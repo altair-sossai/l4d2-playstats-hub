@@ -12,13 +12,15 @@
     var liveServer = modules.IsEnabled(HubModule.LiveServer);
     var skinShop = modules.IsEnabled(HubModule.SkinShop);
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
+    var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
     var metadata = ViewData["PageMetadata"] as PageMetadata;
     var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
     var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
     var description = metadata?.Description ?? L["Statistics, rankings, players, and matches from the {0} Left 4 Dead 2 server.", site.Name].Value;
     var siteUrl = string.IsNullOrWhiteSpace(site.PublicUrl) ? $"{Context.Request.Scheme}://{Context.Request.Host}" : site.PublicUrl.TrimEnd('/');
     var canonical = $"{siteUrl}{Context.Request.Path}";
-    var image = string.IsNullOrWhiteSpace(metadata?.Image) ? null : Uri.TryCreate(metadata.Image, UriKind.Absolute, out _) ? metadata.Image : $"{siteUrl}/{metadata.Image.TrimStart('/')}";
+    var pageImage = !string.IsNullOrWhiteSpace(metadata?.Image) ? metadata.Image : Branding.HasLogo ? AppConsts.LogoUrl : null;
+    var image = pageImage == null ? null : Uri.TryCreate(pageImage, UriKind.Absolute, out _) ? pageImage : $"{siteUrl}/{pageImage.TrimStart('/')}";
     var imageAlt = metadata?.ImageAlt ?? pageTitle ?? site.Name;
     var footerLinks = FooterLinks.Parse(site.FooterLinks);
     var languages = new[] { ("en-US", "us", "English", "lang-en"), ("pt-BR", "br", "Português", "lang-pt"), ("es-ES", "es", "Español", "lang-es") };
@@ -30,6 +32,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="@description">
+    @if (!string.IsNullOrWhiteSpace(site.MetaKeywords))
+    {
+        <meta name="keywords" content="@site.MetaKeywords">
+    }
     <meta name="author" content="@site.Name">
     <meta name="robots" content="@(metadata?.NoIndex == true ? "noindex, follow" : "index, follow")">
 
@@ -368,6 +374,12 @@
                         <a href="/skins">@L["Skins"]</a>
                     </li>
                 }
+                @if (antiCheat)
+                {
+                    <li class="@ViewBag.AntiCheat">
+                        <a href="@AppConsts.AntiCheatUrl">@L["Anti-Cheat"]</a>
+                    </li>
+                }
                 @if (communityRanking)
                 {
                     <li class="@ViewBag.Community">
@@ -423,6 +435,16 @@
                                     <a href="/admin/chat-bans">
                                         <img src="~/imgs/menu/chat-bans.svg" alt="" class="img-responsive img-header-icon">
                                         @L["Chat Bans"]
+                                    </a>
+                                </li>
+                            }
+                            @if (antiCheat)
+                            {
+                                <li role="separator" class="divider"></li>
+                                <li class="@ViewBag.AntiCheatAdmin">
+                                    <a href="@AppConsts.AntiCheatAdminUrl">
+                                        <span class="glyphicon glyphicon-lock" style="margin-right: 5px"></span>
+                                        @L["Anti-Cheat"]
                                     </a>
                                 </li>
                             }

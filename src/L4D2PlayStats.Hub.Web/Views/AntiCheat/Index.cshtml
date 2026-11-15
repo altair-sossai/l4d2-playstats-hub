@@ -1,0 +1,594 @@
+@using L4D2PlayStats.Hub.Web.Models.AntiCheat
+@model AntiCheatModel
+@inject ISettingsService Settings
+
+@{
+    var site = await Settings.GetAsync<SiteSettings>();
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Anti-Cheat"],
+        Description = L["Download the {0} Anti-Cheat and learn how it works.", site.Name]
+    };
+
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+    var copyIcon = light ? "copy-light.png" : "copy-dark.png";
+    var statuses = new[]
+    {
+        (Key: "Starting", Color: "#f0ad4e"),
+        (Key: "Updating", Color: "#5bc0de"),
+        (Key: "Ready", Color: "#62c462"),
+        (Key: "Failed", Color: "#ee5f5b")
+    };
+}
+
+@section Styles {
+    <style>
+        .aac-hero {
+            margin: 10px 0 30px;
+            padding: 30px 30px 26px;
+            border: 1px solid rgba(128, 128, 128, .25);
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(98, 196, 98, .10), rgba(91, 192, 222, .06) 55%, rgba(128, 128, 128, .03));
+        }
+
+        .aac-hero-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+            .aac-hero-row:before,
+            .aac-hero-row:after {
+                display: none;
+            }
+
+        .aac-kicker {
+            display: inline-block;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .75;
+        }
+
+        .aac-hero h1 {
+            margin: 0 0 10px;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        .aac-hero .lead {
+            max-width: 560px;
+            margin-bottom: 22px;
+        }
+
+        .aac-download .btn {
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+            .aac-download .btn .glyphicon {
+                margin-right: 8px;
+            }
+
+        .aac-meta {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: .8;
+        }
+
+            .aac-meta .aac-dot {
+                margin: 0 6px;
+                opacity: .6;
+            }
+
+            .aac-meta a {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
+        .aac-verify {
+            max-width: 560px;
+            margin-top: 12px;
+            padding: 12px 14px;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+            .aac-verify p {
+                margin-bottom: 6px;
+            }
+
+            .aac-verify code {
+                display: block;
+                margin-bottom: 8px;
+                padding: 6px 8px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                background: rgba(128, 128, 128, .12);
+                color: inherit;
+                overflow-wrap: anywhere;
+                white-space: normal;
+            }
+
+            .aac-verify .icon-copy {
+                margin: 0 0 0 6px;
+            }
+
+        .aac-highlights {
+            margin: 22px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+            .aac-highlights li {
+                display: inline-block;
+                margin: 0 18px 8px 0;
+                font-size: 14px;
+            }
+
+            .aac-highlights .glyphicon {
+                margin-right: 6px;
+                color: #62c462;
+            }
+
+        .aac-requirements {
+            margin: 6px 0 0;
+            font-size: 12px;
+            opacity: .7;
+        }
+
+        .aac-window {
+            overflow: hidden;
+            border: 1px solid #3a3f44;
+            border-radius: 6px;
+            background: #0c0c0c;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            color: #cccccc;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+        }
+
+        .aac-window-bar {
+            padding: 6px 10px;
+            background: #1f1f1f;
+            color: #d0d0d0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+            .aac-window-bar span {
+                float: right;
+                letter-spacing: 10px;
+                opacity: .6;
+            }
+
+        .aac-window-body {
+            padding: 12px 14px 16px;
+        }
+
+            .aac-window-body .aac-step {
+                color: #5bc0de;
+                font-weight: bold;
+            }
+
+        .aac-window-panel {
+            margin-top: 12px;
+            padding: 8px 12px 10px;
+            border: 3px double #62c462;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+            .aac-window-panel .aac-window-title {
+                display: block;
+                margin-bottom: 4px;
+                color: #62c462;
+            }
+
+        .aac-section-title {
+            margin: 34px 0 14px;
+            font-weight: bold;
+        }
+
+        .aac-cards {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+            .aac-cards:before,
+            .aac-cards:after {
+                display: none;
+            }
+
+            .aac-cards > [class*="col-"] {
+                display: flex;
+                margin-bottom: 15px;
+            }
+
+        .aac-card {
+            width: 100%;
+            padding: 16px 16px 14px;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-radius: 6px;
+            background: rgba(128, 128, 128, .06);
+        }
+
+            .aac-card h5 {
+                margin: 0 0 6px;
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+            .aac-card p {
+                margin: 0;
+            }
+
+        .aac-step-number {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background: #62c462;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 34px;
+            text-align: center;
+        }
+
+        .aac-status {
+            border-left-width: 4px;
+        }
+
+        .aac-faq .panel {
+            border: 1px solid rgba(128, 128, 128, .3);
+        }
+
+        .aac-faq .panel-heading {
+            padding: 0;
+        }
+
+            .aac-faq .panel-heading a {
+                display: block;
+                padding: 12px 15px;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+                .aac-faq .panel-heading a:after {
+                    content: "\2212";
+                    float: right;
+                    opacity: .7;
+                }
+
+                .aac-faq .panel-heading a.collapsed:after {
+                    content: "+";
+                }
+
+        .aac-info h5 .glyphicon {
+            margin-right: 8px;
+        }
+
+        .aac-info h6 {
+            margin: 14px 0 6px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .aac-info ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+
+        @@media screen and (max-width: 767px) {
+            .aac-cards > [class*="col-"] {
+                width: 100%;
+            }
+        }
+
+        @@media screen and (max-width: 991px) {
+            .aac-hero {
+                padding: 22px 18px;
+                text-align: center;
+            }
+
+                .aac-hero .lead,
+                .aac-verify {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+
+                .aac-verify {
+                    text-align: left;
+                }
+
+            .aac-highlights li {
+                margin: 0 9px 8px;
+            }
+        }
+    </style>
+}
+
+<section class="aac-hero">
+    <div class="row aac-hero-row">
+        <div class="col-md-7">
+            <span class="aac-kicker">@L["{0} competitive server", site.Name]</span>
+            <h1>@L["Anti-Cheat"]</h1>
+            <p class="lead">@L["To play on the competitive server, open the game through the Anti-Cheat."]</p>
+
+            <div class="aac-download">
+                @if (Model.DownloadUrl != null)
+                {
+                    <a class="btn btn-success btn-lg" href="@Model.DownloadUrl">
+                        <span class="glyphicon glyphicon-download-alt"></span>@L["Download Anti-Cheat"]
+                    </a>
+                }
+                <div class="aac-meta">
+                    @if (!string.IsNullOrWhiteSpace(Model.Version))
+                    {
+                        <span>v@(Model.Version)</span>
+                    }
+                    @if (Model.SizeText is not null)
+                    {
+                        <span class="aac-dot">&middot;</span>
+                        <span>@Model.SizeText</span>
+                    }
+                    @if (Model.PublishedAt is not null)
+                    {
+                        <span class="aac-dot">&middot;</span>
+                        <span>@string.Format(L["released on {0}"].Value, Model.PublishedAt.Value.ToString("d"))</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Sha256))
+                    {
+                        <span class="aac-dot">&middot;</span>
+                        <a data-toggle="collapse" href="#aac-verify" aria-expanded="false" aria-controls="aac-verify">@L["Verify the file"]</a>
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Sha256))
+                {
+                    var sha256 = Model.Sha256.ToUpperInvariant();
+
+                    <div id="aac-verify" class="collapse">
+                        <div class="aac-verify">
+                            <p>@L["To check that the downloaded file is the original, open PowerShell in the download folder and run:"]</p>
+                            <code>Get-FileHash .\L4D2AntiCheat.exe</code>
+                            <p>
+                                @L["The Hash (SHA-256) value must be exactly this:"]
+                                <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                                     data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                                     onclick="copyTextToClipboard('@sha256', this)"/>
+                            </p>
+                            <code style="margin-bottom: 0">@sha256</code>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <ul class="aac-highlights">
+                <li>
+                    <span class="glyphicon glyphicon-ok-circle"></span>@L["No VAC ban risk"]
+                </li>
+                <li>
+                    <span class="glyphicon glyphicon-eye-close"></span>@L["No screenshots, does not read your files"]
+                </li>
+            </ul>
+            <p class="aac-requirements">@L["Windows only · Left 4 Dead 2 through Steam · Asks for administrator permission"]</p>
+        </div>
+
+        <div class="col-md-5 hidden-xs hidden-sm">
+            <div class="aac-window" aria-hidden="true">
+                <div class="aac-window-bar">
+                    L4D2 Anti-Cheat@(string.IsNullOrWhiteSpace(Model.Version) ? "" : $" v{Model.Version}")
+                    <span>&#8211; &#9633; &#10005;</span>
+                </div>
+                <div class="aac-window-body">
+                    @for (var line = 1; line <= 3; line++)
+                    {
+                        <div class="aac-step">@TextWindowLog(line)</div>
+                    }
+                    <div class="aac-window-panel">
+                        <span class="aac-window-title">@L["ANTI-CHEAT ACTIVE"]</span>
+                        @L["You are validated and can play now. Keep this window open while you play."]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<h4 class="aac-section-title">@L["How to use it"]</h4>
+<div class="row aac-cards">
+    @for (var step = 1; step <= 3; step++)
+    {
+        <div class="col-sm-4">
+            <div class="aac-card">
+                <span class="aac-step-number">@step</span>
+                <h5>@TextStepTitle(step)</h5>
+                <p>@TextStepText(step)</p>
+            </div>
+        </div>
+    }
+</div>
+
+<h4 class="aac-section-title">@L["What the window shows"]</h4>
+<div class="row aac-cards">
+    @foreach (var status in statuses)
+    {
+        <div class="col-sm-6 col-md-3">
+            <div class="aac-card aac-status" style="border-left-color: @status.Color">
+                <h5 style="color: @status.Color">@TextStatusLabel(status.Key)</h5>
+                <p>@TextStatusText(status.Key)</p>
+            </div>
+        </div>
+    }
+</div>
+
+<h4 class="aac-section-title">@L["Common problems"]</h4>
+<div class="panel-group aac-faq" id="aac-faq" role="tablist" aria-multiselectable="true">
+    @for (var item = 1; item <= 5; item++)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="aac-faq-heading-@item">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#aac-faq" href="#aac-faq-@item" aria-expanded="false" aria-controls="aac-faq-@item">
+                    @TextFaqQ(item)
+                </a>
+            </div>
+            <div id="aac-faq-@item" class="panel-collapse collapse" role="tabpanel" aria-labelledby="aac-faq-heading-@item">
+                <div class="panel-body">@TextFaqA(item)</div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row aac-cards aac-info" style="margin-top: 20px">
+    <div class="col-md-6">
+        <div class="aac-card">
+            <h5>
+                <span class="glyphicon glyphicon-info-sign"></span>@L["About -insecure (no VAC)"]
+            </h5>
+            <p style="margin-bottom: 10px">@L["The Anti-Cheat opens the game with the -insecure option, which starts it without VAC. That avoids any VAC ban risk caused by the Anti-Cheat, and the {0} server also runs without VAC.", site.Name]</p>
+            <p>@L["With the Anti-Cheat, you can only join servers without VAC, like ours. To play on a server with VAC, close the Anti-Cheat and open the game normally through Steam."]</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="aac-card">
+            <h5>
+                <span class="glyphicon glyphicon-lock"></span>@L["Privacy"]
+            </h5>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h6>@L["What it sends"]</h6>
+                    <ul>
+                        @for (var item = 1; item <= 3; item++)
+                        {
+                            <li>@TextPrivacySends(item)</li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <h6>@L["What it does not do"]</h6>
+                    <ul>
+                        @for (var item = 1; item <= 3; item++)
+                        {
+                            <li>@TextPrivacyNever(item)</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private Microsoft.Extensions.Localization.LocalizedString TextWindowLog(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["[1/3] Checking the game files..."],
+            "2" => L["[2/3] Opening the game through Steam..."],
+            "3" => L["[3/3] Connecting to the Anti-Cheat server..."],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextStepTitle(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["Download and run"],
+            "2" => L["Answer and wait"],
+            "3" => L["Play with the window open"],
+            "s" => L["How to use it"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextStepText(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["Accept the administrator permission. If SmartScreen warns you, click \"More info\" and \"Run anyway\"."],
+            "2" => L["Pick your Steam account and, if it asks to close Steam or L4D2, type Y and Enter. The game opens and connects by itself."],
+            "3" => L["When the green ANTI-CHEAT ACTIVE panel appears, you can play. Closing the Anti-Cheat removes your clearance."],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextStatusLabel(object key)
+    {
+        return key.ToString() switch
+        {
+            "Failed" => L["Failed"],
+            "Ready" => L["Active"],
+            "Starting" => L["Starting / Waiting"],
+            "Updating" => L["Updating"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextStatusText(object key)
+    {
+        return key.ToString() switch
+        {
+            "Failed" => L["Read the reason, close it and open the Anti-Cheat again."],
+            "Ready" => L["You are cleared to play."],
+            "Starting" => L["Working or waiting for your answer. Do not close it."],
+            "Updating" => L["Downloading and installing the new version. It restarts by itself right after. Do not close it."],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextFaqQ(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["I was moved to spectators"],
+            "2" => L["An altered file or incompatible program error appeared"],
+            "3" => L["Steam showed a compatibility warning"],
+            "4" => L["\"New version available\" appeared"],
+            "5" => L["Can the Anti-Cheat get me a VAC ban?"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextFaqA(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["Check that the panel is green. Right after you join the server it takes a few seconds to clear you. If it is red, read the reason, close it and open it again."],
+            "2" => L["Remove skins, mods and files added to the game, and close overlay, capture or optimization programs. If it continues, verify the game files in Steam and tell the administration the message shown."],
+            "3" => L["Click Continue so the game can open. Ideally, untick \"Run as administrator\" and compatibility mode in the steam.exe properties."],
+            "4" => L["The Anti-Cheat normally updates itself. This message shows up when the automatic update could not finish (for example, blocked by the antivirus). Close it and open it again; if it keeps happening, download the file again on this page."],
+            "5" => L["No. The game opens with VAC off in that session (see below). Nothing changes on your account."],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextPrivacySends(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["Your Steam ID and profile name"],
+            "2" => L["The Anti-Cheat and Windows versions"],
+            "3" => L["Security and diagnostic events"],
+            "Title" => L["What it sends"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextPrivacyNever(object key)
+    {
+        return key.ToString() switch
+        {
+            "1" => L["It does not take screenshots"],
+            "2" => L["It does not read your documents or files outside the game"],
+            "3" => L["It does not store your IP or write logs on your computer"],
+            "Title" => L["What it does not do"],
+            _ => L[key.ToString()!]
+        };
+    }
+}

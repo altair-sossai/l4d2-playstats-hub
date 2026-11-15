@@ -10,6 +10,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
+using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,6 +38,7 @@ builder.Services
     });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<Program>()
@@ -96,7 +98,9 @@ var localization = new RequestLocalizationOptions
 localization.RequestCultureProviders.Add(new SiteCultureProvider());
 
 app.UseForwardedHeaders();
+app.UseMiddleware<ErrorLoggingMiddleware>();
 app.UseRequestLocalization(localization);
+app.UseResponseCompression();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
