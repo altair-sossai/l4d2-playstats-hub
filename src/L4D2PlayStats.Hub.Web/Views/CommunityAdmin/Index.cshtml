@@ -1,0 +1,133 @@
+@model CommunityAdminViewModel
+@{
+    ViewData["Title"] = L["Community ranking"].Value;
+    var settings = Model.Settings;
+}
+<h1 class="h3">@L["Community ranking"]</h1>
+<partial name="_AdminNav"/>
+
+@if (TempData["Rebuilt"] != null)
+{
+    <div class="alert alert-success">@L["Ratings rebuilt. Votes replayed:"] @TempData["Rebuilt"]</div>
+}
+@if (TempData["Removed"] != null)
+{
+    <div class="alert alert-success">@L["Ratings rebuilt without that voter. Votes removed:"] @TempData["Removed"]</div>
+}
+
+<div class="row g-3 mb-4" style="max-width: 760px;">
+    <div class="col-6"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.Votes)</div><div class="text-body-secondary">@L["Votes"]</div></div></div></div>
+    <div class="col-6"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.RatedPlayers)</div><div class="text-body-secondary">@L["Rated players"]</div></div></div></div>
+</div>
+
+<form class="mb-4" method="post" asp-antiforgery="true" action="/admin/community" style="max-width: 760px;">
+    <div class="card mb-4">
+        <div class="card-header">@L["Voting"]</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-4">
+                    <label class="form-label" for="MinimumMatchesToVote">@L["Minimum matches to vote"]</label>
+                    <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label" for="VotesPerDay">@L["Votes per day"]</label>
+                    <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label" for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared"]</label>
+                    <input class="form-control" id="MinimumMatchesToBeCandidate" name="MinimumMatchesToBeCandidate" type="number" min="0" value="@settings.MinimumMatchesToBeCandidate">
+                </div>
+            </div>
+            <div class="form-text">@L["Matches are counted over all seasons. Answers of the kind \"I don't know\" do not use up the votes of the day."]</div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">@L["Rating"]</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-4">
+                    <label class="form-label" for="MinimumComparisonsToBeListed">@L["Minimum comparisons to be listed"]</label>
+                    <input class="form-control" id="MinimumComparisonsToBeListed" name="MinimumComparisonsToBeListed" type="number" min="0" value="@settings.MinimumComparisonsToBeListed">
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label" for="KFactor">@L["Elo K factor"]</label>
+                    <input class="form-control" id="KFactor" name="KFactor" type="number" min="@CoreConsts.CommunityMinKFactor" max="@CoreConsts.CommunityMaxKFactor" value="@settings.KFactor">
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label" for="InitialRating">@L["Initial rating"]</label>
+                    <input class="form-control" id="InitialRating" name="InitialRating" type="number" min="0" value="@settings.InitialRating">
+                </div>
+            </div>
+            <div class="form-text">@L["The K factor and the initial rating apply to new votes. Rebuild the ratings to apply them to every vote."]</div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">@L["Save"]</button>
+</form>
+
+<div class="card mb-4" style="max-width: 760px;">
+    <div class="card-header">@L["Maintenance"]</div>
+    <div class="card-body">
+        <p>@L["Rebuilding replays every stored vote in order and recalculates every rating with the current settings."]</p>
+        <form method="post" asp-antiforgery="true" action="/admin/community/rebuild" onsubmit="return confirm('@L["Rebuild every rating now?"]')">
+            <button class="btn btn-outline-warning" type="submit">@L["Rebuild the ratings"]</button>
+        </form>
+    </div>
+</div>
+
+<div class="card" style="max-width: 760px;">
+    <div class="card-header">@L["Voters"]</div>
+    <div class="card-body">
+        <p>@L["Removing a voter deletes all of their votes and rebuilds the ratings without them."]</p>
+        <form class="row g-2 mb-3" method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
+            <div class="col">
+                <input class="form-control" name="communityId" type="number" required placeholder="7656119..." aria-label="SteamID64">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-danger" type="submit">@L["Remove votes"]</button>
+            </div>
+        </form>
+
+        @if (Model.Voters.Count == 0)
+        {
+            <div class="text-body-secondary">@L["Nobody has voted yet."]</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                    <tr>
+                        <th>@L["Player"]</th>
+                        <th class="numeric">@L["Votes"]</th>
+                        <th class="numeric">@L["Last vote"]</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var voter in Model.Voters)
+                    {
+                        <tr>
+                            <td>
+                                <a class="text-decoration-none d-flex align-items-center gap-2" href="@SteamIds.ProfileUrl(voter.CommunityId)" rel="noopener" target="_blank">
+                                    <img class="avatar" src="/avatar/@voter.CommunityId" alt="" loading="lazy">
+                                    <span>@voter.Name</span>
+                                </a>
+                            </td>
+                            <td class="numeric">@voter.Votes</td>
+                            <td class="numeric">@voter.LastVoteAtUtc.ToString("d")</td>
+                            <td class="text-end">
+                                <form method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
+                                    <input type="hidden" name="communityId" value="@voter.CommunityId">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove votes"]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,58 @@
+using System.Linq.Expressions;
+using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Matches;
+using Microsoft.EntityFrameworkCore;
+
+namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
+
+public class CommunityPlayerService(HubDbContext dbContext) : ICommunityPlayerService
+{
+    private static readonly Expression<Func<MatchPlayer, bool>> TookPart = p => p.TeamA || p.TeamB || p.Win || p.Loss || p.Draws > 0 || p.RageQuits > 0;
+
+    public Task<int> MatchesAsync(long communityId, CancellationToken cancellationToken = default)
+    {
+        return Played().CountAsync(p => p.CommunityId == communityId, cancellationToken);
+    }
+
+    public async Task<HashSet<long>> CandidatesAsync(int minimumMatches, CancellationToken cancellationToken = default)
+    {
+        var candidates = await Played()
+            .Where(p => p.CommunityId > AppConsts.SteamCommunityIdBase)
+            .GroupBy(p => p.CommunityId)
+            .Where(group => group.Count() >= minimumMatches)
+            .Select(group => group.Key)
+            .ToListAsync(cancellationToken);
+
+        return [.. candidates];
+    }
+
+    public async Task<HashSet<long>> FamiliarAsync(long communityId, CancellationToken cancellationToken = default)
+    {
+        var matchIds = Played().Where(p => p.CommunityId == communityId).Select(p => p.MatchId);
+
+        var familiar = await Played()
+            .Where(p => p.CommunityId != communityId && matchIds.Contains(p.MatchId))
+            .Select(p => p.CommunityId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return [.. familiar];
+    }
+
+    public async Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
+    {
+        var ids = communityIds.Distinct().ToList();
+
+        var names = await dbContext.PlayerProfiles
+            .AsNoTracking()
+            .Where(p => ids.Contains(p.CommunityId) && p.Name != null && p.Name != string.Empty)
+            .ToDictionaryAsync(p => p.CommunityId, p => p.Name!, cancellationToken);
+
+        return ids.ToDictionary(id => id, id => names.GetValueOrDefault(id) ?? id.ToString());
+    }
+
+    private IQueryable<MatchPlayer> Played()
+    {
+        return dbContext.MatchPlayers.AsNoTracking().Where(TookPart);
+    }
+}

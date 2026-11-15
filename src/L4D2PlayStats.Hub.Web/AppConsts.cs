@@ -53,4 +53,8 @@ public static class AppConsts
 
     public const string DevelopmentSignInSetting = "Development:AllowTestSignIn";
     public const string SteamOpenIdPattern = @"openid/id/(\d+)$";
+
+    public const string HtmxRequestHeader = "HX-Request";
+    public const string CommunityBallotElement = "community-ballot";
+    public const string CommunityVotePage = "/community/vote";
 }

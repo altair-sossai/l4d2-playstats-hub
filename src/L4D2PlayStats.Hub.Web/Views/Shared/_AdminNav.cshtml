@@ -1,3 +1,4 @@
+@inject ISettingsService CommunitySettings
 @{
     var path = Context.Request.Path.Value ?? string.Empty;
 
@@ -11,6 +12,11 @@
         ("/admin/campaigns", L["Campaigns"].Value),
         ("/admin/administrators", L["Administrators"].Value)
     };
+
+    var communityModules = await CommunitySettings.GetAsync<ModuleSettings>();
+
+    if (communityModules.IsEnabled(HubModule.CommunityRanking))
+        items = [.. items, ("/admin/community", L["Community ranking"].Value)];
 }
 <ul class="nav nav-pills flex-wrap mb-4">
     @foreach (var item in items)

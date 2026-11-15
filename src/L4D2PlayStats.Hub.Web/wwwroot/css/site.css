@@ -141,3 +141,17 @@ pre.config {
 .table > :not(caption) > * > * {
     vertical-align: middle;
 }
+
+.avatar-xl {
+    width: 184px;
+    max-width: 100%;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.ballot-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}

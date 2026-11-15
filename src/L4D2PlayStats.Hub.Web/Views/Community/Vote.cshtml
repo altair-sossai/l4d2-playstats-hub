@@ -1,0 +1,13 @@
+@model CommunityVoteViewModel
+@{
+    ViewData["Title"] = L["Who is better?"].Value;
+}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">@L["Who is better?"]</h1>
+        <div class="text-body-secondary">@L["Your answers move players up and down the community ranking."]</div>
+    </div>
+    <a class="btn btn-outline-secondary" href="/community">@L["Community ranking"]</a>
+</div>
+
+<partial name="_Ballot" model="Model"/>
