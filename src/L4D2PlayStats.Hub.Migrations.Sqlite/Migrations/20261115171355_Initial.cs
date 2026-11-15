@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -34,6 +35,71 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Campaigns", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatBans",
+                columns: table => new
+                {
+                    CommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Reason = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    CreatedByCommunityId = table.Column<long>(type: "INTEGER", nullable: true),
+                    CreatedByName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatBans", x => x.CommunityId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommunityOffer",
+                columns: table => new
+                {
+                    VoterId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LeftPlayerId = table.Column<long>(type: "INTEGER", nullable: false),
+                    RightPlayerId = table.Column<long>(type: "INTEGER", nullable: false),
+                    OfferedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommunityOffer", x => x.VoterId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommunityRating",
+                columns: table => new
+                {
+                    CommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Rating = table.Column<double>(type: "REAL", nullable: false),
+                    Comparisons = table.Column<int>(type: "INTEGER", nullable: false),
+                    Wins = table.Column<int>(type: "INTEGER", nullable: false),
+                    Losses = table.Column<int>(type: "INTEGER", nullable: false),
+                    Draws = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommunityRating", x => x.CommunityId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommunityVote",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    VoterId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LeftPlayerId = table.Column<long>(type: "INTEGER", nullable: false),
+                    RightPlayerId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Outcome = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    SiteDay = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommunityVote", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +156,24 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlayerConnections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IpAddress = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    CommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    FirstSeenAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LastSeenAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Count = table.Column<long>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerConnections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PlayerProfiles",
                 columns: table => new
                 {
@@ -102,6 +186,25 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PlayerProfiles", x => x.CommunityId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RemoteCommandLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GameServerId = table.Column<int>(type: "INTEGER", nullable: false),
+                    GameServerName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    AdministratorCommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    AdministratorName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Command = table.Column<string>(type: "TEXT", maxLength: 259, nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    DeliveredAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RemoteCommandLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -128,6 +231,29 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Skin",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Weapon = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Rarity = table.Column<int>(type: "INTEGER", nullable: false),
+                    DefaultPrice = table.Column<int>(type: "INTEGER", nullable: false),
+                    WorkshopId = table.Column<string>(type: "TEXT", maxLength: 32, nullable: true),
+                    AuthorName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    AuthorCommunityId = table.Column<long>(type: "INTEGER", nullable: true),
+                    OriginalTitle = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    OriginalDescription = table.Column<string>(type: "TEXT", nullable: true),
+                    Shots = table.Column<int>(type: "INTEGER", nullable: false),
+                    Available = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ImportedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skin", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,6 +334,98 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         name: "FK_Punishments_Seasons_SeasonId",
                         column: x => x.SeasonId,
                         principalTable: "Seasons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SkinEquipment",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Weapon = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    SkinId = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Source = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SkinEquipment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SkinEquipment_Skin_SkinId",
+                        column: x => x.SkinId,
+                        principalTable: "Skin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SkinPriceOverride",
+                columns: table => new
+                {
+                    SkinId = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Price = table.Column<int>(type: "INTEGER", nullable: false),
+                    UpdatedByCommunityId = table.Column<long>(type: "INTEGER", nullable: true),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SkinPriceOverride", x => x.SkinId);
+                    table.ForeignKey(
+                        name: "FK_SkinPriceOverride_Skin_SkinId",
+                        column: x => x.SkinId,
+                        principalTable: "Skin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SkinPurchase",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CommunityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    SkinId = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Price = table.Column<int>(type: "INTEGER", nullable: false),
+                    StarsBefore = table.Column<int>(type: "INTEGER", nullable: false),
+                    Gift = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PlayerName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    GiftedByCommunityId = table.Column<long>(type: "INTEGER", nullable: true),
+                    GiftedByName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    PurchasedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SkinPurchase", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SkinPurchase_Skin_SkinId",
+                        column: x => x.SkinId,
+                        principalTable: "Skin",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SkinText",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SkinId = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Language = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SkinText", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SkinText_Skin_SkinId",
+                        column: x => x.SkinId,
+                        principalTable: "Skin",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -319,6 +537,16 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 column: "MapName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CommunityRating_Rating",
+                table: "CommunityRating",
+                column: "Rating");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommunityVote_VoterId_SiteDay",
+                table: "CommunityVote",
+                columns: new[] { "VoterId", "SiteDay" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GameConfigurations_Name_TeamSize",
                 table: "GameConfigurations",
                 columns: new[] { "Name", "TeamSize" },
@@ -356,14 +584,73 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 column: "MatchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlayerConnections_CommunityId",
+                table: "PlayerConnections",
+                column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerConnections_IpAddress_CommunityId",
+                table: "PlayerConnections",
+                columns: new[] { "IpAddress", "CommunityId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerConnections_LastSeenAtUtc",
+                table: "PlayerConnections",
+                column: "LastSeenAtUtc");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Punishments_SeasonId_CommunityId",
                 table: "Punishments",
                 columns: new[] { "SeasonId", "CommunityId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_RemoteCommandLogs_CreatedAtUtc",
+                table: "RemoteCommandLogs",
+                column: "CreatedAtUtc");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Seasons_StartsAt",
                 table: "Seasons",
                 column: "StartsAt",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skin_Weapon",
+                table: "Skin",
+                column: "Weapon");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinEquipment_CommunityId_Weapon",
+                table: "SkinEquipment",
+                columns: new[] { "CommunityId", "Weapon" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinEquipment_SkinId",
+                table: "SkinEquipment",
+                column: "SkinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinPurchase_CommunityId_SkinId",
+                table: "SkinPurchase",
+                columns: new[] { "CommunityId", "SkinId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinPurchase_PurchasedAtUtc",
+                table: "SkinPurchase",
+                column: "PurchasedAtUtc");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinPurchase_SkinId",
+                table: "SkinPurchase",
+                column: "SkinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkinText_SkinId_Language",
+                table: "SkinText",
+                columns: new[] { "SkinId", "Language" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -398,6 +685,18 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 name: "CampaignMaps");
 
             migrationBuilder.DropTable(
+                name: "ChatBans");
+
+            migrationBuilder.DropTable(
+                name: "CommunityOffer");
+
+            migrationBuilder.DropTable(
+                name: "CommunityRating");
+
+            migrationBuilder.DropTable(
+                name: "CommunityVote");
+
+            migrationBuilder.DropTable(
                 name: "GameConfigurations");
 
             migrationBuilder.DropTable(
@@ -407,19 +706,40 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                 name: "MatchPlayers");
 
             migrationBuilder.DropTable(
+                name: "PlayerConnections");
+
+            migrationBuilder.DropTable(
                 name: "PlayerProfiles");
 
             migrationBuilder.DropTable(
                 name: "Punishments");
 
             migrationBuilder.DropTable(
+                name: "RemoteCommandLogs");
+
+            migrationBuilder.DropTable(
                 name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "SkinEquipment");
+
+            migrationBuilder.DropTable(
+                name: "SkinPriceOverride");
+
+            migrationBuilder.DropTable(
+                name: "SkinPurchase");
+
+            migrationBuilder.DropTable(
+                name: "SkinText");
 
             migrationBuilder.DropTable(
                 name: "StatisticsFiles");
 
             migrationBuilder.DropTable(
                 name: "Campaigns");
+
+            migrationBuilder.DropTable(
+                name: "Skin");
 
             migrationBuilder.DropTable(
                 name: "Matches");

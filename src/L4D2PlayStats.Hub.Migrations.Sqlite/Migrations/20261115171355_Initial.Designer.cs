@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
 {
     [DbContext(typeof(HubDbContext))]
-    [Migration("20261115163128_Initial")]
+    [Migration("20261115171355_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -79,6 +79,83 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.ToTable("CampaignMaps");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Community.CommunityOffer", b =>
+                {
+                    b.Property<long>("VoterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("LeftPlayerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("OfferedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RightPlayerId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("VoterId");
+
+                    b.ToTable("CommunityOffer");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Community.CommunityRating", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Comparisons")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Draws")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Wins")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CommunityId");
+
+                    b.HasIndex("Rating");
+
+                    b.ToTable("CommunityRating");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Community.CommunityVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("LeftPlayerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Outcome")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("RightPlayerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("SiteDay")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("VoterId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VoterId", "SiteDay");
+
+                    b.ToTable("CommunityVote");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.GameModes.GameConfiguration", b =>
                 {
                     b.Property<int>("Id")
@@ -138,6 +215,116 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GameModeRules");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Live.ChatBan", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("CreatedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedByName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CommunityId");
+
+                    b.ToTable("ChatBans", (string)null);
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Live.PlayerConnection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Count")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FirstSeenAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastSeenAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("LastSeenAtUtc");
+
+                    b.HasIndex("IpAddress", "CommunityId")
+                        .IsUnique();
+
+                    b.ToTable("PlayerConnections", (string)null);
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Live.RemoteCommandLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AdministratorCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AdministratorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Command")
+                        .IsRequired()
+                        .HasMaxLength(259)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeliveredAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GameServerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("GameServerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.ToTable("RemoteCommandLogs", (string)null);
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Matches.Match", b =>
@@ -443,6 +630,196 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("AuthorCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AuthorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DefaultPrice")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ImportedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OriginalDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OriginalTitle")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rarity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Shots")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Weapon")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("WorkshopId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Weapon");
+
+                    b.ToTable("Skin");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinEquipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SkinId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Weapon")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkinId");
+
+                    b.HasIndex("CommunityId", "Weapon")
+                        .IsUnique();
+
+                    b.ToTable("SkinEquipment");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinPriceOverride", b =>
+                {
+                    b.Property<string>("SkinId")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("UpdatedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("SkinId");
+
+                    b.ToTable("SkinPriceOverride");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinPurchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Gift")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("GiftedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("GiftedByName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PlayerName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("PurchasedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SkinId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StarsBefore")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchasedAtUtc");
+
+                    b.HasIndex("SkinId");
+
+                    b.HasIndex("CommunityId", "SkinId")
+                        .IsUnique();
+
+                    b.ToTable("SkinPurchase");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinText", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SkinId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SkinId", "Language")
+                        .IsUnique();
+
+                    b.ToTable("SkinText");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.StatisticsFile", b =>
                 {
                     b.Property<int>("Id")
@@ -566,6 +943,44 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinEquipment", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", null)
+                        .WithMany()
+                        .HasForeignKey("SkinId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinPriceOverride", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", null)
+                        .WithOne("PriceOverride")
+                        .HasForeignKey("L4D2PlayStats.Hub.Core.Modules.Skins.SkinPriceOverride", "SkinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinPurchase", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", "Skin")
+                        .WithMany()
+                        .HasForeignKey("SkinId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Skin");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinText", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", null)
+                        .WithMany("Texts")
+                        .HasForeignKey("SkinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.StatisticsFile", b =>
                 {
                     b.HasOne("L4D2PlayStats.Hub.Core.Modules.Servers.GameServer", "GameServer")
@@ -600,6 +1015,13 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.Navigation("Files");
 
                     b.Navigation("Players");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.Skin", b =>
+                {
+                    b.Navigation("PriceOverride");
+
+                    b.Navigation("Texts");
                 });
 #pragma warning restore 612, 618
         }
