@@ -1,0 +1,111 @@
+@using L4D2PlayStats.Hub.Web.Models.Live
+@model ChatBansViewModel
+@{
+    ViewData["Title"] = L["Chat bans"].Value;
+}
+<h1 class="h3">@L["Chat bans"]</h1>
+<partial name="_AdminNav"/>
+
+<p class="text-body-secondary">@L["A banned player cannot send messages from the site to any game server."]</p>
+
+@if (Model.Bans.Count == 0)
+{
+    <div class="alert alert-secondary">@L["No chat bans found."]</div>
+}
+else
+{
+    <div class="table-responsive mb-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>@L["Name"]</th>
+                <th>SteamID64</th>
+                <th>@L["Reason"]</th>
+                <th>@L["Banned by"]</th>
+                <th>@L["Since"]</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var ban in Model.Bans)
+            {
+                <tr>
+                    <td><img class="avatar me-2" src="/avatar/@ban.CommunityId" alt="" loading="lazy">@(ban.Name ?? "-")</td>
+                    <td><a href="@SteamIds.ProfileUrl(ban.CommunityId)" rel="noopener" target="_blank">@ban.CommunityId</a></td>
+                    <td>@(ban.Reason ?? "-")</td>
+                    <td>@(ban.CreatedByName ?? ban.CreatedByCommunityId?.ToString() ?? "-")</td>
+                    <td>@ban.CreatedAtUtc.ToString("d")</td>
+                    <td class="text-end">
+                        <form method="post" asp-antiforgery="true" action="/admin/chat-bans/@ban.CommunityId/delete" onsubmit="return confirm('@L["Remove this chat ban?"]')">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">@L["Ban a player from the chat"]</div>
+            <div class="card-body">
+                <form method="post" asp-antiforgery="true" action="/admin/chat-bans">
+                    <div class="mb-3">
+                        <label class="form-label" for="communityId">SteamID64</label>
+                        <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="name">@L["Name"]</label>
+                        <input class="form-control" id="name" name="name" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="reason">@L["Reason"]</label>
+                        <input class="form-control" id="reason" name="reason" maxlength="300">
+                    </div>
+                    <button class="btn btn-primary" type="submit">@L["Ban"]</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">@L["Recent messages from the site"]</div>
+            <div class="card-body">
+                @if (Model.RecentSenders.Count == 0)
+                {
+                    <div class="text-body-secondary">@L["Nobody wrote from the site in the last hour."]</div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var sender in Model.RecentSenders)
+                        {
+                            <div class="list-group-item d-flex align-items-center gap-2 px-0">
+                                <img class="avatar" src="/avatar/@sender.CommunityId" alt="" loading="lazy">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@sender.Name <span class="small text-body-secondary">@sender.CommunityId</span></div>
+                                    <div class="small">@sender.Text</div>
+                                </div>
+                                @if (sender.Banned)
+                                {
+                                    <span class="badge text-bg-danger">@L["Banned"]</span>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-antiforgery="true" action="/admin/chat-bans">
+                                        <input type="hidden" name="communityId" value="@sender.CommunityId">
+                                        <input type="hidden" name="name" value="@sender.Name">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">@L["Ban"]</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

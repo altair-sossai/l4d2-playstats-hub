@@ -1,0 +1,133 @@
+@model ServerCardViewModel
+@{
+    var snapshot = Model.Snapshot;
+    var configuration = snapshot.Configuration;
+    var round = snapshot.Round;
+    var scoreboard = snapshot.Scoreboard;
+    var progressPoints = scoreboard?.CurrentProgressPoints ?? 0;
+    var maxProgressPoints = round?.MaxChapterProgressPoints ?? 0;
+}
+<div id="live-header" class="card mb-4" hx-get="/servers/@Model.Server.PublicId/header" hx-trigger="every @(AppConsts.LiveRefreshInSeconds)s" hx-swap="outerHTML">
+    <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <div class="fw-semibold">
+                    <span class="status-dot status-@(Model.Online ? "Online" : "Offline")"></span>@L[Model.Online ? "Online" : "Offline"]
+                    @if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
+                    {
+                        <span>· @configuration.Name</span>
+                    }
+                    @if (configuration is { TeamSize: > 0 })
+                    {
+                        <span>· @(configuration.TeamSize)v@(configuration.TeamSize)</span>
+                    }
+                    @if (round?.AntiCheatStatus is { } antiCheat)
+                    {
+                        <span class="badge @(antiCheat == AntiCheatStatus.Enabled ? "text-bg-success" : antiCheat == AntiCheatStatus.ApiUnavailable ? "text-bg-warning" : "text-bg-secondary")">
+                            @L[antiCheat == AntiCheatStatus.Enabled ? "Anti-cheat on" : antiCheat == AntiCheatStatus.ApiUnavailable ? "Anti-cheat API down" : "Anti-cheat off"]
+                        </span>
+                    }
+                </div>
+                <div class="small text-body-secondary">
+                    @if (!string.IsNullOrEmpty(Model.Campaign))
+                    {
+                        <span>@Model.Campaign · </span>
+                    }
+                    <span>@(string.IsNullOrEmpty(Model.Map) ? L["Unknown map"].Value : Model.Map)</span>
+                    @if (round != null)
+                    {
+                        <span>· @L[round.InSecondHalfOfRound ? "Second round" : "First round"]</span>
+
+                        if (round.IsInPause)
+                        {
+                            <span class="badge text-bg-secondary">@L["Paused"]</span>
+                        }
+                        else if (round.IsInReady)
+                        {
+                            <span class="badge text-bg-info">@L["Starting"]</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-success">@L["Started"]</span>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="score">
+                    <span class="@(scoreboard?.IsSurvivorsWinning == true ? "text-win" : "")" title="@L["Survivors"]">@Display.Number(scoreboard?.SurvivorScore ?? 0)</span>
+                    <span class="text-body-secondary">×</span>
+                    <span class="@(scoreboard?.IsInfectedsWinning == true ? "text-win" : "")" title="@L["Infected"]">@Display.Number(scoreboard?.InfectedScore ?? 0)</span>
+                </div>
+                @if (scoreboard is { Comeback: > 0 })
+                {
+                    <div class="small text-body-secondary">@L["Difference"]: @Display.Number(scoreboard.Comeback)</div>
+                }
+            </div>
+            <div class="text-end">
+                <div class="small">@snapshot.PlayerCount @L["players"]</div>
+                @if (Model.ConnectUrl != null)
+                {
+                    <a class="btn btn-sm btn-outline-primary mt-1" href="@Model.ConnectUrl">@L["Connect"]</a>
+                }
+            </div>
+        </div>
+        <div class="row row-cols-2 row-cols-md-5 g-3 mt-1 small">
+            <div class="col">
+                <div class="text-body-secondary">@L["Progress points"]</div>
+                <div class="live-stat">@Display.Number(progressPoints) / @Display.Number(maxProgressPoints) <span class="badge text-bg-secondary">@Display.Percent(LiveDisplay.Fraction(progressPoints, maxProgressPoints))</span></div>
+            </div>
+            <div class="col">
+                <div class="text-body-secondary">@L["Bonus"]</div>
+                <div class="live-stat">@Display.Number(scoreboard?.Bonus ?? 0) / @Display.Number(scoreboard?.MaxBonus ?? 0) <span class="badge text-bg-secondary">@Display.Percent(scoreboard?.BonusPercentage ?? 0)</span></div>
+            </div>
+            <div class="col">
+                <div class="text-body-secondary">@L["Progress"]</div>
+                <div class="live-stat">@Display.Percent(scoreboard?.CurrentProgress ?? 0)</div>
+            </div>
+            <div class="col">
+                <div class="text-body-secondary">@L["Tank"]</div>
+                <div class="live-stat">
+                    @if (round == null)
+                    {
+                        <span>-</span>
+                    }
+                    else if (round.TankDisabled)
+                    {
+                        <span class="badge text-bg-secondary">@L["Disabled"]</span>
+                    }
+                    else
+                    {
+                        <span>@Display.Percent(round.TankPercent)</span>
+
+                        if (scoreboard?.IsTankInPlay == true)
+                        {
+                            <span class="badge text-bg-info">@L["Alive"]</span>
+                        }
+                        else if (scoreboard?.TankIsDead == true)
+                        {
+                            <span class="badge text-bg-danger">@L["Dead"]</span>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="col">
+                <div class="text-body-secondary">@L["Witch"]</div>
+                <div class="live-stat">
+                    @if (round == null)
+                    {
+                        <span>-</span>
+                    }
+                    else if (round.WitchDisabled)
+                    {
+                        <span class="badge text-bg-secondary">@L["Disabled"]</span>
+                    }
+                    else
+                    {
+                        <span>@Display.Percent(round.WitchPercent)</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+@using L4D2PlayStats.Hub.Web.Models.Live
+@model PlayerConnectionsViewModel
+@{
+    ViewData["Title"] = L["Player connections"].Value;
+    var details = Model.Details;
+}
+<h1 class="h3">@L["Player connections"]</h1>
+<partial name="_AdminNav"/>
+
+<p class="text-body-secondary">@L["Shows the accounts that connected to a game server from the same address as a player. Connections older than three months are deleted."]</p>
+
+<form class="d-flex gap-2 mb-4" method="get" action="/admin/player-connections" style="max-width: 480px;">
+    <input class="form-control" name="communityId" type="number" required placeholder="SteamID64" value="@Model.CommunityId" aria-label="SteamID64">
+    <button class="btn btn-primary" type="submit">@L["Search"]</button>
+</form>
+
+@if (details != null)
+{
+    if (details.Player == null)
+    {
+        <div class="alert alert-secondary">@L["No connection recorded for this player."]</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>@L["Name"]</th>
+                    <th>SteamID64</th>
+                    <th>@L["First seen"]</th>
+                    <th>@L["Last seen"]</th>
+                    <th class="numeric">@L["Connections"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="row-highlight">
+                    <td>@details.Player.Name</td>
+                    <td><a href="@details.Player.ProfileUrl" rel="noopener" target="_blank">@details.Player.CommunityId</a></td>
+                    <td>@details.Player.FirstConnectedAtUtc.ToString("u")</td>
+                    <td>@details.Player.LastConnectedAtUtc.ToString("u")</td>
+                    <td class="numeric">@details.Player.ConnectionCount</td>
+                </tr>
+                @foreach (var related in details.RelatedPlayers)
+                {
+                    <tr>
+                        <td>@related.Name</td>
+                        <td><a href="/admin/player-connections?communityId=@related.CommunityId">@related.CommunityId</a></td>
+                        <td>@related.FirstConnectedAtUtc.ToString("u")</td>
+                        <td>@related.LastConnectedAtUtc.ToString("u")</td>
+                        <td class="numeric">@related.ConnectionCount</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        if (details.RelatedPlayers.Count == 0)
+        {
+            <div class="text-body-secondary">@L["No other account used the same address."]</div>
+        }
+    }
+}

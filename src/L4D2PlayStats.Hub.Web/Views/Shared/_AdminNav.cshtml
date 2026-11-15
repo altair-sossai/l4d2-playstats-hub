@@ -11,6 +11,17 @@
         ("/admin/campaigns", L["Campaigns"].Value),
         ("/admin/administrators", L["Administrators"].Value)
     };
+
+    var liveModules = await Context.RequestServices.GetRequiredService<ISettingsService>().GetAsync<ModuleSettings>();
+
+    if (liveModules.IsEnabled(HubModule.SiteChat))
+        items = [.. items, ("/admin/chat-bans", L["Chat bans"].Value)];
+
+    if (liveModules.IsEnabled(HubModule.RemoteCommands))
+        items = [.. items, ("/admin/remote-commands", L["Remote commands"].Value)];
+
+    if (liveModules.IsEnabled(HubModule.LiveServer))
+        items = [.. items, ("/admin/player-connections", L["Player connections"].Value)];
 }
 <ul class="nav nav-pills flex-wrap mb-4">
     @foreach (var item in items)

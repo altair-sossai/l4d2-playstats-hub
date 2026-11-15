@@ -1,0 +1,8 @@
+@model LiveFeedViewModel
+<partial name="_FeedPoller" model="Model"/>
+@if (Model.Items.Count > 0)
+{
+    <div hx-swap-oob="afterbegin:#feed">
+        <partial name="_FeedItems" model="Model"/>
+    </div>
+}

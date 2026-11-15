@@ -1,0 +1,7 @@
+@model ServerListViewModel
+@{
+    ViewData["Title"] = L["Servers"].Value;
+}
+<link rel="stylesheet" href="~/css/live.css" asp-append-version="true">
+<h1 class="h3 mb-3">@L["Servers"]</h1>
+<partial name="_Cards" model="Model"/>

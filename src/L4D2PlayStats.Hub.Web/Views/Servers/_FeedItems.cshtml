@@ -1,0 +1,211 @@
+@model LiveFeedViewModel
+@functions {
+
+    private void Name(LivePlayer? player, string fallback)
+    {
+        var url = LiveDisplay.PlayerUrl(player, Model.RankingEnabled);
+
+        if (player == null || string.IsNullOrEmpty(player.Name))
+        {
+            <span class="feed-player">@fallback</span>
+        }
+        else if (url == null)
+        {
+            <span class="feed-player">@player.Name</span>
+        }
+        else
+        {
+            <a class="feed-player" href="@url" target="_blank" rel="noopener">@player.Name</a>
+        }
+    }
+
+    private void Stars(GameEvent gameEvent)
+    {
+        if (gameEvent.Stars > 0)
+        {
+            <span class="feed-stars">@LiveDisplay.Stars(gameEvent.Stars)</span>
+        }
+    }
+
+}
+@foreach (var item in Model.Items)
+{
+    <div class="feed-item" data-feed-kind="@(item is LiveChatMessage ? "message" : "event")">
+        <span class="feed-time">@LiveDisplay.Time(item.When, Model.TimeZone)</span>
+        @switch (item)
+        {
+            case LiveChatMessage message:
+                if (message.Team == LiveTeam.External)
+                {
+                    <small class="text-body-secondary">(@L["Site"])</small>
+                }
+                else if (!message.Public)
+                {
+                    <small class="text-body-secondary">(@L[message.Team.ToString()])</small>
+                }
+                <span class="team-@message.Team">@{ Name(message.Player, L["Unknown"].Value); }</span>
+                if (message.IsAdmin)
+                {
+                    <small class="text-body-secondary">(@L["Admin"])</small>
+                }
+                <span>: @message.Message</span>
+                break;
+            case BoomerVomitLandedEvent boomerVomit:
+                Name(boomerVomit.Actor, L["a boomer"].Value);
+                <span class="feed-danger">@L["vomited on"]</span>
+                <span>@L["{0} survivor(s)", boomerVomit.Amount].</span>
+                break;
+            case CarAlarmTriggeredEvent carAlarm:
+                Stars(carAlarm);
+                Name(carAlarm.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["triggered a car alarm"]</span>
+                if (carAlarm.Reason != CarAlarmReason.Unknown)
+                {
+                    <span>(@L[carAlarm.Reason == CarAlarmReason.Hit ? "hit" : carAlarm.Reason == CarAlarmReason.Touched ? "touched" : carAlarm.Reason == CarAlarmReason.Explosion ? "explosion" : "boomer"])</span>
+                }
+                if (carAlarm.Infected != null)
+                {
+                    <span>@L["assisted by"]</span>
+                    Name(carAlarm.Infected, L["a special infected"].Value);
+                }
+                <span>.</span>
+                break;
+            case ChargerLevelEvent chargerLevel:
+                Stars(chargerLevel);
+                Name(chargerLevel.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["fully leveled"]</span>
+                Name(chargerLevel.Charger, L["a charger"].Value);
+                <span>.</span>
+                break;
+            case ChargerLevelHurtEvent chargerLevelHurt:
+                Stars(chargerLevelHurt);
+                Name(chargerLevelHurt.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["chip-leveled"]</span>
+                Name(chargerLevelHurt.Charger, L["a charger"].Value);
+                <span>(<span class="feed-danger">@L["{0} damage", chargerLevelHurt.Damage]</span>).</span>
+                break;
+            case DeathChargeEvent deathCharge:
+                Stars(deathCharge);
+                Name(deathCharge.Actor, L["a charger"].Value);
+                <span class="feed-danger">@L["death-charged"]</span>
+                Name(deathCharge.Victim, L["a survivor"].Value);
+                if (!deathCharge.WasCarried)
+                {
+                    <span>@L["by bowling"]</span>
+                }
+                <span>(@L["height: {0}", (int)Math.Round(deathCharge.Height)]).</span>
+                break;
+            case HunterHighPounceEvent highPounce:
+                Stars(highPounce);
+                Name(highPounce.Actor, L["a hunter"].Value);
+                <span class="feed-danger">@L["high-pounced"]</span>
+                Name(highPounce.Victim, L["a survivor"].Value);
+                if ((int)Math.Round(highPounce.CalculatedDamage) > 0)
+                {
+                    <span>(<span class="feed-danger">@L["{0} damage", (int)Math.Round(highPounce.CalculatedDamage)]</span>, @L["height: {0}", (int)Math.Round(highPounce.Height)]).</span>
+                }
+                else
+                {
+                    <span>(@L["height: {0}", (int)Math.Round(highPounce.Height)]).</span>
+                }
+                break;
+            case MixStartedEvent:
+                <span class="feed-action">@L["A mix has started."]</span>
+                break;
+            case PauseEvent pause:
+                <span class="feed-action">@L[pause.Paused ? "The game was paused." : "The game was unpaused."]</span>
+                break;
+            case PlayerDeathEvent playerDeath:
+                Name(playerDeath.Actor, L["a survivor"].Value);
+                <span class="feed-danger">@L["died"]</span>
+                <span>.</span>
+                break;
+            case RoundEndedEvent roundEnded:
+                <span>@L["Round over"] (<span class="feed-highlight">@roundEnded.SurvivorScore</span> × <span class="feed-highlight">@roundEnded.InfectedScore</span>) - @L["difference of {0}", roundEnded.Difference].</span>
+                break;
+            case RoundLiveEvent roundLive:
+                <span class="feed-action">@L[roundLive.SecondHalf ? "The second round is live." : "The first round is live."]</span>
+                break;
+            case SkeetEvent { IsTeamSkeet: true } teamSkeet:
+                Stars(teamSkeet);
+                Name(teamSkeet.Hunter, L["a hunter"].Value);
+                <span class="feed-action">@L["was team-skeeted"]</span>
+                <span>.</span>
+                break;
+            case SkeetEvent skeet:
+                Stars(skeet);
+                Name(skeet.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L[skeet.SkeetType == SkeetType.Melee ? "melee-skeeted" : skeet.SkeetType == SkeetType.Sniper ? "headshot-skeeted" : skeet.SkeetType == SkeetType.Grenade ? "grenade-skeeted" : "skeeted"]</span>
+                Name(skeet.Hunter, L["a hunter"].Value);
+                <span>.</span>
+                break;
+            case SkeetHurtEvent skeetHurt:
+                Stars(skeetHurt);
+                Name(skeetHurt.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["skeeted"]</span>
+                Name(skeetHurt.Hunter, L["a hunter"].Value);
+                <span>(@L["already chipped"], <span class="feed-danger">@L["{0} damage", skeetHurt.Damage]</span>).</span>
+                if (skeetHurt.IsOverkill)
+                {
+                    <span>@L["Would've skeeted at full HP."]</span>
+                }
+                break;
+            case TankBecameBotEvent tankBecameBot:
+                if (tankBecameBot.Actor != null)
+                {
+                    Name(tankBecameBot.Actor, L["a tank"].Value);
+                    <span>@L["lost the tank to the AI"].</span>
+                }
+                else
+                {
+                    <span>@L["The AI took over the tank"].</span>
+                }
+                break;
+            case TankDiedEvent tankDied:
+                Name(tankDied.Actor, L["a tank"].Value);
+                <span class="feed-highlight">@L["died as the tank"]</span>
+                <span>.</span>
+                break;
+            case TankRockEatenEvent rockEaten:
+                Name(rockEaten.Actor, L["a tank"].Value);
+                <span class="feed-danger">@L["landed a rock on"]</span>
+                Name(rockEaten.Victim, L["a survivor"].Value);
+                <span>.</span>
+                break;
+            case TankRockSkeetedEvent rockSkeeted:
+                Stars(rockSkeeted);
+                Name(rockSkeeted.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["skeeted the rock of"]</span>
+                Name(rockSkeeted.Tank, L["a tank"].Value);
+                <span>.</span>
+                break;
+            case TankSpawnedEvent tankSpawned:
+                Name(tankSpawned.Actor, L["a tank"].Value);
+                <span class="feed-danger">@L["spawned as the tank"]</span>
+                <span>.</span>
+                break;
+            case TongueCutEvent tongueCut:
+                Stars(tongueCut);
+                Name(tongueCut.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["cut the tongue of"]</span>
+                Name(tongueCut.Smoker, L["a smoker"].Value);
+                <span>.</span>
+                break;
+            case WitchCrownEvent witchCrown:
+                Stars(witchCrown);
+                Name(witchCrown.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["crowned a witch"]</span>
+                <span>(<span class="feed-danger">@L["{0} damage", witchCrown.Damage]</span>).</span>
+                break;
+            case WitchCrownHurtEvent witchCrownHurt:
+                Stars(witchCrownHurt);
+                Name(witchCrownHurt.Actor, L["a survivor"].Value);
+                <span class="feed-action">@L["draw-crowned a witch"]</span>
+                <span>(<span class="feed-danger">@L["{0} damage, {1} chip", witchCrownHurt.Damage, witchCrownHurt.ChipDamage]</span>).</span>
+                break;
+            default:
+                <span>@L["Unknown game event."]</span>
+                break;
+        }
+    </div>
+}

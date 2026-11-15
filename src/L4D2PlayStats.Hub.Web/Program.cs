@@ -40,6 +40,7 @@ builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
+builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();
 
 builder.Services
     .AddAuthentication(options =>

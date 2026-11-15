@@ -1,0 +1,173 @@
+@model ServerCardViewModel
+@{
+    var snapshot = Model.Snapshot;
+    var scoreboard = snapshot.Scoreboard;
+}
+<div id="live-players" hx-get="/servers/@Model.Server.PublicId/players" hx-trigger="every @(AppConsts.LiveRefreshInSeconds)s" hx-swap="outerHTML">
+    @if (!snapshot.AnyPlayerConnected)
+    {
+        <div class="alert alert-secondary mb-4">@L["Nobody is playing on this server right now."]</div>
+    }
+    else
+    {
+        <div class="row g-4 mb-3">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <span>@L["Survivors"]</span>
+                        <span class="fw-semibold @(scoreboard?.IsSurvivorsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.SurvivorScore ?? 0)</span>
+                    </div>
+                    <div class="card-body py-2">
+                        @foreach (var survivor in snapshot.Survivors)
+                        {
+                            var url = LiveDisplay.PlayerUrl(survivor, Model.RankingEnabled);
+                            var permanent = survivor.PermanentHealth ?? 0;
+                            var temporary = survivor.TemporaryHealth ?? 0;
+                            var healthClass = LiveDisplay.HealthClass(survivor.HealthColor);
+
+                            <div class="live-player @(survivor.Dead ? "dead" : "")">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img class="avatar" src="@LiveDisplay.Avatar(survivor)" alt="" loading="lazy">
+                                    <div class="flex-grow-1">
+                                        <div>
+                                            @if (url == null)
+                                            {
+                                                <span class="fw-semibold">@survivor.Name</span>
+                                            }
+                                            else
+                                            {
+                                                <a class="fw-semibold text-decoration-none" href="@url" target="_blank" rel="noopener">@survivor.Name</a>
+                                            }
+                                            <span class="small text-body-secondary">@survivor.Character</span>
+                                            @if (survivor.IsAdmin)
+                                            {
+                                                <span class="badge text-bg-primary">@L["Admin"]</span>
+                                            }
+                                            @if (survivor.Dead)
+                                            {
+                                                <span class="badge text-bg-danger">@L["Dead"]</span>
+                                            }
+                                            else if (survivor.Incapacitated == true)
+                                            {
+                                                <span class="badge text-bg-warning">@L["Incapacitated"]</span>
+                                            }
+                                            else if (survivor.BlackAndWhite == true)
+                                            {
+                                                <span class="badge text-bg-secondary">@L["Black and white"]</span>
+                                            }
+                                        </div>
+                                        @if (survivor.IsPlayerAlive)
+                                        {
+                                            <div class="small text-body-secondary">@string.Join(" · ", LiveDisplay.Weapons(survivor))</div>
+                                        }
+                                    </div>
+                                    @if (survivor.LatencyType is { } latency)
+                                    {
+                                        <span class="badge @LiveDisplay.LatencyClass(latency)" title="@L["Latency"]">@L[latency.ToString()]</span>
+                                    }
+                                </div>
+                                @if (survivor.IsPlayerAlive)
+                                {
+                                    <div class="d-flex align-items-center gap-2 mt-1" title="@L["Health"]">
+                                        <div class="progress progress-thin flex-grow-1">
+                                            <div class="progress-bar @healthClass @(survivor.Incapacitated == true ? "health-temporary" : "")" style="width: @LiveDisplay.Width(LiveDisplay.Fraction(permanent, survivor.MaxHealth))"></div>
+                                            <div class="progress-bar @healthClass health-temporary" style="width: @LiveDisplay.Width(LiveDisplay.Fraction(temporary, survivor.MaxHealth))"></div>
+                                        </div>
+                                        <span class="small live-stat">@survivor.Health</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mt-1" title="@L["Progress"]">
+                                        <div class="progress progress-thin flex-grow-1">
+                                            <div class="progress-bar" style="width: @LiveDisplay.Width(survivor.Progress)"></div>
+                                        </div>
+                                        <span class="small live-stat">@Display.Percent(survivor.Progress)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <span>@L["Infected"]</span>
+                        <span class="fw-semibold @(scoreboard?.IsInfectedsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.InfectedScore ?? 0)</span>
+                    </div>
+                    <div class="card-body py-2">
+                        @foreach (var infected in snapshot.Infecteds)
+                        {
+                            var url = LiveDisplay.PlayerUrl(infected, Model.RankingEnabled);
+                            var health = infected.Health ?? 0;
+                            var maxHealth = infected.MaxHealth ?? 0;
+
+                            <div class="live-player @(infected.IsPlayerAlive || infected.IsInfectedGhost ? "" : "dead")">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img class="avatar" src="@LiveDisplay.Avatar(infected)" alt="" loading="lazy">
+                                    <div class="flex-grow-1">
+                                        @if (url == null)
+                                        {
+                                            <span class="fw-semibold">@infected.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <a class="fw-semibold text-decoration-none" href="@url" target="_blank" rel="noopener">@infected.Name</a>
+                                        }
+                                        @if (infected.Type != null)
+                                        {
+                                            <span class="small text-body-secondary">@infected.Type</span>
+                                        }
+                                        @if (infected.IsAdmin)
+                                        {
+                                            <span class="badge text-bg-primary">@L["Admin"]</span>
+                                        }
+                                        @if (infected.IsInfectedGhost)
+                                        {
+                                            <span class="badge text-bg-secondary">@L["Spawning"]</span>
+                                        }
+                                        else if (!infected.IsPlayerAlive)
+                                        {
+                                            <span class="badge text-bg-danger">@L["Dead"]</span>
+                                        }
+                                    </div>
+                                    <span class="fw-semibold live-stat" title="@L["Damage"]">@Display.Number(infected.Damage)</span>
+                                    @if (infected.LatencyType is { } latency)
+                                    {
+                                        <span class="badge @LiveDisplay.LatencyClass(latency)" title="@L["Latency"]">@L[latency.ToString()]</span>
+                                    }
+                                </div>
+                                @if (infected.IsPlayerAlive && !infected.IsInfectedGhost)
+                                {
+                                    <div class="d-flex align-items-center gap-2 mt-1" title="@L["Health"]">
+                                        <div class="progress progress-thin flex-grow-1">
+                                            <div class="progress-bar bg-success" style="width: @LiveDisplay.Width(LiveDisplay.Fraction(health, maxHealth))"></div>
+                                        </div>
+                                        <span class="small live-stat">@Display.Number(health) / @Display.Number(maxHealth)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (snapshot.Spectators.Count > 0)
+        {
+            <div class="mb-4 small">
+                <span class="fw-semibold">@L["Spectators"] (@snapshot.Spectators.Count):</span>
+                @foreach (var spectator in snapshot.Spectators)
+                {
+                    var url = LiveDisplay.PlayerUrl(spectator, Model.RankingEnabled);
+
+                    if (url == null)
+                    {
+                        <span class="badge text-bg-secondary">@spectator.Name</span>
+                    }
+                    else
+                    {
+                        <a class="badge text-bg-secondary text-decoration-none" href="@url" target="_blank" rel="noopener">@spectator.Name</a>
+                    }
+                }
+            </div>
+        }
+    }
+</div>
