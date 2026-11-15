@@ -3,7 +3,9 @@ using L4D2PlayStats.Hub.Core.Modules.Administrators;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns;
 using L4D2PlayStats.Hub.Core.Modules.GameModes;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Punishments;
+using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
@@ -61,7 +63,7 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
         if (AppConsts.SupportedCultures.Contains(model.Site.DefaultCulture))
             site.DefaultCulture = model.Site.DefaultCulture;
 
-        var season = new SeasonSettings { LengthInMonths = Core.Modules.Seasons.SeasonCalendar.NormalizeLength(model.Season.LengthInMonths) };
+        var season = new SeasonSettings { LengthInMonths = SeasonCalendar.NormalizeLength(model.Season.LengthInMonths) };
 
         var ranking = model.Ranking;
         ranking.MinimumMatches = Math.Max(0, ranking.MinimumMatches);
@@ -300,7 +302,7 @@ public class AdminController(
     [HttpPost("administrators")]
     public async Task<IActionResult> AddAdministrator(long communityId, string? name, CancellationToken cancellationToken)
     {
-        if (Core.Modules.Players.SteamIds.IsValid(communityId))
+        if (SteamIds.IsValid(communityId))
             await administratorService.AddAsync(communityId, name, cancellationToken);
         else
             TempData["Error"] = "That is not a valid SteamID64.";
