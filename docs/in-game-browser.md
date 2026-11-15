@@ -121,9 +121,9 @@ The test game build closed by itself before the page reached these two groups, f
 - Served over plain HTTP.
 - Live updates can use polling, Server-Sent Events or WebSocket, but the client code has to be hand-written ES5.
 
-**Proposed approach:** two layers instead of holding the whole site to 2012.
+**The approach taken:** two layers instead of holding the whole site to 2012.
 
-- The main site targets current browsers and is free to use a modern stack.
-- A small set of in-game pages lives under its own route, follows the rules above, and is what the game plugin opens.
+- The main site targets current browsers, with Bootstrap 5 and htmx.
+- Three pages for the game live under `/ingame`: the season ranking, the summary of the player who opened the panel, and the latest matches. They follow the rules above and are what the game plugin opens.
 
-The cost is that pages available in game exist twice, so that set should stay small. Which pages belong to it is an open question in the [roadmap](roadmap.md#open-questions).
+The pages available in game exist twice, so that set stays small. A test fails if one of them starts using something this browser lacks. The [roadmap](roadmap.md#front-end) has the rest of the front-end decisions.

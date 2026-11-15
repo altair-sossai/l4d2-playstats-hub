@@ -1,5 +1,7 @@
 # Game server plugins
 
+🌐 **English** | [Português](README.pt.md) | [Español](README.es.md)
+
 The SourceMod plugins that connect a Left 4 Dead 2 server to L4D2 PlayStats Hub. They use one address and one token for everything.
 
 ## Contents
