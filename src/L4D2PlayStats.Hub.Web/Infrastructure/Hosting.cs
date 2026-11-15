@@ -5,8 +5,8 @@ using L4D2PlayStats.Hub.Core.Modules.Campaigns;
 using L4D2PlayStats.Hub.Core.Modules.GameModes;
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
@@ -16,23 +16,14 @@ public static class Hosting
 {
     public static IServiceCollection AddHubDatabase(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
+        var paths = new HubPaths(configuration, environment);
         var section = configuration.GetSection(CoreConsts.DatabaseSection);
         var provider = section["Provider"] ?? CoreConsts.SqliteProvider;
-        var connectionString = section["ConnectionString"] ?? CoreConsts.DefaultConnectionString;
+        var connectionString = HubDatabase.PrepareConnectionString(provider, section["ConnectionString"] ?? CoreConsts.DefaultConnectionString, paths.DataDirectory);
 
-        if (!provider.Equals(CoreConsts.SqliteProvider, StringComparison.OrdinalIgnoreCase))
-            throw new NotSupportedException($"Database provider '{provider}' is not supported yet.");
-
-        var builder = new SqliteConnectionStringBuilder(connectionString);
-
-        if (!string.IsNullOrEmpty(builder.DataSource) && builder.DataSource != ":memory:" && !Path.IsPathRooted(builder.DataSource))
-            builder.DataSource = Path.Combine(environment.ContentRootPath, builder.DataSource);
-
-        var directory = Path.GetDirectoryName(builder.DataSource);
-        if (!string.IsNullOrEmpty(directory))
-            Directory.CreateDirectory(directory);
-
-        services.AddDbContext<HubDbContext>(options => options.UseSqlite(builder.ConnectionString, sqlite => sqlite.MigrationsAssembly("L4D2PlayStats.Hub.Migrations.Sqlite")));
+        services.AddSingleton(paths);
+        services.AddDataProtection().SetApplicationName(AppConsts.ApplicationName).PersistKeysToFileSystem(new DirectoryInfo(paths.Keys));
+        services.AddDbContext<HubDbContext>(options => HubDatabase.Configure(options, provider, connectionString));
 
         return services;
     }
@@ -54,8 +45,16 @@ public static class Hosting
 
         var token = await services.GetRequiredService<ISetupService>().EnsureTokenAsync();
 
-        if (!string.IsNullOrEmpty(token))
-            app.Logger.LogWarning("Setup is pending. Open /setup and use this setup code: {SetupToken}", token);
+        var paths = services.GetRequiredService<HubPaths>();
+
+        if (string.IsNullOrEmpty(token))
+        {
+            File.Delete(paths.SetupCode);
+            return;
+        }
+
+        await File.WriteAllTextAsync(paths.SetupCode, token);
+        app.Logger.LogWarning("Setup is pending. Open /setup and use this setup code: {SetupToken}", token);
     }
 }
 

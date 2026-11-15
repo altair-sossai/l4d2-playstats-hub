@@ -27,12 +27,14 @@ public class HubWebFactory : WebApplicationFactory<Program>
     public const string UserHeader = "X-Test-User";
 
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
+    private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         _connection.Open();
 
         builder.UseEnvironment("Testing");
+        builder.UseSetting("Hub:DataDirectory", _dataDirectory);
 
         builder.ConfigureServices(services =>
         {
@@ -59,8 +61,13 @@ public class HubWebFactory : WebApplicationFactory<Program>
     {
         base.Dispose(disposing);
 
-        if (disposing)
-            _connection.Dispose();
+        if (!disposing)
+            return;
+
+        _connection.Dispose();
+
+        if (Directory.Exists(_dataDirectory))
+            Directory.Delete(_dataDirectory, true);
     }
 
     public HttpClient Client(long? user = null)

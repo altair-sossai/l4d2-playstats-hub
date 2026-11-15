@@ -25,7 +25,13 @@ public static class AppConsts
     public const int ServerStatusRefreshInSeconds = 3;
     public const int SeasonCheckIntervalInMinutes = 30;
 
-    public const string AvatarFolder = "data/avatars";
+    public const string DataDirectorySetting = "Hub:DataDirectory";
+    public const string DefaultDataDirectory = "data";
+    public const string KeysFolder = "keys";
+    public const string SetupCodeFile = "setup-code.txt";
+    public const string ApplicationName = "L4D2PlayStatsHub";
+
+    public const string AvatarFolder = "avatars";
     public const int AvatarCacheInSeconds = 3600;
     public const int AvatarCheckIntervalInMinutes = 30;
     public const int AvatarMaxAgeInHours = 24;
@@ -37,6 +43,9 @@ public static class AppConsts
 
     public const string ServerUrlCvar = "playstats_url";
     public const string ServerTokenCvar = "playstats_token";
+
+    public const string NpgsqlLegacyTimestampSwitch = "Npgsql.EnableLegacyTimestampBehavior";
+    public const string SqliteMemoryDataSource = ":memory:";
 
     public const string DevelopmentSignInSetting = "Development:AllowTestSignIn";
     public const string SteamOpenIdPattern = @"openid/id/(\d+)$";

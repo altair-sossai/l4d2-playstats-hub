@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure;
 
-public class AvatarStore(IWebHostEnvironment environment)
+public class AvatarStore(HubPaths paths)
 {
-    private readonly string _directory = Path.Combine(environment.ContentRootPath, AppConsts.AvatarFolder);
+    private readonly string _directory = paths.Avatars;
 
     public string PathFor(long communityId)
     {

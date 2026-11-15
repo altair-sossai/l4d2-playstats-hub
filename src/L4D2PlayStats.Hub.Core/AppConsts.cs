@@ -11,7 +11,7 @@ public static class AppConsts
     public const string SqlServerProvider = "SqlServer";
     public const string PostgreSqlProvider = "PostgreSql";
     public const string MySqlProvider = "MySql";
-    public const string DefaultConnectionString = "Data Source=data/hub.db";
+    public const string DefaultConnectionString = "Data Source=hub.db";
 
     public const int GameServerKeyBytes = 32;
     public const int GameServerPublicIdMaxLength = 40;
