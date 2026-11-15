@@ -64,8 +64,6 @@ public class CommunityRankingService(
             hubState.WriteLock.Release();
         }
 
-        hubState.DataChanged();
-
         return votes;
     }
 
@@ -92,8 +90,6 @@ public class CommunityRankingService(
         {
             hubState.WriteLock.Release();
         }
-
-        hubState.DataChanged();
 
         return removed;
     }
