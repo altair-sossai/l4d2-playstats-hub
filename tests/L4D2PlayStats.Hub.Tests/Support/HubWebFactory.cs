@@ -6,7 +6,6 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,13 +21,11 @@ public class HubWebFactory : WebApplicationFactory<Program>
     public const long Player = 76561198000000200;
     public const string UserHeader = "X-Test-User";
 
-    private readonly SqliteConnection _connection = new("DataSource=:memory:");
+    private readonly TestDatabase _database = new();
     private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        _connection.Open();
-
         builder.UseEnvironment("Testing");
         builder.UseSetting("Hub:DataDirectory", _dataDirectory);
 
@@ -37,7 +34,7 @@ public class HubWebFactory : WebApplicationFactory<Program>
             services.RemoveAll<IHostedService>();
             services.RemoveAll<DbContextOptions<HubDbContext>>();
             services.RemoveAll<IDbContextOptionsConfiguration<HubDbContext>>();
-            services.AddDbContext<HubDbContext>(options => options.UseSqlite(_connection));
+            services.AddDbContext<HubDbContext>(_database.Configure);
 
             services
                 .AddAuthentication(TestAuthenticationHandler.Scheme)
@@ -60,7 +57,7 @@ public class HubWebFactory : WebApplicationFactory<Program>
         if (!disposing)
             return;
 
-        _connection.Dispose();
+        _database.Dispose();
 
         if (Directory.Exists(_dataDirectory))
             Directory.Delete(_dataDirectory, true);

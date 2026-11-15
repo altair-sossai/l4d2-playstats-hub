@@ -8,7 +8,6 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Models;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,20 +15,17 @@ namespace L4D2PlayStats.Hub.Tests.Support;
 
 public sealed class TestHub : IDisposable
 {
-    private readonly SqliteConnection _connection;
+    private readonly TestDatabase _database = new();
     private readonly ServiceProvider _services;
 
     public TestHub()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
         var services = new ServiceCollection();
 
         services.AddLogging();
         services.AddHubCore();
         services.AddSingleton<IClock>(Clock);
-        services.AddDbContext<HubDbContext>(options => options.UseSqlite(_connection));
+        services.AddDbContext<HubDbContext>(_database.Configure);
 
         _services = services.BuildServiceProvider();
 
@@ -45,7 +41,7 @@ public sealed class TestHub : IDisposable
     public void Dispose()
     {
         _services.Dispose();
-        _connection.Dispose();
+        _database.Dispose();
     }
 
     public IServiceScope Scope()

@@ -36,7 +36,7 @@
         <option value="">@L["All rarities"]</option>
         @foreach (var rarity in SkinDisplay.Rarities)
         {
-            <option value="@rarity" selected="@(rarity == Model.Rarity)">@L[rarity.ToString()]</option>
+            <option value="@rarity" selected="@(rarity == Model.Rarity)">@L[$"Rarity.{rarity}"]</option>
         }
     </select>
     <button class="btn btn-sm btn-outline-light" type="submit">@L["Search"]</button>
@@ -72,7 +72,7 @@ else
                         <div class="small text-body-secondary"><code>@skin.Id</code></div>
                     </td>
                     <td>@L[SkinWeapons.Name(skin.Weapon)]</td>
-                    <td><span class="badge skin-rarity-badge @SkinDisplay.RarityCss(skin.Rarity)">@L[skin.Rarity.ToString()]</span></td>
+                    <td><span class="badge skin-rarity-badge @SkinDisplay.RarityCss(skin.Rarity)">@L[$"Rarity.{skin.Rarity}"]</span></td>
                     <td class="numeric">@skin.DefaultPrice</td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
