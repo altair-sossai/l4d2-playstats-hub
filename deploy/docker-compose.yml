@@ -1,0 +1,11 @@
+services:
+  hub:
+    image: ghcr.io/altair-sossai/l4d2-playstats-hub:latest
+    restart: unless-stopped
+    ports:
+      - "5080:8080"
+    volumes:
+      - hub-data:/data
+
+volumes:
+  hub-data:

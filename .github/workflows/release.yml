@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runtime: [linux-x64, linux-arm64, win-x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+      - run: dotnet test --configuration Release --filter "TestCategory!=Parity"
+      - run: >
+          dotnet publish src/L4D2PlayStats.Hub.Web
+          --configuration Release
+          --runtime ${{ matrix.runtime }}
+          --self-contained
+          --output publish
+          -p:Version=${GITHUB_REF_NAME#v}
+      - if: startsWith(matrix.runtime, 'linux')
+        run: tar -czf l4d2-playstats-hub-${{ matrix.runtime }}.tar.gz -C publish .
+      - if: startsWith(matrix.runtime, 'win')
+        run: cd publish && zip -qr ../l4d2-playstats-hub-${{ matrix.runtime }}.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: application-${{ matrix.runtime }}
+          path: l4d2-playstats-hub-${{ matrix.runtime }}.*
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
+  release:
+    needs: [application]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - run: gh release create "${GITHUB_REF_NAME}" artifacts/* --title "${GITHUB_REF_NAME}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
