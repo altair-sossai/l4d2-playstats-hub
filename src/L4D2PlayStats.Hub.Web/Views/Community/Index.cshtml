@@ -1,0 +1,68 @@
+@model CommunityRankingViewModel
+@{
+    ViewData["Title"] = L["Community ranking"].Value;
+}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">@L["Community ranking"]</h1>
+        <div class="text-body-secondary">@L["Built from the votes of the players. It does not reset with the season."]</div>
+    </div>
+    <a class="btn btn-primary" href="@AppConsts.CommunityVotePage">@L["Vote"]</a>
+</div>
+
+@if (Model.Players.Count == 0)
+{
+    <div class="alert alert-secondary">@L["Nobody has enough comparisons to be listed yet."]</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th class="position">#</th>
+                <th>@L["Player"]</th>
+                <th class="numeric">@L["Rating"]</th>
+                <th class="numeric">@L["Comparisons"]</th>
+                <th class="numeric">@L["Wins"]</th>
+                <th class="numeric">@L["Draws"]</th>
+                <th class="numeric">@L["Losses"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var player in Model.Players)
+            {
+                <tr class="@(player.CommunityId == Model.Highlight ? "row-highlight" : "")">
+                    <td class="position @(player.Position == 1 ? "position-1" : "")">@player.Position</td>
+                    <td>
+                        @if (Model.PlayerPages)
+                        {
+                            <a class="text-decoration-none d-flex align-items-center gap-2" href="/player/@player.CommunityId">
+                                <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">
+                                <span>@player.Name</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center gap-2">
+                                <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">
+                                <span>@player.Name</span>
+                            </div>
+                        }
+                    </td>
+                    <td class="numeric">@Display.Number((decimal)Math.Round(player.Rating))</td>
+                    <td class="numeric">@player.Comparisons</td>
+                    <td class="numeric">@player.Wins</td>
+                    <td class="numeric">@player.Draws</td>
+                    <td class="numeric">@player.Losses</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.MinimumComparisons > 0)
+{
+    <div class="small text-body-secondary">@L["Minimum comparisons to be listed:"] @Model.MinimumComparisons</div>
+}

@@ -1,0 +1,76 @@
+@model CommunityVoteViewModel
+@{
+    var ballot = Model.Ballot;
+}
+<div id="@AppConsts.CommunityBallotElement">
+    @if (Model.Refusal != null)
+    {
+        <div class="alert alert-warning">@L[Model.Refusal]</div>
+    }
+
+    @if (ballot == null)
+    {
+        <div class="alert alert-secondary d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <span>@L["Sign in with Steam to vote."]</span>
+            <a class="btn btn-outline-light btn-sm" href="/login?returnUrl=@Uri.EscapeDataString(AppConsts.CommunityVotePage)">
+                <img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam"]
+            </a>
+        </div>
+    }
+    else if (ballot.Status == CommunityBallotStatus.TooFewMatches)
+    {
+        <div class="alert alert-secondary">
+            @L["You need to play more matches before you can vote."]
+            @L["Matches played:"] <strong>@ballot.Matches</strong> / @ballot.MinimumMatches
+        </div>
+    }
+    else if (ballot.Status == CommunityBallotStatus.LimitReached)
+    {
+        <div class="alert alert-secondary">
+            @L["You have used all your votes for today. Come back tomorrow."]
+            @L["Votes per day:"] @ballot.VotesPerDay
+        </div>
+    }
+    else if (ballot.Status == CommunityBallotStatus.NobodyLeft)
+    {
+        <div class="alert alert-secondary">@L["There is nobody left for you to compare right now."]</div>
+    }
+    else
+    {
+        var left = ballot.Left!;
+        var right = ballot.Right!;
+
+        <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityVotePage" hx-post="@AppConsts.CommunityVotePage" hx-target="#@(AppConsts.CommunityBallotElement)" hx-swap="outerHTML">
+            <input type="hidden" name="Left" value="@left.CommunityId">
+            <input type="hidden" name="Right" value="@right.CommunityId">
+            <div class="row g-3 text-center">
+                <div class="col-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column align-items-center gap-2">
+                            <img class="avatar-xl" src="/avatar/@left.CommunityId" alt="">
+                            <div class="ballot-name">@left.Name</div>
+                            <button class="btn btn-primary mt-auto" type="submit" name="Outcome" value="@CommunityVoteOutcome.Left">@L["This one is better"]</button>
+                            <button class="btn btn-link btn-sm link-secondary" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownLeft">@L["I don't know this player"]</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column align-items-center gap-2">
+                            <img class="avatar-xl" src="/avatar/@right.CommunityId" alt="">
+                            <div class="ballot-name">@right.Name</div>
+                            <button class="btn btn-primary mt-auto" type="submit" name="Outcome" value="@CommunityVoteOutcome.Right">@L["This one is better"]</button>
+                            <button class="btn btn-link btn-sm link-secondary" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownRight">@L["I don't know this player"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+                <button class="btn btn-outline-light" type="submit" name="Outcome" value="@CommunityVoteOutcome.SameLevel">@L["They are at the same level"]</button>
+                <button class="btn btn-outline-secondary" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownBoth">@L["I don't know either of them"]</button>
+            </div>
+        </form>
+
+        <div class="text-center text-body-secondary small mt-3">@L["Votes left today:"] <strong>@ballot.VotesLeft</strong> / @ballot.VotesPerDay</div>
+    }
+</div>
