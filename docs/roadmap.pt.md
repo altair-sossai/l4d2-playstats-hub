@@ -201,12 +201,11 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 | 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, ainda não testada com os assets reais |
 | 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |
 | 7. Ranking da comunidade | Página de votação, rating, limites e página administrativa. | Concluída |
-| 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; nenhuma versão publicada ainda |
+| 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada |
 | 9. Migração | Importação dos dados de produção, troca do site de produção, arquivamento dos repositórios antigos. | Importação testada localmente; a troca está pendente |
 
 ## Perguntas em aberto
 
-- **Primeira versão.** Nada foi publicado ainda, então o instalador e a imagem Docker não têm versão para baixar.
 - **Plugins em um servidor real.** Eles compilam, e o site aceita o que enviam, mas ainda não rodaram em uma partida de verdade.
 - **HTTPS dentro do jogo.** Não medido. Veja [in-game-browser.pt.md](in-game-browser.pt.md#ainda-não-medido).
 - **Repositório de assets.** A loja espera miniaturas em `skins/{id}.jpg` e fotos em `skin-shots/{id}/`, sob um mesmo endereço. O repositório de assets ainda não tem as miniaturas.

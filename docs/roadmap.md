@@ -201,12 +201,11 @@ A separate console program, outside this repository, moves the production data o
 | 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, not yet tried with the real assets |
 | 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |
 | 7. Community ranking | Voting page, rating, limits and admin page. | Done |
-| 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; no version published yet |
+| 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; published since v0.1.1, installer and image tried from the published version |
 | 9. Migration | Import of the production data, switch of the production site, archiving of the old repositories. | Import tried locally; the switch is pending |
 
 ## Open questions
 
-- **First release.** Nothing is published yet, so the installer and the Docker image have no version to download.
 - **Plugins on a live server.** They compile, and the site accepts what they send, but they have not been run in a real match.
 - **HTTPS inside the game.** Not measured. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
 - **Assets repository.** The shop expects thumbnails at `skins/{id}.jpg` and photos at `skin-shots/{id}/`, under one address. The assets repository does not have the thumbnails yet.

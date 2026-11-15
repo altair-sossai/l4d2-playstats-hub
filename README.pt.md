@@ -4,7 +4,7 @@
 
 Uma única aplicação web auto-hospedada para servidores competitivos de Left 4 Dead 2: ranking, estatísticas de partidas, visualização do servidor ao vivo, loja de skins de armas e um ranking da comunidade, junto com os plugins SourceMod que a alimentam.
 
-> **Status: em desenvolvimento, ainda não lançado.** A aplicação, os plugins e o instalador estão neste repositório e passam nos testes. Nenhuma versão foi publicada, e os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
+> **Status: primeira versão publicada, migração em andamento.** A aplicação, os plugins, o instalador Linux e a imagem Docker estão disponíveis nos [lançamentos](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
 
 ## Conteúdo
 
@@ -48,7 +48,7 @@ curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/ma
 
 Ele imprime o endereço do site e um código de configuração. Abra o endereço, cole o código, entre com a Steam, e o site guia você pelo resto.
 
-Esse comando baixa uma versão publicada, então funciona a partir do primeiro lançamento. Até lá, a aplicação pode ser [executada a partir do código-fonte](CONTRIBUTING.pt.md#como-rodar).
+Esse comando baixa a versão publicada mais recente. A aplicação também pode ser [executada a partir do código-fonte](CONTRIBUTING.pt.md#como-rodar).
 
 | Guia | Para |
 |---|---|
