@@ -1,0 +1,96 @@
+@using L4D2PlayStats.Hub.Web.Models.Ranking
+@model HistoryModel
+@inject ICurrentUser CurrentUser
+
+@{
+    var history = Model.History;
+    var players = Model.Players;
+}
+
+<style>
+    .last-ranking-header {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .last-ranking-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .trophy {
+        margin: 0 16px;
+    }
+</style>
+
+<div class="well well-sm last-ranking-header">
+    <div class="media">
+        <div class="media-left media-middle">
+            <img src="~/imgs/icons/trophy.png" alt="@L["Trophy"]" class="trophy" data-toggle="tooltip" data-placement="top" title="@L["Trophy"]"/>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading" style="margin-top:0">
+                @L["Top 6 from last ranking"]
+            </h4>
+            <p class="text-muted" style="margin-bottom:0">
+                @L["Displayed period: {0}", history.Label(L)]
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var player in players.Take(AppConsts.HistoryPodiumPlayers))
+    {
+        var panelClass = CurrentUser.ItIsMe(player.CommunityId) ? "panel-primary" : "panel-default";
+        var placeLabel = player.Position switch
+        {
+            1 => "label-warning",
+            2 => "label-default",
+            3 => "label-success",
+            _ => "label-info"
+        };
+
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="panel @panelClass">
+                <div class="panel-heading">
+                    <span class="label @placeLabel" title="@L["Player"] #@player.Position">#@player.Position</span>
+                    <strong style="margin-left:6px">
+                        <a href="/player/@player.CommunityId" title="@player.MainName">
+                            @player.MainName.TruncatePlayerName()
+                        </a>
+                    </strong>
+                </div>
+                <div class="panel-body text-center">
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="/player/@player.CommunityId" title="@player.MainName">
+                                <img src="/avatar/@player.CommunityId" alt="@player.MainName" class="last-ranking-avatar" onerror="imgOnError(this)"/>
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <p style="margin-bottom: 8px !important">
+                                @L["Wins"]: <strong class="text-success">@player.Wins.ToString("N0")</strong>
+                                ·
+                                @L["Loss"]: <strong class="text-danger">@player.Loss.ToString("N0")</strong>
+                            </p>
+                            <div class="label-group">
+                                <span class="label label-success" title="@L["Win rate"]">@L["Win rate"]: @player.WinRate.ToString("P0")</span>
+                                <span class="label label-info" title="@L["SI MVP awards"]">@L["SI MVP awards"]: @player.MvpSiDamage.ToString("N0")</span>
+                                <span class="label label-primary" title="@L["CI MVP awards"]">@L["CI MVP awards"]: @player.MvpCommon.ToString("N0")</span>
+                                <span class="label label-default" title="@L["Games"]">@L["Games"]: @player.Games.ToString("N0")</span>
+                                <span class="label label-warning" title="@L["Rage quit"]">@L["Rage quit"]: @player.RageQuit.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="text-center" style="margin-top: 12px">
+    <a href="/history/@history.Id" class="btn btn-primary btn-sm">@L["View full ranking"]</a>
+</div>

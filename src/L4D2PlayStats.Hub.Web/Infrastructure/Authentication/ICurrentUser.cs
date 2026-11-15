@@ -6,4 +6,6 @@ public interface ICurrentUser
     long? CommunityId { get; }
     string? Name { get; }
     Task<bool> IsAdministratorAsync();
+    bool ItIsMe(long? communityId);
+    bool ItIsMe(string? communityId);
 }

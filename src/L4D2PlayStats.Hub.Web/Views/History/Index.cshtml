@@ -1,0 +1,143 @@
+@using L4D2PlayStats.Hub.Web.Models.Ranking
+@model HistoryModel
+@inject ICurrentUser CurrentUser
+
+@{
+    var winner = Model.Players.MinBy(player => player.Position);
+    var period = Model.History.Label(L);
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = $"{L["History"].Value} - {period}",
+        Description = L["See the {0} historical ranking and the top players' performance for the period.", period],
+        Image = winner == null ? null : $"/avatar/{winner.CommunityId}",
+        ImageAlt = winner?.MainName
+    };
+}
+
+@section Styles {
+    <style>
+        .place {
+            width: 30px;
+        }
+
+        table {
+            margin-bottom: 0 !important;
+        }
+
+        p {
+            margin-bottom: 0 !important;
+        }
+
+        th {
+            vertical-align: middle !important;
+        }
+    </style>
+}
+
+<h4 class="text-center">@L["History"]</h4>
+
+<div class="row" style="margin-bottom: 10px">
+    <div class="col-md-12">
+        <div class="dropdown">
+            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                @L["Displayed period"]:
+                <b>@period</b>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" style="max-height: 60vh; overflow-y: auto">
+                @foreach (var history in Model.AllHistory)
+                {
+                    <li>
+                        <a href="/history/@history.Id">@history.Label(L)</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped table-hover table-bordered table-condensed" id="table-ranking">
+    <thead>
+    <tr>
+        <th class="text-center">#</th>
+        <th colspan="2">@L["Player"]</th>
+        <th class="text-center">@L["Wins"]</th>
+        <th class="text-center hide-mobile">@L["Loss"]</th>
+        <th class="text-center hide-mobile">@L["Games"]</th>
+        <th class="text-center hide-mobile">@L["SI MVP awards"]</th>
+        <th class="text-center hide-mobile">@L["CI MVP awards"]</th>
+        <th class="text-center hide-mobile">@L["Win rate"]</th>
+        <th class="text-center hide-mobile">@L["Rage quit"]</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var player in Model.Players.Take(AppConsts.RankingListedPlayers))
+    {
+        <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+            <td class="text-center vertical-align-middle">
+                @switch (player.Position)
+                {
+                    case 1:
+                        <img src="~/imgs/first-place.png" alt="@L["First place"]" title="@L["First place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                        break;
+                    case 2:
+                        <img src="~/imgs/second-place.png" alt="@L["Second place"]" title="@L["Second place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                        break;
+                    case 3:
+                        <img src="~/imgs/third-place.png" alt="@L["Third place"]" title="@L["Third place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                        break;
+                    default:
+                        @($"#{player.Position:N0}")
+                        break;
+                }
+            </td>
+            <td class="text-center vertical-align-middle slim" style="margin: 0; padding: 0">
+                <a href="/player/@player.CommunityId" title="@player.MainName">
+                    <img src="/avatar/@player.CommunityId" alt="@player.MainName" title="@player.MainName" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
+                </a>
+            </td>
+            <td class="vertical-align-middle">
+                <a href="/player/@player.CommunityId" title="@player.MainName">
+                    @player.MainName.TruncatePlayerName()
+                </a>
+            </td>
+            <td class="text-center vertical-align-middle">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Wins"] - @player.WinRate.ToString("P0") @L["Win rate"]">
+                    @player.Wins.ToString("N0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Loss"]">
+                    @player.Loss.ToString("N0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Games"]">
+                    @player.Games.ToString("N0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["SI MVP awards"]">
+                    @player.MvpSiDamage.ToString("N0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["CI MVP awards"]">
+                    @player.MvpCommon.ToString("N0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Win rate"]">
+                    @player.WinRate.ToString("P0")
+                </p>
+            </td>
+            <td class="text-center vertical-align-middle hide-mobile">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Rage quit"]">
+                    @player.RageQuit.ToString("N0")
+                </p>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

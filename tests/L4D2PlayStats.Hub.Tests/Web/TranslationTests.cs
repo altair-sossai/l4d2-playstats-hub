@@ -14,7 +14,7 @@ public partial class TranslationTests
     public void EveryTextInTheViewsIsTranslated(string culture)
     {
         var web = WebProjectDirectory();
-        var translations = Load(Path.Combine(web, "Resources", $"{culture}.json"));
+        var translations = Load(web, culture);
 
         var missing = Directory.EnumerateFiles(Path.Combine(web, "Views"), "*.cshtml", SearchOption.AllDirectories)
             .SelectMany(file => LocalizedText().Matches(File.ReadAllText(file)).Select(match => Regex.Unescape(match.Groups[1].Value)))
@@ -30,8 +30,8 @@ public partial class TranslationTests
     public void BothLanguagesHaveTheSameTexts()
     {
         var web = WebProjectDirectory();
-        var portuguese = Load(Path.Combine(web, "Resources", "pt-BR.json")).Keys.ToHashSet();
-        var spanish = Load(Path.Combine(web, "Resources", "es-ES.json")).Keys.ToHashSet();
+        var portuguese = Load(web, "pt-BR").Keys.ToHashSet();
+        var spanish = Load(web, "es-ES").Keys.ToHashSet();
 
         Assert.IsTrue(portuguese.SetEquals(spanish), $"Only in one language: {string.Join(" | ", portuguese.Except(spanish).Concat(spanish.Except(portuguese)))}");
     }
@@ -41,15 +41,22 @@ public partial class TranslationTests
     [DataRow("es-ES")]
     public void NoTranslationIsEmpty(string culture)
     {
-        var translations = Load(Path.Combine(WebProjectDirectory(), "Resources", $"{culture}.json"));
+        var translations = Load(WebProjectDirectory(), culture);
         var empty = translations.Where(pair => string.IsNullOrWhiteSpace(pair.Value)).Select(pair => pair.Key).ToList();
 
         Assert.IsEmpty(empty);
     }
 
-    private static Dictionary<string, string> Load(string path)
+    private static Dictionary<string, string> Load(string web, string culture)
     {
-        return JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path)) ?? [];
+        var folder = Path.Combine(web, "Resources");
+        var texts = new Dictionary<string, string>();
+
+        foreach (var file in Directory.EnumerateFiles(folder, $"{culture}.json").Concat(Directory.EnumerateFiles(folder, $"{culture}.*.json").Order()))
+            foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
+                texts[pair.Key] = pair.Value;
+
+        return texts;
     }
 
     private static string WebProjectDirectory()

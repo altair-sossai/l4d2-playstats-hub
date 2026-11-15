@@ -4,6 +4,7 @@ public class Patent(int level, string name)
 {
     public int Level { get; } = level;
     public string Name { get; } = name;
+    public string FullName => $"Level {Level:00} - {Name}";
 
     public int Experience
     {

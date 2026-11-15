@@ -15,6 +15,16 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministrato
 
     public string? Name => Principal?.FindFirstValue(ClaimTypes.Name);
 
+    public bool ItIsMe(long? communityId)
+    {
+        return communityId != null && CommunityId == communityId;
+    }
+
+    public bool ItIsMe(string? communityId)
+    {
+        return long.TryParse(communityId, out var parsed) && ItIsMe(parsed);
+    }
+
     public async Task<bool> IsAdministratorAsync()
     {
         if (_administrator != null)

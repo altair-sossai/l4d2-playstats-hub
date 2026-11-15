@@ -5,6 +5,7 @@ using L4D2PlayStats.Hub.Core.DependencyInjection;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
+using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
@@ -44,6 +45,8 @@ builder.Services.Scan(scan => scan
     .WithScopedLifetime());
 builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
+builder.Services.AddSingleton<AvatarQueue>();
+builder.Services.AddSingleton<BrandingStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
 builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();

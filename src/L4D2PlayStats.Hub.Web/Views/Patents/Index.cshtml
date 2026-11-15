@@ -1,0 +1,74 @@
+@using L4D2PlayStats.Hub.Web.Models.Ranking
+@model PatentModel
+@inject ISettingsService Settings
+
+@{
+    var site = await Settings.GetAsync<SiteSettings>();
+    var highestPatent = Model.Patents.MaxBy(patent => patent.Level);
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Patents"],
+        Description = L["Learn about {0} ranks, levels, and experience requirements.", site.Name],
+        Image = highestPatent?.Image,
+        ImageAlt = highestPatent?.FullName
+    };
+}
+
+<h4 class="text-center">@L["Patents"]</h4>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">@L["Understanding the patent system"]</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            @L["The patent system in our service takes into account the amount of XP the player has earned during games in the current season. The system resets at the end of each season, which lasts {0} month(s).", Model.SeasonLengthInMonths]
+        </p>
+        <p>
+            @Html.Raw(string.Format(L["Each victory awards the player <b>{0:N0}</b> XP points, while losses cause the player to lose <b>{1:N0}</b> XP points. An MVP SI title grants the player an additional <b>{2:N0}</b> XP points, and an MVP CI title grants an additional <b>{3:N0}</b> XP points. Rage quit results in a loss of <b>{4:N0}</b> XP points."].Value, Model.Config.Win, Math.Abs(Model.Config.Loss), Model.Config.Mvp, Model.Config.MvpCommon, Math.Abs(Model.Config.RageQuit)))
+        </p>
+    </div>
+</div>
+
+<table class="table table-striped table-hover table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th class="text-center">@L["Level"]</th>
+        <th colspan="2">@L["Description"]</th>
+        <th class="text-center">@L["Experience required"]</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var patent in Model.Patents.OrderByDescending(p => p.Level))
+    {
+        <tr>
+            <td class="text-center vertical-align-middle">#@patent.Level</td>
+            <td class="vertical-align-middle slim">
+                <img src="@patent.Image" alt="@patent.FullName" data-toggle="tooltip" data-placement="top" title="@patent.FullName" style="width: 48px"/>
+            </td>
+            <td class="vertical-align-middle">
+                @patent.Name
+            </td>
+            <td class="text-center vertical-align-middle">
+                @($"{patent.Experience:N0}")
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">@L["XP Points Breakdown"]</h3>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>@string.Format(L["Victory: +{0:N0} XP points"].Value, Model.Config.Win)</li>
+            <li>@string.Format(L["Defeat: {0:N0} XP points"].Value, Model.Config.Loss)</li>
+            <li>@string.Format(L["MVP SI: +{0:N0} XP points"].Value, Model.Config.Mvp)</li>
+            <li>@string.Format(L["MVP CI: +{0:N0} XP points"].Value, Model.Config.MvpCommon)</li>
+            <li>@string.Format(L["Rage quit: {0:N0} XP points"].Value, Model.Config.RageQuit)</li>
+        </ul>
+    </div>
+</div>

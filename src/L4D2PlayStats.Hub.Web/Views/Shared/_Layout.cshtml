@@ -1,117 +1,762 @@
 @inject ISettingsService Settings
 @inject ICurrentUser CurrentUser
+@inject BrandingStore Branding
 @{
     var site = await Settings.GetAsync<SiteSettings>();
     var modules = await Settings.GetAsync<ModuleSettings>();
     var administrator = await CurrentUser.IsAdministratorAsync();
-    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
     var culture = CultureInfo.CurrentUICulture.Name;
-    var flags = new Dictionary<string, string> { ["en-US"] = "us", ["pt-BR"] = "br", ["es-ES"] = "es" };
-    var languages = new Dictionary<string, string> { ["en-US"] = "English", ["pt-BR"] = "Português", ["es-ES"] = "Español" };
-    var title = ViewData["Title"] as string;
+    var returnUrl = Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString);
+    var ranking = modules.IsEnabled(HubModule.Ranking);
+    var liveServer = modules.IsEnabled(HubModule.LiveServer);
+    var skinShop = modules.IsEnabled(HubModule.SkinShop);
+    var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
+    var metadata = ViewData["PageMetadata"] as PageMetadata;
+    var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
+    var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
+    var description = metadata?.Description ?? L["Statistics, rankings, players, and matches from the {0} Left 4 Dead 2 server.", site.Name].Value;
+    var siteUrl = string.IsNullOrWhiteSpace(site.PublicUrl) ? $"{Context.Request.Scheme}://{Context.Request.Host}" : site.PublicUrl.TrimEnd('/');
+    var canonical = $"{siteUrl}{Context.Request.Path}";
+    var image = string.IsNullOrWhiteSpace(metadata?.Image) ? null : Uri.TryCreate(metadata.Image, UriKind.Absolute, out _) ? metadata.Image : $"{siteUrl}/{metadata.Image.TrimStart('/')}";
+    var imageAlt = metadata?.ImageAlt ?? pageTitle ?? site.Name;
+    var footerLinks = FooterLinks.Parse(site.FooterLinks);
+    var languages = new[] { ("en-US", "us", "English", "lang-en"), ("pt-BR", "br", "Português", "lang-pt"), ("es-ES", "es", "Español", "lang-es") };
 }
 <!DOCTYPE html>
-<html lang="@culture" data-bs-theme="dark">
+<html lang="@culture">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@(string.IsNullOrEmpty(title) ? site.Name : $"{title} · {site.Name}")</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/bootstrap.min.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="@description">
+    <meta name="author" content="@site.Name">
+    <meta name="robots" content="@(metadata?.NoIndex == true ? "noindex, follow" : "index, follow")">
+
+    <link rel="canonical" href="@canonical">
+    <meta property="og:title" content="@title">
+    <meta property="og:description" content="@description">
+    <meta property="og:url" content="@canonical">
+    <meta property="og:type" content="@(metadata?.OpenGraphType ?? AppConsts.DefaultOpenGraphType)">
+    @if (image != null)
+    {
+        <meta property="og:image" content="@image">
+        <meta property="og:image:secure_url" content="@image">
+        <meta property="og:image:alt" content="@imageAlt">
+    }
+    <meta property="og:site_name" content="@site.Name">
+    <meta property="og:locale" content="@culture.Replace('-', '_')">
+
+    <meta name="twitter:card" content="@(image == null ? "summary" : "summary_large_image")">
+    <meta name="twitter:title" content="@title">
+    <meta name="twitter:description" content="@description">
+    @if (image != null)
+    {
+        <meta name="twitter:image" content="@image">
+        <meta name="twitter:image:alt" content="@imageAlt">
+    }
+
+    <title>@title</title>
+
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="~/css/lity.min.css" asp-append-version="true"/>
+
+    @if (light)
+    {
+        <link rel="stylesheet" href="~/css/bootstrap.light.min.css" asp-append-version="true"/>
+    }
+    else
+    {
+        <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
+    }
+
+    <style>
+        .main-container {
+            max-width: 1200px;
+        }
+
+        a, a:visited, a:hover, a:active {
+            color: inherit;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .navbar-nav .nav-item img {
+            width: 20px;
+            height: auto;
+            margin-top: -2px;
+        }
+
+        .logo {
+            height: 100%;
+            max-height: 50px;
+        }
+
+        .navbar-brand.site-name {
+            font-weight: bold;
+            letter-spacing: .5px;
+        }
+
+        .img-header-icon {
+            height: 100%;
+            max-height: 20px !important;
+            max-width: 20px !important;
+            display: inline !important;
+            margin-right: 5px;
+        }
+
+        .vertical-align-middle {
+            vertical-align: middle !important;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .line-break-anywhere {
+            line-break: anywhere
+        }
+
+        .tooltip-inner {
+            min-width: 150px;
+        }
+
+        .icon-copy {
+            cursor: pointer;
+            width: 14px;
+            height: 14px;
+            margin: 0 5px;
+            margin-bottom: 4px;
+        }
+
+        .match .panel h4,
+        .match .panel p {
+            margin: 0;
+        }
+
+        .match .icon {
+            width: 16px;
+        }
+
+        .match .teams .col-xs-6 {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+        .match table {
+            margin-bottom: 0 !important;
+        }
+
+        .match .img-campaign {
+            max-height: 155px;
+        }
+
+        .show-mobile {
+            display: none;
+        }
+
+        .server-info {
+            font-size: 14px;
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        .float-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+            .float-icon img {
+                width: 70px;
+            }
+
+        .table > thead > tr > td.it-is-me,
+        .table > tbody > tr > td.it-is-me,
+        .table > tfoot > tr > td.it-is-me,
+        .table > thead > tr > th.it-is-me,
+        .table > tbody > tr > th.it-is-me,
+        .table > tfoot > tr > th.it-is-me,
+        .table > thead > tr.it-is-me > td,
+        .table > tbody > tr.it-is-me > td,
+        .table > tfoot > tr.it-is-me > td,
+        .table > thead > tr.it-is-me > th,
+        .table > tbody > tr.it-is-me > th,
+        .table > tfoot > tr.it-is-me > th {
+            background-color: @Html.Raw(light ? "#bcf3a6" : "#2e6b2e");
+        }
+
+        @@media screen and (min-width: 700px) {
+            .slim {
+                width: 1px;
+                white-space: nowrap;
+            }
+        }
+
+        @@media screen and (max-width: 700px) {
+            .hide-mobile {
+                display: none !important;
+            }
+
+            .show-mobile {
+                display: inline;
+            }
+
+            .match .left-side {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+
+            .match .right-side {
+                width: 100% !important;
+            }
+
+            .table-responsive thead,
+            .table-responsive tfoot,
+            .table-responsive th {
+                display: none;
+            }
+
+            .table-responsive tr {
+                border-top: 1px solid #ddd;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .table-responsive td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                text-align: right !important;
+                padding: 5px !important;
+                margin: 0px !important;
+                overflow-wrap: anywhere;
+            }
+
+                .table-responsive td::before {
+                    content: attr(data-label);
+                    float: left;
+                    vertical-align: middle;
+                    font-weight: bold;
+                    padding-right: 15px;
+                }
+        }
+
+        @@media (min-width: 768px) and (max-width: 930px) {
+            .navbar-nav > li > a {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+
+        .nav-stars-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: -4px 0;
+            padding: 3px 10px 3px 7px;
+            border: 1px solid rgba(240, 173, 78, .6);
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(240, 173, 78, .28), rgba(240, 173, 78, .08));
+            line-height: 20px;
+            white-space: nowrap;
+            transition: background-color .2s, border-color .2s;
+        }
+
+        .nav-stars a:hover .nav-stars-pill,
+        .nav-stars a:focus .nav-stars-pill {
+            border-color: #f0ad4e;
+            background-color: rgba(240, 173, 78, .18);
+        }
+
+        .nav-stars-icon {
+            color: #f0ad4e;
+            font-size: 16px;
+            text-shadow: 0 0 6px rgba(240, 173, 78, .7);
+        }
+
+        .nav-stars-label {
+            font-size: 12px;
+            opacity: .85;
+        }
+
+        @@media (min-width: 768px) and (max-width: 1199px) {
+            .nav-stars-label {
+                display: none;
+            }
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", false)
+
+    <script>
+
+        function imgOnError(img) {
+            img.onerror = null;
+            img.src = '@AppConsts.EmptyAvatarUrl';
+        }
+
+        function copyTextToClipboard(text, sender) {
+            var $this = $(sender);
+
+            navigator.clipboard.writeText(text)
+                .then(function(){
+                    $this.popover("show");
+
+                    setTimeout(function () {
+                        $this.popover("hide");
+                    }, 1500);
+                })
+                .catch(function () {
+                    alert('@L["It was not possible to copy the text automatically. Please copy it manually."]');
+                });
+        }
+
+    </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/">@site.Name</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="@L["Menu"]">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="menu">
-            <ul class="navbar-nav me-auto">
-                @if (modules.IsEnabled(HubModule.Ranking))
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid main-container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">@L["Toggle navigation"]</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @if (Branding.HasLogo)
+            {
+                <a class="navbar-brand" href="/">
+                    <img src="@AppConsts.LogoUrl?v=@Branding.LogoVersion" alt="@site.Name" class="logo img-responsive">
+                </a>
+            }
+            else
+            {
+                <a class="navbar-brand site-name" href="/">@site.Name</a>
+            }
+            @if (liveServer)
+            {
+                <a id="server-info" class="navbar-brand server-info pulsate" href="/servers" title="@L["Server"]" style="display:none;">
+                    <span id="server-status" class="label label-success"></span>
+                </a>
+            }
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-navbar-collapse">
+            <ul class="nav navbar-nav">
+                @if (ranking)
                 {
-                    <li class="nav-item"><a class="nav-link" href="/">@L["Ranking"]</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/matches">@L["Matches"]</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/players">@L["Players"]</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/patents">@L["Patents"]</a></li>
+                    <li class="@ViewBag.Home">
+                        <a href="/">@L["Ranking"]</a>
+                    </li>
+                    <li class="@ViewBag.LastMatches">
+                        <a href="/matches">@L["Last matches"]</a>
+                    </li>
                 }
-                @if (modules.IsEnabled(HubModule.LiveServer))
+                @if (liveServer)
                 {
-                    <li class="nav-item"><a class="nav-link" href="/servers">@L["Servers"]</a></li>
+                    <li class="@ViewBag.Server">
+                        <a href="/servers">@L["Server"]</a>
+                    </li>
                 }
-                @if (modules.IsEnabled(HubModule.CommunityRanking))
+                @if (skinShop)
                 {
-                    <li class="nav-item"><a class="nav-link" href="/community">@L["Community"]</a></li>
+                    <li class="@ViewBag.Skins">
+                        <a href="/skins">@L["Skins"]</a>
+                    </li>
                 }
-                @if (modules.IsEnabled(HubModule.SkinShop))
+                @if (communityRanking)
                 {
-                    <li class="nav-item"><a class="nav-link" href="/skins">@L["Skins"]</a></li>
+                    <li class="@ViewBag.Community">
+                        <a href="/community">@L["Community"]</a>
+                    </li>
+                }
+                @if (ranking)
+                {
+                    <li class="dropdown @(ViewBag.Players ?? ViewBag.History ?? ViewBag.Patent)">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            @L["More"] <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="@ViewBag.Players">
+                                <a href="/players">
+                                    <img src="~/imgs/menu/players.svg" alt="" class="img-responsive img-header-icon">
+                                    @L["Players"]
+                                </a>
+                            </li>
+                            <li class="@ViewBag.Patent">
+                                <a href="/patents">
+                                    <img src="~/imgs/menu/patents.svg" alt="" class="img-responsive img-header-icon">
+                                    @L["Patents"]
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="@ViewBag.History">
+                                <a href="/history">
+                                    <img src="~/imgs/menu/history.svg" alt="" class="img-responsive img-header-icon">
+                                    @L["History"]
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                @if (administrator)
+                {
+                    <li class="dropdown @ViewBag.Admin">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-cog"></span> @L["Admin"] <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="@ViewBag.Administration">
+                                <a href="/admin">
+                                    <span class="glyphicon glyphicon-wrench" style="margin-right: 5px"></span>
+                                    @L["Administration"]
+                                </a>
+                            </li>
+                            @if (liveServer)
+                            {
+                                <li role="separator" class="divider"></li>
+                                <li class="@ViewBag.ChatBans">
+                                    <a href="/admin/chat-bans">
+                                        <img src="~/imgs/menu/chat-bans.svg" alt="" class="img-responsive img-header-icon">
+                                        @L["Chat Bans"]
+                                    </a>
+                                </li>
+                            }
+                            @if (skinShop)
+                            {
+                                <li role="separator" class="divider"></li>
+                                <li class="@ViewBag.SkinPurchases">
+                                    <a href="@AppConsts.SkinAdminUrl">
+                                        <img src="~/imgs/menu/skin-purchases.svg" alt="" class="img-responsive img-header-icon">
+                                        @L["Skin purchases"]
+                                    </a>
+                                </li>
+                                <li class="@ViewBag.SkinPrices">
+                                    <a href="@AppConsts.SkinPricesUrl">
+                                        <img src="~/imgs/menu/skin-prices.svg" alt="" class="img-responsive img-header-icon">
+                                        @L["Skin prices"]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
                 }
             </ul>
-            <ul class="navbar-nav align-items-lg-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/imgs/@(flags.GetValueOrDefault(culture, "us")).png" alt="" width="20" class="me-1">@languages.GetValueOrDefault(culture, "English")
+            <ul class="nav navbar-nav navbar-right">
+                @if (CurrentUser.IsAuthenticated)
+                {
+                    if (skinShop)
+                    {
+                        <li class="nav-stars" style="display: none">
+                            <a href="/skins" title="@L["Your stars to buy skins"]" data-toggle="tooltip" data-placement="bottom">
+                                <span class="nav-stars-pill">
+                                    <span class="nav-stars-icon">★</span>
+                                    <b class="nav-stars-value"></b>
+                                    <span class="nav-stars-label"></span>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                    <li>
+                        <a href="@(ranking ? $"/player/{CurrentUser.CommunityId}" : "#")">
+                            <img src="/avatar/@CurrentUser.CommunityId" alt="@CurrentUser.Name" title="@CurrentUser.Name" class="img-responsive img-header-icon" data-toggle="tooltip" data-placement="bottom" onerror="imgOnError(this)">
+                            <span class="show-mobile" style="margin-left: 5px">
+                                @CurrentUser.Name
+                            </span>
+                        </a>
+                    </li>
+                }
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <img src="~/imgs/settings.png" alt="@L["Settings"]" title="@L["Settings"]" class="img-responsive img-header-icon">
+                        <span class="show-mobile">
+                            @L["Settings"]
+                        </span>
+                        <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        @foreach (var language in languages)
+                    <ul class="dropdown-menu">
+                        @if (light)
                         {
                             <li>
-                                <a class="dropdown-item" href="/language?culture=@language.Key&returnUrl=@Uri.EscapeDataString(returnUrl)">
-                                    <img src="~/imgs/@(flags[language.Key]).png" alt="" width="20" class="me-2">@language.Value
+                                <a href="/theme/default?returnUrl=@returnUrl">
+                                    <img src="~/imgs/dark-theme.png" alt="@L["Switch to dark theme"]" title="@L["Switch to dark theme"]" class="img-responsive img-header-icon">
+                                    @L["Switch to dark theme"]
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="/theme/@AppConsts.LightTheme?returnUrl=@returnUrl">
+                                    <img src="~/imgs/light-theme.png" alt="@L["Switch to light theme"]" title="@L["Switch to light theme"]" class="img-responsive img-header-icon">
+                                    @L["Switch to light theme"]
+                                </a>
+                            </li>
+                        }
+                        <li role="separator" class="divider"></li>
+                        @foreach (var (name, flag, label, id) in languages)
+                        {
+                            if (culture.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            <li id="@id">
+                                <a href="/language?culture=@name&returnUrl=@returnUrl">
+                                    <img src="~/imgs/@(flag).png" alt="@label" title="@label" class="img-responsive img-header-icon">
+                                    @label
+                                </a>
+                            </li>
+                        }
+                        <li role="separator" class="divider"></li>
+                        @if (CurrentUser.IsAuthenticated)
+                        {
+                            <li>
+                                <a href="/logout?returnUrl=@returnUrl">
+                                    <img src="~/imgs/logout.png" alt="@L["Click here to logout"]" title="@L["Click here to logout"]" class="img-responsive img-header-icon">
+                                    @L["Click here to logout"]
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="/login?returnUrl=@returnUrl">
+                                    <img src="~/imgs/steam.png" alt="@L["Login with Steam"]" title="@L["Login with Steam"]" class="img-responsive img-header-icon">
+                                    @L["Login with Steam"]
                                 </a>
                             </li>
                         }
                     </ul>
                 </li>
-                @if (CurrentUser.IsAuthenticated)
-                {
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="/avatar/@CurrentUser.CommunityId" alt="" width="24" height="24" class="rounded me-1">@(CurrentUser.Name ?? CurrentUser.CommunityId.ToString())
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            @if (modules.IsEnabled(HubModule.Ranking))
-                            {
-                                <li><a class="dropdown-item" href="/player/@CurrentUser.CommunityId">@L["My profile"]</a></li>
-                            }
-                            @if (administrator)
-                            {
-                                <li><a class="dropdown-item" href="/admin">@L["Administration"]</a></li>
-                            }
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout?returnUrl=@Uri.EscapeDataString(returnUrl)">@L["Sign out"]</a></li>
-                        </ul>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light btn-sm" href="/login?returnUrl=@Uri.EscapeDataString(returnUrl)">
-                            <img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam"]
-                        </a>
-                    </li>
-                }
             </ul>
         </div>
     </div>
 </nav>
-<main class="container py-4">
+
+<div class="container-fluid main-container">
     @if (TempData["Error"] is string error)
     {
-        <div class="alert alert-danger">@L[error]</div>
+        <div class="alert alert-danger" style="margin-top: 15px">@L[error]</div>
     }
     @if (TempData["Saved"] != null)
     {
-        <div class="alert alert-success">@L["Saved."]</div>
+        <div class="alert alert-success" style="margin-top: 15px">@L["Saved."]</div>
     }
+
     @RenderBody()
-</main>
-<footer class="container py-4 text-body-secondary small border-top">
-    @site.Name · <a class="link-secondary" href="https://github.com/altair-sossai/l4d2-playstats-hub">L4D2 PlayStats Hub</a>
-</footer>
-<script src="~/lib/bootstrap/bootstrap.bundle.min.js" asp-append-version="true"></script>
-<script src="~/lib/htmx/htmx.min.js" asp-append-version="true"></script>
+
+    <hr/>
+
+    <div class="row text-center" style="margin-bottom: 25px">
+        <div class="col-md-12">
+            @for (var index = 0; index < footerLinks.Count; index++)
+            {
+                if (index > 0)
+                {
+                    <small> ● </small>
+                }
+
+                <a href="@footerLinks[index].Url" target="_blank" rel="noopener">
+                    <small>@footerLinks[index].Text</small>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@if (liveServer)
+{
+    <a id="connect-icon" href="/connect" class="float-icon hide-mobile" style="display: none">
+        <img src="~/imgs/icons/l4d2.png" alt="connect" data-toggle="tooltip" data-placement="top" title="connect"/>
+    </a>
+}
+
+<script src="~/js/jquery.min.js" asp-append-version="true"></script>
+<script src="~/js/bootstrap.min.js" asp-append-version="true"></script>
+<script src="~/js/diffDOM.min.js" asp-append-version="true"></script>
+<script src="~/js/chart.min.js" asp-append-version="true"></script>
+<script src="~/js/lity.min.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", false)
+
+<script>
+        var titlePlayersRegex = /^🟢\s*\d+\/\d+\s*\|\s*/;
+        var liveServerEnabled = @Json.Serialize(liveServer);
+        var skinShopEnabled = @Json.Serialize(skinShop);
+
+        function getBaseTitle() {
+            return document.title.replace(titlePlayersRegex, '');
+        }
+
+        function pulsate(element, options) {
+            if (!options)
+                options = {};
+
+            if (!options.start)
+                options.start = {};
+
+            if (!options.start.opacity)
+                options.start.opacity = 0.6;
+
+            if (!options.start.interval)
+                options.start.interval = 700;
+
+            if (!options.end)
+                options.end = {};
+
+            if (!options.end.opacity)
+                options.end.opacity = 1;
+
+            if (!options.end.interval)
+                options.end.interval = 700;
+
+            $(element).animate(options.start, options.start.interval, function () {
+                $(this).animate(options.end, options.end.interval, function () {
+                    pulsate(this, options);
+                });
+            });
+        }
+
+        function updateServerInfo() {
+            if (!liveServerEnabled)
+                return;
+
+            $.ajax({
+                url: '/api/server',
+                method: 'GET',
+                success: function (serverInfo) {
+                    var baseTitle = getBaseTitle();
+
+                    if (serverInfo && serverInfo.address) {
+                        $('#connect-icon img').attr('alt', 'connect ' + serverInfo.address).attr('title', 'connect ' + serverInfo.address).attr('data-original-title', 'connect ' + serverInfo.address);
+                        $('#connect-icon').show();
+                    } else {
+                        $('#connect-icon').hide();
+                    }
+
+                    if (!serverInfo || serverInfo.players == 0) {
+                        $('#server-info').hide();
+                        $('#game-info-chat').hide();
+                        document.title = baseTitle;
+                        return;
+                    }
+
+                    $('#server-status').text('● ' + serverInfo.players + '/' + serverInfo.max_players);
+                    $('#server-info').show();
+                    $('#game-info-chat').show();
+                    document.title = '🟢 ' + serverInfo.players + '/' + serverInfo.max_players + ' | ' + baseTitle;
+                },
+                complete: function () {
+                    setTimeout(updateServerInfo, 4000);
+                }
+            });
+        }
+
+        function createChart(canvas) {
+            var ctx = canvas.getContext('2d');
+            var chartData = $(canvas).data('chart');
+
+            new Chart(ctx, chartData);
+        }
+
+        function isElementInViewport(el, margin) {
+            margin = margin || 150;
+            var rect = el.getBoundingClientRect();
+
+            return (
+                rect.top >= -margin &&
+                rect.left >= -margin &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + margin &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth) + margin
+            );
+        }
+
+        function lazyLoadCharts() {
+            $('.app-chart').each(function () {
+                if ($(this).data('loaded'))
+                    return;
+
+                if (!isElementInViewport(this))
+                    return;
+
+                createChart(this);
+
+                $(this).data('loaded', true);
+            });
+        }
+
+        function isObject(value) {
+            return value !== null && typeof value === 'object' && !Array.isArray(value);
+        }
+
+        var navStarsKey = 'nav-stars-@CurrentUser.CommunityId';
+
+        function setNavStars(balance) {
+            var $stars = $('.nav-stars');
+
+            $stars.find('.nav-stars-value').text(balance.toLocaleString(document.documentElement.lang || undefined));
+            $stars.find('.nav-stars-label').text(balance === 1 ? @Json.Serialize(L["star available"].Value) : @Json.Serialize(L["stars available"].Value));
+            $stars.show();
+
+            try {
+                sessionStorage.setItem(navStarsKey, balance);
+            } catch (e) {
+            }
+        }
+
+        function loadNavStars() {
+            if (!skinShopEnabled || $('.nav-stars').length === 0)
+                return;
+
+            try {
+                var cached = sessionStorage.getItem(navStarsKey);
+
+                if (cached !== null)
+                    setNavStars(parseInt(cached, 10));
+            } catch (e) {
+            }
+
+            $.ajax({
+                url: '/api/shop/wallet',
+                method: 'GET',
+                success: function (wallet) {
+                    setNavStars(wallet.balance);
+                }
+            });
+        }
+
+        $(window).on('scroll resize', function () {
+            lazyLoadCharts();
+        });
+
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('.pulsate').each(function () {
+                pulsate(this);
+            });
+
+            updateServerInfo();
+
+            loadNavStars();
+
+            lazyLoadCharts();
+        });
+    </script>
+
+@if (!string.IsNullOrWhiteSpace(site.GoogleAnalyticsId))
+{
+    <script async src="https://www.googletagmanager.com/gtag/js?id=@site.GoogleAnalyticsId"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', @Json.Serialize(site.GoogleAnalyticsId));
+    </script>
+}
 </body>
 </html>
