@@ -1,0 +1,30 @@
+name: Plugins
+
+on:
+  push:
+    paths: ['plugins/**', '.github/workflows/plugins.yml']
+  pull_request:
+    paths: ['plugins/**', '.github/workflows/plugins.yml']
+
+env:
+  SOURCEMOD_VERSION: '1.12'
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download SourceMod
+        run: |
+          mkdir -p "$RUNNER_TEMP/sourcemod"
+          curl --fail --silent --show-error --location "https://www.sourcemod.net/latest.php?version=${SOURCEMOD_VERSION}&os=linux" --output "$RUNNER_TEMP/sourcemod.tar.gz"
+          tar -xzf "$RUNNER_TEMP/sourcemod.tar.gz" -C "$RUNNER_TEMP/sourcemod" addons/sourcemod/scripting
+          chmod +x "$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64"
+          echo "SPCOMP=$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64" >> "$GITHUB_ENV"
+      - name: Compile the plugins
+        run: bash plugins/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: l4d2-playstats-hub-plugins
+          path: plugins/compiled/*.smx
+          if-no-files-found: error

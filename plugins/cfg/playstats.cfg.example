@@ -1,0 +1,41 @@
+// L4D2 PlayStats Hub - settings of the game server plugins.
+//
+// 1. Copy this file to cfg/playstats.cfg on the game server.
+// 2. Replace the two values below with the ones the site shows on the page of this game server.
+// 3. Add this line to cfg/server.cfg:
+//        exec playstats.cfg
+//
+// l4d2_playstats_sync.smx must be in addons/sourcemod/plugins itself, not in a subfolder,
+// so that these cvars already exist when this file runs.
+// Check the result in the server console with: sm_playstats_test
+
+// Address of the site, without a slash at the end.
+playstats_url "https://stats.example.com"
+
+// Token of this game server, in the form <identifier>:<key>. Keep it secret.
+playstats_token "my-server:REPLACE-WITH-THE-KEY-SHOWN-BY-THE-SITE"
+
+// The cvars below belong to plugins that a match mode usually loads later.
+// Set them where those plugins are loaded, for example with confogl_addcvar in the
+// configuration of the match mode. The values shown are the defaults.
+
+// l4d2_ranking: address the game opens for the in-game pages. Empty means playstats_url.
+// The browser inside the game is from 2012 and may not open a modern HTTPS site;
+// in that case, give a plain HTTP address of the same site here.
+// playstats_ingame_url ""
+// ranking_show_motd_panel "1"
+
+// l4d2_show_patent_icon
+// patent_icon_version "1"
+// patent_icon_max_level "15"
+
+// l4d2_gameinfo_sync
+// gameinfo_related_accounts_chat "1"
+// gameinfo_boomer_vomit_min_survivors "3"
+
+// l4d2_weapon_skins
+// weapon_skins_enabled "0"
+// weapon_skins_kick_no_downloads "0"
+// weapon_skins_pile_radius "120.0"
+// weapon_skins_pile_max "3"
+// weapon_skins_preview_all "0"
