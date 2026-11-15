@@ -1,6 +1,6 @@
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
-using L4D2PlayStats.Hub.Web.Infrastructure;
+using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Skins;
 using Microsoft.AspNetCore.Mvc;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;

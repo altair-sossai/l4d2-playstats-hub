@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 

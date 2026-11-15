@@ -1,6 +1,6 @@
 using System.Text;
 using L4D2PlayStats.Hub.Core.Infrastructure;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

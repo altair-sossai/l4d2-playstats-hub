@@ -1,5 +1,8 @@
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 

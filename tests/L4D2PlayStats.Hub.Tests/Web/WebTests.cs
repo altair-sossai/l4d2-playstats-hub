@@ -1,10 +1,12 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Administrators;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -433,8 +435,14 @@ public class WebTests
 
         var response = await server.PostAsJsonAsync("/api/mix", new
         {
-            player1 = players[0], player2 = players[1], player3 = players[2], player4 = players[3],
-            player5 = players[4], player6 = players[5], player7 = players[6], player8 = players[7]
+            player1 = players[0],
+            player2 = players[1],
+            player3 = players[2],
+            player4 = players[3],
+            player5 = players[4],
+            player6 = players[5],
+            player7 = players[6],
+            player8 = players[7]
         });
 
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();

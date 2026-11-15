@@ -1,9 +1,10 @@
-using L4D2PlayStats.Hub.Core.Modules.Administrators;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;

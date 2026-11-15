@@ -1,8 +1,9 @@
-using L4D2PlayStats.Hub.Core.Modules.Administrators;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
-using L4D2PlayStats.Hub.Web.Controllers.Admin;
-using L4D2PlayStats.Hub.Web.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Web.Services;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;

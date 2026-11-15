@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Modules.Matches;
-using L4D2PlayStats.Hub.Core.Modules.Ranking;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 

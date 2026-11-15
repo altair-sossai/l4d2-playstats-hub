@@ -3,7 +3,7 @@ using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;

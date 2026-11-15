@@ -1,4 +1,4 @@
-using L4D2PlayStats.Hub.Web.Infrastructure;
+using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;

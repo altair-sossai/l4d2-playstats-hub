@@ -1,0 +1,28 @@
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+
+namespace L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+
+public class SetupRedirectFilter(ISetupService setupService) : IAsyncResourceFilter
+{
+    public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
+    {
+        var path = context.HttpContext.Request.Path;
+
+        var exempt = path.StartsWithSegments("/setup")
+                     || path.StartsWithSegments("/api")
+                     || path.StartsWithSegments("/login")
+                     || path.StartsWithSegments("/logout")
+                     || path.StartsWithSegments("/language")
+                     || path.StartsWithSegments("/dev");
+
+        if (!exempt && await setupService.IsPendingAsync(context.HttpContext.RequestAborted))
+        {
+            context.Result = new RedirectResult("/setup");
+            return;
+        }
+
+        await next();
+    }
+}

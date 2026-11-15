@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Tests.Community.Support;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
@@ -6,8 +7,8 @@ using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
-using L4D2PlayStats.Hub.Tests.Community.Support;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

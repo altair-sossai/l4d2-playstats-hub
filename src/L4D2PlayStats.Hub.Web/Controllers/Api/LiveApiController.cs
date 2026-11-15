@@ -1,6 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
-using L4D2PlayStats.Hub.Web.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Live;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;

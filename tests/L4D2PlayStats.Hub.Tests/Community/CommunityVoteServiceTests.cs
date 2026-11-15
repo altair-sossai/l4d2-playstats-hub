@@ -1,10 +1,10 @@
+using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
-using L4D2PlayStats.Hub.Tests.Community.Support;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

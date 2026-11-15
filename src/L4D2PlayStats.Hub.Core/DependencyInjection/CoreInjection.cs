@@ -1,5 +1,5 @@
 using L4D2PlayStats.Hub.Core.Infrastructure;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Core.DependencyInjection;

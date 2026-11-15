@@ -1,8 +1,8 @@
+using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using System.Collections.Concurrent;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 

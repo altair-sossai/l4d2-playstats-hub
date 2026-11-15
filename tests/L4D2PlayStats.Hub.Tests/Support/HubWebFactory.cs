@@ -1,22 +1,18 @@
-using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Administrators;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System.Text.RegularExpressions;
 
 namespace L4D2PlayStats.Hub.Tests.Support;
 
@@ -135,24 +131,5 @@ public class HubWebFactory : WebApplicationFactory<Program>
         var form = new Dictionary<string, string>(fields) { ["__RequestVerificationToken"] = match.Groups[1].Value };
 
         return await client.PostAsync(action, new FormUrlEncodedContent(form));
-    }
-}
-
-public class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
-    : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
-{
-    public const string Scheme = "Test";
-
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    {
-        var user = Request.Headers[HubWebFactory.UserHeader].ToString();
-
-        if (string.IsNullOrEmpty(user))
-            return Task.FromResult(AuthenticateResult.NoResult());
-
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user), new Claim(ClaimTypes.Name, $"Player {user}") };
-        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme));
-
-        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme)));
     }
 }

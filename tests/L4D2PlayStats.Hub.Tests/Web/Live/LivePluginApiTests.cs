@@ -1,11 +1,10 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 

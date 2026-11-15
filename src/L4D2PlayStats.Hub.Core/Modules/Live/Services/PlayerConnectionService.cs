@@ -2,7 +2,7 @@ using System.Net;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
-using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;

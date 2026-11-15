@@ -1,6 +1,5 @@
 using System.Net;
-using System.Net.Http.Json;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
 

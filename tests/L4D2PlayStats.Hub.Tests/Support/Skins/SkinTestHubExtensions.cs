@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Ranking;
-using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;

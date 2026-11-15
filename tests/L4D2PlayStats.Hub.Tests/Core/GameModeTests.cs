@@ -1,5 +1,7 @@
 using L4D2PlayStats.Hub.Core.Modules.GameModes;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
+using L4D2PlayStats.Hub.Core.Modules.GameModes.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.GameModes.Models;
+using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 

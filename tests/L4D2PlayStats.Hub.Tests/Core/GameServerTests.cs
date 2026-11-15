@@ -1,4 +1,7 @@
 using L4D2PlayStats.Hub.Core.Modules.Servers;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 

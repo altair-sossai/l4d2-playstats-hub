@@ -1,5 +1,5 @@
-using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
+using System.Globalization;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Skins;
 

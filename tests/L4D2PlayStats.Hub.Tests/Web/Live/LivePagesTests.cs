@@ -2,8 +2,7 @@ using System.Net;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
-using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Live;
