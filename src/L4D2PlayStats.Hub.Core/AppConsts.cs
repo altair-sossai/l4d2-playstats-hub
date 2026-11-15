@@ -54,4 +54,23 @@ public static class AppConsts
 
     public const long SteamCommunityIdBase = 76561197960265728;
     public const string SteamProfileUrl = "https://steamcommunity.com/profiles/";
+
+    public const int DefaultCommunityMinimumMatchesToVote = 10;
+    public const int DefaultCommunityVotesPerDay = 20;
+    public const int DefaultCommunityMinimumMatchesToBeCandidate = 1;
+    public const int DefaultCommunityMinimumComparisonsToBeListed = 5;
+    public const int DefaultCommunityKFactor = 32;
+    public const int DefaultCommunityInitialRating = 1500;
+    public const int CommunityMinVotesPerDay = 1;
+    public const int CommunityMinKFactor = 1;
+    public const int CommunityMaxKFactor = 200;
+    public const double CommunityEloScale = 400;
+    public const double CommunityEloBase = 10;
+    public const double CommunityWinScore = 1;
+    public const double CommunityDrawScore = 0.5;
+    public const double CommunityLossScore = 0;
+    public const int CommunityAnchorPoolSize = 5;
+    public const int CommunityOpponentPoolSize = 5;
+    public const int CommunityPairSides = 2;
+    public const int CommunityVoterListSize = 100;
 }
