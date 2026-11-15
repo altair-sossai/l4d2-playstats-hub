@@ -1,0 +1,190 @@
+# Installing on a Linux VPS
+
+🌐 **English** | [Português](install-linux.pt.md) | [Español](install-linux.es.md)
+
+This is the recommended way to run L4D2 PlayStats Hub. One command installs everything, and the site then guides you through the rest.
+
+## Contents
+
+- [What you need](#what-you-need)
+- [Step 1: connect to the VPS](#step-1-connect-to-the-vps)
+- [Step 2: run the installer](#step-2-run-the-installer)
+- [Step 3: open the site](#step-3-open-the-site)
+- [Step 4: follow the setup](#step-4-follow-the-setup)
+- [Using a domain with HTTPS](#using-a-domain-with-https)
+- [The address used inside the game](#the-address-used-inside-the-game)
+- [Day-to-day commands](#day-to-day-commands)
+- [Updating](#updating)
+- [Backup and restore](#backup-and-restore)
+- [Changing the configuration](#changing-the-configuration)
+- [Removing it](#removing-it)
+- [If something goes wrong](#if-something-goes-wrong)
+
+## What you need
+
+| Item | Detail |
+|---|---|
+| A VPS | Any provider. 1 CPU and 1 GB of memory are enough to start. |
+| Linux | Ubuntu 22.04 or 24.04, or Debian 12. Fedora, Rocky and AlmaLinux also work. |
+| Root access | You run one command as root or with `sudo`. |
+| An open port | Port `5080`, or ports `80` and `443` if you use a domain. |
+| A Steam account | The account that will be the first administrator of the site. |
+
+You do not need to install .NET, a database or a web server. The installer brings the application ready to run, and the database is a single file.
+
+It can run on the same machine as your game server or on another one.
+
+## Step 1: connect to the VPS
+
+From your computer, open a terminal and connect with the address and user your provider gave you:
+
+```bash
+ssh root@YOUR-SERVER-ADDRESS
+```
+
+## Step 2: run the installer
+
+Paste this line and press Enter:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
+```
+
+It takes about a minute. At the end it prints something like this:
+
+```text
+L4D2 PlayStats Hub is running.
+
+  Site address:            http://203.0.113.10:5080
+
+  Next step: open the site address. It asks for this setup code:
+
+      98ff3a8f5d5022bd4f66103c009e8162
+```
+
+Keep the address and the setup code. You can see the code again at any time:
+
+```bash
+playstats-hub setup-code
+```
+
+## Step 3: open the site
+
+Open the site address in your browser. The first page asks for the setup code.
+
+1. Paste the setup code.
+2. Click **Continue with Steam** and sign in.
+
+The Steam account you sign in with becomes the first administrator. The code stops working after that.
+
+## Step 4: follow the setup
+
+The site asks a few questions, one page at a time:
+
+| Page | What you decide |
+|---|---|
+| Site | The name of the site, its language, your time zone, and how many months a season lasts. |
+| Modules | What the site has: ranking, live server, skin shop, community ranking, chat. |
+| Game server | A name for your game server. The site gives you the lines to paste into its configuration. |
+| Finish | Confirms. Everything can be changed later in the administration area. |
+
+On the game server page, the site shows whether your server is connected and what is missing. [Connecting a game server](game-server.md) explains that part in detail.
+
+## Using a domain with HTTPS
+
+If you have a domain, point it to the VPS first (an `A` record with the address of the VPS). Then run the installer with the domain:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo HUB_DOMAIN=stats.example.com bash
+```
+
+The installer adds [Caddy](https://caddyserver.com/), which gets and renews the HTTPS certificate by itself. Your site is then at `https://stats.example.com`.
+
+You can do this on a machine where the application is already installed. Nothing is lost.
+
+## The address used inside the game
+
+Players open the ranking inside Left 4 Dead 2 with the `!ranking` command. The browser built into the game is from 2012 and is expected to fail on current HTTPS sites, so the game should open the site through plain HTTP.
+
+That is why port `5080` stays open even when you use a domain:
+
+| Who opens it | Address |
+|---|---|
+| Visitors, in a normal browser | `https://stats.example.com` |
+| The game, through `!ranking` | `http://YOUR-SERVER-ADDRESS:5080` |
+
+The game address is set on the game server, in `playstats_ingame_url`. See [Connecting a game server](game-server.md).
+
+## Day-to-day commands
+
+| Command | What it does |
+|---|---|
+| `playstats-hub status` | Shows whether the application is running. |
+| `playstats-hub logs` | Shows the latest log lines. |
+| `playstats-hub follow` | Follows the log as it is written. |
+| `playstats-hub restart` | Restarts the application. |
+| `playstats-hub setup-code` | Shows the setup code while the setup is not done. |
+| `playstats-hub add-admin <SteamID64>` | Makes a Steam account an administrator of the site. |
+
+## Updating
+
+```bash
+playstats-hub update
+```
+
+It installs the latest version and keeps your database and configuration. To install a specific version, give its name: `playstats-hub update v1.2.0`.
+
+## Backup and restore
+
+Everything that matters is in one folder. This command saves it in one file:
+
+```bash
+playstats-hub backup
+```
+
+The site stops for a few seconds while the copy is made. The file goes to `/root`, with the date in its name. Copy it to another machine.
+
+To bring a backup back, on the same VPS or on a new one where you ran the installer:
+
+```bash
+playstats-hub restore /root/l4d2-playstats-hub-backup-20270115-030000.tar.gz
+```
+
+This replaces the current data with the data in the file.
+
+## Changing the configuration
+
+Almost everything is changed in the administration area of the site. The few settings that live outside it are in `/etc/l4d2-playstats-hub/hub.env`:
+
+| Setting | Meaning | Default |
+|---|---|---|
+| `ASPNETCORE_URLS` | Address and port the application listens on. | `http://0.0.0.0:5080` |
+| `Hub__DataDirectory` | Folder with the database, avatars and keys. | `/var/lib/l4d2-playstats-hub` |
+| `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` or `MySql`. | `Sqlite` |
+| `Database__ConnectionString` | How to reach the database. | `Data Source=hub.db` |
+
+After editing the file, restart: `playstats-hub restart`.
+
+To install on a different port, set it when you run the installer for the first time: `sudo HUB_PORT=8080 bash`.
+
+Using another database is described in [Databases](databases.md).
+
+## Removing it
+
+```bash
+sudo systemctl disable --now l4d2-playstats-hub
+sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /usr/local/bin/playstats-hub
+```
+
+Your data stays in `/var/lib/l4d2-playstats-hub`. Delete that folder too if you do not want it any more.
+
+## If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| The installer says the distribution is not supported | Use one of the listed distributions, or [Docker](install-docker.md). |
+| The site does not open | Check that the port is open in the firewall of your provider. Run `playstats-hub status`. |
+| "The application did not start" | Run `playstats-hub logs` and read the last lines. A port already in use is the usual cause; install with another `HUB_PORT`. |
+| The setup code is refused | Copy it again with `playstats-hub setup-code`. It has no spaces. |
+| HTTPS does not work with the domain | The domain must already point to the VPS, and ports 80 and 443 must be open. Then run `sudo systemctl restart caddy`. |
+| You lost access to the administrator account | On the VPS, run `playstats-hub add-admin <SteamID64>` with the SteamID64 of another Steam account. |

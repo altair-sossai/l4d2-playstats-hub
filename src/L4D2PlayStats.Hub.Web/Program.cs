@@ -71,6 +71,9 @@ var app = builder.Build();
 
 await app.InitializeHubAsync();
 
+if (HubCommands.IsCommand(args))
+    return await app.RunCommandAsync(args);
+
 var cultures = Cultures.Supported();
 var localization = new RequestLocalizationOptions
 {
@@ -101,5 +104,7 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConst
     });
 
 await app.RunAsync();
+
+return 0;
 
 public partial class Program;

@@ -110,7 +110,7 @@ ASPNETCORE_ENVIRONMENT=Production
 ASPNETCORE_URLS=http://0.0.0.0:${PORT}
 Hub__DataDirectory=${DATA_DIR}
 Database__Provider=Sqlite
-Database__ConnectionString=Data Source=hub.db
+Database__ConnectionString="Data Source=hub.db"
 EOF
 
   chmod 640 "${ENV_FILE}"
@@ -169,12 +169,27 @@ case "\${1:-help}" in
       echo "The setup was already done. There is no setup code."
     fi
     ;;
+  add-admin)
+    steam_id="\${2:?Usage: playstats-hub add-admin <SteamID64>}"
+    (set -a; . "${ENV_FILE}"; set +a; cd "${APP_DIR}"; runuser -u ${SERVICE_USER} -- "${APP_DIR}/${EXECUTABLE}" admin add "\${steam_id}")
+    ;;
   backup)
     target="\${2:-/root/${NAME}-backup-\$(date +%Y%m%d-%H%M%S).tar.gz}"
     systemctl stop ${NAME}
     tar -czf "\${target}" -C "${DATA_DIR}" . -C "${CONFIG_DIR}" hub.env
     systemctl start ${NAME}
     echo "Backup written to \${target}"
+    ;;
+  restore)
+    source="\${2:?Usage: playstats-hub restore <backup file>}"
+    systemctl stop ${NAME}
+    find "${DATA_DIR}" -mindepth 1 -delete
+    tar -xzf "\${source}" -C "${DATA_DIR}" --exclude=hub.env
+    tar -xzf "\${source}" -C "${CONFIG_DIR}" hub.env
+    chown -R ${SERVICE_USER}:${SERVICE_USER} "${DATA_DIR}"
+    chown root:${SERVICE_USER} "${ENV_FILE}"
+    systemctl start ${NAME}
+    echo "Restored from \${source}"
     ;;
   update)
     curl -fsSL "https://raw.githubusercontent.com/${REPOSITORY}/main/deploy/install.sh" | HUB_VERSION="\${2:-latest}" bash
@@ -187,7 +202,9 @@ case "\${1:-help}" in
     echo "  restart       Restart the application"
     echo "  stop | start  Stop or start the application"
     echo "  setup-code    Show the code asked by the first-run setup page"
+    echo "  add-admin <id> Make a SteamID64 an administrator of the site"
     echo "  backup [file] Save the database, avatars and configuration in one file"
+    echo "  restore <file> Replace the current data with a backup file"
     echo "  update [tag]  Install the latest version, or the given one, keeping the data"
     ;;
 esac

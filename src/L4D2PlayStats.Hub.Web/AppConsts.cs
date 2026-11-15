@@ -47,6 +47,10 @@ public static class AppConsts
     public const string NpgsqlLegacyTimestampSwitch = "Npgsql.EnableLegacyTimestampBehavior";
     public const string SqliteMemoryDataSource = ":memory:";
 
+    public const string AdminCommand = "admin";
+    public const string AdminListAction = "list";
+    public const string AdminAddAction = "add";
+
     public const string DevelopmentSignInSetting = "Development:AllowTestSignIn";
     public const string SteamOpenIdPattern = @"openid/id/(\d+)$";
 }
