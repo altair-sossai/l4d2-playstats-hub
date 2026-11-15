@@ -57,4 +57,12 @@ public static class AppConsts
     public const string HtmxRequestHeader = "HX-Request";
     public const string CommunityBallotElement = "community-ballot";
     public const string CommunityVotePage = "/community/vote";
+
+    public const int LiveRefreshInSeconds = 3;
+    public const int ServerListRefreshInSeconds = 10;
+    public const int RemoteCommandLogSize = 100;
+    public const int PlayerConnectionCleanupIntervalInHours = 24;
+    public const string SteamConnectUrl = "steam://connect/";
+    public const string LiveTimeFormat = "HH:mm";
+    public const string EmptyAvatarUrl = "/imgs/avatar-empty.png";
 }

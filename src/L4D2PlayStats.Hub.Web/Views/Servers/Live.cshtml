@@ -1,0 +1,46 @@
+@model LiveServerViewModel
+@{
+    var server = Model.Card.Server;
+    ViewData["Title"] = server.Name;
+}
+<link rel="stylesheet" href="~/css/live.css" asp-append-version="true">
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <h1 class="h3 mb-0">@server.Name</h1>
+    @if (Model.Servers.Count > 1)
+    {
+        <select class="form-select form-select-sm w-auto" id="server-picker" aria-label="@L["Server"]" onchange="location.href = '/servers/' + this.value">
+            @foreach (var other in Model.Servers)
+            {
+                <option value="@other.PublicId" selected="@(other.Id == server.Id)">@other.Name</option>
+            }
+        </select>
+    }
+</div>
+
+<partial name="_Header" model="Model.Card"/>
+<partial name="_Players" model="Model.Card"/>
+
+<div class="row g-4">
+    <div class="@(Model.Chat == null ? "col-12" : "col-lg-8")">
+        <div class="card">
+            <div class="card-header">@L["Events and chat"]</div>
+            <div class="card-body">
+                <div id="feed" class="live-feed">
+                    <partial name="_FeedItems" model="Model.Feed"/>
+                </div>
+                <partial name="_FeedPoller" model="Model.Feed"/>
+            </div>
+        </div>
+    </div>
+    @if (Model.Chat != null)
+    {
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">@L["Chat with the server"]</div>
+                <div class="card-body">
+                    <partial name="_ChatForm" model="Model.Chat"/>
+                </div>
+            </div>
+        </div>
+    }
+</div>

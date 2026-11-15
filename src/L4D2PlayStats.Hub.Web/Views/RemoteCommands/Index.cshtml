@@ -1,0 +1,76 @@
+@using L4D2PlayStats.Hub.Web.Models.Live
+@model RemoteCommandsViewModel
+@{
+    ViewData["Title"] = L["Remote commands"].Value;
+}
+<h1 class="h3">@L["Remote commands"]</h1>
+<partial name="_AdminNav"/>
+
+@if (TempData["Queued"] is string queued)
+{
+    <div class="alert alert-success">@L["Command queued. The game server runs it on its next check."] <code>@queued</code></div>
+}
+
+<div class="card mb-4" style="max-width: 760px;">
+    <div class="card-header">@L["Send a command to a game server"]</div>
+    <div class="card-body">
+        @if (Model.Servers.Count == 0)
+        {
+            <div class="text-body-secondary">@L["No game server available yet."]</div>
+        }
+        else
+        {
+            <form method="post" asp-antiforgery="true" action="/admin/remote-commands">
+                <div class="mb-3">
+                    <label class="form-label" for="serverId">@L["Server"]</label>
+                    <select class="form-select" id="serverId" name="serverId" required>
+                        @foreach (var server in Model.Servers)
+                        {
+                            <option value="@server.Id">@server.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="command">@L["Command"]</label>
+                    <input class="form-control font-monospace" id="command" name="command" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ServerCommandMaxLength" placeholder="sm_forcestart">
+                    <div class="form-text">@L["SourceMod commands only: sm_command, !command or /command. Every command is recorded below."]</div>
+                </div>
+                <button class="btn btn-primary" type="submit">@L["Send"]</button>
+            </form>
+        }
+    </div>
+</div>
+
+<h2 class="h5">@L["Audit log"]</h2>
+@if (Model.Logs.Count == 0)
+{
+    <div class="alert alert-secondary">@L["No command was sent yet."]</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>@L["When"]</th>
+                <th>@L["Administrator"]</th>
+                <th>@L["Server"]</th>
+                <th>@L["Command"]</th>
+                <th>@L["Delivered"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td class="text-nowrap">@log.CreatedAtUtc.ToString("u")</td>
+                    <td><a href="@SteamIds.ProfileUrl(log.AdministratorCommunityId)" rel="noopener" target="_blank">@(log.AdministratorName ?? log.AdministratorCommunityId.ToString())</a></td>
+                    <td>@log.GameServerName</td>
+                    <td><code>@log.Command</code></td>
+                    <td class="text-nowrap">@(log.DeliveredAtUtc?.ToString("u") ?? "-")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,8 +1,9 @@
-@inject ISettingsService CommunitySettings
+@inject ISettingsService Settings
 @{
     var path = Context.Request.Path.Value ?? string.Empty;
+    var modules = await Settings.GetAsync<ModuleSettings>();
 
-    var items = new (string Url, string Title)[]
+    var items = new List<(string Url, string Title)>
     {
         ("/admin", L["Overview"].Value),
         ("/admin/servers", L["Game servers"].Value),
@@ -13,10 +14,17 @@
         ("/admin/administrators", L["Administrators"].Value)
     };
 
-    var communityModules = await CommunitySettings.GetAsync<ModuleSettings>();
+    if (modules.IsEnabled(HubModule.CommunityRanking))
+        items.Add(("/admin/community", L["Community ranking"].Value));
 
-    if (communityModules.IsEnabled(HubModule.CommunityRanking))
-        items = [.. items, ("/admin/community", L["Community ranking"].Value)];
+    if (modules.IsEnabled(HubModule.SiteChat))
+        items.Add(("/admin/chat-bans", L["Chat bans"].Value));
+
+    if (modules.IsEnabled(HubModule.RemoteCommands))
+        items.Add(("/admin/remote-commands", L["Remote commands"].Value));
+
+    if (modules.IsEnabled(HubModule.LiveServer))
+        items.Add(("/admin/player-connections", L["Player connections"].Value));
 }
 <ul class="nav nav-pills flex-wrap mb-4">
     @foreach (var item in items)

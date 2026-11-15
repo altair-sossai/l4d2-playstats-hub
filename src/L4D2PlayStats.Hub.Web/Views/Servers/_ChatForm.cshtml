@@ -1,0 +1,51 @@
+@model SiteChatFormViewModel
+@{
+    var error = Model.Result?.Error switch
+    {
+        SiteChatError.EmptyMessage => L["Write a message first."].Value,
+        SiteChatError.MessageTooLong => L["The message cannot be longer than {0} characters.", L4D2PlayStats.Hub.Core.AppConsts.SiteChatMaxMessageLength].Value,
+        SiteChatError.RateLimited => L["Too many messages. Please wait a moment."].Value,
+        SiteChatError.Banned => L["You have been banned from the chat."].Value,
+        SiteChatError.Disabled => L["The chat is turned off."].Value,
+        _ => null
+    };
+
+    var returnUrl = $"/servers/{Model.PublicId}";
+}
+<div id="chat-form">
+    @if (!Model.SignedIn)
+    {
+        <p class="small text-body-secondary mb-2">@L["Sign in to send messages to the players on the server."]</p>
+        <a class="btn btn-outline-light btn-sm" href="/login?returnUrl=@Uri.EscapeDataString(returnUrl)">
+            <img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam"]
+        </a>
+    }
+    else if (Model.Ban != null)
+    {
+        <div class="alert alert-danger mb-0">
+            @L["You have been banned from the chat."]
+            @if (!string.IsNullOrWhiteSpace(Model.Ban.Reason))
+            {
+                <div class="small">@L["Reason"]: @Model.Ban.Reason</div>
+            }
+        </div>
+    }
+    else
+    {
+        <form method="post" asp-antiforgery="true" action="/servers/@Model.PublicId/chat" hx-post="/servers/@Model.PublicId/chat" hx-target="#chat-form" hx-swap="outerHTML">
+            @if (error != null)
+            {
+                <div class="alert alert-danger py-2">@error</div>
+            }
+            else if (Model.Result?.Success == true)
+            {
+                <div class="alert alert-success py-2">@L["Message sent."]</div>
+            }
+            <div class="mb-2">
+                <label class="form-label small" for="message">@L["Your message appears in the game chat."]</label>
+                <textarea class="form-control" id="message" name="message" rows="3" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.SiteChatMaxMessageLength" required>@Model.Message</textarea>
+            </div>
+            <button class="btn btn-primary btn-sm" type="submit">@L["Send"]</button>
+        </form>
+    }
+</div>

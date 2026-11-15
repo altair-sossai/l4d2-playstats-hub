@@ -1,0 +1,57 @@
+@model ServerListViewModel
+<div id="server-cards" hx-get="/servers" hx-trigger="every @(AppConsts.ServerListRefreshInSeconds)s" hx-swap="outerHTML">
+    @if (Model.Servers.Count == 0)
+    {
+        <div class="alert alert-secondary">@L["No game server available yet."]</div>
+    }
+    <div class="row g-3">
+        @foreach (var card in Model.Servers)
+        {
+            var configuration = card.Snapshot.Configuration;
+            var scoreboard = card.Snapshot.Scoreboard;
+
+            <div class="col-md-6 col-xl-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h2 class="h5 mb-1"><a class="text-decoration-none stretched-link" href="/servers/@card.Server.PublicId">@card.Server.Name</a></h2>
+                            <span class="small text-nowrap"><span class="status-dot status-@(card.Online ? "Online" : "Offline")"></span>@L[card.Online ? "Online" : "Offline"]</span>
+                        </div>
+                        <div class="small text-body-secondary mb-3">
+                            @if (!string.IsNullOrEmpty(card.Campaign))
+                            {
+                                <span>@card.Campaign · </span>
+                            }
+                            <span>@(string.IsNullOrEmpty(card.Map) ? L["Unknown map"].Value : card.Map)</span>
+                            @if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
+                            {
+                                <span>· @configuration.Name</span>
+                            }
+                            @if (configuration is { TeamSize: > 0 })
+                            {
+                                <span>· @(configuration.TeamSize)v@(configuration.TeamSize)</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="score">
+                                <span class="@(scoreboard?.IsSurvivorsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.SurvivorScore ?? 0)</span>
+                                <span class="text-body-secondary">×</span>
+                                <span class="@(scoreboard?.IsInfectedsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.InfectedScore ?? 0)</span>
+                            </div>
+                            <div class="text-end small">
+                                <div>@card.Snapshot.PlayerCount @L["players"]</div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (card.ConnectUrl != null)
+                    {
+                        <div class="card-footer position-relative" style="z-index: 2;">
+                            <a class="btn btn-sm btn-outline-primary" href="@card.ConnectUrl">@L["Connect"]</a>
+                            <code class="ms-2 small">@card.Server.Address</code>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,81 @@
+.live-feed {
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.feed-item {
+    padding: .3rem 0;
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+    font-size: .925rem;
+}
+
+.feed-item:last-child {
+    border-bottom: 0;
+}
+
+.feed-time {
+    color: var(--bs-secondary-color);
+    font-variant-numeric: tabular-nums;
+    margin-right: .4rem;
+}
+
+.feed-stars,
+.feed-highlight {
+    color: var(--hub-win);
+    font-weight: 600;
+}
+
+.feed-player {
+    color: var(--hub-gold);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.feed-action {
+    color: var(--bs-info);
+    font-weight: 600;
+}
+
+.feed-danger {
+    color: var(--hub-loss);
+    font-weight: 600;
+}
+
+.team-Survivor {
+    color: var(--bs-info);
+}
+
+.team-Infected {
+    color: var(--hub-loss);
+}
+
+.team-External {
+    color: var(--hub-gold);
+}
+
+.team-Spectator {
+    color: var(--bs-secondary-color);
+}
+
+.live-player {
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+.live-player:last-child {
+    border-bottom: 0;
+}
+
+.live-player.dead .avatar {
+    filter: grayscale(100%);
+    opacity: .6;
+}
+
+.health-temporary {
+    opacity: .5;
+}
+
+.live-stat {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
