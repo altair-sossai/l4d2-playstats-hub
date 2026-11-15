@@ -4,39 +4,70 @@
 
 Uma única aplicação web auto-hospedada para servidores competitivos de Left 4 Dead 2: ranking, estatísticas de partidas, visualização do servidor ao vivo, loja de skins de armas e um ranking da comunidade, junto com os plugins SourceMod que a alimentam.
 
-> **Status: início do desenvolvimento.** Nada neste repositório pode ser instalado ainda. Os repositórios existentes listados abaixo continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) e seguem como a fonte da verdade até a migração terminar.
+> **Status: em desenvolvimento, ainda não lançado.** A aplicação, os plugins e o instalador estão neste repositório e passam nos testes. Nenhuma versão foi publicada, e os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
 
 ## Conteúdo
 
 - [Por que este projeto existe](#por-que-este-projeto-existe)
-- [O que ele vai incluir](#o-que-ele-vai-incluir)
+- [O que ele faz](#o-que-ele-faz)
+- [Instalação](#instalação)
+- [Como tudo se encaixa](#como-tudo-se-encaixa)
 - [O que fica fora deste repositório](#o-que-fica-fora-deste-repositório)
 - [Repositórios que estão sendo consolidados](#repositórios-que-estão-sendo-consolidados)
-- [Roadmap](#roadmap)
 - [Documentação](#documentação)
 - [Licença](#licença)
 
 ## Por que este projeto existe
 
-O sistema começou pequeno e cresceu até virar vários repositórios: um parser de estatísticas, uma API, um site com loja de skins e um conjunto de plugins para o servidor de jogo. Rodá-lo hoje exige recursos do Azure, linhas de armazenamento criadas à mão e segredos espalhados por três projetos.
+O sistema começou pequeno e cresceu até virar vários repositórios: um parser de estatísticas, uma API, um site com loja de skins e um conjunto de plugins para o servidor de jogo. Rodá-lo exigia recursos do Azure, linhas de armazenamento criadas à mão e segredos espalhados por três projetos.
 
 Este repositório reúne a lógica para que qualquer dono de servidor possa rodar o mesmo sistema de ranking e estatísticas com uma aplicação, um arquivo de banco de dados e um comando de instalação.
 
-A migração acontece passo a passo. Cada funcionalidade só vem para cá quando está pronta, e os repositórios antigos são arquivados no final.
+## O que ele faz
 
-## O que ele vai incluir
+- **Ranking e estatísticas.** Cada partida jogada nos seus servidores vira ranking, com patentes, detalhes das partidas e uma página para cada jogador mostrando resultados, médias e com quem e contra quem ele joga.
+- **Temporadas que você configura.** Você escolhe quantos meses dura uma temporada. O ranking recomeça a cada temporada, e as temporadas passadas continuam navegáveis: ranking, partidas e jogadores.
+- **Vários servidores de jogo, um único site.** Cada servidor tem a própria chave. Os resultados de um jogador se somam entre todos eles.
+- **Modos de jogo que você configura.** Você escolhe quais modos contam para o ranking e quantos mapas formam uma partida ranqueada.
+- **Servidor ao vivo.** Placar, jogadores, eventos e chat da partida em andamento, para cada servidor.
+- **Loja de skins de armas.** Os jogadores ganham estrelas com MVPs e as gastam em skins.
+- **Ranking da comunidade.** Os jogadores votam em pares de jogadores, e os votos formam um segundo ranking.
+- **Páginas para dentro do jogo.** O `!ranking` abre uma versão leve do ranking, feita para o navegador do próprio jogo.
+- **Módulos.** O administrador liga ou desliga cada um desses recursos.
+- **Configuração guiada.** Um assistente de primeira execução e uma página de status que mostra se cada servidor de jogo está conectado e o que está faltando.
+- **Três idiomas.** Inglês, português e espanhol.
+- **Banco de dados à sua escolha.** SQLite por padrão, sem servidor para instalar. SQL Server, PostgreSQL e MySQL são suportados.
 
-- **Uma única aplicação web** (ASP.NET Core) que é o site, a API usada pelos plugins do servidor de jogo, a área administrativa e as tarefas agendadas.
-- **Banco de dados relacional via Entity Framework Core.** O SQLite é o padrão, então uma instalação nova não precisa de servidor de banco de dados. SQL Server, PostgreSQL e MySQL estão planejados como opções.
-- **Módulos que o administrador liga ou desliga:** ranking e estatísticas, visualização do servidor ao vivo, loja de skins de armas, ranking da comunidade, chat do site.
-- **Vários servidores de jogo em um único back-end.** Cada servidor tem a sua própria chave, e as estatísticas de cada jogador se somam entre todos os servidores.
-- **Temporadas configuráveis.** O administrador define quantos meses dura uma temporada, e as temporadas passadas continuam navegáveis: ranking, partidas e jogadores.
-- **Modos de jogo configuráveis.** O administrador escolhe quais modos contam para o ranking e o tamanho mínimo de uma partida competitiva.
-- **Ranking da comunidade.** Os jogadores votam em pares de jogadores, e os votos formam um segundo ranking ao lado do ranking de estatísticas.
-- **Assistente de configuração e status dos servidores.** Um guia de primeira execução conduz a configuração, e cada servidor de jogo cadastrado mostra se está conectado e configurado corretamente.
-- **Plugins SourceMod** que enviam as estatísticas, transmitem a partida ao vivo, mostram o ranking dentro do jogo e aplicam as skins de armas.
-- **Implantação simples.** Um script de instalação para uma VPS Linux, com um guia para o Azure e uma imagem Docker como alternativas.
-- **Testes automatizados**, com o back-end como prioridade.
+## Instalação
+
+Em uma VPS Linux, um único comando instala o site:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
+```
+
+Ele imprime o endereço do site e um código de configuração. Abra o endereço, cole o código, entre com a Steam, e o site guia você pelo resto.
+
+Esse comando baixa uma versão publicada, então funciona a partir do primeiro lançamento. Até lá, a aplicação pode ser [executada a partir do código-fonte](CONTRIBUTING.pt.md#como-rodar).
+
+| Guia | Para |
+|---|---|
+| [Instalando em uma VPS Linux](docs/install-linux.pt.md) | O jeito recomendado. |
+| [Instalando com Docker](docs/install-docker.pt.md) | Se você já usa contêineres. |
+| [Instalando no Azure](docs/install-azure.pt.md) | Uma máquina virtual ou o App Service. |
+| [Conectando um servidor de jogo](docs/game-server.pt.md) | Os plugins e as configurações deles. |
+
+## Como tudo se encaixa
+
+```text
+ servidor de jogo 1 ─┐
+ servidor de jogo 2 ─┼─ plugins ──>  L4D2 PlayStats Hub  ──>  visitantes, em um navegador
+ servidor de jogo N ─┘               (site + API + jobs)  ──>  jogadores, dentro do jogo
+                                             │
+                                     um banco de dados
+```
+
+Os plugins enviam ao site o arquivo de estatísticas de cada mapa e a partida ao vivo. O site armazena os arquivos, monta as partidas e os rankings a partir deles e serve as páginas.
 
 ## O que fica fora deste repositório
 
@@ -47,44 +78,27 @@ A migração acontece passo a passo. Cada funcionalidade só vem para cá quando
 
 ## Repositórios que estão sendo consolidados
 
-| Repositório | O que é hoje | O que acontece com ele |
+A migração acontece passo a passo. Os repositórios antigos são arquivados quando ela terminar.
+
+| Repositório | O que é | O que acontece com ele |
 |---|---|---|
 | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | API em Azure Functions que armazena os arquivos de estatísticas e calcula partidas, ranking e estrelas. | Substituído por esta aplicação e depois arquivado. |
 | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Site com ranking, estatísticas, página do servidor ao vivo e loja de skins de armas. | Substituído por esta aplicação e depois arquivado. |
-| [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Configuração de servidor competitivo com plugins personalizados. | Os plugins abaixo vêm para cá. |
-
-Plugins que saem do `l4d2-zone-server`:
-
-| Plugin | O que faz |
-|---|---|
-| `l4d2_playstats_sync` | Envia os arquivos de estatísticas gravados pelo `l4d2_playstats`. |
-| `l4d2_gameinfo_sync` | Transmite a partida ao vivo: placar, jogadores, eventos e chat. |
-| `l4d2_ranking` | Abre o ranking dentro do jogo. |
-| `l4d2_show_patent_icon` | Mostra o ícone da patente de cada jogador dentro do jogo. |
-| `l4d2_weapon_skins` | Aplica as skins de armas que os jogadores possuem. |
-
-O `l4d2_playstats` em si, que grava os arquivos de estatísticas, vem do [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) e não é copiado para cá.
-
-## Roadmap
-
-1. Fundação: esqueleto da aplicação, banco de dados, configurações e módulos, login com a Steam, assistente de configuração, cadastro de servidores de jogo.
-2. Envio de estatísticas, partidas, temporadas e ranking.
-3. Páginas do site, com filtros de temporada e de servidor.
-4. Visualização do servidor ao vivo para vários servidores.
-5. Loja de skins de armas.
-6. Plugins do servidor de jogo.
-7. Ranking da comunidade.
-8. Script de instalação, guias de implantação e tutoriais.
-9. Migração de dados e arquivamento dos repositórios antigos.
-
-O plano completo, com todas as decisões tomadas até agora, está em [docs/roadmap.pt.md](docs/roadmap.pt.md).
+| [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Configuração de servidor competitivo com plugins personalizados. | Os plugins do PlayStats dele agora ficam em [plugins/](plugins/README.pt.md). |
 
 ## Documentação
 
 | Documento | Conteúdo |
 |---|---|
-| [docs/roadmap.pt.md](docs/roadmap.pt.md) | Arquitetura, decisões, fases e perguntas em aberto. |
-| [docs/in-game-browser.pt.md](docs/in-game-browser.pt.md) | O que o navegador embutido no Left 4 Dead 2 suporta e o que isso significa para o front-end. |
+| [docs/install-linux.pt.md](docs/install-linux.pt.md) | Instalação, atualização e backup em uma VPS Linux. |
+| [docs/install-docker.pt.md](docs/install-docker.pt.md) | Como rodar a imagem publicada. |
+| [docs/install-azure.pt.md](docs/install-azure.pt.md) | Como rodar no Azure. |
+| [docs/game-server.pt.md](docs/game-server.pt.md) | Como conectar um servidor de jogo, passo a passo. |
+| [docs/databases.pt.md](docs/databases.pt.md) | Como usar SQL Server, PostgreSQL ou MySQL. |
+| [plugins/README.pt.md](plugins/README.pt.md) | Todos os plugins, configurações e comandos. |
+| [docs/roadmap.pt.md](docs/roadmap.pt.md) | Arquitetura, decisões, o que está pronto e o que está em aberto. |
+| [docs/in-game-browser.pt.md](docs/in-game-browser.pt.md) | O que o navegador dentro do jogo suporta. |
+| [CONTRIBUTING.pt.md](CONTRIBUTING.pt.md) | Como o código está organizado e as regras para mudanças. |
 
 O inglês é o idioma padrão deste repositório. Todo documento também tem uma versão em português (`.pt.md`) e uma em espanhol (`.es.md`).
 
@@ -92,4 +106,4 @@ O inglês é o idioma padrão deste repositório. Todo documento também tem uma
 
 A aplicação é distribuída sob a [Licença MIT](LICENSE). Qualquer pessoa pode usar, alterar e compartilhar, inclusive comercialmente, desde que o aviso de copyright seja mantido.
 
-Os plugins SourceMod, quando chegarem a `plugins/`, serão distribuídos sob GPL-3.0, porque o SourceMod exige isso dos plugins compilados com os seus includes.
+Os plugins SourceMod em [plugins/](plugins/) são distribuídos sob a [GPL-3.0](plugins/LICENSE), porque o SourceMod exige isso dos plugins compilados com os seus includes.

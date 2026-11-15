@@ -2,12 +2,12 @@
 
 🌐 [English](roadmap.md) | [Português](roadmap.pt.md) | **Español**
 
-El plan para traer el sistema L4D2 PlayStats a este repositorio: qué existe hoy, el diseño objetivo, las decisiones ya tomadas, las fases y lo que sigue abierto.
+El plan para traer el sistema L4D2 PlayStats a este repositorio: de dónde viene, el diseño, las decisiones tomadas, qué está hecho y qué sigue abierto.
 
 ## Contenido
 
-- [Situación actual](#situación-actual)
-- [Diseño objetivo](#diseño-objetivo)
+- [De dónde viene](#de-dónde-viene)
+- [Diseño](#diseño)
 - [Decisiones](#decisiones)
 - [Módulos](#módulos)
 - [Servidores de juego](#servidores-de-juego)
@@ -15,212 +15,200 @@ El plan para traer el sistema L4D2 PlayStats a este repositorio: qué existe hoy
 - [Modos de juego](#modos-de-juego)
 - [Ranking de la comunidad](#ranking-de-la-comunidad)
 - [Tienda de skins de armas](#tienda-de-skins-de-armas)
+- [Servidor en vivo](#servidor-en-vivo)
 - [Asistente de configuración y estado del servidor](#asistente-de-configuración-y-estado-del-servidor)
 - [Front-end](#front-end)
 - [Pruebas](#pruebas)
 - [Despliegue](#despliegue)
 - [Migración de datos](#migración-de-datos)
-- [Fases](#fases)
+- [Progreso](#progreso)
 - [Preguntas abiertas](#preguntas-abiertas)
 
-## Situación actual
+## De dónde viene
 
-| Pieza | Repositorio | Cómo funciona hoy |
+| Pieza | Repositorio | Cómo funcionaba |
 |---|---|---|
 | Analizador de estadísticas | [l4d2-playstats](https://github.com/altair-sossai/l4d2-playstats) | Paquete NuGet que lee los archivos que escribe `l4d2_playstats`. |
-| API | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions. Guarda los archivos sin procesar en Azure Table Storage y, a partir de ellos, reconstruye las partidas y el ranking en cada solicitud. |
-| Sitio web | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | ASP.NET Core MVC. Lee de la API, guarda la tienda de skins en Azure Table Storage y mantiene la partida en vivo en memoria. |
-| Plugins | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Cinco plugins de SourceMod se comunican con la API y con el sitio web. |
+| API | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions. Guardaba los archivos sin procesar en Azure Table Storage y, a partir de ellos, reconstruía las partidas y el ranking en cada solicitud. |
+| Sitio web | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | ASP.NET Core MVC. Leía de la API, guardaba la tienda de skins en Azure Table Storage y mantenía la partida en vivo en memoria. |
+| Plugins | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Cinco plugins de SourceMod se comunicaban con la API y con el sitio web, con direcciones y secretos distintos. |
 
-Limitaciones que este proyecto elimina:
+Limitaciones de esa configuración, que este proyecto elimina:
 
-- La duración de la temporada está fija en dos meses, en dos lugares distintos.
-- Las temporadas pasadas existen solo como listas guardadas de los 100 mejores, así que sus partidas no se pueden consultar.
-- El sitio web asume un solo servidor de juego.
-- Solo cuentan las partidas 4v4 con al menos dos mapas, y los modos de juego aceptados son un patrón escrito a mano en una fila de almacenamiento.
-- Los mapas que no están en una lista fija de campañas se descartan.
-- Instalarlo requiere una suscripción de Azure, filas de almacenamiento creadas a mano y secretos en tres proyectos.
+- La duración de la temporada estaba fija en dos meses, en dos lugares distintos.
+- Las temporadas pasadas existían solo como listas guardadas de los 100 mejores, así que sus partidas no se podían consultar.
+- El sitio web asumía un solo servidor de juego.
+- Solo contaban las partidas 4v4 con al menos dos mapas, y los modos de juego aceptados eran un patrón escrito a mano en una fila de almacenamiento.
+- Los mapas que no estaban en una lista fija de campañas se descartaban.
+- Instalarlo requería una suscripción de Azure, filas de almacenamiento creadas a mano y secretos en tres proyectos.
 
-## Diseño objetivo
+## Diseño
 
 Una sola aplicación ASP.NET Core que es el sitio web, la API para los plugins, el área de administración y el programador de tareas.
 
-| Carpeta | Contenido |
-|---|---|
-| `src/` | La aplicación, la lógica de dominio y la capa de datos con Entity Framework Core, con un proyecto de migraciones por cada base de datos. |
-| `plugins/` | Fuentes de SourceMod, includes, traducciones y archivos de configuración. |
-| `deploy/` | Script de instalación, definición del servicio, proxy inverso y archivos de Docker. |
-| `docs/` | Guías en inglés, portugués y español. |
+- **El archivo de estadísticas sin procesar se sigue guardando** como fuente de verdad. Las partidas, los mapas y los resultados por jugador son tablas construidas a partir de él, y un comando de reprocesamiento las reconstruye cuando cambian las reglas.
+- **Los ajustes viven en la base de datos** y se editan en el área de administración. Fuera de ella solo se definen el proveedor de base de datos, la cadena de conexión y la carpeta de datos.
+- **Una sola instancia del back-end** atiende a todos los servidores de juego. Ejecutar varias instancias queda fuera del alcance.
+- **La partida en vivo se mantiene en memoria**, nunca en la base de datos, y se guarda por separado para cada servidor de juego.
+- **Cada funcionalidad es un módulo** en el código y, donde tiene sentido, algo que el administrador puede desactivar.
 
-Puntos principales:
-
-- **El archivo de estadísticas sin procesar se sigue guardando** como fuente de verdad. Las partidas, los mapas y los resultados por jugador pasan a ser tablas, así que los rankings son consultas a la base de datos, y un comando de reprocesamiento puede aplicar reglas nuevas a archivos antiguos.
-- **La configuración vive en la base de datos** y se edita en el área de administración. En un archivo de configuración solo quedan el proveedor de base de datos y la cadena de conexión.
-- **Una sola instancia del back-end** atiende a todos los servidores de juego. Ejecutar varias instancias queda fuera del alcance por ahora.
-- **La partida en vivo se mantiene en memoria**, nunca en la base de datos. Se guarda por separado para cada servidor de juego.
+[CONTRIBUTING.es.md](../CONTRIBUTING.es.md) describe las carpetas y las reglas de código.
 
 ## Decisiones
 
 | Tema | Decisión |
 |---|---|
-| Rankings | Dos rankings. El ranking de estadísticas es el principal y es la página de inicio del sitio. El ranking de la comunidad es secundario. |
-| Alcance de los rankings | Ambos son globales. Los resultados de un jugador en todos los servidores de juego se suman. |
+| Rankings | Dos rankings. El ranking de estadísticas es el principal y es lo primero que muestra el sitio. El ranking de la comunidad es secundario. |
+| Alcance de los rankings | Los dos son globales. Los resultados de un jugador en todos los servidores de juego se suman. |
 | Duración de la temporada | La define el administrador, en meses. Un cambio se aplica a partir de la temporada siguiente. |
-| Temporadas pasadas | Se pueden consultar el ranking, las partidas y los jugadores de cualquier temporada pasada. |
-| Cambios de reglas | Se aplican de ahí en adelante. El administrador puede reprocesar manualmente. |
-| Mínimos | El número mínimo de mapas en una partida y el número mínimo de partidas para aparecer en el ranking son ambos configurables. |
+| Límites de la temporada | Siguen el reloj del servidor de juego que envió cada archivo, como hacía el sistema anterior. |
+| Temporadas pasadas | Se pueden consultar el ranking, las partidas y los jugadores de cualquier temporada pasada, así como de un año completo y de todo el historial. |
+| Cambios de reglas | Se aplican de ahí en adelante. El administrador puede reprocesar todas las partidas. |
+| Mínimos | El número mínimo de mapas en una partida y el número mínimo de partidas para aparecer en el ranking son ajustes. |
+| Mapas desconocidos | Una partida en mapas que no están en la lista de campañas se conserva. Un ajuste lo desactiva. |
 | Base de datos | Siempre relacional, mediante Entity Framework Core. SQLite es la opción predeterminada. SQL Server, PostgreSQL y MySQL son opciones. |
-| Back-end | Una sola instancia, sin importar la cantidad de servidores de juego. |
+| Versión de Entity Framework Core | 10, la versión con soporte a largo plazo. Los proveedores de PostgreSQL y MySQL todavía no están disponibles para la versión 11. |
+| Back-end | Una sola instancia, sea cual sea el número de servidores de juego. |
 | Partida en vivo | Solo en memoria, separada por servidor de juego. |
-| Reembolso de skins | Reembolsar las skins al final de una temporada es una opción de configuración, activada por defecto. |
-| Catálogo de skins | El catálogo y las miniaturas viven en el repositorio de assets, y la aplicación los importa. |
-| Plugins | Apuntan a servidores basados en L4D2 Competitive Rework. |
-| Comandos remotos | El envío de comandos desde el sitio a un servidor de juego se incluye como módulo. |
+| Reembolso de skins | Reembolsar las skins al final de una temporada es un ajuste, activado de forma predeterminada. |
+| Catálogo de skins | El catálogo y las imágenes viven en el repositorio de assets, y la aplicación importa el catálogo. |
+| Plugins | Están pensados para servidores basados en L4D2 Competitive Rework. Una sola dirección y un solo token para todos. |
+| Comandos remotos | Enviar comandos desde el sitio a un servidor de juego es un módulo, desactivado de forma predeterminada, con un registro de auditoría. |
 | Anti-cheat | Reservado como módulo, desactivado, sin implementación por ahora. |
+| Front-end | Dos capas: el sitio principal para navegadores actuales, y unas pocas páginas hechas para el navegador que está dentro del juego. |
+| Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. |
+| Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única como Angular si una pantalla lo necesita, pero no se usa. |
 | Docker | Se ofrece como alternativa al script de instalación. |
-| Datos antiguos | Se importan y se recalculan. No hay retrocompatibilidad con el almacenamiento antiguo. |
+| Datos antiguos | Se importan y se recalculan. No hay compatibilidad hacia atrás con el almacenamiento antiguo. |
 | Idiomas | El inglés es el predeterminado. Las versiones en portugués y en español se derivan de él. |
+| Organización del código | Un tipo por archivo, agrupados por módulo y luego por tipo. |
 | Pruebas | Extensas en el back-end. Pruebas de front-end solo donde valgan la pena. |
-| Front-end | Dos capas. El sitio principal apunta a navegadores actuales. Un conjunto separado de páginas respeta los límites del navegador del juego. |
-| Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. Todo lo demás está en el sitio principal. |
-| Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única, como Angular, si alguna pantalla lo necesita, y no se usa al principio. |
-| Licencia | MIT para la aplicación. Los plugins son GPL-3.0, como lo exige SourceMod. |
+| Licencia | MIT para la aplicación. Los plugins son GPL-3.0, como exige SourceMod. |
 
 ## Módulos
 
-El núcleo está siempre activo: registro de servidores de juego, subida de estadísticas, inicio de sesión con Steam y el área de administración.
+El núcleo siempre está activado: registro de servidores de juego, subida de estadísticas, inicio de sesión con Steam y el área de administración.
 
-| Módulo | Contenido |
-|---|---|
-| Ranking y estadísticas | Ranking, partidas, jugadores, patentes, sanciones e historial de temporadas. |
-| Servidor en vivo | Marcador, jugadores, eventos y chat de la partida en curso. |
-| Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. |
-| Ranking de la comunidad | Votación por pares y su ranking. |
-| Chat del sitio | Chat entre el sitio y el juego, con baneos. |
-| Comandos remotos | Comandos enviados desde el sitio a un servidor de juego, con un registro de auditoría. |
-| Anti-cheat | Reservado. |
+| Módulo | Contenido | Predeterminado |
+|---|---|---|
+| Ranking y estadísticas | Ranking, partidas, jugadores, patentes, sanciones e historial de temporadas. | Activado |
+| Servidor en vivo | Marcador, jugadores y eventos de la partida en curso. | Activado |
+| Chat del sitio | Chat entre el sitio y el juego, con baneos. Necesita el servidor en vivo. | Desactivado |
+| Comandos remotos | Comandos enviados desde el sitio a un servidor de juego. Necesita el servidor en vivo. | Desactivado |
+| Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. Necesita el ranking. | Desactivado |
+| Ranking de la comunidad | Votación por pares y su ranking. | Desactivado |
+| Anti-cheat | Reservado. | Desactivado |
 
-Un módulo desactivado desaparece del menú y sus rutas responden como no encontradas. La tienda de skins depende del módulo de estadísticas, porque las estrellas salen de los resultados de las partidas.
+Un módulo desactivado desaparece del menú y sus páginas responden como no encontradas.
 
 ## Servidores de juego
 
-- El administrador registra cada servidor de juego y recibe un identificador y una clave para él. La clave se guarda con hash.
-- Los plugins usan una sola dirección y un solo token con la forma `id:key`. El token le indica al back-end qué servidor envió cada archivo, así que el formato del archivo de estadísticas no cambia.
-- Los archivos son únicos por servidor y por nombre de archivo.
-- La partida en vivo, el chat del sitio y la cola de comandos están separados por servidor. El sitio le permite al visitante elegir qué servidor ver.
+- El administrador registra cada servidor de juego y recibe un identificador y una clave. Solo se guarda un hash de la clave.
+- Los plugins usan una sola dirección y un solo token con la forma `identifier:key`. El token le dice al sitio qué servidor envió cada archivo, así que el formato del archivo de estadísticas no cambió.
+- Los archivos son únicos por servidor y nombre de archivo.
+- La partida en vivo, el chat del sitio y la cola de comandos están separados por servidor. El visitante elige qué servidor ver.
 
 ## Temporadas y rankings
 
-- Las temporadas son filas en la base de datos, creadas a partir de la duración configurada.
-- Un archivo con fecha anterior a la primera temporada crea las temporadas anteriores que necesita, usando la misma duración.
-- El ranking de estadísticas conserva la puntuación actual como valores predeterminados que el administrador puede editar: puntos por victoria, por derrota y por rage quit, y puntos extra por MVP.
+- Las temporadas son filas en la base de datos, creadas a partir de la duración configurada. Una temporada de dos meses empieza en enero, marzo, mayo y así sucesivamente.
+- Un archivo con fecha anterior a la primera temporada crea las temporadas anteriores que necesita.
+- La puntuación conserva los valores antiguos como predeterminados que el administrador puede editar: 85 por una victoria, -80 por una derrota, -150 por un rage quit, 8 y 6 por cada MVP. La experiencia nunca baja de cero.
 - Las sanciones pertenecen a una temporada.
+- Las partidas nunca cruzan un límite de temporada, un cambio de configuración ni un cambio de servidor de juego.
 
 ## Modos de juego
 
 El archivo de estadísticas trae el nombre visible de la configuración, como `ZoneMod v2.9.2b`, y el tamaño del equipo. No trae el nombre de la carpeta de la configuración.
 
-- Cada nombre de configuración recibido se registra automáticamente.
-- El administrador escribe reglas sobre esos nombres: un patrón de nombre que ignora la versión, los tamaños de equipo, si cuenta para el ranking y el número mínimo de mapas.
-- Las campañas pasan a ser una tabla editable, y un mapa que no esté en la tabla ya no se descarta.
+- Cada nombre de configuración recibido se registra automáticamente y se lista en el área de administración.
+- El administrador escribe reglas sobre esos nombres: un patrón donde `*` representa cualquier texto, el tamaño del equipo, si cuenta para el ranking y el número mínimo de mapas.
+- La primera regla que encaja con una partida decide. Una partida que no encaja con ninguna regla no cuenta.
+- Las campañas son una tabla editable, que se usa para saber qué mapas pertenecen a la misma partida.
 
 ## Ranking de la comunidad
 
-- El votante ve a dos jugadores con sus avatares de Steam y responde cuál es mejor.
-- Las respuestas son: izquierda, derecha, mismo nivel o "No conozco a uno de ellos".
-- Mismo nivel cuenta como empate en el cálculo. "No conozco" no cambia nada.
-- Para votar se requiere un número mínimo de partidas jugadas, contadas entre todas las temporadas. Es una opción de configuración, con 10 como valor predeterminado.
-- El número de votos por día está limitado por una opción de configuración. Los jugadores no pueden votar por sí mismos ni repetir un par.
-- Los candidatos son jugadores con partidas registradas.
-- El ranking no se reinicia con la temporada.
+- El votante ve a dos jugadores con sus avatares y responde cuál es mejor: izquierda, derecha, mismo nivel, o "no conozco" a uno o a los dos.
+- Mismo nivel cuenta como empate. "No conozco" no cambia nada y, de ahí en adelante, oculta a ese jugador para ese votante.
+- La puntuación es Elo, y no se reinicia con la temporada.
+- Para votar se necesita un número mínimo de partidas jugadas, contadas entre todas las temporadas: 10 de forma predeterminada.
+- Los votos por día están limitados: 20 de forma predeterminada. Los jugadores no pueden votar por sí mismos ni dos veces por el mismo par.
+- El sitio elige el par, prefiriendo a jugadores con los que el votante ha jugado o contra los que ha jugado, y acepta una respuesta solo para el par que ofreció.
 
 ## Tienda de skins de armas
 
-- Los jugadores ganan estrellas con los MVP y las gastan en skins.
-- Las compras, los regalos, los precios y las skins equipadas pasan de Azure Table Storage a la base de datos.
-- El reembolso de temporada sigue las mismas temporadas que el ranking, y el administrador puede desactivarlo.
+- Los jugadores ganan una estrella por cada MVP en partidas clasificatorias, a lo largo de todo su historial, y gastan las estrellas en skins.
+- El catálogo se importa desde un archivo del repositorio de assets. Las imágenes se cargan desde una dirección que define el administrador.
+- Al inicio de una temporada, las skins compradas antes se reembolsan y los regalos se conservan. El administrador puede desactivar el reembolso.
 - Los modelos, los materiales y las fotos se quedan en [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
+
+## Servidor en vivo
+
+- El servidor de juego envía la configuración, la ronda, el marcador, los jugadores, el chat y los eventos de la partida.
+- El sitio los muestra con unos segundos de retraso, como hacía el sitio anterior.
+- Las conexiones por dirección IP se guardan para señalar las cuentas que comparten una dirección. La dirección en sí nunca se muestra.
 
 ## Asistente de configuración y estado del servidor
 
-Asistente de primera ejecución, que se muestra una sola vez después de la instalación:
+El asistente de primera ejecución se ejecuta una sola vez, después de la instalación: el primer administrador inicia sesión con Steam usando un código que muestra el instalador, y luego elige los ajustes del sitio, los módulos y el primer servidor de juego.
 
-1. El primer administrador inicia sesión con Steam, usando un código que imprime el instalador.
-2. Nombre del sitio, idioma y clave de la Steam Web API.
-3. Módulos que se van a activar.
-4. Duración de la temporada y reglas iniciales de modos de juego.
-5. El primer servidor de juego.
-
-Asistente de servidor de juego, que se usa para el primer servidor y para cada uno que se agregue después:
-
-1. Nombre y dirección.
-2. Qué hay que instalar en el servidor de juego, con un enlace de descarga de los plugins.
-3. El bloque de configuración exacto que hay que pegar y el archivo donde va.
-4. Validación. La página espera y cambia a "conectado" cuando el servidor de juego responde.
-
-Es el servidor de juego el que llama al back-end, y no al revés. Eso funciona detrás de NAT y no requiere ninguna contraseña de RCON en el sitio. Cada servidor muestra uno de estos estados:
+Para cada servidor de juego, el sitio muestra las dos líneas que hay que pegar en su configuración y luego espera a que el servidor responda. El servidor de juego llama al sitio, y no al revés, lo que funciona detrás de NAT y no necesita contraseña de RCON.
 
 | Estado | Significado |
 |---|---|
 | En espera | Nunca se conectó. |
-| En línea | Llegó una señal en los últimos segundos. |
+| Conectado | Llegó una señal en los últimos segundos. |
 | Fuera de línea | Muestra cuándo se lo vio por última vez. |
-| Clave inválida | El identificador llegó con la clave incorrecta. |
+| Clave inválida | El identificador llegó con la clave equivocada. |
 
-Cada servidor tiene además una lista de verificación, con una sugerencia de corrección en cada punto que falla: conexión, versiones de los plugins, escritura de estadísticas habilitada, primer archivo de estadísticas recibido, llegada de datos en vivo y el plugin de skins cuando ese módulo está activo. Un comando de consola en el servidor de juego ejecuta la misma verificación desde ese lado.
+Una lista de verificación muestra qué se encontró: conexión, plugin de subida, escritura de estadísticas, primer archivo recibido, datos en vivo y el plugin de skins. El comando `sm_playstats_test` ejecuta la misma verificación desde la consola del servidor de juego.
 
 ## Front-end
 
-El navegador integrado en el juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
+El navegador que está dentro del juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
 
-El front-end tiene dos capas:
-
-- **Sitio principal.** Apunta a navegadores actuales: páginas renderizadas en el servidor con un framework CSS moderno y sin paso de compilación con Node. El área de administración se construye de la misma manera.
-- **Páginas del juego.** Un conjunto pequeño bajo su propia ruta, que es lo que abre el plugin. Respetan los límites de ese navegador y se sirven por HTTP sin cifrar.
-
-Las páginas del juego son de solo lectura y no requieren iniciar sesión:
-
-| Página | Contenido |
-|---|---|
-| Ranking | La temporada actual, con posición, patente y puntos. |
-| Resumen del jugador | Posición, puntos, victorias y derrotas, y progreso de patente del jugador que abrió el panel. El plugin pasa el identificador del jugador en la dirección. |
-| Últimas partidas | Una lista corta con equipos y marcadores. |
-
-La tienda de skins, el ranking de la comunidad, el servidor en vivo y el área de administración están solo en el sitio principal.
+- **Sitio principal.** Páginas renderizadas en el servidor con Bootstrap 5 y htmx, sin ningún paso de compilación con Node. El área de administración está hecha de la misma forma.
+- **Páginas dentro del juego.** Tres páginas de solo lectura bajo `/ingame`, sin scripts, que caben en el panel del juego. Una prueba falla si empiezan a usar algo que ese navegador no tiene.
 
 ## Pruebas
 
-- **Back-end, la prioridad.** Pruebas unitarias para el armado de partidas, la puntuación, las temporadas, las reglas de modos de juego, la calificación de la comunidad y la billetera de la tienda de skins. Pruebas de integración contra una base de datos SQLite real, y contra las demás bases de datos en la integración continua. Pruebas de endpoints para todo lo que llaman los plugins, para que el contrato con el servidor de juego no pueda romperse sin que nadie lo note.
-- **Plugins.** Cada plugin se compila en la integración continua.
-- **Front-end.** Solo pruebas de humo que comprueban que las páginas se renderizan, más una verificación de que las páginas dentro del juego se mantienen dentro de los límites del navegador antiguo.
+- **Back-end.** Pruebas unitarias para el armado de partidas, la puntuación, las temporadas, las reglas de modos de juego, la puntuación Elo y la tienda de skins. Pruebas a través de HTTP para cada página y para cada endpoint que llaman los plugins.
+- **Paridad.** Una prueba compara los rankings con una copia de los datos de producción. Coincide exactamente con la API antigua en las temporadas calculadas con las reglas actuales.
+- **Bases de datos.** Las mismas pruebas se ejecutan en SQLite, SQL Server, PostgreSQL y MySQL, y verifican que las migraciones de cada una coincidan con el modelo.
+- **Plugins.** Todos los plugins se compilan en cada cambio.
 
 ## Despliegue
 
-- **VPS Linux, el camino principal.** Un solo comando descarga un script de instalación. El script instala una compilación autocontenida, crea el servicio, configura HTTPS cuando se indica un dominio e imprime la dirección de configuración y el bloque de configuración para el servidor de juego. Se incluyen comandos de actualización y de respaldo.
-- **Azure.** Una guía para App Service con un contenedor. Ese servicio debe ejecutar una sola instancia, y ahí se recomienda SQL Server porque su disco persistente es un recurso compartido de red.
-- **Docker.** Una imagen para quienes la prefieran.
+- **VPS Linux.** Un solo comando instala una compilación autocontenida como servicio, con HTTPS opcional mediante Caddy, y muestra el código de configuración. Actualizar, hacer una copia de seguridad y restaurar son un solo comando cada uno.
+- **Docker.** Una imagen que se publica con cada versión.
+- **Azure.** Una máquina virtual con el instalador para Linux, o App Service con la imagen.
 
 ## Migración de datos
 
 Un programa de consola aparte, fuera de este repositorio, mueve los datos de producción una sola vez:
 
-- Lee los archivos de estadísticas sin procesar del almacenamiento antiguo y sube cada uno por el mismo endpoint que usa el plugin, así que todo se recalcula por el camino normal.
-- Las sanciones antiguas se borraban en cada cambio de temporada y no vuelven, así que el historial recalculado puede diferir un poco de las listas antiguas.
-- Los regalos de skins, las compras de la temporada actual, los precios y los baneos del chat se escriben en la nueva base de datos.
+- Lee los archivos de estadísticas sin procesar del almacenamiento antiguo, sin modificarlo, y sube cada uno por el mismo endpoint que usa el plugin, así que todo se recalcula por el camino normal.
+- Las sanciones antiguas se borraban en cada cambio de temporada y no vuelven.
+- Los rankings guardados antes de agosto de 2026 se calcularon con una regla anterior para el número mínimo de mapas, así que el historial recalculado difiere de esas listas.
 
-## Fases
+## Progreso
 
-1. **Base.** Repositorio, integración continua, base de datos, configuración y módulos, inicio de sesión con Steam, asistente de primera ejecución, registro de servidores de juego con la señal de conexión y un script de instalación mínimo.
-2. **Estadísticas y ranking.** Subida, armado de partidas, puntuación, sanciones, temporadas y reglas de modos de juego.
-3. **Sitio web.** Las páginas existentes sobre los nuevos servicios, con filtros por temporada y por servidor.
-4. **Servidor en vivo.** Estado en vivo por servidor, selector de servidor, chat del sitio, cola de comandos y baneos del chat.
-5. **Tienda de skins de armas.** Almacenamiento en la base de datos, importación del catálogo y reembolso de temporada.
-6. **Plugins.** Los cinco plugins, una sola dirección y un solo token, correcciones al plugin de subida, versiones compiladas.
-7. **Ranking de la comunidad.** Página de votación, calificación y límites.
-8. **Despliegue y tutoriales.** Script de instalación completo, guías de Azure y Docker, tutoriales paso a paso.
-9. **Migración.** Importación de los datos de producción, cambio del sitio de producción, archivado de los repositorios antiguos.
+| Fase | Contenido | Estado |
+|---|---|---|
+| 1. Base | Base de datos, ajustes y módulos, inicio de sesión con Steam, asistente, registro y estado de los servidores de juego. | Hecho |
+| 2. Estadísticas y ranking | Subida, armado de partidas, puntuación, sanciones, temporadas y reglas de modos de juego. | Hecho |
+| 3. Sitio web | Ranking, partidas, jugadores, patentes, área de administración y las páginas dentro del juego, en tres idiomas. | Hecho |
+| 4. Servidor en vivo | Estado en vivo por servidor, selector de servidor, chat del sitio, comandos remotos y baneos del chat. | Hecho, todavía no se ha visto con un servidor de juego real |
+| 5. Tienda de skins de armas | Tienda, regalos, reembolsos, importación del catálogo y reembolso de temporada. | Hecho, todavía no se ha probado con los assets reales |
+| 6. Plugins | Los cinco plugins con una sola dirección y un solo token, heartbeat y prueba de conexión. | Compilados, todavía no se han ejecutado en un servidor de juego |
+| 7. Ranking de la comunidad | Página de votación, puntuación, límites y página de administración. | Hecho |
+| 8. Despliegue | Instalador para Linux, imagen de Docker, workflow de publicación y guías. | Hecho; todavía no se ha publicado ninguna versión |
+| 9. Migración | Importación de los datos de producción, cambio del sitio de producción y archivado de los repositorios antiguos. | Importación probada localmente; el cambio está pendiente |
 
 ## Preguntas abiertas
 
-- **MySQL.** Depende de que haya un proveedor de Entity Framework Core disponible para la versión de .NET en uso.
-- **HTTPS dentro del juego.** Aún no medido. Ver [in-game-browser.es.md](in-game-browser.es.md#aún-no-medido).
+- **Primera versión.** Todavía no hay nada publicado, así que el instalador y la imagen de Docker no tienen ninguna versión que descargar.
+- **Plugins en un servidor en vivo.** Compilan, y el sitio acepta lo que envían, pero no se han ejecutado en una partida real.
+- **HTTPS dentro del juego.** No se ha medido. Consulta [in-game-browser.es.md](in-game-browser.es.md#aún-no-medido).
+- **Repositorio de assets.** La tienda espera las miniaturas en `skins/{id}.jpg` y las fotos en `skin-shots/{id}/`, bajo una misma dirección. El repositorio de assets todavía no tiene las miniaturas.
+- **Íconos de patente dentro del juego.** Los sprites que usa `l4d2_show_patent_icon` no están en este repositorio.
+- **Azure App Service.** La guía se escribió a partir de la documentación de Azure y no se ha ejecutado de principio a fin.

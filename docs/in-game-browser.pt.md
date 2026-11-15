@@ -46,7 +46,7 @@ O navegador roda apenas ES5. Toda sintaxe adicionada no ES2015 ou depois é um e
 | `XMLHttpRequest`, `FormData`, `WebSocket`, `EventSource` | `Map`, `Set`, `WeakMap`, `Symbol`, `Proxy`, `Reflect` |
 | `localStorage`, `sessionStorage`, cookies, `history.pushState` | `Intl`, `toLocaleString` sensível à localidade |
 | `matchMedia`, canvas 2D, SVG inline, typed arrays | `IntersectionObserver`, `ResizeObserver`, `CSS.supports`, custom elements, `<template>` |
-| `webkitRequestAnimationFrame`, `WebKitMutationObserver`, `webkitMatchesSelector` (somente com prefixo) | `requestAnimationFrame`, `MutationObserver`, `Element.matches` e `Element.closest` sem prefixo |
+| `webkitRequestAnimationFrame`, `WebKitMutationObserver`, `webkitMatchesSelector` (somente com prefixo) | `requestAnimationFrame`, `MutationObserver`, `Element.matches`, `Element.closest` sem prefixo |
 | | `URL`, `URLSearchParams`, `TextEncoder`, WebGL, WebAssembly, service workers, `<video>`, `<input type="date">`, API de clipboard |
 
 ## CSS
@@ -94,7 +94,7 @@ Medido contra um servidor HTTP simples na mesma máquina.
 
 A build de teste do jogo fechou sozinha antes que a página chegasse a estes dois grupos, por um motivo sem relação com o navegador.
 
-- **HTTPS.** Um navegador de 2012 é anterior às versões de TLS que os servidores atuais exigem, então a expectativa é que páginas HTTPS falhem. O ambiente de produção reforça isso: o plugin abre o ranking por HTTP simples. Até que isso seja medido, as páginas do jogo devem ser acessíveis por HTTP.
+- **HTTPS.** Um navegador de 2012 é anterior às versões de TLS que os servidores atuais exigem, então a expectativa é que páginas HTTPS falhem. O ambiente de produção reforça isso: o plugin abre o ranking por HTTP simples. Até que isso seja medido, as páginas dentro do jogo devem ser acessíveis por HTTP.
 - **Carregamento de bibliotecas reais.** Nenhuma biblioteca foi carregada no teste. A próxima seção tira suas conclusões das medições acima e da sintaxe encontrada no arquivo publicado de cada biblioteca.
 
 ## O que isso significa para o front-end
@@ -121,9 +121,9 @@ A build de teste do jogo fechou sozinha antes que a página chegasse a estes doi
 - Servida por HTTP simples.
 - Atualizações ao vivo podem usar polling, Server-Sent Events ou WebSocket, mas o código do cliente precisa ser ES5 escrito à mão.
 
-**Abordagem proposta:** duas camadas, em vez de prender o site inteiro a 2012.
+**A abordagem adotada:** duas camadas, em vez de prender o site inteiro a 2012.
 
-- O site principal é voltado para os navegadores atuais e fica livre para usar uma stack moderna.
-- Um pequeno conjunto de páginas do jogo fica em uma rota própria, segue as regras acima e é o que o plugin do jogo abre.
+- O site principal é voltado para os navegadores atuais, com Bootstrap 5 e htmx.
+- Três páginas para o jogo ficam em `/ingame`: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. Elas seguem as regras acima e são o que o plugin do jogo abre.
 
-O custo é que as páginas disponíveis no jogo existem em dobro, então esse conjunto deve continuar pequeno. Quais páginas fazem parte dele é uma pergunta em aberto no [roadmap](roadmap.pt.md#perguntas-em-aberto).
+As páginas disponíveis no jogo existem em dobro, então esse conjunto continua pequeno. Um teste falha se uma delas começar a usar algo que este navegador não tem. O [roadmap](roadmap.pt.md#front-end) tem o restante das decisões de front-end.

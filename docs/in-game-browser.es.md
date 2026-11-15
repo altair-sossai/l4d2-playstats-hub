@@ -42,16 +42,16 @@ El navegador solo ejecuta ES5. Cualquier sintaxis agregada en ES2015 o posterior
 | API que funciona | API que falta |
 |---|---|
 | `JSON`, `querySelectorAll`, `classList`, `dataset`, `addEventListener` | `Promise`, `fetch` |
-| `Function.prototype.bind`, `forEach`/`map`/`filter` de `Array`, `Object.keys`, `Object.defineProperty`, `String.prototype.trim` | `Object.assign`, `Array.from`, `Array.prototype.find`, `Array.prototype.includes`, `String.prototype.includes` |
+| `Function.prototype.bind`, `Array` `forEach`/`map`/`filter`, `Object.keys`, `Object.defineProperty`, `String.prototype.trim` | `Object.assign`, `Array.from`, `Array.prototype.find`, `Array.prototype.includes`, `String.prototype.includes` |
 | `XMLHttpRequest`, `FormData`, `WebSocket`, `EventSource` | `Map`, `Set`, `WeakMap`, `Symbol`, `Proxy`, `Reflect` |
 | `localStorage`, `sessionStorage`, cookies, `history.pushState` | `Intl`, `toLocaleString` con soporte de configuración regional |
-| `matchMedia`, canvas 2D, SVG en línea, arrays tipados | `IntersectionObserver`, `ResizeObserver`, `CSS.supports`, elementos personalizados, `<template>` |
-| `webkitRequestAnimationFrame`, `WebKitMutationObserver`, `webkitMatchesSelector` (solo con prefijo) | `requestAnimationFrame`, `MutationObserver`, `Element.matches` y `Element.closest` sin prefijo |
+| `matchMedia`, canvas 2D, SVG en línea, arreglos tipados | `IntersectionObserver`, `ResizeObserver`, `CSS.supports`, elementos personalizados, `<template>` |
+| `webkitRequestAnimationFrame`, `WebKitMutationObserver`, `webkitMatchesSelector` (solo con prefijo) | `requestAnimationFrame`, `MutationObserver`, `Element.matches`, `Element.closest` sin prefijo |
 | | `URL`, `URLSearchParams`, `TextEncoder`, WebGL, WebAssembly, service workers, `<video>`, `<input type="date">`, API del portapapeles |
 
 ## CSS
 
-El layout se comprobó renderizando dos cajas y midiendo si quedan una al lado de la otra.
+El layout se verificó renderizando dos cajas y midiendo si quedan una al lado de la otra.
 
 | Técnica de layout | Resultado |
 |---|---|
@@ -76,15 +76,15 @@ El layout se comprobó renderizando dos cajas y midiendo si quedan una al lado d
 |---|---|
 | PNG, JPEG, GIF | Funciona |
 | SVG en un `<img>` | Funciona |
-| WebP con pérdida | Funciona |
-| WebP sin pérdida | No funciona |
+| WebP, con pérdida | Funciona |
+| WebP, sin pérdida | No funciona |
 | AVIF | No funciona |
 
 ## Red
 
 Medido contra un servidor HTTP sin cifrar en la misma máquina.
 
-| Característica | Resultado |
+| Función | Resultado |
 |---|---|
 | `XMLHttpRequest` con JSON | Funciona |
 | Server-Sent Events (`EventSource`) | Funciona |
@@ -95,13 +95,13 @@ Medido contra un servidor HTTP sin cifrar en la misma máquina.
 La compilación del juego usada en la prueba se cerró sola antes de que la página llegara a estos dos grupos, por un motivo ajeno al navegador.
 
 - **HTTPS.** Un navegador de 2012 es anterior a las versiones de TLS que exigen los servidores actuales, así que se espera que las páginas HTTPS fallen. La configuración de producción lo respalda: el plugin abre el ranking por HTTP sin cifrar. Hasta que se mida, las páginas dentro del juego deberían ser accesibles por HTTP.
-- **Carga de bibliotecas reales.** En la prueba no se cargó ninguna biblioteca. La siguiente sección saca sus conclusiones de las mediciones anteriores y de la sintaxis encontrada en el archivo publicado de cada biblioteca.
+- **Carga de bibliotecas reales.** En la prueba no se cargó ninguna biblioteca. La siguiente sección saca sus conclusiones de las mediciones de arriba y de la sintaxis encontrada en el archivo publicado de cada biblioteca.
 
 ## Qué significa esto para el front-end
 
-**Se sabe que funciona dentro del juego:** Bootstrap 3.4.1 y jQuery 1.12.4, que el sitio actual usa en producción por este motivo.
+**Se sabe que funcionan dentro del juego:** Bootstrap 3.4.1 y jQuery 1.12.4, que el sitio actual usa en producción por este motivo.
 
-**Se espera que falle dentro del juego**, según las mediciones:
+**Se espera que fallen dentro del juego**, según las mediciones:
 
 | Biblioteca | Por qué |
 |---|---|
@@ -109,21 +109,21 @@ La compilación del juego usada en la prueba se cerró sola antes de que la pág
 | JavaScript de Bootstrap 5, htmx 2, Alpine 3, Vue 3, Chart.js 4, cliente de SignalR 8 | Sus archivos publicados contienen sintaxis de ES2015 o posterior, que aquí es un error de análisis. |
 | React 18 | Sus archivos son ES5, pero necesita `Symbol`, `Map` y `Set` en tiempo de ejecución. |
 
-**Probablemente funcione, sin confirmar:** jQuery 3 y 4, Chart.js 2.9, Vue 2.7 y Preact 10. Sus archivos publicados solo usan sintaxis de ES5.
+**Probablemente funcionan, sin confirmar:** jQuery 3 y 4, Chart.js 2.9, Vue 2.7 y Preact 10. Sus archivos publicados solo usan sintaxis ES5.
 
-**Reglas para una página que debe abrirse dentro del juego:**
+**Reglas para una página que tiene que abrirse dentro del juego:**
 
-- JavaScript en ES5, sin ningún paso de compilación que pueda emitir sintaxis más nueva y sin depender de `Promise` ni de `fetch`.
+- JavaScript en ES5, sin ningún paso de compilación que pueda emitir sintaxis más nueva, y sin depender de `Promise` ni de `fetch`.
 - Layout con floats, `inline-block`, tablas o `-webkit-box`.
-- Sin propiedades personalizadas, `calc()` ni unidades de viewport. Usar el prefijo `-webkit-` en `transform`, `transition`, `animation` y los degradados.
+- Sin propiedades personalizadas, `calc()` ni unidades de viewport. Usa el prefijo `-webkit-` en `transform`, `transition`, `animation` y los gradientes.
 - Imágenes en PNG, JPEG, GIF, SVG o WebP con pérdida.
 - Diseñada para un panel de 900 × 450.
 - Servida por HTTP sin cifrar.
 - Las actualizaciones en vivo pueden usar polling, Server-Sent Events o WebSocket, pero el código del cliente tiene que ser ES5 escrito a mano.
 
-**Enfoque propuesto:** dos capas en lugar de atar todo el sitio a 2012.
+**El enfoque adoptado:** dos capas en lugar de limitar todo el sitio a 2012.
 
-- El sitio principal apunta a navegadores actuales y es libre de usar un stack moderno.
-- Un conjunto pequeño de páginas dentro del juego vive bajo su propia ruta, sigue las reglas anteriores y es lo que abre el plugin del juego.
+- El sitio principal está pensado para navegadores actuales, con Bootstrap 5 y htmx.
+- Tres páginas para el juego viven bajo `/ingame`: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. Siguen las reglas de arriba y son las que abre el plugin del juego.
 
-El costo es que las páginas disponibles dentro del juego existen dos veces, así que ese conjunto debería mantenerse pequeño. Qué páginas forman parte de él es una pregunta abierta en la [hoja de ruta](roadmap.es.md#preguntas-abiertas).
+Las páginas disponibles dentro del juego existen por duplicado, así que ese conjunto se mantiene pequeño. Una prueba falla si alguna de ellas empieza a usar algo que este navegador no tiene. La [hoja de ruta](roadmap.es.md#front-end) tiene el resto de las decisiones de front-end.
