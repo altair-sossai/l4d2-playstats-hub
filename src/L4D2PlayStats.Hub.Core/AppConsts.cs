@@ -54,4 +54,36 @@ public static class AppConsts
 
     public const long SteamCommunityIdBase = 76561197960265728;
     public const string SteamProfileUrl = "https://steamcommunity.com/profiles/";
+
+    public const int LiveDelayInSeconds = 15;
+    public const int LiveConfigurationExpirationInMinutes = 120;
+    public const int LiveRoundExpirationInMinutes = 120;
+    public const int LiveScoreboardExpirationInMinutes = 10;
+    public const int LivePlayersExpirationInMinutes = 120;
+    public const int LiveFeedRetentionInMinutes = 60;
+    public const int LiveFeedMaxItems = 250;
+    public const decimal LiveLatencyLowLimit = 0.1m;
+    public const decimal LiveLatencyMediumLimit = 0.2m;
+    public const int LiveSurvivorMaxHealth = 100;
+    public const int LiveIncapacitatedMaxHealth = 300;
+    public const int LiveHealthRedLimit = 25;
+    public const int LiveHealthOrangeLimit = 40;
+    public const int LivePlayerNameMaxLength = 100;
+    public static readonly string[] LiveChatBindPhrases = ["gogogo", "go go go", "back back", "back back back", "tank tank", "tank tank tank", "hit hit", "hit hit hit", "r"];
+
+    public const int SiteChatRetentionInMinutes = 60;
+    public const int SiteChatGlobalCooldownInSeconds = 15;
+    public const int SiteChatUserCooldownInSeconds = 30;
+    public const int SiteChatMaxMessageLength = 200;
+    public const int SiteChatRecentSenders = 30;
+    public const int ChatBanReasonMaxLength = 300;
+
+    public const string ServerCommandPattern = @"^(!|/|sm_)(\w+)( ([^;\r\n]+))?$";
+    public const string ServerCommandPrefix = "sm_";
+    public const int ServerCommandMaxLength = 256;
+    public const int RemoteCommandExpirationInMinutes = 5;
+
+    public const int PlayerConnectionRetentionInMonths = 3;
+    public const int PlayerConnectionCleanupBatchSize = 100;
+    public const int IpAddressMaxLength = 45;
 }

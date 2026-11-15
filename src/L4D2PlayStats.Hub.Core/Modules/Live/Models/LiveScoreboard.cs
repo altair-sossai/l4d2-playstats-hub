@@ -1,0 +1,22 @@
+namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
+
+public class LiveScoreboard
+{
+    public int SurvivorScore { get; set; }
+    public int InfectedScore { get; set; }
+    public int Bonus { get; set; }
+    public int MaxBonus { get; set; }
+    public decimal CurrentProgress { get; set; }
+    public int CurrentProgressPoints { get; set; }
+    public bool IsTankInPlay { get; set; }
+    public bool TankIsDead { get; set; }
+    public decimal BonusPercentage => MaxBonus == 0 ? 0 : Bonus / (decimal)MaxBonus;
+    public int TotalScore => SurvivorScore + InfectedScore;
+    public decimal SurvivorPercentage => TotalScore == 0 ? 0.5m : SurvivorScore / (decimal)TotalScore;
+    public decimal InfectedPercentage => TotalScore == 0 ? 0.5m : InfectedScore / (decimal)TotalScore;
+    public int Difference => SurvivorScore - InfectedScore;
+    public int Comeback => Math.Abs(Difference);
+    public bool IsSurvivorsWinning => SurvivorScore > InfectedScore;
+    public bool IsInfectedsWinning => InfectedScore > SurvivorScore;
+    public bool IsDraw => SurvivorScore == InfectedScore;
+}
