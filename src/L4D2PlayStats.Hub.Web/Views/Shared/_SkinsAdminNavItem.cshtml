@@ -1,0 +1,10 @@
+@inject ISettingsService Settings
+@{
+    var modules = await Settings.GetAsync<ModuleSettings>();
+    var path = Context.Request.Path.Value ?? string.Empty;
+    var active = path.StartsWith(AppConsts.SkinAdminUrl, StringComparison.OrdinalIgnoreCase);
+}
+@if (modules.IsEnabled(HubModule.SkinShop))
+{
+    <li class="nav-item"><a class="nav-link @(active ? "active" : "")" href="@AppConsts.SkinAdminUrl">@L["Skins"]</a></li>
+}

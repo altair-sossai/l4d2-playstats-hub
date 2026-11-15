@@ -40,6 +40,7 @@ builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
+builder.Services.AddHostedService<L4D2PlayStats.Hub.Web.Services.SkinSeasonRefundBackgroundService>();
 
 builder.Services
     .AddAuthentication(options =>

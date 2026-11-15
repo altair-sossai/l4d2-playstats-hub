@@ -1,0 +1,71 @@
+.skin-card {
+    --skin-rarity: #8a8f98;
+    border-top: 3px solid var(--skin-rarity);
+}
+
+.skin-rarity-common {
+    --skin-rarity: #8a8f98;
+}
+
+.skin-rarity-uncommon {
+    --skin-rarity: #4caf7a;
+}
+
+.skin-rarity-rare {
+    --skin-rarity: #4b8fe2;
+}
+
+.skin-rarity-epic {
+    --skin-rarity: #a66bd8;
+}
+
+.skin-rarity-legendary {
+    --skin-rarity: #f5c542;
+}
+
+.skin-rarity-badge {
+    background-color: var(--skin-rarity);
+    color: #111;
+}
+
+.skin-thumb {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: #0d1117;
+}
+
+.skin-stars {
+    color: var(--hub-gold);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.skin-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
+.skin-shot-main {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: #0d1117;
+    border-radius: 8px;
+}
+
+.skin-shot-thumb {
+    width: 96px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: .7;
+}
+
+.skin-shot-thumb:hover,
+.skin-shot-thumb.active {
+    opacity: 1;
+    outline: 2px solid var(--hub-gold);
+}

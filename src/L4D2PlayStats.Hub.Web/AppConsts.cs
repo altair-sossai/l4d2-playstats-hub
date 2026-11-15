@@ -40,4 +40,17 @@ public static class AppConsts
 
     public const string DevelopmentSignInSetting = "Development:AllowTestSignIn";
     public const string SteamOpenIdPattern = @"openid/id/(\d+)$";
+
+    public const string SkinShopUrl = "/skins";
+    public const string SkinAdminUrl = "/admin/skins";
+    public const string SkinPricesUrl = "/admin/skins/prices";
+    public const int SkinAdminPageSize = 30;
+    public const int SkinSeasonRefundIntervalInMinutes = 10;
+    public const int SkinSeasonRefundStartDelayInSeconds = 30;
+    public const string SkinMessageTempData = "SkinMessage";
+    public const string SkinRefundTempData = "SkinRefund";
+    public const string SkinImportTempData = "SkinImport";
+    public const char SkinTempDataSeparator = ',';
+    public const string HtmxRequestHeader = "HX-Request";
+    public const string HtmxHistoryRestoreHeader = "HX-History-Restore-Request";
 }
