@@ -1,4 +1,3 @@
-using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.Modules.Administrators;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
@@ -75,7 +74,7 @@ public class SetupController(
         if (DevelopmentSignIn && developmentCommunityId != null)
             return Redirect($"/dev/sign-in/{developmentCommunityId}?returnUrl=/setup/claim");
 
-        return Challenge(new AuthenticationProperties { RedirectUri = "/setup/claim" }, SteamAuthenticationDefaults.AuthenticationScheme);
+        return Challenge(new AuthenticationProperties { RedirectUri = "/setup/claim" });
     }
 
     [HttpGet("claim")]

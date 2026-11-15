@@ -1,4 +1,3 @@
-using AspNet.Security.OpenId.Steam;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
@@ -11,7 +10,7 @@ public class AccountController : Controller
     [HttpGet("login")]
     public IActionResult Login(string? returnUrl = null)
     {
-        return Challenge(new AuthenticationProperties { RedirectUri = Local(returnUrl) }, SteamAuthenticationDefaults.AuthenticationScheme);
+        return Challenge(new AuthenticationProperties { RedirectUri = Local(returnUrl) });
     }
 
     [HttpGet("logout")]
