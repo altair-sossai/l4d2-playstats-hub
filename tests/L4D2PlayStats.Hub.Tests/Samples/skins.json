@@ -1,0 +1,124 @@
+{
+  "skins": [
+    {
+      "id": "desert-smg",
+      "weapon": "weapon_smg",
+      "rarity": "common",
+      "price": 1,
+      "workshopId": "1000000001",
+      "shots": 0,
+      "author": {
+        "name": "Sample Author",
+        "communityId": "76561198000000001"
+      },
+      "title": {
+        "en": "Desert SMG",
+        "pt": "SMG do Deserto",
+        "es": "SMG del Desierto"
+      },
+      "description": {
+        "en": "A sand colored SMG.",
+        "pt": "Uma SMG cor de areia.",
+        "es": "Una SMG color arena."
+      },
+      "originalTitle": "Desert Uzi",
+      "originalDescription": "Sample skin used by the tests"
+    },
+    {
+      "id": "neon-smg",
+      "weapon": "weapon_smg",
+      "rarity": "rare",
+      "price": 2,
+      "workshopId": "1000000002",
+      "shots": 1,
+      "author": {
+        "name": "Sample Author",
+        "communityId": "76561198000000001"
+      },
+      "title": {
+        "en": "Neon SMG",
+        "pt": "SMG Neon",
+        "es": "SMG Neón"
+      },
+      "description": {
+        "en": "An SMG that glows in the dark.",
+        "pt": "Uma SMG que brilha no escuro.",
+        "es": "Una SMG que brilla en la oscuridad."
+      },
+      "originalTitle": "Neon Uzi",
+      "originalDescription": "Sample skin used by the tests"
+    },
+    {
+      "id": "gold-magnum",
+      "weapon": "weapon_pistol_magnum",
+      "rarity": "legendary",
+      "price": 3,
+      "workshopId": "1000000003",
+      "shots": 2,
+      "author": {
+        "name": "Another Author",
+        "communityId": "76561198000000002"
+      },
+      "title": {
+        "en": "Golden Magnum",
+        "pt": "Magnum Dourada",
+        "es": "Magnum Dorada"
+      },
+      "description": {
+        "en": "A Magnum plated in gold.",
+        "pt": "Uma Magnum banhada a ouro.",
+        "es": "Una Magnum bañada en oro."
+      },
+      "originalTitle": "Gold Desert Eagle",
+      "originalDescription": "Sample skin used by the tests"
+    },
+    {
+      "id": "dragon-katana",
+      "weapon": "weapon_melee_katana",
+      "rarity": "epic",
+      "price": 2,
+      "workshopId": "1000000004",
+      "shots": 0,
+      "author": {
+        "name": "Another Author",
+        "communityId": "76561198000000002"
+      },
+      "title": {
+        "en": "Dragon Katana",
+        "pt": "Katana do Dragão",
+        "es": "Katana del Dragón"
+      },
+      "description": {
+        "en": "A katana with a dragon on the blade.",
+        "pt": "Uma katana com um dragão na lâmina.",
+        "es": "Una katana con un dragón en la hoja."
+      },
+      "originalTitle": "Dragon Katana",
+      "originalDescription": "Sample skin used by the tests"
+    },
+    {
+      "id": "galaxy-pump",
+      "weapon": "weapon_pumpshotgun",
+      "rarity": "legendary",
+      "price": 100000,
+      "workshopId": "1000000005",
+      "shots": 3,
+      "author": {
+        "name": "Sample Author",
+        "communityId": "76561198000000001"
+      },
+      "title": {
+        "en": "Galaxy Pump Shotgun",
+        "pt": "Escopeta Galáxia",
+        "es": "Escopeta Galaxia"
+      },
+      "description": {
+        "en": "A pump shotgun painted with a galaxy.",
+        "pt": "Uma escopeta pintada com uma galáxia.",
+        "es": "Una escopeta pintada con una galaxia."
+      },
+      "originalTitle": "Galaxy Pump",
+      "originalDescription": "Sample skin used by the tests"
+    }
+  ]
+}
