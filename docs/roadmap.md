@@ -81,6 +81,10 @@ Main points:
 | Old data | Imported and recalculated. There is no backward compatibility with the old storage. |
 | Languages | English is the default. Portuguese and Spanish versions follow from it. |
 | Tests | Extensive on the back end. Front-end tests only where they pay off. |
+| Front end | Two layers. The main site targets current browsers. A separate set of pages follows the limits of the game's browser. |
+| In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, and the latest matches. Everything else is on the main site. |
+| Admin area | Server-rendered like the rest of the site. A single-page framework such as Angular is allowed if a screen needs it, and is not used to start with. |
+| License | MIT for the application. The plugins are GPL-3.0, as SourceMod requires. |
 
 ## Modules
 
@@ -169,10 +173,20 @@ Each server also has a checklist, with a correction hint on every failed item: c
 
 The browser embedded in the game is Chromium 18 from 2012. It runs ES5 only and has no flexbox, grid or custom properties. The measurements are in [in-game-browser.md](in-game-browser.md).
 
-Proposed approach, still to be confirmed:
+The front end has two layers:
 
-- The main site targets current browsers: server-rendered pages with a modern CSS framework and no Node build step.
-- A small set of pages for the game lives under its own route, follows the limits of that browser, is served over plain HTTP, and is what the plugin opens.
+- **Main site.** Targets current browsers: server-rendered pages with a modern CSS framework and no Node build step. The admin area is built the same way.
+- **In-game pages.** A small set under its own route, which is what the plugin opens. They follow the limits of that browser and are served over plain HTTP.
+
+The in-game pages are read-only and need no sign-in:
+
+| Page | Contents |
+|---|---|
+| Ranking | The current season, with position, patent and points. |
+| Player summary | Position, points, wins and losses, and patent progress of the player who opened the panel. The plugin passes the player's identifier in the address. |
+| Latest matches | A short list with teams and scores. |
+
+The skin shop, the community ranking, the live server and the admin area are on the main site only.
 
 ## Tests
 
@@ -208,7 +222,5 @@ A separate console program, outside this repository, moves the production data o
 
 ## Open questions
 
-- **License.** None chosen yet. The plugins compile against SourceMod includes, which are GPL-3.0.
-- **Pages available in game.** Only the ranking, or also player details, last matches and the skin shop.
 - **MySQL.** Depends on an Entity Framework Core provider being available for the .NET version in use.
 - **HTTPS inside the game.** Not measured yet. See [in-game-browser.md](in-game-browser.md#not-measured-yet).

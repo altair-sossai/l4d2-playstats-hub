@@ -14,6 +14,7 @@ One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, 
 - [Repositories being consolidated](#repositories-being-consolidated)
 - [Roadmap](#roadmap)
 - [Documentation](#documentation)
+- [License](#license)
 
 ## Why this project exists
 
@@ -86,3 +87,9 @@ The full plan, with every decision taken so far, is in [docs/roadmap.md](docs/ro
 | [docs/in-game-browser.md](docs/in-game-browser.md) | What the browser embedded in Left 4 Dead 2 supports, and what that means for the front end. |
 
 English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.
+
+## License
+
+The application is released under the [MIT License](LICENSE). Anyone can use, change and share it, including commercially, as long as the copyright notice is kept.
+
+The SourceMod plugins, once they arrive in `plugins/`, are released under GPL-3.0, because SourceMod requires that of plugins built with its includes.

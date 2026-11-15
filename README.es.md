@@ -14,6 +14,7 @@ Una sola aplicación web autoalojada para servidores competitivos de Left 4 Dead
 - [Repositorios que se están consolidando](#repositorios-que-se-están-consolidando)
 - [Hoja de ruta](#hoja-de-ruta)
 - [Documentación](#documentación)
+- [Licencia](#licencia)
 
 ## Por qué existe este proyecto
 
@@ -86,3 +87,9 @@ El plan completo, con todas las decisiones tomadas hasta ahora, está en [docs/r
 | [docs/in-game-browser.es.md](docs/in-game-browser.es.md) | Qué soporta el navegador integrado en Left 4 Dead 2 y qué significa eso para el front-end. |
 
 El inglés es el idioma predeterminado de este repositorio. Cada documento tiene también una versión en portugués (`.pt.md`) y otra en español (`.es.md`).
+
+## Licencia
+
+La aplicación se distribuye bajo la [Licencia MIT](LICENSE). Cualquier persona puede usarla, modificarla y compartirla, incluso con fines comerciales, siempre que se conserve el aviso de copyright.
+
+Los plugins de SourceMod, cuando lleguen a `plugins/`, se distribuirán bajo GPL-3.0, porque SourceMod lo exige a los plugins compilados con sus includes.

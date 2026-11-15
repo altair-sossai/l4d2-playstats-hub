@@ -81,6 +81,10 @@ Puntos principales:
 | Datos antiguos | Se importan y se recalculan. No hay retrocompatibilidad con el almacenamiento antiguo. |
 | Idiomas | El inglés es el predeterminado. Las versiones en portugués y en español se derivan de él. |
 | Pruebas | Extensas en el back-end. Pruebas de front-end solo donde valgan la pena. |
+| Front-end | Dos capas. El sitio principal apunta a navegadores actuales. Un conjunto separado de páginas respeta los límites del navegador del juego. |
+| Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. Todo lo demás está en el sitio principal. |
+| Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única, como Angular, si alguna pantalla lo necesita, y no se usa al principio. |
+| Licencia | MIT para la aplicación. Los plugins son GPL-3.0, como lo exige SourceMod. |
 
 ## Módulos
 
@@ -169,10 +173,20 @@ Cada servidor tiene además una lista de verificación, con una sugerencia de co
 
 El navegador integrado en el juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
 
-Enfoque propuesto, aún por confirmar:
+El front-end tiene dos capas:
 
-- El sitio principal apunta a navegadores actuales: páginas renderizadas en el servidor con un framework CSS moderno y sin paso de compilación con Node.
-- Un conjunto pequeño de páginas para el juego vive bajo su propia ruta, respeta los límites de ese navegador, se sirve por HTTP sin cifrar y es lo que abre el plugin.
+- **Sitio principal.** Apunta a navegadores actuales: páginas renderizadas en el servidor con un framework CSS moderno y sin paso de compilación con Node. El área de administración se construye de la misma manera.
+- **Páginas del juego.** Un conjunto pequeño bajo su propia ruta, que es lo que abre el plugin. Respetan los límites de ese navegador y se sirven por HTTP sin cifrar.
+
+Las páginas del juego son de solo lectura y no requieren iniciar sesión:
+
+| Página | Contenido |
+|---|---|
+| Ranking | La temporada actual, con posición, patente y puntos. |
+| Resumen del jugador | Posición, puntos, victorias y derrotas, y progreso de patente del jugador que abrió el panel. El plugin pasa el identificador del jugador en la dirección. |
+| Últimas partidas | Una lista corta con equipos y marcadores. |
+
+La tienda de skins, el ranking de la comunidad, el servidor en vivo y el área de administración están solo en el sitio principal.
 
 ## Pruebas
 
@@ -208,7 +222,5 @@ Un programa de consola aparte, fuera de este repositorio, mueve los datos de pro
 
 ## Preguntas abiertas
 
-- **Licencia.** Todavía no se eligió ninguna. Los plugins se compilan contra los includes de SourceMod, que son GPL-3.0.
-- **Páginas disponibles dentro del juego.** Solo el ranking, o también los detalles del jugador, las últimas partidas y la tienda de skins.
 - **MySQL.** Depende de que haya un proveedor de Entity Framework Core disponible para la versión de .NET en uso.
 - **HTTPS dentro del juego.** Aún no medido. Ver [in-game-browser.es.md](in-game-browser.es.md#aún-no-medido).
