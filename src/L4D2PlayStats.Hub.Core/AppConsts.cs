@@ -44,6 +44,11 @@ public static class AppConsts
     public const int MostUsedNames = 3;
     public const string UnknownPlayerName = "Unknown";
 
+    public const int PatentMinLevel = 1;
+    public const int PatentMaxLevel = 15;
+    public const int PatentMinExperience = 0;
+    public const int PatentMaxExperience = 2500;
+
     public const int SettingsCacheInMinutes = 60;
     public const int RankingCacheInMinutes = 60;
 

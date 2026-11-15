@@ -1,0 +1,165 @@
+@model SetupViewModel
+@{
+    ViewData["Title"] = L["Setup"].Value;
+
+    var steps = new (string Key, string Title)[]
+    {
+        ("token", L["Administrator"].Value),
+        ("site", L["Site"].Value),
+        ("modules", L["Modules"].Value),
+        ("server", L["Game server"].Value),
+        ("finish", L["Finish"].Value)
+    };
+
+    var current = Model.Step == "signin" ? "token" : Model.Step;
+    var index = Array.FindIndex(steps, step => step.Key == current);
+    var cultures = new Dictionary<string, string> { ["en-US"] = "English", ["pt-BR"] = "Português", ["es-ES"] = "Español" };
+}
+<div class="mx-auto" style="max-width: 760px;">
+    <h1 class="h3 mb-1">@L["Welcome"]</h1>
+    <p class="text-body-secondary">@L["A few steps and the site is ready."]</p>
+
+    <div class="d-flex wizard-steps mb-4">
+        @for (var i = 0; i < steps.Length; i++)
+        {
+            <div class="step @(i == index ? "active" : i < index ? "done" : "")">@(i + 1). @steps[i].Title</div>
+        }
+    </div>
+
+    @if (Model.Step == "token")
+    {
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5">@L["Who is the administrator?"]</h2>
+                <p>@L["Type the setup code that the installer printed. It is also in the application log. Then sign in with Steam: that account becomes the first administrator."]</p>
+                @if (Model.Error != null)
+                {
+                    <div class="alert alert-danger py-2">@L[Model.Error]</div>
+                }
+                <form method="post" asp-antiforgery="true" action="/setup/start">
+                    <div class="mb-3">
+                        <label class="form-label" for="token">@L["Setup code"]</label>
+                        <input class="form-control" id="token" name="token" value="@Model.Token" autocomplete="off" required>
+                    </div>
+                    @if (Model.DevelopmentSignIn)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label" for="developmentCommunityId">@L["Development only: sign in as this SteamID64, without Steam"]</label>
+                            <input class="form-control" id="developmentCommunityId" name="developmentCommunityId" type="number">
+                        </div>
+                    }
+                    <button class="btn btn-primary" type="submit"><img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Continue with Steam"]</button>
+                </form>
+            </div>
+        </div>
+    }
+    else if (Model.Step == "signin")
+    {
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5">@L["Setup is in progress"]</h2>
+                <p>@L["An administrator already exists. Sign in with that Steam account to continue the setup."]</p>
+                <a class="btn btn-primary" href="/login?returnUrl=/setup"><img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam"]</a>
+            </div>
+        </div>
+    }
+    else if (Model.Step == "site")
+    {
+        <form class="card" method="post" asp-antiforgery="true" action="/setup/site">
+            <div class="card-body">
+                <h2 class="h5">@L["About the site"]</h2>
+                <div class="mb-3">
+                    <label class="form-label" for="Site_Name">@L["Site name"]</label>
+                    <input class="form-control" id="Site_Name" name="Site.Name" value="@Model.Settings.Site.Name" required>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label" for="Site_DefaultCulture">@L["Default language"]</label>
+                        <select class="form-select" id="Site_DefaultCulture" name="Site.DefaultCulture">
+                            @foreach (var culture in cultures)
+                            {
+                                <option value="@culture.Key" selected="@(culture.Key == Model.Settings.Site.DefaultCulture)">@culture.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label" for="Site_TimeZone">@L["Time zone"]</label>
+                        <input class="form-control" id="Site_TimeZone" name="Site.TimeZone" value="@Model.Settings.Site.TimeZone" list="timezones">
+                        <datalist id="timezones">
+                            @foreach (var zone in Model.Settings.TimeZones)
+                            {
+                                <option value="@zone"></option>
+                            }
+                        </datalist>
+                        <div class="form-text">@L["Decides when a season starts and ends."]</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Season_LengthInMonths">@L["Season length, in months"]</label>
+                    <input class="form-control" id="Season_LengthInMonths" name="Season.LengthInMonths" type="number" min="1" max="24" value="@Model.Settings.Season.LengthInMonths">
+                    <div class="form-text">@L["The ranking starts again at each new season. Past seasons stay available."]</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Site_SteamApiKey">@L["Steam Web API key (optional)"]</label>
+                    <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" value="@Model.Settings.Site.SteamApiKey" autocomplete="off">
+                    <div class="form-text">@L["Used to show player avatars."] <a href="https://steamcommunity.com/dev/apikey" rel="noopener" target="_blank">steamcommunity.com/dev/apikey</a></div>
+                </div>
+                <button class="btn btn-primary" type="submit">@L["Continue"]</button>
+            </div>
+        </form>
+    }
+    else if (Model.Step == "modules")
+    {
+        <form class="card" method="post" asp-antiforgery="true" action="/setup/modules">
+            <div class="card-body">
+                <h2 class="h5">@L["What should this site have?"]</h2>
+                <p class="text-body-secondary">@L["You can change this later in the administration area."]</p>
+                <partial name="_ModuleSwitches" model="Model.Modules"/>
+                <button class="btn btn-primary" type="submit">@L["Continue"]</button>
+            </div>
+        </form>
+    }
+    else if (Model.Step == "server")
+    {
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5">@L["Connect a game server"]</h2>
+                @if (Model.Server == null)
+                {
+                    <p>@L["Give the game server a name. You get an identifier and a key for it."]</p>
+                    <form method="post" asp-antiforgery="true" action="/setup/server">
+                        <div class="mb-3">
+                            <label class="form-label" for="Name">@L["Server name"]</label>
+                            <input class="form-control" id="Name" name="Name" required maxlength="100">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="Address">@L["Address players connect to (optional)"]</label>
+                            <input class="form-control" id="Address" name="Address" placeholder="play.example.com:27015" maxlength="200">
+                        </div>
+                        <button class="btn btn-primary" type="submit">@L["Create"]</button>
+                        <a class="btn btn-link" href="/setup?step=finish">@L["Skip for now"]</a>
+                    </form>
+                }
+                else
+                {
+                    <p class="fw-semibold">@Model.Server.Status.Server.Name</p>
+                    <partial name="_ServerInstructions" model="Model.Server"/>
+                    <div class="border rounded p-3 mb-3">
+                        <partial name="_ServerStatus" model="Model.Server.Status"/>
+                    </div>
+                    <a class="btn btn-primary" href="/setup?step=finish">@L["Continue"]</a>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <form class="card" method="post" asp-antiforgery="true" action="/setup/finish">
+            <div class="card-body">
+                <h2 class="h5">@L["All set"]</h2>
+                <p>@L["The site is ready. Everything you chose can be changed in the administration area, where you can also add more game servers."]</p>
+                <button class="btn btn-success" type="submit">@L["Finish"]</button>
+            </div>
+        </form>
+    }
+</div>

@@ -1,6 +1,102 @@
+using System.Security.Claims;
+using System.Text.Json.Serialization;
+using AspNet.Security.OpenId.Steam;
+using L4D2PlayStats.Hub.Core.DependencyInjection;
+using L4D2PlayStats.Hub.Web;
+using L4D2PlayStats.Hub.Web.Controllers.Admin;
+using L4D2PlayStats.Hub.Web.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.Local.json", true, true);
+
+builder.Services.AddHubCore();
+builder.Services.AddHubDatabase(builder.Configuration, builder.Environment);
+
+builder.Services.AddLocalization();
+builder.Services.AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+
+builder.Services
+    .AddControllersWithViews(options => options.Filters.Add<SetupRedirectFilter>())
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<IAdminViewService, AdminViewService>();
+builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
+builder.Services.AddSingleton<AvatarStore>();
+builder.Services.AddHostedService<SeasonBackgroundService>();
+builder.Services.AddHostedService<AvatarBackgroundService>();
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = SteamAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(AppConsts.LoginCookieInDays);
+        options.SlidingExpiration = true;
+        options.AccessDeniedPath = "/";
+    })
+    .AddSteam();
+
+builder.Services
+    .AddAuthorizationBuilder()
+    .AddPolicy(AppConsts.AdministratorPolicy, policy => policy.RequireAuthenticatedUser().AddRequirements(new AdministratorRequirement()));
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+await app.InitializeHubAsync();
 
-app.Run();
+var cultures = Cultures.Supported();
+var localization = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(AppConsts.DefaultCulture),
+    SupportedCultures = cultures,
+    SupportedUICultures = cultures
+};
+
+localization.RequestCultureProviders.Add(new SiteCultureProvider());
+
+app.UseForwardedHeaders();
+app.UseRequestLocalization(localization);
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConsts.DevelopmentSignInSetting))
+    app.MapGet("/dev/sign-in/{communityId:long}", async (long communityId, string? returnUrl, HttpContext httpContext) =>
+    {
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, communityId.ToString()), new Claim(ClaimTypes.Name, $"Player {communityId}") };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
+
+        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+        return Results.Redirect(!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith('/') && !returnUrl.StartsWith("//") ? returnUrl : "/");
+    });
+
+await app.RunAsync();
+
+public partial class Program;

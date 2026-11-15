@@ -1,0 +1,130 @@
+@model MatchViewModel
+@{
+    var match = Model.Match;
+    var experience = Model.Ranking.ToDictionary(player => player.CommunityId, player => player.Experience - (player.PreviousExperience ?? 0));
+
+    ViewData["Title"] = match.Campaign ?? L["Match"].Value;
+}
+<img class="campaign-banner mb-3" src="@Display.CampaignImage(match.Campaign)" alt="" onerror="this.src='/imgs/campaigns/no-image.jpg'">
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">@(match.Campaign ?? L["Custom campaign"].Value)</h1>
+        <div class="text-body-secondary">
+            @match.LastFileDate.ToString("f") · @match.ConfigurationName · @match.GameServer?.Name · @Display.Duration(match.StartedAtUtc, match.EndedAtUtc)
+        </div>
+        @if (!match.CountsForRanking)
+        {
+            <span class="badge text-bg-secondary mt-1">@L["Not ranked"]</span>
+        }
+    </div>
+    <div class="score display-6">
+        <span class="@(match.TeamAScore > match.TeamBScore ? "text-win" : "")">@match.TeamAScore</span>
+        <span class="text-body-secondary">×</span>
+        <span class="@(match.TeamBScore > match.TeamAScore ? "text-win" : "")">@match.TeamBScore</span>
+    </div>
+</div>
+
+@foreach (var team in new[] { 'A', 'B' })
+{
+    var won = team == 'A' ? match.TeamAScore > match.TeamBScore : match.TeamBScore > match.TeamAScore;
+
+    <h2 class="h5">
+        @L["Team"] @team
+        @if (won)
+        {
+            <span class="badge text-bg-success">@L["Winner"]</span>
+        }
+    </h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>@L["Player"]</th>
+                <th class="numeric" title="@L["Damage to special infected"]">@L["SI damage"]</th>
+                <th class="numeric">@L["SI killed"]</th>
+                <th class="numeric">@L["Common"]</th>
+                <th class="numeric">@L["Tank damage"]</th>
+                <th class="numeric">@L["Skeets"]</th>
+                <th class="numeric" title="@L["Friendly fire given"]">@L["FF"]</th>
+                <th class="numeric" title="@L["Damage dealt as infected"]">@L["Infected damage"]</th>
+                <th class="numeric">@L["MVPs"]</th>
+                <th class="numeric">@L["Experience"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var player in Model.Team(team))
+            {
+                var gained = experience.GetValueOrDefault(player.CommunityId);
+
+                <tr>
+                    <td>
+                        <a class="text-decoration-none d-flex align-items-center gap-2" href="/player/@player.CommunityId?season=@match.SeasonId">
+                            <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">@(player.Name ?? player.CommunityId.ToString())
+                        </a>
+                    </td>
+                    <td class="numeric">@Display.Number(player.SiDamage)</td>
+                    <td class="numeric">@player.SiKilled</td>
+                    <td class="numeric">@player.Common</td>
+                    <td class="numeric">@Display.Number(player.TankDamage)</td>
+                    <td class="numeric">@player.Skeets</td>
+                    <td class="numeric">@player.FfGiven</td>
+                    <td class="numeric">@Display.Number(player.DmgTotal)</td>
+                    <td class="numeric">@(player.MvpSiDamage + player.MvpCommon)</td>
+                    <td class="numeric @(gained > 0 ? "text-win" : gained < 0 ? "text-loss" : "")">@(match.CountsForRanking ? (gained > 0 ? "+" : "") + Display.Number(gained) : "-")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.Others.Any())
+{
+    <h2 class="h5">@L["Left before the end"]</h2>
+    <ul class="list-inline mb-4">
+        @foreach (var player in Model.Others)
+        {
+            <li class="list-inline-item"><a href="/player/@player.CommunityId?season=@match.SeasonId">@(player.Name ?? player.CommunityId.ToString())</a></li>
+        }
+    </ul>
+}
+
+<h2 class="h5">@L["Maps"]</h2>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>@L["Map"]</th>
+            <th class="numeric">@L["Team"] A</th>
+            <th class="numeric">@L["Team"] B</th>
+            @if (Model.Administrator)
+            {
+                <th>@L["Fix the score"]</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var file in match.Files.OrderBy(f => f.MatchOrder))
+        {
+            <tr>
+                <td>@(file.MatchOrder + 1)</td>
+                <td>@file.MapName</td>
+                <td class="numeric">@file.TeamAScore</td>
+                <td class="numeric">@file.TeamBScore</td>
+                @if (Model.Administrator)
+                {
+                    <td>
+                        <form class="d-flex gap-1" method="post" asp-antiforgery="true" action="/admin/statistics/@file.Id/score">
+                            <input class="form-control form-control-sm" style="width: 6rem" type="number" name="teamAScore" value="@file.TeamAScore" min="0" max="10000" aria-label="@L["Team"] A">
+                            <input class="form-control form-control-sm" style="width: 6rem" type="number" name="teamBScore" value="@file.TeamBScore" min="0" max="10000" aria-label="@L["Team"] B">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">@L["Save"]</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

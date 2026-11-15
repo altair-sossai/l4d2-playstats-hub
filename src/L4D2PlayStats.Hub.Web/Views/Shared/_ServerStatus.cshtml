@@ -1,0 +1,75 @@
+@model ServerStatusViewModel
+@{
+    var status = Model.Status;
+    var signal = status.Signal;
+    var connected = status.State == GameServerConnectionState.Online;
+
+    var title = status.State switch
+    {
+        GameServerConnectionState.Online => L["Connected"].Value,
+        GameServerConnectionState.Offline => L["Offline"].Value,
+        GameServerConnectionState.InvalidKey => L["Invalid key"].Value,
+        _ => L["Waiting for the first connection"].Value
+    };
+
+    string Mark(bool? ok)
+    {
+        return ok == true ? "✔" : ok == false ? "✘" : "…";
+    }
+
+    string Style(bool? ok)
+    {
+        return ok == true ? "text-win" : ok == false ? "text-loss" : "text-body-secondary";
+    }
+
+    bool? Plugin(string name)
+    {
+        return signal == null ? null : signal.Plugins.ContainsKey(name);
+    }
+}
+<div id="server-status-@Model.Server.Id" hx-get="/admin/servers/@Model.Server.Id/status" hx-trigger="every @(AppConsts.ServerStatusRefreshInSeconds)s" hx-swap="outerHTML">
+    <div class="d-flex align-items-center mb-2">
+        <span class="status-dot status-@status.State"></span>
+        <span class="fw-semibold">@title</span>
+        @if (status.LastSeenAtUtc != null)
+        {
+            <span class="text-body-secondary small ms-2">@L["Last contact"]: @status.LastSeenAtUtc.Value.ToString("u")</span>
+        }
+    </div>
+    @if (status.State == GameServerConnectionState.InvalidKey)
+    {
+        <div class="alert alert-danger py-2">@L["The server identifier arrived with the wrong key. Check the token in the server configuration, or generate a new key."]</div>
+    }
+    <ul class="list-unstyled mb-0">
+        <li class="@Style(connected ? true : status.LastSeenAtUtc == null ? null : false)">@Mark(connected ? true : status.LastSeenAtUtc == null ? null : false) @L["Connection with this site"]</li>
+        <li class="@Style(Plugin("l4d2_playstats_sync"))">@Mark(Plugin("l4d2_playstats_sync")) @L["Statistics upload plugin loaded"]</li>
+        <li class="@Style(signal?.StatisticsWriting)">@Mark(signal?.StatisticsWriting) @L["Statistics writing enabled (sm_stats_writestats 1)"]</li>
+        <li class="@Style(Model.Files > 0 ? true : null)">@Mark(Model.Files > 0 ? true : null) @L["First statistics file received"] @(Model.Files > 0 ? $"({Model.Files})" : "")</li>
+        @if (Model.Modules.IsEnabled(HubModule.LiveServer))
+        {
+            <li class="@Style(status.LastLiveDataAtUtc != null ? true : null)">@Mark(status.LastLiveDataAtUtc != null ? true : null) @L["Live match data arriving"]</li>
+        }
+        @if (Model.Modules.IsEnabled(HubModule.SkinShop))
+        {
+            <li class="@Style(Plugin("l4d2_weapon_skins"))">@Mark(Plugin("l4d2_weapon_skins")) @L["Weapon skins plugin loaded"]</li>
+        }
+    </ul>
+    @if (signal != null)
+    {
+        <div class="small text-body-secondary mt-2">
+            @signal.Hostname
+            @if (!string.IsNullOrEmpty(signal.Map))
+            {
+                <span>· @signal.Map</span>
+            }
+            @if (!string.IsNullOrEmpty(signal.Configuration))
+            {
+                <span>· @signal.Configuration</span>
+            }
+            @if (!string.IsNullOrEmpty(signal.SourceModVersion))
+            {
+                <span>· SourceMod @signal.SourceModVersion</span>
+            }
+        </div>
+    }
+</div>

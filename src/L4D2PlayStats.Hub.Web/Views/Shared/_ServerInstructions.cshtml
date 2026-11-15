@@ -1,0 +1,28 @@
+@model ServerViewModel
+@{
+    var server = Model.Status.Server;
+    var token = Model.Token ?? $"{server.PublicId}:{L["YOUR-KEY"].Value}";
+}
+<ol class="mb-3">
+    <li class="mb-2">
+        @L["Install the PlayStats plugins on the game server."]
+        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/releases" rel="noopener" target="_blank">@L["Download"]</a>
+    </li>
+    <li class="mb-2">
+        @L["The server needs SourceMod, the REST in Pawn extension and the l4d2_playstats plugin, which comes with L4D2 Competitive Rework."]
+    </li>
+    <li class="mb-2">
+        @L["Paste these lines into a configuration file that the server runs at startup, such as cfg/server.cfg:"]
+        <pre class="config mt-2 mb-0">@(AppConsts.ServerUrlCvar) "@Model.SiteUrl"
+@(AppConsts.ServerTokenCvar) "@token"</pre>
+        @if (Model.Token != null)
+        {
+            <div class="alert alert-warning py-2 mt-2 mb-0">@L["Copy the token now. The key is shown only once; if you lose it, generate a new one."]</div>
+        }
+        else
+        {
+            <div class="small text-body-secondary mt-1">@L["The key is not stored in readable form. Generate a new key if you need the full token again."]</div>
+        }
+    </li>
+    <li>@L["Restart the game server or change the map. The status below updates by itself."]</li>
+</ol>

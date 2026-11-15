@@ -1,0 +1,56 @@
+@model List<ServerStatusViewModel>
+@{
+    ViewData["Title"] = L["Game servers"].Value;
+}
+<h1 class="h3">@L["Game servers"]</h1>
+<partial name="_AdminNav"/>
+
+@if (Model.Count > 0)
+{
+    <div class="table-responsive mb-4">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>@L["Server"]</th>
+                <th>@L["Identifier"]</th>
+                <th>@L["Status"]</th>
+                <th class="numeric">@L["Statistics files"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var server in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="/admin/servers/@server.Server.Id">@server.Server.Name</a>
+                        @if (!server.Server.Enabled)
+                        {
+                            <span class="badge text-bg-secondary">@L["Disabled"]</span>
+                        }
+                    </td>
+                    <td><code>@server.Server.PublicId</code></td>
+                    <td><span class="status-dot status-@server.Status.State"></span>@L[server.Status.State.ToString()]</td>
+                    <td class="numeric">@Display.Number(server.Files)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-header">@L["Add a game server"]</div>
+    <div class="card-body">
+        <form method="post" asp-antiforgery="true" action="/admin/servers">
+            <div class="mb-3">
+                <label class="form-label" for="Name">@L["Server name"]</label>
+                <input class="form-control" id="Name" name="Name" required maxlength="100">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="Address">@L["Address players connect to (optional)"]</label>
+                <input class="form-control" id="Address" name="Address" placeholder="play.example.com:27015" maxlength="200">
+            </div>
+            <button class="btn btn-primary" type="submit">@L["Create"]</button>
+        </form>
+    </div>
+</div>

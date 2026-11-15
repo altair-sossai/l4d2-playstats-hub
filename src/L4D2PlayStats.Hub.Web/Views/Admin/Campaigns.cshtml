@@ -1,0 +1,36 @@
+@model CampaignsViewModel
+@{
+    ViewData["Title"] = L["Campaigns"].Value;
+}
+<h1 class="h3">@L["Campaigns"]</h1>
+<partial name="_AdminNav"/>
+
+<p class="text-body-secondary">@L["Maps played one after the other in the order below form a single match. Add your custom campaigns here, one map per line, in play order."]</p>
+
+<div class="row g-3">
+    @foreach (var campaign in Model.Campaigns)
+    {
+        <div class="col-md-6 col-xl-4">
+            <form class="card h-100" method="post" asp-antiforgery="true" action="/admin/campaigns">
+                <div class="card-body">
+                    <input type="hidden" name="Id" value="@campaign.Id">
+                    <input class="form-control form-control-sm mb-2 fw-semibold" name="Name" value="@campaign.Name" required aria-label="@L["Name"]">
+                    <textarea class="form-control form-control-sm font-monospace" name="Maps" rows="@Math.Max(4, campaign.Maps.Count)" aria-label="@L["Maps"]">@string.Join("\n", campaign.Maps.OrderBy(m => m.Order).Select(m => m.MapName))</textarea>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
+                    <button class="btn btn-sm btn-outline-danger" type="submit" formaction="/admin/campaigns/@campaign.Id/delete" onclick="return confirm('@L["Delete this campaign?"]')">@L["Delete"]</button>
+                </div>
+            </form>
+        </div>
+    }
+    <div class="col-md-6 col-xl-4">
+        <form class="card h-100 border-success" method="post" asp-antiforgery="true" action="/admin/campaigns">
+            <div class="card-body">
+                <input class="form-control form-control-sm mb-2" name="Name" placeholder="@L["New campaign"]" required aria-label="@L["Name"]">
+                <textarea class="form-control form-control-sm font-monospace" name="Maps" rows="5" placeholder="map_1&#10;map_2" required aria-label="@L["Maps"]"></textarea>
+            </div>
+            <div class="card-footer"><button class="btn btn-sm btn-success" type="submit">@L["Add"]</button></div>
+        </form>
+    </div>
+</div>

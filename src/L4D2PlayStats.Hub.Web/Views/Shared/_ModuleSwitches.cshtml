@@ -1,0 +1,24 @@
+@model ModuleSettings
+@{
+    var modules = new (string Name, bool Value, string Title, string Description, bool Available)[]
+    {
+        (nameof(ModuleSettings.Ranking), Model.Ranking, L["Ranking and statistics"].Value, L["Ranking, matches, players, patents and season history."].Value, true),
+        (nameof(ModuleSettings.LiveServer), Model.LiveServer, L["Live server"].Value, L["Scoreboard, players and events of the match in progress, for each game server."].Value, true),
+        (nameof(ModuleSettings.SiteChat), Model.SiteChat, L["Site chat"].Value, L["Chat between the site and the game. Needs the live server."].Value, true),
+        (nameof(ModuleSettings.RemoteCommands), Model.RemoteCommands, L["Remote commands"].Value, L["Administrators send commands from the site to a game server. Needs the live server."].Value, true),
+        (nameof(ModuleSettings.SkinShop), Model.SkinShop, L["Weapon skin shop"].Value, L["Players earn stars from MVPs and spend them on skins. Needs the ranking."].Value, true),
+        (nameof(ModuleSettings.CommunityRanking), Model.CommunityRanking, L["Community ranking"].Value, L["Players vote on who is better, and the votes build a second ranking."].Value, true),
+        (nameof(ModuleSettings.AntiCheat), Model.AntiCheat, L["Anti-cheat"].Value, L["Reserved. Not available yet."].Value, false)
+    };
+}
+@foreach (var module in modules)
+{
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" role="switch" id="module-@module.Name" name="@module.Name" value="true" checked="@module.Value" disabled="@(!module.Available)">
+        <input type="hidden" name="@module.Name" value="false">
+        <label class="form-check-label" for="module-@module.Name">
+            <span class="fw-semibold">@module.Title</span>
+            <span class="d-block small text-body-secondary">@module.Description</span>
+        </label>
+    </div>
+}

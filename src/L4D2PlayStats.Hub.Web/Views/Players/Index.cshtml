@@ -1,0 +1,80 @@
+@model PlayersViewModel
+@{
+    ViewData["Title"] = L["Players"].Value;
+
+    var columns = new (string Key, string Title)[]
+    {
+        ("experience", L["Experience"].Value),
+        ("games", L["Games"].Value),
+        ("winrate", L["Win rate"].Value),
+        ("sidamage", L["SI damage"].Value),
+        ("sikilled", L["SI killed"].Value),
+        ("common", L["Common"].Value),
+        ("tankdamage", L["Tank damage"].Value),
+        ("skeets", L["Skeets"].Value),
+        ("dmgtotal", L["Infected damage"].Value),
+        ("ffgiven", L["FF"].Value),
+        ("mvps", L["MVPs"].Value)
+    };
+}
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">@L["Players"]</h1>
+        <div class="text-body-secondary">@Display.SeasonName(Model.Season) · @L["Averages per match"]</div>
+    </div>
+    <form method="get" action="/players">
+        <input type="hidden" name="orderBy" value="@Model.OrderBy">
+        <select class="form-select form-select-sm w-auto" name="season" aria-label="@L["Season"]" onchange="this.form.submit()">
+            @foreach (var season in Model.Seasons)
+            {
+                <option value="@season.Id" selected="@(season.Id == Model.Season.Id)">@Display.SeasonName(season)</option>
+            }
+        </select>
+    </form>
+</div>
+
+@if (Model.Players.Count == 0)
+{
+    <div class="alert alert-secondary">@L["No ranked matches in this period yet."]</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-hover">
+            <thead>
+            <tr>
+                <th>@L["Player"]</th>
+                @foreach (var column in columns)
+                {
+                    <th class="numeric">
+                        <a class="@(column.Key == Model.OrderBy ? "link-warning" : "link-light") text-decoration-none" href="/players?season=@Model.Season.Id&orderBy=@column.Key">@column.Title</a>
+                    </th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <td>
+                        <a class="text-decoration-none d-flex align-items-center gap-2" href="/player/@player.CommunityId?season=@Model.Season.Id">
+                            <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">@player.MainName
+                        </a>
+                    </td>
+                    <td class="numeric">@Display.Number(player.Experience)</td>
+                    <td class="numeric">@player.Games</td>
+                    <td class="numeric">@Display.Percent(player.WinRate)</td>
+                    <td class="numeric">@Display.PerGame(player.SiDamage, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.SiKilled, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.Common, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.TankDamage, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.Skeets, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.DmgTotal, player.Games)</td>
+                    <td class="numeric">@Display.PerGame(player.FfGiven, player.Games)</td>
+                    <td class="numeric">@player.Stars</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

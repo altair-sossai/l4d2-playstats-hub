@@ -1,0 +1,87 @@
+@model MatchListViewModel
+@{
+    ViewData["Title"] = L["Matches"].Value;
+
+    string Link(int page)
+    {
+        var parts = new List<string> { $"page={page}" };
+
+        if (Model.SeasonId != null)
+            parts.Add($"season={Model.SeasonId}");
+
+        if (Model.ServerId != null)
+            parts.Add($"server={Model.ServerId}");
+
+        return "/matches?" + string.Join("&", parts);
+    }
+}
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <h1 class="h3 mb-0">@L["Matches"]</h1>
+    <form class="d-flex flex-wrap gap-2" method="get" action="/matches">
+        <select class="form-select form-select-sm w-auto" name="season" aria-label="@L["Season"]" onchange="this.form.submit()">
+            <option value="">@L["All seasons"]</option>
+            @foreach (var season in Model.Seasons)
+            {
+                <option value="@season.Id" selected="@(season.Id == Model.SeasonId)">@Display.SeasonName(season)</option>
+            }
+        </select>
+        @if (Model.Servers.Count > 1)
+        {
+            <select class="form-select form-select-sm w-auto" name="server" aria-label="@L["Server"]" onchange="this.form.submit()">
+                <option value="">@L["All servers"]</option>
+                @foreach (var server in Model.Servers)
+                {
+                    <option value="@server.Id" selected="@(server.Id == Model.ServerId)">@server.Name</option>
+                }
+            </select>
+        }
+    </form>
+</div>
+
+@if (Model.Page.Matches.Count == 0)
+{
+    <div class="alert alert-secondary">@L["No matches found."]</div>
+}
+else
+{
+    <div class="list-group mb-3">
+        @foreach (var match in Model.Page.Matches)
+        {
+            <a class="list-group-item list-group-item-action d-flex align-items-center gap-3" href="/matches/@match.Id">
+                <img class="campaign-thumb d-none d-sm-block" src="@Display.CampaignImage(match.Campaign)" alt="" loading="lazy" onerror="this.src='/imgs/campaigns/no-image.jpg'">
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">@(match.Campaign ?? L["Custom campaign"].Value)</div>
+                    <div class="small text-body-secondary">
+                        @match.LastFileDate.ToString("g") · @match.ConfigurationName · @match.MapCount @L["maps"]
+                        @if (Model.Servers.Count > 1)
+                        {
+                            <span>· @match.GameServer?.Name</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="score">
+                        <span class="@(match.TeamAScore > match.TeamBScore ? "text-win" : "")">@match.TeamAScore</span>
+                        <span class="text-body-secondary">×</span>
+                        <span class="@(match.TeamBScore > match.TeamAScore ? "text-win" : "")">@match.TeamBScore</span>
+                    </div>
+                    @if (!match.CountsForRanking)
+                    {
+                        <span class="badge text-bg-secondary">@L["Not ranked"]</span>
+                    }
+                </div>
+            </a>
+        }
+    </div>
+
+    @if (Model.Page.Pages > 1)
+    {
+        <nav aria-label="@L["Pages"]">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Page.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page.Page - 1)">@L["Previous"]</a></li>
+                <li class="page-item disabled"><span class="page-link">@Model.Page.Page / @Model.Page.Pages</span></li>
+                <li class="page-item @(Model.Page.Page >= Model.Page.Pages ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page.Page + 1)">@L["Next"]</a></li>
+            </ul>
+        </nav>
+    }
+}

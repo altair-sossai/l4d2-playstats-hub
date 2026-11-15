@@ -1,0 +1,22 @@
+@{
+    var path = Context.Request.Path.Value ?? string.Empty;
+
+    var items = new (string Url, string Title)[]
+    {
+        ("/admin", L["Overview"].Value),
+        ("/admin/servers", L["Game servers"].Value),
+        ("/admin/modules", L["Modules"].Value),
+        ("/admin/settings", L["Settings"].Value),
+        ("/admin/game-modes", L["Game modes"].Value),
+        ("/admin/campaigns", L["Campaigns"].Value),
+        ("/admin/administrators", L["Administrators"].Value)
+    };
+}
+<ul class="nav nav-pills flex-wrap mb-4">
+    @foreach (var item in items)
+    {
+        var active = item.Url == "/admin" ? path == "/admin" : path.StartsWith(item.Url, StringComparison.OrdinalIgnoreCase);
+
+        <li class="nav-item"><a class="nav-link @(active ? "active" : "")" href="@item.Url">@item.Title</a></li>
+    }
+</ul>

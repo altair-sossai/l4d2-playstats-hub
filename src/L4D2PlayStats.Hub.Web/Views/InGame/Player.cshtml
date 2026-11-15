@@ -1,0 +1,58 @@
+@model InGameViewModel
+@{
+    Layout = "_InGameLayout";
+    ViewData["Tab"] = "player";
+}
+@if (Model.Me == null)
+{
+    <div class="box">
+        <p>@L["You have no ranked matches in this season yet."]</p>
+        <p class="muted">@L["Play a complete match in a ranked mode to appear here."]</p>
+    </div>
+}
+else
+{
+    var player = Model.Me.Player;
+    var progress = Model.Me.Progress;
+
+    <div class="box">
+        <div style="float: left; width: 60px;"><img src="@progress.Patent.Image" alt="" width="52" height="52"></div>
+        <div style="margin-left: 64px;">
+            <div class="big">@player.MainName</div>
+            <div>#@player.Position · @progress.Patent.Name · @Display.Number(player.Experience) @L["experience"]</div>
+            <div class="bar" style="margin-top: 6px;"><div style="width: @((int)(progress.Progress * 100))%"></div></div>
+            @if (progress.NextPatent != null)
+            {
+                <div class="muted" style="margin-top: 3px;">@L["Next"]: @progress.NextPatent.Name (@Display.Number(progress.NextPatent.Experience))</div>
+            }
+        </div>
+    </div>
+    <div class="box">
+        <div class="cell"><div class="big win">@player.Wins</div><div class="muted">@L["Wins"]</div></div>
+        <div class="cell"><div class="big loss">@player.Loss</div><div class="muted">@L["Losses"]</div></div>
+        <div class="cell"><div class="big">@Display.Percent(player.WinRate)</div><div class="muted">@L["Win rate"]</div></div>
+        <div class="cell"><div class="big">@player.MaxWinStreak</div><div class="muted">@L["Best win streak"]</div></div>
+        <div class="cell"><div class="big">@player.Stars</div><div class="muted">@L["MVPs"]</div></div>
+        <div class="cell"><div class="big">@player.RageQuit</div><div class="muted">@L["Rage quits"]</div></div>
+    </div>
+    <table>
+        <tr>
+            <th>@L["Averages per match"]</th>
+            <th class="num">@L["SI damage"]</th>
+            <th class="num">@L["SI killed"]</th>
+            <th class="num">@L["Common"]</th>
+            <th class="num">@L["Tank damage"]</th>
+            <th class="num">@L["Skeets"]</th>
+            <th class="num">@L["Infected damage"]</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="num">@Display.PerGame(player.SiDamage, player.Games)</td>
+            <td class="num">@Display.PerGame(player.SiKilled, player.Games)</td>
+            <td class="num">@Display.PerGame(player.Common, player.Games)</td>
+            <td class="num">@Display.PerGame(player.TankDamage, player.Games)</td>
+            <td class="num">@Display.PerGame(player.Skeets, player.Games)</td>
+            <td class="num">@Display.PerGame(player.DmgTotal, player.Games)</td>
+        </tr>
+    </table>
+}

@@ -1,0 +1,44 @@
+@model IReadOnlyList<Patent>
+@{
+    ViewData["Title"] = L["Patents"].Value;
+    var settings = (RankingSettings)ViewBag.Settings;
+}
+<h1 class="h3">@L["Patents"]</h1>
+<p class="text-body-secondary">@L["Your patent follows your experience in the current season."]</p>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>@L["Patent"]</th>
+                <th>@L["Name"]</th>
+                <th class="numeric">@L["Experience needed"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var patent in Model)
+            {
+                <tr>
+                    <td><img class="patent" src="@patent.Image" alt=""></td>
+                    <td>@patent.Name</td>
+                    <td class="numeric">@Display.Number(patent.Experience)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">@L["How experience is earned"]</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between"><span>@L["Win"]</span><span class="text-win">+@settings.Win</span></li>
+                <li class="list-group-item d-flex justify-content-between"><span>@L["Loss"]</span><span class="text-loss">@settings.Loss</span></li>
+                <li class="list-group-item d-flex justify-content-between"><span>@L["Rage quit"]</span><span class="text-loss">@settings.RageQuit</span></li>
+                <li class="list-group-item d-flex justify-content-between"><span>@L["MVP in special infected damage, per round"]</span><span class="text-win">+@settings.Mvp</span></li>
+                <li class="list-group-item d-flex justify-content-between"><span>@L["MVP in common infected, per round"]</span><span class="text-win">+@settings.MvpCommon</span></li>
+            </ul>
+            <div class="card-body small text-body-secondary">@L["Experience never goes below zero."]</div>
+        </div>
+    </div>
+</div>

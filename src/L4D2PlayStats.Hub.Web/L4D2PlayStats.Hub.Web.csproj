@@ -4,6 +4,22 @@
     <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNet.Security.OpenId.Steam" Version="11.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\L4D2PlayStats.Hub.Core\L4D2PlayStats.Hub.Core.csproj" />
+    <ProjectReference Include="..\L4D2PlayStats.Hub.Migrations.Sqlite\L4D2PlayStats.Hub.Migrations.Sqlite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Resources\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <InternalsVisibleTo Include="L4D2PlayStats.Hub.Tests" />
+  </ItemGroup>
 
 </Project>

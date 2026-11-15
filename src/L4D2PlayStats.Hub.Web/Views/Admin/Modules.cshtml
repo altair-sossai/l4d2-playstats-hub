@@ -1,0 +1,14 @@
+@model ModuleSettings
+@{
+    ViewData["Title"] = L["Modules"].Value;
+}
+<h1 class="h3">@L["Modules"]</h1>
+<partial name="_AdminNav"/>
+
+<form class="card" method="post" asp-antiforgery="true" action="/admin/modules" style="max-width: 760px;">
+    <div class="card-body">
+        <p class="text-body-secondary">@L["A module that is off disappears from the menu and its pages stop answering."]</p>
+        <partial name="_ModuleSwitches" model="Model"/>
+        <button class="btn btn-primary" type="submit">@L["Save"]</button>
+    </div>
+</form>

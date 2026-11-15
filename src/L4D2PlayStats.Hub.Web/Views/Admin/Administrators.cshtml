@@ -1,0 +1,58 @@
+@model AdministratorsViewModel
+@{
+    ViewData["Title"] = L["Administrators"].Value;
+}
+<h1 class="h3">@L["Administrators"]</h1>
+<partial name="_AdminNav"/>
+
+<div class="table-responsive mb-4" style="max-width: 760px;">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>@L["Name"]</th>
+            <th>SteamID64</th>
+            <th>@L["Since"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var administrator in Model.Administrators)
+        {
+            <tr>
+                <td>@(administrator.Name ?? "-")</td>
+                <td><a href="@SteamIds.ProfileUrl(administrator.CommunityId)" rel="noopener" target="_blank">@administrator.CommunityId</a></td>
+                <td>@administrator.AddedAtUtc.ToString("d")</td>
+                <td class="text-end">
+                    @if (administrator.CommunityId != Model.Current)
+                    {
+                        <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" onsubmit="return confirm('@L["Remove this administrator?"]')">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-secondary">@L["You"]</span>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="card" style="max-width: 640px;">
+    <div class="card-header">@L["Add an administrator"]</div>
+    <div class="card-body">
+        <form method="post" asp-antiforgery="true" action="/admin/administrators">
+            <div class="mb-3">
+                <label class="form-label" for="communityId">SteamID64</label>
+                <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="name">@L["Name"]</label>
+                <input class="form-control" id="name" name="name" maxlength="100">
+            </div>
+            <button class="btn btn-primary" type="submit">@L["Add"]</button>
+        </form>
+    </div>
+</div>
