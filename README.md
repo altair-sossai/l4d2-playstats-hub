@@ -4,39 +4,70 @@
 
 One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, match statistics, live server view, weapon skin shop and a community ranking, together with the SourceMod plugins that feed it.
 
-> **Status: early development.** Nothing in this repository can be installed yet. The existing repositories listed below still run the production site ([l4d2.com.br](https://l4d2.com.br/)) and remain the source of truth until the migration is finished.
+> **Status: in development, not released yet.** The application, the plugins and the installer are in this repository and pass their tests. No version has been published, and the plugins have not been run on a live game server yet. The [existing repositories](#repositories-being-consolidated) still run the production site ([l4d2.com.br](https://l4d2.com.br/)) until the migration is finished.
 
 ## Contents
 
 - [Why this project exists](#why-this-project-exists)
-- [What it will include](#what-it-will-include)
+- [What it does](#what-it-does)
+- [Installing](#installing)
+- [How it fits together](#how-it-fits-together)
 - [What stays outside this repository](#what-stays-outside-this-repository)
 - [Repositories being consolidated](#repositories-being-consolidated)
-- [Roadmap](#roadmap)
 - [Documentation](#documentation)
 - [License](#license)
 
 ## Why this project exists
 
-The system started small and grew into several repositories: a statistics parser, an API, a website with a skin shop, and a set of game server plugins. Running it today takes Azure resources, hand-made storage rows and secrets spread over three projects.
+The system started small and grew into several repositories: a statistics parser, an API, a website with a skin shop, and a set of game server plugins. Running it took Azure resources, storage rows created by hand and secrets spread over three projects.
 
 This repository brings the logic together so that any server owner can run the same ranking and statistics system with one application, one database file and one install command.
 
-The migration happens step by step. Each feature moves here only when it is ready, and the old repositories are archived at the end.
+## What it does
 
-## What it will include
+- **Ranking and statistics.** Every match played on your servers becomes a ranking, with patents, match details, and a page for each player showing results, averages, and who they play with and against.
+- **Seasons you configure.** You choose how many months a season lasts. The ranking starts again at each season, and past seasons stay browsable: ranking, matches and players.
+- **Several game servers, one site.** Each server has its own key. A player's results add up across all of them.
+- **Game modes you configure.** You choose which modes count toward the ranking and how many maps make a ranked match.
+- **Live server.** Scoreboard, players, events and chat of the match in progress, for each server.
+- **Weapon skin shop.** Players earn stars from MVPs and spend them on skins.
+- **Community ranking.** Players vote on pairs of players, and the votes build a second ranking.
+- **Pages for inside the game.** `!ranking` opens a light version of the ranking made for the game's own browser.
+- **Modules.** The administrator turns each of these on or off.
+- **Guided setup.** A first-run wizard, and a status page that shows whether each game server is connected and what is missing.
+- **Three languages.** English, Portuguese and Spanish.
+- **Your choice of database.** SQLite by default, with no server to install. SQL Server, PostgreSQL and MySQL are supported.
 
-- **One web application** (ASP.NET Core) that is the website, the API used by the game server plugins, the admin area and the scheduled jobs.
-- **Relational database through Entity Framework Core.** SQLite is the default, so a new install needs no database server. SQL Server, PostgreSQL and MySQL are planned as options.
-- **Modules the administrator turns on or off:** ranking and statistics, live server view, weapon skin shop, community ranking, site chat.
-- **Several game servers on one back end.** Each server has its own key, and every player's statistics add up across all servers.
-- **Configurable seasons.** The administrator sets how many months a season lasts, and past seasons stay browsable: ranking, matches and players.
-- **Configurable game modes.** The administrator chooses which modes count toward the ranking and the minimum size of a competitive match.
-- **Community ranking.** Players vote on pairs of players, and the votes build a second ranking next to the statistics one.
-- **Setup wizard and server status.** A first-run guide walks through the configuration, and each registered game server shows whether it is connected and correctly set up.
-- **SourceMod plugins** that upload statistics, send the live match, show the ranking in game and apply weapon skins.
-- **Simple deployment.** One install script for a Linux VPS, with a guide for Azure and a Docker image as alternatives.
-- **Automated tests**, with the back end as the priority.
+## Installing
+
+On a Linux VPS, one command installs the site:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
+```
+
+It prints the address of the site and a setup code. Open the address, paste the code, sign in with Steam, and the site guides you through the rest.
+
+This command downloads a published version, so it works from the first release on. Until then, the application can be [run from the source](CONTRIBUTING.md#running-it).
+
+| Guide | For |
+|---|---|
+| [Installing on a Linux VPS](docs/install-linux.md) | The recommended way. |
+| [Installing with Docker](docs/install-docker.md) | If you already use containers. |
+| [Installing on Azure](docs/install-azure.md) | A virtual machine or App Service. |
+| [Connecting a game server](docs/game-server.md) | The plugins and their settings. |
+
+## How it fits together
+
+```text
+ game server 1 ─┐
+ game server 2 ─┼─ plugins ──>  L4D2 PlayStats Hub  ──>  visitors, in a browser
+ game server N ─┘               (site + API + jobs)  ──>  players, inside the game
+                                        │
+                                   one database
+```
+
+The plugins send each map's statistics file and the live match to the site. The site stores the files, builds the matches and the rankings from them, and serves the pages.
 
 ## What stays outside this repository
 
@@ -47,44 +78,27 @@ The migration happens step by step. Each feature moves here only when it is read
 
 ## Repositories being consolidated
 
-| Repository | What it is today | What happens to it |
+The migration happens step by step. The old repositories are archived when it is finished.
+
+| Repository | What it is | What happens to it |
 |---|---|---|
 | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions API that stores the statistics files and computes matches, ranking and stars. | Replaced by this application, then archived. |
 | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Website with ranking, statistics, live server page and weapon skin shop. | Replaced by this application, then archived. |
-| [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Competitive server setup with custom plugins. | The plugins below move here. |
-
-Plugins that move from `l4d2-zone-server`:
-
-| Plugin | What it does |
-|---|---|
-| `l4d2_playstats_sync` | Uploads the statistics files written by `l4d2_playstats`. |
-| `l4d2_gameinfo_sync` | Sends the live match: scoreboard, players, events and chat. |
-| `l4d2_ranking` | Opens the ranking inside the game. |
-| `l4d2_show_patent_icon` | Shows each player's patent icon in game. |
-| `l4d2_weapon_skins` | Applies the weapon skins players own. |
-
-`l4d2_playstats` itself, which writes the statistics files, comes from [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) and is not copied here.
-
-## Roadmap
-
-1. Foundation: application skeleton, database, settings and modules, Steam sign-in, setup wizard, game server registration.
-2. Statistics upload, matches, seasons and ranking.
-3. Website pages, with season and server filters.
-4. Live server view for several servers.
-5. Weapon skin shop.
-6. Game server plugins.
-7. Community ranking.
-8. Install script, deployment guides and tutorials.
-9. Data migration and archiving of the old repositories.
-
-The full plan, with every decision taken so far, is in [docs/roadmap.md](docs/roadmap.md).
+| [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Competitive server setup with custom plugins. | Its PlayStats plugins now live in [plugins/](plugins/README.md). |
 
 ## Documentation
 
 | Document | Contents |
 |---|---|
-| [docs/roadmap.md](docs/roadmap.md) | Architecture, decisions, phases and open questions. |
-| [docs/in-game-browser.md](docs/in-game-browser.md) | What the browser embedded in Left 4 Dead 2 supports, and what that means for the front end. |
+| [docs/install-linux.md](docs/install-linux.md) | Installing, updating and backing up on a Linux VPS. |
+| [docs/install-docker.md](docs/install-docker.md) | Running the published image. |
+| [docs/install-azure.md](docs/install-azure.md) | Running on Azure. |
+| [docs/game-server.md](docs/game-server.md) | Connecting a game server, step by step. |
+| [docs/databases.md](docs/databases.md) | Using SQL Server, PostgreSQL or MySQL. |
+| [plugins/README.md](plugins/README.md) | Every plugin, setting and command. |
+| [docs/roadmap.md](docs/roadmap.md) | Design, decisions, what is done and what is open. |
+| [docs/in-game-browser.md](docs/in-game-browser.md) | What the browser inside the game supports. |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How the code is organised and the rules for changes. |
 
 English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.
 
@@ -92,4 +106,4 @@ English is the default language of this repository. Every document also has a Po
 
 The application is released under the [MIT License](LICENSE). Anyone can use, change and share it, including commercially, as long as the copyright notice is kept.
 
-The SourceMod plugins, once they arrive in `plugins/`, are released under GPL-3.0, because SourceMod requires that of plugins built with its includes.
+The SourceMod plugins in [plugins/](plugins/) are released under [GPL-3.0](plugins/LICENSE), because SourceMod requires that of plugins built with its includes.

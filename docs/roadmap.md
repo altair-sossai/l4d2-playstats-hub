@@ -2,12 +2,12 @@
 
 🌐 **English** | [Português](roadmap.pt.md) | [Español](roadmap.es.md)
 
-The plan for bringing the L4D2 PlayStats system into this repository: what exists today, the target design, the decisions already taken, the phases, and what is still open.
+The plan for bringing the L4D2 PlayStats system into this repository: where it came from, the design, the decisions taken, what is done, and what is still open.
 
 ## Contents
 
-- [Where things stand today](#where-things-stand-today)
-- [Target design](#target-design)
+- [Where it came from](#where-it-came-from)
+- [Design](#design)
 - [Decisions](#decisions)
 - [Modules](#modules)
 - [Game servers](#game-servers)
@@ -15,49 +15,44 @@ The plan for bringing the L4D2 PlayStats system into this repository: what exist
 - [Game modes](#game-modes)
 - [Community ranking](#community-ranking)
 - [Weapon skin shop](#weapon-skin-shop)
+- [Live server](#live-server)
 - [Setup wizard and server status](#setup-wizard-and-server-status)
 - [Front end](#front-end)
 - [Tests](#tests)
 - [Deployment](#deployment)
 - [Data migration](#data-migration)
-- [Phases](#phases)
+- [Progress](#progress)
 - [Open questions](#open-questions)
 
-## Where things stand today
+## Where it came from
 
-| Piece | Repository | How it works today |
+| Piece | Repository | How it worked |
 |---|---|---|
 | Statistics parser | [l4d2-playstats](https://github.com/altair-sossai/l4d2-playstats) | NuGet package that reads the files written by `l4d2_playstats`. |
-| API | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions. Stores the raw files in Azure Table Storage and rebuilds matches and ranking from them on request. |
-| Website | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | ASP.NET Core MVC. Reads from the API, keeps the skin shop in Azure Table Storage and the live match in memory. |
-| Plugins | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Five SourceMod plugins talk to the API and to the website. |
+| API | [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions. Stored the raw files in Azure Table Storage and rebuilt matches and ranking from them on request. |
+| Website | [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | ASP.NET Core MVC. Read from the API, kept the skin shop in Azure Table Storage and the live match in memory. |
+| Plugins | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Five SourceMod plugins talked to the API and to the website, with different addresses and secrets. |
 
-Limits that this project removes:
+Limits of that setup, which this project removes:
 
-- The season length is fixed at two months, in two separate places.
-- Past seasons exist only as saved top-100 lists, so their matches cannot be browsed.
-- The website assumes one game server.
-- Only 4v4 matches with at least two maps count, and the accepted game modes are a hand-written pattern in a storage row.
-- Maps outside a fixed list of campaigns are dropped.
-- Installing it takes an Azure subscription, storage rows created by hand and secrets in three projects.
+- The season length was fixed at two months, in two separate places.
+- Past seasons existed only as saved top-100 lists, so their matches could not be browsed.
+- The website assumed one game server.
+- Only 4v4 matches with at least two maps counted, and the accepted game modes were a hand-written pattern in a storage row.
+- Maps outside a fixed list of campaigns were dropped.
+- Installing it took an Azure subscription, storage rows created by hand and secrets in three projects.
 
-## Target design
+## Design
 
 One ASP.NET Core application that is the website, the API for the plugins, the admin area and the scheduler.
 
-| Folder | Contents |
-|---|---|
-| `src/` | The application, the domain logic and the Entity Framework Core data layer, with one migrations project per database. |
-| `plugins/` | SourceMod sources, includes, translations and configuration files. |
-| `deploy/` | Install script, service definition, reverse proxy and Docker files. |
-| `docs/` | Guides in English, Portuguese and Spanish. |
+- **The raw statistics file stays stored** as the source of truth. Matches, maps and per-player results are tables built from it, and a reprocess command rebuilds them when rules change.
+- **Settings live in the database** and are edited in the admin area. Only the database provider, the connection string and the data folder are set outside it.
+- **One back-end instance** serves every game server. Running several instances is out of scope.
+- **The live match stays in memory**, never in the database, and is kept separately for each game server.
+- **Each feature is a module** in the code and, where it makes sense, something the administrator can turn off.
 
-Main points:
-
-- **The raw statistics file stays stored** as the source of truth. Matches, maps and per-player results become tables, so rankings are database queries, and a reprocess command can apply new rules to old files.
-- **Settings live in the database** and are edited in the admin area. Only the database provider and connection string stay in a configuration file.
-- **One back-end instance** serves every game server. Running several instances is out of scope for now.
-- **The live match stays in memory**, never in the database. It is kept separately for each game server.
+[CONTRIBUTING.md](../CONTRIBUTING.md) describes the folders and the code rules.
 
 ## Decisions
 
@@ -66,161 +61,154 @@ Main points:
 | Rankings | Two rankings. The statistics ranking is the main one and opens the site. The community ranking is secondary. |
 | Scope of rankings | Both are global. A player's results on every game server add up. |
 | Season length | Set in months by the administrator. A change applies from the next season. |
-| Past seasons | Ranking, matches and players of any past season can be browsed. |
-| Rule changes | Apply from then on. The administrator can reprocess manually. |
+| Season boundaries | Follow the clock of the game server that sent each file, as the old system did. |
+| Past seasons | Ranking, matches and players of any past season can be browsed, as well as a whole year and all time. |
+| Rule changes | Apply from then on. The administrator can reprocess every match. |
 | Minimums | The minimum number of maps in a match and the minimum number of matches to appear in the ranking are both settings. |
+| Unknown maps | A match on maps outside the campaign list is kept. A setting turns that off. |
 | Database | Always relational, through Entity Framework Core. SQLite is the default. SQL Server, PostgreSQL and MySQL are options. |
+| Entity Framework Core version | 10, the long-term support version. The PostgreSQL and MySQL providers are not available for version 11 yet. |
 | Back end | A single instance, whatever the number of game servers. |
 | Live match | In memory only, separated by game server. |
 | Skin refund | Refunding skins at the end of a season is a setting, on by default. |
-| Skin catalog | The catalog and thumbnails live in the assets repository, and the application imports them. |
-| Plugins | Target servers based on L4D2 Competitive Rework. |
-| Remote commands | Sending commands from the site to a game server is included as a module. |
+| Skin catalog | The catalog and the pictures live in the assets repository, and the application imports the catalog. |
+| Plugins | Target servers based on L4D2 Competitive Rework. One address and one token for all of them. |
+| Remote commands | Sending commands from the site to a game server is a module, off by default, with an audit log. |
 | Anti-cheat | Reserved as a module, turned off, with no implementation for now. |
+| Front end | Two layers: the main site for current browsers, and a few pages made for the browser inside the game. |
+| In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, and the latest matches. |
+| Admin area | Server-rendered like the rest of the site. A single-page framework such as Angular is allowed if a screen needs it, and is not used. |
 | Docker | Offered as an alternative to the install script. |
 | Old data | Imported and recalculated. There is no backward compatibility with the old storage. |
 | Languages | English is the default. Portuguese and Spanish versions follow from it. |
+| Code layout | One type per file, grouped by module and then by kind. |
 | Tests | Extensive on the back end. Front-end tests only where they pay off. |
-| Front end | Two layers. The main site targets current browsers. A separate set of pages follows the limits of the game's browser. |
-| In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, and the latest matches. Everything else is on the main site. |
-| Admin area | Server-rendered like the rest of the site. A single-page framework such as Angular is allowed if a screen needs it, and is not used to start with. |
 | License | MIT for the application. The plugins are GPL-3.0, as SourceMod requires. |
 
 ## Modules
 
 The core is always on: game server registration, statistics upload, Steam sign-in and the admin area.
 
-| Module | Contents |
-|---|---|
-| Ranking and statistics | Ranking, matches, players, patents, punishments and season history. |
-| Live server | Scoreboard, players, events and chat of the match in progress. |
-| Weapon skin shop | Stars, purchases, gifts and equipped skins. |
-| Community ranking | Pairwise voting and its ranking. |
-| Site chat | Chat between the site and the game, with bans. |
-| Remote commands | Commands sent from the site to a game server, with an audit log. |
-| Anti-cheat | Reserved. |
+| Module | Contents | Default |
+|---|---|---|
+| Ranking and statistics | Ranking, matches, players, patents, punishments and season history. | On |
+| Live server | Scoreboard, players and events of the match in progress. | On |
+| Site chat | Chat between the site and the game, with bans. Needs the live server. | Off |
+| Remote commands | Commands sent from the site to a game server. Needs the live server. | Off |
+| Weapon skin shop | Stars, purchases, gifts and equipped skins. Needs the ranking. | Off |
+| Community ranking | Pairwise voting and its ranking. | Off |
+| Anti-cheat | Reserved. | Off |
 
-A module that is off disappears from the menu and its routes answer as not found. The skin shop depends on the statistics module, because stars come from match results.
+A module that is off disappears from the menu and its pages answer as not found.
 
 ## Game servers
 
-- The administrator registers each game server and receives an identifier and a key for it. The key is stored hashed.
-- The plugins use one address and one token of the form `id:key`. The token tells the back end which server sent each file, so the statistics file format does not change.
+- The administrator registers each game server and receives an identifier and a key. Only a hash of the key is stored.
+- The plugins use one address and one token of the form `identifier:key`. The token tells the site which server sent each file, so the statistics file format did not change.
 - Files are unique per server and file name.
-- The live match, the site chat and the command queue are separated by server. The site lets the visitor pick which server to watch.
+- The live match, the site chat and the command queue are separated by server. The visitor picks which server to watch.
 
 ## Seasons and rankings
 
-- Seasons are rows in the database, created from the configured length.
-- A file dated before the first season creates the earlier seasons it needs, using the same length.
-- The statistics ranking keeps the current scoring as default values that the administrator can edit: points for a win, a loss and a rage quit, and bonus points for MVPs.
+- Seasons are rows in the database, created from the configured length. A two-month season starts in January, March, May and so on.
+- A file dated before the first season creates the earlier seasons it needs.
+- The scoring keeps the old values as defaults the administrator can edit: 85 for a win, -80 for a loss, -150 for a rage quit, 8 and 6 for each MVP. Experience never goes below zero.
 - Punishments belong to a season.
+- Matches never cross a season boundary, a change of configuration or a change of game server.
 
 ## Game modes
 
 The statistics file carries the display name of the configuration, such as `ZoneMod v2.9.2b`, and the team size. It does not carry the configuration folder name.
 
-- Every configuration name received is recorded automatically.
-- The administrator writes rules on top of those names: a name pattern that ignores the version, the team sizes, whether it counts toward the ranking, and the minimum number of maps.
-- Campaigns become an editable table, and a map outside the table is no longer dropped.
+- Every configuration name received is recorded automatically and listed in the admin area.
+- The administrator writes rules on top of those names: a pattern where `*` stands for any text, the team size, whether it counts toward the ranking, and the minimum number of maps.
+- The first rule that fits a match decides. A match that fits no rule does not count.
+- Campaigns are an editable table, used to tell which maps belong to the same match.
 
 ## Community ranking
 
-- The voter sees two players with their Steam avatars and answers which one is better.
-- The answers are: left, right, same level, or "I don't know one of them".
-- Same level counts as a draw in the calculation. "I don't know" changes nothing.
-- Voting requires a minimum number of matches played, counted over all seasons. It is a setting, with 10 as the default.
-- The number of votes per day is limited by a setting. Players cannot vote on themselves or repeat a pair.
-- Candidates are players with recorded matches.
-- The ranking does not reset with the season.
+- The voter sees two players with their avatars and answers which one is better: left, right, same level, or "I don't know" one or both of them.
+- Same level counts as a draw. "I don't know" changes nothing and hides that player from that voter afterwards.
+- The rating is Elo, and it does not reset with the season.
+- Voting needs a minimum number of matches played, counted over all seasons: 10 by default.
+- Votes per day are limited: 20 by default. Players cannot vote on themselves or on the same pair twice.
+- The site chooses the pair, preferring players the voter has played with or against, and accepts an answer only for the pair it offered.
 
 ## Weapon skin shop
 
-- Players earn stars from MVPs and spend them on skins.
-- Purchases, gifts, prices and equipped skins move from Azure Table Storage to the database.
-- The season refund follows the same seasons as the ranking, and the administrator can turn it off.
+- Players earn one star for each MVP in ranked matches, over their whole history, and spend stars on skins.
+- The catalog is imported from a file in the assets repository. The pictures are loaded from an address the administrator sets.
+- At the start of a season, skins bought earlier are refunded and gifts are kept. The administrator can turn the refund off.
 - Models, materials and photos stay in [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
+
+## Live server
+
+- The game server sends the configuration, the round, the scoreboard, the players, the chat and the events of the match.
+- The site shows them a few seconds late, as the old site did.
+- Connections by IP address are stored to point out accounts that share an address. The address itself is never shown.
 
 ## Setup wizard and server status
 
-First-run wizard, shown once after the install:
+The first-run wizard runs once, after the install: the first administrator signs in with Steam using a code printed by the installer, then chooses the site settings, the modules and the first game server.
 
-1. The first administrator signs in with Steam, using a code printed by the installer.
-2. Site name, language and Steam Web API key.
-3. Modules to turn on.
-4. Season length and initial game mode rules.
-5. The first game server.
-
-Game server wizard, used for the first server and for each one added later:
-
-1. Name and address.
-2. What has to be installed on the game server, with a download link for the plugins.
-3. The exact configuration block to paste, and the file it goes in.
-4. Validation. The page waits and turns to "connected" when the game server answers.
-
-The game server calls the back end, not the other way around. That works behind NAT and needs no RCON password on the site. Each server shows one of these states:
+For each game server, the site shows the two lines to paste into its configuration and then waits for the server to answer. The game server calls the site, not the other way around, which works behind NAT and needs no RCON password.
 
 | State | Meaning |
 |---|---|
 | Waiting | Never connected. |
-| Online | A signal arrived in the last seconds. |
+| Connected | A signal arrived in the last seconds. |
 | Offline | Shows when it was last seen. |
 | Invalid key | The identifier arrived with the wrong key. |
 
-Each server also has a checklist, with a correction hint on every failed item: connection, plugin versions, statistics writing enabled, first statistics file received, live data arriving, and the skins plugin when that module is on. A console command on the game server runs the same check from that side.
+A checklist shows what was found: connection, upload plugin, statistics writing, first file received, live data and the skins plugin. The `sm_playstats_test` command runs the same check from the game server console.
 
 ## Front end
 
-The browser embedded in the game is Chromium 18 from 2012. It runs ES5 only and has no flexbox, grid or custom properties. The measurements are in [in-game-browser.md](in-game-browser.md).
+The browser inside the game is Chromium 18 from 2012. It runs ES5 only and has no flexbox, grid or custom properties. The measurements are in [in-game-browser.md](in-game-browser.md).
 
-The front end has two layers:
-
-- **Main site.** Targets current browsers: server-rendered pages with a modern CSS framework and no Node build step. The admin area is built the same way.
-- **In-game pages.** A small set under its own route, which is what the plugin opens. They follow the limits of that browser and are served over plain HTTP.
-
-The in-game pages are read-only and need no sign-in:
-
-| Page | Contents |
-|---|---|
-| Ranking | The current season, with position, patent and points. |
-| Player summary | Position, points, wins and losses, and patent progress of the player who opened the panel. The plugin passes the player's identifier in the address. |
-| Latest matches | A short list with teams and scores. |
-
-The skin shop, the community ranking, the live server and the admin area are on the main site only.
+- **Main site.** Server-rendered pages with Bootstrap 5 and htmx, with no Node build step. The admin area is built the same way.
+- **In-game pages.** Three read-only pages under `/ingame`, with no script, that fit the game's panel. A test fails if they start using something that browser lacks.
 
 ## Tests
 
-- **Back end, the priority.** Unit tests for match assembly, scoring, seasons, game mode rules, the community rating and the skin shop wallet. Integration tests against a real SQLite database, and against the other databases in continuous integration. Endpoint tests for everything the plugins call, so the contract with the game server cannot break unnoticed.
-- **Plugins.** Every plugin is compiled in continuous integration.
-- **Front end.** Only smoke tests that the pages render, plus a check that the in-game pages stay within the old browser's limits.
+- **Back end.** Unit tests for match assembly, scoring, seasons, game mode rules, the Elo rating and the skin shop. Tests through HTTP for every page and for every endpoint the plugins call.
+- **Parity.** A test compares the rankings with a copy of the production data. It matches the old API exactly for the seasons computed with the current rules.
+- **Databases.** The same tests run on SQLite, SQL Server, PostgreSQL and MySQL, and check that the migrations of each one match the model.
+- **Plugins.** Every plugin is compiled on each change.
 
 ## Deployment
 
-- **Linux VPS, the main path.** One command downloads an install script. It installs a self-contained build, creates the service, sets up HTTPS when a domain is given, and prints the setup address and the configuration block for the game server. Update and backup commands are included.
-- **Azure.** A guide for App Service with a container. That service must run a single instance, and SQL Server is recommended there because its persistent disk is a network share.
-- **Docker.** An image for those who prefer it.
+- **Linux VPS.** One command installs a self-contained build as a service, with optional HTTPS through Caddy, and prints the setup code. Update, backup and restore are single commands.
+- **Docker.** An image published with every release.
+- **Azure.** A virtual machine with the Linux installer, or App Service with the image.
 
 ## Data migration
 
 A separate console program, outside this repository, moves the production data once:
 
-- It reads the raw statistics files from the old storage and uploads each one through the same endpoint the plugin uses, so everything is recalculated by the normal path.
-- Old punishments were deleted at each season change and do not come back, so recalculated history can differ slightly from the old lists.
-- Skin gifts, current-season purchases, prices and chat bans are written to the new database.
+- It reads the raw statistics files from the old storage, without changing it, and uploads each one through the same endpoint the plugin uses, so everything is recalculated by the normal path.
+- Old punishments were deleted at each season change and do not come back.
+- Rankings saved before August 2026 were computed with an older rule for the minimum number of maps, so recalculated history differs from those lists.
 
-## Phases
+## Progress
 
-1. **Foundation.** Repository, continuous integration, database, settings and modules, Steam sign-in, first-run wizard, game server registration with the connection signal, and a minimal install script.
-2. **Statistics and ranking.** Upload, match assembly, scoring, punishments, seasons and game mode rules.
-3. **Website.** The existing pages on top of the new services, with season and server filters.
-4. **Live server.** Live state per server, server picker, site chat, command queue and chat bans.
-5. **Weapon skin shop.** Database storage, catalog import and season refund.
-6. **Plugins.** The five plugins, one address and token, fixes to the upload plugin, compiled releases.
-7. **Community ranking.** Voting page, rating and limits.
-8. **Deployment and tutorials.** Full install script, Azure and Docker guides, step-by-step tutorials.
-9. **Migration.** Import of the production data, switch of the production site, archiving of the old repositories.
+| Phase | Contents | Status |
+|---|---|---|
+| 1. Foundation | Database, settings and modules, Steam sign-in, wizard, game server registration and status. | Done |
+| 2. Statistics and ranking | Upload, match assembly, scoring, punishments, seasons and game mode rules. | Done |
+| 3. Website | Ranking, matches, players, patents, admin area and the in-game pages, in three languages. | Done |
+| 4. Live server | Live state per server, server picker, site chat, remote commands and chat bans. | Done, not yet seen with a real game server |
+| 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, not yet tried with the real assets |
+| 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |
+| 7. Community ranking | Voting page, rating, limits and admin page. | Done |
+| 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; no version published yet |
+| 9. Migration | Import of the production data, switch of the production site, archiving of the old repositories. | Import tried locally; the switch is pending |
 
 ## Open questions
 
-- **MySQL.** Depends on an Entity Framework Core provider being available for the .NET version in use.
-- **HTTPS inside the game.** Not measured yet. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
+- **First release.** Nothing is published yet, so the installer and the Docker image have no version to download.
+- **Plugins on a live server.** They compile, and the site accepts what they send, but they have not been run in a real match.
+- **HTTPS inside the game.** Not measured. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
+- **Assets repository.** The shop expects thumbnails at `skins/{id}.jpg` and photos at `skin-shots/{id}/`, under one address. The assets repository does not have the thumbnails yet.
+- **Patent icons in game.** The sprites used by `l4d2_show_patent_icon` are not in this repository.
+- **Azure App Service.** The guide was written from the Azure documentation and not run end to end.

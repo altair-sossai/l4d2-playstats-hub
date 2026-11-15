@@ -1,0 +1,73 @@
+name: Databases
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'tests/**', '.github/workflows/databases.yml']
+  pull_request:
+    paths: ['src/**', 'tests/**', '.github/workflows/databases.yml']
+
+jobs:
+  postgresql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: hubtest
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      HUB_TEST_DATABASE_PROVIDER: PostgreSql
+      HUB_TEST_DATABASE_CONNECTION: Host=localhost;Database={database};Username=postgres;Password=hubtest;Pooling=false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+      - run: dotnet test --configuration Release --filter "TestCategory!=Parity"
+
+  mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: hubtest
+        ports: ['3306:3306']
+        options: --health-cmd "mysqladmin ping -h 127.0.0.1 -phubtest" --health-interval 5s --health-timeout 5s --health-retries 30
+    env:
+      HUB_TEST_DATABASE_PROVIDER: MySql
+      HUB_TEST_DATABASE_CONNECTION: Server=127.0.0.1;Database={database};User=root;Password=hubtest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+      - run: dotnet test --configuration Release --filter "TestCategory!=Parity"
+
+  sqlserver:
+    runs-on: ubuntu-latest
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: HubTest!2026
+        ports: ['1433:1433']
+    env:
+      HUB_TEST_DATABASE_PROVIDER: SqlServer
+      HUB_TEST_DATABASE_CONNECTION: Server=localhost,1433;Database={database};User ID=sa;Password=HubTest!2026;TrustServerCertificate=True
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+      - name: Wait for SQL Server
+        run: |
+          for attempt in $(seq 1 30); do
+            if (echo > /dev/tcp/localhost/1433) 2>/dev/null; then sleep 10; exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - run: dotnet test --configuration Release --filter "TestCategory!=Parity"
