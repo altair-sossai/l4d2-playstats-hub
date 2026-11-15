@@ -487,7 +487,7 @@ $RECYCLE.BIN/
 *.swp
 
 # L4D2 PlayStats Hub
-**/data/
+src/L4D2PlayStats.Hub.Web/data/
 *.db
 *.db-shm
 *.db-wal
