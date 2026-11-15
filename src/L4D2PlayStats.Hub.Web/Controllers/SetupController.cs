@@ -75,7 +75,7 @@ public class SetupController(
         if (DevelopmentSignIn && developmentCommunityId != null)
             return Redirect($"/dev/sign-in/{developmentCommunityId}?returnUrl=/setup/claim");
 
-        return Challenge(new AuthenticationProperties { RedirectUri = "/setup/claim" });
+        return Challenge(new AuthenticationProperties { RedirectUri = "/setup/claim", IsPersistent = true });
     }
 
     [HttpGet("claim")]

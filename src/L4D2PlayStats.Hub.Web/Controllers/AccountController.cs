@@ -10,7 +10,7 @@ public class AccountController : Controller
     [HttpGet("login")]
     public IActionResult Login(string? returnUrl = null)
     {
-        return Challenge(new AuthenticationProperties { RedirectUri = Local(returnUrl) });
+        return Challenge(new AuthenticationProperties { RedirectUri = Local(returnUrl), IsPersistent = true });
     }
 
     [HttpGet("logout")]

@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 
-public class GameServerService(HubDbContext dbContext, IGameServerPresence presence, IClock clock) : IGameServerService
+public class GameServerService(HubDbContext dbContext, IGameServerPresence presence, ILiveServerStore liveServerStore, IClock clock) : IGameServerService
 {
     public Task<List<GameServer>> ListAsync(CancellationToken cancellationToken = default)
     {
@@ -84,6 +85,7 @@ public class GameServerService(HubDbContext dbContext, IGameServerPresence prese
         dbContext.GameServers.Remove(server);
         await dbContext.SaveChangesAsync(cancellationToken);
         presence.Forget(server);
+        liveServerStore.Forget(server.Id);
 
         return true;
     }

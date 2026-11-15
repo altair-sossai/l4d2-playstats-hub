@@ -106,7 +106,7 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConst
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, communityId.ToString()), new Claim(ClaimTypes.Name, $"Player {communityId}") };
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
 
-        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties { IsPersistent = true });
 
         return Results.Redirect(!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith('/') && !returnUrl.StartsWith("//") ? returnUrl : "/");
     });
