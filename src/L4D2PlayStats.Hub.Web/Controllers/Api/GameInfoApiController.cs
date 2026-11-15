@@ -79,7 +79,6 @@ public class GameInfoApiController(
     }
 
     [HttpGet("server-command/dequeue")]
-    [RequireModule(HubModule.RemoteCommands)]
     public async Task<IActionResult> Dequeue(CancellationToken cancellationToken)
     {
         var command = await remoteCommandService.DequeueAsync(HttpContext.GameServer(), cancellationToken);

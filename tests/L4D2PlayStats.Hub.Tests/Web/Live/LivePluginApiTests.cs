@@ -126,7 +126,7 @@ public class LivePluginApiTests
     }
 
     [TestMethod]
-    public async Task TheChatAndTheCommandsOfThePluginFollowTheirOwnModules()
+    public async Task WithChatAndCommandsOffThePluginGetsEmptyAnswersInsteadOfErrors()
     {
         using var factory = new LiveWebFactory();
 
@@ -140,8 +140,9 @@ public class LivePluginApiTests
         var command = await client.GetAsync("/api/game-info/server-command/dequeue");
 
         Assert.AreEqual(HttpStatusCode.OK, round.StatusCode);
-        Assert.AreEqual(HttpStatusCode.NotFound, chat.StatusCode);
-        Assert.AreEqual(HttpStatusCode.NotFound, command.StatusCode);
+        Assert.AreEqual(HttpStatusCode.OK, chat.StatusCode);
+        Assert.AreEqual("[]", await chat.Content.ReadAsStringAsync());
+        Assert.AreEqual(HttpStatusCode.NoContent, command.StatusCode);
     }
 
     [TestMethod]

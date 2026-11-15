@@ -7,13 +7,18 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/external-chat")]
-[RequireModule(HubModule.SiteChat)]
+[RequireModule(HubModule.LiveServer)]
 [GameServerAuthorize]
-public class ExternalChatApiController(ILiveDataService liveDataService) : ControllerBase
+public class ExternalChatApiController(ILiveDataService liveDataService, ISettingsService settingsService) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get([FromQuery] long after = 0)
+    public async Task<IActionResult> Get([FromQuery] long after = 0, CancellationToken cancellationToken = default)
     {
+        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
+
+        if (!modules.IsEnabled(HubModule.SiteChat))
+            return Ok(Array.Empty<object>());
+
         return Ok(liveDataService.SiteMessagesAfter(HttpContext.GameServer(), after));
     }
 }
