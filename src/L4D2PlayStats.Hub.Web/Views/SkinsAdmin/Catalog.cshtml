@@ -1,0 +1,80 @@
+@using L4D2PlayStats.Hub.Web.Helpers
+@using L4D2PlayStats.Hub.Web.Models.Skins
+@model SkinCatalogViewModel
+@{
+    ViewData["Title"] = L["Skins"].Value;
+}
+<h1 class="h3">@L["Skins"]</h1>
+<partial name="_AdminNav"/>
+<partial name="_SkinsAdminNav"/>
+
+@if (TempData[AppConsts.SkinImportTempData] is string imported)
+{
+    <div class="alert alert-success">@L["Catalog imported: {0} skins in the file, {1} added, {2} updated and {3} no longer for sale.", SkinDisplay.Arguments(imported)]</div>
+}
+
+<p class="text-body-secondary" style="max-width: 760px;">
+    @L["The catalog is the skins.json file of the assets repository. Importing it again updates the skins that exist, adds the new ones, and takes off sale the skins that are no longer in the file. Players keep the skins they own."]
+</p>
+
+<div class="row g-3 mb-4" style="max-width: 760px;">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["Skins"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Total)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["For sale"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Available)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["No longer for sale"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Unavailable)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.UpdatedAtUtc != null)
+{
+    <p class="small text-body-secondary">@L["Last change"]: @Model.UpdatedAtUtc.Value.ToString("g") UTC</p>
+}
+
+<div class="card mb-4" style="max-width: 760px;">
+    <div class="card-header">@L["Import from a file"]</div>
+    <div class="card-body">
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/catalog/upload" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label" for="file">@L["Catalog file"]</label>
+                <input class="form-control" id="file" name="file" type="file" accept=".json,application/json" required>
+            </div>
+            <button class="btn btn-primary" type="submit">@L["Import"]</button>
+        </form>
+    </div>
+</div>
+
+<div class="card" style="max-width: 760px;">
+    <div class="card-header">@L["Import from the configured address"]</div>
+    <div class="card-body">
+        @if (string.IsNullOrEmpty(Model.Settings.CatalogUrl))
+        {
+            <div class="text-body-secondary">@L["Set the catalog address in the shop settings first."]</div>
+        }
+        else
+        {
+            <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/catalog/fetch">
+                <p><code>@Model.Settings.CatalogUrl</code></p>
+                <button class="btn btn-primary" type="submit">@L["Download and import"]</button>
+            </form>
+        }
+    </div>
+</div>

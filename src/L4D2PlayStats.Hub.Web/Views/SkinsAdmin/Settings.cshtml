@@ -1,0 +1,45 @@
+@using L4D2PlayStats.Hub.Core.Modules.Skins.Settings
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@model SkinShopSettings
+@{
+    ViewData["Title"] = L["Skins"].Value;
+}
+<h1 class="h3">@L["Skins"]</h1>
+<partial name="_AdminNav"/>
+<partial name="_SkinsAdminNav"/>
+
+<form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/settings" style="max-width: 760px;">
+    <div class="card mb-4">
+        <div class="card-header">@L["Seasons"]</div>
+        <div class="card-body">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="RefundAtSeasonEnd" name="RefundAtSeasonEnd" value="true" checked="@Model.RefundAtSeasonEnd">
+                <input type="hidden" name="RefundAtSeasonEnd" value="false">
+                <label class="form-check-label" for="RefundAtSeasonEnd">@L["Refund the skins when a season ends"]</label>
+            </div>
+            <div class="form-text">@L["When a new ranking season starts, the skins bought before it are taken back and their stars return to the players. Gifts are kept."]</div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">@L["Assets"]</div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label" for="AssetsUrl">@L["Address of the assets"]</label>
+                <input class="form-control" id="AssetsUrl" name="AssetsUrl" value="@Model.AssetsUrl" placeholder="https://assets.example.com">
+                <div class="form-text">
+                    @L["Where the pictures published from the assets repository are served."]
+                    @L["Thumbnails"]: <code>@($"/{CoreConsts.SkinThumbnailsFolder}/<id>{CoreConsts.SkinThumbnailExtension}")</code>
+                    · @L["Photos"]: <code>@($"/{CoreConsts.SkinShotsFolder}/<id>/1{CoreConsts.SkinShotExtension}")</code>
+                </div>
+            </div>
+            <div>
+                <label class="form-label" for="CatalogUrl">@L["Address of the catalog"]</label>
+                <input class="form-control" id="CatalogUrl" name="CatalogUrl" value="@Model.CatalogUrl" placeholder="https://assets.example.com/skins/skins.json">
+                <div class="form-text">@L["The skins.json file of the assets repository. It is downloaded when you import the catalog from the configured address."]</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">@L["Save"]</button>
+</form>

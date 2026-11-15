@@ -1,0 +1,109 @@
+@using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers
+@using L4D2PlayStats.Hub.Web.Helpers
+@using L4D2PlayStats.Hub.Web.Models.Skins
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@model SkinShopViewModel
+@{
+    ViewData["Title"] = L["Skins"].Value;
+}
+<link rel="stylesheet" href="~/css/skins.css" asp-append-version="true">
+
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="h3 mb-0">@L["Weapon skins"]</h1>
+        <div class="text-body-secondary">@L["Earn a star for each MVP of a round and spend your stars on skins that everyone sees in the game."]</div>
+    </div>
+    @if (Model.Wallet != null)
+    {
+        <div class="card">
+            <div class="card-body py-2 d-flex gap-4">
+                <div>
+                    <div class="small text-body-secondary">@L["Your balance"]</div>
+                    <div class="fs-4 fw-bold skin-stars" id="skin-balance">★ @Model.Wallet.Balance</div>
+                </div>
+                <div>
+                    <div class="small text-body-secondary">@L["Stars earned"]</div>
+                    <div class="fs-5">@Model.Wallet.Stars</div>
+                </div>
+                <div>
+                    <div class="small text-body-secondary">@L["Stars spent"]</div>
+                    <div class="fs-5">@Model.Wallet.Spent</div>
+                </div>
+                <div>
+                    <div class="small text-body-secondary">@L["Your skins"]</div>
+                    <div class="fs-5">@Model.PlayerSkins.Owned.Count</div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <a class="btn btn-outline-light" href="/login?returnUrl=@Uri.EscapeDataString(Model.ReturnUrl)">
+            <img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam to buy skins"]
+        </a>
+    }
+</div>
+
+@if (TempData[AppConsts.SkinMessageTempData] is string message)
+{
+    <div class="alert alert-success">@L[message]</div>
+}
+
+@if (Model.Total == 0)
+{
+    <div class="alert alert-secondary">@L["There are no skins yet. An administrator has to import the catalog first."]</div>
+}
+else
+{
+    <form class="d-flex flex-wrap align-items-center gap-3 mb-3" method="get" action="@AppConsts.SkinShopUrl" hx-get="@AppConsts.SkinShopUrl" hx-target="#skin-grid" hx-trigger="change" hx-push-url="true">
+        <select class="form-select form-select-sm w-auto" name="weapon" aria-label="@L["Weapon"]">
+            <option value="">@L["All weapons"]</option>
+            @foreach (var weapon in Model.Weapons)
+            {
+                <option value="@weapon" selected="@(weapon == Model.Weapon)">@L[SkinWeapons.Name(weapon)]</option>
+            }
+        </select>
+        <select class="form-select form-select-sm w-auto" name="rarity" aria-label="@L["Rarity"]">
+            <option value="">@L["All rarities"]</option>
+            @foreach (var rarity in SkinDisplay.Rarities)
+            {
+                <option value="@rarity" selected="@(rarity == Model.Rarity)">@L[rarity.ToString()]</option>
+            }
+        </select>
+        @if (Model.SignedIn)
+        {
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="owned" name="owned" value="true" checked="@Model.OnlyOwned">
+                <label class="form-check-label" for="owned">@L["Only my skins"]</label>
+            </div>
+        }
+        <noscript>
+            <button class="btn btn-sm btn-primary" type="submit">@L["Filter"]</button>
+        </noscript>
+    </form>
+
+    <div id="skin-grid">
+        <partial name="_SkinGrid" model="Model"/>
+    </div>
+
+    <p class="small text-body-secondary mt-4">@L["Every skin was made by the Left 4 Dead 2 community and published on the Steam Workshop. Each card links to the original page."]</p>
+}
+
+<div class="modal fade" id="skin-shots-modal" tabindex="-1" aria-labelledby="skin-shots-title" aria-hidden="true" data-count="@CoreConsts.SkinShotCount" data-extension="@CoreConsts.SkinShotExtension" data-thumb-suffix="@CoreConsts.SkinShotThumbnailSuffix">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="skin-shots-title"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+            </div>
+            <div class="modal-body">
+                <img class="skin-shot-main mb-2" id="skin-shots-main" alt="">
+                <div class="d-flex flex-wrap gap-2" id="skin-shots-thumbs"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/skins.js" asp-append-version="true"></script>
+}

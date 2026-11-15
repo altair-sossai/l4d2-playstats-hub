@@ -1,0 +1,171 @@
+@using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers
+@using L4D2PlayStats.Hub.Web.Helpers
+@using L4D2PlayStats.Hub.Web.Models.Skins
+@model SkinPurchasesViewModel
+@{
+    ViewData["Title"] = L["Skins"].Value;
+
+    var culture = CultureInfo.CurrentUICulture;
+
+    string Link(int page)
+    {
+        return AppConsts.SkinAdminUrl + SkinDisplay.Query(("q", Model.Query), ("page", page));
+    }
+}
+<link rel="stylesheet" href="~/css/skins.css" asp-append-version="true">
+<h1 class="h3">@L["Skins"]</h1>
+<partial name="_AdminNav"/>
+<partial name="_SkinsAdminNav"/>
+
+@if (TempData[AppConsts.SkinRefundTempData] is string refund)
+{
+    <div class="alert alert-success">@L["Refunded {0} purchases and {1} gifts: {2} stars went back to {3} players.", SkinDisplay.Arguments(refund)]</div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["Purchases"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Purchases)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["Gifts"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Gifts)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["Stars spent"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Stars)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="small text-body-secondary">@L["Players with skins"]</div>
+                <div class="fs-4 fw-bold">@Display.Number(Model.Players)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4" style="max-width: 760px;">
+    <div class="card-header">@L["Give a skin to a player"]</div>
+    <div class="card-body">
+        @if (Model.Skins.Count == 0)
+        {
+            <div class="text-body-secondary">@L["Import the catalog before giving skins."]</div>
+        }
+        else
+        {
+            <form class="row g-3 align-items-end" method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/gift">
+                <div class="col-md-4">
+                    <label class="form-label" for="communityId">SteamID64</label>
+                    <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="skinId">@L["Skin"]</label>
+                    <select class="form-select" id="skinId" name="skinId" required>
+                        @foreach (var weapon in Model.Skins.GroupBy(skin => skin.Weapon))
+                        {
+                            <optgroup label="@L[SkinWeapons.Name(weapon.Key)]">
+                                @foreach (var skin in weapon)
+                                {
+                                    <option value="@skin.Id">@skin.Title(culture)</option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" type="submit">@L["Give"]</button>
+                </div>
+            </form>
+            <div class="form-text">@L["A gift costs no stars, is equipped right away and is kept when a season ends."]</div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <form class="d-flex gap-2" method="get" action="@AppConsts.SkinAdminUrl">
+        <input class="form-control form-control-sm" name="q" value="@Model.Query" placeholder="@L["Player, SteamID64 or skin"]" aria-label="@L["Search"]">
+        <button class="btn btn-sm btn-outline-light" type="submit">@L["Search"]</button>
+    </form>
+    <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/refund-all" onsubmit="return confirm('@L["Refund every purchase and remove every gift from every player?"]')">
+        <button class="btn btn-sm btn-outline-danger" type="submit" disabled="@(Model.Purchases + Model.Gifts == 0)">@L["Refund all"]</button>
+    </form>
+</div>
+
+@if (Model.Rows.Total == 0)
+{
+    <div class="alert alert-secondary">@L["No purchases found."]</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th>@L["Player"]</th>
+                <th>@L["Skin"]</th>
+                <th class="numeric">@L["Price"]</th>
+                <th>@L["Date"]</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in Model.Rows.Items)
+            {
+                <tr>
+                    <td>
+                        <a class="text-decoration-none d-flex align-items-center gap-2" href="@SteamIds.ProfileUrl(row.Purchase.CommunityId)" rel="noopener" target="_blank">
+                            <img class="avatar" src="/avatar/@row.Purchase.CommunityId" alt="" loading="lazy">@row.PlayerName
+                        </a>
+                    </td>
+                    <td>
+                        @row.SkinTitle(culture)
+                        <div class="small text-body-secondary"><code>@row.Purchase.SkinId</code></div>
+                    </td>
+                    <td class="numeric">
+                        @if (row.Purchase.Gift)
+                        {
+                            <span class="badge text-bg-info" title="@row.GiftedByName">@L["Gift"]</span>
+                        }
+                        else
+                        {
+                            <span class="skin-stars">★ @row.Purchase.Price</span>
+                        }
+                    </td>
+                    <td>@row.Purchase.PurchasedAtUtc.ToString("g")</td>
+                    <td class="text-end">
+                        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/refund" onsubmit="return confirm('@L["Take this skin from the player and give the stars back?"]')">
+                            <input type="hidden" name="communityId" value="@row.Purchase.CommunityId">
+                            <input type="hidden" name="skinId" value="@row.Purchase.SkinId">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Refund"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.Rows.Pages > 1)
+    {
+        <nav aria-label="@L["Pages"]">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Rows.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Rows.Page - 1)">@L["Previous"]</a></li>
+                <li class="page-item disabled"><span class="page-link">@Model.Rows.Page / @Model.Rows.Pages</span></li>
+                <li class="page-item @(Model.Rows.Page >= Model.Rows.Pages ? "disabled" : "")"><a class="page-link" href="@Link(Model.Rows.Page + 1)">@L["Next"]</a></li>
+            </ul>
+        </nav>
+    }
+}

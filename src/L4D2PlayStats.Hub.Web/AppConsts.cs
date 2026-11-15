@@ -65,4 +65,15 @@ public static class AppConsts
     public const string SteamConnectUrl = "steam://connect/";
     public const string LiveTimeFormat = "HH:mm";
     public const string EmptyAvatarUrl = "/imgs/avatar-empty.png";
+    public const string SkinShopUrl = "/skins";
+    public const string SkinAdminUrl = "/admin/skins";
+    public const string SkinPricesUrl = "/admin/skins/prices";
+    public const int SkinAdminPageSize = 30;
+    public const int SkinSeasonRefundIntervalInMinutes = 10;
+    public const int SkinSeasonRefundStartDelayInSeconds = 30;
+    public const string SkinMessageTempData = "SkinMessage";
+    public const string SkinRefundTempData = "SkinRefund";
+    public const string SkinImportTempData = "SkinImport";
+    public const char SkinTempDataSeparator = ',';
+    public const string HtmxHistoryRestoreHeader = "HX-History-Restore-Request";
 }

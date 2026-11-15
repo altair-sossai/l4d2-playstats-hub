@@ -4,6 +4,7 @@ using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,7 @@ builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
 builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();
+builder.Services.AddHostedService<SkinSeasonRefundBackgroundService>();
 
 builder.Services
     .AddAuthentication(options =>

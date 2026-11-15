@@ -1,0 +1,23 @@
+@{
+    var path = (Context.Request.Path.Value ?? string.Empty).TrimEnd('/');
+
+    var items = new (string Url, string Title)[]
+    {
+        (AppConsts.SkinAdminUrl, L["Purchases and gifts"].Value),
+        (AppConsts.SkinPricesUrl, L["Prices"].Value),
+        ($"{AppConsts.SkinAdminUrl}/catalog", L["Catalog"].Value),
+        ($"{AppConsts.SkinAdminUrl}/settings", L["Shop settings"].Value)
+    };
+}
+<ul class="nav nav-tabs mb-4">
+    @foreach (var item in items)
+    {
+        var active = path.Equals(item.Url, StringComparison.OrdinalIgnoreCase);
+
+        <li class="nav-item"><a class="nav-link @(active ? "active" : "")" href="@item.Url">@item.Title</a></li>
+    }
+</ul>
+@if (TempData[AppConsts.SkinMessageTempData] is string message)
+{
+    <div class="alert alert-success">@L[message]</div>
+}

@@ -14,6 +14,9 @@
         ("/admin/administrators", L["Administrators"].Value)
     };
 
+    if (modules.IsEnabled(HubModule.SkinShop))
+        items.Add((AppConsts.SkinAdminUrl, L["Skins"].Value));
+
     if (modules.IsEnabled(HubModule.CommunityRanking))
         items.Add(("/admin/community", L["Community ranking"].Value));
 
