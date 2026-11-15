@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
 using L4D2PlayStats.Hub.Web;
-using L4D2PlayStats.Hub.Web.Controllers.Admin;
 using L4D2PlayStats.Hub.Web.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -32,7 +31,11 @@ builder.Services
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
-builder.Services.AddScoped<IAdminViewService, AdminViewService>();
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Program>()
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service", StringComparison.Ordinal) && !typeof(IHostedService).IsAssignableFrom(type)))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
