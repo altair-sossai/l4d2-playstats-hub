@@ -36,6 +36,34 @@ jobs:
           name: application-${{ matrix.runtime }}
           path: l4d2-playstats-hub-${{ matrix.runtime }}.*
 
+  plugins:
+    runs-on: ubuntu-latest
+    env:
+      SOURCEMOD_VERSION: '1.12'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download SourceMod
+        run: |
+          mkdir -p "$RUNNER_TEMP/sourcemod"
+          curl --fail --silent --show-error --location "https://www.sourcemod.net/latest.php?version=${SOURCEMOD_VERSION}&os=linux" --output "$RUNNER_TEMP/sourcemod.tar.gz"
+          tar -xzf "$RUNNER_TEMP/sourcemod.tar.gz" -C "$RUNNER_TEMP/sourcemod" addons/sourcemod/scripting
+          chmod +x "$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64"
+          echo "SPCOMP=$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64" >> "$GITHUB_ENV"
+      - run: bash plugins/build.sh
+      - name: Package the plugins
+        run: |
+          mkdir -p package/addons/sourcemod/plugins package/addons/sourcemod/configs package/cfg
+          cp plugins/compiled/*.smx package/addons/sourcemod/plugins/
+          cp -r plugins/translations package/addons/sourcemod/translations
+          cp plugins/configs/* package/addons/sourcemod/configs/
+          cp plugins/cfg/playstats.cfg.example package/cfg/
+          cp plugins/README.md plugins/LICENSE plugins/NOTICE.md package/
+          cd package && zip -qr ../l4d2-playstats-hub-plugins.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugins
+          path: l4d2-playstats-hub-plugins.zip
+
   image:
     runs-on: ubuntu-latest
     steps:
@@ -54,7 +82,7 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
   release:
-    needs: [application]
+    needs: [application, plugins]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

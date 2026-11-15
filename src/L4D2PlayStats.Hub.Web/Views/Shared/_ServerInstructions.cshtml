@@ -5,14 +5,17 @@
 }
 <ol class="mb-3">
     <li class="mb-2">
-        @L["Install the PlayStats plugins on the game server."]
+        @L["Download the PlayStats plugins and copy them to the game server."]
         <a href="https://github.com/altair-sossai/l4d2-playstats-hub/releases" rel="noopener" target="_blank">@L["Download"]</a>
+        ·
+        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/plugins/README.md" rel="noopener" target="_blank">@L["Step-by-step guide"]</a>
+        <div class="small text-body-secondary">@L["Put l4d2_playstats_sync.smx in addons/sourcemod/plugins itself, not in a subfolder, so it loads when the server starts."]</div>
     </li>
     <li class="mb-2">
         @L["The server needs SourceMod, the REST in Pawn extension and the l4d2_playstats plugin, which comes with L4D2 Competitive Rework."]
     </li>
     <li class="mb-2">
-        @L["Paste these lines into a configuration file that the server runs at startup, such as cfg/server.cfg:"]
+        @L["Paste these lines into cfg/server.cfg on the game server:"]
         <pre class="config mt-2 mb-0">@(AppConsts.ServerUrlCvar) "@Model.SiteUrl"
 @(AppConsts.ServerTokenCvar) "@token"</pre>
         @if (Model.Token != null)
@@ -24,5 +27,5 @@
             <div class="small text-body-secondary mt-1">@L["The key is not stored in readable form. Generate a new key if you need the full token again."]</div>
         }
     </li>
-    <li>@L["Restart the game server or change the map. The status below updates by itself."]</li>
+    <li>@L["Restart the game server or change the map. The status below updates by itself."] @L["You can also type sm_playstats_test in the server console to see the result there."]</li>
 </ol>
