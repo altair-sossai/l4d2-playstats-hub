@@ -115,7 +115,7 @@ public class SetupController(
 
         TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
 
-        return Redirect(AppConsts.SetupUrl);
+        return Redirect(AppConsts.SetupWizardUrl);
     }
 
     [HttpPost("modules")]

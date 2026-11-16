@@ -15,6 +15,8 @@ public class SetupRedirectFilter(ISetupService setupService) : IAsyncResourceFil
                      || path.StartsWithSegments("/login")
                      || path.StartsWithSegments("/logout")
                      || path.StartsWithSegments("/language")
+                     || path.StartsWithSegments(AppConsts.LogoUrl)
+                     || path.StartsWithSegments(AppConsts.ThemeSwitchPath)
                      || path.StartsWithSegments("/dev");
 
         if (!exempt && await setupService.IsPendingAsync(context.HttpContext.RequestAborted))

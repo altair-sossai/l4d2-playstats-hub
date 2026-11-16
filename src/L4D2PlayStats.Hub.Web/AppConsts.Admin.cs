@@ -17,7 +17,8 @@ public static partial class AppConsts
 
     public const string SettingsProblemsTempData = "SettingsProblems";
 
-    public const string SetupUrl = "/setup";
+    public const string SetupWizardUrl = "/setup";
+    public const string ThemeSwitchPath = "/theme";
     public const string AdminNavAntiCheatUrl = "/admin/anti-cheat";
     public const string AdminSteamIdPlaceholder = "7656119...";
     public const string AdminServerAddressPlaceholder = "play.example.com:27015";
