@@ -10,7 +10,7 @@ public static class LiveDisplay
         if (player?.Id == null)
             return null;
 
-        return ranking ? $"{AppConsts.PlayerUrl}{player.Id}" : player.ProfileUrl;
+        return ranking ? $"{AppConsts.LivePlayerUrl}{player.Id}" : player.ProfileUrl;
     }
 
     public static string Avatar(LivePlayer player)

@@ -70,7 +70,7 @@ public class LiveViewService(
             Status = status,
             Snapshot = liveDataService.Snapshot(server),
             Campaign = campaign,
-            CampaignImage = environment.WebRootFileProvider.GetFileInfo(image).Exists ? image : AppConsts.NoCampaignImage,
+            CampaignImage = environment.WebRootFileProvider.GetFileInfo(image).Exists ? image : AppConsts.LiveNoCampaignImage,
             RankingEnabled = modules.IsEnabled(HubModule.Ranking),
             AntiCheatPage = modules.IsEnabled(HubModule.AntiCheat)
         };
