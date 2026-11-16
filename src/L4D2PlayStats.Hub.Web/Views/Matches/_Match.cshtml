@@ -146,7 +146,11 @@
                 <h4 style="display: inline; font-weight: bold">
                     @campaign
                 </h4>
-                <small style="font-style: italic"> - @match.ConfigurationName@if (Model.ShowServer && !string.IsNullOrEmpty(match.GameServerName)){<text> - @match.GameServerName</text>}</small>
+                <small style="font-style: italic"> - @match.ConfigurationName</small>
+                @if (Model.ShowServer && !string.IsNullOrEmpty(match.GameServerName))
+                {
+                    <small style="font-style: italic"> - @match.GameServerName</small>
+                }
                 @if (match.Competitive)
                 {
                     <span class="label label-success" style="margin-left: 5px;">@L["Competitive"]</span>
