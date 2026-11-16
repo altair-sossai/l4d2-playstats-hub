@@ -6,6 +6,7 @@ public class SkinRefundSummary
     public int Gifts { get; init; }
     public int Stars { get; init; }
     public int Players { get; init; }
+    public int Failed { get; init; }
 
     public static SkinRefundSummary Of(IReadOnlyCollection<SkinPurchase> refunded)
     {

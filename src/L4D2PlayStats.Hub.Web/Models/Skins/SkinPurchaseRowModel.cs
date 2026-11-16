@@ -3,12 +3,14 @@ using L4D2PlayStats.Hub.Core.Modules.Skins;
 
 namespace L4D2PlayStats.Hub.Web.Models.Skins;
 
-public class SkinPurchaseRow(SkinPurchase purchase, Skin? skin, string playerName, string? giftedByName)
+public class SkinPurchaseRowModel(SkinPurchase purchase, Skin? skin, string playerName, string? giftedByName, DateTime date)
 {
     public SkinPurchase Purchase { get; } = purchase;
     public Skin? Skin { get; } = skin;
+    public string CommunityId { get; } = purchase.CommunityId.ToString(CultureInfo.InvariantCulture);
     public string PlayerName { get; } = playerName;
     public string? GiftedByName { get; } = giftedByName;
+    public DateTime Date { get; } = date;
 
     public string SkinTitle(CultureInfo culture)
     {
@@ -23,7 +25,7 @@ public class SkinPurchaseRow(SkinPurchase purchase, Skin? skin, string playerNam
         var term = query.Trim();
 
         return PlayerName.Contains(term, StringComparison.OrdinalIgnoreCase)
-               || Purchase.CommunityId.ToString().Contains(term, StringComparison.Ordinal)
+               || CommunityId.Contains(term, StringComparison.OrdinalIgnoreCase)
                || Purchase.SkinId.Contains(term, StringComparison.OrdinalIgnoreCase)
                || SkinTitle(culture).Contains(term, StringComparison.OrdinalIgnoreCase);
     }

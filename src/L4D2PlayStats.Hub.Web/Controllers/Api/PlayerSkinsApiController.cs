@@ -29,7 +29,7 @@ public class PlayerSkinsApiController(ISkinShopService skinShopService) : Contro
     {
         var wallet = await skinShopService.GetWalletAsync(communityId, cancellationToken);
 
-        return Ok(new { stars = wallet.Stars, spent = wallet.Spent, balance = wallet.Balance });
+        return Ok(new { mvpSiDamage = wallet.MvpSiDamage, mvpCommon = wallet.MvpCommon, stars = wallet.Stars, spent = wallet.Spent, balance = wallet.Balance });
     }
 
     [HttpPost("api/players/{communityId:long}/skins/equip")]

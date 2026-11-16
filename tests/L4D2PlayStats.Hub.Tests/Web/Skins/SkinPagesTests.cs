@@ -1,4 +1,5 @@
 using System.Net;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
@@ -12,6 +13,8 @@ namespace L4D2PlayStats.Hub.Tests.Web.Skins;
 public class SkinPagesTests
 {
     private const string AssetsUrl = "https://assets.example.test";
+    private const string ContactUrl = "https://steamcommunity.com/profiles/76561198000000100";
+    private const string RequestUrl = "https://example.test/issues/new";
 
     [TestMethod]
     public async Task TheShopOpensForVisitorsAndShowsTheCatalog()
@@ -25,15 +28,28 @@ public class SkinPagesTests
         var body = await response.Content.ReadAsStringAsync();
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("class=\"sk-hero\"", body);
+        Assert.Contains("id=\"skin-gold-magnum\"", body);
         Assert.Contains("Golden Magnum", body);
         Assert.Contains("Galaxy Pump Shotgun", body);
-        Assert.Contains("!skin gold-magnum", body);
-        Assert.DoesNotContain("__RequestVerificationToken", body);
-        Assert.DoesNotContain("id=\"skin-balance\"", body);
+        Assert.Contains("href=\"/login?returnUrl=%2Fskins\"", body);
+        Assert.Contains("href=\"#shop\"", body);
+        Assert.Contains("href=\"#authors\"", body);
+        Assert.Contains("https://steamcommunity.com/profiles/76561198000000001", body);
+        Assert.Contains("https://steamcommunity.com/sharedfiles/filedetails/?id=1000000003", body);
+        Assert.Contains("Desert Uzi", body);
+        Assert.Contains("sk-rarity-legendary", body);
+        Assert.Contains("id=\"sk-use-modal\"", body);
+        Assert.DoesNotContain("href=\"#mine\"", body);
+        Assert.DoesNotContain("id=\"sk-only-affordable\"", body);
+        Assert.DoesNotContain("class=\"sk-wallet-balance\"", body);
+        Assert.DoesNotContain("id=\"gm-modal\"", body);
+        Assert.DoesNotContain("sk-admin-gift\" data-skin", body);
+        Assert.DoesNotContain("!skin gold-magnum", body);
     }
 
     [TestMethod]
-    public async Task TheShopShowsAnEmptyCatalogBeforeTheFirstImport()
+    public async Task TheShopSaysWhenThereIsNoCatalogYet()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client(HubWebFactory.Player);
@@ -44,7 +60,8 @@ public class SkinPagesTests
         var body = await response.Content.ReadAsStringAsync();
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.DoesNotContain("class=\"card h-100 skin-card", body);
+        Assert.Contains("There are no skins yet.", body);
+        Assert.DoesNotContain("class=\"sk-card", body);
     }
 
     [TestMethod]
@@ -59,60 +76,39 @@ public class SkinPagesTests
 
         await factory.ShopAsync(shop => shop.BuyAsync(player, null, SkinSamples.GoldMagnum));
 
-        var all = await client.GetStringAsync("/skins");
-        var mine = await client.GetStringAsync("/skins?owned=true");
+        var wallet = await factory.ShopAsync(shop => shop.GetWalletAsync(player));
+        var page = await client.GetStringAsync("/skins");
 
-        Assert.Contains("id=\"skin-balance\">★ 1<", all);
-        Assert.Contains("/skins/unequip", all);
-        Assert.Contains("/skins/desert-smg/buy", all);
-        Assert.DoesNotContain("/skins/galaxy-pump/buy", all);
-        Assert.Contains("id=\"skin-gold-magnum\"", mine);
-        Assert.DoesNotContain("id=\"skin-desert-smg\"", mine);
+        Assert.Contains("<div class=\"sk-wallet-balance\">1</div>", page);
+        Assert.Contains("star available", page);
+        Assert.Contains("You earned <b>4 ⭐</b> as MVP and have spent <b>3 ⭐</b> on skins.", page);
+        Assert.Contains($"{wallet.MvpSiDamage} SI damage MVPs &#x2B; {wallet.MvpCommon} common MVPs", page);
+        Assert.Contains("href=\"#mine\"", page);
+        Assert.Contains("id=\"sk-only-affordable\"", page);
+        Assert.Contains("sk-unequip\" data-weapon=\"weapon_pistol_magnum\"", page);
+        Assert.Contains("sk-buy\" data-skin=\"desert-smg\"", page);
+        Assert.Contains("!skin gold-magnum", page);
+        Assert.DoesNotContain("sk-buy\" data-skin=\"galaxy-pump\"", page);
+        Assert.DoesNotContain("sk-buy\" data-skin=\"gold-magnum\"", page);
+        Assert.DoesNotContain("!skin desert-smg", page);
+        Assert.DoesNotContain("id=\"gm-modal\"", page);
     }
 
     [TestMethod]
-    public async Task TheShopFiltersByWeaponAndRarity()
+    public async Task AnAdministratorGetsTheGiftModalOnTheShop()
     {
         using var factory = new HubWebFactory();
-        using var client = factory.Client();
+        using var client = factory.Client(HubWebFactory.Administrator);
 
         await factory.StartSkinShopAsync();
 
-        var byWeapon = await client.GetStringAsync("/skins?weapon=weapon_smg");
-        var byRarity = await client.GetStringAsync("/skins?rarity=Legendary");
-        var both = await client.GetStringAsync("/skins?weapon=weapon_smg&rarity=Rare");
+        var page = await client.GetStringAsync("/skins");
 
-        Assert.Contains("id=\"skin-desert-smg\"", byWeapon);
-        Assert.Contains("id=\"skin-neon-smg\"", byWeapon);
-        Assert.DoesNotContain("id=\"skin-gold-magnum\"", byWeapon);
-        Assert.Contains("id=\"skin-gold-magnum\"", byRarity);
-        Assert.Contains("id=\"skin-galaxy-pump\"", byRarity);
-        Assert.DoesNotContain("id=\"skin-desert-smg\"", byRarity);
-        Assert.Contains("id=\"skin-neon-smg\"", both);
-        Assert.DoesNotContain("id=\"skin-desert-smg\"", both);
-    }
-
-    [TestMethod]
-    public async Task AFilterChangedOnThePageGetsOnlyTheListOfSkins()
-    {
-        using var factory = new HubWebFactory();
-        using var client = factory.Client();
-
-        await factory.StartSkinShopAsync();
-
-        client.DefaultRequestHeaders.Add("HX-Request", "true");
-
-        var body = await client.GetStringAsync("/skins?weapon=weapon_smg");
-
-        client.DefaultRequestHeaders.Add("HX-History-Restore-Request", "true");
-
-        var restored = await client.GetStringAsync("/skins?weapon=weapon_smg");
-
-        Assert.Contains("id=\"skin-desert-smg\"", body);
-        Assert.DoesNotContain("<html", body);
-        Assert.DoesNotContain("<nav", body);
-        Assert.Contains("id=\"skin-desert-smg\"", restored);
-        Assert.Contains("<html", restored);
+        Assert.Contains("id=\"gm-modal\"", page);
+        Assert.Contains("id=\"sp-modal\"", page);
+        Assert.Contains("id=\"pp-modal\"", page);
+        Assert.Contains("sk-admin-gift\" data-skin=\"gold-magnum\"", page);
+        Assert.Contains("class=\"sp-tile sp-legendary\"", page);
     }
 
     [TestMethod]
@@ -129,86 +125,149 @@ public class SkinPagesTests
 
         var with = await client.GetStringAsync("/skins");
 
-        Assert.DoesNotContain("skin-thumb", without);
-        Assert.DoesNotContain("data-skin-shots", without);
+        Assert.DoesNotContain("class=\"sk-gallery\"", without);
+        Assert.DoesNotContain("og:image", without);
         Assert.Contains($"src=\"{AssetsUrl}/skins/gold-magnum.jpg\"", with);
-        Assert.Contains($"data-skin-shots=\"{AssetsUrl}/skin-shots/gold-magnum/\" data-skin-version=\"2\"", with);
-        Assert.DoesNotContain($"data-skin-shots=\"{AssetsUrl}/skin-shots/desert-smg/\"", with);
+        Assert.Contains($"<meta property=\"og:image\" content=\"{AssetsUrl}/skins/galaxy-pump.jpg\">", with);
+        Assert.Contains($"class=\"sk-gallery\" data-shots=\"{AssetsUrl}/skin-shots/gold-magnum/\" data-version=\"2\"", with);
+        Assert.Contains($"href=\"{AssetsUrl}/skin-shots/gold-magnum/1.webp?v=2\"", with);
+        Assert.DoesNotContain($"{AssetsUrl}/skin-shots/desert-smg/", with);
     }
 
     [TestMethod]
-    public async Task APlayerBuysEquipsAndUnequipsOnTheShopPage()
+    public async Task TheSeasonTextsFollowTheSeasonLengthAndTheRefundSetting()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+
+        await factory.StartSkinShopAsync();
+        await factory.SaveAsync(new SeasonSettings { LengthInMonths = 3 });
+
+        var refunding = await client.GetStringAsync("/skins");
+        var purchases = await administrator.GetStringAsync("/admin/skins");
+
+        await factory.SaveAsync(new SkinShopSettings { RefundAtSeasonEnd = false });
+
+        var keeping = await client.GetStringAsync("/skins");
+        var purchasesKeeping = await administrator.GetStringAsync("/admin/skins");
+
+        Assert.Contains("class=\"sk-season\"", refunding);
+        Assert.Contains("which happens every 3 months", refunding);
+        Assert.Contains("At the end of the ranking season", purchases);
+        Assert.DoesNotContain("class=\"sk-season\"", keeping);
+        Assert.DoesNotContain("which happens every", keeping);
+        Assert.Contains("is yours forever", keeping);
+        Assert.DoesNotContain("At the end of the ranking season", purchasesKeeping);
+    }
+
+    [TestMethod]
+    public async Task TheNoticeForAuthorsUsesTheAddressesOfTheSettings()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.StartSkinShopAsync();
+
+        var standard = await client.GetStringAsync("/skins");
+
+        await factory.SaveAsync(new SkinShopSettings { AuthorContactUrl = ContactUrl, AuthorRequestUrl = RequestUrl });
+
+        var both = await client.GetStringAsync("/skins");
+
+        await factory.SaveAsync(new SkinShopSettings { AuthorContactUrl = null, AuthorRequestUrl = null });
+
+        var none = await client.GetStringAsync("/skins");
+
+        Assert.Contains("sk-author-notice-open", standard);
+        Assert.Contains("class=\"btn btn-default sk-author-notice-github\" href=\"https://github.com/altair-sossai/l4d2-zone-server-assets/issues/new\"", standard);
+        Assert.DoesNotContain("class=\"btn btn-primary\" href=\"https://steamcommunity.com", standard);
+        Assert.Contains($"class=\"btn btn-primary\" href=\"{ContactUrl}\"", both);
+        Assert.Contains($"class=\"btn btn-default sk-author-notice-github\" href=\"{RequestUrl}\"", both);
+        Assert.DoesNotContain("<button type=\"button\" class=\"btn btn-link btn-sm pull-left sk-author-notice-open\"", none);
+    }
+
+    [TestMethod]
+    public async Task ASkinNoLongerForSaleStaysOnlyWithItsOwner()
     {
         using var factory = new HubWebFactory();
 
         await factory.StartSkinShopAsync();
 
         var player = await factory.PlayerWithStarsAsync();
-        using var client = factory.Client(player);
+        using var owner = factory.Client(player);
+        using var visitor = factory.Client();
 
-        var buy = await HubWebFactory.PostFormAsync(client, "/skins", "/skins/desert-smg/buy", new Dictionary<string, string> { ["returnUrl"] = "/skins?weapon=weapon_smg" });
-        var afterBuying = await factory.ShopAsync(shop => shop.GetPlayerSkinsAsync(player));
+        await factory.ShopAsync(shop => shop.BuyAsync(player, null, SkinSamples.DesertSmg));
+        await factory.RunAsync(services => services.GetRequiredService<ISkinCatalogService>().ImportAsync(SkinSamples.Catalog(skins => skins.Remove(SkinSamples.Find(skins, SkinSamples.DesertSmg)))));
 
-        await factory.ShopAsync(shop => shop.BuyAsync(player, null, SkinSamples.NeonSmg));
+        var mine = await owner.GetStringAsync("/skins");
+        var shop = await visitor.GetStringAsync("/skins");
 
-        var equip = await HubWebFactory.PostFormAsync(client, "/skins", "/skins/desert-smg/equip", []);
-        var afterEquipping = await factory.ShopAsync(shop => shop.GetPlayerSkinsAsync(player));
-        var unequip = await HubWebFactory.PostFormAsync(client, "/skins", "/skins/unequip", new Dictionary<string, string> { ["weapon"] = SkinSamples.Smg });
-        var afterUnequipping = await factory.ShopAsync(shop => shop.GetPlayerSkinsAsync(player));
-        var purchase = (await factory.PurchasesAsync()).Single(p => p.SkinId == SkinSamples.DesertSmg);
-
-        Assert.AreEqual(HttpStatusCode.Redirect, buy.StatusCode);
-        Assert.AreEqual("/skins?weapon=weapon_smg", buy.Headers.Location!.OriginalString);
-        Assert.AreEqual(SkinSamples.DesertSmg, afterBuying.Equipped[SkinSamples.Smg]);
-        Assert.AreEqual($"Player {player}", purchase.PlayerName);
-        Assert.AreEqual(HttpStatusCode.Redirect, equip.StatusCode);
-        Assert.AreEqual("/skins", equip.Headers.Location!.OriginalString);
-        Assert.AreEqual(SkinSamples.DesertSmg, afterEquipping.Equipped[SkinSamples.Smg]);
-        Assert.AreEqual(HttpStatusCode.Redirect, unequip.StatusCode);
-        Assert.IsEmpty(afterUnequipping.Equipped);
-        Assert.HasCount(2, afterUnequipping.Owned);
+        Assert.Contains("data-skin=\"desert-smg\"", mine);
+        Assert.Contains("No longer for sale", mine);
+        Assert.DoesNotContain("id=\"skin-desert-smg\"", mine);
+        Assert.DoesNotContain("data-skin=\"desert-smg\"", shop);
     }
 
     [TestMethod]
-    public async Task APurchaseThatFailsTellsThePlayerWhy()
+    public async Task ThePurchasesPageListsFiltersAndPaginates()
     {
         using var factory = new HubWebFactory();
 
         await factory.StartSkinShopAsync();
+        await factory.SaveAsync(new SkinShopSettings { AssetsUrl = AssetsUrl });
 
         var player = await factory.PlayerWithStarsAsync();
-        using var client = factory.Client(player);
+        using var client = factory.Client(HubWebFactory.Administrator);
 
-        var buy = await HubWebFactory.PostFormAsync(client, "/skins", "/skins/galaxy-pump/buy", new Dictionary<string, string> { ["returnUrl"] = "https://example.test/" });
-        var page = await client.GetStringAsync("/skins");
+        await factory.ShopAsync(shop => shop.BuyAsync(player, "Rich Player", SkinSamples.GoldMagnum));
+        await factory.ShopAsync(shop => shop.GiftAsync(HubWebFactory.Player, SkinSamples.GalaxyPump, HubWebFactory.Administrator, "The Admin"));
 
-        Assert.AreEqual(HttpStatusCode.Redirect, buy.StatusCode);
-        Assert.AreEqual("/skins", buy.Headers.Location!.OriginalString);
-        Assert.Contains("alert-danger", page);
-        Assert.IsEmpty(await factory.PurchasesAsync());
+        var all = await client.GetStringAsync("/admin/skins");
+        var bySearch = await client.GetStringAsync("/admin/skins?q=rich");
+        var byPlayer = await client.GetStringAsync($"/admin/skins?player={HubWebFactory.Player}");
+        var nothing = await client.GetStringAsync("/admin/skins?q=nobody");
+        var lastPage = await client.GetAsync("/admin/skins?page=9");
+
+        Assert.Contains("<strong>1</strong>", all);
+        Assert.Contains("<strong>3 ⭐</strong>", all);
+        Assert.Contains("ska-refund-all-open", all);
+        Assert.Contains($"data-player=\"{player}\" data-player-name=\"Rich Player\" data-avatar=\"/avatar/{player}\"", all);
+        Assert.Contains($"data-image=\"{AssetsUrl}/skins/gold-magnum.jpg\"", all);
+        Assert.Contains("data-shop-url=\"/skins#skin-gold-magnum\"", all);
+        Assert.Contains("data-rarity=\"Legendary\" data-rarity-css=\"ska-rarity-legendary\"", all);
+        Assert.Contains("data-gift=\"0\"", all);
+        Assert.Contains("data-stars-before=\"4\"", all);
+        Assert.Contains("data-stars-after=\"1\"", all);
+        Assert.Contains("data-gift=\"1\" data-gifted-by=\"The Admin\"", all);
+        Assert.Contains("by The Admin", all);
+        Assert.Contains("id=\"gm-modal\"", all);
+        Assert.Contains("Rich Player", bySearch);
+        Assert.DoesNotContain("data-skin=\"galaxy-pump\"", bySearch);
+        Assert.Contains("class=\"ska-filter-player\"", byPlayer);
+        Assert.Contains("data-skin=\"galaxy-pump\"", byPlayer);
+        Assert.DoesNotContain("data-skin=\"gold-magnum\"", byPlayer);
+        Assert.Contains("class=\"admin-empty\"", nothing);
+        Assert.AreEqual(HttpStatusCode.OK, lastPage.StatusCode);
     }
 
     [TestMethod]
-    public async Task BuyingNeedsASignedInPlayerAndTheAntiforgeryToken()
+    public async Task TheOldPurchasesAddressRedirectsToTheNewOne()
     {
         using var factory = new HubWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
 
         await factory.StartSkinShopAsync();
 
-        var player = await factory.PlayerWithStarsAsync();
-        using var anonymous = factory.Client();
-        using var client = factory.Client(player);
+        var response = await client.GetAsync("/admin/skins/purchases?q=rich&page=2");
 
-        var notSignedIn = await anonymous.PostAsync("/skins/desert-smg/buy", new FormUrlEncodedContent([]));
-        var withoutToken = await client.PostAsync("/skins/desert-smg/buy", new FormUrlEncodedContent([]));
-
-        Assert.AreEqual(HttpStatusCode.Unauthorized, notSignedIn.StatusCode);
-        Assert.AreEqual(HttpStatusCode.BadRequest, withoutToken.StatusCode);
-        Assert.IsEmpty(await factory.PurchasesAsync());
+        Assert.AreEqual(HttpStatusCode.MovedPermanently, response.StatusCode);
+        Assert.AreEqual("/admin/skins?q=rich&page=2", response.Headers.Location!.OriginalString);
     }
 
     [TestMethod]
-    public async Task AnAdministratorGivesAndRefundsASkin()
+    public async Task ThePricesPageListsFiltersAndShowsChangedPrices()
     {
         using var factory = new HubWebFactory();
 
@@ -216,115 +275,24 @@ public class SkinPagesTests
 
         using var client = factory.Client(HubWebFactory.Administrator);
 
-        var gift = await HubWebFactory.PostFormAsync(client, "/admin/skins", "/admin/skins/gift", new Dictionary<string, string>
-        {
-            ["communityId"] = HubWebFactory.Player.ToString(),
-            ["skinId"] = SkinSamples.GalaxyPump
-        });
+        await factory.RunAsync(services => services.GetRequiredService<ISkinService>().SetPriceAsync(SkinSamples.DesertSmg, 9, HubWebFactory.Administrator));
 
-        var purchase = (await factory.PurchasesAsync()).Single();
-        var page = await client.GetStringAsync("/admin/skins");
-        var search = await client.GetStringAsync("/admin/skins?q=nobody");
+        var all = await client.GetStringAsync("/admin/skins/prices");
+        var byName = await client.GetStringAsync("/admin/skins/prices?q=magnum");
+        var byFilters = await client.GetStringAsync("/admin/skins/prices?weapon=weapon_smg&rarity=Rare");
+        var nothing = await client.GetStringAsync("/admin/skins/prices?q=nothing-like-this");
 
-        var refund = await HubWebFactory.PostFormAsync(client, "/admin/skins", "/admin/skins/refund", new Dictionary<string, string>
-        {
-            ["communityId"] = HubWebFactory.Player.ToString(),
-            ["skinId"] = SkinSamples.GalaxyPump
-        });
-
-        Assert.AreEqual(HttpStatusCode.Redirect, gift.StatusCode);
-        Assert.IsTrue(purchase.Gift);
-        Assert.AreEqual(HubWebFactory.Player, purchase.CommunityId);
-        Assert.AreEqual(HubWebFactory.Administrator, purchase.GiftedByCommunityId);
-        Assert.Contains("Galaxy Pump Shotgun", page);
-        Assert.Contains($"name=\"communityId\" value=\"{HubWebFactory.Player}\"", page);
-        Assert.DoesNotContain($"name=\"communityId\" value=\"{HubWebFactory.Player}\"", search);
-        Assert.AreEqual(HttpStatusCode.Redirect, refund.StatusCode);
-        Assert.IsEmpty(await factory.PurchasesAsync());
-    }
-
-    [TestMethod]
-    public async Task AGiftToAnInvalidSteamIdIsRefused()
-    {
-        using var factory = new HubWebFactory();
-
-        await factory.StartSkinShopAsync();
-
-        using var client = factory.Client(HubWebFactory.Administrator);
-
-        var gift = await HubWebFactory.PostFormAsync(client, "/admin/skins", "/admin/skins/gift", new Dictionary<string, string>
-        {
-            ["communityId"] = "123",
-            ["skinId"] = SkinSamples.GalaxyPump
-        });
-
-        var page = await client.GetStringAsync("/admin/skins");
-
-        Assert.AreEqual(HttpStatusCode.Redirect, gift.StatusCode);
-        Assert.Contains("alert-danger", page);
-        Assert.IsEmpty(await factory.PurchasesAsync());
-    }
-
-    [TestMethod]
-    public async Task AnAdministratorRefundsEverything()
-    {
-        using var factory = new HubWebFactory();
-
-        await factory.StartSkinShopAsync();
-
-        var player = await factory.PlayerWithStarsAsync();
-        using var client = factory.Client(HubWebFactory.Administrator);
-
-        await factory.ShopAsync(shop => shop.BuyAsync(player, null, SkinSamples.GoldMagnum));
-        await factory.ShopAsync(shop => shop.GiftAsync(HubWebFactory.Player, SkinSamples.DesertSmg, HubWebFactory.Administrator, "Admin"));
-
-        var response = await HubWebFactory.PostFormAsync(client, "/admin/skins", "/admin/skins/refund-all", []);
-        var page = await client.GetStringAsync("/admin/skins");
-        var wallet = await factory.ShopAsync(shop => shop.GetWalletAsync(player));
-
-        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("alert-success", page);
-        Assert.AreEqual(0, wallet.Spent);
-        Assert.IsEmpty(await factory.PurchasesAsync());
-    }
-
-    [TestMethod]
-    public async Task AnAdministratorChangesAndResetsAPrice()
-    {
-        using var factory = new HubWebFactory();
-
-        await factory.StartSkinShopAsync();
-
-        using var client = factory.Client(HubWebFactory.Administrator);
-
-        var change = await HubWebFactory.PostFormAsync(client, "/admin/skins/prices", "/admin/skins/prices", new Dictionary<string, string>
-        {
-            ["skinId"] = SkinSamples.GoldMagnum,
-            ["price"] = "25",
-            ["returnUrl"] = "/admin/skins/prices?rarity=Legendary"
-        });
-
-        var changed = (await factory.SkinsAsync()).Single(skin => skin.Id == SkinSamples.GoldMagnum);
-
-        var invalid = await HubWebFactory.PostFormAsync(client, "/admin/skins/prices", "/admin/skins/prices", new Dictionary<string, string>
-        {
-            ["skinId"] = SkinSamples.GoldMagnum,
-            ["price"] = "0"
-        });
-
-        var afterInvalid = (await factory.SkinsAsync()).Single(skin => skin.Id == SkinSamples.GoldMagnum);
-        var reset = await HubWebFactory.PostFormAsync(client, "/admin/skins/prices", "/admin/skins/prices", new Dictionary<string, string> { ["skinId"] = SkinSamples.GoldMagnum });
-        var afterReset = (await factory.SkinsAsync()).Single(skin => skin.Id == SkinSamples.GoldMagnum);
-
-        Assert.AreEqual(HttpStatusCode.Redirect, change.StatusCode);
-        Assert.AreEqual("/admin/skins/prices?rarity=Legendary", change.Headers.Location!.OriginalString);
-        Assert.AreEqual(25, changed.Price);
-        Assert.AreEqual(HubWebFactory.Administrator, changed.PriceOverride!.UpdatedByCommunityId);
-        Assert.AreEqual(HttpStatusCode.Redirect, invalid.StatusCode);
-        Assert.AreEqual(25, afterInvalid.Price);
-        Assert.AreEqual(HttpStatusCode.Redirect, reset.StatusCode);
-        Assert.AreEqual(3, afterReset.Price);
-        Assert.IsFalse(afterReset.HasCustomPrice);
+        Assert.Contains("data-skin=\"desert-smg\"", all);
+        Assert.Contains("data-price=\"9\" data-default-price=\"1\" data-custom=\"1\"", all);
+        Assert.Contains("data-price=\"3\" data-default-price=\"3\" data-custom=\"0\"", all);
+        Assert.Contains("label label-warning", all);
+        Assert.Contains("id=\"ska-price-modal\"", all);
+        Assert.Contains("id=\"gm-modal\"", all);
+        Assert.Contains("data-skin=\"gold-magnum\"", byName);
+        Assert.DoesNotContain("data-skin=\"desert-smg\"", byName);
+        Assert.Contains("data-skin=\"neon-smg\"", byFilters);
+        Assert.DoesNotContain("data-skin=\"desert-smg\"", byFilters);
+        Assert.Contains("class=\"admin-empty\"", nothing);
     }
 
     [TestMethod]
@@ -378,7 +346,9 @@ public class SkinPagesTests
         {
             ["RefundAtSeasonEnd"] = "false",
             ["AssetsUrl"] = $" {AssetsUrl}/ ",
-            ["CatalogUrl"] = $"{AssetsUrl}/skins/skins.json"
+            ["CatalogUrl"] = $"{AssetsUrl}/skins/skins.json",
+            ["AuthorContactUrl"] = $" {ContactUrl} ",
+            ["AuthorRequestUrl"] = ""
         });
 
         var settings = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<SkinShopSettings>());
@@ -390,6 +360,12 @@ public class SkinPagesTests
             ["CatalogUrl"] = "skins.json"
         });
 
+        var invalidContact = await HubWebFactory.PostFormAsync(client, "/admin/skins/settings", "/admin/skins/settings", new Dictionary<string, string>
+        {
+            ["RefundAtSeasonEnd"] = "true",
+            ["AuthorContactUrl"] = "javascript:alert(1)"
+        });
+
         var afterInvalid = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<SkinShopSettings>());
         var page = await client.GetStringAsync("/admin/skins/settings");
 
@@ -397,14 +373,18 @@ public class SkinPagesTests
         Assert.IsFalse(settings.RefundAtSeasonEnd);
         Assert.AreEqual(AssetsUrl, settings.AssetsUrl);
         Assert.AreEqual($"{AssetsUrl}/skins/skins.json", settings.CatalogUrl);
+        Assert.AreEqual(ContactUrl, settings.AuthorContactUrl);
+        Assert.IsNull(settings.AuthorRequestUrl);
         Assert.AreEqual(HttpStatusCode.Redirect, invalid.StatusCode);
+        Assert.AreEqual(HttpStatusCode.Redirect, invalidContact.StatusCode);
         Assert.IsFalse(afterInvalid.RefundAtSeasonEnd);
         Assert.AreEqual(AssetsUrl, afterInvalid.AssetsUrl);
-        Assert.Contains("alert-danger", page);
+        Assert.AreEqual(ContactUrl, afterInvalid.AuthorContactUrl);
+        Assert.Contains($"name=\"AuthorContactUrl\" value=\"{ContactUrl}\"", page);
     }
 
     [TestMethod]
-    public async Task EverySkinPageOfTheAdministrationOpensWithData()
+    public async Task EverySkinPageOfTheAdministrationOpensWithDataAndOnTheSiteLayout()
     {
         using var factory = new HubWebFactory();
 
@@ -414,27 +394,27 @@ public class SkinPagesTests
         using var client = factory.Client(HubWebFactory.Administrator);
 
         await factory.ShopAsync(shop => shop.BuyAsync(player, "Rich Player", SkinSamples.GoldMagnum));
-        await factory.RunAsync(services => services.GetRequiredService<ISkinService>().SetPriceAsync(SkinSamples.DesertSmg, 9, HubWebFactory.Administrator));
         await factory.SaveAsync(new SkinShopSettings { AssetsUrl = AssetsUrl, CatalogUrl = $"{AssetsUrl}/skins/skins.json" });
 
         string[] pages =
         [
-            "/admin/skins", "/admin/skins?q=rich", "/admin/skins?page=2", "/admin/skins/prices", "/admin/skins/prices?q=magnum&weapon=weapon_pistol_magnum&rarity=Legendary",
+            "/skins", "/admin/skins", "/admin/skins?q=rich", "/admin/skins?page=2", "/admin/skins/prices", "/admin/skins/prices?q=magnum&weapon=weapon_pistol_magnum&rarity=Legendary",
             "/admin/skins/catalog", "/admin/skins/settings"
         ];
 
         foreach (var page in pages)
         {
             var response = await client.GetAsync(page);
+            var body = await response.Content.ReadAsStringAsync();
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, page);
+            Assert.Contains("/css/bootstrap.min.css", body, page);
+            Assert.DoesNotContain("/lib/bootstrap/", body, page);
         }
 
-        var purchases = await client.GetStringAsync("/admin/skins?q=rich");
-        var prices = await client.GetStringAsync("/admin/skins/prices?q=magnum");
+        var catalog = await client.GetStringAsync("/admin/skins/catalog");
 
-        Assert.Contains("Rich Player", purchases);
-        Assert.Contains("Golden Magnum", prices);
-        Assert.DoesNotContain("Desert SMG", prices);
+        Assert.Contains("href=\"/admin/skins/settings\"", catalog);
+        Assert.Contains($"<code>{AssetsUrl}/skins/skins.json</code>", catalog);
     }
 }

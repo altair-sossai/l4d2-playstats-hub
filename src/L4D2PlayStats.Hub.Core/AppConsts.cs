@@ -135,4 +135,11 @@ public static class AppConsts
 
     public const char TeamACode = 'A';
     public const char TeamBCode = 'B';
+    public const string SkinStarsCacheKey = "skin_stars";
+    public const string SkinAuthorRequestUrl = "https://github.com/altair-sossai/l4d2-zone-server-assets/issues/new";
+    public const string SkinMeleePrefix = "weapon_melee_";
+    public const string SteamIdPattern = @"^STEAM_\d:(\d):(\d+)$";
+    public const string Steam3Pattern = @"^\[?U:\d:(\d+)]?$";
+    public const string SteamCommunityIdPattern = @"^(\d{16,})$";
+    public const string SteamProfilePattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
 }
