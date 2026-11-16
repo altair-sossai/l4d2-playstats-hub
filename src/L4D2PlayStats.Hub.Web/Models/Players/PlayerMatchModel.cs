@@ -7,13 +7,15 @@ public class PlayerMatchModel
 {
     private readonly Match _match;
     private readonly DateTime _today;
+    private readonly TimeZoneInfo _timeZone;
 
-    public PlayerMatchModel(PlayerMatch playerMatch, DateTime today)
+    public PlayerMatchModel(PlayerMatch playerMatch, DateTime today, TimeZoneInfo timeZone)
     {
         var players = playerMatch.Match.Players.OrderBy(player => player.Order).ToList();
 
         _match = playerMatch.Match;
         _today = today.Date;
+        _timeZone = timeZone;
 
         Maps = playerMatch.Maps;
 
@@ -24,12 +26,14 @@ public class PlayerMatchModel
         ];
     }
 
+    private DateTime StartedAt => _match.StartedAtUtc ?? _match.FirstFileDate;
+
     public int Id => _match.Id;
     public string? Campaign => _match.Campaign;
     public string ConfigurationName => _match.ConfigurationName;
     public bool Competitive => _match.CountsForRanking;
-    public DateTime MatchStart => _match.StartedAtUtc ?? _match.FirstFileDate;
-    public TimeSpan? MatchElapsed => _match.EndedAtUtc - MatchStart;
+    public DateTime MatchStart => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(StartedAt, DateTimeKind.Utc), _timeZone);
+    public TimeSpan? MatchElapsed => _match.EndedAtUtc - StartedAt;
     public bool StartedToday => MatchStart.Date == _today;
     public bool StartedYesterday => MatchStart.Date == _today.AddDays(-1);
     public IReadOnlyList<PlayerMatchTeamModel> Teams { get; }

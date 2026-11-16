@@ -63,6 +63,7 @@ public class PlayerViewService(
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
         var today = await seasonService.SiteNowAsync(cancellationToken);
         var skinShop = modules.IsEnabled(HubModule.SkinShop);
+        var timeZone = TimeZone(site);
 
         long[] communityIds = secondPlayer == null ? [firstPlayer.CommunityId] : [firstPlayer.CommunityId, secondPlayer.CommunityId];
 
@@ -75,7 +76,7 @@ public class PlayerViewService(
         var firstPlayerRanking = new RankingModel(localizer, firstPlayer);
         var secondPlayerRanking = secondPlayer == null ? null : new RankingModel(localizer, secondPlayer);
         var knownNames = await KnownNamesAsync(players, firstPlayer, secondPlayer, cancellationToken);
-        var matchModels = matches.Select(match => new PlayerMatchModel(match, today) { SeasonId = period.SeasonId }).ToList();
+        var matchModels = matches.Select(match => new PlayerMatchModel(match, today, timeZone) { SeasonId = period.SeasonId }).ToList();
 
         IReadOnlyCollection<Skin> skins = skinShop ? await skinService.ListAsync(cancellationToken) : [];
         var assetsUrl = skinShop ? (await settingsService.GetAsync<SkinShopSettings>(cancellationToken)).AssetsUrl : null;

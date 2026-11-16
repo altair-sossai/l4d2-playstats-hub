@@ -5,7 +5,7 @@ namespace L4D2PlayStats.Hub.Web.Models.Players;
 
 public class PlayerNotFoundModel(long communityId, PlayerConnectionResult? player, IReadOnlyList<PlayerConnectionResult> relatedPlayers, string? knownName = null)
 {
-    private readonly bool _valid = SteamIds.IsValid(communityId);
+    private readonly bool _valid = communityId > 0;
 
     public long CommunityId { get; } = communityId;
     public string? Name { get; } = player?.Name ?? knownName;
