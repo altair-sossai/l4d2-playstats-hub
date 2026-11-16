@@ -1,0 +1,983 @@
+@model StatisticsDetailsModel
+@inject ICurrentUser CurrentUser
+
+@{
+    var campaign = Model.Match.Campaign ?? L["Campaign"].Value;
+    var map = Model.Statistic?.Statistic?.GameRound?.MapName ?? L["Map"].Value;
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = $"{map} - {campaign}",
+        Description = L["See statistics for map {0} from the match on {1}, with a {2}–{3} score.", map, campaign, Model.Match.ScoreA, Model.Match.ScoreB],
+        Image = Model.Card.CampaignImage,
+        ImageAlt = campaign
+    };
+}
+
+@section Styles {
+    <style>
+    @@media screen and (min-width: 992px) {
+            .round-details .left-side {
+                padding-right: 3px;
+            }
+
+            .round-details .right-side {
+                padding-left: 3px;
+            }
+    }
+
+    .player-name {
+        overflow-wrap: break-word;
+        white-space: wrap;
+    }
+    </style>
+}
+
+@{
+    Microsoft.Extensions.Localization.LocalizedString? PlayerStatsHelp(PlayerStats playerStats)
+    {
+        return playerStats switch
+        {
+            PlayerStats.DmgTaken => L["Damage from player infected and commons attributed to a Boomer; regular common damage is excluded."],
+            _ => null
+        };
+    }
+
+    Microsoft.Extensions.Localization.LocalizedString? InfectedStatsHelp(InfectedStats infectedStats)
+    {
+        return infectedStats switch
+        {
+            InfectedStats.DmgTotal => L["SI damage, including incapacitated and post-boom damage; Tank damage is excluded."],
+            InfectedStats.DmgBoom => L["Common damage to upright survivors after a Boomer bile."],
+            InfectedStats.HunterDpDmg => L["Sum of damage from all recorded high pounces."],
+            _ => null
+        };
+    }
+
+    bool HasPlayerStats(List<Player> players, PlayerStats playerStats)
+    {
+        return players.Any(player => player[playerStats] != 0);
+    }
+
+    bool HasInfectedStats(List<InfectedPlayer> infectedPlayers, InfectedStats infectedStats)
+    {
+        return infectedPlayers.Any(player => player[infectedStats] != 0);
+    }
+
+    void RenderPlayerStats(List<Player> players, PlayerStats playerStats)
+    {
+        if (!HasPlayerStats(players, playerStats))
+            return;
+
+        var help = PlayerStatsHelp(playerStats);
+
+        <tr>
+            <th>
+                @PlayerStatsText(playerStats):
+                @if (help != null)
+                {
+                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@help" aria-label="@L["More information"]"></span>
+                }
+            </th>
+            @foreach (var player in players)
+            {
+                <td class="slim text-center">
+                    @if (playerStats == PlayerStats.AvgClearTime)
+                    {
+                        @((player[playerStats] / AppConsts.AvgClearTimeDivisor).ToString("N2"))
+                    }
+                    else
+                    {
+                        @player[playerStats].ToString("N0")
+                    }
+                </td>
+            }
+        </tr>
+    }
+
+    void RenderPlayerStatsCollection(List<Player> players, IEnumerable<PlayerStats> playerStats, bool lineBreak = true)
+    {
+        var any = false;
+
+        @foreach (var ps in playerStats.Where(ps => HasPlayerStats(players, ps)))
+        {
+            RenderPlayerStats(players, ps);
+            any = true;
+        }
+
+        @if (lineBreak && any)
+        {
+            <tr>
+                <td colspan="@(players.Count + 1)"></td>
+            </tr>
+        }
+    }
+
+    void RenderPlayerStatsBetween(List<Player> players, PlayerStats start, PlayerStats end, bool lineBreak = true)
+    {
+        var startValue = (int)start;
+        var endValue = (int)end;
+        var count = Math.Max(endValue - startValue + 1, 1);
+        var playerStats = Enumerable.Range(startValue, count).Select(v => (PlayerStats)v);
+
+        RenderPlayerStatsCollection(players, playerStats, lineBreak);
+    }
+
+    void RenderInfectedStats(List<InfectedPlayer> infectedPlayers, InfectedStats infectedStats)
+    {
+        if (!HasInfectedStats(infectedPlayers, infectedStats))
+            return;
+
+        var help = InfectedStatsHelp(infectedStats);
+
+        <tr>
+            <th>
+                @InfectedStatsText(infectedStats):
+                @if (help != null)
+                {
+                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@help" aria-label="@L["More information"]"></span>
+                }
+            </th>
+            @foreach (var infectedPlayer in infectedPlayers)
+            {
+                <td class="slim text-center">
+                    @infectedPlayer[infectedStats].ToString("N0")
+                </td>
+            }
+        </tr>
+    }
+
+    void RenderInfectedStatsCollection(List<InfectedPlayer> infectedPlayers, IEnumerable<InfectedStats> infectedStats, bool lineBreak = true)
+    {
+        var any = false;
+
+        @foreach (var ps in infectedStats.Where(ps => HasInfectedStats(infectedPlayers, ps)))
+        {
+            RenderInfectedStats(infectedPlayers, ps);
+            any = true;
+        }
+
+        @if (lineBreak && any)
+        {
+            <tr>
+                <td colspan="@(infectedPlayers.Count + 1)"></td>
+            </tr>
+        }
+    }
+
+    void RenderInfectedStatsBetween(List<InfectedPlayer> infectedPlayers, InfectedStats start, InfectedStats end, bool lineBreak = true)
+    {
+        var startValue = (int)start;
+        var endValue = (int)end;
+        var count = Math.Max(endValue - startValue + 1, 1);
+        var infectedStats = Enumerable.Range(startValue, count).Select(v => (InfectedStats)v);
+
+        RenderInfectedStatsCollection(infectedPlayers, infectedStats, lineBreak);
+    }
+}
+
+@if (Model.Statistics.Count == 0)
+{
+    <div class="row">
+        <div class="col-xs-12">
+            <h4 class="text-center">
+                @L["No match found"]
+            </h4>
+        </div>
+    </div>
+    return;
+}
+
+@{
+    var match = Model.Match;
+    var gameRound = Model.Statistic?.Statistic?.GameRound;
+    var halves = Model.Statistic?.Statistic?.Halves ?? [];
+    var allPlayers = Model.Statistic?.Statistic?.PlayerNames ?? [];
+}
+
+<h4 class="text-center">@L["Match details"]</h4>
+
+<ol class="breadcrumb">
+    <li>
+        <a href="@AppConsts.MatchesUrl">@L["Last matches"]</a>
+    </li>
+    <li>
+        <a href="@Model.Card.DetailsUrl">@(match.Campaign ?? L["Custom campaign"].Value)</a>
+    </li>
+    <li>
+        @gameRound?.MapName
+    </li>
+</ol>
+
+<div class="maps">
+    <div class="panel panel-default">
+        <table class="table table-striped table-hover table-condensed table-responsive">
+            <thead>
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">@L["Map"]</th>
+                <th class="text-center">@L["Start"]</th>
+                <th class="text-center">@L["End"]</th>
+                <th class="text-center">@L["Elapsed"]</th>
+                <th class="text-center slim" colspan="3">@L["Scoreboard"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (var i = 0; i < Model.Statistics.Count; i++)
+            {
+                var result = Model.Statistics[i];
+                var scoring = result.Statistic?.Scoring;
+                var labelTeamA = scoring?.Draw == true ? "default" : scoring?.TeamAWon == true ? "success" : "danger";
+                var labelTeamB = scoring?.Draw == true ? "default" : scoring?.TeamBWon == true ? "success" : "danger";
+
+                <tr class="@(Model.Statistic?.FileId == result.FileId ? "info" : string.Empty)">
+                    <td class="text-center" data-label="#">
+                        <a href="@Model.StatisticsUrl(result)">
+                            #@(i + 1)
+                        </a>
+                    </td>
+                    <td class="text-center" data-label="@L["Map"]">
+                        <a href="@Model.StatisticsUrl(result)">
+                            @result.Statistic?.GameRound?.MapName
+                        </a>
+                    </td>
+                    <td class="text-center" data-label="@L["Start"]">@MatchDisplay.DateAndTime(result.Statistic?.MapStart, Model.TimeZone)</td>
+                    <td class="text-center" data-label="@L["End"]">@MatchDisplay.DateAndTime(result.Statistic?.MapEnd, Model.TimeZone)</td>
+                    <td class="text-center" data-label="@L["Elapsed"]">@MatchDisplay.Elapsed(result.Statistic?.MapElapsed)</td>
+                    <td class="text-center slim" data-label="@L["Team A score"]">
+                        <span class="label label-@labelTeamA" data-toggle="tooltip" data-placement="top" title="@L["Team A score"]">
+                            @scoring?.TeamA?.Score.ToString("N0")
+                        </span>
+                    </td>
+                    <td class="text-center slim" data-label="@L["Score difference"]">
+                        <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Score difference"]">
+                            @scoring?.ScoreDiff?.ToString("N0")
+                        </span>
+                    </td>
+                    <td class="text-center slim" data-label="@L["Team B score"]">
+                        <span class="label label-@labelTeamB" data-toggle="tooltip" data-placement="top" title="@L["Team B score"]">
+                            @scoring?.TeamB?.Score.ToString("N0")
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    @for (var round = 1; round <= halves.Count; round++)
+    {
+        <li class="@(round == 1 ? "active" : string.Empty)">
+            <a href="#tab-round-half-@round" data-toggle="tab">
+                @(round == 1 ? L["1st round"] : L["2nd round"])
+            </a>
+        </li>
+    }
+</ul>
+
+<br/>
+
+<div class="tab-content">
+@for (var round = 1; round <= halves.Count; round++)
+{
+    var half = halves[round - 1];
+    var roundHalf = half.RoundHalf!;
+    var scoring = Model.Statistic?.Statistic?.Scoring;
+    var survivorWinning = round == 1 ? scoring?.TeamAWon : scoring?.TeamBWon;
+    var infectedWinning = round == 1 ? scoring?.TeamBWon : scoring?.TeamAWon;
+
+    var mvpSiDamage = half.Players.Where(p => p.SiDamage > 0).OrderByDescending(p => p.SiDamage).FirstOrDefault();
+    var mvpCommon = half.Players.Where(p => p.Common > 0).OrderByDescending(p => p.Common).FirstOrDefault();
+    var lvpFfGiven = half.Players.Where(p => p.FfGiven > 0).OrderByDescending(p => p.FfGiven).FirstOrDefault();
+
+    var players = half.Players
+        .OrderByDescending(p => p == mvpSiDamage)
+        .ThenByDescending(p => p == mvpCommon)
+        .ThenBy(p => p == lvpFfGiven)
+        .ToList();
+
+    var infectedPlayers = half.InfectedPlayers
+        .OrderByDescending(p => p.DmgTotal)
+        .ToList();
+
+    <div id="tab-round-half-@round" class="tab-pane fade @(round == 1 ? "in active" : string.Empty) match">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-xs-6" style="padding-right: 3px">
+                    <div class="panel panel-@(survivorWinning == true ? "success" : "danger")" style="margin-bottom: 0;">
+                        <div class="panel-heading bold" style="padding: 3px 15px">
+                            @L["Survivors"]
+                        </div>
+                        <div class="panel-body" style="padding: 0">
+                            <table class="table table-striped table-hover table-bordered table-condensed">
+                                <tbody>
+                                @foreach (var player in players)
+                                {
+                                    <tr class="@(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+                                        <td style="padding: 2px" class="slim">
+                                            <a href="/player/@player.CommunityId" title="@player.PlayerName">
+                                                <img src="/avatar/@player.CommunityId" alt="@player.PlayerName" title="@player.PlayerName" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
+                                            </a>
+                                        </td>
+                                        <td class="vertical-align-middle">
+                                            <a href="/player/@player.CommunityId">@(player.PlayerName?.TruncatePlayerName() ?? "-")</a>
+
+                                            @if (player == mvpSiDamage)
+                                            {
+                                                <img src="~/imgs/icons/star.png" alt="@L["MVP (SI)"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["MVP (SI)"]"/>
+                                            }
+
+                                            @if (player == mvpCommon)
+                                            {
+                                                <img src="~/imgs/icons/star-blue.png" alt="@L["MVP (CI)"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["MVP (CI)"]"/>
+                                            }
+
+                                            @if (player == lvpFfGiven)
+                                            {
+                                                <img src="~/imgs/icons/lvp.png" alt="@L["LVP"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["LVP"]"/>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6" style="padding-left: 3px">
+                    <div class="panel panel-@(infectedWinning == true ? "success" : "danger")" style="margin-bottom: 0;">
+                        <div class="panel-heading bold" style="padding: 3px 15px">
+                            @L["Infecteds"]
+                        </div>
+                        <div class="panel-body" style="padding: 0">
+                            <table class="table table-striped table-hover table-bordered table-condensed">
+                                <tbody>
+                                @foreach (var infectedPlayer in infectedPlayers)
+                                {
+                                    <tr class="@(CurrentUser.ItIsMe(infectedPlayer.CommunityId) ? "it-is-me" : string.Empty)">
+                                        <td style="padding: 2px" class="slim">
+                                            <a href="/player/@infectedPlayer.CommunityId" title="@infectedPlayer.PlayerName">
+                                                <img src="/avatar/@infectedPlayer.CommunityId" alt="@infectedPlayer.PlayerName" title="@infectedPlayer.PlayerName" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
+                                            </a>
+                                        </td>
+                                        <td class="vertical-align-middle">
+                                            <a href="/player/@infectedPlayer.CommunityId">@(infectedPlayer.PlayerName?.TruncatePlayerName() ?? "-")</a>
+                                        </td>
+                                        <td class="slim text-center">
+                                            <span data-toggle="tooltip" data-placement="top" title="@L["SI damage (excl. Tank)"]">
+                                                @infectedPlayer.DmgTotal.ToString("N0")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading bold" style="padding: 3px 15px">
+                    @L["Details"]
+                </div>
+                <div class="panel-body" style="padding: 0">
+                    <div class="row round-details">
+                        <div class="col-md-6 left-side">
+                            <table class="table table-striped table-hover table-bordered table-condensed">
+                                <tbody>
+                                @foreach (var roundStats in Enum
+                                              .GetValues<RoundStats>()
+                                              .Where(rs => rs.DataType() == DataType.Number && roundHalf[rs] != 0))
+                                {
+                                    <tr>
+                                        <th>@RoundStatsText(roundStats):</th>
+                                        <td class="slim text-center">@roundHalf[roundStats].ToString("N0")</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6 right-side">
+                            <table class="table table-striped table-hover table-bordered table-condensed">
+                                <tbody>
+                                @if (roundHalf.StartTime != null)
+                                {
+                                    <tr>
+                                        <th>@L["Round start"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.StartTime, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.EndTime != null)
+                                {
+                                    <tr>
+                                        <th>@L["Round end"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.EndTime, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.RoundElapsed != null)
+                                {
+                                    <tr>
+                                        <th>@L["Round duration"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.Elapsed(roundHalf.RoundElapsed)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.StartTimePause != null)
+                                {
+                                    <tr>
+                                        <th>@L["Pause start"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.StartTimePause, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.StopTimePause != null)
+                                {
+                                    <tr>
+                                        <th>@L["Pause end"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.StopTimePause, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.PauseElapsed != null)
+                                {
+                                    <tr>
+                                        <th>@L["Pause duration"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.Elapsed(roundHalf.PauseElapsed)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.StartTimeTank != null)
+                                {
+                                    <tr>
+                                        <th>@L["Tank start"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.StartTimeTank, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.StopTimeTank != null)
+                                {
+                                    <tr>
+                                        <th>@L["Tank end"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.DateAndTime(roundHalf.StopTimeTank, Model.TimeZone)</td>
+                                    </tr>
+                                }
+                                @if (roundHalf.TankElapsed != null)
+                                {
+                                    <tr>
+                                        <th>@L["Tank duration"]:</th>
+                                        <td class="slim text-center">@MatchDisplay.Elapsed(roundHalf.TankElapsed)</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading bold" style="padding: 3px 15px">
+                    @L["Survivors"]
+                </div>
+                <div class="panel-body" style="padding: 0">
+                    <table class="table table-striped table-hover table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            @foreach (var player in players)
+                            {
+                                <th class="text-center player-name">
+                                    <a href="/player/@player.CommunityId" title="@player.PlayerName">
+                                        @player.PlayerName?.TruncatePlayerName()
+                                    </a>
+                                </th>
+                            }
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        @{
+                            RenderPlayerStatsCollection(players, [
+                                PlayerStats.Died,
+                                PlayerStats.Incaps,
+                                PlayerStats.DmgTaken,
+                                PlayerStats.FallDamage
+                            ]);
+                        }
+
+                        @{
+                            var weapons = Enum
+                                .GetValues<PlayerStats>()
+                                .Where(ps => ps.ToString().StartsWith(AppConsts.WeaponShotsPrefix))
+                                .Select(ps => ps.ToString()[AppConsts.WeaponShotsPrefix.Length..]);
+                        }
+
+                        @foreach (var weapon in weapons)
+                        {
+                            if (!Enum.TryParse($"Shots{weapon}", out PlayerStats shots)
+                                || !Enum.TryParse($"Hits{weapon}", out PlayerStats hits)
+                                || !Enum.TryParse($"HitsSi{weapon}", out PlayerStats hitsSi)
+                                || !Enum.TryParse($"HitsTank{weapon}", out PlayerStats hitsTank))
+                                continue;
+
+                            var supportsHeadshots = Enum.TryParse($"Headshots{weapon}", out PlayerStats headshots)
+                                                    & Enum.TryParse($"HeadshotsSi{weapon}", out PlayerStats headshotsSi);
+                            var hasShots = HasPlayerStats(players, shots);
+                            var hasHits = HasPlayerStats(players, hits);
+                            var hasHitsSi = HasPlayerStats(players, hitsSi);
+                            var hasHitsTank = HasPlayerStats(players, hitsTank);
+                            var hasHeadshots = supportsHeadshots && HasPlayerStats(players, headshots);
+                            var hasHeadshotsSi = supportsHeadshots && HasPlayerStats(players, headshotsSi);
+
+                            if (!hasShots && !hasHits && !hasHitsSi && !hasHitsTank && !hasHeadshots && !hasHeadshotsSi)
+                                continue;
+
+                            RenderPlayerStats(players, shots);
+                            RenderPlayerStats(players, hits);
+
+                            @if (hasHits)
+                            {
+                                <tr>
+                                    <th>@TextHitsPercent(weapon):</th>
+                                    @foreach (var player in players)
+                                    {
+                                        var percent = player[shots] != 0 ? player[hits] / (decimal)player[shots] : 0;
+                                        <td class="slim text-center">
+                                            @percent.ToString("P0")
+                                        </td>
+                                    }
+                                </tr>
+                            }
+
+                            RenderPlayerStats(players, hitsSi);
+
+                            @if (hasHitsSi)
+                            {
+                                <tr>
+                                    <th>@TextHitsSiPercent(weapon):</th>
+                                    @foreach (var player in players)
+                                    {
+                                        var percent = player[hits] != 0 ? player[hitsSi] / (decimal)player[hits] : 0;
+                                        <td class="slim text-center">
+                                            @percent.ToString("P0")
+                                        </td>
+                                    }
+                                </tr>
+                            }
+
+                            RenderPlayerStats(players, hitsTank);
+
+                            @if (hasHitsTank)
+                            {
+                                <tr>
+                                    <th>@TextHitsTankPercent(weapon):</th>
+                                    @foreach (var player in players)
+                                    {
+                                        var percent = player[hits] != 0 ? player[hitsTank] / (decimal)player[hits] : 0;
+                                        <td class="slim text-center">
+                                            @percent.ToString("P0")
+                                        </td>
+                                    }
+                                </tr>
+                            }
+
+                            @if (supportsHeadshots)
+                            {
+                                RenderPlayerStats(players, headshots);
+
+                                @if (hasHeadshots)
+                                {
+                                    <tr>
+                                        <th>@TextHeadshotsPercent(weapon):</th>
+                                        @foreach (var player in players)
+                                        {
+                                            var eligibleHits = player[hits] - player[hitsTank];
+                                            var percent = eligibleHits > 0 ? player[headshots] / (decimal)eligibleHits : 0;
+                                            <td class="slim text-center">
+                                                @percent.ToString("P0")
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+
+                                RenderPlayerStats(players, headshotsSi);
+
+                                @if (hasHeadshotsSi)
+                                {
+                                    <tr>
+                                        <th>@TextHeadshotsSiPercent(weapon):</th>
+                                        @foreach (var player in players)
+                                        {
+                                            var percent = player[hitsSi] > 0 ? player[headshotsSi] / (decimal)player[hitsSi] : 0;
+                                            <td class="slim text-center">
+                                                @percent.ToString("P0")
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+
+                            <tr>
+                                <td colspan="@(players.Count + 1)"></td>
+                            </tr>
+                        }
+
+                        @{
+                            RenderPlayerStatsBetween(players, PlayerStats.Common, PlayerStats.SiDamageTankUp);
+                            RenderPlayerStatsBetween(players, PlayerStats.TankDamage, PlayerStats.RockEats);
+                            RenderPlayerStatsBetween(players, PlayerStats.Skeets, PlayerStats.SelfClears, false);
+                            RenderPlayerStatsBetween(players, PlayerStats.Clears, PlayerStats.AvgClearTime);
+                        }
+
+                        @{
+                            var ffGivenStats = new[]
+                            {
+                                PlayerStats.FfGiven,
+                                PlayerStats.FfGivenPellet,
+                                PlayerStats.FfGivenBullet,
+                                PlayerStats.FfGivenMelee,
+                                PlayerStats.FfGivenFire,
+                                PlayerStats.FfGivenIncap,
+                                PlayerStats.FfGivenOther,
+                                PlayerStats.FfGivenSelf,
+                                PlayerStats.FfGivenTotal
+                            };
+                            var ffTakenStats = new[]
+                            {
+                                PlayerStats.FfTaken,
+                                PlayerStats.FfTakenPellet,
+                                PlayerStats.FfTakenBullet,
+                                PlayerStats.FfTakenMelee,
+                                PlayerStats.FfTakenFire,
+                                PlayerStats.FfTakenIncap,
+                                PlayerStats.FfTakenOther,
+                                PlayerStats.FfTakenTotal
+                            };
+                            var hasFfTaken = ffTakenStats.Any(ps => HasPlayerStats(players, ps));
+
+                            RenderPlayerStatsCollection(players, ffGivenStats, hasFfTaken);
+                            RenderPlayerStatsCollection(players, ffTakenStats, false);
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading bold" style="padding: 3px 15px">
+                    @L["Infecteds"]
+                </div>
+                <div class="panel-body" style="padding: 0">
+                    <table class="table table-striped table-hover table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            @foreach (var infectedPlayer in infectedPlayers)
+                            {
+                                <th class="text-center player-name">
+                                    <a href="/player/@infectedPlayer.CommunityId" title="@infectedPlayer.PlayerName">
+                                        @infectedPlayer.PlayerName?.TruncatePlayerName()
+                                    </a>
+                                </th>
+                            }
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            RenderInfectedStatsBetween(infectedPlayers, InfectedStats.DmgTotal, InfectedStats.DmgUpright);
+
+                            RenderInfectedStatsCollection(infectedPlayers, [
+                                InfectedStats.DmgTank,
+                                InfectedStats.DmgTankIncap,
+                                InfectedStats.TankPasses
+                            ]);
+
+                            RenderInfectedStatsCollection(infectedPlayers, [
+                                InfectedStats.DmgScratch,
+                                InfectedStats.DmgTankUp,
+                                InfectedStats.DmgSpit,
+                                InfectedStats.DmgBoom
+                            ]);
+
+                            RenderInfectedStatsBetween(infectedPlayers, InfectedStats.HunterDPs, InfectedStats.Ledged, false);
+
+                            RenderInfectedStats(infectedPlayers, InfectedStats.Common);
+                        }
+
+                        <tr>
+                            <td colspan="@(infectedPlayers.Count + 1)"></td>
+                        </tr>
+
+                        @{
+                            RenderInfectedStatsBetween(infectedPlayers, InfectedStats.Spawns, InfectedStats.SpawnJockey, false);
+                        }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+            <br/>
+
+            <div class="panel panel-default" style="margin-bottom: 0;">
+                <div class="panel-heading bold" style="padding: 3px 15px">
+                    @L["Connected Players"]
+                </div>
+                <div class="panel-body" style="padding: 0">
+                    <table class="table table-striped table-hover table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Steam ID</th>
+                            <th>Community ID</th>
+                            <th>@L["Name"]</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @for (var i = 0; i < allPlayers.Count; i++)
+                        {
+                            var playerName = allPlayers[i];
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td class="line-break-anywhere">
+                                    @playerName.SteamId
+                                    @if (!string.IsNullOrWhiteSpace(playerName.SteamId))
+                                    {
+                                        @await Html.PartialAsync("_CopyButton", playerName.SteamId)
+                                    }
+                                </td>
+                                <td class="line-break-anywhere">
+                                    @playerName.CommunityId
+                                    @if (!string.IsNullOrWhiteSpace(playerName.CommunityId))
+                                    {
+                                        @await Html.PartialAsync("_CopyButton", playerName.CommunityId)
+                                    }
+                                </td>
+                                <td>
+                                    <a href="/player/@playerName.CommunityId" title="@playerName.Name">
+                                        @playerName.Name?.TruncatePlayerName()
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+}
+</div>
+
+@functions {
+    private Microsoft.Extensions.Localization.LocalizedString PlayerStatsText(PlayerStats key)
+    {
+        return key switch
+        {
+            PlayerStats.ShotsShotgun => L["Shotgun - Shots (Pellets)"],
+            PlayerStats.ShotsSmg => L["SMG / Rifle - Shots"],
+            PlayerStats.ShotsSniper => L["Sniper - Shots"],
+            PlayerStats.ShotsPistol => L["Pistol - Shots"],
+            PlayerStats.HitsShotgun => L["Shotgun - Hits"],
+            PlayerStats.HitsSmg => L["SMG / Rifle - Hits"],
+            PlayerStats.HitsSniper => L["Sniper - Hits"],
+            PlayerStats.HitsPistol => L["Pistol - Hits"],
+            PlayerStats.HeadshotsSmg => L["SMG / Rifle - Headshots"],
+            PlayerStats.HeadshotsSniper => L["Sniper - Headshots"],
+            PlayerStats.HeadshotsPistol => L["Pistol - Headshots"],
+            PlayerStats.HeadshotsSiSmg => L["SMG / Rifle - Headshots on SI"],
+            PlayerStats.HeadshotsSiSniper => L["Sniper - SI headshots"],
+            PlayerStats.HeadshotsSiPistol => L["Pistol - SI headshots"],
+            PlayerStats.HitsSiShotgun => L["Shotgun - SI hits"],
+            PlayerStats.HitsSiSmg => L["SMG / Rifle - Hits on SI"],
+            PlayerStats.HitsSiSniper => L["Sniper - SI hits"],
+            PlayerStats.HitsSiPistol => L["Pistol - SI hits"],
+            PlayerStats.HitsTankShotgun => L["Shotgun - Hits on Tank"],
+            PlayerStats.HitsTankSmg => L["SMG / Rifle - Hits on Tank"],
+            PlayerStats.HitsTankSniper => L["Sniper - Hits on Tank"],
+            PlayerStats.HitsTankPistol => L["Pistol - Hits on Tank"],
+            PlayerStats.Common => L["Commons killed"],
+            PlayerStats.CommonTankUp => L["Commons killed during Tank"],
+            PlayerStats.SiKilled => L["SI killed"],
+            PlayerStats.SiKilledTankUp => L["SI killed during Tank"],
+            PlayerStats.SiDamage => L["Damage to SI"],
+            PlayerStats.SiDamageTankUp => L["Damage to SI during Tank"],
+            PlayerStats.Incaps => L["Times incapacitated"],
+            PlayerStats.Died => L["Deaths"],
+            PlayerStats.Skeets => L["Skeets"],
+            PlayerStats.SkeetsHurt => L["Hurt skeets"],
+            PlayerStats.SkeetsMelee => L["Melee skeets"],
+            PlayerStats.Levels => L["Levels"],
+            PlayerStats.LevelsHurt => L["Hurt levels"],
+            PlayerStats.Pops => L["Boomers popped"],
+            PlayerStats.Crowns => L["Crowns (Witch one-shot)"],
+            PlayerStats.CrownsHurt => L["Hurt crowns"],
+            PlayerStats.Shoves => L["Shoves"],
+            PlayerStats.DeadStops => L["Dead stops"],
+            PlayerStats.TongueCuts => L["Tongues cut"],
+            PlayerStats.SelfClears => L["Self clears"],
+            PlayerStats.FallDamage => L["Fall damage"],
+            PlayerStats.DmgTaken => L["SI damage taken"],
+            PlayerStats.FfGiven => L["FF dealt (non-incap.)"],
+            PlayerStats.FfTaken => L["FF taken (non-incap.)"],
+            PlayerStats.FfHits => L["Friendly fire hits"],
+            PlayerStats.TankDamage => L["Damage to Tank"],
+            PlayerStats.WitchDamage => L["Damage to Witch"],
+            PlayerStats.MeleesOnTank => L["Tank - Melee hits"],
+            PlayerStats.RockSkeets => L["Rock skeets"],
+            PlayerStats.RockEats => L["Rock hits taken"],
+            PlayerStats.FfGivenPellet => L["FF dealt - Pellets"],
+            PlayerStats.FfGivenBullet => L["FF dealt - Bullets"],
+            PlayerStats.FfGivenSniper => L["FF dealt - Sniper"],
+            PlayerStats.FfGivenMelee => L["FF dealt - Melee"],
+            PlayerStats.FfGivenFire => L["FF dealt - Fire"],
+            PlayerStats.FfGivenIncap => L["FF dealt to incapped"],
+            PlayerStats.FfGivenOther => L["FF dealt - Other"],
+            PlayerStats.FfGivenSelf => L["FF dealt - Self"],
+            PlayerStats.FfTakenPellet => L["FF taken - Pellets"],
+            PlayerStats.FfTakenBullet => L["FF taken - Bullets"],
+            PlayerStats.FfTakenSniper => L["FF taken - Sniper"],
+            PlayerStats.FfTakenMelee => L["FF taken - Melee"],
+            PlayerStats.FfTakenFire => L["FF taken - Fire"],
+            PlayerStats.FfTakenIncap => L["FF taken while incapped"],
+            PlayerStats.FfTakenOther => L["FF taken - Other"],
+            PlayerStats.FfGivenTotal => L["FF dealt - Total"],
+            PlayerStats.FfTakenTotal => L["FF taken - Total"],
+            PlayerStats.Clears => L["Clears"],
+            PlayerStats.AvgClearTime => L["Average clear time (s)"],
+            _ => L[key.ToString()]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString InfectedStatsText(InfectedStats key)
+    {
+        return key switch
+        {
+            InfectedStats.DmgTotal => L["SI damage (excl. Tank)"],
+            InfectedStats.DmgUpright => L["SI damage (upright)"],
+            InfectedStats.DmgTank => L["Damage as Tank (upright)"],
+            InfectedStats.DmgTankIncap => L["Damage as Tank (incapped)"],
+            InfectedStats.DmgScratch => L["Scratch damage (upright)"],
+            InfectedStats.DmgSpit => L["Spit damage (upright)"],
+            InfectedStats.DmgBoom => L["Common damage after boom"],
+            InfectedStats.DmgTankUp => L["SI damage during Tank"],
+            InfectedStats.HunterDPs => L["Hunter - High pounces"],
+            InfectedStats.HunterDpDmg => L["Total pounce damage"],
+            InfectedStats.JockeyDPs => L["Jockey - High pounces"],
+            InfectedStats.DeathCharges => L["Charges - Instant kills"],
+            InfectedStats.Booms => L["Boomed"],
+            InfectedStats.Ledged => L["Ledged"],
+            InfectedStats.Common => L["Commons killed"],
+            InfectedStats.Spawns => L["Spawns"],
+            InfectedStats.SpawnSmoker => L["Spawns - Smoker"],
+            InfectedStats.SpawnBoomer => L["Spawns - Boomer"],
+            InfectedStats.SpawnHunter => L["Spawns - Hunter"],
+            InfectedStats.SpawnCharger => L["Spawns - Charger"],
+            InfectedStats.SpawnSpitter => L["Spawns - Spitter"],
+            InfectedStats.SpawnJockey => L["Spawns - Jockey"],
+            InfectedStats.TankPasses => L["Tank passes"],
+            _ => L[key.ToString()]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString RoundStatsText(RoundStats key)
+    {
+        return key switch
+        {
+            RoundStats.Restarts => L["Restarts"],
+            RoundStats.PillsUsed => L["Pills/adrenaline used"],
+            RoundStats.KitsUsed => L["First aid kits used"],
+            RoundStats.DefibsUsed => L["Defibrillators used"],
+            RoundStats.Common => L["Commons killed"],
+            RoundStats.SiKilled => L["SI killed"],
+            RoundStats.SiDamage => L["Damage to SI"],
+            RoundStats.SiSpawned => L["SI spawned"],
+            RoundStats.WitchKilled => L["Witches killed"],
+            RoundStats.TankKilled => L["Tanks killed"],
+            RoundStats.Incaps => L["Times incapacitated"],
+            RoundStats.Deaths => L["Deaths"],
+            RoundStats.FfDamageTotal => L["FF"],
+            _ => L[key.ToString()]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextHitsPercent(object key)
+    {
+        return key.ToString() switch
+        {
+            "Pistol" => L["Pistol - Hits (%)"],
+            "Shotgun" => L["Shotgun - Hits (%)"],
+            "SiPistol" => L["Pistol - Hits on SI (%)"],
+            "SiShotgun" => L["Shotgun - Hits on SI (%)"],
+            "SiSmg" => L["SMG / Rifle - Hits on SI (%)"],
+            "SiSniper" => L["Sniper - Hits on SI (%)"],
+            "Smg" => L["SMG / Rifle - Hits (%)"],
+            "Sniper" => L["Sniper - Hits (%)"],
+            "TankPistol" => L["Pistol - Hits on Tank (%)"],
+            "TankShotgun" => L["Shotgun - Hits on Tank (%)"],
+            "TankSmg" => L["SMG / Rifle - Hits on Tank (%)"],
+            "TankSniper" => L["Sniper - Hits on Tank (%)"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextHitsSiPercent(object key)
+    {
+        return key.ToString() switch
+        {
+            "Pistol" => L["Pistol - Hits on SI (%)"],
+            "Shotgun" => L["Shotgun - Hits on SI (%)"],
+            "Smg" => L["SMG / Rifle - Hits on SI (%)"],
+            "Sniper" => L["Sniper - Hits on SI (%)"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextHitsTankPercent(object key)
+    {
+        return key.ToString() switch
+        {
+            "Pistol" => L["Pistol - Hits on Tank (%)"],
+            "Shotgun" => L["Shotgun - Hits on Tank (%)"],
+            "Smg" => L["SMG / Rifle - Hits on Tank (%)"],
+            "Sniper" => L["Sniper - Hits on Tank (%)"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextHeadshotsPercent(object key)
+    {
+        return key.ToString() switch
+        {
+            "Pistol" => L["Pistol - HS per hit (%)"],
+            "SiPistol" => L["Pistol - SI HS per hit (%)"],
+            "SiSmg" => L["SMG/Rifle - SI HS/hit (%)"],
+            "SiSniper" => L["Sniper - SI HS per hit (%)"],
+            "Smg" => L["SMG / Rifle - HS per hit (%)"],
+            "Sniper" => L["Sniper - HS per hit (%)"],
+            _ => L[key.ToString()!]
+        };
+    }
+
+    private Microsoft.Extensions.Localization.LocalizedString TextHeadshotsSiPercent(object key)
+    {
+        return key.ToString() switch
+        {
+            "Pistol" => L["Pistol - SI HS per hit (%)"],
+            "Smg" => L["SMG/Rifle - SI HS/hit (%)"],
+            "Sniper" => L["Sniper - SI HS per hit (%)"],
+            _ => L[key.ToString()!]
+        };
+    }
+}
