@@ -1,68 +1,170 @@
 @model CommunityRankingViewModel
+@inject ICurrentUser CurrentUser
+
 @{
-    ViewData["Title"] = L["Community ranking"].Value;
+    var topPlayer = Model.Players.FirstOrDefault()?.Entry;
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Community ranking"],
+        Description = L["Built from the votes of the players. It does not reset with the season."],
+        Image = topPlayer == null ? null : $"/avatar/{topPlayer.CommunityId}",
+        ImageAlt = topPlayer?.Name
+    };
 }
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-    <div>
-        <h1 class="h3 mb-0">@L["Community ranking"]</h1>
-        <div class="text-body-secondary">@L["Built from the votes of the players. It does not reset with the season."]</div>
-    </div>
-    <a class="btn btn-primary" href="@AppConsts.CommunityVotePage">@L["Vote"]</a>
+
+@section Styles {
+    <style>
+        .place {
+            width: 30px;
+        }
+
+        table {
+            margin-bottom: 0 !important;
+        }
+
+        p {
+            margin-bottom: 0 !important;
+        }
+
+        th {
+            vertical-align: middle !important;
+        }
+
+        .community-lead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+            .community-lead small {
+                margin-right: 10px;
+                font-style: italic;
+            }
+    </style>
+}
+
+<h4 class="text-center">@L["Community ranking"]</h4>
+
+<div class="community-lead">
+    <small>@L["Built from the votes of the players. It does not reset with the season."]</small>
+    <a class="btn btn-sm btn-primary" href="@AppConsts.CommunityVotePage">
+        <span class="glyphicon glyphicon-thumbs-up"></span> @L["Vote"]
+    </a>
 </div>
 
 @if (Model.Players.Count == 0)
 {
-    <div class="alert alert-secondary">@L["Nobody has enough comparisons to be listed yet."]</div>
+    <div class="jumbotron text-center" style="margin-top: 20px">
+        <p>@L["Nobody has enough comparisons to be listed yet."]</p>
+    </div>
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th class="position">#</th>
-                <th>@L["Player"]</th>
-                <th class="numeric">@L["Rating"]</th>
-                <th class="numeric">@L["Comparisons"]</th>
-                <th class="numeric">@L["Wins"]</th>
-                <th class="numeric">@L["Draws"]</th>
-                <th class="numeric">@L["Losses"]</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var player in Model.Players)
+    <table class="table table-striped table-hover table-bordered table-condensed" id="table-community-ranking">
+        <thead>
+        <tr>
+            <th class="text-center">#</th>
+            @if (Model.PlayerPages)
             {
-                <tr class="@(player.CommunityId == Model.Highlight ? "row-highlight" : "")">
-                    <td class="position @(player.Position == 1 ? "position-1" : "")">@player.Position</td>
-                    <td>
-                        @if (Model.PlayerPages)
-                        {
-                            <a class="text-decoration-none d-flex align-items-center gap-2" href="/player/@player.CommunityId">
-                                <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">
-                                <span>@player.Name</span>
-                            </a>
-                        }
-                        else
-                        {
-                            <div class="d-flex align-items-center gap-2">
-                                <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">
-                                <span>@player.Name</span>
-                            </div>
-                        }
-                    </td>
-                    <td class="numeric">@Display.Number((decimal)Math.Round(player.Rating))</td>
-                    <td class="numeric">@player.Comparisons</td>
-                    <td class="numeric">@player.Wins</td>
-                    <td class="numeric">@player.Draws</td>
-                    <td class="numeric">@player.Losses</td>
-                </tr>
+                <th class="text-center">@L["Patent"]</th>
             }
-            </tbody>
-        </table>
-    </div>
+            <th colspan="2">@L["Player"]</th>
+            <th class="text-center">@L["Rating"]</th>
+            <th class="text-center hide-mobile">@L["Comparisons"]</th>
+            <th class="text-center">@L["Wins"]</th>
+            <th class="text-center hide-mobile">@L["Draws"]</th>
+            <th class="text-center hide-mobile">@L["Losses"]</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model.Players)
+        {
+            var player = row.Entry;
+
+            <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+                <td class="text-center vertical-align-middle">
+                    @switch (player.Position)
+                    {
+                        case 1:
+                            <img src="~/imgs/first-place.png" alt="@L["First place"]" title="@L["First place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                            break;
+                        case 2:
+                            <img src="~/imgs/second-place.png" alt="@L["Second place"]" title="@L["Second place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                            break;
+                        case 3:
+                            <img src="~/imgs/third-place.png" alt="@L["Third place"]" title="@L["Third place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                            break;
+                        default:
+                            @($"#{player.Position:N0}")
+                            break;
+                    }
+                </td>
+                @if (row.Patent != null)
+                {
+                    <td class="text-center vertical-align-middle slim">
+                        <img src="@row.Patent.Image" alt="@row.Patent.FullName" data-toggle="tooltip" data-placement="top" title="@row.Patent.FullName" style="width: 32px"/>
+                    </td>
+                }
+                <td class="text-center vertical-align-middle slim" style="margin: 0; padding: 0">
+                    @if (Model.PlayerPages)
+                    {
+                        <a href="/player/@player.CommunityId" title="@player.Name">
+                            <img src="/avatar/@player.CommunityId" alt="@player.Name" title="@player.Name" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
+                        </a>
+                    }
+                    else
+                    {
+                        <img src="/avatar/@player.CommunityId" alt="@player.Name" title="@player.Name" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
+                    }
+                </td>
+                <td class="vertical-align-middle">
+                    @if (Model.PlayerPages)
+                    {
+                        <a href="/player/@player.CommunityId">@player.Name.TruncatePlayerName()</a>
+                    }
+                    else
+                    {
+                        @player.Name.TruncatePlayerName()
+                    }
+                    <span class="show-mobile">
+                        <br/>
+                        <small class="text-muted">@L["Comparisons"]: @player.Comparisons · @L["Draws"]: @player.Draws · @L["Losses"]: @player.Losses</small>
+                    </span>
+                </td>
+                <td class="text-center vertical-align-middle">
+                    <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating"]">
+                        @Display.Number((decimal)Math.Round(player.Rating))
+                    </p>
+                </td>
+                <td class="text-center vertical-align-middle hide-mobile">
+                    <p data-toggle="tooltip" data-placement="top" title="@L["Comparisons"]">
+                        @player.Comparisons.ToString("N0")
+                    </p>
+                </td>
+                <td class="text-center vertical-align-middle">
+                    <p data-toggle="tooltip" data-placement="top" title="@L["Wins"]">
+                        @player.Wins.ToString("N0")
+                    </p>
+                </td>
+                <td class="text-center vertical-align-middle hide-mobile">
+                    <p data-toggle="tooltip" data-placement="top" title="@L["Draws"]">
+                        @player.Draws.ToString("N0")
+                    </p>
+                </td>
+                <td class="text-center vertical-align-middle hide-mobile">
+                    <p data-toggle="tooltip" data-placement="top" title="@L["Losses"]">
+                        @player.Losses.ToString("N0")
+                    </p>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
 @if (Model.MinimumComparisons > 0)
 {
-    <div class="small text-body-secondary">@L["Minimum comparisons to be listed:"] @Model.MinimumComparisons</div>
+    <small class="text-muted" style="display: block; margin-top: 6px; font-style: italic">@L["Minimum comparisons to be listed:"] @Model.MinimumComparisons</small>
 }

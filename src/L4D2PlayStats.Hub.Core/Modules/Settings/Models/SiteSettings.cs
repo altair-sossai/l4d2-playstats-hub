@@ -9,4 +9,5 @@ public class SiteSettings
     public string? SteamApiKey { get; set; }
     public string? GoogleAnalyticsId { get; set; }
     public string? FooterLinks { get; set; }
+    public string? MetaKeywords { get; set; }
 }

@@ -1,6 +1,8 @@
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
@@ -8,6 +10,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -17,20 +20,29 @@ public class CommunityController(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService,
     ICommunityVoteService communityVoteService,
+    IRankingService rankingService,
     ICurrentUser currentUser) : Controller
 {
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        ViewBag.Community = "active";
+    }
+
     [HttpGet("/community")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
 
+        var playerPages = modules.IsEnabled(HubModule.Ranking);
+        var entries = await communityRankingService.ListAsync(cancellationToken);
+        var experience = playerPages ? await ExperienceAsync(cancellationToken) : null;
+
         var model = new CommunityRankingViewModel
         {
-            Players = await communityRankingService.ListAsync(cancellationToken),
+            Players = [.. entries.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId))))],
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
-            PlayerPages = modules.IsEnabled(HubModule.Ranking),
-            Highlight = currentUser.CommunityId
+            PlayerPages = playerPages
         };
 
         return View(model);
@@ -69,6 +81,13 @@ public class CommunityController(
             Ballot = voterId == null ? null : await communityVoteService.BallotAsync(voterId.Value, cancellationToken),
             Refusal = refusal
         };
+    }
+
+    private async Task<Dictionary<long, decimal>> ExperienceAsync(CancellationToken cancellationToken)
+    {
+        var players = await rankingService.CurrentAsync(cancellationToken);
+
+        return players.ToDictionary(player => player.CommunityId, player => player.Experience);
     }
 
     private static string? Refusal(CommunityVoteResult result)

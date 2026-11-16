@@ -28,12 +28,17 @@
 
     if (modules.IsEnabled(HubModule.LiveServer))
         items.Add(("/admin/player-connections", L["Player connections"].Value));
+
+    if (modules.IsEnabled(HubModule.AntiCheat))
+        items.Add((AppConsts.AdminNavAntiCheatUrl, L["Anti-Cheat"].Value));
 }
-<ul class="nav nav-pills flex-wrap mb-4">
+<ul class="nav nav-pills" style="margin-bottom: 16px">
     @foreach (var item in items)
     {
         var active = item.Url == "/admin" ? path == "/admin" : path.StartsWith(item.Url, StringComparison.OrdinalIgnoreCase);
 
-        <li class="nav-item"><a class="nav-link @(active ? "active" : "")" href="@item.Url">@item.Title</a></li>
+        <li role="presentation" class="@(active ? "active" : "")">
+            <a href="@item.Url" style="padding: 6px 12px">@item.Title</a>
+        </li>
     }
 </ul>

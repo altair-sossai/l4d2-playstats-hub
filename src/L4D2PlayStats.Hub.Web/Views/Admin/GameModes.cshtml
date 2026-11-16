@@ -1,117 +1,151 @@
 @model GameModesViewModel
 @{
     ViewData["Title"] = L["Game modes"].Value;
+    const string newRuleForm = "rule-new";
 }
-<h1 class="h3">@L["Game modes"]</h1>
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+}
+
+<div class="admin-header">
+    <h3>@L["Game modes"]</h3>
+</div>
+
 <partial name="_AdminNav"/>
 
-<p class="text-body-secondary">
+<p class="admin-lead">
     @L["A match counts toward the ranking when the first rule that fits its configuration says so. Rules are checked in order of priority, lowest first. In the pattern, * stands for any text, which lets one rule cover every version of a configuration."]
 </p>
 
-<h2 class="h5">@L["Rules"]</h2>
-<div class="table-responsive mb-4">
-    <table class="table">
-        <thead>
+<h4 class="admin-section">@L["Rules"]</h4>
+
+<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
+    <thead>
+    <tr>
+        <th>@L["Name"]</th>
+        <th>@L["Configuration pattern"]</th>
+        <th class="text-center">@L["Team size"]</th>
+        <th class="text-center">@L["Minimum maps"]</th>
+        <th class="text-center">@L["Priority"]</th>
+        <th class="text-center">@L["Counts for the ranking"]</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var rule in Model.Rules)
+    {
+        var form = $"rule-{rule.Id}";
+
         <tr>
-            <th>@L["Name"]</th>
-            <th>@L["Configuration pattern"]</th>
-            <th>@L["Team size"]</th>
-            <th>@L["Minimum maps"]</th>
-            <th>@L["Priority"]</th>
-            <th>@L["Counts for the ranking"]</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var rule in Model.Rules)
-        {
-            <tr>
-                <td colspan="7" class="p-0">
-                    <form class="row g-2 align-items-center m-0 p-2" method="post" asp-antiforgery="true" action="/admin/game-modes">
-                        <input type="hidden" name="Id" value="@rule.Id">
-                        <div class="col-md-2"><input class="form-control form-control-sm" name="Name" value="@rule.Name" required aria-label="@L["Name"]"></div>
-                        <div class="col-md-3"><input class="form-control form-control-sm" name="ConfigurationPattern" value="@rule.ConfigurationPattern" required aria-label="@L["Configuration pattern"]"></div>
-                        <div class="col-md-1"><input class="form-control form-control-sm" name="TeamSize" type="number" min="1" max="8" value="@rule.TeamSize" placeholder="@L["Any"]" aria-label="@L["Team size"]"></div>
-                        <div class="col-md-1"><input class="form-control form-control-sm" name="MinimumMaps" type="number" min="1" value="@rule.MinimumMaps" aria-label="@L["Minimum maps"]"></div>
-                        <div class="col-md-1"><input class="form-control form-control-sm" name="Priority" type="number" value="@rule.Priority" aria-label="@L["Priority"]"></div>
-                        <div class="col-md-2">
-                            <select class="form-select form-select-sm" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
-                                <option value="true" selected="@rule.CountsForRanking">@L["Yes"]</option>
-                                <option value="false" selected="@(!rule.CountsForRanking)">@L["No"]</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
-                            <button class="btn btn-sm btn-outline-danger" type="submit" formaction="/admin/game-modes/@rule.Id/delete" onclick="return confirm('@L["Delete this rule?"]')">@L["Delete"]</button>
-                        </div>
-                    </form>
-                </td>
-            </tr>
-        }
-        <tr>
-            <td colspan="7" class="p-0">
-                <form class="row g-2 align-items-center m-0 p-2" method="post" asp-antiforgery="true" action="/admin/game-modes">
-                    <div class="col-md-2"><input class="form-control form-control-sm" name="Name" placeholder="@L["New rule"]" required aria-label="@L["Name"]"></div>
-                    <div class="col-md-3"><input class="form-control form-control-sm" name="ConfigurationPattern" value="*" required aria-label="@L["Configuration pattern"]"></div>
-                    <div class="col-md-1"><input class="form-control form-control-sm" name="TeamSize" type="number" min="1" max="8" placeholder="@L["Any"]" aria-label="@L["Team size"]"></div>
-                    <div class="col-md-1"><input class="form-control form-control-sm" name="MinimumMaps" type="number" min="1" value="2" aria-label="@L["Minimum maps"]"></div>
-                    <div class="col-md-1"><input class="form-control form-control-sm" name="Priority" type="number" value="50" aria-label="@L["Priority"]"></div>
-                    <div class="col-md-2">
-                        <select class="form-select form-select-sm" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
-                            <option value="true">@L["Yes"]</option>
-                            <option value="false">@L["No"]</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 text-end"><button class="btn btn-sm btn-success" type="submit">@L["Add"]</button></div>
+            <td class="vertical-align-middle" data-label="@L["Name"]">
+                <input class="form-control input-sm" form="@form" name="Name" value="@rule.Name" required aria-label="@L["Name"]">
+            </td>
+            <td class="vertical-align-middle" data-label="@L["Configuration pattern"]">
+                <input class="form-control input-sm admin-mono" form="@form" name="ConfigurationPattern" value="@rule.ConfigurationPattern" required aria-label="@L["Configuration pattern"]">
+            </td>
+            <td class="vertical-align-middle slim" data-label="@L["Team size"]">
+                <input class="form-control input-sm text-center" form="@form" name="TeamSize" type="number" min="1" max="8" value="@rule.TeamSize" placeholder="@L["Any"]" aria-label="@L["Team size"]">
+            </td>
+            <td class="vertical-align-middle slim" data-label="@L["Minimum maps"]">
+                <input class="form-control input-sm text-center" form="@form" name="MinimumMaps" type="number" min="1" value="@rule.MinimumMaps" aria-label="@L["Minimum maps"]">
+            </td>
+            <td class="vertical-align-middle slim" data-label="@L["Priority"]">
+                <input class="form-control input-sm text-center" form="@form" name="Priority" type="number" value="@rule.Priority" aria-label="@L["Priority"]">
+            </td>
+            <td class="vertical-align-middle slim" data-label="@L["Counts for the ranking"]">
+                <select class="form-control input-sm" form="@form" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
+                    <option value="true" selected="@rule.CountsForRanking">@L["Yes"]</option>
+                    <option value="false" selected="@(!rule.CountsForRanking)">@L["No"]</option>
+                </select>
+            </td>
+            <td class="text-center vertical-align-middle slim admin-actions">
+                <form id="@form" method="post" asp-antiforgery="true" action="/admin/game-modes">
+                    <input type="hidden" name="Id" value="@rule.Id">
+                    <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
+                    <button class="btn btn-sm btn-danger" type="submit" formaction="/admin/game-modes/@rule.Id/delete" onclick="return confirm('@L["Delete this rule?"]')">
+                        <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                    </button>
                 </form>
             </td>
         </tr>
-        </tbody>
-    </table>
-</div>
+    }
+    <tr>
+        <td class="vertical-align-middle" data-label="@L["Name"]">
+            <input class="form-control input-sm" form="@newRuleForm" name="Name" placeholder="@L["New rule"]" required aria-label="@L["Name"]">
+        </td>
+        <td class="vertical-align-middle" data-label="@L["Configuration pattern"]">
+            <input class="form-control input-sm admin-mono" form="@newRuleForm" name="ConfigurationPattern" value="*" required aria-label="@L["Configuration pattern"]">
+        </td>
+        <td class="vertical-align-middle slim" data-label="@L["Team size"]">
+            <input class="form-control input-sm text-center" form="@newRuleForm" name="TeamSize" type="number" min="1" max="8" placeholder="@L["Any"]" aria-label="@L["Team size"]">
+        </td>
+        <td class="vertical-align-middle slim" data-label="@L["Minimum maps"]">
+            <input class="form-control input-sm text-center" form="@newRuleForm" name="MinimumMaps" type="number" min="1" value="2" aria-label="@L["Minimum maps"]">
+        </td>
+        <td class="vertical-align-middle slim" data-label="@L["Priority"]">
+            <input class="form-control input-sm text-center" form="@newRuleForm" name="Priority" type="number" value="50" aria-label="@L["Priority"]">
+        </td>
+        <td class="vertical-align-middle slim" data-label="@L["Counts for the ranking"]">
+            <select class="form-control input-sm" form="@newRuleForm" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
+                <option value="true">@L["Yes"]</option>
+                <option value="false">@L["No"]</option>
+            </select>
+        </td>
+        <td class="text-center vertical-align-middle slim admin-actions">
+            <form id="@newRuleForm" method="post" asp-antiforgery="true" action="/admin/game-modes">
+                <button class="btn btn-sm btn-success" type="submit">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
-<h2 class="h5">@L["Configurations seen on your servers"]</h2>
+<h4 class="admin-section">@L["Configurations seen on your servers"]</h4>
+
 @if (Model.Configurations.Count == 0)
 {
-    <div class="alert alert-secondary">@L["Nothing yet. Configurations appear here when the first statistics files arrive."]</div>
+    <div class="admin-list">
+        <div class="admin-empty">@L["Nothing yet. Configurations appear here when the first statistics files arrive."]</div>
+    </div>
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-sm">
-            <thead>
+    <table class="table table-striped table-hover table-bordered table-condensed table-responsive">
+        <thead>
+        <tr>
+            <th>@L["Configuration"]</th>
+            <th class="text-center">@L["Team size"]</th>
+            <th class="text-center">@L["Last seen"]</th>
+            <th>@L["Rule"]</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var seen in Model.Configurations)
+        {
             <tr>
-                <th>@L["Configuration"]</th>
-                <th>@L["Team size"]</th>
-                <th>@L["Last seen"]</th>
-                <th>@L["Rule"]</th>
+                <td class="vertical-align-middle" data-label="@L["Configuration"]">@seen.Configuration.Name</td>
+                <td class="text-center vertical-align-middle" data-label="@L["Team size"]">@seen.Configuration.TeamSize</td>
+                <td class="text-center vertical-align-middle" data-label="@L["Last seen"]">@seen.Configuration.LastSeenAtUtc.ToString("d")</td>
+                <td class="vertical-align-middle" data-label="@L["Rule"]">
+                    @if (seen.Rule == null)
+                    {
+                        <span class="label label-warning">@L["No rule: not ranked"]</span>
+                    }
+                    else if (seen.Rule.CountsForRanking)
+                    {
+                        <span class="label label-success">@seen.Rule.Name</span>
+                    }
+                    else
+                    {
+                        <span class="label label-default">@seen.Rule.Name: @L["Not ranked"]</span>
+                    }
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach (var seen in Model.Configurations)
-            {
-                <tr>
-                    <td>@seen.Configuration.Name</td>
-                    <td>@seen.Configuration.TeamSize</td>
-                    <td>@seen.Configuration.LastSeenAtUtc.ToString("d")</td>
-                    <td>
-                        @if (seen.Rule == null)
-                        {
-                            <span class="badge text-bg-warning">@L["No rule: not ranked"]</span>
-                        }
-                        else if (seen.Rule.CountsForRanking)
-                        {
-                            <span class="badge text-bg-success">@seen.Rule.Name</span>
-                        }
-                        else
-                        {
-                            <span class="badge text-bg-secondary">@seen.Rule.Name: @L["Not ranked"]</span>
-                        }
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
+        }
+        </tbody>
+    </table>
 }
