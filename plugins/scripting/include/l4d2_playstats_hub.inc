@@ -227,6 +227,8 @@ stock JSONObject PlayStatsHub_BuildHeartbeat()
     PlayStatsHub_SetConVarString(heartbeat, "configuration", PLAYSTATS_HUB_CONFIGURATION_CVAR);
     PlayStatsHub_SetConVarString(heartbeat, "sourceModVersion", PLAYSTATS_HUB_SOURCEMOD_VERSION_CVAR);
 
+    heartbeat.SetInt("maxPlayers", GetMaxHumanPlayers());
+
     heartbeat.SetBool("statisticsWriting", PlayStatsHub_IsWritingStatistics());
 
     JSONObject plugins = PlayStatsHub_BuildPlugins();

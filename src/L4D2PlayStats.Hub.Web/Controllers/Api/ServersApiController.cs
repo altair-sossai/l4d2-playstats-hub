@@ -25,6 +25,7 @@ public class ServersApiController(IGameServerService gameServerService, ISetting
             Hostname = command?.Hostname,
             Map = command?.Map,
             Configuration = command?.Configuration,
+            MaxPlayers = command?.MaxPlayers is > 0 ? command.MaxPlayers : null,
             SourceModVersion = command?.SourceModVersion,
             StatisticsWriting = command?.StatisticsWriting,
             Plugins = command?.Plugins ?? []
