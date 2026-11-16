@@ -1,5 +1,7 @@
 # Site parity
 
+🌐 **English** | [Português](README.pt.md) | [Español](README.es.md)
+
 This project replaces an existing website, [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) (in production at [l4d2.com.br](https://l4d2.com.br/)). The rule for the pages is strict: everything a visitor sees on the old site must be on the new one, with the same look. Each page was therefore ported from the old view, not redesigned, and checked item by item.
 
 ## Contents

@@ -1,5 +1,7 @@
 # Site parity: players
 
+🌐 **English** | [Português](players.pt.md) | [Español](players.es.md)
+
 Port of the old site's players area (`Views/Players/*`, `PlayersController`, `Api/PlayersController`, `Api/PunishmentsController`, the player models and page metadata) to the hub.
 
 Paths in the second column are relative to `L4D2PlayStats.Web/L4D2PlayStats.Web` in the old repository unless they start with `Core/` or `Sdk/` (the old site's other projects) or `api/` (the old API repository).

@@ -166,7 +166,7 @@ Uma checklist mostra o que foi encontrado: conexão, plugin de envio, gravação
 
 O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não tem flexbox, grid nem propriedades personalizadas. As medições estão em [in-game-browser.pt.md](in-game-browser.pt.md).
 
-- **Site principal.** Páginas renderizadas no servidor que mantêm o visual e o conteúdo do site que este projeto substitui: Bootstrap 3 com os temas escuro e claro, jQuery, Chart.js e diffDOM, sem etapa de build com Node. Cada página do site antigo foi portada item por item; os checklists estão em [site-parity](site-parity/README.md). As páginas que são novas aqui (assistente, administração, ranking da comunidade) seguem o mesmo visual.
+- **Site principal.** Páginas renderizadas no servidor que mantêm o visual e o conteúdo do site que este projeto substitui: Bootstrap 3 com os temas escuro e claro, jQuery, Chart.js e diffDOM, sem etapa de build com Node. Cada página do site antigo foi portada item por item; os checklists estão em [site-parity](site-parity/README.pt.md). As páginas que são novas aqui (assistente, administração, ranking da comunidade) seguem o mesmo visual.
 - **Páginas dentro do jogo.** Três páginas somente leitura em `/ingame`, sem script, que cabem no painel do jogo. Um teste falha se elas começarem a usar algo que aquele navegador não tem.
 
 ## Testes

@@ -1,5 +1,7 @@
 # Site parity: server
 
+🌐 **English** | [Português](server.pt.md) | [Español](server.es.md)
+
 Checklist of everything the old site showed in the **server** area, and where it stands in the hub.
 
 Old files are under `l4d2-playstats-web/L4D2PlayStats.Web`. `Web/` means the project `L4D2PlayStats.Web`, `Core/` means `L4D2PlayStats.Core`.

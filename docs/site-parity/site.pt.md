@@ -1,0 +1,138 @@
+# Paridade do site: layout, ranking, histórico, patentes e Anti-Cheat
+
+🌐 [English](site.md) | **Português** | [Español](site.es.md)
+
+Todos os itens do site antigo (`l4d2-playstats-web`) nestas telas, conferidos um a um com o hub. `Onde` aponta para o arquivo antigo, relativo a `L4D2PlayStats.Web/L4D2PlayStats.Web`.
+
+Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pelo motivo indicado), `not ported` (não pode existir no hub, com o motivo).
+
+## Layout (todas as páginas)
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Metas de charset, compatibilidade com IE e viewport | Views/Shared/_Layout.cshtml:28-30 | done | |
+| Meta description | _Layout.cshtml:31 | adapted | Mesmo texto por página; o padrão usa o nome do site (`SiteSettings.Name`) em vez do "L4D2 Competitive" fixo. |
+| Meta keywords | _Layout.cshtml:32 | adapted | A lista fixa virou a configuração opcional `SiteSettings.MetaKeywords`. |
+| Meta author | _Layout.cshtml:33 | adapted | Nome do site em vez do nome fixo. |
+| Meta robots (index ou noindex por página) | _Layout.cshtml:34 | done | |
+| Link canônico | _Layout.cshtml:36 | adapted | Montado a partir do endereço público das configurações, ou da requisição quando ele está vazio, em vez do `https://l4d2.com.br` fixo. |
+| Open Graph: título, descrição, URL, tipo, nome do site e locale | _Layout.cshtml:37-45 | done | |
+| Open Graph: imagem, URL segura e alt | _Layout.cshtml:41-43 | adapted | A imagem da própria página, como antes. A imagem padrão era um arquivo fixo no armazenamento antigo; agora é a logo do site, quando há uma enviada, e as tags ficam de fora quando não há. |
+| Twitter: card, título, descrição, imagem e alt | _Layout.cshtml:47-51 | done | `summary` em vez de `summary_large_image` quando não há imagem. |
+| Título no formato "Página \| Site" | _Layout.cshtml:53, PageMetadata/Infrastructure/PageMetadata.cs | done | |
+| Favicon | _Layout.cshtml:55 | done | |
+| Folha de estilo e script do lity | _Layout.cshtml:56, 535 | done | |
+| Folhas de estilo do tema escuro (padrão) e do tema claro, escolhidas por um cookie | _Layout.cshtml:58-65 | done | Cookie `hub_theme`. |
+| Estilos da página: largura do container, cor dos links, navbar, logo, ícones do cabeçalho, utilitários (`vertical-align-middle`, `bold`, `line-break-anywhere`), largura do tooltip, ícone de copiar | _Layout.cshtml:67-121 | done | Copiados como estavam. |
+| Estilos do cartão de partida (`.match ...`) | _Layout.cshtml:123-143 | done | |
+| `show-mobile` / `hide-mobile`, badge do servidor, ícone flutuante, cor da linha "sou eu" por tema | _Layout.cshtml:145-178 | done | |
+| Coluna `slim`, regras para celular dos cartões de partida e `table-responsive` com `data-label` | _Layout.cshtml:180-234 | done | |
+| Padding menor da navbar entre 768 e 930 px | _Layout.cshtml:236-241 | done | |
+| Estilos da pílula de estrelas | _Layout.cshtml:243-278 | done | |
+| Seções `Styles` e `Scripts` | _Layout.cshtml:281, 536 | done | |
+| `imgOnError` (avatar vazio como fallback) | _Layout.cshtml:285-288 | done | |
+| `copyTextToClipboard` com popover e mensagem de falha | _Layout.cshtml:290-304 | done | |
+| Botão que abre a navbar no celular | _Layout.cshtml:313-318 | done | |
+| Logo com link para a página inicial | _Layout.cshtml:319-321 | adapted | A logo é enviada pelo administrador (era um arquivo fixo com o nome do site antigo). Sem logo, o nome do site aparece como texto. |
+| Badge de jogadores online ao lado da logo, pulsando, com link para a página do servidor | _Layout.cshtml:322-324 | done | Só aparece quando o módulo de servidor ao vivo está ligado. |
+| Menu: Ranking, Últimos jogos, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada item segue o seu módulo. Comunidade (novo) vem depois deles. |
+| Menu "Mais": Jogadores, Patentes, Histórico, com ícones e um divisor | _Layout.cshtml:344-369 | done | |
+| Menu "Admin" para administradores: Bans de chat, Compras de skins, Preços das skins, com ícones | _Layout.cshtml:370-398 | done | Mais a área de Administração do hub e as configurações do Anti-Cheat. |
+| Pílula de estrelas com o saldo do jogador logado, tooltip e rótulo | _Layout.cshtml:403-411, 647-681 | done | Lê `GET /api/shop/wallet`, com cache no session storage, como antes. |
+| Avatar do jogador logado com link para a página do jogador, com o nome no celular | _Layout.cshtml:412-419 | done | |
+| Menu de configurações: trocar o tema | _Layout.cshtml:430-447, Controllers/HomeController.cs:42 | done | `/theme/{theme}`. |
+| Menu de configurações: English, Português, Español (o idioma atual fica oculto) | _Layout.cshtml:449-475, 545-554, 690-703 | adapted | Links simples (`/language?culture=`) em vez de um POST por AJAX seguido de um recarregamento. Mesmo resultado, e funciona sem script. |
+| Menu de configurações: entrar com a Steam / sair | _Layout.cshtml:477-494 | done | |
+| Links do rodapé (repositório do servidor, GitHub, Steam) | _Layout.cshtml:507-521 | adapted | Os três links fixos viraram a configuração `SiteSettings.FooterLinks` (um por linha). O padrão é um link para o projeto. |
+| Ícone flutuante de "conectar" com o endereço do servidor no tooltip, oculto no celular | _Layout.cshtml:524-529, Controllers/ConnectController.cs | adapted | O endereço vem do servidor de jogo cadastrado com mais jogadores (`/connect`), e não de uma configuração fixa. Fica oculto quando nenhum servidor tem endereço. |
+| Scripts do jQuery, Bootstrap, diffDOM, Chart.js e lity | _Layout.cshtml:531-535 | done | |
+| Jogadores online no título da aba do navegador ("🟢 5/8 \| ...") e a atualização a cada 4 segundos | _Layout.cshtml:539-543, 585-608 | done | `GET /api/server` com os mesmos campos (`players`, `max_players`). |
+| Animação `pulsate` | _Layout.cshtml:556-583, 705-707 | done | |
+| Gráficos criados a partir de `data-chart` quando entram na área visível | _Layout.cshtml:610-641, 683-685, 713 | done | |
+| Helper `isObject` | _Layout.cshtml:643-645 | done | |
+| Tooltips em todo `data-toggle="tooltip"` | _Layout.cshtml:688 | done | |
+| Tag do Google Analytics | _Layout.cshtml:717-723 | adapted | O ID fixo virou a configuração opcional `SiteSettings.GoogleAnalyticsId`. |
+| Minificação do HTML e compressão HTTP | Program.cs:9-16, 65 | adapted | As respostas são comprimidas (Brotli/Gzip). O HTML não é minificado: não há efeito visível, e é uma dependência a menos. |
+| Aviso no log para toda requisição que termina em erro, e a exceção no caso de falhas | Middlewares/ErrorLoggingMiddleware.cs | done | Pelo logger da aplicação; uma instalação em Linux guarda isso no journal do sistema em vez de em `logs/app.log`. |
+| JSON sem nulos e com enums como texto | Program.cs:21-25 | done | |
+| Login pela Steam com um cookie deslizante de 30 dias | Program.cs:28-39 | done | |
+| Endereços por convenção, como `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | O hub usa endereços explícitos (`/theme/...`, `/language`, `/login`, `/logout`). Os endereços que as pessoas de fato abrem (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) são os mesmos. |
+| `POST /api/cache/clear` | Controllers/Api/CacheController.cs | not ported | O site antigo guardava em cache o que lia de uma API separada e precisava ser avisado para descartar esse cache. No hub, o site e a API são uma única aplicação, e cada envio atualiza o ranking sozinho. |
+
+## Página inicial: ranking (`/`)
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Metadados da página: título "Ranking", descrição, imagem e nome do primeiro jogador | PageMetadata/HomePageMetadata.cs | done | |
+| Estilos da página: tamanho das medalhas, barra de progresso fina, cor da barra vermelha, margens de tabela e de parágrafo | Views/Home/Index.cshtml:18-46 | done | |
+| Cabeçalho "Top 100 jogadores" | Index.cshtml:75 | done | |
+| "Próximo reset em N dia(s)" | Index.cshtml:78, Models/RankingPeriodModel.cs | adapted | Conta os dias até o fim da temporada atual, seja qual for a duração dela, em vez de períodos fixos de dois meses. |
+| Link "Ver rankings anteriores" | Index.cshtml:80 | done | |
+| Tabela zebrada, com hover, bordas e condensada | Index.cshtml:83 | done | |
+| Colunas: #, Patente, Jogador (avatar e nome), XP, Vitórias, Derrotas, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Jogos, Rage quit | Index.cshtml:85-97 | done | |
+| Colunas ocultas no celular (XP, Derrotas, MVPs, Taxa de vitória, Jogos, Rage quit) | Index.cshtml:89-96 | done | |
+| Top 100 listado, os 50 primeiros visíveis, botão "Mostrar mais" para o restante | Index.cshtml:103, 109, 198-207, 50-57 | done | |
+| Linha do jogador logado destacada | Index.cshtml:109 | done | |
+| Medalhas para os três primeiros lugares, com tooltip; "#N" para os demais | Index.cshtml:111-125 | done | |
+| Imagem da patente com o tooltip "Nível NN - Nome" | Index.cshtml:127-129 | done | |
+| Avatar com link para a página do jogador, com imagem de fallback | Index.cshtml:130-134 | done | Os avatares são baixados sob demanda, mesmo sem uma chave da API da Steam. |
+| Nome do jogador, encurtado quando é longo demais, com link para a página do jogador | Index.cshtml:136 | done | |
+| Rótulos pulsantes "Subiu de Nível!" / "Caiu de Nível!" com tooltip | Index.cshtml:137-148 | done | |
+| Barra de progresso de XP: tipo e pulso conforme a situação, listrada no nível máximo, segundo segmento para o ganho ou a perda do último jogo | Index.cshtml:150-157, Models/RankingModel.cs | done | |
+| Tooltip do progresso: mudança de nível, patente máxima, XP do último jogo, próximo nível, XP do total, percentual | Models/RankingModel.cs:44-71 | done | |
+| Vitórias com o tooltip "Vitórias - N% Taxa de vitória" | Index.cshtml:158-162 | done | |
+| Derrotas, MVP de SI, MVP de CI, Taxa de vitória, Jogos, Rage quit, cada um com o seu tooltip | Index.cshtml:163-192 | done | |
+| Ainda sem ranking: os seis primeiros do último ranking | Index.cshtml:60-65, Views/Home/_LastRankingTopSix.cshtml | done | |
+| Sem ranking e sem histórico: a mensagem "Não existem dados no momento..." | Index.cshtml:66-71 | done | |
+| Seis primeiros: troféu, cabeçalho, período de referência | _LastRankingTopSix.cshtml:36-61 | adapted | O texto do período cobre uma temporada de qualquer duração. |
+| Seis primeiros: um painel por jogador (destacado se for o jogador logado), rótulo de posição por cor, nome, avatar redondo, vitórias e derrotas, rótulos de taxa de vitória, MVP de SI, MVP de CI, jogos e rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
+| Seis primeiros: botão "Veja o ranking completo" | _LastRankingTopSix.cshtml:113-115 | done | Abre esse período no histórico. |
+| Com o módulo de ranking desligado | (novo) | adapted | Uma página curta de boas-vindas; o site antigo não tinha módulos. |
+
+## Histórico (`/history/{id?}`)
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Metadados da página: "Histórico - período", descrição, imagem e nome do vencedor | PageMetadata/HistoryPageMetadata.cs | done | |
+| Estilos da página | Views/History/Index.cshtml:13-32 | done | |
+| Cabeçalho "Histórico" | Index.cshtml:34 | done | |
+| Seletor de período mostrando o período exibido | Index.cshtml:36-85 | adapted | Lista todo o período, cada ano e cada temporada encerrada. O site antigo listava só os períodos de dois meses do ano atual; uma lista longa ganha rolagem. |
+| Nomes dos períodos: "De MM/YYYY até MM/YYYY", "Ano de YYYY", "Todo o período" | Index.cshtml:42-57 | done | |
+| Período padrão: o ano atual | Controllers/HistoryController.cs:26 | done | |
+| Colunas da tabela: #, Jogador (avatar e nome), Vitórias, Derrotas, Jogos, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Rage quit | Index.cshtml:87-101 | done | |
+| Colunas ocultas no celular | Index.cshtml:93-99 | done | |
+| Top 100, linha do jogador logado destacada, medalhas, avatar, nome encurtado, tooltips em todos os números | Index.cshtml:103-171 | done | |
+| Período desconhecido: "Histórico não encontrado" com um botão de volta para o ranking, sem indexação | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |
+| Endereços `/ranking/season/{id}`, `/ranking/year/{year}`, `/ranking/all-time` | (primeira versão do hub) | adapted | Redirecionam para o histórico. |
+
+## Patentes (`/patents`)
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Metadados da página: título, descrição, imagem e nome da patente mais alta | PageMetadata/PatentsPageMetadata.cs | adapted | A descrição usa o nome do site em vez do nome fixo. |
+| Cabeçalho "Patentes" | Views/Patents/Index.cshtml:8 | done | |
+| Painel "Entendendo o sistema de patentes", primeiro parágrafo | Index.cshtml:10-17 | adapted | Diz "temporada" e a duração dela em meses em vez dos períodos fixos de dois meses. |
+| Segundo parágrafo com o XP de uma vitória, de uma derrota, do MVP de SI, do MVP de CI e do rage quit | Index.cshtml:18-20 | done | Valores das configurações do ranking. |
+| Tabela: Nível, imagem com tooltip, descrição, experiência necessária, da mais alta para a mais baixa | Index.cshtml:24-49 | done | |
+| Painel "Detalhamento dos pontos de XP" com as cinco linhas | Index.cshtml:51-64 | done | |
+
+## Anti-Cheat (`/anti-cheat`)
+
+A página pertence ao módulo Anti-Cheat, que vem desligado por padrão. Quando o administrador liga o módulo, a página e o item de menu dela aparecem.
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Metadados da página | PageMetadata/AntiCheatPageMetadata.cs | adapted | Usam o nome do site em vez do nome fixo. |
+| Estilos da página (hero, cartões, passos, maquete da janela, FAQ, regras para celular) | Views/AntiCheat/Index.cshtml:16-306 | done | |
+| Hero: antetítulo, título, texto de abertura | Index.cshtml:308-313 | adapted | O antetítulo usa o nome do site. |
+| Botão de download | Index.cshtml:315-318 | adapted | Endereço vindo do serviço do Anti-Cheat ou da configuração; oculto quando nenhum dos dois fornece um endereço seguro. |
+| Versão, tamanho, data de lançamento | Index.cshtml:319-333 | done | Consultados no serviço do Anti-Cheat (`/v1/client/version`), com cache de 5 minutos, ou de 30 segundos depois de uma falha. |
+| "Verificar o arquivo": SHA-256 com botão de copiar e o comando do PowerShell | Index.cshtml:334-366 | done | |
+| Linha de requisitos | Index.cshtml:367-370 | done | |
+| Maquete da janela com as linhas de log | Index.cshtml:372-398 | done | |
+| "Como usar": três passos | Index.cshtml:400-415 | done | |
+| "O que a janela mostra": quatro estados com as suas cores | Index.cshtml:417-428 | done | |
+| "Problemas comuns": cinco perguntas que abrem e fecham | Index.cshtml:430-447 | done | |
+| "Sobre o -insecure (sem VAC)" | Index.cshtml:449-458 | adapted | Usa o nome do site em vez do endereço fixo. |
+| Privacidade: o que é enviado e o que nunca é enviado | Index.cshtml:459-484 | done | |
+| Endereços do serviço e do download | Core/AppConsts.cs:15-16 | adapted | Configurações em `/admin/anti-cheat` em vez de endereços fixos. |

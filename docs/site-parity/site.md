@@ -1,5 +1,7 @@
 # Site parity: layout, ranking, history, patents and Anti-Cheat
 
+🌐 **English** | [Português](site.pt.md) | [Español](site.es.md)
+
 Every item of the old site (`l4d2-playstats-web`) for these screens, checked one by one against the hub. `Where` points to the old file, relative to `L4D2PlayStats.Web/L4D2PlayStats.Web`.
 
 Status: `done` (same content and look), `adapted` (present, changed for the stated reason), `not ported` (cannot exist in the hub, with the reason).

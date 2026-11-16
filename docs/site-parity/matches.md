@@ -1,5 +1,7 @@
 # Site parity: matches
 
+🌐 **English** | [Português](matches.pt.md) | [Español](matches.es.md)
+
 Port of the old site's matches area (`Views/LastMatches/*`, `LastMatchesController`, `Api/StatisticsController`, `Api/CampaignController`) to the hub.
 
 Paths in the second column are relative to `L4D2PlayStats.Web/L4D2PlayStats.Web` in the old repository unless they start with `Sdk/`, `Core/` or `api/` (the old API repository).

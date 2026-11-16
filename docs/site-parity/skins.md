@@ -1,5 +1,7 @@
 # Site parity: skins
 
+🌐 **English** | [Português](skins.pt.md) | [Español](skins.es.md)
+
 Port of the skin shop and its administrator pages from the old site (`l4d2-playstats-web`) to the hub.
 
 Paths in the column "Where in the old site" are relative to `L4D2PlayStats.Web/L4D2PlayStats.Web` unless they start with `Core/` (`L4D2PlayStats.Web/L4D2PlayStats.Core`).

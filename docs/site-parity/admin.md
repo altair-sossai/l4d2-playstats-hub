@@ -1,5 +1,7 @@
 # Site parity: administration, setup and community ranking
 
+🌐 **English** | [Português](admin.pt.md) | [Español](admin.es.md)
+
 The pages of this area exist only in the hub: the old site has no setup wizard, no administration area for servers, modules, settings, game modes, campaigns or administrators, and no community ranking. There is nothing to port from the old site, so this checklist is an inventory of what each page had in its first version (Bootstrap 5, commit `f59518f`) and what became of each item when the page was rewritten for the old site's look (Bootstrap 3, `Views/Shared/_Layout.cshtml`, `_AdminStyles`).
 
 `Where today` is the file and line of the item in the Bootstrap 5 version (paths relative to `src/L4D2PlayStats.Hub.Web`), or `new` for something this work adds.

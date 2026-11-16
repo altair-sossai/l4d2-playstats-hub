@@ -166,7 +166,7 @@ Una lista de verificación muestra qué se encontró: conexión, plugin de subid
 
 El navegador que está dentro del juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
 
-- **Sitio principal.** Páginas renderizadas en el servidor que mantienen el aspecto y el contenido del sitio que este proyecto reemplaza: Bootstrap 3 con sus temas oscuro y claro, jQuery, Chart.js y diffDOM, sin ningún paso de compilación con Node. Cada página del sitio antiguo se portó elemento por elemento; las listas de comprobación están en [site-parity](site-parity/README.md). Las páginas que son nuevas aquí (asistente, administración, ranking de la comunidad) siguen el mismo aspecto.
+- **Sitio principal.** Páginas renderizadas en el servidor que mantienen el aspecto y el contenido del sitio que este proyecto reemplaza: Bootstrap 3 con sus temas oscuro y claro, jQuery, Chart.js y diffDOM, sin ningún paso de compilación con Node. Cada página del sitio antiguo se portó elemento por elemento; las listas de comprobación están en [site-parity](site-parity/README.es.md). Las páginas que son nuevas aquí (asistente, administración, ranking de la comunidad) siguen el mismo aspecto.
 - **Páginas dentro del juego.** Tres páginas de solo lectura bajo `/ingame`, sin scripts, que caben en el panel del juego. Una prueba falla si empiezan a usar algo que ese navegador no tiene.
 
 ## Pruebas
