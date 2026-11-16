@@ -1,0 +1,179 @@
+@model PlayerNotFoundModel
+@inject ISettingsService Settings
+
+@{
+    var playerName = Model.Name ?? Model.CommunityId.ToString();
+
+    var site = await Settings.GetAsync<SiteSettings>();
+    var seasonId = Model.Period?.SeasonId;
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = $"{playerName} - {L["Player details"].Value}",
+        Description = L["See the available information about player {0} on {1}.", playerName, site.Name],
+        Image = $"/avatar/{Model.CommunityId}",
+        ImageAlt = playerName,
+        OpenGraphType = AppConsts.PlayerOpenGraphType,
+        NoIndex = true
+    };
+}
+
+@section Styles {
+    <style>
+        .player-summary-avatar {
+            max-width: 184px;
+            width: 100%;
+        }
+
+        th {
+            width: 1%;
+            white-space: nowrap;
+            padding-right: 24px !important;
+        }
+
+        @@media screen and (max-width: 767px) {
+            .player-summary-avatar-container {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+}
+
+<h4 class="text-center">@L["Player details"]</h4>
+
+@if (Model.Period is { HasChoices: true })
+{
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-12">
+            @await Html.PartialAsync("_PeriodSelector", new PlayerPeriodSelectorModel(Model.Period, season => PlayerUrls.Details(Model.CommunityId, null, season)))
+        </div>
+    </div>
+}
+
+<div class="alert alert-warning text-center" role="alert">
+    <h4>@L["Player not ranked"]</h4>
+    <p>@L["This player is not currently present in the ranking."]</p>
+    <p>@L["Therefore, complete statistics are unavailable. The known account information is shown below."]</p>
+</div>
+
+<div class="row">
+    <div class="col-sm-3 text-center player-summary-avatar-container">
+        <img src="/avatar/@Model.CommunityId" alt="@playerName" title="@playerName" class="img-responsive img-thumbnail center-block player-summary-avatar" onerror="imgOnError(this)" data-lity/>
+    </div>
+    <div class="col-sm-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @L["Available information"]
+            </div>
+
+            <table class="table table-hover table-condensed table-responsive">
+                <tbody>
+                @if (!string.IsNullOrWhiteSpace(Model.Name))
+                {
+                    <tr>
+                        <th>@L["Name"]:</th>
+                        <td data-label="@L["Name"]:">@Model.Name</td>
+                    </tr>
+                }
+                <tr>
+                    <th>@L["Community ID"]:</th>
+                    <td data-label="@L["Community ID"]:">
+                        @Model.CommunityId
+                        @await Html.PartialAsync("_CopyButton", Model.CommunityId.ToString())
+                    </td>
+                </tr>
+                @if (!string.IsNullOrWhiteSpace(Model.SteamId))
+                {
+                    <tr>
+                        <th>@L["Steam ID"]:</th>
+                        <td data-label="@L["Steam ID"]:">
+                            @Model.SteamId
+                            @await Html.PartialAsync("_CopyButton", Model.SteamId)
+                        </td>
+                    </tr>
+                }
+                @if (Model.LastConnectedAtUtc.HasValue)
+                {
+                    <tr>
+                        <th>@L["Last login"]:</th>
+                        <td data-label="@L["Last login"]:">@Model.LocalTime(Model.LastConnectedAtUtc.Value).ToString("g")</td>
+                    </tr>
+                }
+                @if (Model.ConnectionCount.HasValue)
+                {
+                    <tr>
+                        <th>@L["Connections"]:</th>
+                        <td data-label="@L["Connections"]:">@Model.ConnectionCount.Value.ToString("N0")</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.ProfileUrl))
+                {
+                    <tr>
+                        <th>@L["Profile URL"]:</th>
+                        <td data-label="@L["Profile URL"]:">
+                            <a href="@Model.ProfileUrl" target="_blank" rel="noopener noreferrer">
+                                @Model.ProfileUrl
+                            </a>
+                            @await Html.PartialAsync("_CopyButton", Model.ProfileUrl)
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.RelatedPlayers.Any())
+{
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            @L["Related accounts"]
+        </div>
+
+        <table class="table table-hover table-condensed table-responsive">
+            <thead>
+            <tr>
+                <th>@L["Name"]</th>
+                <th>@L["Steam ID"]</th>
+                <th>@L["Last login"]</th>
+                <th>@L["Connections"]</th>
+                <th>@L["Profile URL"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var relatedPlayer in Model.RelatedPlayers)
+            {
+                <tr>
+                    <td data-label="@L["Name"]:">
+                        <img src="/avatar/@relatedPlayer.CommunityId" alt="@relatedPlayer.Name" title="@relatedPlayer.Name" class="img-thumbnail" style="width: 32px; margin-right: 5px" onerror="imgOnError(this)"/>
+                        <a href="@PlayerUrls.Details(long.Parse(relatedPlayer.CommunityId), null, seasonId)">@relatedPlayer.Name</a>
+                    </td>
+                    <td data-label="@L["Steam ID"]:">
+                        @relatedPlayer.SteamId
+                        @if (!string.IsNullOrWhiteSpace(relatedPlayer.SteamId))
+                        {
+                            @await Html.PartialAsync("_CopyButton", relatedPlayer.SteamId)
+                        }
+                    </td>
+                    <td data-label="@L["Last login"]:">@Model.LocalTime(relatedPlayer.LastConnectedAtUtc).ToString("g")</td>
+                    <td data-label="@L["Connections"]:">@relatedPlayer.ConnectionCount.ToString("N0")</td>
+                    <td data-label="@L["Profile URL"]:">
+                        @if (!string.IsNullOrWhiteSpace(relatedPlayer.ProfileUrl))
+                        {
+                            <a href="@relatedPlayer.ProfileUrl" target="_blank" rel="noopener noreferrer">
+                                @relatedPlayer.ProfileUrl
+                            </a>
+                            @await Html.PartialAsync("_CopyButton", relatedPlayer.ProfileUrl)
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="text-center">
+    <a href="/" class="btn btn-primary">@L["Return to ranking page"]</a>
+</div>
