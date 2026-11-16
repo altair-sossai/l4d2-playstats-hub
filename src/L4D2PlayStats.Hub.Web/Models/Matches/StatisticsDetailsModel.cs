@@ -1,0 +1,18 @@
+using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
+
+namespace L4D2PlayStats.Hub.Web.Models.Matches;
+
+public class StatisticsDetailsModel
+{
+    public required MatchCardModel Card { get; init; }
+    public IReadOnlyList<MatchStatisticsResult> Statistics { get; init; } = [];
+    public MatchStatisticsResult? Statistic { get; init; }
+
+    public MatchResult Match => Card.Match;
+    public TimeZoneInfo TimeZone => Card.TimeZone;
+
+    public string StatisticsUrl(MatchStatisticsResult statistics)
+    {
+        return $"{Card.DetailsUrl}/statistics/{statistics.FileId}";
+    }
+}

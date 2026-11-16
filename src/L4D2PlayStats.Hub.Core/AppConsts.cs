@@ -132,4 +132,7 @@ public static class AppConsts
     public const string SkinSourceGift = "gift";
     public const string SkinSourceSite = "site";
     public const string SkinSourceGame = "game";
+
+    public const char TeamACode = 'A';
+    public const char TeamBCode = 'B';
 }
