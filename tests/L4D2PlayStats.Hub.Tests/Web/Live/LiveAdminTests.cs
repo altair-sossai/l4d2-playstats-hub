@@ -20,18 +20,18 @@ public class LiveAdminTests
         await factory.CompleteSetupAsync();
         await factory.EnableAsync();
 
-        var add = await HubWebFactory.PostFormAsync(client, "/admin/chat-bans", "/admin/chat-bans", new Dictionary<string, string> { ["communityId"] = Alice.ToString(), ["name"] = "AliceTheSpammer", ["reason"] = "Flooding the chat" });
+        var add = await LiveWebFactory.SendJsonAsync(client, "/admin/chat-bans", HttpMethod.Post, "/api/chat-bans", $$"""{"communityId":"{{Alice}}","name":"AliceTheSpammer","reason":"Flooding the chat"}""");
         var listed = await client.GetStringAsync("/admin/chat-bans");
         var ban = await factory.RunAsync(services => services.GetRequiredService<IChatBanService>().FindAsync(Alice));
 
-        var remove = await HubWebFactory.PostFormAsync(client, "/admin/chat-bans", $"/admin/chat-bans/{Alice}/delete", []);
+        var remove = await LiveWebFactory.SendJsonAsync(client, "/admin/chat-bans", HttpMethod.Delete, $"/api/chat-bans/{Alice}", null);
         var after = await factory.RunAsync(services => services.GetRequiredService<IChatBanService>().ListAsync());
 
-        Assert.AreEqual(HttpStatusCode.Redirect, add.StatusCode);
+        Assert.AreEqual(HttpStatusCode.OK, add.StatusCode);
         Assert.Contains("AliceTheSpammer", listed);
         Assert.Contains("Flooding the chat", listed);
         Assert.AreEqual(HubWebFactory.Administrator, ban!.CreatedByCommunityId);
-        Assert.AreEqual(HttpStatusCode.Redirect, remove.StatusCode);
+        Assert.AreEqual(HttpStatusCode.NoContent, remove.StatusCode);
         Assert.IsEmpty(after);
     }
 
@@ -49,9 +49,11 @@ public class LiveAdminTests
         await factory.RunAsync(services => services.GetRequiredService<ISiteChatService>().SendAsync(credentials.Server, new SiteChatUser(Alice, "AliceTheChatter"), "buy my skins"));
 
         var page = await client.GetStringAsync("/admin/chat-bans");
+        var senders = await client.GetStringAsync("/api/chat-bans/recent-senders");
 
-        Assert.Contains("AliceTheChatter", page);
-        Assert.Contains("buy my skins", page);
+        Assert.Contains("cb-recent", page);
+        Assert.Contains("AliceTheChatter", senders);
+        Assert.Contains("buy my skins", senders);
     }
 
     [TestMethod]

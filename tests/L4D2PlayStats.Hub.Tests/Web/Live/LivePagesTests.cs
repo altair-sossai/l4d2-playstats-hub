@@ -24,10 +24,11 @@ public class LivePagesTests
         var body = await live.Content.ReadAsStringAsync();
 
         Assert.AreEqual(HttpStatusCode.OK, list.StatusCode);
-        Assert.Contains("Test Server", await list.Content.ReadAsStringAsync());
+        Assert.Contains("Test Server", body);
         Assert.AreEqual(HttpStatusCode.OK, live.StatusCode);
-        Assert.Contains("live-header", body);
-        Assert.Contains("feed-poller", body);
+        Assert.Contains("game-info-header", body);
+        Assert.Contains("game-info-chat", body);
+        Assert.Contains("game-info-header", await list.Content.ReadAsStringAsync());
         Assert.DoesNotContain("server-picker", body);
     }
 
@@ -53,8 +54,9 @@ public class LivePagesTests
         Assert.AreEqual(HttpStatusCode.OK, first.StatusCode);
         Assert.AreEqual(HttpStatusCode.OK, second.StatusCode);
         Assert.Contains("server-picker", body);
-        Assert.Contains("<option value=\"first\">First</option>", body);
-        Assert.Contains("<option value=\"second\" selected=\"selected\">Second</option>", body);
+        Assert.Contains("<a href=\"/servers/first\">First</a>", body);
+        Assert.Contains("<a href=\"/servers/second\">Second</a>", body);
+        Assert.DoesNotContain("id=\"game-info-chat\"", body);
     }
 
     [TestMethod]
@@ -130,7 +132,7 @@ public class LivePagesTests
         Assert.DoesNotContain("AliceTheSurvivor", secondPage);
         Assert.DoesNotContain("tank incoming", secondPage);
         Assert.Contains("812", header);
-        Assert.Contains("Second round", header);
+        Assert.Contains("2nd round", header);
         Assert.Contains("AliceTheSurvivor", players);
         Assert.Contains("ZoneMod v2.9", cards);
     }
@@ -155,16 +157,15 @@ public class LivePagesTests
         factory.PassTheDelay();
 
         var second = await client.GetStringAsync("/servers/test-server/feed?after=1");
-        var third = await client.GetStringAsync("/servers/test-server/feed?after=2");
+        var third = await client.GetAsync("/servers/test-server/feed?after=2");
 
         Assert.Contains("A mix has started.", first);
-        Assert.Contains("feed?after=1", first);
-        Assert.Contains("hx-swap-oob", first);
+        Assert.Contains("data-feed-sequence=\"1\"", first);
+        Assert.Contains("data-feed-kind=\"event\"", first);
         Assert.DoesNotContain("A mix has started.", second);
         Assert.Contains("BobTheTank", second);
-        Assert.Contains("feed?after=2", second);
-        Assert.Contains("feed?after=2", third);
-        Assert.DoesNotContain("hx-swap-oob", third);
+        Assert.Contains("data-feed-sequence=\"2\"", second);
+        Assert.AreEqual(HttpStatusCode.NoContent, third.StatusCode);
     }
 
     [TestMethod]

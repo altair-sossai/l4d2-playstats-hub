@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -32,5 +33,20 @@ public class LiveWebFactory : HubWebFactory
     public static StringContent Json(string json)
     {
         return new StringContent(json, Encoding.UTF8, "application/json");
+    }
+
+    public static async Task<HttpResponseMessage> SendJsonAsync(HttpClient client, string tokenPage, HttpMethod method, string url, string? json)
+    {
+        var html = await client.GetStringAsync(tokenPage);
+        var match = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"");
+
+        using var request = new HttpRequestMessage(method, url);
+
+        request.Headers.Add("RequestVerificationToken", match.Groups[1].Value);
+
+        if (json != null)
+            request.Content = Json(json);
+
+        return await client.SendAsync(request);
     }
 }

@@ -87,7 +87,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Survivor: character picture with tooltip, grey when dead | `Web/Views/Server/_Players.cshtml:101` | pending | |
 | Survivor: avatar linked to the player page, grey when dead | `Web/Views/Server/_Players.cshtml:106` | pending | |
 | Survivor: name linked to the player page | `Web/Views/Server/_Players.cshtml:114` | pending | |
-| Survivor: labels Admin, Dead, Incapacitated, B&W | `Web/Views/Server/_Players.cshtml:116` | pending | |
+| Survivor: labels Admin, Dead, Incapacitated, Black and white | `Web/Views/Server/_Players.cshtml:116` | pending | |
 | Survivor: latency icon (low, medium, high) with tooltip | `Web/Views/Server/_Players.cshtml:145` | pending | |
 | Survivor: weapon icons for the five slots, per theme, with the melee weapon icon in place of the generic one | `Web/Views/Server/_Players.cshtml:157` | pending | |
 | Which weapons have an icon | `Web/Extensions/WeaponExtensions.cs:7`, `Web/Extensions/MeleeWeaponExtensions.cs:7` | pending | |
