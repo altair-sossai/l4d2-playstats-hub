@@ -1,0 +1,287 @@
+@using System.Text.Json
+@model PlayerMatchModel
+@inject ICurrentUser CurrentUser
+
+@{
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+
+    const string success = AppConsts.PlayerChartSuccessColor;
+    const string danger = AppConsts.PlayerChartDangerColor;
+    const string transparent = AppConsts.PlayerChartTransparentColor;
+
+    var fontColor = light ? AppConsts.PlayerChartLightFontColor : AppConsts.PlayerChartDarkFontColor;
+    var winner = Model.Winner;
+
+    var scoreboardChart = new
+    {
+        type = "line",
+        data = new
+        {
+            labels = Model.Maps.Select(m => m.MapName.Truncate(AppConsts.PlayerMatchMapNameLength)),
+            datasets = Model.Teams.Select(team => new
+            {
+                label = $"{L["Team"].Value} {team.Code}",
+                data = Model.Maps.Select(m => team.Code == AppConsts.PlayerMatchTeamA ? m.TeamAScore : m.TeamBScore),
+                borderColor = team.Code == winner.Code ? success : danger,
+                backgroundColor = transparent,
+                lineTension = 0
+            })
+        },
+        options = new
+        {
+            title = new
+            {
+                display = true,
+                text = L["Scoreboard"].Value,
+                fontColor
+            },
+            legend = new
+            {
+                display = true,
+                position = "bottom",
+                labels = new { fontColor }
+            },
+            responsive = true,
+            maintainAspectRatio = false,
+            scales = new
+            {
+                xAxes = new object[]
+                {
+                    new
+                    {
+                        ticks = new { fontColor }
+                    }
+                },
+                yAxes = new object[]
+                {
+                    new
+                    {
+                        ticks = new
+                        {
+                            fontColor,
+                            beginAtZero = true
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    var pointsEarnedOnMapChart = new
+    {
+        type = "bar",
+        data = new
+        {
+            labels = Model.Maps.Select(m => m.MapName.Truncate(AppConsts.PlayerMatchMapNameLength)),
+            datasets = new List<object>()
+        },
+        options = new
+        {
+            title = new
+            {
+                display = true,
+                text = L["Points earned per map"].Value,
+                fontColor
+            },
+            legend = new
+            {
+                display = true,
+                position = "bottom",
+                labels = new { fontColor }
+            },
+            responsive = true,
+            maintainAspectRatio = false,
+            scales = new
+            {
+                xAxes = new object[]
+                {
+                    new
+                    {
+                        ticks = new { fontColor }
+                    }
+                },
+                yAxes = new object[]
+                {
+                    new
+                    {
+                        ticks = new
+                        {
+                            fontColor,
+                            beginAtZero = true
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    var teamA = Model.Maps
+        .Select(m => m.TeamAScore)
+        .ToArray();
+
+    var teamB = Model.Maps
+        .Select(m => m.TeamBScore)
+        .ToArray();
+
+    for (var i = teamA.Length - 1; i > 0; i--)
+        teamA[i] -= teamA[i - 1];
+
+    for (var i = teamB.Length - 1; i > 0; i--)
+        teamB[i] -= teamB[i - 1];
+
+    foreach (var team in Model.Teams)
+    {
+        var color = team.Code == winner.Code ? success : danger;
+
+        pointsEarnedOnMapChart.data.datasets.Add(new
+        {
+            label = $"{L["Team"].Value} {team.Code}",
+            data = team.Code == AppConsts.PlayerMatchTeamA ? teamA : teamB,
+            borderColor = color,
+            backgroundColor = color
+        });
+    }
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading" style="padding: 6px 10px;">
+        <div class="row">
+            <div class="col-xs-8">
+                <h4 style="display: inline; font-weight: bold">
+                    @Model.Campaign
+                </h4>
+                <small style="font-style: italic"> - @Model.ConfigurationName</small>
+                @if (Model.Competitive)
+                {
+                    <span class="label label-success" style="margin-left: 5px;">@L["Competitive"]</span>
+                }
+                else
+                {
+                    <span class="label label-default" style="margin-left: 5px;">@L["Casual"]</span>
+                }
+                <p>
+                    @string.Format(L["Team {0} won by {1:N0} points"].Value, winner.Code, Model.Diff)
+                </p>
+            </div>
+            <div class="col-xs-4 text-right">
+                <p data-toggle="tooltip" data-placement="top" title="@L["Date and time when the game occurred"]">
+                    <img src="~/imgs/icons/calendar.png" alt="@L["Calendar"]" class="icon"/>
+                    @{
+                        if (Model.StartedToday)
+                        {
+                            @string.Format(L["Today at {0:t}"].Value, Model.MatchStart)
+                        }
+                        else if (Model.StartedYesterday)
+                        {
+                            @string.Format(L["Yesterday at {0:t}"].Value, Model.MatchStart)
+                        }
+                        else
+                        {
+                            @string.Format(L["{0:d} at {0:t}"].Value, Model.MatchStart)
+                        }
+                    }
+                </p>
+
+                @if (Model.MatchElapsed.HasValue)
+                {
+                    <p data-toggle="tooltip" data-placement="top" title="@L["Duration of the game in hours"]">
+                        <img src="~/imgs/icons/clock.png" alt="@L["Clock"]" class="icon"/>
+                        @Model.MatchElapsed.Value.ToString(AppConsts.PlayerMatchDurationFormat)
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-2 left-side text-center">
+                <img src="@PlayerUrls.CampaignThumb(Model.Campaign)" alt="@Model.Campaign" title="@Model.Campaign" class="img-responsive img-thumbnail img-campaign" onerror="this.onerror = null; this.src = '@PlayerUrls.CampaignThumb(null)'" data-lity/>
+                <a href="/matches/@Model.Id" class="btn btn-danger btn-xs btn-block" style="margin-top: 10px;">
+                    @L["Details"]
+                </a>
+            </div>
+            <div class="col-xs-10 right-side">
+                <div class="row teams">
+                    @foreach (var team in Model.Teams)
+                    {
+                        <div class="col-xs-6">
+                            <div class="panel panel-@(team.Code == winner.Code ? "success" : "danger")" style="margin-bottom: 0;">
+                                <div class="panel-heading bold" style="padding: 3px 15px">
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            @L["Team"] @team.Code
+                                        </div>
+                                        <div class="col-xs-6 text-right">
+                                            @team.Score.ToString("N0")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body" style="padding: 0">
+                                    <table class="table table-striped table-hover table-bordered table-condensed">
+                                        <tbody>
+                                        @foreach (var player in team.Players)
+                                        {
+                                            <tr class="@(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+                                                <td style="padding: 2px" class="slim">
+                                                    <a href="@PlayerUrls.Details(player.CommunityId, null, Model.SeasonId)" title="@player.Name">
+                                                        <img src="/avatar/@player.CommunityId" alt="@player.Name" title="@player.Name" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
+                                                    </a>
+                                                </td>
+                                                <td class="vertical-align-middle">
+                                                    <a href="@PlayerUrls.Details(player.CommunityId, null, Model.SeasonId)">@(player.Name?.TruncatePlayerName() ?? "-")</a>
+                                                    @if (player.MvpSiDamage > 0 || player.MvpCommon > 0)
+                                                    {
+                                                        <small> | </small>
+                                                    }
+
+                                                    @for (var i = 0; i < player.MvpSiDamage; i++)
+                                                    {
+                                                        <img src="~/imgs/icons/star.png" alt="@L["MVP (SI)"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["MVP (SI)"]"/>
+                                                    }
+
+                                                    @for (var i = 0; i < player.MvpCommon; i++)
+                                                    {
+                                                        <img src="~/imgs/icons/star-blue.png" alt="@L["MVP (CI)"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["MVP (CI)"]"/>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+            <div class="col-sm-6 col-xs-12" style="padding-right: 0">
+                <div style="height: 200px;">
+                    @{
+                        var canvas = new TagBuilder("canvas");
+                        canvas.AddCssClass("app-chart");
+                        canvas.Attributes.Add("style", "max-height: 100%;");
+                        canvas.Attributes.Add("data-chart", JsonSerializer.Serialize(scoreboardChart));
+                    }
+                    @canvas
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xs-12" style="padding-left: 0">
+                <div style="height: 200px;">
+                    @{
+                        canvas = new TagBuilder("canvas");
+                        canvas.AddCssClass("app-chart");
+                        canvas.Attributes.Add("style", "max-height: 100%;");
+                        canvas.Attributes.Add("data-chart", JsonSerializer.Serialize(pointsEarnedOnMapChart));
+                    }
+                    @canvas
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

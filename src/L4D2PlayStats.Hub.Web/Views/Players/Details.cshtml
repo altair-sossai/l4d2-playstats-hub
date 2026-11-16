@@ -1,204 +1,1556 @@
-@model PlayerViewModel
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Antiforgery
+@model PlayerDetailsModel
+@inject ICurrentUser CurrentUser
+@inject ISettingsService Settings
+@inject IAntiforgery Antiforgery
+
 @{
-    ViewData["Title"] = Model.Name;
-    var ranked = Model.Ranked;
-}
-<div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-    <img class="avatar-lg" src="/avatar/@Model.CommunityId" alt="">
-    <div class="flex-grow-1">
-        <h1 class="h3 mb-1">@Model.Name</h1>
-        <div class="text-body-secondary small">
-            <a class="link-secondary" href="@SteamIds.ProfileUrl(Model.CommunityId)" rel="noopener" target="_blank">@L["Steam profile"]</a>
-            · @SteamIds.SteamId(Model.CommunityId)
-            · ★ @Model.Stars @L["stars"]
-        </div>
-        @if (ranked != null && ranked.PreviousNames.Count > 1)
-        {
-            <div class="small text-body-secondary">@L["Also known as"]: @ranked.MostUsedNames</div>
-        }
-    </div>
-    <form method="get" action="/player/@Model.CommunityId">
-        <select class="form-select form-select-sm w-auto" name="season" aria-label="@L["Season"]" onchange="this.form.submit()">
-            @foreach (var season in Model.Seasons)
-            {
-                <option value="@season.Id" selected="@(season.Id == Model.Season.Id)">@Display.SeasonName(season)</option>
-            }
-        </select>
-    </form>
-</div>
+    var firstPlayerRanking = Model.FirstPlayerRanking;
+    var firstPlayer = firstPlayerRanking.Player;
+    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
+    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
 
-@if (ranked == null)
-{
-    <div class="alert alert-secondary">@L["This player has no ranked matches in this season."]</div>
-}
-else
-{
-    var progress = Model.Progress!;
+    var secondPlayerRanking = Model.SecondPlayerRanking;
+    var secondPlayer = secondPlayerRanking?.Player;
+    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
+    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <img class="patent-lg" src="@progress.Patent.Image" alt="">
-                    <div class="flex-grow-1">
-                        <div class="fw-semibold">@progress.Patent.Name</div>
-                        <div class="small text-body-secondary">#@ranked.Position · @Display.Number(ranked.Experience) @L["experience"]</div>
-                        <div class="progress progress-thin mt-2" role="progressbar" aria-label="@L["Progress to the next patent"]" aria-valuenow="@((int)(progress.Progress * 100))" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: @((int)(progress.Progress * 100))%"></div>
-                        </div>
-                        @if (progress.NextPatent != null)
-                        {
-                            <div class="small text-body-secondary mt-1">@L["Next"]: @progress.NextPatent.Name (@Display.Number(progress.NextPatent.Experience))</div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="row text-center g-3">
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0 text-win">@ranked.Wins</div><div class="small text-body-secondary">@L["Wins"]</div></div>
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0 text-loss">@ranked.Loss</div><div class="small text-body-secondary">@L["Losses"]</div></div>
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0">@Display.Percent(ranked.WinRate)</div><div class="small text-body-secondary">@L["Win rate"]</div></div>
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0">@ranked.MaxWinStreak</div><div class="small text-body-secondary">@L["Best win streak"]</div></div>
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0">@ranked.RageQuit</div><div class="small text-body-secondary">@L["Rage quits"]</div></div>
-                        <div class="col-4 col-lg-2"><div class="h4 mb-0">@ranked.Stars</div><div class="small text-body-secondary">@L["MVPs"]</div></div>
-                    </div>
-                    @if (ranked.Punishment > 0)
-                    {
-                        <div class="alert alert-warning mt-3 mb-0 py-2">@L["Punishment this season"]: -@ranked.Punishment</div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+    var copyIcon = light ? "copy-light.png" : "copy-dark.png";
 
-    <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <h2 class="h5">@L["Averages per match"]</h2>
-            <table class="table table-sm">
-                <tbody>
-                <tr><td>@L["SI damage"]</td><td class="numeric">@Display.PerGame(ranked.SiDamage, ranked.Games)</td></tr>
-                <tr><td>@L["SI killed"]</td><td class="numeric">@Display.PerGame(ranked.SiKilled, ranked.Games)</td></tr>
-                <tr><td>@L["Common"]</td><td class="numeric">@Display.PerGame(ranked.Common, ranked.Games)</td></tr>
-                <tr><td>@L["Tank damage"]</td><td class="numeric">@Display.PerGame(ranked.TankDamage, ranked.Games)</td></tr>
-                <tr><td>@L["Skeets"]</td><td class="numeric">@Display.PerGame(ranked.Skeets, ranked.Games)</td></tr>
-                <tr><td>@L["Infected damage"]</td><td class="numeric">@Display.PerGame(ranked.DmgTotal, ranked.Games)</td></tr>
-                <tr><td>@L["FF"]</td><td class="numeric">@Display.PerGame(ranked.FfGiven, ranked.Games)</td></tr>
-                <tr><td>@L["Incapacitations"]</td><td class="numeric">@Display.PerGame(ranked.Incaps, ranked.Games)</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-lg-6">
-            <h2 class="h5">@L["Campaigns"]</h2>
-            <table class="table table-sm">
-                <thead><tr><th>@L["Campaign"]</th><th class="numeric">@L["Wins"]</th><th class="numeric">@L["Losses"]</th></tr></thead>
-                <tbody>
-                @foreach (var campaign in ranked.Campaigns.OrderByDescending(c => c.Value.Wins + c.Value.Loss).Take(AppConsts.PlayerRelations))
-                {
-                    <tr>
-                        <td>@(string.IsNullOrEmpty(campaign.Key) ? L["Custom campaign"].Value : campaign.Key)</td>
-                        <td class="numeric text-win">@campaign.Value.Wins</td>
-                        <td class="numeric text-loss">@campaign.Value.Loss</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    var site = await Settings.GetAsync<SiteSettings>();
+    var seasonId = Model.Period.SeasonId;
+    var antiforgeryToken = Model.Administrator ? Antiforgery.GetAndStoreTokens(Context).RequestToken : null;
 
-    @if (ranked.Relations.Count > 0)
+    ViewData["PageMetadata"] = new PageMetadata
     {
-        <div class="row g-4 mb-4">
-            <div class="col-lg-6">
-                <h2 class="h5">@L["Plays most with"]</h2>
-                <table class="table table-sm">
-                    <thead><tr><th>@L["Player"]</th><th class="numeric">@L["Wins"]</th><th class="numeric">@L["Losses"]</th></tr></thead>
-                    <tbody>
-                    @foreach (var relation in ranked.Relations.Values.Where(r => r.TogetherGames > 0).OrderByDescending(r => r.TogetherGames).Take(AppConsts.PlayerRelations))
+        Title = secondPlayer == null
+            ? $"{firstPlayer.MainName} - {L["Player details"].Value}"
+            : $"{firstPlayer.MainName} vs {secondPlayer.MainName}",
+        Description = secondPlayer == null
+            ? L["See {0}'s statistics: rank #{1}, {2} matches, and {3} wins.", firstPlayer.MainName, firstPlayer.Position, firstPlayer.Games, firstPlayer.Wins]
+            : L["Compare {0} and {1}'s performance and statistics on {2}.", firstPlayer.MainName, secondPlayer.MainName, site.Name],
+        Image = $"/avatar/{firstPlayer.CommunityId}",
+        ImageAlt = firstPlayer.MainName,
+        OpenGraphType = AppConsts.PlayerOpenGraphType
+    };
+
+    string FormatPunishment(int punishment)
+    {
+        return punishment == 0 ? "0" : $"-{punishment:N0} XP";
+    }
+
+    void RenderStreak(RankingPlayer player, bool second, bool showName)
+    {
+        <div class="streak-row">
+            @if (showName)
+            {
+                <div class="streak-name @(second ? "second" : "text-muted")">@player.MainName</div>
+            }
+            <div class="streak-tiles">
+                @if (player.Results == null || player.Results.Count == 0)
+                {
+                    <small class="text-muted">@Html.Raw("&mdash;")</small>
+                }
+                else
+                {
+                    foreach (var result in player.Results)
                     {
-                        <tr>
-                            <td><a href="/player/@relation.CommunityId?season=@Model.Season.Id">@Model.Names.GetValueOrDefault(relation.CommunityId, relation.CommunityId.ToString())</a></td>
-                            <td class="numeric text-win">@relation.TogetherWins</td>
-                            <td class="numeric text-loss">@relation.TogetherLosses</td>
-                        </tr>
+                        var cssClass = result switch
+                        {
+                            MatchOutcome.Win => "streak-win",
+                            MatchOutcome.Draw => "streak-draw",
+                            _ => "streak-loss"
+                        };
+
+                        var title = result switch
+                        {
+                            MatchOutcome.Win => L["Win"],
+                            MatchOutcome.Draw => L["Draw"],
+                            _ => L["Loss"]
+                        };
+
+                        <span class="streak-tile @cssClass" data-toggle="tooltip" data-placement="top" title="@title"></span>
                     }
-                    </tbody>
-                </table>
+                }
             </div>
-            <div class="col-lg-6">
-                <h2 class="h5">@L["Plays most against"]</h2>
-                <table class="table table-sm">
-                    <thead><tr><th>@L["Player"]</th><th class="numeric">@L["Wins"]</th><th class="numeric">@L["Losses"]</th></tr></thead>
-                    <tbody>
-                    @foreach (var relation in ranked.Relations.Values.Where(r => r.AgainstGames > 0).OrderByDescending(r => r.AgainstGames).Take(AppConsts.PlayerRelations))
+        </div>
+    }
+
+    string Width(decimal rate)
+    {
+        return (rate * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
+    }
+
+    void RenderCampaign(PlayerCampaign? campaign, RankingPlayer player, bool second, bool showName)
+    {
+        <div class="campaign-line">
+            @if (showName)
+            {
+                <div class="campaign-player @(second ? "second" : "text-muted")">
+                    @player.MainName
+                    @if (campaign is { Games: > 0 })
                     {
-                        <tr>
-                            <td><a href="/player/@relation.CommunityId?season=@Model.Season.Id">@Model.Names.GetValueOrDefault(relation.CommunityId, relation.CommunityId.ToString())</a></td>
-                            <td class="numeric text-win">@relation.AgainstWins</td>
-                            <td class="numeric text-loss">@relation.AgainstLosses</td>
-                        </tr>
+                        <small>· @campaign.Games.ToString("N0") @L["Games"]</small>
                     }
-                    </tbody>
-                </table>
-            </div>
+                </div>
+            }
+            @if (campaign is not { Games: > 0 })
+            {
+                <small class="text-muted">@L["Has not played it yet"]</small>
+            }
+            else
+            {
+                <div class="campaign-bar">
+                    <span class="streak-win" style="width: @Width(campaign.WinRate)" data-toggle="tooltip" data-container="body" title="@L["Wins"]: @campaign.WinRate.ToString("P0")"></span>
+                    <span class="streak-draw" style="width: @Width(campaign.DrawRate)" data-toggle="tooltip" data-container="body" title="@L["Draws"]: @campaign.DrawRate.ToString("P0")"></span>
+                    <span class="streak-loss" style="width: @Width(campaign.LossRate)" data-toggle="tooltip" data-container="body" title="@L["Loss"]: @campaign.LossRate.ToString("P0")"></span>
+                </div>
+                <div class="campaign-numbers">
+                    <div>
+                        <strong class="campaign-win">@campaign.Wins.ToString("N0")</strong>
+                        <small>@L["Wins"] · @campaign.WinRate.ToString("P0")</small>
+                    </div>
+                    <div>
+                        <strong>@campaign.Draws.ToString("N0")</strong>
+                        <small>@L["Draws"] · @campaign.DrawRate.ToString("P0")</small>
+                    </div>
+                    <div>
+                        <strong class="campaign-loss">@campaign.Loss.ToString("N0")</strong>
+                        <small>@L["Loss"] · @campaign.LossRate.ToString("P0")</small>
+                    </div>
+                </div>
+                @if (campaign.RageQuit > 0)
+                {
+                    <small class="text-muted">@L["Rage quit"]: @campaign.RageQuit.ToString("N0")</small>
+                }
+            }
+        </div>
+    }
+
+    void RenderWallet(PlayerSkinsModel? playerSkins)
+    {
+        var wallet = playerSkins?.Wallet;
+
+        if (wallet == null)
+            return;
+
+        <span class="player-stars">
+            <span class="player-stars-icon">★</span>
+            <strong>@wallet.Balance.ToString("N0")</strong>
+            @L[wallet.Balance == 1 ? "star available" : "stars available"]
+            <small>· @string.Format(L["{0} earned, {1} spent"].Value, wallet.Stars.ToString("N0"), wallet.Spent.ToString("N0"))</small>
+        </span>
+    }
+
+    void RenderPlayerSkins(PlayerSkinsModel? playerSkins, RankingPlayer player, bool second, bool showName)
+    {
+        var ownedSkins = playerSkins?.OwnedSkins ?? [];
+
+        <div class="player-skins-row">
+            @if (showName || playerSkins?.Wallet != null)
+            {
+                <div class="player-skins-header">
+                    @if (showName)
+                    {
+                        <span class="streak-name @(second ? "second" : "text-muted")">
+                            @player.MainName <small>(@ownedSkins.Count.ToString("N0"))</small>
+                        </span>
+                    }
+                    @{ RenderWallet(playerSkins); }
+                </div>
+            }
+            @if (ownedSkins.Count == 0)
+            {
+                <p class="text-muted" style="margin: 0">@L["This player does not own any skins yet."]</p>
+            }
+            else
+            {
+                <div class="player-skins">
+                    @foreach (var skin in ownedSkins)
+                    {
+                        var title = skin.Title(CultureInfo.CurrentUICulture);
+                        var image = playerSkins!.Image(skin);
+                        var equipped = playerSkins!.IsEquipped(skin);
+
+                        <a class="player-skin @(equipped ? "player-skin-equipped" : "")" href="@(AppConsts.SkinShopUrl + AppConsts.PlayerSkinAnchor + skin.Id)" title="@title">
+                            @if (image != null)
+                            {
+                                <img src="@image" alt="@title" loading="lazy"/>
+                            }
+                            else
+                            {
+                                <div class="player-skin-no-image"></div>
+                            }
+                            <span class="@(second ? "second" : "")">@title</span>
+                            @if (equipped)
+                            {
+                                <span class="label label-success">@L["Equipped"]</span>
+                            }
+                        </a>
+                    }
+                </div>
+            }
         </div>
     }
 }
 
-@if (Model.Matches.Count > 0)
-{
-    <h2 class="h5">@L["Matches"]</h2>
-    <div class="list-group mb-4">
-        @foreach (var match in Model.Matches)
-        {
-            var row = match.Players.FirstOrDefault(p => p.CommunityId == Model.CommunityId);
-            var outcome = row == null ? "" : row.RageQuits > 0 ? L["Rage quit"].Value : row.Win ? L["Win"].Value : row.Loss ? L["Loss"].Value : row.Draws > 0 ? L["Draw"].Value : "";
-            var style = row is { Win: true } ? "text-win" : row != null && (row.Loss || row.RageQuits > 0) ? "text-loss" : "";
+@section Styles {
+    <style>
+        .player-skins {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -5px;
+        }
 
-            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="/matches/@match.Id">
-                <span>
-                    <span class="fw-semibold">@(match.Campaign ?? L["Custom campaign"].Value)</span>
-                    <span class="small text-body-secondary ms-2">@match.LastFileDate.ToString("g")</span>
-                </span>
-                <span>
-                    <span class="me-3">@match.TeamAScore × @match.TeamBScore</span>
-                    <span class="@style">@outcome</span>
-                </span>
+        .player-skin {
+            position: relative;
+            display: block;
+            width: 110px;
+            margin: 0 5px 10px;
+            text-align: center;
+            text-decoration: none !important;
+        }
+
+            .player-skin img {
+                display: block;
+                width: 110px;
+                height: 110px;
+                margin-bottom: 4px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                border-radius: 4px;
+                object-fit: cover;
+            }
+
+            .player-skin span {
+                display: block;
+                overflow: hidden;
+                font-size: 11px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .player-skin .label {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                font-size: 10px;
+            }
+
+            .player-skin-no-image {
+                width: 110px;
+                height: 110px;
+                margin-bottom: 4px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                border-radius: 4px;
+                background: rgba(128, 128, 128, .12);
+            }
+
+        .player-skin-equipped img,
+        .player-skin-equipped .player-skin-no-image {
+            border-color: rgba(98, 196, 98, .8);
+        }
+
+        .player-skins-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+            margin-bottom: 10px;
+        }
+
+            .player-skins-header .streak-name {
+                margin: 0;
+            }
+
+        .player-stars {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+            padding: 3px 12px 3px 9px;
+            border: 1px solid rgba(240, 173, 78, .6);
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(240, 173, 78, .25), rgba(240, 173, 78, .06));
+        }
+
+            .player-stars-icon {
+                color: #f0ad4e;
+                text-shadow: 0 0 6px rgba(240, 173, 78, .7);
+            }
+
+            .player-stars small {
+                opacity: .75;
+            }
+
+        .player-skins-row + .player-skins-row {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(128, 128, 128, .3);
+        }
+
+        .panel-heading .badge.badge-second {
+            background-color: #FFBC00;
+            color: #222;
+        }
+
+        th {
+            width: 1%;
+            white-space: nowrap;
+            padding-right: 24px !important;
+        }
+
+        .progress {
+            margin: 0;
+        }
+
+        .players-dropdown-menu {
+            height: 175px;
+            overflow-y: auto;
+        }
+
+        .second {
+            color: #FFBC00 !important;
+        }
+
+        .separator {
+            color: #979797;
+        }
+
+        .previous-names .label {
+            border: 1px solid #979797;
+        }
+
+        .streak-row {
+            margin-bottom: 6px;
+        }
+
+        .streak-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .streak-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .streak-tiles {
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .streak-tile {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 0 3px 3px 0;
+            border-radius: 0;
+            vertical-align: top;
+        }
+
+        .streak-win {
+            background-color: #2ea44f;
+        }
+
+        .streak-loss {
+            background-color: #d73a49;
+        }
+
+        .streak-draw {
+            background-color: #c6cbd1;
+        }
+
+        .player-tabs {
+            margin-bottom: 15px;
+        }
+
+            .player-tabs > li > a {
+                padding: 8px 12px;
+            }
+
+            .player-tabs .badge {
+                margin-left: 3px;
+                font-size: 11px;
+            }
+
+        .campaign-help {
+            font-size: 12px;
+        }
+
+        .campaign-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .campaign-card {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-radius: 8px;
+            background: rgba(128, 128, 128, .05);
+        }
+
+        .campaign-cover {
+            flex: 0 0 96px;
+            width: 96px;
+            height: auto;
+            margin-right: 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+        }
+
+        .campaign-body {
+            flex: 1;
+            align-self: center;
+            min-width: 0;
+        }
+
+        .campaign-title {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+            .campaign-title strong {
+                overflow: hidden;
+                font-size: 15px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .campaign-title span {
+                flex: 0 0 auto;
+                font-size: 12px;
+                opacity: .7;
+            }
+
+        .campaign-line + .campaign-line {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(128, 128, 128, .25);
+        }
+
+        .campaign-player {
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+            .campaign-player small {
+                font-weight: normal;
+            }
+
+        .campaign-bar {
+            display: flex;
+            height: 10px;
+            margin-bottom: 6px;
+            border-radius: 5px;
+            overflow: hidden;
+            background: rgba(128, 128, 128, .2);
+        }
+
+            .campaign-bar span {
+                display: block;
+                height: 100%;
+            }
+
+        .campaign-numbers {
+            display: flex;
+            gap: 6px;
+        }
+
+            .campaign-numbers > div {
+                flex: 1;
+                min-width: 0;
+                padding: 4px 6px;
+                border-radius: 4px;
+                text-align: center;
+                background: rgba(128, 128, 128, .08);
+            }
+
+            .campaign-numbers strong {
+                display: block;
+                font-size: 18px;
+                line-height: 1.2;
+            }
+
+            .campaign-numbers small {
+                display: block;
+                overflow: hidden;
+                font-size: 11px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                opacity: .7;
+            }
+
+        .campaign-win {
+            color: #2ea44f;
+        }
+
+        .campaign-loss {
+            color: #d73a49;
+        }
+
+        @@media screen and (max-width: 700px) {
+            .player-tabs > li > a {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .left-side {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+
+            .right-side {
+                width: 100% !important;
+            }
+
+            .table-responsive th.mobile-row-label {
+                display: block !important;
+                width: auto;
+                white-space: normal;
+                text-align: left;
+                padding: 5px !important;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function reloadPage() {
+            location.reload();
+        }
+
+        var punishmentSeasonId = @Json.Serialize(Model.Period.Season.Id);
+        var punishmentHeaders = { "@AppConsts.PlayerAntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
+
+        function addPunishments(communityId, lostExperiencePoints) {
+            var command = { 
+                communityId: communityId, 
+                lostExperiencePoints: lostExperiencePoints,
+                seasonId: punishmentSeasonId
+            };
+
+            $.ajax({
+                url: "/api/punishments",
+                type: "POST",
+                contentType: "application/json",
+                headers: punishmentHeaders,
+                data: JSON.stringify(command)
+            }).done(reloadPage);
+        }
+
+        function deletePunishments(communityId) {
+            $.ajax({
+                url: "/api/punishments/" + communityId + "?@AppConsts.PlayerSeasonParameter=" + punishmentSeasonId,
+                type: "DELETE",
+                headers: punishmentHeaders
+            }).done(reloadPage);
+        }
+
+        function editPunishment(communityId, punishment) {
+            var output = prompt("@Html.Raw(L["How many experience points should the user lose?"])", punishment);
+
+            if (!output)
+                return;
+
+            var lostExperiencePoints = +output;
+
+            if (isNaN(lostExperiencePoints))
+                return;
+
+            else if (lostExperiencePoints > 0)
+                addPunishments(communityId, lostExperiencePoints);
+
+            else if (lostExperiencePoints === 0)
+                deletePunishments(communityId);
+        }
+
+        $(function () {
+            var $tabs = $('#player-tabs a[data-toggle="tab"]');
+
+            $tabs.on('shown.bs.tab', function () {
+                history.replaceState(null, '', $(this).attr('href'));
+                $(window).trigger('resize');
+            });
+
+            if (location.hash)
+                $tabs.filter('[href="' + location.hash + '"]').tab('show');
+
+            $('.players-dropdown-menu a, .relation-card-item .panel-heading a, .period-selector .dropdown-menu a').on('click', function () {
+                if (location.hash)
+                    this.href = this.href.split('#')[0] + location.hash;
+            });
+
+            $('#btn-show-more-relations').click(function () {
+                var $button = $(this);
+                var $cards = $('.relation-card-item');
+
+                if ($cards.hasClass('hidden')) {
+                    $cards.removeClass('hidden');
+                    $button.text($button.data('less'));
+                } else {
+                    $cards.each(function (index) {
+                        if (index >= $button.data('visible')) {
+                            $(this).addClass('hidden');
+                        }
+                    });
+                    $button.text($button.data('more'));
+                }
+            });
+        });
+    </script>
+}
+
+<h4 class="text-center">@L["Player details"]</h4>
+
+@if (Model.Period.HasChoices)
+{
+    <div class="row" style="margin-bottom: 5px">
+        <div class="col-md-12">
+            @await Html.PartialAsync("_PeriodSelector", new PlayerPeriodSelectorModel(Model.Period, season => PlayerUrls.Details(firstPlayer.CommunityId, secondPlayer?.CommunityId, season)))
+        </div>
+    </div>
+}
+
+<div class="row">
+<div class="col-xs-2 left-side text-center">
+    <div class="dropdown">
+        <button class="btn btn-default btn-sm btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+            @firstPlayer.MainName.Truncate(AppConsts.PlayerDropdownNameLength)
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu players-dropdown-menu">
+            @foreach (var player in Model.Players.Where(player => player.CommunityId != firstPlayer.CommunityId && player.CommunityId != secondPlayer?.CommunityId))
+            {
+                <li>
+                    <a href="@PlayerUrls.Details(player.CommunityId, secondPlayer?.CommunityId, seasonId)">#@player.Position - @player.MainName</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <img src="/avatar/@firstPlayer.CommunityId" alt="@firstPlayer.MainName" title="@firstPlayer.MainName" class="img-responsive img-thumbnail" style="margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+
+    <hr/>
+
+    <div class="dropdown">
+        <button class="btn btn-default btn-sm btn-block dropdown-toggle second" type="button" data-toggle="dropdown">
+            @(secondPlayer?.MainName.Truncate(AppConsts.PlayerDropdownNameLength) ?? L["Compare..."])
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu players-dropdown-menu">
+            @if (secondPlayer != null)
+            {
+                <li>
+                    <a href="@PlayerUrls.Details(firstPlayer.CommunityId, null, seasonId)">
+                        <span class="glyphicon glyphicon-remove"></span> @L["Remove comparison"]
+                    </a>
+                </li>
+                <li class="divider"></li>
+            }
+            @foreach (var player in Model.Players.Where(player => player.CommunityId != firstPlayer.CommunityId && player.CommunityId != secondPlayer?.CommunityId))
+            {
+                <li>
+                    <a href="@PlayerUrls.Details(firstPlayer.CommunityId, player.CommunityId, seasonId)" class="second">
+                        #@player.Position - @player.MainName
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    @if (secondPlayer != null)
+    {
+        <img src="/avatar/@secondPlayer.CommunityId" alt="@secondPlayer.MainName" title="@secondPlayer.MainName" class="img-responsive img-thumbnail" style="background-color: #FFBC00; margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+    }
+</div>
+<div class="col-xs-10 right-side">
+
+<ul class="nav nav-tabs player-tabs" id="player-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#general" role="tab" data-toggle="tab">@L["General"]</a>
+    </li>
+    <li role="presentation">
+        <a href="#campaigns" role="tab" data-toggle="tab">
+            @L["Campaigns"] <span class="badge">@Model.Campaigns.Count.ToString("N0")</span>
+        </a>
+    </li>
+    @if (Model.SkinShop)
+    {
+    <li role="presentation">
+        <a href="#skins" role="tab" data-toggle="tab">
+            @L["Skins"] <span class="badge">@(((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0) + (Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0)).ToString("N0"))</span>
+        </a>
+    </li>
+    }
+    @if (Model.Relations.Any())
+    {
+        <li role="presentation">
+            <a href="#relations" role="tab" data-toggle="tab">
+                @L["Relations"] <span class="badge">@Model.Relations.Count.ToString("N0")</span>
             </a>
+        </li>
+    }
+</ul>
+
+<div class="tab-content player-tab-content">
+<div role="tabpanel" class="tab-pane active" id="general">
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        @L["General statistics"]
+    </div>
+
+    <table class="table table-hover table-condensed table-responsive">
+        <tbody>
+        <tr>
+            <th>@L["Ranking"]:</th>
+            <td data-label="@L["Ranking"]:">
+                #@firstPlayer.Position.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">#@secondPlayer.Position.ToString("N0")</span>
+                }
+            </td>
+
+            <th>@L["Steam ID"]:</th>
+            <td data-label="@L["Steam ID"]:" colspan="3">
+                @firstPlayer.SteamId
+                <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                     data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                     onclick="copyTextToClipboard('@firstPlayer.SteamId', this)"/>
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">
+                        @secondPlayer.SteamId
+                        <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                             data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                             onclick="copyTextToClipboard('@secondPlayer.SteamId', this)"/>
+                    </span>
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Name"]:</th>
+            <td data-label="@L["Name"]:">
+                @firstPlayer.MainName
+                @if (secondPlayer != null)
+                {
+                    <br/>
+                    <span class="second">@secondPlayer.MainName</span>
+                }
+            </td>
+
+            <th>@L["Profile URL"]:</th>
+            <td data-label="@L["Profile URL"]:" colspan="3">
+                <a href="@firstPlayer.ProfileUrl" target="_blank">@firstPlayer.ProfileUrl</a>
+                @if (!string.IsNullOrWhiteSpace(firstPlayer.ProfileUrl))
+                {
+                    @await Html.PartialAsync("_CopyButton", firstPlayer.ProfileUrl)
+                }
+                @if (secondPlayer != null)
+                {
+                    <br/>
+                    <span class="second">
+                        <a href="@secondPlayer.ProfileUrl" target="_blank">
+                            @secondPlayer.ProfileUrl
+                        </a>
+                        @if (!string.IsNullOrWhiteSpace(secondPlayer.ProfileUrl))
+                        {
+                            @await Html.PartialAsync("_CopyButton", secondPlayer.ProfileUrl)
+                        }
+                    </span>
+                }
+            </td>
+        </tr>
+        @if (firstPlayer.PreviousNames != null && firstPlayer.PreviousNames.Any())
+        {
+            <tr class="previous-names">
+                <th>@L["Previous names"]:</th>
+                <td data-label="@L["Previous names"]:" colspan="5">
+                    @foreach (var previousName in firstPlayer.PreviousNames.Take(AppConsts.PlayerPreviousNamesVisible))
+                    {
+                        <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@previousName.Name">@previousName.Name</span>
+                    }
+                    @if (secondPlayer is { PreviousNames: not null } && secondPlayer.PreviousNames.Any())
+                    {
+                        <span class="separator"> | </span>
+                        @foreach (var previousName in secondPlayer.PreviousNames.Take(AppConsts.PlayerPreviousNamesVisible))
+                        {
+                            <span class="label label-warning" data-toggle="tooltip" data-placement="top" title="@previousName.Name">@previousName.Name</span>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        <tr class="hide-mobile">
+            <th class="vertical-align-middle">@L["Patent"]:</th>
+            <td class="vertical-align-middle" data-label="@L["Patent"]:">
+                <img src="@firstPlayerPatent.Image" alt="@firstPlayerPatent.FullName" data-toggle="tooltip" data-placement="top" title="@firstPlayer.MainName - @firstPlayerPatent.FullName" style="width: 32px"/>
+                @if (secondPlayer != null && secondPlayerPatent != null)
+                {
+                    <span class="separator"> | </span>
+                    <img src="@secondPlayerPatent.Image" alt="@secondPlayerPatent.FullName" data-toggle="tooltip" data-placement="top" title="@secondPlayer.MainName - @secondPlayerPatent.FullName" style="width: 32px"/>
+                }
+            </td>
+
+            <th class="vertical-align-middle">XP:</th>
+            <td class="text-center vertical-align-middle" data-label="XP:" colspan="3">
+                <div class="progress" data-toggle="tooltip" data-placement="top" data-html="true" title="@firstPlayer.MainName - @firstPlayerPatentProgress.Tooltip">
+                    <div class="progress-bar progress-bar-@firstPlayerPatentProgress.ProgressBarType" role="progressbar" style="width: @firstPlayerPatentProgress.ProgressBarWidth;">
+                    </div>
+                    <div class="progress-bar progress-bar-@firstPlayerPatentProgress.PreviousExperienceProgressBarType" role="progressbar" style="width: @firstPlayerPatentProgress.PreviousExperienceProgressBarWidth;">
+                    </div>
+                </div>
+                @if (secondPlayer != null && secondPlayerPatentProgress != null)
+                {
+                    <p></p>
+                    <div class="progress" data-toggle="tooltip" data-placement="top" data-html="true" title="@secondPlayer.MainName - @secondPlayerPatentProgress.Tooltip">
+                        <div class="progress-bar progress-bar-@secondPlayerPatentProgress.ProgressBarType" role="progressbar" style="width: @secondPlayerPatentProgress.ProgressBarWidth;">
+                        </div>
+                        <div class="progress-bar progress-bar-@secondPlayerPatentProgress.PreviousExperienceProgressBarType" role="progressbar" style="width: @secondPlayerPatentProgress.PreviousExperienceProgressBarWidth;">
+                        </div>
+                    </div>
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Games"]:</th>
+            <td data-label="@L["Games"]:">
+                @firstPlayer.Games.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Games.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Wins"]:</th>
+            <td data-label="@L["Wins"]:">
+                @firstPlayer.Wins.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Wins.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Rage quit"]:</th>
+            <td data-label="@L["Rage quit"]:">
+                @firstPlayer.RageQuit.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.RageQuit.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Win rate"]:</th>
+            <td data-label="@L["Win rate"]:">
+                @firstPlayer.WinRate.ToString("P0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.WinRate.ToString("P0")</span>
+                }
+            </td>
+            <th>@L["Loss"]:</th>
+            <td data-label="@L["Loss"]:">
+                @firstPlayer.Loss.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Loss.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Punishment"]:</th>
+            <td data-label="@L["Punishment"]:">
+                @FormatPunishment(firstPlayer.Punishment)
+
+                @if (Model.Administrator)
+                {
+                    <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(firstPlayer.CommunityId)', '@AppConsts.PlayerDefaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                        @L["Edit"]
+                    </button>
+                }
+
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@FormatPunishment(secondPlayer.Punishment)</span>
+
+                    @if (Model.Administrator)
+                    {
+                        <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(secondPlayer.CommunityId)', '@AppConsts.PlayerDefaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                            @L["Edit"]
+                        </button>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Longest win streak"]:</th>
+            <td data-label="@L["Longest win streak"]:">
+                @firstPlayer.MaxWinStreak.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MaxWinStreak.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Longest loss streak"]:</th>
+            <td data-label="@L["Longest loss streak"]:" colspan="3">
+                @firstPlayer.MaxLossStreak.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MaxLossStreak.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+        <tr>
+            <th class="vertical-align-middle">@L["Match history"]:</th>
+            <td data-label="@L["Match history"]:" colspan="5">
+                @{ RenderStreak(firstPlayer, false, secondPlayer != null); }
+                @if (secondPlayer != null)
+                {
+                    RenderStreak(secondPlayer, true, true);
+                }
+            </td>
+        </tr>
+        @if (secondPlayer != null && Model.HeadToHead != null)
+        {
+            var headToHead = Model.HeadToHead;
+
+            @if (headToHead.TogetherGames > 0)
+            {
+                <tr>
+                    <th class="mobile-row-label">@L["Playing together"]:</th>
+                    <td data-label="@L["Games"]:">@headToHead.TogetherGames.ToString("N0") @L["Games"]</td>
+                    <th>@L["Wins"]:</th>
+                    <td data-label="@L["Wins"]:">
+                        @headToHead.TogetherWins.ToString("N0")
+                        <small class="text-muted" data-toggle="tooltip" data-placement="top" title="@L["Win rate"]"> (@headToHead.TogetherWinRate.ToString("P0"))</small>
+                    </td>
+                    <th>@L["Loss"]:</th>
+                    <td data-label="@L["Loss"]:">
+                        @headToHead.TogetherLosses.ToString("N0")
+                        <small class="text-muted" data-toggle="tooltip" data-placement="top" title="@L["Loss rate"]"> (@headToHead.TogetherLossRate.ToString("P0"))</small>
+                    </td>
+                </tr>
+            }
+
+            @if (headToHead.AgainstGames > 0)
+            {
+                <tr>
+                    <th class="mobile-row-label">@L["Playing against"]:</th>
+                    <td data-label="@L["Games"]:">@headToHead.AgainstGames.ToString("N0") @L["Games"]</td>
+                    <th>@L["Wins"]:</th>
+                    <td data-label="@L["Wins"]:">
+                        @headToHead.AgainstWins.ToString("N0")
+                        <small class="text-muted" data-toggle="tooltip" data-placement="top" title="@L["Win rate"]"> (@headToHead.AgainstWinRate.ToString("P0"))</small>
+                        <span class="separator"> | </span>
+                        <span class="second">
+                            @headToHead.AgainstLosses.ToString("N0")
+                            <small data-toggle="tooltip" data-placement="top" title="@L["Win rate"]"> (@headToHead.AgainstLossRate.ToString("P0"))</small>
+                        </span>
+                    </td>
+                    <th>@L["Loss"]:</th>
+                    <td data-label="@L["Loss"]:">
+                        @headToHead.AgainstLosses.ToString("N0")
+                        <small class="text-muted" data-toggle="tooltip" data-placement="top" title="@L["Loss rate"]"> (@headToHead.AgainstLossRate.ToString("P0"))</small>
+                        <span class="separator"> | </span>
+                        <span class="second">
+                            @headToHead.AgainstWins.ToString("N0")
+                            <small data-toggle="tooltip" data-placement="top" title="@L["Loss rate"]"> (@headToHead.AgainstWinRate.ToString("P0"))</small>
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.RelatedPlayers.Any())
+{
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            @L["Related accounts"]
+        </div>
+
+        <table class="table table-hover table-condensed table-responsive">
+            <thead>
+            <tr>
+                <th>@L["Name"]</th>
+                <th>@L["Steam ID"]</th>
+                <th>@L["Last login"]</th>
+                <th>@L["Connections"]</th>
+                <th>@L["Profile URL"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var relatedPlayer in Model.RelatedPlayers)
+            {
+                <tr>
+                    <td data-label="@L["Name"]:">
+                        <img src="/avatar/@relatedPlayer.CommunityId" alt="@relatedPlayer.Name" title="@relatedPlayer.Name" class="img-thumbnail" style="width: 32px; margin-right: 5px" onerror="imgOnError(this)"/>
+                        <a href="@PlayerUrls.Details(long.Parse(relatedPlayer.CommunityId), null, seasonId)">@relatedPlayer.Name</a>
+                    </td>
+                    <td data-label="@L["Steam ID"]:">
+                        @relatedPlayer.SteamId
+                        @if (!string.IsNullOrWhiteSpace(relatedPlayer.SteamId))
+                        {
+                            @await Html.PartialAsync("_CopyButton", relatedPlayer.SteamId)
+                        }
+                    </td>
+                    <td data-label="@L["Last login"]:">@Model.LocalTime(relatedPlayer.LastConnectedAtUtc).ToString("g")</td>
+                    <td data-label="@L["Connections"]:">@relatedPlayer.ConnectionCount.ToString("N0")</td>
+                    <td data-label="@L["Profile URL"]:">
+                        @if (!string.IsNullOrWhiteSpace(relatedPlayer.ProfileUrl))
+                        {
+                            <a href="@relatedPlayer.ProfileUrl" target="_blank" rel="noopener noreferrer">
+                                @relatedPlayer.ProfileUrl
+                            </a>
+                            @await Html.PartialAsync("_CopyButton", relatedPlayer.ProfileUrl)
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        @L["Statistics as survivor"]
+    </div>
+    <table class="table table-hover table-condensed table-responsive">
+        <tbody>
+        <tr>
+            <th>@L["SI MVP awards"]:</th>
+            <td data-label="@L["SI MVP awards"]:">
+                @firstPlayer.MvpSiDamage.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MvpSiDamage.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["CI MVP awards"]:</th>
+            <td data-label="@L["CI MVP awards"]:">
+                @firstPlayer.MvpCommon.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MvpCommon.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["FF LVP awards"]:</th>
+            <td data-label="@L["FF LVP awards"]:">
+                @firstPlayer.LvpFfGiven.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.LvpFfGiven.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th>@L["SI killed"]:</th>
+            <td data-label="@L["SI killed"]:">
+                @firstPlayer.SiKilled.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.SiKilled.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Commons killed"]:</th>
+            <td data-label="@L["Commons killed"]:">
+                @firstPlayer.Common.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Common.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Damage to SI"]:</th>
+            <td data-label="@L["Damage to SI"]:">
+                @firstPlayer.SiDamage.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.SiDamage.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th>@L["Deaths"]:</th>
+            <td data-label="@L["Deaths"]:">
+                @firstPlayer.Died.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Died.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["Times incapacitated"]:</th>
+            <td data-label="@L["Times incapacitated"]:">
+                @firstPlayer.Incaps.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Incaps.ToString("N0")</span>
+                }
+            </td>
+            <th>
+                @L["SI damage taken"]:
+                <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Damage from player infected and commons attributed to a Boomer; regular common damage is excluded."]" aria-label="@L["More information"]"></span>
+            </th>
+            <td data-label="@L["SI damage taken"]:">
+                @firstPlayer.DmgTaken.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.DmgTaken.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th>@L["Damage to Tank"]:</th>
+            <td data-label="@L["Damage to Tank"]:">
+                @firstPlayer.TankDamage.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.TankDamage.ToString("N0")</span>
+                }
+            </td>
+
+            <th>@L["Rock hits taken"]:</th>
+            <td data-label="@L["Rock hits taken"]:">
+                @firstPlayer.RockEats.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.RockEats.ToString("N0")</span>
+                }
+            </td>
+            <th>@L["FF dealt (non-incap.)"]:</th>
+            <td data-label="@L["FF dealt (non-incap.)"]:">
+                @firstPlayer.FfGiven.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.FfGiven.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th>@L["Total skeets"]:</th>
+            <td data-label="@L["Total skeets"]:">
+                @firstPlayer.Skeets.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Skeets.ToString("N0")</span>
+                }
+            </td>
+
+            <th>@L["Melee skeets"]:</th>
+            <td data-label="@L["Melee skeets"]:">
+                @firstPlayer.SkeetsMelee.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.SkeetsMelee.ToString("N0")</span>
+                }
+            </td>
+
+            <th>@L["Total levels"]:</th>
+            <td data-label="@L["Total levels"]:">
+                @firstPlayer.Levels.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.Levels.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        @if (firstPlayer.Crowns != 0 || (secondPlayer != null && secondPlayer.Crowns != 0))
+        {
+            <tr>
+                <th>@L["Total crowns"]:</th>
+                <td data-label="@L["Total crowns"]:">
+                    @firstPlayer.Crowns.ToString("N0")
+                    @if (secondPlayer != null)
+                    {
+                        <span class="separator"> | </span>
+                        <span class="second">@secondPlayer.Crowns.ToString("N0")</span>
+                    }
+                </td>
+                <th></th>
+                <td></td>
+                <th></th>
+                <td></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        @L["Statistics as infected"]
+    </div>
+    <table class="table table-hover table-condensed table-responsive">
+        <tbody>
+        <tr>
+            <th>
+                @L["SI damage (excl. Tank)"]:
+                <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["SI damage, including incapacitated and post-boom damage; Tank damage is excluded."]" aria-label="@L["More information"]"></span>
+            </th>
+            <td data-label="@L["SI damage (excl. Tank)"]:">
+                @firstPlayer.DmgTotal.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.DmgTotal.ToString("N0")</span>
+                }
+            </td>
+
+            <th>@L["Damage as Tank (upright)"]:</th>
+            <td data-label="@L["Damage as Tank (upright)"]:">
+                @firstPlayer.DmgTank.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.DmgTank.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th>@L["Spit damage (upright)"]:</th>
+            <td data-label="@L["Spit damage (upright)"]:">
+                @firstPlayer.DmgSpit.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.DmgSpit.ToString("N0")</span>
+                }
+            </td>
+
+            <th>
+                @L["Total pounce damage"]:
+                <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Sum of damage from all recorded high pounces."]" aria-label="@L["More information"]"></span>
+            </th>
+            <td data-label="@L["Total pounce damage"]:">
+                @firstPlayer.HunterDpDmg.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.HunterDpDmg.ToString("N0")</span>
+                }
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+@if (Model.LastMatches.Any())
+{
+    <h4 class="text-center">@L["Last matches"]</h4>
+
+    <div class="match">
+        @foreach (var match in Model.LastMatches)
+        {
+            @await Html.PartialAsync("_PlayerMatch", match)
         }
     </div>
 }
 
-@if (Model.Administrator)
-{
-    <div class="card border-warning">
-        <div class="card-header">@L["Administration"] · @L["Punishment"]</div>
-        <div class="card-body">
-            <form class="row g-2 align-items-end" method="post" asp-antiforgery="true" action="/admin/punishments">
-                <input type="hidden" name="seasonId" value="@Model.Season.Id">
-                <input type="hidden" name="communityId" value="@Model.CommunityId">
-                <div class="col-sm-3">
-                    <label class="form-label" for="points">@L["Experience to remove"]</label>
-                    <input class="form-control" id="points" type="number" name="points" min="1" required>
-                </div>
-                <div class="col-sm-6">
-                    <label class="form-label" for="reason">@L["Reason"]</label>
-                    <input class="form-control" id="reason" type="text" name="reason" maxlength="300">
-                </div>
-                <div class="col-sm-3">
-                    <button class="btn btn-warning w-100" type="submit">@L["Punish"]</button>
-                </div>
-            </form>
-            @if (ranked is { Punishment: > 0 })
+</div>
+<div role="tabpanel" class="tab-pane" id="campaigns">
+    @if (Model.Campaigns.Count == 0)
+    {
+        <div class="alert alert-info">@L["No campaign statistics for this player yet."]</div>
+    }
+    else
+    {
+        <p class="text-muted campaign-help">
+            <span class="glyphicon glyphicon-info-sign"></span> @L["Games played in each campaign this season, from the most played. Draws count as games, and a rage quit counts as a loss."]
+        </p>
+        <div class="campaign-grid">
+            @foreach (var campaign in Model.Campaigns)
             {
-                <form class="mt-2" method="post" asp-antiforgery="true" action="/admin/punishments/delete">
-                    <input type="hidden" name="seasonId" value="@Model.Season.Id">
-                    <input type="hidden" name="communityId" value="@Model.CommunityId">
-                    <button class="btn btn-outline-secondary btn-sm" type="submit">@L["Remove the punishments of this season"]</button>
-                </form>
+                <div class="campaign-card">
+                    <img class="campaign-cover" src="@PlayerUrls.CampaignThumb(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@PlayerUrls.CampaignThumb(null)'"/>
+                    <div class="campaign-body">
+                        <div class="campaign-title">
+                            <strong>@campaign.Name</strong>
+                            @if (secondPlayer == null)
+                            {
+                                <span>@campaign.Games.ToString("N0") @L["Games"]</span>
+                            }
+                        </div>
+                        @{
+                            RenderCampaign(campaign.First, firstPlayer, false, secondPlayer != null);
+
+                            if (secondPlayer != null)
+                            {
+                                RenderCampaign(campaign.Second, secondPlayer, true, true);
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+@if (Model.SkinShop)
+{
+<div role="tabpanel" class="tab-pane" id="skins">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @L["Skins"] <span class="badge">@((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
+            @if (secondPlayer != null)
+            {
+                <span class="separator"> | </span>
+                <span class="badge badge-second">@((Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
+            }
+            <a class="pull-right" href="@AppConsts.SkinShopUrl">@L["See the skin shop"]</a>
+        </div>
+        <div class="panel-body">
+            @{
+                RenderPlayerSkins(Model.FirstPlayerSkins, firstPlayer, false, secondPlayer != null);
+
+                if (secondPlayer != null)
+                {
+                    RenderPlayerSkins(Model.SecondPlayerSkins, secondPlayer, true, true);
+                }
             }
         </div>
     </div>
+
+</div>
 }
+
+@{
+    void RenderCell(PlayerRelationModel? side, Func<PlayerRelationModel, int> count, Func<PlayerRelationModel, decimal>? rate, string? rateTooltip, Func<PlayerRelationModel, int> groupGames, bool second)
+    {
+        <td class="text-right @(second ? "second" : null)">@(side == null ? "0" : count(side).ToString("N0"))</td>
+        <td class="text-left @(second ? "second" : null)">
+            @if (side != null && rate != null && groupGames(side) > 0)
+            {
+                <small data-toggle="tooltip" data-placement="top" data-container="body" title="@rateTooltip">(@rate(side).ToString("P0"))</small>
+            }
+            else
+            {
+                <small>@Html.Raw("&nbsp;")</small>
+            }
+        </td>
+    }
+
+    void RenderGroup(PlayerRelationRowModel row, Func<PlayerRelationModel, int> count, Func<PlayerRelationModel, decimal>? rate, string? rateTooltip, Func<PlayerRelationModel, int> groupGames)
+    {
+        RenderCell(row.First, count, rate, rateTooltip, groupGames, false);
+        @if (secondPlayer != null)
+        {
+            RenderCell(row.Second, count, rate, rateTooltip, groupGames, true);
+        }
+    }
+
+    string Bold(int value)
+    {
+        return $"<strong>{value:N0}</strong>";
+    }
+
+    string BoldPercentage(decimal value)
+    {
+        return $"<strong>{value:P0}</strong>";
+    }
+
+    string ColoredPlayerName(long communityId, string? name)
+    {
+        var encoded = HtmlEncoder.Default.Encode(name ?? communityId.ToString());
+        var cssClass = secondPlayer != null && communityId == secondPlayer.CommunityId ? "second"
+            : communityId == firstPlayer.CommunityId ? null
+            : "text-muted";
+
+        return cssClass == null ? $"<strong>{encoded}</strong>" : $"<strong class=\"{cssClass}\">{encoded}</strong>";
+    }
+
+    void RenderRelationExplanation(long subjectId, string? subjectName, long otherId, string? otherName, PlayerRelationModel relation)
+    {
+        var subject = ColoredPlayerName(subjectId, subjectName);
+        var other = ColoredPlayerName(otherId, otherName);
+        var total = relation.TogetherGames + relation.AgainstGames;
+
+        <p>@Html.Raw(string.Format(L["{0} and {1} have crossed paths in {2} games in total."].Value, subject, other, Bold(total)))</p>
+        @if (relation.TogetherGames > 0)
+        {
+            <p>@Html.Raw(string.Format(L["Playing together, on the same team, there were {0} games: {1} wins ({2}) and {3} losses ({4})."].Value, Bold(relation.TogetherGames), Bold(relation.TogetherWins), BoldPercentage(relation.TogetherWinRate), Bold(relation.TogetherLosses), BoldPercentage(relation.TogetherLossRate)))</p>
+        }
+
+        @if (relation.AgainstGames > 0)
+        {
+            <p>@Html.Raw(string.Format(L["Playing against each other, there were {0} games: {1} won {2} ({3}) and lost {4} ({5})."].Value, Bold(relation.AgainstGames), subject, Bold(relation.AgainstWins), BoldPercentage(relation.AgainstWinRate), Bold(relation.AgainstLosses), BoldPercentage(relation.AgainstLossRate)))</p>
+        }
+    }
+}
+
+@{
+    var relations = Model.Relations;
+}
+
+<div role="tabpanel" class="tab-pane" id="relations">
+    @if (relations.Any())
+    {
+        <h4 class="text-center">
+            @L["Player relationships"]
+            <small class="text-muted">
+                (@firstPlayer.MainName
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MainName</span>
+                }
+                )
+            </small>
+        </h4>
+
+        var relationColspan = secondPlayer != null ? 4 : 2;
+        var relationCount = 0;
+
+        <div class="row">
+            @foreach (var row in relations)
+            {
+                <div class="col-md-6 col-xs-12 relation-card-item @(++relationCount > AppConsts.PlayerRelationsVisible ? "hidden" : null)">
+                    <div class="panel @(secondPlayer != null && row.CommunityId == secondPlayer.CommunityId ? "panel-warning" : "panel-default")">
+                        <div class="panel-heading">
+                            <button type="button" class="btn btn-link btn-xs pull-right" style="padding: 0" data-toggle="tooltip" data-placement="left" title="@L["I don't get it, explain it to me"]" onclick="$('#relation-help-@row.CommunityId').modal('show')">
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </button>
+                            @if (row.Player != null)
+                            {
+                                <a href="@PlayerUrls.Details(row.CommunityId, secondPlayer?.CommunityId, seasonId)">@row.Name</a>
+                            }
+                            else
+                            {
+                                @row.Name
+                            }
+                            <small class="text-muted">| @row.TotalGames.ToString("N0") @L["Games"]</small>
+                        </div>
+                        <div class="panel-body" style="padding: 5px">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <img src="/avatar/@row.CommunityId" alt="@row.Name" title="@row.Name" class="img-thumbnail" onerror="imgOnError(this)" style="margin-bottom: 15px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <table class="table table-condensed" style="margin-bottom: 5px">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="text-center" colspan="@relationColspan">@L["Playing together"]</th>
+                                            <th class="text-center" colspan="@relationColspan">@L["Playing against"]</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th>@L["Games"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherGames, null, null, r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstGames, null, null, r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <th>@L["Wins"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherWins, r => r.TogetherWinRate, L["Win rate"], r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstWins, r => r.AgainstWinRate, L["Win rate"], r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <th>@L["Loss"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherLosses, r => r.TogetherLossRate, L["Loss rate"], r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstLosses, r => r.AgainstLossRate, L["Loss rate"], r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="relation-help-@row.CommunityId" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">@L["Understanding the numbers"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    @if (row.First != null)
+                                    {
+                                        RenderRelationExplanation(firstPlayer.CommunityId, firstPlayer.MainName, row.CommunityId, row.Name, row.First);
+                                    }
+                                    @if (row.Second != null && secondPlayer != null)
+                                    {
+                                        var otherIsSecond = row.CommunityId == secondPlayer.CommunityId;
+                                        var otherId = otherIsSecond ? firstPlayer.CommunityId : row.CommunityId;
+                                        var otherName = otherIsSecond ? firstPlayer.MainName : row.Name;
+
+                                        if (row.First != null)
+                                        {
+                                            <hr/>
+                                        }
+
+                                        RenderRelationExplanation(secondPlayer.CommunityId, secondPlayer.MainName, otherId, otherName, row.Second);
+                                    }
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (relations.Count > AppConsts.PlayerRelationsVisible)
+        {
+            <div class="row text-center" style="margin: 10px; margin-bottom: 25px">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-primary" id="btn-show-more-relations" data-visible="@AppConsts.PlayerRelationsVisible" data-more="@L["Show more players"]" data-less="@L["Hide"]">
+                        @L["Show more players"]
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+</div>
+</div>
+</div>
