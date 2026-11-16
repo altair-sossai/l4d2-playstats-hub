@@ -5,6 +5,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Live;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,17 +15,23 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 [AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.RemoteCommands)]
 [Route("admin/remote-commands")]
-public class RemoteCommandsController(IRemoteCommandService remoteCommandService, IGameServerService gameServerService, ICurrentUser currentUser) : Controller
+public class RemoteCommandsController(
+    IRemoteCommandService remoteCommandService,
+    IGameServerService gameServerService,
+    ILiveViewService liveViewService,
+    ICurrentUser currentUser) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var servers = await gameServerService.ListAsync(cancellationToken);
+        ViewBag.Admin = "active";
+        ViewBag.Administration = "active";
 
         var model = new RemoteCommandsViewModel
         {
-            Servers = [.. servers.Where(server => server.Enabled)],
-            Logs = await remoteCommandService.ListAsync(AppConsts.RemoteCommandLogSize, cancellationToken)
+            Servers = await liveViewService.EnabledServersAsync(cancellationToken),
+            Logs = await remoteCommandService.ListAsync(AppConsts.RemoteCommandLogSize, cancellationToken),
+            TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
 
         return View(model);

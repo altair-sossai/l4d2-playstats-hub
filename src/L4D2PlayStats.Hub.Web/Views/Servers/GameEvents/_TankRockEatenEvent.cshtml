@@ -1,0 +1,5 @@
+@model TankRockEatenEvent
+
+@(Html.EventPlayer(Model.Actor, L["a tank"]))
+<span class="game-event-danger">@L["landed a rock on"]</span>
+@(Html.EventPlayer(Model.Victim, L["a survivor"])).

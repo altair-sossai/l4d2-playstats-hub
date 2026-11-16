@@ -1,0 +1,14 @@
+{
+  "Alternative address, such as a DNS name (optional)": "Endereço alternativo, como um nome DNS (opcional)",
+  "Follow the {0} server, map {1}, and its {2} connected players.": "Acompanhe o servidor {0}, o mapa {1} e seus {2} jogadores conectados.",
+  "Follow the {0} servers: map, score, and connected players of each one.": "Acompanhe os servidores do {0}: mapa, placar e jogadores conectados de cada um.",
+  "Watch": "Acompanhar",
+  "The Steam ID must be provided.": "Informe o Steam ID.",
+  "The Steam ID is invalid.": "O Steam ID é inválido.",
+  "connections of this player": "conexões deste jogador",
+  "other accounts on the same address": "outras contas no mesmo endereço",
+  "Searched player": "Jogador pesquisado",
+  "commands sent": "comandos enviados",
+  "commands delivered to the game server": "comandos entregues ao servidor de jogo",
+  "Not delivered": "Não entregue"
+}

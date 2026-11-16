@@ -1,46 +1,1039 @@
 @model LiveServerViewModel
+@inject ICurrentUser CurrentUser
+
 @{
-    var server = Model.Card.Server;
-    ViewData["Title"] = server.Name;
-}
-<link rel="stylesheet" href="~/css/live.css" asp-append-version="true">
-<div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
-    <h1 class="h3 mb-0">@server.Name</h1>
-    @if (Model.Servers.Count > 1)
+    var card = Model.Card;
+    var publicId = card.Server.PublicId;
+    var mapDescription = card.Campaign ?? card.Map ?? L["Map"].Value;
+
+    ViewData["PageMetadata"] = new PageMetadata
     {
-        <select class="form-select form-select-sm w-auto" id="server-picker" aria-label="@L["Server"]" onchange="location.href = '/servers/' + this.value">
+        Title = L["Server"],
+        Description = L["Follow the {0} server, map {1}, and its {2} connected players.", Model.SiteName, mapDescription, card.Players],
+        Image = card.CampaignImage,
+        ImageAlt = mapDescription
+    };
+
+    var chatBan = Model.ChatBan;
+    var returnUrl = Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString);
+}
+
+@section Styles {
+    <style>
+        .table-survivors,
+        .table-infecteds {
+            width: 100%;
+        }
+
+            .table-survivors .img-character,
+            .table-infecteds .img-infected {
+                margin: 0;
+                padding: 0;
+            }
+
+            .table-survivors .img-avatar,
+            .table-infecteds .img-avatar {
+                padding-right: 5px;
+            }
+
+            .table-survivors .img-weapon {
+                display: inline-block;
+                height: 15px;
+                padding-right: 5px;
+                margin-bottom: 5px;
+            }
+
+            .table-survivors .progress,
+            .table-infecteds .progress {
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .table-survivors .table-hp-progress,
+            .table-infecteds .table-hp {
+                width: 100%;
+                margin-bottom: 5px;
+                white-space: nowrap;
+            }
+
+                .table-survivors .table-hp-progress .progress,
+                .table-infecteds .table-hp .progress {
+                    height: 12px;
+                }
+
+                .table-survivors .table-hp-progress .hp-progress-number,
+                .table-infecteds .table-hp .hp-number {
+                    padding: 0;
+                    margin: 0;
+                    padding-left: 10px;
+                    font-size: 11px;
+                    text-align: center;
+                }
+
+            .table-survivors hr,
+            .table-infecteds hr {
+                margin: 0px 0px 5px 0;
+            }
+
+        .temporary {
+            opacity: 0.5;
+        }
+
+        .img-latency {
+            display: inline-block;
+            height: 16px;
+        }
+
+        .img-gray {
+            -webkit-filter: grayscale(100%);
+            filter: grayscale(100%);
+        }
+
+        .td-latency {
+            width: 40px;
+        }
+
+        .row-players .panel-body {
+            padding: 5px;
+        }
+
+        #feed {
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .feed-heading {
+            display: table;
+            width: 100%;
+        }
+
+            .feed-heading > * {
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            .feed-heading > .dropdown {
+                text-align: right;
+            }
+
+        .game-event-stars,
+        .game-event-highlight {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+
+        .game-event-player {
+            color: #9b873c;
+            font-weight: bold;
+        }
+
+        .game-event-action {
+            color: #5bc0de;
+            font-weight: bold;
+        }
+
+        .game-event-danger {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .spectators a {
+            margin-left: 8px;
+        }
+
+        #command-container {
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        #commands {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        #commands h5 {
+            margin: 0;
+        }
+
+        .server-switch {
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var serverUrl = '@AppConsts.ServersUrl/@publicId';
+        var refreshInterval = @AppConsts.LivePageRefreshInMilliseconds;
+        var requestTimeout = @AppConsts.LivePageRequestTimeoutInMilliseconds;
+        var maxFeedItems = @AppConsts.LivePageMaxFeedItems;
+        var feedAfter = 0;
+        var feedRefreshTimer = null;
+        var feedRefreshRequest = null;
+        var feedRefreshPending = false;
+        var dd = new diffDOM.DiffDOM();
+
+        function sync(current, html) {
+            var source = document.createElement('div');
+            source.id = current.id;
+            source.innerHTML = html;
+
+            var diffs = dd.diff(current, source);
+            dd.apply(current, diffs);
+        }
+
+        function loadCampaigns() {
+            $.ajax({
+                url: '/api/campaigns',
+                method: 'GET',
+                dataType: 'json',
+                success: function (campaigns) {
+                    terminal.dataSources.campaign.items = function() {
+                        return $.map(campaigns, function(campaign) {
+                            return { displayText: campaign.name, value: campaign.maps[0] };
+                        });
+                    };
+                }
+            });
+        }
+
+        function refreshHeader() {
+            $.ajax({
+                url: serverUrl + '/header',
+                type: 'GET',
+                timeout: requestTimeout,
+                success: function (html) {
+                    var target = document.getElementById('game-info-header');
+                    sync(target, html);
+
+                },
+                complete: function () {
+                    setTimeout(refreshHeader, refreshInterval);
+                }
+            });
+        }
+
+        function refreshPlayers() {
+            $.ajax({
+                url: serverUrl + '/players',
+                type: 'GET',
+                timeout: requestTimeout,
+                success: function (html) {
+                    var target = document.getElementById('game-info-players');
+                    sync(target, html);
+
+                    $('.game-info-chat-own').toggle(!$(target).children('div').first().hasClass('hidden'));
+                },
+                complete: function () {
+                    setTimeout(refreshPlayers, refreshInterval);
+                }
+            });
+        }
+
+        function applyFeedFilter() {
+            var mode = 'all';
+
+            try { 
+                mode = localStorage.getItem('feedFilter') || 'all'; 
+            } catch (err) {
+                console.warn('Unable to access localStorage:', err);
+            }
+
+            $('#feed p[data-feed-kind]').each(function () {
+                var kind = $(this).attr('data-feed-kind');
+                var show = mode === 'all'
+                    || (mode === 'events' && kind === 'event')
+                    || (mode === 'messages' && kind === 'message');
+                $(this).toggle(show);
+            });
+        }
+
+        function lastFeedSequence(items) {
+            var last = 0;
+
+            items.each(function () {
+                last = Math.max(last, Number($(this).attr('data-feed-sequence')) || 0);
+            });
+
+            return last;
+        }
+
+        function refreshFeed() {
+            clearTimeout(feedRefreshTimer);
+            feedRefreshTimer = null;
+
+            if (feedRefreshRequest) {
+                feedRefreshPending = true;
+                return;
+            }
+
+            feedRefreshPending = false;
+            var after = feedAfter;
+
+            feedRefreshRequest = $.ajax({
+                url: serverUrl + '/feed?after=' + after,
+                type: 'GET',
+                timeout: requestTimeout,
+                success: function (html, status) {
+                    if (!html || status == "nocontent")
+                        return;
+
+                    var feed = $('#feed');
+                    var scrollDown = feed[0].scrollHeight - feed.scrollTop() === feed.outerHeight();
+
+                    feedAfter = lastFeedSequence($('<div>').html(html).find('p[data-feed-sequence]')) || feedAfter;
+
+                    feed.append(html);
+
+                    $('#feed p[data-feed-when]').each(function () {
+                        var feedWhen = $(this).data('feed-when');
+                        if (feedWhen) {
+                            var $duplicates = $('#feed p[data-feed-when="' + feedWhen + '"]').slice(1);
+                            $duplicates.remove();
+                        }
+                    });
+
+                    var $items = $('#feed p[data-feed-when]');
+                    if ($items.length > maxFeedItems)
+                        $items.slice(0, $items.length - maxFeedItems).remove();
+
+                    applyFeedFilter();
+
+                    if (scrollDown)
+                        feed.scrollTop(feed[0].scrollHeight);
+                },
+                complete: function () {
+                    feedRefreshRequest = null;
+                    feedRefreshTimer = setTimeout(refreshFeed, feedRefreshPending ? 0 : refreshInterval / 2);
+                }
+            });
+        }
+
+        function sendMessage() {
+            var message = $('#message').val().trim();
+            if (!message)
+                return;
+
+            $.ajax({
+                url: serverUrl + '/chat',
+                type: 'POST',
+                data: { message: message, __RequestVerificationToken: $('#chatForm input[name="__RequestVerificationToken"]').val() },
+                success: function (result, statusCode) {
+                    if (result?.success || statusCode == 'nocontent') {
+                        refreshFeed();
+                        $('#message').val('');
+                        $('button[type="submit"]').prop('disabled', true);
+                    } else {
+                        alert(result?.errorMessage ?? statusCode);
+                    }
+                },
+                error: function (jqXHR) {
+                    if (jqXHR.status === 403) {
+                        alert(jqXHR.responseJSON?.errorMessage ?? @Json.Serialize(L["You have been banned from the chat."].Value));
+                        location.reload();
+                    } else {
+                        alert(jqXHR.responseJSON?.errorMessage ?? jqXHR.statusText);
+                    }
+                }
+            });
+        }
+
+        var terminal = {
+            commands: {
+                '!forcematch': {
+                    description: @Json.Serialize(L["Forces the selection of a match mode"].Value),
+                    args: ['matchMode']
+                },
+                '!aac': {
+                    description: @Json.Serialize(L["Turns anti-cheat on or off"].Value),
+                    args: ['antiCheatState']
+                },
+                '!resetmatch': {
+                    description: @Json.Serialize(L["Unloads the current match mode"].Value),
+                    args: []
+                },
+                '!forcestart': {
+                    description: @Json.Serialize(L["Forces the round to start without waiting for everyone to ready up"].Value),
+                    args: []
+                },
+                '!forcepause': {
+                    description: @Json.Serialize(L["Pauses the match"].Value),
+                    args: []
+                },
+                '!forceunpause': {
+                    description: @Json.Serialize(L["Unpauses the match"].Value),
+                    args: []
+                },
+                '!changelevel': {
+                    description: @Json.Serialize(L["Changes the current campaign"].Value),
+                    args: ['campaign']
+                },
+                '!restartmap': {
+                    description: @Json.Serialize(L["Restarts the current map"].Value),
+                    args: []
+                },
+                '!swapto': {
+                    description: @Json.Serialize(L["Swaps players between teams"].Value),
+                    args: ['team', 'players']
+                },
+                '!swapteams': {
+                    description: @Json.Serialize(L["Swaps both teams to the opposite side"].Value),
+                    args: []
+                },
+                '!givetank': {
+                    description: @Json.Serialize(L["Sets which player will be the tank"].Value),
+                    args: ['infecteds']
+                },
+                '!tankshuffle': {
+                    description: @Json.Serialize(L["Re-picks who will be the tank"].Value),
+                    args: []
+                },
+                '!kick': {
+                    description: @Json.Serialize(L["Kicks a player from the server"].Value),
+                    args: ['players', 'reason']
+                },
+                '!votekick': {
+                    description: @Json.Serialize(L["Initiates a vote to kick a player"].Value),
+                    args: ['players', 'reason']
+                },
+                '!ban': {
+                    description: @Json.Serialize(L["Bans players for a specified amount of time"].Value),
+                    args: ['players', 'minutes', 'reason']
+                },
+                '!voteban': {
+                    description: @Json.Serialize(L["Initiates a vote to ban a player"].Value),
+                    args: ['players', 'reason']
+                },
+                '!silence': {
+                    description: @Json.Serialize(L["Silences a player"].Value),
+                    args: ['players']
+                },
+                '!unsilence': {
+                    description: @Json.Serialize(L["Removes silence from a player"].Value),
+                    args: ['players']
+                },
+                '!gag': {
+                    description: @Json.Serialize(L["Gags a player"].Value),
+                    args: ['players']
+                },
+                '!ungag': {
+                    description: @Json.Serialize(L["Removes gag from a player"].Value),
+                    args: ['players']
+                },
+                '!mute': {
+                    description: @Json.Serialize(L["Mutes a player"].Value),
+                    args: ['players']
+                },
+                '!unmute': {
+                    description: @Json.Serialize(L["Unmutes a player"].Value),
+                    args: ['players']
+                },
+                '!slay': {
+                    description: @Json.Serialize(L["Slays a player"].Value),
+                    args: ['players']
+                },
+                '!crash': {
+                    description: @Json.Serialize(L["Causes the server to crash and restart to its initial state"].Value),
+                    args: []
+                }
+            },
+            dataSources: {
+                wildcards : {
+                    title: @Json.Serialize(L["Select a wildcard"].Value),
+                    items: function() {
+                        return ['@@all', '@@survivors', '@@infected'];
+                    }
+                },
+                survivors : {
+                    title: @Json.Serialize(L["Select a survivor"].Value),
+                    items: function() {
+                        var survivors = JSON.parse($('#survivors').text());
+
+                        return $.map(survivors, function(survivor) {
+                            return survivor.name;
+                        });
+                    }
+                },
+                infecteds : {
+                    title: @Json.Serialize(L["Select an infected"].Value),
+                    items: function() {
+                        var infecteds = JSON.parse($('#infecteds').text());
+
+                        return $.map(infecteds, function(infected) {
+                            return infected.name;
+                        });
+                    }
+                },
+                spectators : {
+                    title: @Json.Serialize(L["Select a spectator"].Value),
+                    items: function() {
+                        var spectators = JSON.parse($('#spectators').text());
+
+                        return $.map(spectators, function(spectator) {
+                            return spectator.name;
+                        });
+                    }
+                },
+                players: {
+                    title: @Json.Serialize(L["Select a player"].Value),
+                    items: function() {
+                        return []
+                            .concat(terminal.dataSources.survivors.items())
+                            .concat(terminal.dataSources.infecteds.items())
+                            .concat(terminal.dataSources.spectators.items())
+                            .concat(terminal.dataSources.wildcards.items());
+                    }
+                },
+                team: {
+                    title: @Json.Serialize(L["Select a team"].Value),
+                    items: function() {
+                        return [
+                            { displayText: @Json.Serialize(L["Spectators"].Value), value: 1 },
+                            { displayText: @Json.Serialize(L["Survivors"].Value), value: 2 },
+                            { displayText: @Json.Serialize(L["Infected"].Value), value: 3 }
+                        ];
+                    }
+                },
+                minutes: {
+                    title: @Json.Serialize(L["Select duration in minutes"].Value),
+                    items: function() {
+                        return [
+                            { displayText: @Json.Serialize(L["5 minutes"].Value), value: 5 },
+                            { displayText: @Json.Serialize(L["10 minutes"].Value), value: 10 },
+                            { displayText: @Json.Serialize(L["30 minutes"].Value), value: 30 },
+                            { displayText: @Json.Serialize(L["1 hour"].Value), value: 60 },
+                            { displayText: @Json.Serialize(L["1 day"].Value), value: 1440 },
+                            { displayText: @Json.Serialize(L["Permanent"].Value), value: 0 }
+                        ];
+                    }
+                },
+                reason: {
+                    title: @Json.Serialize(L["Select a reason"].Value),
+                    items: function () {
+                        return [
+                            { displayText: @Json.Serialize(L["None"].Value) },
+                            @Json.Serialize(L["Toxic behavior"].Value),
+                            @Json.Serialize(L["Griefing"].Value),
+                            @Json.Serialize(L["Cheating"].Value),
+                            @Json.Serialize(L["Mic spam"].Value),
+                            @Json.Serialize(L["AFK"].Value),
+                            @Json.Serialize(L["Harassment"].Value),
+                            @Json.Serialize(L["Team kill"].Value),
+                            @Json.Serialize(L["Rule violation"].Value),
+                            @Json.Serialize(L["Other"].Value)
+                        ];
+                    }
+                },
+                matchMode: {
+                    title: @Json.Serialize(L["Select the match mode"].Value),
+                    items: function() {
+                        return [
+                            { displayText: 'ZoneMod', value: 'zonemod' },
+                            { displayText: 'ZoneMod Retro', value: 'zoneretro' },
+                            { displayText: '3v3 ZoneMod', value: 'zm3v3' },
+                            { displayText: '2v2 ZoneMod', value: 'zm2v2' },
+                            { displayText: '1v1 ZoneMod', value: 'zm1v1' },
+
+                            { displayText: 'NeoMod Tourney', value: 'neomod' },
+
+                            { displayText: 'NextMod', value: 'nextmod' },
+                            { displayText: '3v3 NextMod', value: 'nextmod3v3' },
+                            { displayText: '2v2 NextMod', value: 'nextmod2v2' },
+                            { displayText: '1v1 NextMod', value: 'nextmod1v1' },
+
+                            { displayText: 'Promod Elite', value: 'pmelite' },
+                            { displayText: 'Deadman', value: 'deadman' },
+
+                            { displayText: 'Acemod RV', value: 'acemodrv' },
+                            { displayText: '3v3 Acemod RV', value: 'amrv3v3' },
+                            { displayText: '2v2 Acemod RV', value: 'amrv2v2' },
+                            { displayText: '1v1 Acemod RV', value: 'amrv1v1' },
+
+                            { displayText: 'Equilibrium ', value: 'eq' },
+                            { displayText: '3v3 EQ', value: 'eq3v3' },
+                            { displayText: '2v2 EQ', value: 'eq2v2' },
+                            { displayText: '1v1 EQ', value: 'eq1v1' },
+
+                            { displayText: 'Apex', value: 'apex' },
+
+                            { displayText: 'ZoneHunters', value: 'zonehunters' },
+                            { displayText: '3v3 ZoneHunters', value: 'zh3v3' },
+                            { displayText: '2v2 ZoneHunters', value: 'zh2v2' },
+                            { displayText: '1v1 ZoneHunters', value: 'zh1v1' },
+                        ];
+                    }
+                },
+                antiCheatState: {
+                    title: @Json.Serialize(L["Turn the anti-cheat on or off"].Value),
+                    items: function() {
+                        return [
+                            { displayText: @Json.Serialize(L["Turn on"].Value), value: 'on' },
+                            { displayText: @Json.Serialize(L["Turn off"].Value), value: 'off' }
+                        ];
+                    }
+                },
+                campaign: {
+                    title: @Json.Serialize(L["Select a campaign"].Value),
+                    items: function() {
+                        return [
+                            {
+                                displayText: 'Dead Center',
+                                value: 'c1m1_hotel'
+                            },
+                            {
+                                displayText: 'Dark Carnival',
+                                value: 'c2m1_highway'
+                            },
+                            {
+                                displayText: 'Swamp Fever',
+                                value: 'c3m1_plankcountry'
+                            },
+                            {
+                                displayText: 'Hard Rain',
+                                value: 'c4m1_milltown_a'
+                            },
+                            {
+                                displayText: 'The Parish',
+                                value: 'c5m1_waterfront'
+                            },
+                            {
+                                displayText: 'The Passing',
+                                value: 'c6m1_riverbank'
+                            },
+                            {
+                                displayText: 'The Sacrifice',
+                                value: 'c7m3_port'
+                            },
+                            {
+                                displayText: 'No Mercy',
+                                value: 'c8m1_apartment'
+                            },
+                            {
+                                displayText: 'Crash Course',
+                                value: 'c9m1_alleys'
+                            },
+                            {
+                                displayText: 'Death Toll',
+                                value: 'c10m1_caves'
+                            },
+                            {
+                                displayText: 'Dead Air',
+                                value: 'c11m1_greenhouse'
+                            },
+                            {
+                                displayText: 'Blood Harvest',
+                                value: 'c12m1_hilltop'
+                            },
+                            {
+                                displayText: 'Cold Stream',
+                                value: 'c13m1_alpinecreek'
+                            }
+                        ];
+                    }
+                }
+            },
+            show: function() {
+                this.path = [];
+                this.build();
+                $('#terminal').modal();
+            },
+            close: function() {
+                $('#terminal').modal('hide');
+            },
+            previous: function() {
+                if (!this.path.length) {
+                    this.close();
+                    return;
+                }
+
+                this.path.pop();
+                this.build();
+            },
+            next: function(value) {
+                this.path.push(value);
+                this.build();
+            },
+            build: function() {
+                var options = [];
+
+                this.clearOptions();
+
+                if (this.path.length == 0) {
+                    this.addOption({ displayText: @Json.Serialize(L["Select a command"].Value), header: true });
+
+                    var commands = this.commands;
+                    var keys = Object.keys(commands);
+
+                    options = $.map(keys, function(command) {
+                        return { value: command, description: commands[command].description };
+                    });
+                } else {
+                    var command = this.commands[this.path[0]];
+
+                    if (this.path.length == command.args.length + 1) {
+                        this.updatePreview();
+                        this.flush();
+                        return;
+                    }
+
+                    var arg = command.args[this.path.length - 1];
+                    var dataSource = this.dataSources[arg];
+                    var items = dataSource.items();
+
+                    this.addOption({ displayText: dataSource.title, header: true });
+
+                    options = $.map(items, function(item) {
+                        return isObject(item) ? item : { value: item };
+                    });
+                }
+
+                for (var i = 0; i < options.length; i++) {
+                    this.addOption(options[i], function (e) {
+                        e.preventDefault();
+                        terminal.next($(this).data('value'));
+                    });
+                }
+
+                if (this.path.length) {
+                    this.addOption({ displayText: '← ' + @Json.Serialize(L["Back"].Value) }, function (e) {
+                        e.preventDefault();
+                        terminal.previous();
+                    });
+                }
+
+                this.updatePreview();
+
+                $("#commands").scrollTop(0);
+            },
+            clearOptions: function() {
+                $('#commands').empty();
+            },
+            addOption: function(option, onClick) {
+
+                var $item = onClick ? $('<a>', { href: '#' }) : $('<div>');
+
+                $item.addClass('list-group-item');
+
+                if (option.header) {
+                    $item.addClass('active');
+                }
+
+                if (option.value)
+                    $item.data('value', option.value);
+
+                if (onClick)
+                    $item.on('click', onClick);
+
+                var $title = $('<h5>', {
+                    class: 'list-group-item-heading',
+                    text: option.displayText || option.value
+                });
+
+                $item.append($title);
+
+                if (option.description) {
+                    var $description = $('<small>', {
+                        class: 'list-group-item-text',
+                        text: option.description
+                    });
+
+                    $item.append($description);
+                }
+
+                $('#commands').append($item);
+            },
+            command: function() {
+                var values = this.path || [];
+
+                values = $.grep(values, function(value) {
+                    return value != null;
+                });
+
+                values = $.map(values, function(value) {
+                    return String(value).trim();
+                });
+
+                values = $.grep(values, function(value) {
+                    return value != '';
+                });
+
+                values = $.map(values, function(value) {
+                    if (value.includes(' '))
+                        return '"' + value + '"';
+
+                    return value;
+                });
+
+                return values.join(' ');
+            },
+            updatePreview: function() {
+                var command = this.command();
+
+                if (command) {
+                    $("#command-container").show();
+                    $("#command").text(this.command());
+                } else {
+                    $("#command-container").hide();
+                }
+            },
+            flush: function() {
+                var command = this.command();
+                if (!command)
+                    return;
+
+                $('#message').val(command);
+                $('button[type="submit"]').prop('disabled', false);
+
+                if (!confirm(@Json.Serialize(L["Are you sure you want to execute the following command?"].Value) + '\n\n' + command)) {
+                    this.previous();
+                    return;
+                }
+
+                $("#chatForm").submit();
+                this.close();
+            }
+        };
+
+        $(document).ready(function () {
+            feedAfter = lastFeedSequence($('#feed p[data-feed-sequence]'));
+
+            refreshHeader();
+            refreshPlayers();
+            refreshFeed();
+            loadCampaigns();
+
+            var savedFilter = 'all';
+
+            try { 
+                savedFilter = localStorage.getItem('feedFilter') || 'all'; 
+            } 
+            catch (err) {
+                console.warn('Unable to access localStorage:', err);
+            }
+
+            $('#feed-filter-label').text($('#feed-filter-menu a[data-filter="' + savedFilter + '"]').text());
+
+            applyFeedFilter();
+
+            $('#feed').scrollTop($('#feed')[0].scrollHeight);
+
+            $('#feed-filter-menu a').on('click', function (e) {
+                e.preventDefault();
+
+                var mode = $(this).data('filter');
+
+                try {
+                    localStorage.setItem('feedFilter', mode);
+                } catch (err) {
+                    console.warn('Unable to access localStorage:', err);
+                }
+
+                $('#feed-filter-label').text($(this).text());
+                applyFeedFilter();
+                $('#feed').scrollTop($('#feed')[0].scrollHeight);
+            });
+
+             $('#chatForm').on('submit', function () {
+                sendMessage();
+            });
+
+             $('#message').on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            $('#message').on('input', function() {
+                var message = $('#message').val().trim();
+                $('button[type="submit"]').prop('disabled', message.length === 0);
+            });
+        });
+    </script>
+}
+
+<h4 class="text-center">@L["Server"]</h4>
+
+@if (!Model.SingleServer)
+{
+    <div class="text-center">
+        <ul id="server-picker" class="nav nav-pills server-switch">
             @foreach (var other in Model.Servers)
             {
-                <option value="@other.PublicId" selected="@(other.Id == server.Id)">@other.Name</option>
+                <li role="presentation" class="@(other.Id == card.Server.Id ? "active" : null)">
+                    <a href="@AppConsts.ServersUrl/@other.PublicId">@other.Name</a>
+                </li>
             }
-        </select>
-    }
+        </ul>
+    </div>
+}
+
+<div id="game-info-header">
+    @await Html.PartialAsync("_Header", card)
 </div>
 
-<partial name="_Header" model="Model.Card"/>
-<partial name="_Players" model="Model.Card"/>
+<div id="game-info-players">
+    @await Html.PartialAsync("_Players", card)
+</div>
 
-<div class="row g-4">
-    <div class="@(Model.Chat == null ? "col-12" : "col-lg-8")">
-        <div class="card">
-            <div class="card-header">@L["Events and chat"]</div>
-            <div class="card-body">
-                <div id="feed" class="live-feed">
-                    <partial name="_FeedItems" model="Model.Feed"/>
+<div id="@(Model.SingleServer ? "game-info-chat" : null)" class="row @(Model.SingleServer ? null : "game-info-chat-own")" style="margin-top: 20px; @(card.AnyPlayerConnected ? string.Empty : "display: none")">
+    <div class="col-md-6 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading feed-heading">
+                <span>@L["Chat messages"]</span>
+                <div class="dropdown">
+                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                        <span id="feed-filter-label">@L["All"]</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul id="feed-filter-menu" class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="#" data-filter="all">@L["All"]</a>
+                        </li>
+                        <li>
+                            <a href="#" data-filter="events">@L["Events"]</a>
+                        </li>
+                        <li>
+                            <a href="#" data-filter="messages">@L["Messages"]</a>
+                        </li>
+                    </ul>
                 </div>
-                <partial name="_FeedPoller" model="Model.Feed"/>
+            </div>
+            <div class="panel-body">
+                <div id="feed" style="margin-bottom: 20px">
+                    @await Html.PartialAsync("_Feed", Model.Feed)
+                </div>
+                @if (!Model.ChatEnabled)
+                {
+                }
+                else if (chatBan != null)
+                {
+                    <p class="text-danger" style="margin: 0">
+                        <strong>@L["You have been banned from the chat."]</strong>
+                        @if (!string.IsNullOrWhiteSpace(chatBan.Reason))
+                        {
+                            <text> @L["Reason"]: @chatBan.Reason</text>
+                        }
+                    </p>
+                }
+                else if (CurrentUser.IsAuthenticated)
+                {
+                    <form id="chatForm" class="form-inline" onsubmit="return false;">
+                        @Html.AntiForgeryToken()
+                        <div class="input-group" style="width: 100%">
+                            <input type="text" id="message" name="message" class="form-control" maxlength="@CoreConsts.SiteChatMaxMessageLength" placeholder="@L["Type your message"]"/>
+                            @if (Model.Administrator && Model.RemoteCommandsEnabled)
+                            {
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-info btn-block" onclick="terminal.show()">
+                                        <img src="~/imgs/icons/terminal.png" alt="@L["Terminal"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["Terminal"]"/>
+                                    </button>
+                                </div>
+                            }
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-primary btn-block" disabled>
+                                    @L["Send"]
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <a href="/login?returnUrl=@returnUrl" class="btn btn-default btn-block">
+                        <img src="~/imgs/steam.png" alt="@L["Login with Steam"]" title="@L["Login with Steam"]" class="img-responsive img-header-icon">
+                        @L["Sign in with Steam to use the chat."]
+                    </a>
+                }
             </div>
         </div>
     </div>
-    @if (Model.Chat != null)
-    {
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">@L["Chat with the server"]</div>
-                <div class="card-body">
-                    <partial name="_ChatForm" model="Model.Chat"/>
+</div>
+
+@if (card.ConnectUrl != null)
+{
+    <div class="row hide-mobile">
+        <div class="col-md-12 text-center">
+            <a href="@card.ConnectUrl" class="btn btn-sm btn-primary" style="margin: 10px">
+                connect @card.ServerIp
+            </a>
+        </div>
+    </div>
+}
+
+<div id="terminal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 0">
+                <div id="command-container">
+                    <small>@L["Preview"]:</small>
+                    <code id="command"></code>
                 </div>
+                <div id="commands" class="list-group" style="margin: 0"></div>
             </div>
         </div>
-    }
+    </div>
+</div>
+
+@{
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+    var copyIcon = light ? AppConsts.CopyIconLight : AppConsts.CopyIconDark;
+}
+
+<div id="server-info-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["Server info"]</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-condensed">
+                    <tbody>
+                    @if (!string.IsNullOrEmpty(card.ServerIp))
+                    {
+                        <tr>
+                            <th class="text-nowrap">
+                                IP
+                                <span class="label label-success" style="margin-left: 5px">@L["Recommended"]</span>
+                            </th>
+                            <td class="line-break-anywhere">
+                                <code>connect @card.ServerIp</code>
+                                <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                                     data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                                     onclick="copyTextToClipboard('connect @card.ServerIp', this)"/>
+                            </td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(card.ServerDns))
+                    {
+                        <tr>
+                            <th class="text-nowrap">
+                                DNS
+                                <span class="label label-default" style="margin-left: 5px">@L["Alternative"]</span>
+                            </th>
+                            <td class="line-break-anywhere">
+                                <code>connect @card.ServerDns</code>
+                                <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                                     data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                                     onclick="copyTextToClipboard('connect @card.ServerDns', this)"/>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                @if (!string.IsNullOrEmpty(card.ServerDns))
+                {
+                    <p class="text-muted" style="margin-bottom: 0">
+                        <small>@L["Prefer the IP: some chats (like Steam's) may turn the DNS into a link and break the connect command. The DNS is an alternative — it stays the same even if the server's IP changes."]</small>
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
 </div>

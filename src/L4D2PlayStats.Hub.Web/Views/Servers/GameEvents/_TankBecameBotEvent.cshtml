@@ -1,0 +1,11 @@
+@model TankBecameBotEvent
+
+@if (Model.Actor != null)
+{
+    @(Html.EventPlayer(Model.Actor, L["a tank"]))
+    <text> @L["lost the tank to the AI"].</text>
+}
+else
+{
+    <text>@L["The AI took over the tank"].</text>
+}

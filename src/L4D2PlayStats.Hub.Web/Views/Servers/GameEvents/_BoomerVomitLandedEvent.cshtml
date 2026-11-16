@@ -1,0 +1,5 @@
+@model BoomerVomitLandedEvent
+
+@(Html.EventPlayer(Model.Actor, L["a boomer"]))
+<span class="game-event-danger">@L["vomited on"]</span>
+@Html.EventStat(L["{0} survivor(s)"].Value, Model.Amount).

@@ -82,6 +82,7 @@ public class AdminController(
         }
 
         var credentials = await gameServerService.CreateAsync(form.Name, form.Address, cancellationToken);
+        await gameServerService.SetAlternativeAddressAsync(credentials.Server.Id, form.AlternativeAddress, cancellationToken);
         TempData["Token"] = credentials.Token;
 
         return RedirectToAction(nameof(Server), new { id = credentials.Server.Id });
@@ -120,7 +121,10 @@ public class AdminController(
     public async Task<IActionResult> UpdateServer(int id, ServerForm form, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(form.Name))
+        {
             await gameServerService.UpdateAsync(id, form.Name, form.Address, form.Enabled, cancellationToken);
+            await gameServerService.SetAlternativeAddressAsync(id, form.AlternativeAddress, cancellationToken);
+        }
 
         return RedirectToAction(nameof(Server), new { id });
     }

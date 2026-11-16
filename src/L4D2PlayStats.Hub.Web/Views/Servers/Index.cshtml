@@ -1,7 +1,66 @@
 @model ServerListViewModel
+@inject ISettingsService Settings
+
 @{
-    ViewData["Title"] = L["Servers"].Value;
+    var site = await Settings.GetAsync<SiteSettings>();
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Servers"],
+        Description = L["Follow the {0} servers: map, score, and connected players of each one.", site.Name]
+    };
 }
-<link rel="stylesheet" href="~/css/live.css" asp-append-version="true">
-<h1 class="h3 mb-3">@L["Servers"]</h1>
-<partial name="_Cards" model="Model"/>
+
+@section Styles {
+    <style>
+        .server-card .table {
+            margin-bottom: 0;
+        }
+
+        .server-card .panel-footer .btn {
+            margin: 2px 0;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var refreshInterval = @AppConsts.ServerPickerRefreshInMilliseconds;
+        var requestTimeout = @AppConsts.LivePageRequestTimeoutInMilliseconds;
+        var dd = new diffDOM.DiffDOM();
+
+        function sync(current, html) {
+            var source = document.createElement('div');
+            source.id = current.id;
+            source.innerHTML = html;
+
+            var diffs = dd.diff(current, source);
+            dd.apply(current, diffs);
+        }
+
+        function refreshServers() {
+            $.ajax({
+                url: '@AppConsts.ServersUrl?cards=true',
+                type: 'GET',
+                timeout: requestTimeout,
+                success: function (html) {
+                    var target = document.getElementById('server-cards');
+                    sync(target, html);
+                },
+                complete: function () {
+                    setTimeout(refreshServers, refreshInterval);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            setTimeout(refreshServers, refreshInterval);
+        });
+    </script>
+}
+
+<h4 class="text-center">@L["Servers"]</h4>
+
+<div id="server-cards">
+    @await Html.PartialAsync("_Cards", Model)
+</div>
