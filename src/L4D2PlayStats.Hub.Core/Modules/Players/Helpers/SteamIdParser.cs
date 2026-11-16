@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
-using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 
-namespace L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
+namespace L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 
 public static class SteamIdParser
 {
