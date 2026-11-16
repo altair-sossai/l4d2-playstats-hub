@@ -12,5 +12,8 @@
   "Steam profile for contact": "Perfil de Steam para contacto",
   "Opened by the Message me on Steam button of the notice for skin authors in the shop. Leave it empty to hide the button.": "Lo abre el botón Escríbeme en Steam del aviso para autores de skins en la tienda. Déjalo vacío para ocultar el botón.",
   "Address for removal requests": "Dirección para solicitudes de retirada",
-  "Opened by the Open a request on GitHub button of the same notice, with the skin already filled in. Leave it empty to hide the button.": "Lo abre el botón Abrir una solicitud en GitHub del mismo aviso, con la skin ya rellenada. Déjalo vacío para ocultar el botón."
+  "Opened by the Open a request on GitHub button of the same notice, with the skin already filled in. Leave it empty to hide the button.": "Lo abre el botón Abrir una solicitud en GitHub del mismo aviso, con la skin ya rellenada. Déjalo vacío para ocultar el botón.",
+  "Rarity.Epic": "Épica",
+  "Rarity.Legendary": "Legendaria",
+  "Rarity.Rare": "Rara"
 }
