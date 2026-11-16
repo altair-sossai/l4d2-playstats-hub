@@ -3,60 +3,92 @@
     var server = Model.Status.Server;
     ViewData["Title"] = server.Name;
 }
-<h1 class="h3">@server.Name</h1>
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+}
+
+@section Scripts {
+    <script src="~/lib/htmx/htmx.min.js" asp-append-version="true"></script>
+}
+
+<div class="admin-header">
+    <h3>@server.Name</h3>
+    <a class="btn btn-default" href="/admin/servers">
+        <span class="glyphicon glyphicon-chevron-left"></span> @L["Game servers"]
+    </a>
+</div>
+
 <partial name="_AdminNav"/>
 
-<div class="row g-4">
-    <div class="col-lg-7">
-        <div class="card mb-4">
-            <div class="card-header">@L["How to connect this server"]</div>
-            <div class="card-body">
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["How to connect this server"]</h3>
+            </div>
+            <div class="panel-body">
                 <partial name="_ServerInstructions" model="Model"/>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">@L["Status"]</div>
-            <div class="card-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Status"]</h3>
+            </div>
+            <div class="panel-body">
                 <partial name="_ServerStatus" model="Model.Status"/>
             </div>
         </div>
     </div>
-    <div class="col-lg-5">
-        <div class="card mb-4">
-            <div class="card-header">@L["Details"]</div>
-            <div class="card-body">
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Details"]</h3>
+            </div>
+            <div class="panel-body">
                 <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Id">
-                    <div class="mb-3">
-                        <label class="form-label" for="Name">@L["Server name"]</label>
+                    <div class="form-group">
+                        <label for="Name">@L["Server name"]</label>
                         <input class="form-control" id="Name" name="Name" value="@server.Name" required maxlength="100">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="Address">@L["Address players connect to (optional)"]</label>
+                    <div class="form-group">
+                        <label for="Address">@L["Address players connect to (optional)"]</label>
                         <input class="form-control" id="Address" name="Address" value="@server.Address" maxlength="200">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"]</label>
+                    <div class="form-group">
+                        <label for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"]</label>
                         <input class="form-control" id="AlternativeAddress" name="AlternativeAddress" value="@server.AlternativeAddress" maxlength="200">
                     </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" id="Enabled" name="Enabled" value="true" checked="@server.Enabled">
-                        <input type="hidden" name="Enabled" value="false">
-                        <label class="form-check-label" for="Enabled">@L["Enabled"]</label>
+                    <div class="checkbox">
+                        <label for="Enabled">
+                            <input type="checkbox" id="Enabled" name="Enabled" value="true" checked="@server.Enabled">
+                            <input type="hidden" name="Enabled" value="false">
+                            @L["Enabled"]
+                        </label>
                     </div>
-                    <div class="mb-3 small text-body-secondary">@L["Identifier"]: <code>@server.PublicId</code></div>
+                    <p class="text-muted">
+                        <small>@L["Identifier"]: <code>@server.PublicId</code></small>
+                    </p>
                     <button class="btn btn-primary" type="submit">@L["Save"]</button>
                 </form>
             </div>
         </div>
-        <div class="card border-warning">
-            <div class="card-header">@L["Key"]</div>
-            <div class="card-body">
-                <p class="small">@L["Generating a new key disconnects the game server until its configuration has the new token."]</p>
-                <form class="d-inline" method="post" asp-antiforgery="true" action="/admin/servers/@server.Id/key" onsubmit="return confirm('@L["Generate a new key?"]')">
-                    <button class="btn btn-outline-warning btn-sm" type="submit">@L["Generate a new key"]</button>
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Key"]</h3>
+            </div>
+            <div class="panel-body">
+                <p>@L["Generating a new key disconnects the game server until its configuration has the new token."]</p>
+                <form style="display: inline-block" method="post" asp-antiforgery="true" action="/admin/servers/@server.Id/key" onsubmit="return confirm('@L["Generate a new key?"]')">
+                    <button class="btn btn-warning btn-sm" type="submit">
+                        <span class="glyphicon glyphicon-refresh"></span> @L["Generate a new key"]
+                    </button>
                 </form>
-                <form class="d-inline" method="post" asp-antiforgery="true" action="/admin/servers/@server.Id/delete" onsubmit="return confirm('@L["Delete this server?"]')">
-                    <button class="btn btn-outline-danger btn-sm" type="submit">@L["Delete"]</button>
+                <form style="display: inline-block" method="post" asp-antiforgery="true" action="/admin/servers/@server.Id/delete" onsubmit="return confirm('@L["Delete this server?"]')">
+                    <button class="btn btn-danger btn-sm" type="submit">
+                        <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                    </button>
                 </form>
             </div>
         </div>

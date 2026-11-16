@@ -1,0 +1,19 @@
+{
+  "Appearance": "Aparência",
+  "Site logo": "Logo do site",
+  "Site logo (optional)": "Logo do site (opcional)",
+  "No logo yet: the menu shows the site name.": "Ainda sem logo: o menu mostra o nome do site.",
+  "PNG, JPG, WEBP or GIF, up to {0} MB. It appears in the menu, in place of the site name.": "PNG, JPG, WEBP ou GIF, de até {0} MB. Aparece no menu, no lugar do nome do site.",
+  "Remove the logo and show the site name": "Remover a logo e mostrar o nome do site",
+  "Footer links": "Links do rodapé",
+  "One link per line, as a text, a vertical bar and the address: {0}. Leave empty to show only the link to the project.": "Um link por linha, com o texto, uma barra vertical e o endereço: {0}. Deixe em branco para mostrar apenas o link do projeto.",
+  "Keywords for search engines (optional)": "Palavras-chave para buscadores (opcional)",
+  "Separated by commas. They go in the keywords tag of every page.": "Separadas por vírgula. Vão na tag de palavras-chave de todas as páginas.",
+  "Google Analytics ID (optional)": "ID do Google Analytics (opcional)",
+  "With an ID, every page loads the Google Analytics script. Leave empty to load nothing.": "Com um ID, todas as páginas carregam o script do Google Analytics. Deixe em branco para não carregar nada.",
+  "Shows the Anti-Cheat page with the download and instructions. The Anti-Cheat itself is a separate program.": "Mostra a página do Anti-Cheat, com o download e as instruções. O Anti-Cheat em si é um programa à parte.",
+  "The logo was not changed: it must be a PNG, JPG, WEBP or GIF image.": "A logo não foi alterada: ela precisa ser uma imagem PNG, JPG, WEBP ou GIF.",
+  "The logo was not changed: the file is too large.": "A logo não foi alterada: o arquivo é grande demais.",
+  "The Google Analytics ID was not changed: it can only have letters, digits and hyphens.": "O ID do Google Analytics não foi alterado: ele só pode ter letras, números e hifens.",
+  "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.": "Alguns links do rodapé ficaram de fora: cada linha precisa ter um texto, uma barra vertical e um endereço que comece com http:// ou https://."
+}

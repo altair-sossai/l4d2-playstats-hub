@@ -1,13 +1,74 @@
 @model CommunityVoteViewModel
+
 @{
-    ViewData["Title"] = L["Who is better?"].Value;
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Who is better?"],
+        Description = L["Your answers move players up and down the community ranking."]
+    };
 }
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-    <div>
-        <h1 class="h3 mb-0">@L["Who is better?"]</h1>
-        <div class="text-body-secondary">@L["Your answers move players up and down the community ranking."]</div>
-    </div>
-    <a class="btn btn-outline-secondary" href="/community">@L["Community ranking"]</a>
+
+@section Styles {
+    <style>
+        .community-lead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+            .community-lead small {
+                margin-right: 10px;
+                font-style: italic;
+            }
+
+        .ballot {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+            .ballot .col-xs-6 {
+                padding-right: 5px;
+                padding-left: 5px;
+            }
+
+            .ballot .panel {
+                margin-bottom: 10px;
+            }
+
+            .ballot .btn {
+                white-space: normal;
+            }
+
+        .ballot-avatar {
+            width: 184px;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .ballot-name {
+            margin: 10px 0;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .ballot-both .btn {
+            margin: 3px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="~/lib/htmx/htmx.min.js" asp-append-version="true"></script>
+}
+
+<h4 class="text-center">@L["Who is better?"]</h4>
+
+<div class="community-lead">
+    <small>@L["Your answers move players up and down the community ranking."]</small>
+    <a class="btn btn-sm btn-default" href="/community">
+        <span class="glyphicon glyphicon-list"></span> @L["Community ranking"]
+    </a>
 </div>
 
 <partial name="_Ballot" model="Model"/>

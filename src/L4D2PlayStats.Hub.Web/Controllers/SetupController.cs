@@ -106,10 +106,16 @@ public class SetupController(
         current.Site.PublicUrl = model.Site.PublicUrl;
         current.Site.SteamApiKey = model.Site.SteamApiKey;
         current.Season.LengthInMonths = model.Season.LengthInMonths;
+        current.Logo = model.Logo;
 
-        await adminViewService.SaveAsync(current, cancellationToken);
+        var problems = await adminViewService.SaveAsync(current, cancellationToken);
 
-        return Redirect($"/setup?step={ModulesStep}");
+        if (problems.Count == 0)
+            return Redirect($"/setup?step={ModulesStep}");
+
+        TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
+
+        return Redirect(AppConsts.SetupWizardUrl);
     }
 
     [HttpPost("modules")]

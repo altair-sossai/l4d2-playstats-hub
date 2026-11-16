@@ -13,6 +13,7 @@
     var skinShop = modules.IsEnabled(HubModule.SkinShop);
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
     var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
+    var siteChat = modules.IsEnabled(HubModule.SiteChat);
     var metadata = ViewData["PageMetadata"] as PageMetadata;
     var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
     var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
@@ -428,7 +429,7 @@
                                     @L["Administration"]
                                 </a>
                             </li>
-                            @if (liveServer)
+                            @if (siteChat)
                             {
                                 <li role="separator" class="divider"></li>
                                 <li class="@ViewBag.ChatBans">

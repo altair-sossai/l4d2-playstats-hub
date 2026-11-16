@@ -16,6 +16,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
@@ -36,6 +37,12 @@ public class AdminController(
     IStatisticsService statisticsService,
     ICurrentUser currentUser) : Controller
 {
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        ViewBag.Admin = "active";
+        ViewBag.Administration = "active";
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
@@ -159,8 +166,12 @@ public class AdminController(
     [HttpPost("settings")]
     public async Task<IActionResult> SaveSettings(SettingsViewModel model, CancellationToken cancellationToken)
     {
-        await adminViewService.SaveAsync(model, cancellationToken);
+        var problems = await adminViewService.SaveAsync(model, cancellationToken);
+
         TempData["Saved"] = true;
+
+        if (problems.Count > 0)
+            TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
 
         return RedirectToAction(nameof(Settings));
     }

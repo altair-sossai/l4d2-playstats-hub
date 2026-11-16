@@ -8,6 +8,6 @@ public interface IAdminViewService
 {
     Task<ServerStatusViewModel> StatusAsync(GameServer server, CancellationToken cancellationToken = default);
     Task<SettingsViewModel> SettingsAsync(CancellationToken cancellationToken = default);
-    Task SaveAsync(SettingsViewModel model, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<string>> SaveAsync(SettingsViewModel model, CancellationToken cancellationToken = default);
     string SiteUrl(HttpRequest request, SiteSettings site);
 }
