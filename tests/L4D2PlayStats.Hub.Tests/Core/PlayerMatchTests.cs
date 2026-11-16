@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -145,7 +146,7 @@ public class PlayerMatchTests
         Assert.AreEqual(1m, player.Campaigns["Dark Carnival"].WinRate + player.Campaigns["Dark Carnival"].LossRate);
     }
 
-    private static async Task UploadMatchAsync(TestHub hub, L4D2PlayStats.Hub.Core.Modules.Servers.GameServer server, DateTime start, params string[] maps)
+    private static async Task UploadMatchAsync(TestHub hub, GameServer server, DateTime start, params string[] maps)
     {
         for (var index = 0; index < maps.Length; index++)
             await hub.UploadAsync(server, StatisticsBuilder.Map(maps[index], start.AddMinutes(15 * index), index + 1, 300 * (index + 1), 250 * (index + 1)));

@@ -43,7 +43,7 @@
 
 @if (Model.Period is { HasChoices: true })
 {
-    <div class="row" style="margin-bottom: 10px">
+    <div class="row" style="margin-bottom: 5px">
         <div class="col-md-12">
             @await Html.PartialAsync("_PeriodSelector", new PlayerPeriodSelectorModel(Model.Period, season => PlayerUrls.Details(Model.CommunityId, null, season)))
         </div>

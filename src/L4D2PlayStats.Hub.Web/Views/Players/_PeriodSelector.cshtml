@@ -13,7 +13,7 @@
 
 @if (Model.Period.HasChoices)
 {
-    <div class="dropdown period-selector" style="display: inline-block; vertical-align: top; max-width: 100%">
+    <div class="dropdown period-selector" style="display: inline-block; vertical-align: top; max-width: 100%; margin-bottom: 5px">
         <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" style="max-width: 100%; white-space: normal">
             @L["Displayed period"]:
             <b>@PeriodLabel(Model.Period.Season)</b>

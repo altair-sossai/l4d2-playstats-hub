@@ -584,7 +584,7 @@
             if (location.hash)
                 $tabs.filter('[href="' + location.hash + '"]').tab('show');
 
-            $('.players-dropdown-menu a, .relation-card-item .panel-heading a').on('click', function () {
+            $('.players-dropdown-menu a, .relation-card-item .panel-heading a, .period-selector .dropdown-menu a').on('click', function () {
                 if (location.hash)
                     this.href = this.href.split('#')[0] + location.hash;
             });
@@ -613,7 +613,7 @@
 
 @if (Model.Period.HasChoices)
 {
-    <div class="row" style="margin-bottom: 10px">
+    <div class="row" style="margin-bottom: 5px">
         <div class="col-md-12">
             @await Html.PartialAsync("_PeriodSelector", new PlayerPeriodSelectorModel(Model.Period, season => PlayerUrls.Details(firstPlayer.CommunityId, secondPlayer?.CommunityId, season)))
         </div>
@@ -777,14 +777,14 @@
             <tr class="previous-names">
                 <th>@L["Previous names"]:</th>
                 <td data-label="@L["Previous names"]:" colspan="5">
-                    @foreach (var previousName in firstPlayer.PreviousNames.Take(5))
+                    @foreach (var previousName in firstPlayer.PreviousNames.Take(AppConsts.PlayerPreviousNamesVisible))
                     {
                         <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@previousName.Name">@previousName.Name</span>
                     }
                     @if (secondPlayer is { PreviousNames: not null } && secondPlayer.PreviousNames.Any())
                     {
                         <span class="separator"> | </span>
-                        @foreach (var previousName in secondPlayer.PreviousNames.Take(5))
+                        @foreach (var previousName in secondPlayer.PreviousNames.Take(AppConsts.PlayerPreviousNamesVisible))
                         {
                             <span class="label label-warning" data-toggle="tooltip" data-placement="top" title="@previousName.Name">@previousName.Name</span>
                         }
