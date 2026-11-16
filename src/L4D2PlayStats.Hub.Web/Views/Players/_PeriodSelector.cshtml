@@ -1,0 +1,31 @@
+@model PlayerPeriodSelectorModel
+
+@functions {
+
+    private string PeriodLabel(Season season)
+    {
+        var label = RankingPeriod.ForSeason(season).Label(L);
+
+        return season.Id == Model.Period.CurrentSeason.Id ? $"{label} ({L["Current season"].Value})" : label;
+    }
+
+}
+
+@if (Model.Period.HasChoices)
+{
+    <div class="dropdown period-selector" style="display: inline-block; vertical-align: top; max-width: 100%; margin-bottom: 5px">
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" style="max-width: 100%; white-space: normal">
+            @L["Displayed period"]:
+            <b>@PeriodLabel(Model.Period.Season)</b>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" style="max-height: 60vh; overflow-y: auto">
+            @foreach (var season in Model.Period.Seasons)
+            {
+                <li>
+                    <a href="@Model.Url(Model.Period.IdOf(season))">@PeriodLabel(season)</a>
+                </li>
+            }
+        </ul>
+    </div>
+}

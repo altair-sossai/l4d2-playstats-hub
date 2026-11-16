@@ -1,0 +1,20 @@
+@{
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["History not found"],
+        Description = L["The requested history could not be found. Please check the information and try again"],
+        NoIndex = true
+    };
+}
+
+<div class="jumbotron text-center" style="margin-top: 20px">
+    <h2>@L["History not found"]</h2>
+
+    <p>
+        @L["The requested history could not be found. Please check the information and try again"]
+    </p>
+
+    <a href="/" class="btn btn-primary">
+        @L["Return to ranking page"]
+    </a>
+</div>

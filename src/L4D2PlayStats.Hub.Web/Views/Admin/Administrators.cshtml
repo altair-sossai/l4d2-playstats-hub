@@ -2,57 +2,79 @@
 @{
     ViewData["Title"] = L["Administrators"].Value;
 }
-<h1 class="h3">@L["Administrators"]</h1>
-<partial name="_AdminNav"/>
 
-<div class="table-responsive mb-4" style="max-width: 760px;">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>@L["Name"]</th>
-            <th>SteamID64</th>
-            <th>@L["Since"]</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var administrator in Model.Administrators)
-        {
-            <tr>
-                <td>@(administrator.Name ?? "-")</td>
-                <td><a href="@SteamIds.ProfileUrl(administrator.CommunityId)" rel="noopener" target="_blank">@administrator.CommunityId</a></td>
-                <td>@administrator.AddedAtUtc.ToString("d")</td>
-                <td class="text-end">
-                    @if (administrator.CommunityId != Model.Current)
-                    {
-                        <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" onsubmit="return confirm('@L["Remove this administrator?"]')">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove"]</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <span class="badge text-bg-secondary">@L["You"]</span>
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+}
+
+<div class="admin-header">
+    <h3>@L["Administrators"]</h3>
 </div>
 
-<div class="card" style="max-width: 640px;">
-    <div class="card-header">@L["Add an administrator"]</div>
-    <div class="card-body">
-        <form method="post" asp-antiforgery="true" action="/admin/administrators">
-            <div class="mb-3">
-                <label class="form-label" for="communityId">SteamID64</label>
-                <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
+<partial name="_AdminNav"/>
+
+<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
+    <thead>
+    <tr>
+        <th colspan="2">@L["Name"]</th>
+        <th>SteamID64</th>
+        <th class="text-center">@L["Since"]</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var administrator in Model.Administrators)
+    {
+        <tr class="@(administrator.CommunityId == Model.Current ? "it-is-me" : string.Empty)">
+            <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                <img src="/avatar/@administrator.CommunityId" alt="@administrator.Name" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
+            </td>
+            <td class="vertical-align-middle" data-label="@L["Name"]">@(administrator.Name ?? "-")</td>
+            <td class="vertical-align-middle" data-label="SteamID64">
+                <a href="@SteamIds.ProfileUrl(administrator.CommunityId)" rel="noopener" target="_blank"><u>@administrator.CommunityId</u></a>
+            </td>
+            <td class="text-center vertical-align-middle" data-label="@L["Since"]">@administrator.AddedAtUtc.ToString("d")</td>
+            <td class="text-center vertical-align-middle slim admin-actions">
+                @if (administrator.CommunityId != Model.Current)
+                {
+                    <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" onsubmit="return confirm('@L["Remove this administrator?"]')">
+                        <button class="btn btn-xs btn-danger" type="submit">
+                            <span class="glyphicon glyphicon-trash"></span> @L["Remove"]
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <span class="label label-default">@L["You"]</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Add an administrator"]</h3>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="name">@L["Name"]</label>
-                <input class="form-control" id="name" name="name" maxlength="100">
+            <div class="panel-body">
+                <form method="post" asp-antiforgery="true" action="/admin/administrators">
+                    <div class="form-group">
+                        <label for="communityId">SteamID64</label>
+                        <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="@AppConsts.AdminSteamIdPlaceholder">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">@L["Name"]</label>
+                        <input class="form-control" id="name" name="name" maxlength="100">
+                    </div>
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                    </button>
+                </form>
             </div>
-            <button class="btn btn-primary" type="submit">@L["Add"]</button>
-        </form>
+        </div>
     </div>
 </div>

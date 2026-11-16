@@ -1,21 +1,15 @@
-using System.Globalization;
-using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
-using L4D2PlayStats.Hub.Core.Modules.Skins;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
-using L4D2PlayStats.Hub.Web.Models.Skins;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
@@ -25,152 +19,40 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 [RequireModule(HubModule.SkinShop)]
 [Route("admin/skins")]
 public class SkinsAdminController(
-    HubDbContext dbContext,
-    ISkinService skinService,
-    ISkinShopService skinShopService,
+    ISkinViewService skinViewService,
     ISkinCatalogService skinCatalogService,
-    ISettingsService settingsService,
-    ICurrentUser currentUser) : Controller
+    ISettingsService settingsService) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Purchases(string? q, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Purchases(string? q, string? player, int page = 1, CancellationToken cancellationToken = default)
     {
-        var culture = CultureInfo.CurrentUICulture;
-        var skins = await skinService.ListAsync(cancellationToken);
-        var skinsById = skins.ToDictionary(skin => skin.Id);
-        var purchases = await skinShopService.ListPurchasesAsync(cancellationToken);
-        var names = await dbContext.PlayerProfiles.AsNoTracking().Where(profile => profile.Name != null).ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name!, cancellationToken);
+        ViewBag.Admin = "active";
+        ViewBag.SkinPurchases = "active";
 
-        var rows = purchases
-            .Select(purchase => new SkinPurchaseRow(
-                purchase,
-                skinsById.GetValueOrDefault(purchase.SkinId),
-                purchase.PlayerName ?? names.GetValueOrDefault(purchase.CommunityId) ?? purchase.CommunityId.ToString(),
-                purchase.GiftedByCommunityId == null ? null : purchase.GiftedByName ?? names.GetValueOrDefault(purchase.GiftedByCommunityId.Value) ?? purchase.GiftedByCommunityId.ToString()))
-            .Where(row => row.Matches(q, culture))
-            .ToList();
-
-        var model = new SkinPurchasesViewModel
-        {
-            Rows = new PagedList<SkinPurchaseRow>(rows, page, AppConsts.SkinAdminPageSize),
-            Skins = [.. skins.Where(skin => skin.Available).OrderBy(skin => SkinWeapons.Order(skin.Weapon)).ThenBy(skin => skin.Title(culture))],
-            Query = q,
-            Purchases = purchases.Count(purchase => !purchase.Gift),
-            Gifts = purchases.Count(purchase => purchase.Gift),
-            Stars = purchases.Sum(purchase => purchase.Price),
-            Players = purchases.Select(purchase => purchase.CommunityId).Distinct().Count()
-        };
-
-        return View(model);
+        return View(await skinViewService.PurchasesAsync(q, player, page, cancellationToken));
     }
 
-    [HttpPost("gift")]
-    public async Task<IActionResult> Gift(long communityId, string? skinId, CancellationToken cancellationToken)
+    [HttpGet("purchases")]
+    public IActionResult LegacyPurchases()
     {
-        if (!SteamIds.IsValid(communityId))
-        {
-            TempData["Error"] = "That is not a valid SteamID64.";
-            return RedirectToAction(nameof(Purchases));
-        }
-
-        var result = await skinShopService.GiftAsync(communityId, skinId, currentUser.CommunityId, currentUser.Name, cancellationToken);
-
-        if (result.Succeeded)
-            TempData[AppConsts.SkinMessageTempData] = "Skin given to the player.";
-        else
-            TempData["Error"] = SkinShopMessages.For(result.Status);
-
-        return RedirectToAction(nameof(Purchases));
-    }
-
-    [HttpPost("refund")]
-    public async Task<IActionResult> Refund(long communityId, string? skinId, CancellationToken cancellationToken)
-    {
-        var result = await skinShopService.RefundAsync(communityId, skinId, currentUser.CommunityId, cancellationToken);
-
-        if (result.Succeeded)
-            TempData[AppConsts.SkinMessageTempData] = "Skin refunded.";
-        else
-            TempData["Error"] = SkinShopMessages.For(result.Status);
-
-        return RedirectToAction(nameof(Purchases));
-    }
-
-    [HttpPost("refund-all")]
-    public async Task<IActionResult> RefundAll(CancellationToken cancellationToken)
-    {
-        var summary = await skinShopService.RefundAllAsync(currentUser.CommunityId, cancellationToken);
-
-        TempData[AppConsts.SkinRefundTempData] = string.Join(AppConsts.SkinTempDataSeparator, summary.Purchases, summary.Gifts, summary.Stars, summary.Players);
-
-        return RedirectToAction(nameof(Purchases));
+        return RedirectPermanent($"{AppConsts.SkinAdminUrl}{Request.QueryString}");
     }
 
     [HttpGet("prices")]
-    public async Task<IActionResult> Prices(string? q, string? weapon, SkinRarity? rarity, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Prices(string? q, SkinRarity? rarity, string? weapon, int page = 1, CancellationToken cancellationToken = default)
     {
-        var culture = CultureInfo.CurrentUICulture;
-        var skins = await skinService.ListAsync(cancellationToken);
-        var term = q?.Trim();
+        ViewBag.Admin = "active";
+        ViewBag.SkinPrices = "active";
 
-        var filtered = skins
-            .Where(skin => rarity == null || skin.Rarity == rarity)
-            .Where(skin => string.IsNullOrEmpty(weapon) || skin.Weapon == weapon)
-            .Where(skin => string.IsNullOrEmpty(term)
-                           || skin.Id.Contains(term, StringComparison.OrdinalIgnoreCase)
-                           || skin.Title(culture).Contains(term, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(skin => skin.Rarity)
-            .ThenByDescending(skin => skin.Price)
-            .ThenBy(skin => SkinWeapons.Order(skin.Weapon))
-            .ThenBy(skin => skin.Id)
-            .ToList();
-
-        var list = new PagedList<Skin>(filtered, page, AppConsts.SkinAdminPageSize);
-
-        var model = new SkinPricesViewModel
-        {
-            Skins = list,
-            Weapons = SkinWeapons.Sort(skins.Select(skin => skin.Weapon)),
-            Query = q,
-            Weapon = weapon,
-            Rarity = rarity,
-            CustomPrices = skins.Count(skin => skin.HasCustomPrice),
-            ReturnUrl = AppConsts.SkinPricesUrl + SkinDisplay.Query(("q", q), ("weapon", weapon), ("rarity", rarity), ("page", list.Page))
-        };
-
-        return View(model);
-    }
-
-    [HttpPost("prices")]
-    public async Task<IActionResult> SavePrice(string? skinId, int? price, string? returnUrl, CancellationToken cancellationToken)
-    {
-        if (await skinService.SetPriceAsync(skinId, price, currentUser.CommunityId, cancellationToken))
-            TempData[AppConsts.SkinMessageTempData] = "Price saved.";
-        else
-            TempData["Error"] = "That price is not valid for that skin.";
-
-        var local = !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) && returnUrl.StartsWith(AppConsts.SkinPricesUrl, StringComparison.Ordinal);
-
-        return Redirect(local ? returnUrl! : AppConsts.SkinPricesUrl);
+        return View(await skinViewService.PricesAsync(q, rarity, weapon, page, cancellationToken));
     }
 
     [HttpGet("catalog")]
     public async Task<IActionResult> Catalog(CancellationToken cancellationToken)
     {
-        var skins = dbContext.Set<Skin>().AsNoTracking();
-        var total = await skins.CountAsync(cancellationToken);
-        var available = await skins.CountAsync(skin => skin.Available, cancellationToken);
+        ViewBag.Admin = "active";
 
-        var model = new SkinCatalogViewModel
-        {
-            Settings = await settingsService.GetAsync<SkinShopSettings>(cancellationToken),
-            Total = total,
-            Available = available,
-            Unavailable = total - available,
-            UpdatedAtUtc = total == 0 ? null : await skins.MaxAsync(skin => skin.UpdatedAtUtc, cancellationToken)
-        };
-
-        return View(model);
+        return View(await skinViewService.CatalogAsync(cancellationToken));
     }
 
     [HttpPost("catalog/upload")]
@@ -179,7 +61,7 @@ public class SkinsAdminController(
     {
         if (file == null || file.Length == 0)
         {
-            TempData["Error"] = "Choose the catalog file first.";
+            TempData["Error"] = AppConsts.SkinCatalogNoFile;
             return RedirectToAction(nameof(Catalog));
         }
 
@@ -198,25 +80,29 @@ public class SkinsAdminController(
     [HttpGet("settings")]
     public async Task<IActionResult> Settings(CancellationToken cancellationToken)
     {
+        ViewBag.Admin = "active";
+
         return View(await settingsService.GetAsync<SkinShopSettings>(cancellationToken));
     }
 
     [HttpPost("settings")]
     public async Task<IActionResult> SaveSettings(SkinShopSettings settings, CancellationToken cancellationToken)
     {
-        settings.AssetsUrl = string.IsNullOrWhiteSpace(settings.AssetsUrl) ? null : settings.AssetsUrl.Trim().TrimEnd('/');
-        settings.CatalogUrl = string.IsNullOrWhiteSpace(settings.CatalogUrl) ? null : settings.CatalogUrl.Trim();
+        settings.AssetsUrl = Clean(settings.AssetsUrl)?.TrimEnd('/');
+        settings.CatalogUrl = Clean(settings.CatalogUrl);
+        settings.AuthorContactUrl = Clean(settings.AuthorContactUrl);
+        settings.AuthorRequestUrl = Clean(settings.AuthorRequestUrl);
 
-        var valid = (settings.AssetsUrl == null || SkinAssets.IsHttpUrl(settings.AssetsUrl)) && (settings.CatalogUrl == null || SkinAssets.IsHttpUrl(settings.CatalogUrl));
+        string?[] addresses = [settings.AssetsUrl, settings.CatalogUrl, settings.AuthorContactUrl, settings.AuthorRequestUrl];
 
-        if (valid)
+        if (addresses.All(address => address == null || SkinAssets.IsHttpUrl(address)))
         {
             await settingsService.SaveAsync(settings, cancellationToken);
             TempData["Saved"] = true;
         }
         else
         {
-            TempData["Error"] = "An address must start with http:// or https://.";
+            TempData["Error"] = AppConsts.SkinSettingsInvalidUrl;
         }
 
         return RedirectToAction(nameof(Settings));
@@ -227,8 +113,13 @@ public class SkinsAdminController(
         if (result.Succeeded)
             TempData[AppConsts.SkinImportTempData] = string.Join(AppConsts.SkinTempDataSeparator, result.Total, result.Added, result.Updated, result.Removed);
         else
-            TempData["Error"] = SkinShopMessages.For(result.Status);
+            TempData["Error"] = SkinDisplay.CatalogMessage(result.Status);
 
         return RedirectToAction(nameof(Catalog));
+    }
+
+    private static string? Clean(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 }

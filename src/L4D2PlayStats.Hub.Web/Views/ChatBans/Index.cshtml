@@ -1,111 +1,378 @@
-@using L4D2PlayStats.Hub.Web.Models.Live
-@model ChatBansViewModel
+@model ChatBansModel
+@inject ISettingsService Settings
+
 @{
-    ViewData["Title"] = L["Chat bans"].Value;
+    ViewData["Title"] = L["Chat Bans"].Value;
+    var culture = CultureInfo.CurrentUICulture;
+    var modules = await Settings.GetAsync<ModuleSettings>();
+    var ranking = modules.IsEnabled(HubModule.Ranking);
+    var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
+    var pagination = PaginationModel.Of(Model.Bans, number => $"{AppConsts.ChatBansUrl}?{query}page={number}");
 }
-<h1 class="h3">@L["Chat bans"]</h1>
-<partial name="_AdminNav"/>
 
-<p class="text-body-secondary">@L["A banned player cannot send messages from the site to any game server."]</p>
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    <style>
+        .cb-reason {
+            display: -webkit-box !important;
+            overflow: hidden;
+            white-space: normal !important;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
 
-@if (Model.Bans.Count == 0)
-{
-    <div class="alert alert-secondary">@L["No chat bans found."]</div>
+        .cb-details-avatar {
+            width: 96px !important;
+            height: 96px !important;
+            border-radius: 50% !important;
+        }
+    </style>
 }
-else
-{
-    <div class="table-responsive mb-4">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>@L["Name"]</th>
-                <th>SteamID64</th>
-                <th>@L["Reason"]</th>
-                <th>@L["Banned by"]</th>
-                <th>@L["Since"]</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var ban in Model.Bans)
-            {
-                <tr>
-                    <td><img class="avatar me-2" src="/avatar/@ban.CommunityId" alt="" loading="lazy">@(ban.Name ?? "-")</td>
-                    <td><a href="@SteamIds.ProfileUrl(ban.CommunityId)" rel="noopener" target="_blank">@ban.CommunityId</a></td>
-                    <td>@(ban.Reason ?? "-")</td>
-                    <td>@(ban.CreatedByName ?? ban.CreatedByCommunityId?.ToString() ?? "-")</td>
-                    <td>@ban.CreatedAtUtc.ToString("d")</td>
-                    <td class="text-end">
-                        <form method="post" asp-antiforgery="true" action="/admin/chat-bans/@ban.CommunityId/delete" onsubmit="return confirm('@L["Remove this chat ban?"]')">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove"]</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+
+@Html.AntiForgeryToken()
+
+<div class="admin-header">
+    <h3>@L["Chat Bans"]</h3>
+    <button type="button" class="btn btn-primary cb-add">
+        <span class="glyphicon glyphicon-plus"></span> @L["Add ban"]
+    </button>
+</div>
+
+<p class="text-muted">@L["Players banned from the chat cannot send messages on the server. Click a ban to see its details, edit the reason or remove it."]</p>
+
+<div class="admin-stats">
+    <div>
+        <strong>@Model.TotalBans.ToString("N0", culture)</strong>
+        <small>@L["players banned from the chat"]</small>
     </div>
-}
+</div>
 
-<div class="row g-4">
-    <div class="col-lg-5">
-        <div class="card">
-            <div class="card-header">@L["Ban a player from the chat"]</div>
-            <div class="card-body">
-                <form method="post" asp-antiforgery="true" action="/admin/chat-bans">
-                    <div class="mb-3">
-                        <label class="form-label" for="communityId">SteamID64</label>
-                        <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="name">@L["Name"]</label>
-                        <input class="form-control" id="name" name="name" maxlength="100">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="reason">@L["Reason"]</label>
-                        <input class="form-control" id="reason" name="reason" maxlength="300">
-                    </div>
-                    <button class="btn btn-primary" type="submit">@L["Ban"]</button>
-                </form>
+<form method="get" class="admin-filters">
+    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name, Steam ID or reason..."]"/>
+    <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span> @L["Search"]
+    </button>
+    @if (!string.IsNullOrEmpty(Model.Query))
+    {
+        <a class="btn btn-link" href="@AppConsts.ChatBansUrl">@L["Clear filters"]</a>
+    }
+</form>
+
+<div class="admin-list">
+    @if (Model.Bans.Items.Count == 0)
+    {
+        <div class="admin-empty">@L["No chat bans found."]</div>
+    }
+    @foreach (var ban in Model.Bans.Items)
+    {
+        var name = string.IsNullOrWhiteSpace(ban.Name) ? ban.CommunityId : ban.Name;
+        var bannedAt = LiveDisplay.ShortDateTime(ban.CreatedAtUtc, Model.TimeZone);
+        var updatedAt = ban.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(ban.UpdatedAtUtc.Value, Model.TimeZone);
+
+        <div class="admin-item cb-ban"
+             data-community-id="@ban.CommunityId" data-name="@name" data-avatar="@ban.AvatarUrl" data-steam-id="@ban.SteamId"
+             data-profile-url="@ban.ProfileUrl" data-reason="@ban.Reason" data-banned-at="@bannedAt" data-updated-at="@updatedAt"
+             data-banned-by="@ban.CreatedByName">
+            <img class="admin-avatar" src="@ban.AvatarUrl" alt="@name" onerror="imgOnError(this)"/>
+            <div class="admin-main">
+                <div class="admin-title">@name</div>
+                <small>@ban.SteamId · @ban.CommunityId</small>
+                <small class="cb-reason">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</small>
+            </div>
+            <div class="admin-side">
+                <strong>@bannedAt</strong>
+                @if (!string.IsNullOrWhiteSpace(ban.CreatedByName))
+                {
+                    <small>@string.Format(L["by {0}"].Value, ban.CreatedByName)</small>
+                }
             </div>
         </div>
-    </div>
-    <div class="col-lg-7">
-        <div class="card">
-            <div class="card-header">@L["Recent messages from the site"]</div>
-            <div class="card-body">
-                @if (Model.RecentSenders.Count == 0)
-                {
-                    <div class="text-body-secondary">@L["Nobody wrote from the site in the last hour."]</div>
-                }
-                else
-                {
-                    <div class="list-group list-group-flush">
-                        @foreach (var sender in Model.RecentSenders)
-                        {
-                            <div class="list-group-item d-flex align-items-center gap-2 px-0">
-                                <img class="avatar" src="/avatar/@sender.CommunityId" alt="" loading="lazy">
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">@sender.Name <span class="small text-body-secondary">@sender.CommunityId</span></div>
-                                    <div class="small">@sender.Text</div>
-                                </div>
-                                @if (sender.Banned)
-                                {
-                                    <span class="badge text-bg-danger">@L["Banned"]</span>
-                                }
-                                else
-                                {
-                                    <form method="post" asp-antiforgery="true" action="/admin/chat-bans">
-                                        <input type="hidden" name="communityId" value="@sender.CommunityId">
-                                        <input type="hidden" name="name" value="@sender.Name">
-                                        <button class="btn btn-sm btn-outline-danger" type="submit">@L["Ban"]</button>
-                                    </form>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
+    }
+</div>
+
+@await Html.PartialAsync("_Pagination", pagination)
+
+<div id="cb-details-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["Ban details"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="admin-details">
+                    <img class="cb-avatar cb-details-avatar" src="" alt="" onerror="imgOnError(this)"/>
+                    <dl>
+                        <dt>@L["Player"]</dt>
+                        <dd>
+                            <a class="cb-player-link" href="#"></a><br/>
+                            <small class="cb-ids text-muted"></small><br/>
+                            <a class="cb-steam-link" href="#" target="_blank" rel="noopener noreferrer">@L["Steam profile"]</a>
+                        </dd>
+                        <dt>@L["Ban date"]</dt>
+                        <dd class="cb-banned-at"></dd>
+                        <dt class="cb-updated-at-label">@L["Updated at"]</dt>
+                        <dd class="cb-updated-at"></dd>
+                        <dt class="cb-banned-by-label">@L["Banned by"]</dt>
+                        <dd class="cb-banned-by"></dd>
+                    </dl>
+                </div>
+                <div class="form-group">
+                    <label for="cb-details-reason">@L["Reason"]</label>
+                    <textarea id="cb-details-reason" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="alert alert-warning admin-confirm cb-remove-confirm">@L["Are you sure you want to remove this chat ban?"]</div>
+                <div class="cb-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                <button type="button" class="btn btn-danger cb-remove">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Remove ban"]
+                </button>
+                <button type="button" class="btn btn-danger cb-remove-yes" style="display: none">@L["Confirm removal"]</button>
+                <button type="button" class="btn btn-primary cb-save-reason">@L["Save reason"]</button>
             </div>
         </div>
     </div>
 </div>
+
+<div id="cb-add-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["Add ban"]</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="cb-add-name"/>
+                <div class="form-group">
+                    <label for="cb-add-player">@L["Steam ID or profile URL"]</label>
+                    <div class="input-group">
+                        <input type="text" id="cb-add-player" class="form-control" placeholder="76561198000000000"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default cb-pick-player">
+                                <span class="glyphicon glyphicon-user"></span> @L["Choose from the list"]
+                            </button>
+                        </span>
+                    </div>
+                    <div class="cb-picked text-muted" style="margin-top: 6px"></div>
+                </div>
+                <div class="form-group">
+                    <label for="cb-add-reason">@L["Reason"]</label>
+                    <textarea id="cb-add-reason" class="form-control" rows="2"></textarea>
+                </div>
+                <label>@L["Recent chat senders"]</label>
+                <div class="list-group cb-recent" style="max-height: 240px; overflow-y: auto"></div>
+                <div class="cb-add-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-primary cb-add-save">@L["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_PlayerPickerModal")
+
+@section Scripts {
+    <script>
+        $(function () {
+            var texts = {
+                required: @Json.Serialize(L["Steam ID or profile URL"].Value),
+                saved: @Json.Serialize(L["Ban saved. Reloading..."].Value),
+                removed: @Json.Serialize(L["Ban removed. Reloading..."].Value),
+                noRecent: @Json.Serialize(L["Nobody sent a message recently."].Value),
+                alreadyBanned: @Json.Serialize(L["Already banned"].Value),
+                error: @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
+            };
+
+            var selected = null;
+            var playerUrl = @Json.Serialize(ranking ? AppConsts.LivePlayerUrl : null);
+            var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
+
+            function escapeHtml(text) {
+                return $('<div/>').text(text == null ? '' : text).html();
+            }
+
+            function message($target, success, text) {
+                $target.html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + escapeHtml(text) + '</div>');
+            }
+
+            function errorText(xhr) {
+                return (xhr.responseJSON && xhr.responseJSON.errorMessage) || texts.error;
+            }
+
+            function saveBan(communityId, name, reason) {
+                return $.ajax({
+                    url: '/api/chat-bans',
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify({ communityId: communityId, name: name || null, reason: reason || null })
+                });
+            }
+
+            $('.cb-ban').on('click', function () {
+                var $item = $(this);
+                var $modal = $('#cb-details-modal');
+                var updatedAt = $item.data('updated-at');
+                var bannedBy = $item.data('banned-by');
+                var profileUrl = $item.data('profile-url');
+
+                selected = { communityId: $item.data('community-id').toString(), name: $item.data('name') };
+
+                $modal.find('.cb-avatar').attr({ src: $item.data('avatar'), alt: selected.name });
+                $modal.find('.cb-player-link').text(selected.name).attr('href', playerUrl ? playerUrl + encodeURIComponent(selected.communityId) : (profileUrl || '#'));
+                $modal.find('.cb-ids').text(($item.data('steam-id') || '') + ' · ' + selected.communityId);
+                $modal.find('.cb-steam-link').attr('href', profileUrl || '#').toggle(!!profileUrl);
+                $modal.find('.cb-banned-at').text($item.data('banned-at'));
+                $modal.find('.cb-updated-at').text(updatedAt || '');
+                $modal.find('.cb-updated-at, .cb-updated-at-label').toggle(!!updatedAt);
+                $modal.find('.cb-banned-by').text(bannedBy || '');
+                $modal.find('.cb-banned-by, .cb-banned-by-label').toggle(!!bannedBy);
+                $('#cb-details-reason').val($item.data('reason') || '');
+                $modal.find('.cb-remove-confirm').hide();
+                $modal.find('.cb-message').empty();
+                $modal.find('.cb-remove').show();
+                $modal.find('.cb-remove-yes').hide();
+                $modal.find('button').prop('disabled', false);
+                $modal.modal('show');
+            });
+
+            $('.cb-save-reason').on('click', function () {
+                var $button = $(this);
+                var $message = $('#cb-details-modal .cb-message');
+
+                $button.prop('disabled', true);
+
+                saveBan(selected.communityId, selected.name, $.trim($('#cb-details-reason').val())).done(function () {
+                    message($message, true, texts.saved);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+
+            $('.cb-remove').on('click', function () {
+                $('#cb-details-modal .cb-remove-confirm').show();
+                $(this).hide();
+                $('#cb-details-modal .cb-remove-yes').show();
+            });
+
+            $('.cb-remove-yes').on('click', function () {
+                var $button = $(this);
+                var $message = $('#cb-details-modal .cb-message');
+
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: '/api/chat-bans/' + encodeURIComponent(selected.communityId),
+                    type: 'DELETE',
+                    headers: headers
+                }).done(function () {
+                    message($message, true, texts.removed);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+
+            function loadRecentSenders() {
+                var $list = $('#cb-add-modal .cb-recent').empty();
+
+                $.getJSON('/api/chat-bans/recent-senders').done(function (senders) {
+                    if (!senders || senders.length === 0) {
+                        $list.append('<div class="list-group-item text-muted">' + escapeHtml(texts.noRecent) + '</div>');
+                        return;
+                    }
+
+                    $.each(senders, function (index, sender) {
+                        var $item = $('<a href="#" class="list-group-item"></a>');
+
+                        $item.append('<img src="' + escapeHtml(sender.avatarUrl) + '" alt="" style="width: 24px; border-radius: 50%; margin-right: 8px" onerror="imgOnError(this)"/>');
+                        $item.append($('<strong></strong>').text(sender.name || sender.communityId));
+
+                        if (sender.alreadyBanned) {
+                            $item.addClass('disabled');
+                            $item.append(' <span class="label label-default">' + escapeHtml(texts.alreadyBanned) + '</span>');
+                        }
+
+                        $item.append($('<div class="text-muted small"></div>').text(sender.message));
+
+                        $item.on('click', function (event) {
+                            event.preventDefault();
+
+                            if (sender.alreadyBanned)
+                                return;
+
+                            $('#cb-add-player').val(sender.communityId);
+                            $('#cb-add-name').val(sender.name || '');
+                            $('#cb-add-modal .cb-picked').text(sender.name || sender.communityId);
+                            $('#cb-add-reason').focus();
+                        });
+
+                        $list.append($item);
+                    });
+                });
+            }
+
+            $('.cb-add').on('click', function () {
+                $('#cb-add-player').val('');
+                $('#cb-add-name').val('');
+                $('#cb-add-reason').val('');
+                $('#cb-add-modal .cb-picked').empty();
+                $('#cb-add-modal .cb-add-message').empty();
+                $('#cb-add-modal .cb-add-save').prop('disabled', false);
+                loadRecentSenders();
+                $('#cb-add-modal').modal('show');
+            });
+
+            $('.cb-pick-player').on('click', function () {
+                $('#cb-add-modal').one('hidden.bs.modal', function () {
+                    PlayerPicker.open(function (player) {
+                        if (player) {
+                            $('#cb-add-player').val(player.communityId);
+                            $('#cb-add-name').val(player.name || '');
+                            $('#cb-add-modal .cb-picked').html('<img src="' + escapeHtml(player.avatarUrl) + '" alt="" style="width: 24px; border-radius: 50%; margin-right: 6px" onerror="imgOnError(this)"/>' + escapeHtml(player.name));
+                        }
+
+                        $('#cb-add-modal').modal('show');
+                    });
+                }).modal('hide');
+            });
+
+            $('#cb-add-player').on('input', function () {
+                $('#cb-add-name').val('');
+                $('#cb-add-modal .cb-picked').empty();
+            });
+
+            $('.cb-add-save').on('click', function () {
+                var $button = $(this);
+                var $message = $('#cb-add-modal .cb-add-message');
+                var player = $.trim($('#cb-add-player').val());
+
+                if (player === '') {
+                    message($message, false, texts.required);
+                    return;
+                }
+
+                $button.prop('disabled', true);
+
+                saveBan(player, $('#cb-add-name').val(), $.trim($('#cb-add-reason').val())).done(function () {
+                    message($message, true, texts.saved);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+        });
+    </script>
+}

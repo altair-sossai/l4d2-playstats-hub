@@ -1,130 +1,557 @@
-@model MatchViewModel
+@model MatchDetailsModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
 @{
     var match = Model.Match;
-    var experience = Model.Ranking.ToDictionary(player => player.CommunityId, player => player.Experience - (player.PreviousExperience ?? 0));
+    var campaign = match.Campaign ?? L["Campaign"].Value;
+    var campaignName = match.Campaign ?? L["Custom campaign"].Value;
 
-    ViewData["Title"] = match.Campaign ?? L["Match"].Value;
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = $"{L["Match details"].Value} - {campaign}",
+        Description = L["See details of the match on {0}, played on {1}, with a {2}–{3} score.", campaign, Model.Card.MatchStart.ToString("d"), match.ScoreA, match.ScoreB],
+        Image = Model.Card.CampaignImage,
+        ImageAlt = campaign
+    };
 }
-<img class="campaign-banner mb-3" src="@Display.CampaignImage(match.Campaign)" alt="" onerror="this.src='/imgs/campaigns/no-image.jpg'">
 
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-    <div>
-        <h1 class="h3 mb-1">@(match.Campaign ?? L["Custom campaign"].Value)</h1>
-        <div class="text-body-secondary">
-            @match.LastFileDate.ToString("f") · @match.ConfigurationName · @match.GameServer?.Name · @Display.Duration(match.StartedAtUtc, match.EndedAtUtc)
-        </div>
-        @if (!match.CountsForRanking)
-        {
-            <span class="badge text-bg-secondary mt-1">@L["Not ranked"]</span>
+@section Styles {
+    <style>
+        .maps .label {
+            margin: 0 3px;
         }
+    </style>
+}
+
+@section Scripts {
+    @if (Model.Administrator)
+    {
+        <script>
+            function showMatch(result) {
+                if (result && result.matchId)
+                    location.href = "@AppConsts.MatchesUrl/" + result.matchId;
+                else
+                    location.href = "@AppConsts.MatchesUrl";
+            }
+
+            function editScore(statisticId, team, score, message) {
+                var output = prompt(message, score);
+
+                if (!output)
+                    return;
+
+                var score = +output;
+
+                if (isNaN(score))
+                    return;
+
+                if (score < 0 || score > 10000) {
+                    alert("@L["Invalid score range"]");
+                    return;
+                }
+
+                var command = {
+                    team: team,
+                    score: score
+                };
+
+                $.ajax({
+                    url: "/api/statistics/" + statisticId + "/update-score",
+                    type: "PUT",
+                    contentType: "application/json",
+                    headers: { "@AppConsts.AntiforgeryHeader": "@Antiforgery.GetAndStoreTokens(Context).RequestToken" },
+                    data: JSON.stringify(command)
+                }).done(showMatch);
+            }
+        </script>
+    }
+}
+
+@if (Model.Statistics.Count == 0)
+{
+    <div class="row">
+        <div class="col-xs-12">
+            <h4 class="text-center">
+                @L["No match found"]
+            </h4>
+        </div>
     </div>
-    <div class="score display-6">
-        <span class="@(match.TeamAScore > match.TeamBScore ? "text-win" : "")">@match.TeamAScore</span>
-        <span class="text-body-secondary">×</span>
-        <span class="@(match.TeamBScore > match.TeamAScore ? "text-win" : "")">@match.TeamBScore</span>
-    </div>
+    return;
+}
+
+<h4 class="text-center">@L["Match details"]</h4>
+
+<ol class="breadcrumb">
+    <li>
+        <a href="@AppConsts.MatchesUrl">@L["Last matches"]</a>
+    </li>
+    <li class="active">
+        @campaignName
+    </li>
+</ol>
+
+<div class="match">
+    @await Html.PartialAsync("_Match", Model.Card)
 </div>
 
-@foreach (var team in new[] { 'A', 'B' })
-{
-    var won = team == 'A' ? match.TeamAScore > match.TeamBScore : match.TeamBScore > match.TeamAScore;
-
-    <h2 class="h5">
-        @L["Team"] @team
-        @if (won)
-        {
-            <span class="badge text-bg-success">@L["Winner"]</span>
-        }
-    </h2>
-    <div class="table-responsive mb-4">
-        <table class="table table-sm">
+<div class="maps">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @L["Maps"]
+        </div>
+        <div class="panel-body">
+            @L["Map results"]
+        </div>
+        <table class="table table-striped table-hover table-condensed table-responsive">
             <thead>
-            <tr>
-                <th>@L["Player"]</th>
-                <th class="numeric" title="@L["Damage to special infected"]">@L["SI damage"]</th>
-                <th class="numeric">@L["SI killed"]</th>
-                <th class="numeric">@L["Common"]</th>
-                <th class="numeric">@L["Tank damage"]</th>
-                <th class="numeric">@L["Skeets"]</th>
-                <th class="numeric" title="@L["Friendly fire given"]">@L["FF"]</th>
-                <th class="numeric" title="@L["Damage dealt as infected"]">@L["Infected damage"]</th>
-                <th class="numeric">@L["MVPs"]</th>
-                <th class="numeric">@L["Experience"]</th>
-            </tr>
+            <th class="text-center">#</th>
+            <th class="text-center">@L["Map"]</th>
+            <th class="text-center">@L["Start"]</th>
+            <th class="text-center">@L["End"]</th>
+            <th class="text-center">@L["Elapsed"]</th>
+            <th class="text-center slim" colspan="3">@L["Scoreboard"]</th>
             </thead>
             <tbody>
-            @foreach (var player in Model.Team(team))
+            @for (var i = 0; i < Model.Statistics.Count; i++)
             {
-                var gained = experience.GetValueOrDefault(player.CommunityId);
+                var result = Model.Statistics[i];
+                var statistic = result.Statistic;
+                var gameRound = statistic?.GameRound;
+                var scoring = statistic?.Scoring;
+                var labelTeamA = scoring?.Draw == true ? "default" : scoring?.TeamAWon == true ? "success" : "danger";
+                var labelTeamB = scoring?.Draw == true ? "default" : scoring?.TeamBWon == true ? "success" : "danger";
 
                 <tr>
-                    <td>
-                        <a class="text-decoration-none d-flex align-items-center gap-2" href="/player/@player.CommunityId?season=@match.SeasonId">
-                            <img class="avatar" src="/avatar/@player.CommunityId" alt="" loading="lazy">@(player.Name ?? player.CommunityId.ToString())
+                    <td class="text-center" data-label="#">
+                        <a href="@Model.StatisticsUrl(result)">
+                            #@(i + 1)
                         </a>
                     </td>
-                    <td class="numeric">@Display.Number(player.SiDamage)</td>
-                    <td class="numeric">@player.SiKilled</td>
-                    <td class="numeric">@player.Common</td>
-                    <td class="numeric">@Display.Number(player.TankDamage)</td>
-                    <td class="numeric">@player.Skeets</td>
-                    <td class="numeric">@player.FfGiven</td>
-                    <td class="numeric">@Display.Number(player.DmgTotal)</td>
-                    <td class="numeric">@(player.MvpSiDamage + player.MvpCommon)</td>
-                    <td class="numeric @(gained > 0 ? "text-win" : gained < 0 ? "text-loss" : "")">@(match.CountsForRanking ? (gained > 0 ? "+" : "") + Display.Number(gained) : "-")</td>
+                    <td class="text-center" data-label="@L["Map"]">
+                        <a href="@Model.StatisticsUrl(result)">
+                            @gameRound?.MapName
+                        </a>
+                    </td>
+                    <td class="text-center" data-label="@L["Start"]">@MatchDisplay.DateAndTime(statistic?.MapStart, Model.TimeZone)</td>
+                    <td class="text-center" data-label="@L["End"]">@MatchDisplay.DateAndTime(statistic?.MapEnd, Model.TimeZone)</td>
+                    <td class="text-center" data-label="@L["Elapsed"]">@MatchDisplay.Elapsed(statistic?.MapElapsed)</td>
+                    <td class="text-center slim" data-label="@L["Team A score"]">
+                        <span class="label label-@labelTeamA" data-toggle="tooltip" data-placement="top" title="@L["Team A score"]">
+                            @scoring?.TeamA?.Score.ToString("N0")
+                        </span>
+                        @if (Model.Administrator)
+                        {
+                            var team = scoring?.TeamA;
+
+                            <button type="button" class="btn btn-link btn-xs" onclick="editScore('@result.FileId', '@team?.Letter', @team?.Score, '@string.Format(L["Team {0} score"].Value, team?.Letter)')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                                @L["Edit"]
+                            </button>
+                        }
+                    </td>
+                    <td class="text-center slim" data-label="@L["Score difference"]">
+                        <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Score difference"]">
+                            @scoring?.ScoreDiff?.ToString("N0")
+                        </span>
+                    </td>
+                    <td class="text-center slim" data-label="@L["Team B score"]">
+                        <span class="label label-@labelTeamB" data-toggle="tooltip" data-placement="top" title="@L["Team B score"]">
+                            @scoring?.TeamB?.Score.ToString("N0")
+                        </span>
+                        @if (Model.Administrator)
+                        {
+                            var team = scoring?.TeamB;
+
+                            <button type="button" class="btn btn-link btn-xs" onclick="editScore('@result.FileId', '@team?.Letter', @team?.Score, '@string.Format(L["Team {0} score"].Value, team?.Letter)')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                                @L["Edit"]
+                            </button>
+                        }
+                    </td>
                 </tr>
             }
             </tbody>
         </table>
     </div>
-}
+</div>
 
-@if (Model.Others.Any())
+@foreach (var team in match.Teams)
 {
-    <h2 class="h5">@L["Left before the end"]</h2>
-    <ul class="list-inline mb-4">
-        @foreach (var player in Model.Others)
-        {
-            <li class="list-inline-item"><a href="/player/@player.CommunityId?season=@match.SeasonId">@(player.Name ?? player.CommunityId.ToString())</a></li>
-        }
-    </ul>
-}
-
-<h2 class="h5">@L["Maps"]</h2>
-<div class="table-responsive">
-    <table class="table table-sm">
+    <div class="panel panel-default">
+    <div class="panel-heading">@L["Team"] @team.Code - @L["Survivor"]</div>
+    <div class="panel-body">
+        @string.Format(L["Statistics of team {0} playing as survivors"].Value, team.Code)
+    </div>
+    <table class="table table-striped table-hover table-condensed table-responsive">
         <thead>
         <tr>
-            <th>#</th>
-            <th>@L["Map"]</th>
-            <th class="numeric">@L["Team"] A</th>
-            <th class="numeric">@L["Team"] B</th>
-            @if (Model.Administrator)
+            <th class="text-center"></th>
+            @foreach (var player in team.Players)
             {
-                <th>@L["Fix the score"]</th>
+                <th class="text-center" colspan="2">
+                    <a href="/player/@player.CommunityId" title="@player.Name?.TruncatePlayerName()">
+                        @player.Name?.TruncatePlayerName()
+                    </a>
+                </th>
             }
+            <th class="text-center">@L["Total"]</th>
+        </tr>
+        <tr>
+            <th></th>
+            @for (var i = 0; i < team.Players.Count; i++)
+            {
+                <th class="text-right">
+                    <small>@L["Value"]</small>
+                </th>
+                <th class="text-left">
+                    <small>@L["Team %"]</small>
+                </th>
+            }
+            <th></th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var file in match.Files.OrderBy(f => f.MatchOrder))
-        {
-            <tr>
-                <td>@(file.MatchOrder + 1)</td>
-                <td>@file.MapName</td>
-                <td class="numeric">@file.TeamAScore</td>
-                <td class="numeric">@file.TeamBScore</td>
-                @if (Model.Administrator)
-                {
-                    <td>
-                        <form class="d-flex gap-1" method="post" asp-antiforgery="true" action="/admin/statistics/@file.Id/score">
-                            <input class="form-control form-control-sm" style="width: 6rem" type="number" name="teamAScore" value="@file.TeamAScore" min="0" max="10000" aria-label="@L["Team"] A">
-                            <input class="form-control form-control-sm" style="width: 6rem" type="number" name="teamBScore" value="@file.TeamBScore" min="0" max="10000" aria-label="@L["Team"] B">
-                            <button class="btn btn-sm btn-outline-secondary" type="submit">@L["Save"]</button>
-                        </form>
-                    </td>
-                }
-            </tr>
-        }
+        <tr>
+            <td>@L["SI MVP awards"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.MvpSiDamage.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.MvpSiDamagePercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.MvpSiDamage.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["CI MVP awards"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.MvpCommon.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.MvpCommonPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.MvpCommon.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["FF LVP awards"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.LvpFfGiven.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.LvpFfGivenPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.LvpFfGiven.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Deaths"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Died.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.DiedPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Died.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Times incapacitated"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Incaps.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.IncapsPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Incaps.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>
+                @L["SI damage taken"]
+                <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Damage from player infected and commons attributed to a Boomer; regular common damage is excluded."]" aria-label="@L["More information"]"></span>
+            </td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.DmgTaken.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.DmgTakenPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.DmgTaken.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Commons killed"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Common.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.CommonPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Common.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["SI killed"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.SiKilled.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.SiKilledPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.SiKilled.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["SI - Damage dealt"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.SiDamage.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.SiDamagePercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.SiDamage.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Damage to Tank"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.TankDamage.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.TankDamagePercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.TankDamage.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Damage to Witch"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.WitchDamage.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.WitchDamagePercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.WitchDamage.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Rock hits taken"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.RockEats.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.RockEatsPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.RockEats.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Total skeets"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Skeets.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.SkeetsPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Skeets.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Melee skeets"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.SkeetsMelee.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.SkeetsMeleePercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.SkeetsMelee.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Total levels"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Levels.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.LevelsPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Levels.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["Crowns (Witch one-shot)"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.Crowns.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.CrownsPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.Crowns.ToString("N0")</td>
+        </tr>
+
+        <tr>
+            <td>@L["FF dealt (non-incap.)"]</td>
+            @foreach (var player in team.Players)
+            {
+                <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                    @player.FfGiven.ToString("N0")
+                </td>
+                <td class="text-left hide-mobile">
+                    @player.FfGivenPercentage.ToString("P0")
+                </td>
+            }
+            <td class="text-center" data-label="@L["Total"]">@team.FfGiven.ToString("N0")</td>
+        </tr>
         </tbody>
     </table>
-</div>
+    </div>
+}
+
+@foreach (var team in match.Teams)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">@L["Team"] @team.Code - @L["Infected"]</div>
+        <div class="panel-body">
+            @string.Format(L["Statistics of team {0} playing as infected"].Value, team.Code)
+        </div>
+        <table class="table table-striped table-hover table-condensed table-responsive">
+            <thead>
+            <tr>
+                <th class="text-center"></th>
+                @foreach (var player in team.Players)
+                {
+                    <th class="text-center" colspan="2">
+                        <a href="/player/@player.CommunityId" title="@player.Name?.TruncatePlayerName()">
+                            @player.Name?.TruncatePlayerName()
+                        </a>
+                    </th>
+                }
+                <th class="text-center">@L["Total"]</th>
+            </tr>
+            <tr>
+                <th></th>
+                @for (var i = 0; i < team.Players.Count; i++)
+                {
+                    <th class="text-right">
+                        <small>@L["Value"]</small>
+                    </th>
+                    <th class="text-left">
+                        <small>@L["Team %"]</small>
+                    </th>
+                }
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    @L["SI damage (excl. Tank)"]
+                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["SI damage, including incapacitated and post-boom damage; Tank damage is excluded."]" aria-label="@L["More information"]"></span>
+                </td>
+                @foreach (var player in team.Players)
+                {
+                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                        @player.DmgTotal.ToString("N0")
+                    </td>
+                    <td class="text-left hide-mobile">
+                        @player.DmgTotalPercentage.ToString("P0")
+                    </td>
+                }
+                <td class="text-center" data-label="@L["Total"]">@team.DmgTotal.ToString("N0")</td>
+            </tr>
+
+            <tr>
+                <td>@L["Damage as Tank (upright)"]</td>
+                @foreach (var player in team.Players)
+                {
+                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                        @player.DmgTank.ToString("N0")
+                    </td>
+                    <td class="text-left hide-mobile">
+                        @player.DmgTankPercentage.ToString("P0")
+                    </td>
+                }
+                <td class="text-center" data-label="@L["Total"]">@team.DmgTank.ToString("N0")</td>
+            </tr>
+
+            <tr>
+                <td>@L["Spit damage (upright)"]</td>
+                @foreach (var player in team.Players)
+                {
+                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                        @player.DmgSpit.ToString("N0")
+                    </td>
+                    <td class="text-left hide-mobile">
+                        @player.DmgSpitPercentage.ToString("P0")
+                    </td>
+                }
+                <td class="text-center" data-label="@L["Total"]">@team.DmgSpit.ToString("N0")</td>
+            </tr>
+
+            <tr>
+                <td>
+                    @L["Total pounce damage"]
+                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Sum of damage from all recorded high pounces."]" aria-label="@L["More information"]"></span>
+                </td>
+                @foreach (var player in team.Players)
+                {
+                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                        @player.HunterDpDmg.ToString("N0")
+                    </td>
+                    <td class="text-left hide-mobile">
+                        @player.HunterDpDmgPercentage.ToString("P0")
+                    </td>
+                }
+                <td class="text-center" data-label="@L["Total"]">@team.HunterDpDmg.ToString("N0")</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+}

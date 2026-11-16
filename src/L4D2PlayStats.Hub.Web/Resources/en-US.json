@@ -3,5 +3,7 @@
   "Rarity.Epic": "Epic",
   "Rarity.Legendary": "Legendary",
   "Rarity.Rare": "Rare",
-  "Rarity.Uncommon": "Uncommon"
+  "Rarity.Uncommon": "Uncommon",
+  "Shared.PlayerPickerModal.FromHistory": "History",
+  "Skins.Index.EquipSuccessText": "<b>{0}</b> is now equipped on your weapon ({1})."
 }

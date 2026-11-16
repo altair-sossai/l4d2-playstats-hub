@@ -2,29 +2,34 @@
 @{
     var server = Model.Status.Server;
     var token = Model.Token ?? $"{server.PublicId}:{L["YOUR-KEY"].Value}";
+    var configuration = $"{AppConsts.ServerUrlCvar} \"{Model.SiteUrl}\"\n{AppConsts.ServerTokenCvar} \"{token}\"";
 }
-<ol class="mb-3">
-    <li class="mb-2">
+<ol class="server-steps">
+    <li>
         @L["Download the PlayStats plugins and copy them to the game server."]
-        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/releases" rel="noopener" target="_blank">@L["Download"]</a>
+        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/releases" rel="noopener" target="_blank"><u>@L["Download"]</u></a>
         ·
-        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/plugins/README.md" rel="noopener" target="_blank">@L["Step-by-step guide"]</a>
-        <div class="small text-body-secondary">@L["Put l4d2_playstats_sync.smx in addons/sourcemod/plugins itself, not in a subfolder, so it loads when the server starts."]</div>
+        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/plugins/README.md" rel="noopener" target="_blank"><u>@L["Step-by-step guide"]</u></a>
+        <small class="text-muted" style="display: block">@L["Put l4d2_playstats_sync.smx in addons/sourcemod/plugins itself, not in a subfolder, so it loads when the server starts."]</small>
     </li>
-    <li class="mb-2">
+    <li>
         @L["The server needs SourceMod, the REST in Pawn extension and the l4d2_playstats plugin, which comes with L4D2 Competitive Rework."]
     </li>
-    <li class="mb-2">
+    <li>
         @L["Paste these lines into cfg/server.cfg on the game server:"]
-        <pre class="config mt-2 mb-0">@(AppConsts.ServerUrlCvar) "@Model.SiteUrl"
+        @await Html.PartialAsync("_CopyButton", configuration)
+        <pre class="server-config">@(AppConsts.ServerUrlCvar) "@Model.SiteUrl"
 @(AppConsts.ServerTokenCvar) "@token"</pre>
         @if (Model.Token != null)
         {
-            <div class="alert alert-warning py-2 mt-2 mb-0">@L["Copy the token now. The key is shown only once; if you lose it, generate a new one."]</div>
+            <div class="alert alert-warning" style="margin-bottom: 0">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                @L["Copy the token now. The key is shown only once; if you lose it, generate a new one."]
+            </div>
         }
         else
         {
-            <div class="small text-body-secondary mt-1">@L["The key is not stored in readable form. Generate a new key if you need the full token again."]</div>
+            <small class="text-muted" style="display: block">@L["The key is not stored in readable form. Generate a new key if you need the full token again."]</small>
         }
     </li>
     <li>@L["Restart the game server or change the map. The status below updates by itself."] @L["You can also type sm_playstats_test in the server console to see the result there."]</li>

@@ -1,11 +1,11 @@
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
-using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models.Live;
 
@@ -18,13 +18,21 @@ public class LiveViewService(
     ICampaignService campaignService,
     ISettingsService settingsService,
     IChatBanService chatBanService,
-    ICurrentUser currentUser) : ILiveViewService
+    ICurrentUser currentUser,
+    IWebHostEnvironment environment) : ILiveViewService
 {
     public async Task<GameServer?> FindServerAsync(string publicId, CancellationToken cancellationToken = default)
     {
         var server = await gameServerService.FindAsync(publicId, cancellationToken);
 
         return server is { Enabled: true } ? server : null;
+    }
+
+    public async Task<List<GameServer>> EnabledServersAsync(CancellationToken cancellationToken = default)
+    {
+        var servers = await gameServerService.ListAsync(cancellationToken);
+
+        return [.. servers.Where(server => server.Enabled)];
     }
 
     public async Task<ServerListViewModel> ListAsync(CancellationToken cancellationToken = default)
@@ -37,73 +45,74 @@ public class LiveViewService(
         return new ServerListViewModel { Servers = cards };
     }
 
+    public async Task<ServerCardViewModel?> MainServerAsync(CancellationToken cancellationToken = default)
+    {
+        var list = await ListAsync(cancellationToken);
+
+        return list.Servers
+            .OrderByDescending(server => server.Players)
+            .ThenByDescending(server => server.Online)
+            .FirstOrDefault();
+    }
+
     public async Task<ServerCardViewModel> CardAsync(GameServer server, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var catalog = await campaignService.GetCatalogAsync(cancellationToken);
         var status = presence.GetStatus(server);
         var map = status.Signal?.Map;
+        var campaign = string.IsNullOrEmpty(map) ? null : catalog.FindUsingMapName(map)?.Name;
+        var image = Display.CampaignImage(campaign);
 
         return new ServerCardViewModel
         {
             Server = server,
             Status = status,
             Snapshot = liveDataService.Snapshot(server),
-            Campaign = string.IsNullOrEmpty(map) ? null : catalog.FindUsingMapName(map)?.Name,
-            RankingEnabled = modules.IsEnabled(HubModule.Ranking)
+            Campaign = campaign,
+            CampaignImage = environment.WebRootFileProvider.GetFileInfo(image).Exists ? image : AppConsts.LiveNoCampaignImage,
+            RankingEnabled = modules.IsEnabled(HubModule.Ranking),
+            AntiCheatPage = modules.IsEnabled(HubModule.AntiCheat)
         };
     }
 
     public async Task<LiveServerViewModel> LiveAsync(GameServer server, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
+        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
+        var communityId = currentUser.CommunityId;
+        var chatEnabled = modules.IsEnabled(HubModule.SiteChat);
 
         return new LiveServerViewModel
         {
             Card = await CardAsync(server, cancellationToken),
             Servers = await EnabledServersAsync(cancellationToken),
             Feed = await FeedAsync(server, 0, cancellationToken),
-            Chat = modules.IsEnabled(HubModule.SiteChat) ? await ChatAsync(server, null, null, cancellationToken) : null
+            ChatEnabled = chatEnabled,
+            RemoteCommandsEnabled = modules.IsEnabled(HubModule.RemoteCommands),
+            ChatBan = chatEnabled && communityId != null ? await chatBanService.FindAsync(communityId.Value, cancellationToken) : null,
+            Administrator = await currentUser.IsAdministratorAsync(),
+            SiteName = site.Name
         };
     }
 
     public async Task<LiveFeedViewModel> FeedAsync(GameServer server, long after, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
-        var items = liveDataService.FeedAfter(server, after);
-
-        if (!TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone))
-            timeZone = TimeZoneInfo.Utc;
 
         return new LiveFeedViewModel
         {
             PublicId = server.PublicId,
-            Items = [.. items.Reverse()],
-            After = items.Count == 0 ? after : items.Max(item => item.Sequence),
-            TimeZone = timeZone,
+            Items = liveDataService.FeedAfter(server, after),
+            TimeZone = await TimeZoneAsync(cancellationToken),
             RankingEnabled = modules.IsEnabled(HubModule.Ranking)
         };
     }
 
-    public async Task<SiteChatFormViewModel> ChatAsync(GameServer server, SiteChatResult? result, string? message, CancellationToken cancellationToken = default)
+    public async Task<TimeZoneInfo> TimeZoneAsync(CancellationToken cancellationToken = default)
     {
-        var communityId = currentUser.CommunityId;
+        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
-        return new SiteChatFormViewModel
-        {
-            PublicId = server.PublicId,
-            SignedIn = communityId != null,
-            Ban = communityId == null ? null : await chatBanService.FindAsync(communityId.Value, cancellationToken),
-            Result = result,
-            Message = message
-        };
-    }
-
-    private async Task<List<GameServer>> EnabledServersAsync(CancellationToken cancellationToken)
-    {
-        var servers = await gameServerService.ListAsync(cancellationToken);
-
-        return [.. servers.Where(server => server.Enabled)];
+        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
     }
 }

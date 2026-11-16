@@ -1,0 +1,39 @@
+@model AntiCheatSettings
+@{
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Anti-Cheat"],
+        Description = L["Anti-Cheat"],
+        NoIndex = true
+    };
+}
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+}
+
+<h4 class="text-center">@L["Anti-Cheat"]</h4>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">@L["Anti-Cheat page"]</h3>
+    </div>
+    <div class="panel-body">
+        <p>@L["The Anti-Cheat page explains how to play through the Anti-Cheat and offers its download. The Anti-Cheat itself is a separate program with its own service; this site only shows its page."]</p>
+
+        <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
+            <div class="form-group">
+                <label for="serviceUrl">@L["Anti-Cheat service address"]</label>
+                <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.ServiceUrl" placeholder="https://">
+                <p class="help-block">@L["Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://."]</p>
+            </div>
+            <div class="form-group">
+                <label for="downloadUrl">@L["Download address"]</label>
+                <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.DownloadUrl" placeholder="https://">
+                <p class="help-block">@L["Used when the service does not answer or is not set. Must start with https://."]</p>
+            </div>
+            <button class="btn btn-primary" type="submit">@L["Save"]</button>
+            <a class="btn btn-default" href="@AppConsts.AntiCheatUrl">@L["Open the Anti-Cheat page"]</a>
+        </form>
+    </div>
+</div>

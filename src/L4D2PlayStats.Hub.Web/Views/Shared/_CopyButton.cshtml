@@ -1,0 +1,10 @@
+@model string
+
+@{
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+    var copyIcon = light ? "copy-light.png" : "copy-dark.png";
+}
+
+<img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+     data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+     data-copy-text="@Model" onclick="copyTextToClipboard(this.getAttribute('data-copy-text'), this)"/>

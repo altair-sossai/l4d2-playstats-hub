@@ -1,2 +1,0 @@
-@model LiveFeedViewModel
-<div id="feed-poller" hx-get="/servers/@Model.PublicId/feed?after=@Model.After" hx-trigger="every @(AppConsts.LiveRefreshInSeconds)s" hx-swap="outerHTML"></div>

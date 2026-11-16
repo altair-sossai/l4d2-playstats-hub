@@ -48,6 +48,7 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
             entity.Property(e => e.PublicId).HasMaxLength(60);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.AlternativeAddress).HasMaxLength(200);
             entity.Property(e => e.KeyHash).HasMaxLength(100);
             entity.HasIndex(e => e.PublicId).IsUnique();
         });

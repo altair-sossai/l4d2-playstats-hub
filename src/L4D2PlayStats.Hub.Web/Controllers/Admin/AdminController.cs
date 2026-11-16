@@ -16,6 +16,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
@@ -36,6 +37,12 @@ public class AdminController(
     IStatisticsService statisticsService,
     ICurrentUser currentUser) : Controller
 {
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        ViewBag.Admin = "active";
+        ViewBag.Administration = "active";
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
@@ -82,6 +89,7 @@ public class AdminController(
         }
 
         var credentials = await gameServerService.CreateAsync(form.Name, form.Address, cancellationToken);
+        await gameServerService.SetAlternativeAddressAsync(credentials.Server.Id, form.AlternativeAddress, cancellationToken);
         TempData["Token"] = credentials.Token;
 
         return RedirectToAction(nameof(Server), new { id = credentials.Server.Id });
@@ -120,7 +128,10 @@ public class AdminController(
     public async Task<IActionResult> UpdateServer(int id, ServerForm form, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrWhiteSpace(form.Name))
+        {
             await gameServerService.UpdateAsync(id, form.Name, form.Address, form.Enabled, cancellationToken);
+            await gameServerService.SetAlternativeAddressAsync(id, form.AlternativeAddress, cancellationToken);
+        }
 
         return RedirectToAction(nameof(Server), new { id });
     }
@@ -155,8 +166,12 @@ public class AdminController(
     [HttpPost("settings")]
     public async Task<IActionResult> SaveSettings(SettingsViewModel model, CancellationToken cancellationToken)
     {
-        await adminViewService.SaveAsync(model, cancellationToken);
+        var problems = await adminViewService.SaveAsync(model, cancellationToken);
+
         TempData["Saved"] = true;
+
+        if (problems.Count > 0)
+            TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
 
         return RedirectToAction(nameof(Settings));
     }

@@ -1,0 +1,12 @@
+{
+  "{0} competitive server": "Servidor competitivo {0}",
+  "The Anti-Cheat opens the game with the -insecure option, which starts it without VAC. That avoids any VAC ban risk caused by the Anti-Cheat, and the {0} server also runs without VAC.": "O Anti-Cheat abre o jogo com a opção -insecure, que o inicia sem o VAC. Isso evita qualquer risco de ban VAC causado pelo Anti-Cheat, e o servidor {0} também roda sem VAC.",
+  "Download the {0} Anti-Cheat and learn how it works.": "Baixe o Anti-Cheat do {0} e saiba como ele funciona.",
+  "Anti-Cheat page": "Página do Anti-Cheat",
+  "The Anti-Cheat page explains how to play through the Anti-Cheat and offers its download. The Anti-Cheat itself is a separate program with its own service; this site only shows its page.": "A página do Anti-Cheat explica como jogar pelo Anti-Cheat e oferece o download. O Anti-Cheat em si é um programa separado, com serviço próprio; este site apenas exibe a página dele.",
+  "Anti-Cheat service address": "Endereço do serviço do Anti-Cheat",
+  "Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://.": "Opcional. A página consulta esse serviço para saber a versão mais recente, o tamanho, a data e o checksum. Precisa começar com https://.",
+  "Download address": "Endereço de download",
+  "Used when the service does not answer or is not set. Must start with https://.": "Usado quando o serviço não responde ou não está configurado. Precisa começar com https://.",
+  "Open the Anti-Cheat page": "Abrir a página do Anti-Cheat"
+}

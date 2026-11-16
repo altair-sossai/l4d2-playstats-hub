@@ -9,6 +9,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
@@ -22,6 +23,12 @@ public class CommunityAdminController(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService) : Controller
 {
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        ViewBag.Admin = "active";
+        ViewBag.Administration = "active";
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {

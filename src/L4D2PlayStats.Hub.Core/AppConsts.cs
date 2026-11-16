@@ -121,7 +121,6 @@ public static class AppConsts
     public const string SkinThumbnailExtension = ".jpg";
     public const string SkinShotsFolder = "skin-shots";
     public const string SkinShotExtension = ".webp";
-    public const string SkinShotThumbnailSuffix = "-thumb";
     public const string SkinWorkshopUrl = "https://steamcommunity.com/sharedfiles/filedetails/?id=";
     public const string SkinCatalogHttpClient = "SkinCatalog";
     public const int SkinCatalogTimeoutInSeconds = 30;
@@ -132,4 +131,14 @@ public static class AppConsts
     public const string SkinSourceGift = "gift";
     public const string SkinSourceSite = "site";
     public const string SkinSourceGame = "game";
+
+    public const char TeamACode = 'A';
+    public const char TeamBCode = 'B';
+    public const string SkinStarsCacheKey = "skin_stars";
+    public const string SkinAuthorRequestUrl = "https://github.com/altair-sossai/l4d2-zone-server-assets/issues/new";
+    public const string SkinMeleePrefix = "weapon_melee_";
+    public const string SteamIdPattern = @"^STEAM_\d:(\d):(\d+)$";
+    public const string Steam3Pattern = @"^\[?U:\d:(\d+)]?$";
+    public const string SteamCommunityIdPattern = @"^(\d{16,})$";
+    public const string SteamProfileUrlPattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
 }

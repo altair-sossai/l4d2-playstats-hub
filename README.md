@@ -98,6 +98,7 @@ The migration happens step by step. The old repositories are archived when it is
 | [plugins/README.md](plugins/README.md) | Every plugin, setting and command. |
 | [docs/roadmap.md](docs/roadmap.md) | Design, decisions, what is done and what is open. |
 | [docs/in-game-browser.md](docs/in-game-browser.md) | What the browser inside the game supports. |
+| [docs/site-parity](docs/site-parity/README.md) | Every screen of the site being replaced, item by item, and its status here. |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How the code is organised and the rules for changes. |
 
 English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.

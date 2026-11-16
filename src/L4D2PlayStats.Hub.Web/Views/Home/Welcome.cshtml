@@ -3,7 +3,7 @@
     var site = await Settings.GetAsync<SiteSettings>();
     ViewData["Title"] = site.Name;
 }
-<div class="py-5 text-center">
-    <h1 class="display-6">@site.Name</h1>
-    <p class="lead text-body-secondary">@L["Use the menu to see what is available on this site."]</p>
+<div class="jumbotron text-center" style="margin-top: 20px">
+    <h2>@site.Name</h2>
+    <p>@L["Use the menu to see what is available on this site."]</p>
 </div>

@@ -1,0 +1,26 @@
+@model SkeetEvent
+
+@{
+    var verb = Model.SkeetType switch
+    {
+        SkeetType.Melee => L["melee-skeeted"],
+        SkeetType.Sniper => L["headshot-skeeted"],
+        SkeetType.Grenade => L["grenade-skeeted"],
+        _ => L["skeeted"]
+    };
+}
+
+<span class="game-event-stars">@Model.StarsText()</span>
+
+@if (Model.IsTeamSkeet)
+{
+    @(Html.EventPlayer(Model.Hunter, L["a hunter"]))
+    <span class="game-event-action">@L["was team-skeeted"]</span>
+    <text>.</text>
+}
+else
+{
+    @(Html.EventPlayer(Model.Actor!))
+    <span class="game-event-action">@verb</span>
+    @(Html.EventPlayer(Model.Hunter, L["a hunter"]))<text>.</text>
+}

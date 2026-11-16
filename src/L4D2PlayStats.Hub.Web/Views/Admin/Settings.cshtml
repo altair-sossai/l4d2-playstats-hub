@@ -1,81 +1,196 @@
 @model SettingsViewModel
+@inject BrandingStore Branding
 @{
     ViewData["Title"] = L["Settings"].Value;
     var cultures = new Dictionary<string, string> { ["en-US"] = "English", ["pt-BR"] = "Português", ["es-ES"] = "Español" };
+    var logoTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
+    var logoMegabytes = AppConsts.LogoMaxBytes / AppConsts.LogoBytesPerMegabyte;
 }
-<h1 class="h3">@L["Settings"]</h1>
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+}
+
+<div class="admin-header">
+    <h3>@L["Settings"]</h3>
+</div>
+
 <partial name="_AdminNav"/>
 
-<form method="post" asp-antiforgery="true" action="/admin/settings" style="max-width: 760px;">
-    <div class="card mb-4">
-        <div class="card-header">@L["Site"]</div>
-        <div class="card-body">
-            <div class="mb-3">
-                <label class="form-label" for="Site_Name">@L["Site name"]</label>
-                <input class="form-control" id="Site_Name" name="Site.Name" value="@Model.Site.Name" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="Site_PublicUrl">@L["Public address of the site"]</label>
-                <input class="form-control" id="Site_PublicUrl" name="Site.PublicUrl" value="@Model.Site.PublicUrl" placeholder="https://stats.example.com">
-                <div class="form-text">@L["Shown in the instructions for the game server. Leave empty to use the address you are using now."]</div>
-            </div>
-            <div class="row g-3 mb-3">
-                <div class="col-sm-6">
-                    <label class="form-label" for="Site_DefaultCulture">@L["Default language"]</label>
-                    <select class="form-select" id="Site_DefaultCulture" name="Site.DefaultCulture">
-                        @foreach (var culture in cultures)
-                        {
-                            <option value="@culture.Key" selected="@(culture.Key == Model.Site.DefaultCulture)">@culture.Value</option>
-                        }
-                    </select>
+@if (TempData[AppConsts.SettingsProblemsTempData] is string[] problems)
+{
+    foreach (var problem in problems)
+    {
+        <div class="alert alert-danger">@L[problem]</div>
+    }
+}
+
+<form method="post" asp-antiforgery="true" action="/admin/settings" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Site"]</h3>
                 </div>
-                <div class="col-sm-6">
-                    <label class="form-label" for="Site_TimeZone">@L["Time zone"]</label>
-                    <input class="form-control" id="Site_TimeZone" name="Site.TimeZone" value="@Model.Site.TimeZone" list="timezones">
-                    <datalist id="timezones">
-                        @foreach (var zone in Model.TimeZones)
-                        {
-                            <option value="@zone"></option>
-                        }
-                    </datalist>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Site_Name">@L["Site name"]</label>
+                        <input class="form-control" id="Site_Name" name="Site.Name" value="@Model.Site.Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Site_PublicUrl">@L["Public address of the site"]</label>
+                        <input class="form-control" id="Site_PublicUrl" name="Site.PublicUrl" value="@Model.Site.PublicUrl" placeholder="@AppConsts.AdminPublicUrlPlaceholder">
+                        <span class="help-block">@L["Shown in the instructions for the game server. Leave empty to use the address you are using now."]</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Site_DefaultCulture">@L["Default language"]</label>
+                                <select class="form-control" id="Site_DefaultCulture" name="Site.DefaultCulture">
+                                    @foreach (var culture in cultures)
+                                    {
+                                        <option value="@culture.Key" selected="@(culture.Key == Model.Site.DefaultCulture)">@culture.Value</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Site_TimeZone">@L["Time zone"]</label>
+                                <input class="form-control" id="Site_TimeZone" name="Site.TimeZone" value="@Model.Site.TimeZone" list="timezones">
+                                <datalist id="timezones">
+                                    @foreach (var zone in Model.TimeZones)
+                                    {
+                                        <option value="@zone"></option>
+                                    }
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="Site_SteamApiKey">@L["Steam Web API key (optional)"]</label>
+                        <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" value="@Model.Site.SteamApiKey" autocomplete="off">
+                        <span class="help-block">@L["Optional. Player avatars load without it; with a key they load faster."]</span>
+                    </div>
                 </div>
             </div>
-            <div>
-                <label class="form-label" for="Site_SteamApiKey">@L["Steam Web API key (optional)"]</label>
-                <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" value="@Model.Site.SteamApiKey" autocomplete="off">
-                <div class="form-text">@L["Used to show player avatars."]</div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Appearance"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Logo">@L["Site logo"]</label>
+                        <div>
+                            @if (Branding.HasLogo)
+                            {
+                                <div class="navbar navbar-default settings-logo">
+                                    <img src="@AppConsts.LogoUrl?v=@Branding.LogoVersion" alt="@Model.Site.Name">
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">@L["No logo yet: the menu shows the site name."]</p>
+                            }
+                        </div>
+                        <input type="file" id="Logo" name="Logo" accept="@logoTypes">
+                        <span class="help-block">@L["PNG, JPG, WEBP or GIF, up to {0} MB. It appears in the menu, in place of the site name.", logoMegabytes]</span>
+                        @if (Branding.HasLogo)
+                        {
+                            <div class="checkbox">
+                                <label for="RemoveLogo">
+                                    <input type="checkbox" id="RemoveLogo" name="RemoveLogo" value="true">
+                                    @L["Remove the logo and show the site name"]
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="Site_FooterLinks">@L["Footer links"]</label>
+                        <textarea class="form-control admin-mono" id="Site_FooterLinks" name="Site.FooterLinks" rows="4" placeholder="@AppConsts.FooterLinkExample">@Model.Site.FooterLinks</textarea>
+                        <span class="help-block">@L["One link per line, as a text, a vertical bar and the address: {0}. Leave empty to show only the link to the project.", AppConsts.FooterLinkExample]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Site_MetaKeywords">@L["Keywords for search engines (optional)"]</label>
+                        <input class="form-control" id="Site_MetaKeywords" name="Site.MetaKeywords" value="@Model.Site.MetaKeywords" maxlength="@AppConsts.MetaKeywordsMaxLength">
+                        <span class="help-block">@L["Separated by commas. They go in the keywords tag of every page."]</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="Site_GoogleAnalyticsId">@L["Google Analytics ID (optional)"]</label>
+                        <input class="form-control" id="Site_GoogleAnalyticsId" name="Site.GoogleAnalyticsId" value="@Model.Site.GoogleAnalyticsId" placeholder="@AppConsts.GoogleAnalyticsIdPlaceholder" autocomplete="off">
+                        <span class="help-block">@L["With an ID, every page loads the Google Analytics script. Leave empty to load nothing."]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Seasons"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="Season_LengthInMonths">@L["Season length, in months"]</label>
+                        <input class="form-control" id="Season_LengthInMonths" name="Season.LengthInMonths" type="number" min="1" max="24" value="@Model.Season.LengthInMonths" style="max-width: 120px">
+                        <span class="help-block">@L["A change applies from the next season. Seasons that already exist keep their dates."]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Ranking points"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-4">
+                            <div class="form-group">
+                                <label for="Ranking_Win">@L["Win"]</label>
+                                <input class="form-control" id="Ranking_Win" name="Ranking.Win" type="number" value="@Model.Ranking.Win">
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-4">
+                            <div class="form-group">
+                                <label for="Ranking_Loss">@L["Loss"]</label>
+                                <input class="form-control" id="Ranking_Loss" name="Ranking.Loss" type="number" value="@Model.Ranking.Loss">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <div class="form-group">
+                                <label for="Ranking_RageQuit">@L["Rage quit"]</label>
+                                <input class="form-control" id="Ranking_RageQuit" name="Ranking.RageQuit" type="number" value="@Model.Ranking.RageQuit">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Ranking_Mvp">@L["MVP in special infected damage, per round"]</label>
+                        <input class="form-control" id="Ranking_Mvp" name="Ranking.Mvp" type="number" value="@Model.Ranking.Mvp">
+                    </div>
+                    <div class="form-group">
+                        <label for="Ranking_MvpCommon">@L["MVP in common infected, per round"]</label>
+                        <input class="form-control" id="Ranking_MvpCommon" name="Ranking.MvpCommon" type="number" value="@Model.Ranking.MvpCommon">
+                    </div>
+                    <div class="form-group">
+                        <label for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"]</label>
+                        <input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches">
+                    </div>
+                    <div class="checkbox">
+                        <label for="Ranking_IncludeUnknownCampaigns">
+                            <input type="checkbox" id="Ranking_IncludeUnknownCampaigns" name="Ranking.IncludeUnknownCampaigns" value="true" checked="@Model.Ranking.IncludeUnknownCampaigns">
+                            <input type="hidden" name="Ranking.IncludeUnknownCampaigns" value="false">
+                            @L["Keep matches played on maps that are not in the campaign list"]
+                        </label>
+                    </div>
+                    <span class="help-block" style="margin-bottom: 0">@L["Points apply to every season right away. The option about unknown maps applies to new matches, or to all of them after a reprocess."]</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header">@L["Seasons"]</div>
-        <div class="card-body">
-            <label class="form-label" for="Season_LengthInMonths">@L["Season length, in months"]</label>
-            <input class="form-control" id="Season_LengthInMonths" name="Season.LengthInMonths" type="number" min="1" max="24" value="@Model.Season.LengthInMonths" style="max-width: 10rem;">
-            <div class="form-text">@L["A change applies from the next season. Seasons that already exist keep their dates."]</div>
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header">@L["Ranking points"]</div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_Win">@L["Win"]</label><input class="form-control" id="Ranking_Win" name="Ranking.Win" type="number" value="@Model.Ranking.Win"></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_Loss">@L["Loss"]</label><input class="form-control" id="Ranking_Loss" name="Ranking.Loss" type="number" value="@Model.Ranking.Loss"></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_RageQuit">@L["Rage quit"]</label><input class="form-control" id="Ranking_RageQuit" name="Ranking.RageQuit" type="number" value="@Model.Ranking.RageQuit"></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_Mvp">@L["MVP in special infected damage, per round"]</label><input class="form-control" id="Ranking_Mvp" name="Ranking.Mvp" type="number" value="@Model.Ranking.Mvp"></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_MvpCommon">@L["MVP in common infected, per round"]</label><input class="form-control" id="Ranking_MvpCommon" name="Ranking.MvpCommon" type="number" value="@Model.Ranking.MvpCommon"></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"]</label><input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches"></div>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="Ranking_IncludeUnknownCampaigns" name="Ranking.IncludeUnknownCampaigns" value="true" checked="@Model.Ranking.IncludeUnknownCampaigns">
-                <input type="hidden" name="Ranking.IncludeUnknownCampaigns" value="false">
-                <label class="form-check-label" for="Ranking_IncludeUnknownCampaigns">@L["Keep matches played on maps that are not in the campaign list"]</label>
-            </div>
-            <div class="form-text">@L["Points apply to every season right away. The option about unknown maps applies to new matches, or to all of them after a reprocess."]</div>
-        </div>
-    </div>
-
-    <button class="btn btn-primary" type="submit">@L["Save"]</button>
+    <button class="btn btn-primary" type="submit">
+        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+    </button>
 </form>

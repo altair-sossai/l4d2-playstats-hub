@@ -123,7 +123,7 @@ The test game build closed by itself before the page reached these two groups, f
 
 **The approach taken:** two layers instead of holding the whole site to 2012.
 
-- The main site targets current browsers, with Bootstrap 5 and htmx.
+- The main site keeps the stack of the site it replaces: Bootstrap 3 and jQuery, which are known to work in game, with Chart.js and diffDOM.
 - Three pages for the game live under `/ingame`: the season ranking, the summary of the player who opened the panel, and the latest matches. They follow the rules above and are what the game plugin opens.
 
 The pages available in game exist twice, so that set stays small. A test fails if one of them starts using something this browser lacks. The [roadmap](roadmap.md#front-end) has the rest of the front-end decisions.

@@ -15,6 +15,7 @@ public class HubPaths
     public string DataDirectory { get; }
 
     public string Avatars => Path.Combine(DataDirectory, AppConsts.AvatarFolder);
+    public string Branding => Path.Combine(DataDirectory, AppConsts.BrandingFolder);
 
     public string Keys => Path.Combine(DataDirectory, AppConsts.KeysFolder);
 

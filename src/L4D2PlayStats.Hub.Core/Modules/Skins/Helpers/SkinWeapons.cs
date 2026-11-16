@@ -21,6 +21,8 @@ public static class SkinWeapons
         ("weapon_melee_frying_pan", "Frying Pan")
     ];
 
+    public static IReadOnlyList<string> All { get; } = [.. Known.Select(item => item.Weapon)];
+
     public static string Name(string weapon)
     {
         var known = Known.FirstOrDefault(item => item.Weapon == weapon);
@@ -33,6 +35,11 @@ public static class SkinWeapons
         var index = Array.FindIndex(Known, item => item.Weapon == weapon);
 
         return index < 0 ? Known.Length : index;
+    }
+
+    public static bool IsMelee(string weapon)
+    {
+        return weapon.StartsWith(AppConsts.SkinMeleePrefix, StringComparison.Ordinal);
     }
 
     public static List<string> Sort(IEnumerable<string> weapons)

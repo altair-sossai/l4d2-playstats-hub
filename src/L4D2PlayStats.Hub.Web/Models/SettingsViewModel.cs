@@ -8,4 +8,6 @@ public class SettingsViewModel
     public SeasonSettings Season { get; set; } = new();
     public RankingSettings Ranking { get; set; } = new();
     public IReadOnlyList<string> TimeZones { get; set; } = [];
+    public IFormFile? Logo { get; set; }
+    public bool RemoveLogo { get; set; }
 }

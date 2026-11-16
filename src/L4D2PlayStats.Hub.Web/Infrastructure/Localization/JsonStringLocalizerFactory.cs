@@ -38,12 +38,19 @@ public class JsonStringLocalizerFactory(IWebHostEnvironment environment) : IStri
     {
         return _cultures.GetOrAdd(culture, name =>
         {
-            var path = Path.Combine(environment.ContentRootPath, AppConsts.ResourcesFolder, $"{name}.json");
+            var folder = Path.Combine(environment.ContentRootPath, AppConsts.ResourcesFolder);
+            var texts = new Dictionary<string, string>();
 
-            if (!File.Exists(path))
-                return new Dictionary<string, string>();
+            if (!Directory.Exists(folder))
+                return texts;
 
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path)) ?? [];
+            var files = Directory.EnumerateFiles(folder, $"{name}.json").Concat(Directory.EnumerateFiles(folder, $"{name}.*.json").Order());
+
+            foreach (var file in files)
+                foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
+                    texts[pair.Key] = pair.Value;
+
+            return texts;
         });
     }
 }

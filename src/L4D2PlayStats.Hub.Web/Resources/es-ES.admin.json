@@ -1,0 +1,20 @@
+{
+  "Appearance": "Apariencia",
+  "Site logo": "Logo del sitio",
+  "Site logo (optional)": "Logo del sitio (opcional)",
+  "No logo yet: the menu shows the site name.": "Todavía sin logo: el menú muestra el nombre del sitio.",
+  "PNG, JPG, WEBP or GIF, up to {0} MB. It appears in the menu, in place of the site name.": "PNG, JPG, WEBP o GIF, de hasta {0} MB. Aparece en el menú, en lugar del nombre del sitio.",
+  "Remove the logo and show the site name": "Quitar el logo y mostrar el nombre del sitio",
+  "Footer links": "Enlaces del pie de página",
+  "One link per line, as a text, a vertical bar and the address: {0}. Leave empty to show only the link to the project.": "Un enlace por línea, con el texto, una barra vertical y la dirección: {0}. Déjalo vacío para mostrar solo el enlace del proyecto.",
+  "Keywords for search engines (optional)": "Palabras clave para buscadores (opcional)",
+  "Separated by commas. They go in the keywords tag of every page.": "Separadas por comas. Van en la etiqueta de palabras clave de todas las páginas.",
+  "Google Analytics ID (optional)": "ID de Google Analytics (opcional)",
+  "With an ID, every page loads the Google Analytics script. Leave empty to load nothing.": "Con un ID, todas las páginas cargan el script de Google Analytics. Déjalo vacío para no cargar nada.",
+  "Shows the Anti-Cheat page with the download and instructions. The Anti-Cheat itself is a separate program.": "Muestra la página del Anti-Cheat, con la descarga y las instrucciones. El Anti-Cheat en sí es un programa aparte.",
+  "The logo was not changed: it must be a PNG, JPG, WEBP or GIF image.": "El logo no se cambió: tiene que ser una imagen PNG, JPG, WEBP o GIF.",
+  "The logo was not changed: the file is too large.": "El logo no se cambió: el archivo es demasiado grande.",
+  "The Google Analytics ID was not changed: it can only have letters, digits and hyphens.": "El ID de Google Analytics no se cambió: solo puede tener letras, números y guiones.",
+  "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.": "Algunos enlaces del pie de página quedaron fuera: cada línea debe tener un texto, una barra vertical y una dirección que empiece con http:// o https://.",
+  "Optional. Player avatars load without it; with a key they load faster.": "Opcional. Los avatares de los jugadores se cargan sin ella; con la clave, se cargan más rápido."
+}

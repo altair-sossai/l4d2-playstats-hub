@@ -1,171 +1,685 @@
-@using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers
-@using L4D2PlayStats.Hub.Web.Helpers
-@using L4D2PlayStats.Hub.Web.Models.Skins
-@model SkinPurchasesViewModel
+@model SkinPurchasesAdminModel
+
 @{
-    ViewData["Title"] = L["Skins"].Value;
-
+    ViewData["Title"] = L["Skin purchases"].Value;
     var culture = CultureInfo.CurrentUICulture;
-
-    string Link(int page)
-    {
-        return AppConsts.SkinAdminUrl + SkinDisplay.Query(("q", Model.Query), ("page", page));
-    }
-}
-<link rel="stylesheet" href="~/css/skins.css" asp-append-version="true">
-<h1 class="h3">@L["Skins"]</h1>
-<partial name="_AdminNav"/>
-<partial name="_SkinsAdminNav"/>
-
-@if (TempData[AppConsts.SkinRefundTempData] is string refund)
-{
-    <div class="alert alert-success">@L["Refunded {0} purchases and {1} gifts: {2} stars went back to {3} players.", SkinDisplay.Arguments(refund)]</div>
+    var pagination = PaginationModel.Of(Model.Purchases, number => Url.Action("Purchases", "SkinsAdmin", new { q = Model.Query, player = Model.Player, page = number })!);
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="small text-body-secondary">@L["Purchases"]</div>
-                <div class="fs-4 fw-bold">@Display.Number(Model.Purchases)</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="small text-body-secondary">@L["Gifts"]</div>
-                <div class="fs-4 fw-bold">@Display.Number(Model.Gifts)</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="small text-body-secondary">@L["Stars spent"]</div>
-                <div class="fs-4 fw-bold">@Display.Number(Model.Stars)</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="small text-body-secondary">@L["Players with skins"]</div>
-                <div class="fs-4 fw-bold">@Display.Number(Model.Players)</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card mb-4" style="max-width: 760px;">
-    <div class="card-header">@L["Give a skin to a player"]</div>
-    <div class="card-body">
-        @if (Model.Skins.Count == 0)
-        {
-            <div class="text-body-secondary">@L["Import the catalog before giving skins."]</div>
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    <style>
+        .ska-filter-player {
+            display: inline-flex;
+            align-items: center;
+            max-width: 100%;
+            padding: 4px 6px 4px 4px;
+            border: 1px solid rgba(128, 128, 128, .35);
+            border-radius: 20px;
+            background: rgba(128, 128, 128, .08);
         }
-        else
-        {
-            <form class="row g-3 align-items-end" method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/gift">
-                <div class="col-md-4">
-                    <label class="form-label" for="communityId">SteamID64</label>
-                    <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="7656119...">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="skinId">@L["Skin"]</label>
-                    <select class="form-select" id="skinId" name="skinId" required>
-                        @foreach (var weapon in Model.Skins.GroupBy(skin => skin.Weapon))
-                        {
-                            <optgroup label="@L[SkinWeapons.Name(weapon.Key)]">
-                                @foreach (var skin in weapon)
-                                {
-                                    <option value="@skin.Id">@skin.Title(culture)</option>
-                                }
-                            </optgroup>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary w-100" type="submit">@L["Give"]</button>
-                </div>
-            </form>
-            <div class="form-text">@L["A gift costs no stars, is equipped right away and is kept when a season ends."]</div>
-        }
-    </div>
-</div>
 
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-    <form class="d-flex gap-2" method="get" action="@AppConsts.SkinAdminUrl">
-        <input class="form-control form-control-sm" name="q" value="@Model.Query" placeholder="@L["Player, SteamID64 or skin"]" aria-label="@L["Search"]">
-        <button class="btn btn-sm btn-outline-light" type="submit">@L["Search"]</button>
-    </form>
-    <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/refund-all" onsubmit="return confirm('@L["Refund every purchase and remove every gift from every player?"]')">
-        <button class="btn btn-sm btn-outline-danger" type="submit" disabled="@(Model.Purchases + Model.Gifts == 0)">@L["Refund all"]</button>
-    </form>
-</div>
-
-@if (Model.Rows.Total == 0)
-{
-    <div class="alert alert-secondary">@L["No purchases found."]</div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th>@L["Player"]</th>
-                <th>@L["Skin"]</th>
-                <th class="numeric">@L["Price"]</th>
-                <th>@L["Date"]</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var row in Model.Rows.Items)
-            {
-                <tr>
-                    <td>
-                        <a class="text-decoration-none d-flex align-items-center gap-2" href="@SteamIds.ProfileUrl(row.Purchase.CommunityId)" rel="noopener" target="_blank">
-                            <img class="avatar" src="/avatar/@row.Purchase.CommunityId" alt="" loading="lazy">@row.PlayerName
-                        </a>
-                    </td>
-                    <td>
-                        @row.SkinTitle(culture)
-                        <div class="small text-body-secondary"><code>@row.Purchase.SkinId</code></div>
-                    </td>
-                    <td class="numeric">
-                        @if (row.Purchase.Gift)
-                        {
-                            <span class="badge text-bg-info" title="@row.GiftedByName">@L["Gift"]</span>
-                        }
-                        else
-                        {
-                            <span class="skin-stars">★ @row.Purchase.Price</span>
-                        }
-                    </td>
-                    <td>@row.Purchase.PurchasedAtUtc.ToString("g")</td>
-                    <td class="text-end">
-                        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinAdminUrl/refund" onsubmit="return confirm('@L["Take this skin from the player and give the stars back?"]')">
-                            <input type="hidden" name="communityId" value="@row.Purchase.CommunityId">
-                            <input type="hidden" name="skinId" value="@row.Purchase.SkinId">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">@L["Refund"]</button>
-                        </form>
-                    </td>
-                </tr>
+            .ska-filter-player img {
+                width: 26px;
+                height: 26px;
+                margin-right: 8px;
+                border-radius: 50%;
             }
-            </tbody>
-        </table>
-    </div>
 
-    @if (Model.Rows.Pages > 1)
+            .ska-filter-player span {
+                overflow: hidden;
+                margin-right: 6px;
+                font-weight: bold;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .ska-filter-player a {
+                padding: 0 6px;
+                color: inherit;
+                opacity: .6;
+            }
+
+                .ska-filter-player a:hover {
+                    text-decoration: none;
+                    opacity: 1;
+                }
+
+        #ska-purchase-modal .modal-body {
+            padding: 0;
+        }
+
+        .ska-hero {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(var(--ska-rarity-rgb, 128, 128, 128), .22), rgba(var(--ska-rarity-rgb, 128, 128, 128), .04) 70%);
+            border-bottom: 1px solid rgba(128, 128, 128, .2);
+        }
+
+        .ska-cover {
+            position: relative;
+            display: block;
+            width: 132px;
+            height: 132px;
+            margin-right: 18px;
+            border: 2px solid rgb(var(--ska-rarity-rgb, 128, 128, 128));
+            border-radius: 8px;
+            overflow: hidden;
+            background: #111;
+            flex: 0 0 auto;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+        }
+
+            .ska-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform .2s ease;
+            }
+
+            .ska-cover .ska-cover-hint {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                padding: 6px;
+                color: #fff;
+                font-size: 12px;
+                text-align: center;
+                background: rgba(0, 0, 0, .7);
+                opacity: 0;
+                transition: opacity .2s ease;
+            }
+
+            .ska-cover:hover img {
+                transform: scale(1.06);
+            }
+
+            .ska-cover:hover .ska-cover-hint {
+                opacity: 1;
+            }
+
+        .ska-hero-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+            .ska-hero-info h4 {
+                margin: 6px 0 4px;
+                font-size: 19px;
+                font-weight: bold;
+                line-height: 1.25;
+            }
+
+                .ska-hero-info h4 a {
+                    color: inherit;
+                }
+
+            .ska-hero-info .ska-weapon {
+                margin-bottom: 10px;
+                opacity: .7;
+            }
+
+        .ska-rarity {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: rgb(var(--ska-rarity-rgb, 128, 128, 128));
+        }
+
+        .ska-section {
+            padding: 16px 18px 0;
+        }
+
+        .ska-player {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-radius: 8px;
+            background: rgba(128, 128, 128, .06);
+        }
+
+            .ska-player img {
+                width: 44px;
+                height: 44px;
+                margin-right: 12px;
+                border-radius: 50%;
+                flex: 0 0 auto;
+            }
+
+            .ska-player .ska-player-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .ska-player strong,
+            .ska-player small {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .ska-player small {
+                opacity: .7;
+            }
+
+            .ska-player .btn {
+                margin-left: 6px;
+                flex: 0 0 auto;
+            }
+
+        .ska-facts {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 12px -5px 0;
+        }
+
+            .ska-facts > div {
+                flex: 1 1 140px;
+                margin: 0 5px 10px;
+                padding: 10px 12px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                border-radius: 8px;
+            }
+
+            .ska-facts small {
+                display: block;
+                margin-bottom: 2px;
+                font-size: 11px;
+                text-transform: uppercase;
+                opacity: .65;
+            }
+
+            .ska-facts strong {
+                font-size: 16px;
+                white-space: nowrap;
+            }
+
+            .ska-facts .ska-balance-after {
+                font-weight: normal;
+                opacity: .65;
+            }
+
+        @@media screen and (min-width: 768px) {
+            #ska-purchase-modal .modal-dialog {
+                width: 660px;
+            }
+        }
+
+        .ska-feedback {
+            padding: 0 18px 2px;
+        }
+
+            .ska-feedback .alert {
+                margin: 6px 0 12px;
+            }
+
+        .ska-rarity-legendary {
+            --ska-rarity-rgb: 240, 173, 78;
+        }
+
+        .ska-rarity-epic {
+            --ska-rarity-rgb: 176, 106, 224;
+        }
+
+        .ska-rarity-rare {
+            --ska-rarity-rgb: 77, 157, 224;
+        }
+
+        .ska-rarity-uncommon {
+            --ska-rarity-rgb: 92, 184, 92;
+        }
+
+        .ska-rarity-common {
+            --ska-rarity-rgb: 158, 158, 158;
+        }
+
+        @@media screen and (max-width: 480px) {
+            .ska-hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .ska-cover {
+                margin: 0 0 12px;
+            }
+        }
+    </style>
+}
+
+@Html.AntiForgeryToken()
+
+@await Html.PartialAsync("_SkinsAdminNav")
+
+<div class="admin-header">
+    <h3>@L["Skin purchases"]</h3>
+    @if (Model.TotalPurchases + Model.TotalGifts > 0)
     {
-        <nav aria-label="@L["Pages"]">
-            <ul class="pagination justify-content-center">
-                <li class="page-item @(Model.Rows.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Rows.Page - 1)">@L["Previous"]</a></li>
-                <li class="page-item disabled"><span class="page-link">@Model.Rows.Page / @Model.Rows.Pages</span></li>
-                <li class="page-item @(Model.Rows.Page >= Model.Rows.Pages ? "disabled" : "")"><a class="page-link" href="@Link(Model.Rows.Page + 1)">@L["Next"]</a></li>
-            </ul>
-        </nav>
+        <button type="button" class="btn btn-danger ska-refund-all-open">
+            <span class="glyphicon glyphicon-repeat"></span> @L["Refund everything"]
+        </button>
     }
+    <button type="button" class="btn btn-success" onclick="GiftModal.open()">
+        <span class="glyphicon glyphicon-gift"></span> @L["Give a skin"]
+    </button>
+</div>
+
+<div class="admin-stats">
+    <div>
+        <strong>@Model.TotalPurchases.ToString("N0", culture)</strong>
+        <small>@L["purchases"]</small>
+    </div>
+    <div>
+        <strong>@Model.TotalStars.ToString("N0", culture) ⭐</strong>
+        <small>@L["stars spent"]</small>
+    </div>
+    <div>
+        <strong>@Model.TotalGifts.ToString("N0", culture)</strong>
+        <small>@L["gifts given"]</small>
+    </div>
+</div>
+
+@if (Model.Season.Refunds)
+{
+    <div class="alert alert-info">
+        <span class="glyphicon glyphicon-calendar"></span>
+        @string.Format(L["At the end of the ranking season ({0}), purchases are refunded automatically and the stars go back to the players; gifts stay with them forever."].Value, Model.Season.LastDay.ToString("d", culture))
+    </div>
+}
+
+<form method="get" class="admin-filters">
+    <input type="hidden" name="player" value="@Model.Player"/>
+    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by player, Steam ID or skin..."]"/>
+    <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span> @L["Search"]
+    </button>
+    @if (Model.Player == null)
+    {
+        <button type="button" class="btn btn-default ska-pick-player">
+            <span class="glyphicon glyphicon-user"></span> @L["Filter by player"]
+        </button>
+    }
+    else
+    {
+        <div class="ska-filter-player" title="@Model.Player">
+            <img src="/avatar/@Model.Player" alt="@Model.PlayerName" onerror="imgOnError(this)"/>
+            <span>@Model.PlayerName</span>
+            <a href="#" class="ska-pick-player" title="@L["Change player"]">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="@Url.Action("Purchases", "SkinsAdmin", new { q = Model.Query })" title="@L["Show every player"]">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Query) || Model.Player != null)
+    {
+        <a class="btn btn-link" href="@Url.Action("Purchases", "SkinsAdmin")">@L["Clear filters"]</a>
+    }
+</form>
+
+<div class="admin-list">
+    @if (Model.Purchases.Items.Count == 0)
+    {
+        <div class="admin-empty">@L["No purchases found."]</div>
+    }
+    @foreach (var row in Model.Purchases.Items)
+    {
+        var purchase = row.Purchase;
+        var title = row.SkinTitle(culture);
+        var image = row.Skin == null ? AppConsts.SkinEmptyImage : SkinDisplay.Image(Model.AssetsUrl, row.Skin);
+        var weapon = row.Skin == null ? string.Empty : L[SkinWeapons.Name(row.Skin.Weapon)].Value;
+        var date = row.Date.ToString(AppConsts.SkinPurchaseDateFormat, culture);
+        var price = purchase.Gift ? L["Gift"].Value : $"{purchase.Price.ToString("N0", culture)} ⭐";
+        var rarity = row.Skin == null ? null : SkinDisplay.RarityKey(row.Skin.Rarity);
+        var shopUrl = row.Skin is { Available: true } ? $"{Url.Action("Index", "Skins")}#{SkinDisplay.Anchor(row.Skin)}" : string.Empty;
+
+        <div class="admin-item ska-purchase"
+             data-player="@row.CommunityId" data-player-name="@row.PlayerName" data-avatar="/avatar/@row.CommunityId"
+             data-skin="@purchase.SkinId" data-title="@title" data-image="@image" data-weapon="@weapon"
+             data-shop-url="@shopUrl"
+             data-rarity="@(rarity == null ? "" : L[rarity].Value)" data-rarity-css="@(row.Skin == null ? "" : SkinDisplay.PurchaseCss(row.Skin.Rarity))"
+             data-price="@price" data-date="@date" data-gift="@(purchase.Gift ? 1 : 0)" data-gifted-by="@row.GiftedByName"
+             data-stars-before="@(purchase.Gift ? "" : purchase.StarsBefore.ToString("N0", culture))"
+             data-stars-after="@(purchase.Gift ? "" : (purchase.StarsBefore - purchase.Price).ToString("N0", culture))">
+            <img class="admin-thumb" src="@image" alt="@title" loading="lazy"/>
+            <div class="admin-main">
+                <div class="admin-title">@title</div>
+                <small>@weapon · @purchase.SkinId</small>
+            </div>
+            <div class="admin-player">
+                <img class="admin-avatar" src="/avatar/@row.CommunityId" alt="@row.PlayerName" onerror="imgOnError(this)"/>
+                <div class="admin-main">
+                    <div class="admin-title">@row.PlayerName</div>
+                    <small>@row.CommunityId</small>
+                </div>
+            </div>
+            <div class="admin-side">
+                @if (purchase.Gift)
+                {
+                    <span class="label label-success">@L["Gift"]</span>
+                    @if (!string.IsNullOrEmpty(row.GiftedByName))
+                    {
+                        <small>@string.Format(L["by {0}"].Value, row.GiftedByName)</small>
+                    }
+                }
+                else
+                {
+                    <strong>@price</strong>
+                }
+                <small>@date</small>
+            </div>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_Pagination", pagination)
+
+<div id="ska-purchase-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["Purchase details"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="ska-hero">
+                    <a class="ska-cover ska-shop-link" href="#" target="_blank" rel="noopener">
+                        <img class="ska-image" src="" alt=""/>
+                        <span class="ska-cover-hint">
+                            <span class="glyphicon glyphicon-new-window"></span> @L["View in the shop"]
+                        </span>
+                    </a>
+                    <div class="ska-hero-info">
+                        <span class="ska-rarity"></span>
+                        <span class="label label-success ska-gift-badge">
+                            <span class="glyphicon glyphicon-gift"></span> @L["Gift"]
+                        </span>
+                        <h4>
+                            <a class="ska-title ska-shop-link" href="#" target="_blank" rel="noopener"></a>
+                        </h4>
+                        <div class="ska-weapon"></div>
+                        <a class="btn btn-default btn-sm ska-shop-link" href="#" target="_blank" rel="noopener">
+                            <span class="glyphicon glyphicon-new-window"></span> @L["View in the shop"]
+                        </a>
+                    </div>
+                </div>
+                <div class="ska-section">
+                    <div class="ska-player">
+                        <img class="ska-avatar" src="" alt="" onerror="imgOnError(this)"/>
+                        <div class="ska-player-info">
+                            <strong class="ska-player-name"></strong>
+                            <small class="ska-player-id"></small>
+                        </div>
+                        <a class="btn btn-default btn-sm ska-player-filter" href="#" title="@L["Show only this player's purchases"]">
+                            <span class="glyphicon glyphicon-filter"></span>
+                        </a>
+                        <a class="btn btn-default btn-sm ska-player-link" href="#" target="_blank" rel="noopener" title="@L["Open the player's profile"]">
+                            <span class="glyphicon glyphicon-user"></span>
+                        </a>
+                    </div>
+                    <div class="ska-facts">
+                        <div>
+                            <small>@L["Price"]</small>
+                            <strong class="ska-price"></strong>
+                        </div>
+                        <div class="ska-stars-before-box">
+                            <small title="@L["Balance before → after the purchase"]">@L["Balance"]</small>
+                            <strong>
+                                <span class="ska-stars-before"></span> <span class="ska-balance-after"></span>
+                            </strong>
+                        </div>
+                        <div class="ska-gifted-by-box">
+                            <small>@L["Gift given by"]</small>
+                            <strong class="ska-gifted-by"></strong>
+                        </div>
+                        <div>
+                            <small>@L["Date"]</small>
+                            <strong class="ska-date"></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="ska-feedback">
+                    <div class="alert alert-warning admin-confirm ska-refund-confirm"></div>
+                    <div class="ska-message"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                <button type="button" class="btn btn-danger ska-refund">
+                    <span class="glyphicon glyphicon-repeat"></span> @L["Refund purchase"]
+                </button>
+                <button type="button" class="btn btn-danger ska-refund-yes" style="display: none">@L["Confirm refund"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ska-refund-all-modal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ska-refund-all-close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["Refund all purchases"]</h4>
+            </div>
+            <div class="modal-body">
+                <p>@string.Format(L["This refunds, one by one, the {0} purchases and {1} gifts of every player. The {2} stars spent go back to the players, every skin leaves their accounts and weapons go back to the default skin."].Value, Model.TotalPurchases.ToString("N0", culture), Model.TotalGifts.ToString("N0", culture), Model.TotalStars.ToString("N0", culture))</p>
+                <div class="alert alert-warning">@L["This cannot be undone. Use it, for example, after recalculating prices. Players' stars do not change: only what was spent is returned."]</div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" class="ska-refund-all-check"/> @L["I understand that every purchase and every gift of every player will be refunded."]
+                    </label>
+                </div>
+                <div class="ska-refund-all-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default ska-refund-all-close" data-dismiss="modal">@L["Close"]</button>
+                <button type="button" class="btn btn-danger ska-refund-all-yes" disabled>
+                    <span class="glyphicon glyphicon-repeat"></span> <span class="ska-refund-all-label">@L["Refund everything"]</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_GiftModal", Model.Skins)
+
+@section Scripts {
+    <script>
+        $(function () {
+            var texts = {
+                confirmRefund: @Json.Serialize(L["Refund {0} from {1}? The stars paid go back to the player, the skin is removed from their account and, if it was equipped, the weapon goes back to the default skin."].Value),
+                refundDone: @Json.Serialize(L["Purchase refunded. Reloading..."].Value),
+                refundAllDone: @Json.Serialize(L["{0} purchases and {1} gifts refunded. {2} stars returned to {3} players."].Value),
+                refundAllFailed: @Json.Serialize(L["{0} items could not be refunded; try again to refund what is left."].Value),
+                refundAllRunning: @Json.Serialize(L["Refunding..."].Value),
+                confirmRefundAll: @Json.Serialize(L["Refund everything"].Value),                errors: {
+                    NotOwned: @Json.Serialize(L["The player no longer owns this skin."].Value),
+                    Busy: @Json.Serialize(L["Too many operations at the same time. Try again."].Value),
+                    Generic: @Json.Serialize(L["Something went wrong. Reload the page and check before trying again."].Value)
+                }
+            };
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var purchasesUrl = @Json.Serialize(Url.Action("Purchases", "SkinsAdmin"));
+            var query = @Json.Serialize(Model.Query ?? string.Empty);
+            var rarityClasses = 'ska-rarity-legendary ska-rarity-epic ska-rarity-rare ska-rarity-uncommon ska-rarity-common';
+            var selected = null;
+
+            function playerUrl(communityId) {
+                return purchasesUrl + '?' + $.param(query === '' ? { player: communityId } : { player: communityId, q: query });
+            }
+
+            function format(template) {
+                var args = Array.prototype.slice.call(arguments, 1);
+
+                return template.replace(/\{(\d+)\}/g, function (match, index) {
+                    return args[index];
+                });
+            }
+
+            function escapeHtml(text) {
+                return $('<div/>').text(text == null ? '' : text).html();
+            }
+
+            function message($target, success, text) {
+                $target.html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + escapeHtml(text) + '</div>');
+            }
+
+            function post(url, data) {
+                return $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': token },
+                    data: JSON.stringify(data)
+                });
+            }
+
+            function errorText(xhr, response) {
+                return texts.errors[response && response.status] || texts.errors.Generic;
+            }
+
+            $('.ska-purchase').on('click', function () {
+                var $item = $(this);
+                var $modal = $('#ska-purchase-modal');
+                var gift = $item.data('gift') === 1;
+
+                selected = { player: $item.data('player').toString(), name: $item.data('player-name'), skin: $item.data('skin'), title: $item.data('title') };
+
+                var shopUrl = $item.data('shop-url');
+                var rarity = $item.data('rarity');
+
+                $modal.find('.modal-content').removeClass(rarityClasses).addClass($item.data('rarity-css'));
+                $modal.find('.ska-image').attr({ src: $item.data('image'), alt: $item.data('title') });
+                $modal.find('.ska-title').text($item.data('title'));
+                $modal.find('.ska-shop-link').attr('href', shopUrl || '#').toggleClass('disabled', !shopUrl);
+                $modal.find('.btn.ska-shop-link').toggle(!!shopUrl);
+                $modal.find('.ska-cover-hint').toggle(!!shopUrl);
+                $modal.find('.ska-rarity').text(rarity).toggle(!!rarity);
+                $modal.find('.ska-gift-badge').toggle(gift);
+                $modal.find('.ska-weapon').text([$item.data('weapon'), $item.data('skin')].filter(Boolean).join(' · '));
+                $modal.find('.ska-avatar').attr({ src: $item.data('avatar'), alt: $item.data('player-name') });
+                $modal.find('.ska-player-name').text($item.data('player-name'));
+                $modal.find('.ska-player-link').attr('href', '/player/' + encodeURIComponent(selected.player));
+                $modal.find('.ska-player-filter').attr('href', playerUrl(selected.player));
+                $modal.find('.ska-player-id').text(selected.player);
+                $modal.find('.ska-price').text($item.data('price'));
+                $modal.find('.ska-stars-before').text($item.data('stars-before') + ' ⭐');
+                $modal.find('.ska-balance-after').text('→ ' + $item.data('stars-after') + ' ⭐');
+                $modal.find('.ska-stars-before-box').toggle(!gift);
+                $modal.find('.ska-gifted-by').text($item.data('gifted-by'));
+                $modal.find('.ska-gifted-by-box').toggle(gift && !!$item.data('gifted-by'));
+                $modal.find('.ska-date').text($item.data('date'));
+                $modal.find('.ska-refund-confirm').hide().text('');
+                $modal.find('.ska-message').empty();
+                $modal.find('.ska-refund').show().prop('disabled', false);
+                $modal.find('.ska-refund-yes').hide().prop('disabled', false);
+                $modal.modal('show');
+            });
+
+            $('.ska-shop-link').on('click', function (event) {
+                if ($(this).hasClass('disabled'))
+                    event.preventDefault();
+            });
+
+            $('.ska-pick-player').on('click', function (event) {
+                event.preventDefault();
+
+                PlayerPicker.open(function (player) {
+                    if (player)
+                        location.href = playerUrl(player.communityId);
+                });
+            });
+
+            $('.ska-refund').on('click', function () {
+                var $modal = $('#ska-purchase-modal');
+
+                $modal.find('.ska-refund-confirm').text(format(texts.confirmRefund, selected.title, selected.name)).show();
+                $(this).hide();
+                $modal.find('.ska-refund-yes').show();
+            });
+
+            $('.ska-refund-yes').on('click', function () {
+                var $button = $(this);
+                var $message = $('#ska-purchase-modal .ska-message');
+
+                $button.prop('disabled', true);
+
+                post('/api/shop/refund', { communityId: selected.player, skinId: selected.skin }).done(function (response) {
+                    if (!response.succeeded) {
+                        message($message, false, errorText(null, response));
+                        $button.prop('disabled', false);
+                        return;
+                    }
+
+                    message($message, true, texts.refundDone);
+                    setTimeout(function () { location.reload(); }, 1200);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+
+            function number(value) {
+                return value.toLocaleString(document.documentElement.lang || undefined);
+            }
+
+            function resetRefundAll($modal) {
+                $modal.find('.ska-refund-all-check, .ska-refund-all-close').prop('disabled', false);
+                $modal.find('.ska-refund-all-label').text(texts.confirmRefundAll);
+                $modal.find('.ska-refund-all-yes').prop('disabled', !$modal.find('.ska-refund-all-check').prop('checked'));
+            }
+
+            $('.ska-refund-all-open').on('click', function () {
+                var $modal = $('#ska-refund-all-modal');
+
+                $modal.find('.ska-refund-all-check').prop('checked', false);
+                $modal.find('.ska-refund-all-message').empty();
+                resetRefundAll($modal);
+                $modal.modal('show');
+            });
+
+            $('.ska-refund-all-check').on('change', function () {
+                $('#ska-refund-all-modal .ska-refund-all-yes').prop('disabled', !this.checked);
+            });
+
+            $('.ska-refund-all-yes').on('click', function () {
+                var $modal = $('#ska-refund-all-modal');
+                var $message = $modal.find('.ska-refund-all-message');
+
+                $modal.find('.ska-refund-all-yes, .ska-refund-all-check, .ska-refund-all-close').prop('disabled', true);
+                $modal.find('.ska-refund-all-label').text(texts.refundAllRunning);
+                $message.empty();
+
+                post('/api/shop/refund-all', {}).done(function (response) {
+                    var summary = format(texts.refundAllDone, number(response.purchases), number(response.gifts), number(response.stars), number(response.players));
+
+                    if (response.failed > 0) {
+                        message($message, false, summary + ' ' + format(texts.refundAllFailed, number(response.failed)));
+                        resetRefundAll($modal);
+                        $modal.one('hidden.bs.modal', function () { location.reload(); });
+                        return;
+                    }
+
+                    message($message, true, summary);
+                    setTimeout(function () { location.reload(); }, 2500);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    resetRefundAll($modal);
+                });
+            });
+        });
+    </script>
 }

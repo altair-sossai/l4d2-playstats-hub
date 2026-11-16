@@ -7,4 +7,7 @@ public class SiteSettings
     public string DefaultCulture { get; set; } = AppConsts.DefaultCulture;
     public string? PublicUrl { get; set; }
     public string? SteamApiKey { get; set; }
+    public string? GoogleAnalyticsId { get; set; }
+    public string? FooterLinks { get; set; }
+    public string? MetaKeywords { get; set; }
 }

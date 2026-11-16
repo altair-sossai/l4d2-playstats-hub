@@ -24,4 +24,20 @@ public class Match
     public bool CountsForRanking { get; set; }
     public List<MatchPlayer> Players { get; set; } = [];
     public List<StatisticsFile> Files { get; set; } = [];
+
+    public void Replace(Match other)
+    {
+        Campaign = other.Campaign;
+        ConfigurationName = other.ConfigurationName;
+        TeamSize = other.TeamSize;
+        FirstFileDate = other.FirstFileDate;
+        LastFileDate = other.LastFileDate;
+        StartedAtUtc = other.StartedAtUtc;
+        EndedAtUtc = other.EndedAtUtc;
+        TeamAScore = other.TeamAScore;
+        TeamBScore = other.TeamBScore;
+        MapCount = other.MapCount;
+        CountsForRanking = other.CountsForRanking;
+        Players = other.Players;
+    }
 }

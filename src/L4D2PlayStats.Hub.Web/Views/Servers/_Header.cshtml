@@ -1,133 +1,208 @@
 @model ServerCardViewModel
+
 @{
-    var snapshot = Model.Snapshot;
-    var configuration = snapshot.Configuration;
-    var round = snapshot.Round;
-    var scoreboard = snapshot.Scoreboard;
-    var progressPoints = scoreboard?.CurrentProgressPoints ?? 0;
-    var maxProgressPoints = round?.MaxChapterProgressPoints ?? 0;
+    var gameInfo = Model.Snapshot;
+    var configuration = gameInfo.Configuration;
+    var round = gameInfo.Round;
+    var scoreboard = gameInfo.Scoreboard;
+
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+    var copyIcon = light ? AppConsts.CopyIconLight : AppConsts.CopyIconDark;
 }
-<div id="live-header" class="card mb-4" hx-get="/servers/@Model.Server.PublicId/header" hx-trigger="every @(AppConsts.LiveRefreshInSeconds)s" hx-swap="outerHTML">
-    <div class="card-body">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-                <div class="fw-semibold">
-                    <span class="status-dot status-@(Model.Online ? "Online" : "Offline")"></span>@L[Model.Online ? "Online" : "Offline"]
-                    @if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
+
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        @{
+            var header = new List<string>();
+
+            if (!string.IsNullOrEmpty(Model.Name))
+                header.Add(Model.Name);
+
+            if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
+                header.Add(configuration.Name);
+
+            if (configuration is { TeamSize: > 0 })
+                header.Add($"{configuration.TeamSize}v{configuration.TeamSize}");
+        }
+
+        @string.Join(" - ", header)
+
+        @if (round?.AntiCheatStatus is { } antiCheatStatus)
+        {
+            var (antiCheatLabel, antiCheatText, antiCheatTooltip) = antiCheatStatus switch
+            {
+                AntiCheatStatus.Enabled => ("success", L["Anti-Cheat on"], L["Only players running a validated anti-cheat client can play"]),
+                AntiCheatStatus.ApiUnavailable => ("warning", L["Anti-Cheat API down"], L["The server cannot reach the anti-cheat API, so nobody is being blocked right now"]),
+                _ => ("default", L["Anti-Cheat off"], L["Anyone can play; the anti-cheat only records who is running it"])
+            };
+
+            <a href="@(Model.AntiCheatPage ? AppConsts.AntiCheatUrl : null)" style="margin-left: 5px; text-decoration: none">
+                <span class="label label-@antiCheatLabel" data-toggle="tooltip" data-placement="bottom" title="@antiCheatTooltip">
+                    <span class="glyphicon glyphicon-lock"></span>
+                    @antiCheatText
+                </span>
+            </a>
+        }
+    </div>
+
+    <table class="table table-condensed table-responsive">
+        <tbody>
+        <tr>
+            <th class="slim text-right text-nowrap" style="padding-left: 8px">
+                @L["Server IP"]
+                <button type="button" class="btn btn-link btn-xs" style="padding: 0" data-toggle="tooltip" data-placement="top"
+                        title="@L["Server info"]" onclick="$('#server-info-modal').modal('show')">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </button>:
+            </th>
+            <td data-label="@L["Server IP"]:">
+                @Model.ServerIp
+
+                @if (!string.IsNullOrEmpty(Model.ServerIp))
+                {
+                    <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
+                         data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
+                         onclick="copyTextToClipboard('connect @Model.ServerIp', this)"/>
+                }
+            </td>
+
+            <th class="slim text-right">@L["Players"]:</th>
+            <td data-label="@L["Players"]:">
+                @Model.Players.ToString("N0") / @Model.MaxPlayers.ToString("N0")
+            </td>
+
+            <th class="slim text-right">@L["Map"]:</th>
+            <td data-label="@L["Map"]:">
+                @{
+                    var map = new List<string>();
+                    var campaign = Model.Campaign;
+
+                    if (!string.IsNullOrEmpty(campaign))
+                        map.Add(campaign);
+
+                    if (!string.IsNullOrEmpty(Model.Map))
+                        map.Add(Model.Map);
+
+                    if (round != null)
+                        map.Add((round.InSecondHalfOfRound ? L["2nd round"] : L["1st round"]).Value);
+                }
+
+                @string.Join(" - ", map)
+
+                @if (round?.IsInPause == true)
+                {
+                    <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Paused"]" style="margin-left: 5px">
+                        @L["Paused"]
+                    </span>
+                }
+                else if (round?.IsInReady == true)
+                {
+                    <span class="label label-info" data-toggle="tooltip" data-placement="top" title="@(L["Starting"])..." style="margin-left: 5px">
+                        @(L["Starting"])...
+                    </span>
+                }
+                else if (round?.IsInReady == false)
+                {
+                    <span class="label label-success" data-toggle="tooltip" data-placement="top" title="@L["Started"]" style="margin-left: 5px">
+                        @L["Started"]
+                    </span>
+                }
+            </td>
+        </tr>
+        <tr>
+            @{
+                var survivorScore = scoreboard?.SurvivorScore ?? 0;
+                var infectedScore = scoreboard?.InfectedScore ?? 0;
+                var labelSurvivor = scoreboard?.IsDraw == true ? "default" : scoreboard?.IsSurvivorsWinning == true ? "success" : "danger";
+                var labelInfected = scoreboard?.IsDraw == true ? "default" : scoreboard?.IsInfectedsWinning == true ? "success" : "danger";
+            }
+            <th class="text-right">@L["Scoreboard"]:</th>
+            <td data-label="@L["Scoreboard"]:" class="text-nowrap">
+                <span class="label label-@labelSurvivor" data-toggle="tooltip" data-placement="top" title="@L["Survivors"]" style="margin-left: 5px">
+                    @survivorScore.ToString("N0")
+                </span>
+                <span class="label label-@labelInfected" data-toggle="tooltip" data-placement="top" title="@L["Infecteds"]" style="margin-left: 5px">
+                    @infectedScore.ToString("N0")
+                </span>
+                @if (scoreboard?.Comeback is > 0)
+                {
+                    <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Difference"]" style="margin-left: 5px">
+                        @scoreboard.Comeback.ToString("N0")
+                    </span>
+                }
+            </td>
+
+            <th class="text-right text-nowrap">@L["Progress points"]:</th>
+            <td data-label="@L["Progress points"]:" class="text-nowrap">
+                @{
+                    var currentProgressPoints = scoreboard?.CurrentProgressPoints ?? 0;
+                    var maxChapterProgressPoints = round?.MaxChapterProgressPoints ?? 0;
+                    var progressPercentage = maxChapterProgressPoints == 0 ? 0 : currentProgressPoints / (decimal)maxChapterProgressPoints;
+                }
+                @currentProgressPoints.ToString("N0")
+                <span> / </span>
+                @maxChapterProgressPoints.ToString("N0")
+                <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Progress points"] %">
+                    @progressPercentage.ToString("P0")
+                </span>
+            </td>
+
+            <th class="text-right">@L["Bonus"]:</th>
+            <td data-label="@L["Bonus"]:" class="text-nowrap">
+                @((scoreboard?.Bonus ?? 0).ToString("N0"))
+                <span> / </span>
+                @((scoreboard?.MaxBonus ?? 0).ToString("N0"))
+                <span class="label label-default" data-toggle="tooltip" data-placement="top" title="@L["Bonus"] %">
+                    @((scoreboard?.BonusPercentage ?? 0).ToString("P0"))
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <th class="text-right">@L["Progress"]:</th>
+            <td data-label="@L["Progress"]:" class="text-nowrap">
+                @((scoreboard?.CurrentProgress ?? 0).ToString("P0"))
+            </td>
+
+            <th class="text-right text-nowrap">@L["Tank"]:</th>
+            <td data-label="@L["Tank"]:">
+                @if (round?.TankDisabled == true)
+                {
+                    <span class="label label-default">
+                        @L["Disabled"]
+                    </span>
+                }
+                else
+                {
+                    @((round?.TankPercent ?? 0).ToString("P0"))
+                    if (scoreboard?.IsTankInPlay == true)
                     {
-                        <span>· @configuration.Name</span>
-                    }
-                    @if (configuration is { TeamSize: > 0 })
-                    {
-                        <span>· @(configuration.TeamSize)v@(configuration.TeamSize)</span>
-                    }
-                    @if (round?.AntiCheatStatus is { } antiCheat)
-                    {
-                        <span class="badge @(antiCheat == AntiCheatStatus.Enabled ? "text-bg-success" : antiCheat == AntiCheatStatus.ApiUnavailable ? "text-bg-warning" : "text-bg-secondary")">
-                            @L[antiCheat == AntiCheatStatus.Enabled ? "Anti-cheat on" : antiCheat == AntiCheatStatus.ApiUnavailable ? "Anti-cheat API down" : "Anti-cheat off"]
+                        <span class="label label-info" data-toggle="tooltip" data-placement="top" title="@L["Alive"]" style="margin-left: 5px">
+                            @L["Alive"]
                         </span>
                     }
-                </div>
-                <div class="small text-body-secondary">
-                    @if (!string.IsNullOrEmpty(Model.Campaign))
+                    else if (scoreboard?.TankIsDead == true)
                     {
-                        <span>@Model.Campaign · </span>
+                        <span class="label label-danger" data-toggle="tooltip" data-placement="top" title="@L["Dead"]" style="margin-left: 5px">
+                            @L["Dead"]
+                        </span>
                     }
-                    <span>@(string.IsNullOrEmpty(Model.Map) ? L["Unknown map"].Value : Model.Map)</span>
-                    @if (round != null)
-                    {
-                        <span>· @L[round.InSecondHalfOfRound ? "Second round" : "First round"]</span>
-
-                        if (round.IsInPause)
-                        {
-                            <span class="badge text-bg-secondary">@L["Paused"]</span>
-                        }
-                        else if (round.IsInReady)
-                        {
-                            <span class="badge text-bg-info">@L["Starting"]</span>
-                        }
-                        else
-                        {
-                            <span class="badge text-bg-success">@L["Started"]</span>
-                        }
-                    }
-                </div>
-            </div>
-            <div class="text-center">
-                <div class="score">
-                    <span class="@(scoreboard?.IsSurvivorsWinning == true ? "text-win" : "")" title="@L["Survivors"]">@Display.Number(scoreboard?.SurvivorScore ?? 0)</span>
-                    <span class="text-body-secondary">×</span>
-                    <span class="@(scoreboard?.IsInfectedsWinning == true ? "text-win" : "")" title="@L["Infected"]">@Display.Number(scoreboard?.InfectedScore ?? 0)</span>
-                </div>
-                @if (scoreboard is { Comeback: > 0 })
-                {
-                    <div class="small text-body-secondary">@L["Difference"]: @Display.Number(scoreboard.Comeback)</div>
                 }
-            </div>
-            <div class="text-end">
-                <div class="small">@snapshot.PlayerCount @L["players"]</div>
-                @if (Model.ConnectUrl != null)
-                {
-                    <a class="btn btn-sm btn-outline-primary mt-1" href="@Model.ConnectUrl">@L["Connect"]</a>
-                }
-            </div>
-        </div>
-        <div class="row row-cols-2 row-cols-md-5 g-3 mt-1 small">
-            <div class="col">
-                <div class="text-body-secondary">@L["Progress points"]</div>
-                <div class="live-stat">@Display.Number(progressPoints) / @Display.Number(maxProgressPoints) <span class="badge text-bg-secondary">@Display.Percent(LiveDisplay.Fraction(progressPoints, maxProgressPoints))</span></div>
-            </div>
-            <div class="col">
-                <div class="text-body-secondary">@L["Bonus"]</div>
-                <div class="live-stat">@Display.Number(scoreboard?.Bonus ?? 0) / @Display.Number(scoreboard?.MaxBonus ?? 0) <span class="badge text-bg-secondary">@Display.Percent(scoreboard?.BonusPercentage ?? 0)</span></div>
-            </div>
-            <div class="col">
-                <div class="text-body-secondary">@L["Progress"]</div>
-                <div class="live-stat">@Display.Percent(scoreboard?.CurrentProgress ?? 0)</div>
-            </div>
-            <div class="col">
-                <div class="text-body-secondary">@L["Tank"]</div>
-                <div class="live-stat">
-                    @if (round == null)
-                    {
-                        <span>-</span>
-                    }
-                    else if (round.TankDisabled)
-                    {
-                        <span class="badge text-bg-secondary">@L["Disabled"]</span>
-                    }
-                    else
-                    {
-                        <span>@Display.Percent(round.TankPercent)</span>
+            </td>
 
-                        if (scoreboard?.IsTankInPlay == true)
-                        {
-                            <span class="badge text-bg-info">@L["Alive"]</span>
-                        }
-                        else if (scoreboard?.TankIsDead == true)
-                        {
-                            <span class="badge text-bg-danger">@L["Dead"]</span>
-                        }
-                    }
-                </div>
-            </div>
-            <div class="col">
-                <div class="text-body-secondary">@L["Witch"]</div>
-                <div class="live-stat">
-                    @if (round == null)
-                    {
-                        <span>-</span>
-                    }
-                    else if (round.WitchDisabled)
-                    {
-                        <span class="badge text-bg-secondary">@L["Disabled"]</span>
-                    }
-                    else
-                    {
-                        <span>@Display.Percent(round.WitchPercent)</span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+            <th class="text-right text-nowrap">@L["Witch"]:</th>
+            <td data-label="@L["Witch"]:">
+                @if (round?.WitchDisabled == true)
+                {
+                    <span class="label label-default">
+                        @L["Disabled"]
+                    </span>
+                }
+                else
+                {
+                    @((round?.WitchPercent ?? 0).ToString("P0"))
+                }
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>

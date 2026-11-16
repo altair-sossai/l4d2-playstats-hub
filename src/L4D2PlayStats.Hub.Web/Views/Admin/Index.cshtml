@@ -2,7 +2,16 @@
 @{
     ViewData["Title"] = L["Administration"].Value;
 }
-<h1 class="h3">@L["Administration"]</h1>
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+}
+
+<div class="admin-header">
+    <h3>@L["Administration"]</h3>
+</div>
+
 <partial name="_AdminNav"/>
 
 @if (TempData["Reprocessed"] != null)
@@ -10,46 +19,77 @@
     <div class="alert alert-success">@L["Reprocessing finished. Matches rebuilt:"] @TempData["Reprocessed"]</div>
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg"><div class="card"><div class="card-body"><div class="h3 mb-0">@Model.Servers.Count</div><div class="text-body-secondary">@L["Game servers"]</div></div></div></div>
-    <div class="col-6 col-lg"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.Files)</div><div class="text-body-secondary">@L["Statistics files"]</div></div></div></div>
-    <div class="col-6 col-lg"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.Matches)</div><div class="text-body-secondary">@L["Matches"]</div></div></div></div>
-    <div class="col-6 col-lg"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.RankedMatches)</div><div class="text-body-secondary">@L["Ranked matches"]</div></div></div></div>
-    <div class="col-6 col-lg"><div class="card"><div class="card-body"><div class="h3 mb-0">@Display.Number(Model.Players)</div><div class="text-body-secondary">@L["Players"]</div></div></div></div>
+<div class="admin-stats">
+    <div>
+        <strong>@Display.Number(Model.Servers.Count)</strong>
+        <small>@L["Game servers"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(Model.Files)</strong>
+        <small>@L["Statistics files"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(Model.Matches)</strong>
+        <small>@L["Matches"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(Model.RankedMatches)</strong>
+        <small>@L["Ranked matches"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(Model.Players)</strong>
+        <small>@L["Players"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(Model.Seasons)</strong>
+        <small>@L["Seasons"]</small>
+    </div>
 </div>
 
 @if (Model.UnmatchedConfigurations > 0)
 {
     <div class="alert alert-warning">
+        <span class="glyphicon glyphicon-warning-sign"></span>
         @L["Some game configurations seen on your servers match no rule, so their matches do not count toward the ranking."]
-        <a class="alert-link" href="/admin/game-modes">@L["Review the game modes"]</a>
+        <a class="alert-link" href="/admin/game-modes"><u>@L["Review the game modes"]</u></a>
     </div>
 }
 
-<h2 class="h5">@L["Game servers"]</h2>
-@if (Model.Servers.Count == 0)
-{
-    <div class="alert alert-secondary">@L["No game server registered yet."] <a class="alert-link" href="/admin/servers">@L["Add one"]</a></div>
-}
-else
-{
-    <div class="list-group mb-4">
-        @foreach (var server in Model.Servers)
-        {
-            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="/admin/servers/@server.Server.Id">
-                <span><span class="status-dot status-@server.Status.State"></span>@server.Server.Name</span>
-                <span class="text-body-secondary small">@Display.Number(server.Files) @L["files"]</span>
-            </a>
-        }
-    </div>
-}
+<h4 class="admin-section">@L["Game servers"]</h4>
 
-<div class="card">
-    <div class="card-header">@L["Maintenance"]</div>
-    <div class="card-body">
+<div class="admin-list">
+    @if (Model.Servers.Count == 0)
+    {
+        <div class="admin-empty">
+            @L["No game server registered yet."]
+            <a href="/admin/servers"><u>@L["Add one"]</u></a>
+        </div>
+    }
+    @foreach (var server in Model.Servers)
+    {
+        <a class="admin-item" href="/admin/servers/@server.Server.Id">
+            <div class="admin-main">
+                <div class="admin-title"><span class="status-dot status-@server.Status.State"></span>@server.Server.Name</div>
+                <small>@L[server.Status.State.ToString()] · @server.Server.PublicId</small>
+            </div>
+            <div class="admin-side">
+                <strong>@Display.Number(server.Files)</strong>
+                <small>@L["files"]</small>
+            </div>
+        </a>
+    }
+</div>
+
+<div class="panel panel-default" style="margin-top: 20px">
+    <div class="panel-heading">
+        <h3 class="panel-title">@L["Maintenance"]</h3>
+    </div>
+    <div class="panel-body">
         <p>@L["Reprocessing rebuilds every match from the stored statistics files, applying the current game mode rules and campaigns. Use it after changing those rules if old matches should follow them."]</p>
         <form method="post" asp-antiforgery="true" action="/admin/reprocess" onsubmit="return confirm('@L["Rebuild every match now?"]')">
-            <button class="btn btn-outline-warning" type="submit">@L["Reprocess all matches"]</button>
+            <button class="btn btn-warning" type="submit">
+                <span class="glyphicon glyphicon-refresh"></span> @L["Reprocess all matches"]
+            </button>
         </form>
     </div>
 </div>
