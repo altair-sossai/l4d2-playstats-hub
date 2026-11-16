@@ -3,7 +3,6 @@ namespace L4D2PlayStats.Hub.Web;
 public static partial class AppConsts
 {
     public const int SkinListPageSize = 20;
-    public const string SkinPurchasesLegacyUrl = "/admin/skins/purchases";
     public const string SkinCatalogUrl = "/admin/skins/catalog";
     public const string SkinSettingsUrl = "/admin/skins/settings";
     public const string SkinEmptyImage = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";

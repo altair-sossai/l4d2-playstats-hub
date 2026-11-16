@@ -44,15 +44,10 @@ public static partial class AppConsts
         [".webp"] = "image/webp",
         [".gif"] = "image/gif"
     };
-
-
-    public const string InGameUserAgent = "Valve Client";
     public const int InGameRankingPlayers = 50;
     public const int InGameMatches = 10;
 
     public const int RankingPageSize = 100;
-    public const int MatchesPageSize = 30;
-    public const int PlayerRelations = 12;
     public const int ServerStatusRefreshInSeconds = 3;
     public const int SeasonCheckIntervalInMinutes = 30;
 
@@ -97,9 +92,6 @@ public static partial class AppConsts
     public const string HtmxRequestHeader = "HX-Request";
     public const string CommunityBallotElement = "community-ballot";
     public const string CommunityVotePage = "/community/vote";
-
-    public const int LiveRefreshInSeconds = 3;
-    public const int ServerListRefreshInSeconds = 10;
     public const int RemoteCommandLogSize = 100;
     public const int PlayerConnectionCleanupIntervalInHours = 24;
     public const string SteamConnectUrl = "steam://connect/";
@@ -108,12 +100,8 @@ public static partial class AppConsts
     public const string SkinShopUrl = "/skins";
     public const string SkinAdminUrl = "/admin/skins";
     public const string SkinPricesUrl = "/admin/skins/prices";
-    public const int SkinAdminPageSize = 30;
     public const int SkinSeasonRefundIntervalInMinutes = 10;
     public const int SkinSeasonRefundStartDelayInSeconds = 30;
-    public const string SkinMessageTempData = "SkinMessage";
-    public const string SkinRefundTempData = "SkinRefund";
     public const string SkinImportTempData = "SkinImport";
     public const char SkinTempDataSeparator = ',';
-    public const string HtmxHistoryRestoreHeader = "HX-History-Restore-Request";
 }
