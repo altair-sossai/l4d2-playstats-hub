@@ -79,42 +79,63 @@ public class MatchBuildService(
         var settings = await settingsService.GetAsync<RankingSettings>(cancellationToken);
 
         var matchIds = files.Where(f => f.MatchId != null).Select(f => f.MatchId!.Value).Distinct().ToList();
-        if (matchIds.Count > 0)
-        {
-            var existing = await dbContext.Matches.Where(m => matchIds.Contains(m.Id)).ToListAsync(cancellationToken);
-            dbContext.Matches.RemoveRange(existing);
-        }
-
-        foreach (var file in files)
-        {
-            file.MatchId = null;
-            file.Match = null;
-            file.MatchOrder = null;
-        }
+        var replaceable = matchIds.Count == 0
+            ? []
+            : await dbContext.Matches.Include(m => m.Players).Where(m => matchIds.Contains(m.Id)).ToListAsync(cancellationToken);
 
         var assemblyFiles = files.Select(file => new AssemblyFile(file, Parse(file.Content)));
         var drafts = MatchAssembler.Assemble(assemblyFiles, catalog, settings.IncludeUnknownCampaigns);
         var matches = new List<Match>();
 
-        foreach (var draft in drafts)
+        var built = drafts.Select(draft => MatchFactory.Create(draft, gameServerId, seasonId, ruleSet)).ToList();
+        var kept = MatchIdentity.Pair(built, replaceable);
+
+        for (var index = 0; index < drafts.Count; index++)
         {
-            var match = MatchFactory.Create(draft, gameServerId, seasonId, ruleSet);
+            var draft = drafts[index];
+            var match = Store(built[index], kept.GetValueOrDefault(built[index]));
             var order = draft.Files.Count;
 
             foreach (var draftFile in draft.Files)
             {
                 order--;
                 draftFile.File.Match = match;
+                draftFile.File.MatchId = match.Id == 0 ? null : match.Id;
                 draftFile.File.MatchOrder = order;
             }
 
-            dbContext.Matches.Add(match);
             matches.Add(match);
         }
+
+        var used = drafts.SelectMany(draft => draft.Files).Select(draftFile => draftFile.File).ToHashSet();
+
+        foreach (var file in files.Where(file => !used.Contains(file)))
+        {
+            file.MatchId = null;
+            file.Match = null;
+            file.MatchOrder = null;
+        }
+
+        dbContext.Matches.RemoveRange(replaceable.Except(kept.Values));
 
         await UpdateProfilesAsync(matches, cancellationToken);
 
         return matches.Count;
+    }
+
+    private Match Store(Match built, Match? kept)
+    {
+        if (kept == null)
+        {
+            dbContext.Matches.Add(built);
+
+            return built;
+        }
+
+        dbContext.MatchPlayers.RemoveRange(kept.Players);
+        kept.Replace(built);
+
+        return kept;
     }
 
     private async Task UpdateProfilesAsync(List<Match> matches, CancellationToken cancellationToken)

@@ -272,6 +272,7 @@ public partial class MatchPagesTests
         var page = await administrator.GetStringAsync($"/matches/{after.Id}");
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(before.Id, after.Id);
         Assert.AreEqual(after.Id, result.GetProperty("matchId").GetInt32());
         Assert.AreEqual(file.Id, result.GetProperty("statisticId").GetInt32());
         Assert.AreEqual(600, result.GetProperty("teamAScore").GetInt32());
