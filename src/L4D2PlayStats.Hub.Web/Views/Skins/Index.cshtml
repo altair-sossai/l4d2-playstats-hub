@@ -1,109 +1,1848 @@
-@using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers
-@using L4D2PlayStats.Hub.Web.Helpers
-@using L4D2PlayStats.Hub.Web.Models.Skins
 @using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
-@model SkinShopViewModel
+@model SkinsModel
+@inject ICurrentUser CurrentUser
+@inject ISettingsService SiteSettingsService
+
 @{
-    ViewData["Title"] = L["Skins"].Value;
-}
-<link rel="stylesheet" href="~/css/skins.css" asp-append-version="true">
+    var culture = CultureInfo.CurrentUICulture;
+    var site = await SiteSettingsService.GetAsync<SiteSettings>();
+    var administrator = await CurrentUser.IsAdministratorAsync();
+    var highlight = Model.Skins.MaxBy(skin => skin.Price);
 
-<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
-    <div>
-        <h1 class="h3 mb-0">@L["Weapon skins"]</h1>
-        <div class="text-body-secondary">@L["Earn a star for each MVP of a round and spend your stars on skins that everyone sees in the game."]</div>
-    </div>
-    @if (Model.Wallet != null)
+    ViewData["PageMetadata"] = new PageMetadata
     {
-        <div class="card">
-            <div class="card-body py-2 d-flex gap-4">
-                <div>
-                    <div class="small text-body-secondary">@L["Your balance"]</div>
-                    <div class="fs-4 fw-bold skin-stars" id="skin-balance">★ @Model.Wallet.Balance</div>
-                </div>
-                <div>
-                    <div class="small text-body-secondary">@L["Stars earned"]</div>
-                    <div class="fs-5">@Model.Wallet.Stars</div>
-                </div>
-                <div>
-                    <div class="small text-body-secondary">@L["Stars spent"]</div>
-                    <div class="fs-5">@Model.Wallet.Spent</div>
-                </div>
-                <div>
-                    <div class="small text-body-secondary">@L["Your skins"]</div>
-                    <div class="fs-5">@Model.PlayerSkins.Owned.Count</div>
-                </div>
-            </div>
-        </div>
-    }
-    else
+        Title = L["Skins"],
+        Description = L["Weapon skins unlocked by patent level on the {0} server, with credits to the Steam Workshop creators.", site.Name],
+        Image = highlight == null ? null : SkinAssets.Thumbnail(Model.Settings.AssetsUrl, highlight.Id),
+        ImageAlt = highlight?.Title(culture)
+    };
+
+    var wallet = Model.Wallet;
+    var season = Model.Season;
+    var authors = Model.Authors(culture);
+    var loginUrl = $"/login?returnUrl={Uri.EscapeDataString(AppConsts.SkinShopUrl)}";
+    var authorContactUrl = SkinAssets.IsHttpUrl(Model.Settings.AuthorContactUrl) ? Model.Settings.AuthorContactUrl : null;
+    var authorRequestUrl = SkinAssets.IsHttpUrl(Model.Settings.AuthorRequestUrl) ? Model.Settings.AuthorRequestUrl : null;
+    var authorNotice = authorContactUrl != null || authorRequestUrl != null;
+
+    string WeaponName(string weapon)
     {
-        <a class="btn btn-outline-light" href="/login?returnUrl=@Uri.EscapeDataString(Model.ReturnUrl)">
-            <img src="~/imgs/steam.png" alt="" width="18" class="me-1">@L["Sign in with Steam to buy skins"]
-        </a>
+        return L[SkinWeapons.Name(weapon)].Value;
     }
-</div>
-
-@if (TempData[AppConsts.SkinMessageTempData] is string message)
-{
-    <div class="alert alert-success">@L[message]</div>
 }
 
-@if (Model.Total == 0)
-{
-    <div class="alert alert-secondary">@L["There are no skins yet. An administrator has to import the catalog first."]</div>
+@section Styles {
+    <style>
+        .sk-hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px 28px;
+            margin: 10px 0 20px;
+            padding: 20px 24px;
+            border: 1px solid rgba(128, 128, 128, .25);
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(240, 173, 78, .14), rgba(176, 106, 224, .07) 55%, rgba(128, 128, 128, .03));
+        }
+
+        .sk-hero-main {
+            flex: 1 1 420px;
+            min-width: 0;
+        }
+
+        .sk-hero-side {
+            flex: 0 1 320px;
+            min-width: 260px;
+        }
+
+        .sk-season {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 5px 12px;
+            border: 1px solid rgba(91, 192, 222, .5);
+            border-radius: 16px;
+            background: rgba(91, 192, 222, .1);
+            font-size: 13px;
+        }
+
+            .sk-season .glyphicon {
+                color: #5bc0de;
+            }
+
+        .sk-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sk-howto-toggle .caret {
+            transition: transform .2s;
+        }
+
+        .sk-howto-toggle:not(.collapsed) .caret {
+            transform: rotate(180deg);
+        }
+
+        .sk-howto-panel {
+            flex: 1 1 100%;
+        }
+
+            .sk-howto-panel .sk-banner {
+                max-width: none;
+                margin: 0 0 4px;
+            }
+
+        .sk-kicker {
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .75;
+        }
+
+        .sk-hero h1 {
+            margin: 0 0 8px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .sk-hero .lead {
+            max-width: 780px;
+            margin-bottom: 12px;
+        }
+
+        .sk-howto {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -6px 6px;
+        }
+
+            .sk-howto > div {
+                flex: 1 1 220px;
+                margin: 6px;
+                padding: 12px 14px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                border-radius: 4px;
+                background: rgba(128, 128, 128, .06);
+                font-size: 13px;
+            }
+
+            .sk-howto strong {
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            .sk-howto code,
+            .sk-command code,
+            .sk-message code {
+                border: 1px solid rgba(128, 128, 128, .3);
+                background: rgba(128, 128, 128, .12);
+                color: inherit;
+            }
+
+        .sk-wallet {
+            padding: 16px 18px;
+            border: 1px solid rgba(240, 173, 78, .55);
+            border-radius: 8px;
+            background: radial-gradient(circle at 18% 20%, rgba(240, 173, 78, .26), rgba(240, 173, 78, .06) 60%);
+            box-shadow: 0 4px 18px rgba(240, 173, 78, .12);
+        }
+
+        .sk-wallet-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .sk-wallet-star {
+            flex: 0 0 auto;
+            color: #f0ad4e;
+            font-size: 46px;
+            line-height: 1;
+            text-shadow: 0 0 14px rgba(240, 173, 78, .75);
+        }
+
+        .sk-wallet-balance {
+            font-size: 38px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .sk-wallet-label {
+            margin-top: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            opacity: .8;
+        }
+
+        .sk-wallet-text {
+            font-size: 14px;
+        }
+
+        .sk-wallet-summary {
+            margin: 14px 0 0;
+            padding-top: 12px;
+            border-top: 1px solid rgba(240, 173, 78, .3);
+            font-size: 13px;
+        }
+
+        .sk-wallet-mvps {
+            margin: 4px 0 0;
+            font-size: 12px;
+            opacity: .65;
+        }
+
+        .sk-wallet .btn {
+            margin-top: 12px;
+        }
+
+        .sk-wallet-warning {
+            border-color: rgba(217, 83, 79, .55);
+            background: rgba(217, 83, 79, .08);
+            box-shadow: none;
+        }
+
+            .sk-wallet-warning .sk-wallet-star {
+                color: #d9534f;
+                text-shadow: none;
+                opacity: .7;
+            }
+
+        .sk-banner {
+            display: flex;
+            max-width: 780px;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(92, 184, 92, .55);
+            border-left: 4px solid #5cb85c;
+            border-radius: 4px;
+            background: rgba(92, 184, 92, .1);
+        }
+
+            .sk-banner .glyphicon {
+                margin: 3px 12px 0 0;
+                font-size: 18px;
+                color: #5cb85c;
+            }
+
+            .sk-banner p {
+                margin: 4px 0 0;
+            }
+
+        .sk-banner-info {
+            border-color: rgba(91, 192, 222, .55);
+            border-left-color: #5bc0de;
+            background: rgba(91, 192, 222, .1);
+        }
+
+            .sk-banner-info .glyphicon {
+                color: #5bc0de;
+            }
+
+        .sk-credits {
+            margin: 12px 0 0;
+            font-size: 12px;
+            opacity: .75;
+        }
+
+        .sk-tabs {
+            margin-bottom: 14px;
+        }
+
+            .sk-tabs > li > a {
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+        .sk-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+            .sk-toolbar label {
+                margin: 0 8px 8px 0;
+                font-weight: normal;
+                cursor: pointer;
+            }
+
+            .sk-toolbar select {
+                width: auto;
+                min-width: 180px;
+                margin: 0 16px 8px 0;
+            }
+
+        .sk-rarity {
+            margin-bottom: 26px;
+        }
+
+        .sk-rarity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--sk-rarity-color);
+        }
+
+            .sk-rarity-header h3 {
+                flex: 1;
+                margin: 0;
+                color: var(--sk-rarity-color);
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+        .sk-count {
+            font-size: 12px;
+            opacity: .75;
+            white-space: nowrap;
+        }
+
+        .sk-rarity-legendary {
+            --sk-rarity-color: #f0ad4e;
+        }
+
+        .sk-rarity-epic {
+            --sk-rarity-color: #b06ae0;
+        }
+
+        .sk-rarity-rare {
+            --sk-rarity-color: #4d9de0;
+        }
+
+        .sk-rarity-uncommon {
+            --sk-rarity-color: #5cb85c;
+        }
+
+        .sk-rarity-common {
+            --sk-rarity-color: #9e9e9e;
+        }
+
+        .sk-grid {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+            .sk-grid:before,
+            .sk-grid:after {
+                display: none;
+            }
+
+        .sk-col {
+            display: flex;
+            margin-bottom: 14px;
+        }
+
+        .sk-card {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-top: 3px solid var(--sk-rarity-color);
+            border-radius: 6px;
+            background: rgba(128, 128, 128, .05);
+            cursor: pointer;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+            .sk-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
+            }
+
+        .sk-legendary-card {
+            box-shadow: 0 0 12px rgba(240, 173, 78, .25);
+        }
+
+        .sk-owned {
+            border-color: rgba(98, 196, 98, .6);
+            border-top-color: var(--sk-rarity-color);
+        }
+
+        .sk-thumb {
+            position: relative;
+            display: block;
+            background: #111;
+        }
+
+            .sk-thumb img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                object-fit: cover;
+            }
+
+            .sk-thumb .sk-shot {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                transition: opacity .5s ease;
+                pointer-events: none;
+            }
+
+                .sk-thumb .sk-shot.active {
+                    opacity: 1;
+                }
+
+        .sk-weapon,
+        .sk-status,
+        .sk-price-tag {
+            position: absolute;
+            z-index: 2;
+            font-size: 11px;
+        }
+
+        .sk-weapon {
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, .75);
+            color: #fff;
+        }
+
+        .sk-status {
+            top: 8px;
+            right: 8px;
+        }
+
+        .sk-price-tag {
+            right: 8px;
+            bottom: 8px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, .8);
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .sk-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 10px 12px 12px;
+        }
+
+        .sk-title {
+            margin: 0 0 2px;
+            overflow: hidden;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.35;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .sk-author {
+            margin-bottom: 2px;
+            overflow: hidden;
+            font-size: 12px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            opacity: .85;
+        }
+
+        .sk-modal-author {
+            margin-bottom: 10px;
+        }
+
+        .sk-authors {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -6px;
+        }
+
+            .sk-authors > div {
+                flex: 1 1 260px;
+                margin: 6px;
+                padding: 10px 14px;
+                border: 1px solid rgba(128, 128, 128, .3);
+                border-radius: 4px;
+                background: rgba(128, 128, 128, .05);
+            }
+
+            .sk-authors strong {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .sk-authors small {
+                display: block;
+                margin-top: 4px;
+                opacity: .8;
+            }
+
+        .sk-rarity-name {
+            margin-bottom: 10px;
+            color: var(--sk-rarity-color);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .sk-actions {
+            margin-top: auto;
+        }
+
+            .sk-actions .btn {
+                font-weight: bold;
+            }
+
+        .sk-missing {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            text-align: center;
+            opacity: .75;
+        }
+
+        .sk-empty {
+            padding: 30px 0;
+            text-align: center;
+            opacity: .75;
+        }
+
+        .sk-modal-image {
+            display: block;
+            margin-bottom: 12px;
+        }
+
+            .sk-modal-image img {
+                display: block;
+                width: 100%;
+                max-height: 420px;
+                border-radius: 4px;
+                background: #111;
+                object-fit: contain;
+            }
+
+        .sk-gallery {
+            margin-bottom: 15px;
+        }
+
+        .sk-author-notice-open {
+            padding-left: 0;
+            opacity: .7;
+        }
+
+            .sk-author-notice-open:hover,
+            .sk-author-notice-open:focus {
+                opacity: 1;
+            }
+
+        .sk-author-notice .lead {
+            font-size: 16px;
+        }
+
+        .sk-author-notice-actions .btn {
+            margin: 4px 6px 4px 0;
+        }
+
+            .sk-gallery .sk-gallery-main {
+                margin-bottom: 8px;
+                cursor: zoom-in;
+            }
+
+                .sk-gallery .sk-gallery-main img {
+                    max-height: none;
+                    aspect-ratio: 16 / 9;
+                    object-fit: cover;
+                    transition: opacity .25s ease;
+                }
+
+                    .sk-gallery .sk-gallery-main img.loading {
+                        opacity: .35;
+                    }
+
+        .sk-gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+
+        .sk-gallery-thumb {
+            padding: 0;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            background: #111;
+            opacity: .65;
+            overflow: hidden;
+            transition: opacity .2s ease, border-color .2s ease;
+        }
+
+            .sk-gallery-thumb:hover,
+            .sk-gallery-thumb:focus {
+                opacity: 1;
+                outline: none;
+            }
+
+            .sk-gallery-thumb.active {
+                border-color: var(--sk-rarity-color, #f0ad4e);
+                opacity: 1;
+            }
+
+            .sk-gallery-thumb img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
+            }
+
+        @@media (max-width: 480px) {
+            .sk-gallery-thumbs {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .sk-lity-nav {
+            position: fixed;
+            top: 50%;
+            z-index: 9994;
+            width: 48px;
+            height: 64px;
+            margin-top: -32px;
+            padding: 0;
+            border: 0;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, .45);
+            color: #fff;
+            font-size: 24px;
+            opacity: .75;
+            transition: opacity .2s ease, background-color .2s ease;
+        }
+
+            .sk-lity-nav:hover,
+            .sk-lity-nav:focus {
+                background: rgba(0, 0, 0, .7);
+                opacity: 1;
+                outline: none;
+            }
+
+        .sk-lity-prev {
+            left: 12px;
+        }
+
+        .sk-lity-next {
+            right: 12px;
+        }
+
+        .sk-modal-tags {
+            margin: 0 0 10px;
+        }
+
+            .sk-modal-tags .label {
+                display: inline-block;
+                margin: 0 6px 4px 0;
+                font-size: 12px;
+            }
+
+        .sk-modal-rarity {
+            background: var(--sk-rarity-color);
+        }
+
+        .sk-modal-price {
+            margin-bottom: 12px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .sk-modal-desc {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .sk-modal-original {
+            font-size: 12px;
+            opacity: .65;
+        }
+
+        .sk-modal-actions {
+            margin: 14px 0;
+        }
+
+        .sk-command-label {
+            margin-bottom: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            opacity: .65;
+        }
+
+        .sk-command {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+            .sk-command code {
+                flex: 1;
+                padding: 5px 7px;
+                overflow: hidden;
+                font-size: 12px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .sk-command .icon-copy {
+                width: 18px;
+                height: 18px;
+                margin: 0 0 0 8px;
+            }
+
+        .sk-workshop .glyphicon {
+            margin-right: 4px;
+        }
+
+        .sk-message p:last-child {
+            margin-bottom: 0;
+        }
+
+        .sk-message .sk-notice {
+            padding: 10px 12px;
+            border-left: 3px solid #5bc0de;
+            background: rgba(91, 192, 222, .1);
+        }
+
+        .sk-use-table td:first-child {
+            white-space: nowrap;
+        }
+
+        @@media screen and (max-width: 700px) {
+            .sk-hero {
+                padding: 18px 16px;
+            }
+
+                .sk-hero h1 {
+                    font-size: 28px;
+                }
+
+            .sk-hero-side {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+        }
+    </style>
 }
-else
-{
-    <form class="d-flex flex-wrap align-items-center gap-3 mb-3" method="get" action="@AppConsts.SkinShopUrl" hx-get="@AppConsts.SkinShopUrl" hx-target="#skin-grid" hx-trigger="change" hx-push-url="true">
-        <select class="form-select form-select-sm w-auto" name="weapon" aria-label="@L["Weapon"]">
-            <option value="">@L["All weapons"]</option>
-            @foreach (var weapon in Model.Weapons)
-            {
-                <option value="@weapon" selected="@(weapon == Model.Weapon)">@L[SkinWeapons.Name(weapon)]</option>
-            }
-        </select>
-        <select class="form-select form-select-sm w-auto" name="rarity" aria-label="@L["Rarity"]">
-            <option value="">@L["All rarities"]</option>
-            @foreach (var rarity in SkinDisplay.Rarities)
-            {
-                <option value="@rarity" selected="@(rarity == Model.Rarity)">@L[$"Rarity.{rarity}"]</option>
-            }
-        </select>
-        @if (Model.SignedIn)
+
+@Html.AntiForgeryToken()
+
+<div class="sk-hero">
+    <div class="sk-hero-main">
+        <span class="sk-kicker">@L["Skin shop"]</span>
+        <h1>@L["Skins"]</h1>
+        <p class="lead">@L["Trade the stars you earned as MVP for skins for your weapons."]</p>
+
+        @if (season.Refunds)
         {
-            <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" role="switch" id="owned" name="owned" value="true" checked="@Model.OnlyOwned">
-                <label class="form-check-label" for="owned">@L["Only my skins"]</label>
+            <div class="sk-season">
+                <span class="glyphicon glyphicon-calendar"></span>
+                <span>@Html.Raw(string.Format(L["Season ends on <b>{0}</b> · {1} days left"].Value, season.LastDay.ToString("d", culture), season.DaysLeft.ToString("N0", culture)))</span>
             </div>
         }
-        <noscript>
-            <button class="btn btn-sm btn-primary" type="submit">@L["Filter"]</button>
-        </noscript>
-    </form>
 
-    <div id="skin-grid">
-        <partial name="_SkinGrid" model="Model"/>
+        <div class="sk-hero-actions">
+            <button type="button" class="btn btn-default btn-sm sk-howto-toggle collapsed" data-toggle="collapse" data-target="#sk-howto" aria-expanded="false" aria-controls="sk-howto">
+                <span class="glyphicon glyphicon-info-sign"></span> @L["How it works"] <span class="caret"></span>
+            </button>
+            <button type="button" class="btn btn-info btn-sm sk-use-open">
+                <span class="glyphicon glyphicon-question-sign"></span> @L["How do I use my skins in game?"]
+            </button>
+        </div>
     </div>
 
-    <p class="small text-body-secondary mt-4">@L["Every skin was made by the Left 4 Dead 2 community and published on the Steam Workshop. Each card links to the original page."]</p>
+    <div class="sk-hero-side">
+        @if (!Model.LoggedIn)
+        {
+            <div class="sk-wallet">
+                <div class="sk-wallet-top">
+                    <span class="sk-wallet-star">★</span>
+                    <div class="sk-wallet-text">@L["Sign in with Steam to see how many stars you have and buy skins."]</div>
+                </div>
+                <a class="btn btn-warning btn-block" href="@loginUrl">@L["Sign in with Steam"]</a>
+            </div>
+        }
+        else if (wallet == null)
+        {
+            <div class="sk-wallet sk-wallet-warning">
+                <div class="sk-wallet-top">
+                    <span class="sk-wallet-star">★</span>
+                    <div class="sk-wallet-text">@L["We could not load your stars right now. Reload the page in a moment."]</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="sk-wallet">
+                <div class="sk-wallet-top">
+                    <span class="sk-wallet-star">★</span>
+                    <div>
+                        <div class="sk-wallet-balance">@wallet.Balance.ToString("N0", culture)</div>
+                        <div class="sk-wallet-label">@(wallet.Balance == 1 ? L["star available"] : L["stars available"])</div>
+                    </div>
+                </div>
+                <p class="sk-wallet-summary">@Html.Raw(string.Format(L["You earned <b>{0} ⭐</b> as MVP and have spent <b>{1} ⭐</b> on skins."].Value, wallet.Stars.ToString("N0", culture), wallet.Spent.ToString("N0", culture)))</p>
+                <p class="sk-wallet-mvps">@string.Format(L["{0} SI damage MVPs + {1} common MVPs"].Value, wallet.MvpSiDamage.ToString("N0", culture), wallet.MvpCommon.ToString("N0", culture))</p>
+            </div>
+        }
+    </div>
+
+    <div id="sk-howto" class="collapse sk-howto-panel">
+        <div class="sk-howto">
+            <div>
+                <strong>@L["1. Earn stars"]</strong>
+                @Html.Raw(L["Every SI damage MVP and every common infected MVP in competitive matches is worth <b>1 ⭐</b>. Your whole history counts, since the ranking began, and stars never expire."].Value)
+            </div>
+            <div>
+                <strong>@L["2. Buy and equip"]</strong>
+                @if (season.Refunds)
+                {
+                    @Html.Raw(L["Buy a skin with your stars. It is <b>equipped</b> right away and shows up on the server <b>from the next map change</b>. Each skin is bought only once and is yours until the end of the ranking season."].Value)
+                }
+                else
+                {
+                    @Html.Raw(L["Buy a skin with your stars. It is <b>equipped</b> right away and shows up on the server <b>from the next map change</b>. Each skin is bought only once and is yours forever."].Value)
+                }
+            </div>
+            <div>
+                <strong>@L["3. Switch in game"]</strong>
+                @Html.Raw(L["During ready-up, use <code>!skin next</code> and <code>!skin prev</code> to switch between your skins, or <code>!skin default</code> to go back to the default one. You can also equip them here."].Value)
+            </div>
+        </div>
+
+        @if (season.Refunds)
+        {
+            var lastDay = season.LastDay.ToString("d", culture);
+            var daysLeft = season.DaysLeft.ToString("N0", culture);
+
+            <div class="sk-banner sk-banner-info">
+                <span class="glyphicon glyphicon-calendar"></span>
+                <div>
+                    <strong>@L["Skins per season"]</strong>
+                    @if (season.LengthInMonths == 1)
+                    {
+                        <p>@L["Bought skins last until the ranking reset, which happens every month. The current season ends on {0} ({1} days left): at that moment every purchase is refunded automatically and the stars come back so you can buy again. Skins received as gifts are yours forever.", lastDay, daysLeft]</p>
+                    }
+                    else
+                    {
+                        <p>@L["Bought skins last until the ranking reset, which happens every {2} months. The current season ends on {0} ({1} days left): at that moment every purchase is refunded automatically and the stars come back so you can buy again. Skins received as gifts are yours forever.", lastDay, daysLeft, season.LengthInMonths]</p>
+                    }
+                </div>
+            </div>
+        }
+
+        <p class="sk-credits">@L["All skins were made by the community on the Steam Workshop. Each skin shows its author with a link to their Steam profile, and the Authors tab credits all of them."]</p>
+    </div>
+</div>
+
+@{
+    async Task RenderActions(Skin skin, bool block)
+    {
+        var title = skin.Title(culture);
+        var blockClass = block ? "btn-block" : string.Empty;
+
+        if (!Model.LoggedIn)
+        {
+            <a class="btn btn-default btn-sm @blockClass sk-action" href="@loginUrl">@L["Sign in with Steam"]</a>
+            return;
+        }
+
+        if (Model.IsEquipped(skin))
+        {
+            <button type="button" class="btn btn-default btn-sm @blockClass sk-action sk-unequip" data-weapon="@skin.Weapon" data-weapon-name="@WeaponName(skin.Weapon)">
+                <span class="glyphicon glyphicon-repeat"></span> @L["Back to default"]
+            </button>
+            return;
+        }
+
+        if (Model.Owns(skin))
+        {
+            <button type="button" class="btn btn-success btn-sm @blockClass sk-action sk-equip" data-skin="@skin.Id" data-title="@title" data-weapon-name="@WeaponName(skin.Weapon)">
+                <span class="glyphicon glyphicon-ok"></span> @L["Equip"]
+            </button>
+            return;
+        }
+
+        if (Model.Wallet == null)
+        {
+            <button type="button" class="btn btn-default btn-sm @blockClass sk-action" disabled>@string.Format(L["Buy for {0} ⭐"].Value, skin.Price.ToString("N0", culture))</button>
+            return;
+        }
+
+        if (!Model.CanAfford(skin))
+        {
+            <button type="button" class="btn btn-default btn-sm @blockClass sk-action" disabled>@string.Format(L["Buy for {0} ⭐"].Value, skin.Price.ToString("N0", culture))</button>
+            <small class="sk-missing">@string.Format(L["{0} ⭐ to go"].Value, Model.Missing(skin).ToString("N0", culture))</small>
+            return;
+        }
+
+        <button type="button" class="btn btn-warning btn-sm @blockClass sk-action sk-buy" data-skin="@skin.Id" data-title="@title" data-price="@skin.Price" data-weapon-name="@WeaponName(skin.Weapon)">
+            <span class="glyphicon glyphicon-shopping-cart"></span> @string.Format(L["Buy for {0} ⭐"].Value, skin.Price.ToString("N0", culture))
+        </button>
+    }
+
+    const int shotCount = CoreConsts.SkinShotCount;
+
+    async Task RenderDetails(Skin skin)
+    {
+        var title = skin.Title(culture);
+        var description = skin.Description(culture);
+        var original = string.Join(" — ", new[] { skin.OriginalTitle, skin.OriginalDescription }.Where(text => !string.IsNullOrWhiteSpace(text)));
+        var image = Model.Image(skin);
+        var shots = Model.Shots(skin);
+        var authorUrl = SkinDisplay.AuthorUrl(skin);
+        var workshop = SkinDisplay.WorkshopUrl(skin);
+
+        <div class="sk-details hidden">
+            <div class="row @SkinDisplay.RarityCss(skin.Rarity)">
+                @if (shots != null)
+                {
+                    <div class="col-xs-12">
+                        <div class="sk-gallery" data-shots="@shots" data-version="@skin.Shots">
+                            <a class="sk-modal-image sk-gallery-main" href="@($"{shots}1{CoreConsts.SkinShotExtension}?v={skin.Shots}")" data-lity>
+                                <img data-shot="1" data-size="" alt="@title"/>
+                            </a>
+                            <div class="sk-gallery-thumbs">
+                                @for (var shot = 1; shot <= shotCount; shot++)
+                                {
+                                    <button type="button" class="sk-gallery-thumb @(shot == 1 ? "active" : "")" data-shot="@shot" title="@title (@shot/@shotCount)">
+                                        <img data-shot="@shot" data-size="-thumb" alt="@title (@shot/@shotCount)"/>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-xs-12 col-sm-5">
+                        <a class="sk-modal-image" href="@image" data-lity>
+                            <img src="@image" alt="@title" loading="lazy"/>
+                        </a>
+                    </div>
+                }
+                <div class="col-xs-12 @(shots != null ? "" : "col-sm-7")">
+                    <div class="sk-modal-tags">
+                        <span class="label sk-modal-rarity">@L[SkinDisplay.RarityKey(skin.Rarity)]</span>
+                        <span class="label label-default">@WeaponName(skin.Weapon)</span>
+                        @if (Model.IsEquipped(skin))
+                        {
+                            <span class="label label-success">
+                                <span class="glyphicon glyphicon-ok"></span> @L["Equipped"]
+                            </span>
+                        }
+                        else if (Model.Owns(skin))
+                        {
+                            <span class="label label-info">@L["Owned"]</span>
+                        }
+                        @if (!skin.Available)
+                        {
+                            <span class="label label-warning">@L["No longer for sale"]</span>
+                        }
+                    </div>
+                    <div class="sk-modal-price">@skin.Price.ToString("N0", culture) ⭐</div>
+                    @if (!string.IsNullOrEmpty(skin.AuthorName))
+                    {
+                        <p class="sk-modal-author">
+                            <b>@L["Author"]:</b>
+                            @if (authorUrl != null)
+                            {
+                                <a href="@authorUrl" target="_blank" rel="noopener">
+                                    <span class="glyphicon glyphicon-user"></span> @skin.AuthorName
+                                </a>
+                            }
+                            else
+                            {
+                                <span>
+                                    <span class="glyphicon glyphicon-user"></span> @skin.AuthorName
+                                </span>
+                            }
+                        </p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(description))
+                    {
+                        <p class="sk-modal-desc">@description</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(original))
+                    {
+                        <p class="sk-modal-original">
+                            <b>@L["Original"]:</b> @original
+                        </p>
+                    }
+                    <div class="sk-modal-actions">
+                        @{ await RenderActions(skin, true); }
+                    </div>
+                    @if (Model.Owns(skin))
+                    {
+                        <div class="sk-command-label">@L["Chat command"]</div>
+                        <div class="sk-command">
+                            <code>@skin.Command</code>
+                            @await Html.PartialAsync("_CopyButton", skin.Command)
+                        </div>
+                    }
+                    @if (workshop != null)
+                    {
+                        <a class="btn btn-default btn-sm btn-block sk-workshop" href="@workshop" target="_blank" rel="noopener">
+                            <span class="glyphicon glyphicon-new-window"></span> @L["View on Workshop"]
+                        </a>
+                    }
+                    @if (administrator && skin.Available)
+                    {
+                        <button type="button" class="btn btn-success btn-sm btn-block sk-admin-gift" data-skin="@skin.Id">
+                            <span class="glyphicon glyphicon-gift"></span> @L["Give as a gift (admin)"]
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    async Task RenderCard(Skin skin, bool anchor)
+    {
+        var title = skin.Title(culture);
+        var owned = Model.Owns(skin);
+        var equipped = Model.IsEquipped(skin);
+        var shots = Model.Shots(skin);
+        var authorUrl = SkinDisplay.AuthorUrl(skin);
+
+        <div class="col-xs-6 col-sm-4 col-md-3 sk-col sk-item @SkinDisplay.RarityCss(skin.Rarity)"
+             data-weapon="@skin.Weapon" data-rarity="@skin.Rarity" data-affordable="@(owned || Model.CanAfford(skin) ? 1 : 0)">
+            <div class="sk-card sk-open @(owned ? "sk-owned" : "") @(skin.Rarity == SkinRarity.Legendary ? "sk-legendary-card" : "")" id="@(anchor ? SkinDisplay.Anchor(skin) : null)" data-title="@title" data-skin="@skin.Id" data-workshop="@SkinDisplay.WorkshopUrl(skin)">
+                @{ await RenderDetails(skin); }
+                <a class="sk-thumb" href="#@SkinDisplay.Anchor(skin)" data-shots="@shots" data-version="@(shots != null ? skin.Shots : null)">
+                    <img src="@Model.Image(skin)" alt="@title" loading="lazy"/>
+                    <span class="label sk-weapon">@WeaponName(skin.Weapon)</span>
+                    @if (equipped)
+                    {
+                        <span class="label label-success sk-status">
+                            <span class="glyphicon glyphicon-ok"></span> @L["Equipped"]
+                        </span>
+                    }
+                    else if (owned)
+                    {
+                        <span class="label label-info sk-status">@L["Owned"]</span>
+                    }
+                    <span class="sk-price-tag">@skin.Price.ToString("N0", culture) ⭐</span>
+                </a>
+                <div class="sk-body">
+                    <h4 class="sk-title" title="@title">@title</h4>
+                    @if (!string.IsNullOrEmpty(skin.AuthorName))
+                    {
+                        <div class="sk-author" title="@skin.AuthorName">
+                            @if (authorUrl != null)
+                            {
+                                @L["by"] <a href="@authorUrl" target="_blank" rel="noopener">@skin.AuthorName</a>
+                            }
+                            else
+                            {
+                                @L["by"] @skin.AuthorName
+                            }
+                        </div>
+                    }
+                    <div class="sk-rarity-name">@L[SkinDisplay.RarityKey(skin.Rarity)]</div>
+                    <div class="sk-actions">
+                        @{ await RenderActions(skin, true); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 }
 
-<div class="modal fade" id="skin-shots-modal" tabindex="-1" aria-labelledby="skin-shots-title" aria-hidden="true" data-count="@CoreConsts.SkinShotCount" data-extension="@CoreConsts.SkinShotExtension" data-thumb-suffix="@CoreConsts.SkinShotThumbnailSuffix">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+<ul class="nav nav-tabs sk-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#shop" data-target="#sk-shop" role="tab" data-toggle="tab">
+            @L["Shop"] <span class="badge">@Model.Skins.Count</span>
+        </a>
+    </li>
+    @if (Model.LoggedIn)
+    {
+        <li role="presentation">
+            <a href="#mine" data-target="#sk-mine" role="tab" data-toggle="tab">
+                @L["My skins"] <span class="badge">@Model.OwnedSkins.Count</span>
+            </a>
+        </li>
+    }
+    <li role="presentation">
+        <a href="#authors" data-target="#sk-authors" role="tab" data-toggle="tab">
+            @L["Authors"] <span class="badge">@authors.Count</span>
+        </a>
+    </li>
+</ul>
+
+<div class="sk-toolbar">
+    <label for="sk-weapon-filter">@L["Weapon"]</label>
+    <select id="sk-weapon-filter" class="form-control input-sm">
+        <option value="all">@L["All weapons"]</option>
+        <optgroup label="@L["Firearms"]">
+            @foreach (var weapon in Model.Weapons.Where(weapon => !SkinWeapons.IsMelee(weapon)))
+            {
+                <option value="@weapon">@WeaponName(weapon)</option>
+            }
+        </optgroup>
+        <optgroup label="@L["Melee weapons"]">
+            @foreach (var weapon in Model.Weapons.Where(SkinWeapons.IsMelee))
+            {
+                <option value="@weapon">@WeaponName(weapon)</option>
+            }
+        </optgroup>
+    </select>
+    <label for="sk-rarity-filter">@L["Rarity"]</label>
+    <select id="sk-rarity-filter" class="form-control input-sm">
+        <option value="all">@L["All rarities"]</option>
+        @foreach (var rarity in SkinDisplay.Rarities)
+        {
+            <option value="@rarity">@L[SkinDisplay.RarityKey(rarity)]</option>
+        }
+    </select>
+    @if (Model.Wallet != null)
+    {
+        <label>
+            <input type="checkbox" id="sk-only-affordable"/> @L["Only the ones I can buy"]
+        </label>
+    }
+</div>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="sk-shop">
+        @foreach (var rarity in SkinDisplay.Rarities)
+        {
+            var skins = Model.SkinsOf(rarity);
+
+            if (skins.Count == 0)
+                continue;
+
+            <section class="sk-rarity sk-section @SkinDisplay.RarityCss(rarity)">
+                <div class="sk-rarity-header">
+                    <h3>@L[SkinDisplay.RarityKey(rarity)]</h3>
+                    <span class="sk-count">@string.Format(L["{0} skins"].Value, skins.Count) · @string.Format(L["{0} to {1} ⭐"].Value, skins.Min(skin => skin.Price).ToString("N0", culture), skins.Max(skin => skin.Price).ToString("N0", culture))</span>
+                </div>
+                <div class="row sk-grid">
+                    @foreach (var skin in skins)
+                    {
+                        await RenderCard(skin, true);
+                    }
+                </div>
+            </section>
+        }
+        @if (Model.Skins.Count == 0)
+        {
+            <p class="sk-empty">@L["There are no skins yet. An administrator has to import the catalog first."]</p>
+        }
+        <p class="sk-empty hidden">@L["No skins match these filters."]</p>
+    </div>
+
+    @if (Model.LoggedIn)
+    {
+        <div role="tabpanel" class="tab-pane" id="sk-mine">
+            <p>
+                <button type="button" class="btn btn-info btn-sm sk-use-open">
+                    <span class="glyphicon glyphicon-question-sign"></span> @L["How do I use my skins in game?"]
+                </button>
+            </p>
+            @if (Model.OwnedSkins.Count == 0)
+            {
+                <p class="sk-empty">@L["You do not own any skins yet. Pick one in the Shop tab!"]</p>
+            }
+            else
+            {
+                <section class="sk-section">
+                    <div class="row sk-grid">
+                        @foreach (var skin in Model.OwnedSkins)
+                        {
+                            await RenderCard(skin, false);
+                        }
+                    </div>
+                </section>
+                <p class="sk-empty hidden">@L["No skins match these filters."]</p>
+            }
+        </div>
+    }
+    <div role="tabpanel" class="tab-pane" id="sk-authors">
+        <p>@L["Every skin in this shop was made by these Steam Workshop authors. Thank you! Click a name to open their Steam profile and see more of their work."]</p>
+        <div class="sk-authors">
+            @foreach (var author in authors)
+            {
+                <div>
+                    <strong>
+                        @if (author.ProfileUrl != null)
+                        {
+                            <a href="@author.ProfileUrl" target="_blank" rel="noopener" title="@author.Name">
+                                <span class="glyphicon glyphicon-user"></span> @author.Name
+                            </a>
+                        }
+                        else
+                        {
+                            <span title="@author.Name">
+                                <span class="glyphicon glyphicon-user"></span> @author.Name
+                            </span>
+                        }
+                    </strong>
+                    <small>
+                        @(author.Skins.Count == 1 ? L["{0} skin", author.Skins.Count.ToString("N0", culture)] : L["{0} skins", author.Skins.Count.ToString("N0", culture)]):
+                        @string.Join(", ", author.Skins.Select(skin => skin.Title(culture)))
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="sk-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title h5" id="skin-shots-title"></h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"></h4>
             </div>
-            <div class="modal-body">
-                <img class="skin-shot-main mb-2" id="skin-shots-main" alt="">
-                <div class="d-flex flex-wrap gap-2" id="skin-shots-thumbs"></div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                @if (authorNotice)
+                {
+                    <button type="button" class="btn btn-link btn-sm pull-left sk-author-notice-open" title="@L["Are you the author of this skin?"]">
+                        <span class="glyphicon glyphicon-copyright-mark"></span> @L["Are you the author?"]
+                    </button>
+                }
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="sk-author-notice" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-copyright-mark"></span> @L["Are you the author of this skin?"]
+                </h4>
+            </div>
+            <div class="modal-body sk-author-notice">
+                <p class="lead">@L["If you made this skin and do not want it on this site, just let me know. I will gladly remove it as soon as possible, no questions asked."]</p>
+                <p>@L["I deeply respect the work of every author. Every skin shows who made it, with a link to the author's Steam profile and to the original Workshop page."]</p>
+                <p>@L["This is a non-profit project. The server gives me no financial return, the skins are not sold and there is no money involved and no transaction of any kind. The shop stars are earned by playing and cannot be bought with money: the skins are only a cosmetic item for the players."]</p>
+                <p>
+                    <b>@L["If you are the author and do not want your skin here, you have every right. Contact me through one of the channels below and I will remove it as soon as possible."]</b>
+                </p>
+                <div class="sk-author-notice-actions">
+                    @if (authorContactUrl != null)
+                    {
+                        <a class="btn btn-primary" href="@authorContactUrl" target="_blank" rel="noopener">
+                            <span class="glyphicon glyphicon-user"></span> @L["Message me on Steam"]
+                        </a>
+                    }
+                    @if (authorRequestUrl != null)
+                    {
+                        <a class="btn btn-default sk-author-notice-github" href="@authorRequestUrl" target="_blank" rel="noopener">
+                            <span class="glyphicon glyphicon-envelope"></span> @L["Open a request on GitHub"]
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sk-confirm" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@L["Confirm purchase"]</h4>
+            </div>
+            <div class="modal-body sk-message"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-warning sk-confirm-buy">
+                    <span class="glyphicon glyphicon-shopping-cart"></span> @L["Confirm purchase"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sk-result" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body sk-message"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">@L["Got it"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="sk-use-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@L["How to use your skins in game"]</h4>
+            </div>
+            <div class="modal-body sk-message">
+                <p>@Html.Raw(L["Type the commands in the <b>game chat</b>. If you use <code>/</code> instead of <code>!</code> (e.g. <code>/skin next</code>), only you see the message."].Value)</p>
+                <table class="table table-condensed table-striped sk-use-table">
+                    <thead>
+                    <tr>
+                        <th>@L["Command"]</th>
+                        <th>@L["What it does"]</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <code>!skin next</code><br/><code>!skin prev</code>
+                        </td>
+                        <td>@L["Switches between the skins you bought for the weapon in your hand. After the last one, it goes back to the default skin."]</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>!skin surtr</code>
+                        </td>
+                        <td>@L["Uses one of your skins by its id. The id is shown in the details of each skin (e.g. surtr)."]</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>!skin default</code>
+                        </td>
+                        <td>@L["Puts the weapon in your hand back on the default skin."]</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>!skin next pump</code>
+                        </td>
+                        <td>@L["Picks the weapon by name, without holding it."]</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>!skin status</code>
+                        </td>
+                        <td>@L["Shows how many stars and skins you have."]</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>!skin</code>
+                        </td>
+                        <td>@L["Shows the skins help in the chat."]</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>
+                    <small>@Html.Raw(L["Weapon names: <code>smg</code>, <code>mac</code>, <code>mp5</code>, <code>pump</code>, <code>chrome</code>, <code>magnum</code>, <code>axe</code>, <code>katana</code>, <code>machete</code>, <code>bat</code>, <code>cricket</code>, <code>guitar</code>, <code>crowbar</code>, <code>golf</code>, <code>pan</code>."].Value)</small>
+                </p>
+                <p>
+                    <strong>@L["Good to know"]</strong>
+                </p>
+                <ul>
+                    <li>@Html.Raw(L["In game, skins can only be changed as a <b>survivor</b> and during the <b>ready-up</b>."].Value)</li>
+                    <li>@Html.Raw(L["A skin bought or equipped on the site shows up from the <b>next map change</b>."].Value)</li>
+                    <li>@L["Your choice is saved: what you equip in game shows up on the site, and the other way around."]</li>
+                    <li>@L["The skin stays with the weapon: if you drop it, whoever picks it up uses it with your skin."]</li>
+                    <li>@Html.Raw(L["Downloads must be on: <b>Options > Multiplayer > Custom Server Content > Allow All</b>."].Value)</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">@L["Got it"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (administrator)
+{
+    @await Html.PartialAsync("_GiftModal", Model.Skins)
+}
+
 @section Scripts {
-    <script src="~/js/skins.js" asp-append-version="true"></script>
+    <script src="~/js/panzoom.min.js"></script>
+    <script>
+        $(function () {
+            var texts = {
+                balance: @Json.Serialize(wallet?.Balance ?? 0),
+                confirmBuy: @Json.Serialize(L["Buy <b>{0}</b> for <b>{1} ⭐</b>?"].Value),
+                confirmBalance: @Json.Serialize(L["Your balance goes from {0} ⭐ to {1} ⭐."].Value),
+                confirmEquip: @Json.Serialize(L["Once done, it is equipped on your weapon ({0}) right away and shows up on the server from the next map change."].Value),
+                confirmSeason: @Json.Serialize(season.Refunds ? string.Format(L["It lasts until the end of the ranking season, on {0}; then it is refunded automatically and the stars come back to you."].Value, season.LastDay.ToString("d", culture)) : null),
+                confirmFinal: @Json.Serialize(season.Refunds ? L["Purchases cannot be undone before the ranking reset."].Value : L["Purchases cannot be undone."].Value),
+                authorRequestUrl: @Json.Serialize(authorRequestUrl),
+                buySuccessTitle: @Json.Serialize(L["Purchase complete!"].Value),
+                buySuccess: @Json.Serialize(L["<b>{0}</b> is now equipped on your weapon ({1})."].Value),
+                equipSuccessTitle: @Json.Serialize(L["Skin equipped!"].Value),
+                equipSuccess: @Json.Serialize(L["Skins.Index.EquipSuccessText"].Value),
+                unequipSuccessTitle: @Json.Serialize(L["Default skin is back"].Value),
+                unequipSuccess: @Json.Serialize(L["Your weapon ({0}) is back to the default skin."].Value),
+                nextMap: @Json.Serialize(L["The change shows up on the server <b>from the next map change</b>. If you are playing right now, it kicks in when the map changes."].Value),
+                switchHint: @Json.Serialize(L["In game, during ready-up, use <code>!skin next</code> and <code>!skin prev</code> to switch between your skins, or <code>!skin default</code> to go back to the default one."].Value),
+                errorTitle: @Json.Serialize(L["It did not work"].Value),
+                previousPhoto: @Json.Serialize(L["Previous photo"].Value),
+                nextPhoto: @Json.Serialize(L["Next photo"].Value),
+                errors: {
+                    InsufficientStars: @Json.Serialize(L["You do not have enough stars for this skin. No stars were spent."].Value),
+                    AlreadyOwned: @Json.Serialize(L["You already own this skin. No stars were spent."].Value),
+                    StarsUnavailable: @Json.Serialize(L["We could not check your stars right now. Try again in a moment. No stars were spent."].Value),
+                    Busy: @Json.Serialize(L["Too many operations at the same time. Try again. No stars were spent."].Value),
+                    NotOwned: @Json.Serialize(L["You do not own this skin yet."].Value),
+                    SkinNotFound: @Json.Serialize(L["This skin is no longer available."].Value),
+                    Generic: @Json.Serialize(L["Something went wrong. Reload the page to check whether the operation went through before trying again."].Value)
+                }
+            };
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var weapon = 'all';
+            var rarity = 'all';
+            var onlyAffordable = false;
+            var pendingBuy = null;
+            var reloadOnClose = false;
+
+            function escapeHtml(text) {
+                return $('<div/>').text(text).html();
+            }
+
+            function format(template) {
+                var args = Array.prototype.slice.call(arguments, 1);
+
+                return template.replace(/\{(\d+)\}/g, function (match, index) {
+                    return args[index];
+                });
+            }
+
+            function number(value) {
+                return Number(value).toLocaleString(document.documentElement.lang || undefined);
+            }
+
+            function showResult(title, html, reload) {
+                var $result = $('#sk-result');
+
+                reloadOnClose = reload;
+
+                $result.find('.modal-title').text(title);
+                $result.find('.modal-body').html(html);
+                $('.modal.in').not($result).modal('hide');
+                $result.modal('show');
+            }
+
+            function showError(status) {
+                var message = texts.errors[status] || texts.errors.Generic;
+                var reload = status === 'AlreadyOwned';
+
+                showResult(texts.errorTitle, '<p>' + message + '</p>', reload);
+            }
+
+            function post(url, data, $button, onSuccess) {
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': token },
+                    data: JSON.stringify(data || {})
+                }).done(function (response) {
+                    if (response.succeeded) {
+                        onSuccess(response);
+                        return;
+                    }
+
+                    showError(response.status);
+                }).fail(function () {
+                    showError('Generic');
+                }).always(function () {
+                    $button.prop('disabled', false);
+                });
+            }
+
+            var shotExtension = 'webp';
+            var cardShots = [1, 5, 6];
+            var cardShotDelay = 1600;
+            var avifProbe = new Image();
+
+            avifProbe.onload = function () {
+                if (avifProbe.width > 0)
+                    shotExtension = 'avif';
+            };
+            avifProbe.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAAD5bWV0YQAAAAAAAAAvaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAFBpY3R1cmVIYW5kbGVyAAAAAA5waXRtAAAAAAABAAAAHmlsb2MAAAAARAAAAQABAAAAAQAAASEAAAAWAAAAKGlpbmYAAAAAAAEAAAAaaW5mZQIAAAAAAQAAYXYwMUNvbG9yAAAAAGppcHJwAAAAS2lwY28AAAAUaXNwZQAAAAAAAAACAAAAAgAAABBwaXhpAAAAAAMICAgAAAAMYXYxQ4EADAAAAAATY29scm5jbHgAAgACAAIAAAAAF2lwbWEAAAAAAAAAAQABBAECgwQAAAAebWRhdAoFGAA2wCAyDRgAAABQAAAAALATSyg=';
+
+            function shotUrl(base, version, shot, size, extension) {
+                return base + shot + size + '.' + (extension || shotExtension) + '?v=' + version;
+            }
+
+            function startCardShots($thumb) {
+                var $shots = $thumb.children('.sk-shot');
+                var index = 0;
+
+                if ($shots.length === 0) {
+                    $shots = $($.map(cardShots, function (shot) {
+                        return $('<img class="sk-shot" alt=""/>').attr('src', shotUrl($thumb.data('shots'), $thumb.data('version'), shot, '-card'))[0];
+                    }));
+                    $thumb.children('img').first().after($shots);
+                }
+
+                function show() {
+                    var $next = $shots.eq(index % $shots.length);
+
+                    function reveal() {
+                        if (!$thumb.data('hovering'))
+                            return;
+
+                        $shots.css('z-index', 0);
+                        $next.css('z-index', 1).addClass('active');
+                        setTimeout(function () {
+                            if ($next.css('z-index') === '1')
+                                $shots.not($next).removeClass('active');
+                        }, 500);
+                    }
+
+                    index++;
+
+                    if ($next[0].complete && $next[0].naturalWidth > 0)
+                        reveal();
+                    else
+                        $next.one('load', reveal);
+                }
+
+                $thumb.data('hovering', true);
+                show();
+                $thumb.data('timer', setInterval(show, cardShotDelay));
+            }
+
+            function stopCardShots($thumb) {
+                clearInterval($thumb.data('timer'));
+                $thumb.data('hovering', false);
+                $thumb.children('.sk-shot').removeClass('active');
+            }
+
+            $(document).on('mouseenter', '.sk-thumb[data-shots]', function () {
+                startCardShots($(this));
+            });
+
+            $(document).on('mouseleave', '.sk-thumb[data-shots]', function () {
+                stopCardShots($(this));
+            });
+
+            function loadGallery($container) {
+                $container.find('.sk-gallery').each(function () {
+                    var $gallery = $(this);
+
+                    $gallery.find('img[data-shot]').each(function () {
+                        var $image = $(this);
+
+                        $image.attr('src', shotUrl($gallery.data('shots'), $gallery.data('version'), $image.data('shot'), $image.attr('data-size')));
+                    });
+                });
+            }
+
+            $(document).on('click', '.sk-gallery-thumb', function () {
+                var $thumb = $(this);
+                var $gallery = $thumb.closest('.sk-gallery');
+                var $main = $gallery.find('.sk-gallery-main');
+                var $image = $main.find('img');
+                var shot = $thumb.data('shot');
+                var base = $gallery.data('shots');
+                var version = $gallery.data('version');
+
+                if ($thumb.hasClass('active'))
+                    return;
+
+                $gallery.find('.sk-gallery-thumb').removeClass('active');
+                $thumb.addClass('active');
+                $main.attr('href', shotUrl(base, version, shot, '', 'webp'));
+                $image.addClass('loading').one('load error', function () {
+                    $image.removeClass('loading');
+                }).attr('src', shotUrl(base, version, shot, ''));
+            });
+
+            var zoomMaxScale = 4;
+            var zoomStep = 0.7;
+            var zoomClickScale = 2;
+
+            $(document).on('lity:ready', function (event, instance) {
+                var $opener = instance.opener();
+                var lity = instance.element()[0];
+                var image = instance.element().find('.lity-content img')[0];
+                var panned = false;
+
+                if (!image || !$opener || !$opener.is('.sk-modal-image'))
+                    return;
+
+                var panzoom = Panzoom(image, { maxScale: zoomMaxScale, step: zoomStep, contain: 'outside', cursor: 'zoom-in' });
+
+                image.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+                lity.addEventListener('pointerdown', function () {
+                    panned = false;
+                }, true);
+                lity.addEventListener('click', function (e) {
+                    if (panned)
+                        e.stopPropagation();
+                }, true);
+                image.addEventListener('panzoompan', function () {
+                    panned = true;
+                });
+                image.addEventListener('panzoomchange', function (e) {
+                    image.style.cursor = e.detail.scale > 1 ? 'grab' : 'zoom-in';
+                });
+                image.addEventListener('click', function (e) {
+                    if (panzoom.getScale() > 1)
+                        panzoom.reset();
+                    else
+                        panzoom.zoomToPoint(zoomClickScale, e);
+                });
+
+                var $thumbs = $opener.closest('.sk-gallery').find('.sk-gallery-thumb');
+
+                if ($thumbs.length < 2)
+                    return;
+
+                function showShot(offset) {
+                    var index = ($thumbs.index($thumbs.filter('.active')) + offset + $thumbs.length) % $thumbs.length;
+
+                    $thumbs.eq(index).trigger('click');
+                    panzoom.reset({ animate: false });
+                    image.src = $opener.attr('href');
+                }
+
+                function onKeyDown(e) {
+                    if (e.key === 'ArrowLeft')
+                        showShot(-1);
+                    else if (e.key === 'ArrowRight')
+                        showShot(1);
+                    else
+                        return;
+
+                    e.preventDefault();
+                }
+
+                $('<button type="button" class="sk-lity-nav sk-lity-prev"><span class="glyphicon glyphicon-chevron-left"></span></button>')
+                    .attr('aria-label', texts.previousPhoto)
+                    .on('click', function () {
+                        showShot(-1);
+                    })
+                    .appendTo(lity);
+
+                $('<button type="button" class="sk-lity-nav sk-lity-next"><span class="glyphicon glyphicon-chevron-right"></span></button>')
+                    .attr('aria-label', texts.nextPhoto)
+                    .on('click', function () {
+                        showShot(1);
+                    })
+                    .appendTo(lity);
+
+                document.addEventListener('keydown', onKeyDown);
+                instance.element().on('lity:close', function () {
+                    document.removeEventListener('keydown', onKeyDown);
+                });
+            });
+
+            function openDetails($card) {
+                var $modal = $('#sk-modal');
+
+                $modal.find('.modal-title').text($card.data('title'));
+                $modal.find('.modal-body').html($card.find('.sk-details').html());
+                loadGallery($modal);
+                $modal.data('skin', $card.data('skin'));
+                $modal.data('title', $card.data('title'));
+                $modal.data('workshop', $card.data('workshop'));
+                $modal.modal('show');
+            }
+
+            $(document).on('click', '.sk-author-notice-open', function () {
+                var $modal = $('#sk-modal');
+                var title = 'Remove skin: ' + $modal.data('title') + ' (' + $modal.data('skin') + ')';
+                var body = 'Skin: ' + $modal.data('title') + '\nWorkshop: ' + $modal.data('workshop');
+
+                if (texts.authorRequestUrl)
+                    $('#sk-author-notice .sk-author-notice-github').attr('href',
+                        texts.authorRequestUrl + (texts.authorRequestUrl.indexOf('?') < 0 ? '?' : '&') + 'title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body));
+                $('#sk-author-notice').modal('show');
+            });
+
+            $('#sk-author-notice').on('show.bs.modal', function () {
+                var zIndex = 1050 + 10 * $('.modal.in').length;
+
+                $(this).css('z-index', zIndex);
+                setTimeout(function () {
+                    $('.modal-backdrop').not('.sk-stacked').last().css('z-index', zIndex - 1).addClass('sk-stacked');
+                }, 0);
+            }).on('hidden.bs.modal', function () {
+                if ($('.modal.in').length > 0)
+                    $('body').addClass('modal-open');
+            });
+
+            $(document).on('click', '.sk-open', function (e) {
+                if ($(e.target).closest('.sk-action, .sk-missing, .sk-author').length > 0)
+                    return;
+
+                e.preventDefault();
+                openDetails($(this));
+            });
+
+            $(document).on('click', '.sk-buy', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var $button = $(this);
+                var price = Number($button.data('price'));
+                var title = escapeHtml($button.data('title'));
+                var weaponName = escapeHtml($button.data('weapon-name'));
+
+                pendingBuy = { skin: $button.data('skin'), price: price, title: title, weaponName: weaponName };
+
+                var html = '<p>' + format(texts.confirmBuy, title, number(price)) + '</p>'
+                    + '<p>' + format(texts.confirmBalance, number(texts.balance), number(texts.balance - price)) + '</p>'
+                    + '<p class="sk-notice">' + format(texts.confirmEquip, weaponName) + '</p>'
+                    + (texts.confirmSeason ? '<p>' + escapeHtml(texts.confirmSeason) + '</p>' : '')
+                    + '<p><small>' + texts.confirmFinal + '</small></p>';
+
+                $('.modal.in').modal('hide');
+                $('#sk-confirm .modal-body').html(html);
+                $('#sk-confirm').modal('show');
+            });
+
+            $('.sk-confirm-buy').on('click', function () {
+                if (pendingBuy == null)
+                    return;
+
+                var buy = pendingBuy;
+
+                post('/api/shop/skins/' + encodeURIComponent(buy.skin) + '/buy', null, $(this), function () {
+                    pendingBuy = null;
+
+                    var html = '<p>' + format(texts.buySuccess, buy.title, buy.weaponName) + '</p>'
+                        + '<p class="sk-notice">' + texts.nextMap + '</p>'
+                        + '<p>' + texts.switchHint + '</p>';
+
+                    showResult(texts.buySuccessTitle, html, true);
+                });
+            });
+
+            $(document).on('click', '.sk-equip', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var $button = $(this);
+                var title = escapeHtml($button.data('title'));
+                var weaponName = escapeHtml($button.data('weapon-name'));
+
+                post('/api/shop/skins/' + encodeURIComponent($button.data('skin')) + '/equip', null, $button, function () {
+                    var html = '<p>' + format(texts.equipSuccess, title, weaponName) + '</p>'
+                        + '<p class="sk-notice">' + texts.nextMap + '</p>';
+
+                    showResult(texts.equipSuccessTitle, html, true);
+                });
+            });
+
+            $(document).on('click', '.sk-use-open', function (e) {
+                e.preventDefault();
+                $('.modal.in').modal('hide');
+                $('#sk-use-modal').modal('show');
+            });
+
+            $(document).on('click', '.sk-admin-gift', function (e) {
+                e.preventDefault();
+
+                var skin = $(this).data('skin');
+
+                $('#sk-modal').one('hidden.bs.modal', function () {
+                    GiftModal.open({ skin: skin });
+                }).modal('hide');
+            });
+
+            $(document).on('click', '.sk-unequip', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var $button = $(this);
+                var weaponName = escapeHtml($button.data('weapon-name'));
+
+                post('/api/shop/weapons/' + encodeURIComponent($button.data('weapon')) + '/unequip', null, $button, function () {
+                    var html = '<p>' + format(texts.unequipSuccess, weaponName) + '</p>'
+                        + '<p class="sk-notice">' + texts.nextMap + '</p>';
+
+                    showResult(texts.unequipSuccessTitle, html, true);
+                });
+            });
+
+            $('#sk-result').on('hidden.bs.modal', function () {
+                if (reloadOnClose)
+                    location.reload();
+            });
+
+            function applyFilters() {
+                $('.tab-pane').each(function () {
+                    var $pane = $(this);
+                    var total = 0;
+
+                    $pane.find('.sk-section').each(function () {
+                        var visible = 0;
+
+                        $(this).find('.sk-item').each(function () {
+                            var $item = $(this);
+                            var show = (weapon === 'all' || $item.data('weapon') === weapon)
+                                && (rarity === 'all' || $item.data('rarity') === rarity)
+                                && (!onlyAffordable || $item.data('affordable') === 1);
+
+                            $item.toggle(show);
+
+                            if (show)
+                                visible++;
+                        });
+
+                        $(this).toggle(visible > 0);
+                        total += visible;
+                    });
+
+                    if ($pane.find('.sk-item').length > 0)
+                        $pane.find('.sk-empty').toggleClass('hidden', total > 0);
+                });
+            }
+
+            $('#sk-weapon-filter').on('change', function () {
+                weapon = $(this).val();
+                applyFilters();
+            });
+
+            $('#sk-rarity-filter').on('change', function () {
+                rarity = $(this).val();
+                applyFilters();
+            });
+
+            $('#sk-only-affordable').on('change', function () {
+                onlyAffordable = this.checked;
+                applyFilters();
+            });
+
+            $('.sk-tabs a').on('shown.bs.tab', function () {
+                history.replaceState(null, '', $(this).attr('href'));
+            });
+
+            $('.sk-tabs a').filter(function () {
+                return $(this).attr('href') === location.hash;
+            }).tab('show');
+
+            if (location.hash.indexOf('#skin-') === 0) {
+                var $card = $('#sk-shop').find('[id="' + location.hash.substring(1) + '"]');
+
+                if ($card.length > 0)
+                    openDetails($card);
+            }
+        });
+    </script>
 }

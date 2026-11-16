@@ -1,0 +1,16 @@
+{
+  "Weapon skins unlocked by patent level on the {0} server, with credits to the Steam Workshop creators.": "Skins de armas liberadas por nível de patente no servidor {0}, com créditos aos criadores do Steam Workshop.",
+  "Bought skins last until the ranking reset, which happens every {2} months. The current season ends on {0} ({1} days left): at that moment every purchase is refunded automatically and the stars come back so you can buy again. Skins received as gifts are yours forever.": "As skins compradas valem até o reset do ranking, que acontece a cada {2} meses. A temporada atual termina em {0} (faltam {1} dias): nesse momento, todas as compras são estornadas automaticamente e as estrelas voltam para você comprar de novo. Skins recebidas de presente ficam com você para sempre.",
+  "Bought skins last until the ranking reset, which happens every month. The current season ends on {0} ({1} days left): at that moment every purchase is refunded automatically and the stars come back so you can buy again. Skins received as gifts are yours forever.": "As skins compradas valem até o reset do ranking, que acontece todo mês. A temporada atual termina em {0} (faltam {1} dias): nesse momento, todas as compras são estornadas automaticamente e as estrelas voltam para você comprar de novo. Skins recebidas de presente ficam com você para sempre.",
+  "Buy a skin with your stars. It is <b>equipped</b> right away and shows up on the server <b>from the next map change</b>. Each skin is bought only once and is yours forever.": "Compre uma skin com suas estrelas. Ela já fica <b>equipada</b> e aparece no servidor <b>a partir da próxima troca de mapa</b>. Cada skin é comprada uma vez só e fica sua para sempre.",
+  "Purchases cannot be undone.": "A compra não pode ser desfeita.",
+  "Skin catalog": "Catálogo de skins",
+  "skins in the catalog": "skins no catálogo",
+  "skins for sale": "skins à venda",
+  "skins no longer for sale": "skins fora de venda",
+  "Skin authors": "Autores das skins",
+  "Steam profile for contact": "Perfil da Steam para contato",
+  "Opened by the Message me on Steam button of the notice for skin authors in the shop. Leave it empty to hide the button.": "Aberto pelo botão Falar comigo na Steam do aviso para autores de skins na loja. Deixe em branco para esconder o botão.",
+  "Address for removal requests": "Endereço para pedidos de remoção",
+  "Opened by the Open a request on GitHub button of the same notice, with the skin already filled in. Leave it empty to hide the button.": "Aberto pelo botão Abrir um pedido no GitHub do mesmo aviso, com a skin já preenchida. Deixe em branco para esconder o botão."
+}

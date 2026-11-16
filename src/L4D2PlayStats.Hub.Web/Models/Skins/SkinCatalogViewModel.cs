@@ -8,5 +8,5 @@ public class SkinCatalogViewModel
     public int Total { get; init; }
     public int Available { get; init; }
     public int Unavailable { get; init; }
-    public DateTime? UpdatedAtUtc { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 }

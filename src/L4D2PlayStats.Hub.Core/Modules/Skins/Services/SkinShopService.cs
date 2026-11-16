@@ -1,7 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +12,16 @@ public class SkinShopService(
     HubDbContext dbContext,
     HubState hubState,
     IClock clock,
-    IRankingService rankingService,
+    ISkinStarsService skinStarsService,
     ISkinService skinService,
     ILogger<SkinShopService> logger) : ISkinShopService
 {
     public async Task<SkinWallet> GetWalletAsync(long communityId, CancellationToken cancellationToken = default)
     {
-        var stars = await rankingService.StarsAsync(cancellationToken);
+        var stars = await skinStarsService.GetAsync(communityId, cancellationToken);
         var spent = await dbContext.Set<SkinPurchase>().Where(p => p.CommunityId == communityId).SumAsync(p => p.Price, cancellationToken);
 
-        return new SkinWallet(stars.GetValueOrDefault(communityId), spent);
+        return new SkinWallet(stars, spent);
     }
 
     public async Task<PlayerSkins> GetPlayerSkinsAsync(long communityId, CancellationToken cancellationToken = default)
@@ -110,7 +109,7 @@ public class SkinShopService(
             logger.LogInformation("Skin purchased: {CommunityId} bought {SkinId} for {Price} stars (balance {Balance} -> {NewBalance})",
                 communityId, skin.Id, skin.Price, wallet.Balance, wallet.Balance - skin.Price);
 
-            return SkinShopResult.Of(SkinShopStatus.Success, skin, new SkinWallet(wallet.Stars, wallet.Spent + skin.Price));
+            return SkinShopResult.Of(SkinShopStatus.Success, skin, wallet.After(skin.Price));
         }, cancellationToken);
     }
 

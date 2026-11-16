@@ -1,111 +1,227 @@
-@using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers
-@using L4D2PlayStats.Hub.Web.Helpers
-@using L4D2PlayStats.Hub.Web.Models.Skins
-@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
-@model SkinPricesViewModel
+@model SkinPricesAdminModel
+
 @{
-    ViewData["Title"] = L["Skins"].Value;
-
+    ViewData["Title"] = L["Skin prices"].Value;
     var culture = CultureInfo.CurrentUICulture;
-
-    string Link(int page)
-    {
-        return AppConsts.SkinPricesUrl + SkinDisplay.Query(("q", Model.Query), ("weapon", Model.Weapon), ("rarity", Model.Rarity), ("page", page));
-    }
+    var pagination = PaginationModel.Of(Model.Skins, number => Url.Action("Prices", "SkinsAdmin", new { q = Model.Query, rarity = Model.Rarity, weapon = Model.Weapon, page = number })!);
+    var filtered = !string.IsNullOrEmpty(Model.Query) || Model.Rarity != null || !string.IsNullOrEmpty(Model.Weapon);
 }
-<link rel="stylesheet" href="~/css/skins.css" asp-append-version="true">
-<h1 class="h3">@L["Skins"]</h1>
-<partial name="_AdminNav"/>
-<partial name="_SkinsAdminNav"/>
 
-<p class="text-body-secondary">
-    @L["Each skin comes with a price from the catalog. A price set here replaces it, and stays when the catalog is imported again."]
-    @L["{0} skins have their own price.", Model.CustomPrices]
-</p>
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+}
 
-<form class="d-flex flex-wrap gap-2 mb-3" method="get" action="@AppConsts.SkinPricesUrl">
-    <input class="form-control form-control-sm w-auto" name="q" value="@Model.Query" placeholder="@L["Skin"]" aria-label="@L["Search"]">
-    <select class="form-select form-select-sm w-auto" name="weapon" aria-label="@L["Weapon"]" onchange="this.form.submit()">
-        <option value="">@L["All weapons"]</option>
-        @foreach (var weapon in Model.Weapons)
-        {
-            <option value="@weapon" selected="@(weapon == Model.Weapon)">@L[SkinWeapons.Name(weapon)]</option>
-        }
-    </select>
-    <select class="form-select form-select-sm w-auto" name="rarity" aria-label="@L["Rarity"]" onchange="this.form.submit()">
+@Html.AntiForgeryToken()
+
+@await Html.PartialAsync("_SkinsAdminNav")
+
+<div class="admin-header">
+    <h3>@L["Skin prices"]</h3>
+</div>
+
+<p class="text-muted">@L["The default price comes from the catalog. A changed price only applies to new purchases; players who already bought are not affected. Click a skin to change its price."]</p>
+
+<div class="admin-stats">
+    <div>
+        <strong>@Model.CustomPrices.ToString("N0", culture)</strong>
+        <small>@L["skins with a changed price"]</small>
+    </div>
+</div>
+
+<form method="get" class="admin-filters">
+    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search skin by name or id..."]"/>
+    <select name="rarity" class="form-control" onchange="this.form.submit()">
         <option value="">@L["All rarities"]</option>
         @foreach (var rarity in SkinDisplay.Rarities)
         {
-            <option value="@rarity" selected="@(rarity == Model.Rarity)">@L[$"Rarity.{rarity}"]</option>
+            <option value="@rarity" selected="@(Model.Rarity == rarity)">@L[SkinDisplay.RarityKey(rarity)]</option>
         }
     </select>
-    <button class="btn btn-sm btn-outline-light" type="submit">@L["Search"]</button>
+    <select name="weapon" class="form-control" onchange="this.form.submit()">
+        <option value="">@L["All weapons"]</option>
+        @foreach (var weapon in Model.Weapons)
+        {
+            <option value="@weapon" selected="@(Model.Weapon == weapon)">@L[SkinWeapons.Name(weapon)]</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span> @L["Search"]
+    </button>
+    @if (filtered)
+    {
+        <a class="btn btn-link" href="@Url.Action("Prices", "SkinsAdmin")">@L["Clear filters"]</a>
+    }
 </form>
 
-@if (Model.Skins.Total == 0)
-{
-    <div class="alert alert-secondary">@L["No skins found."]</div>
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-sm">
-            <thead>
-            <tr>
-                <th>@L["Skin"]</th>
-                <th>@L["Weapon"]</th>
-                <th>@L["Rarity"]</th>
-                <th class="numeric">@L["Catalog price"]</th>
-                <th>@L["Price"]</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var skin in Model.Skins.Items)
-            {
-                <tr>
-                    <td>
-                        @skin.Title(culture)
-                        @if (!skin.Available)
-                        {
-                            <span class="badge text-bg-warning">@L["No longer for sale"]</span>
-                        }
-                        <div class="small text-body-secondary"><code>@skin.Id</code></div>
-                    </td>
-                    <td>@L[SkinWeapons.Name(skin.Weapon)]</td>
-                    <td><span class="badge skin-rarity-badge @SkinDisplay.RarityCss(skin.Rarity)">@L[$"Rarity.{skin.Rarity}"]</span></td>
-                    <td class="numeric">@skin.DefaultPrice</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <form class="d-flex gap-2" method="post" asp-antiforgery="true" action="@AppConsts.SkinPricesUrl">
-                                <input type="hidden" name="skinId" value="@skin.Id">
-                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
-                                <input class="form-control form-control-sm" style="width: 7rem;" name="price" type="number" min="@CoreConsts.SkinMinPrice" max="@CoreConsts.SkinMaxPrice" value="@skin.Price" required aria-label="@L["Price"]">
-                                <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
-                            </form>
-                            @if (skin.HasCustomPrice)
-                            {
-                                <form method="post" asp-antiforgery="true" action="@AppConsts.SkinPricesUrl">
-                                    <input type="hidden" name="skinId" value="@skin.Id">
-                                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
-                                    <button class="btn btn-sm btn-outline-secondary" type="submit">@L["Use the catalog price"]</button>
-                                </form>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-
-    @if (Model.Skins.Pages > 1)
+<div class="admin-list">
+    @if (Model.Skins.Items.Count == 0)
     {
-        <nav aria-label="@L["Pages"]">
-            <ul class="pagination justify-content-center">
-                <li class="page-item @(Model.Skins.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Skins.Page - 1)">@L["Previous"]</a></li>
-                <li class="page-item disabled"><span class="page-link">@Model.Skins.Page / @Model.Skins.Pages</span></li>
-                <li class="page-item @(Model.Skins.Page >= Model.Skins.Pages ? "disabled" : "")"><a class="page-link" href="@Link(Model.Skins.Page + 1)">@L["Next"]</a></li>
-            </ul>
-        </nav>
+        <div class="admin-empty">@L["No skins found."]</div>
     }
+    @foreach (var skin in Model.Skins.Items)
+    {
+        var title = skin.Title(culture);
+        var weapon = L[SkinWeapons.Name(skin.Weapon)].Value;
+        var rarity = L[SkinDisplay.RarityKey(skin.Rarity)].Value;
+        var image = SkinDisplay.Image(Model.AssetsUrl, skin);
+
+        <div class="admin-item ska-skin"
+             data-skin="@skin.Id" data-title="@title" data-image="@image" data-weapon="@weapon" data-rarity="@rarity"
+             data-price="@skin.Price" data-default-price="@skin.DefaultPrice" data-custom="@(skin.HasCustomPrice ? 1 : 0)" data-available="@(skin.Available ? 1 : 0)">
+            <img class="admin-thumb" src="@image" alt="@title" loading="lazy"/>
+            <div class="admin-main">
+                <div class="admin-title">@title</div>
+                <small>@weapon · @rarity · @skin.Id</small>
+            </div>
+            <div class="admin-side">
+                <strong>@skin.Price.ToString("N0", culture) ⭐</strong>
+                @if (skin.HasCustomPrice)
+                {
+                    <small>
+                        <span class="label label-warning">@L["Changed"]</span> @string.Format(L["default: {0} ⭐"].Value, skin.DefaultPrice.ToString("N0", culture))
+                    </small>
+                }
+                @if (!skin.Available)
+                {
+                    <small>
+                        <span class="label label-default">@L["No longer for sale"]</span>
+                    </small>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_Pagination", pagination)
+
+<div id="ska-price-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title ska-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="admin-details">
+                    <img class="ska-image" src="" alt=""/>
+                    <dl>
+                        <dt>@L["Weapon"]</dt>
+                        <dd class="ska-weapon"></dd>
+                        <dt>@L["Rarity"]</dt>
+                        <dd class="ska-rarity"></dd>
+                        <dt>@L["Default price"]</dt>
+                        <dd class="ska-default-price"></dd>
+                        <dt>@L["Current price"]</dt>
+                        <dd>
+                            <div class="input-group" style="max-width: 200px">
+                                <input type="number" min="1" max="100000" class="form-control ska-price"/>
+                                <span class="input-group-addon">⭐</span>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <p class="text-muted">
+                    <small>@L["The new price applies to new purchases. Use \"Reset to default\" to go back to the catalog price."]</small>
+                </p>
+                <div class="ska-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-success ska-gift">
+                    <span class="glyphicon glyphicon-gift"></span> @L["Give as a gift"]
+                </button>
+                <button type="button" class="btn btn-warning ska-reset">@L["Reset to default"]</button>
+                <button type="button" class="btn btn-primary ska-save">@L["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_GiftModal", Model.AllSkins)
+
+@section Scripts {
+    <script>
+        $(function () {
+            var texts = {
+                saved: @Json.Serialize(L["Price saved. Reloading..."].Value),
+                invalid: @Json.Serialize(L["Enter a price between 1 and 100,000."].Value),
+                error: @Json.Serialize(L["Could not save. Reload the page and try again."].Value)
+            };
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var selected = null;
+
+            function message(success, text) {
+                $('#ska-price-modal .ska-message').html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + $('<div/>').text(text).html() + '</div>');
+            }
+
+            function save(price) {
+                var $buttons = $('#ska-price-modal .ska-save, #ska-price-modal .ska-reset');
+
+                $buttons.prop('disabled', true);
+
+                $.ajax({
+                    url: '/api/shop/skins/' + encodeURIComponent(selected) + '/price',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': token },
+                    data: JSON.stringify({ price: price })
+                }).done(function () {
+                    message(true, texts.saved);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function () {
+                    message(false, texts.error);
+                    $buttons.prop('disabled', false);
+                });
+            }
+
+            $('.ska-skin').on('click', function () {
+                var $item = $(this);
+                var $modal = $('#ska-price-modal');
+
+                selected = $item.data('skin');
+
+                $modal.find('.ska-title').text($item.data('title'));
+                $modal.find('.ska-image').attr({ src: $item.data('image'), alt: $item.data('title') });
+                $modal.find('.ska-weapon').text($item.data('weapon'));
+                $modal.find('.ska-rarity').text($item.data('rarity'));
+                $modal.find('.ska-default-price').text(Number($item.data('default-price')).toLocaleString() + ' ⭐');
+                $modal.find('.ska-price').val($item.data('price'));
+                $modal.find('.ska-reset').toggle($item.data('custom') === 1);
+                $modal.find('.ska-gift').toggle($item.data('available') === 1);
+                $modal.find('.ska-message').empty();
+                $modal.find('.ska-save, .ska-reset').prop('disabled', false);
+                $modal.modal('show');
+            });
+
+            $('.ska-save').on('click', function () {
+                var price = parseInt($('#ska-price-modal .ska-price').val(), 10);
+
+                if (isNaN(price) || price < 1 || price > 100000) {
+                    message(false, texts.invalid);
+                    return;
+                }
+
+                save(price);
+            });
+
+            $('.ska-gift').on('click', function () {
+                var skin = selected;
+
+                $('#ska-price-modal').one('hidden.bs.modal', function () {
+                    GiftModal.open({ skin: skin });
+                }).modal('hide');
+            });
+
+            $('.ska-reset').on('click', function () {
+                save(null);
+            });
+
+            $('#ska-price-modal').on('shown.bs.modal', function () {
+                $(this).find('.ska-price').focus().select();
+            });
+        });
+    </script>
 }
