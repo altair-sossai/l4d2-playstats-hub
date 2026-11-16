@@ -1,47 +1,45 @@
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Live;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.SiteChat)]
-[Route("admin/chat-bans")]
-public class ChatBansController(IChatBanService chatBanService, ISiteChatService siteChatService, ICurrentUser currentUser) : Controller
+public class ChatBansController(IChatBanService chatBanService, ILiveViewService liveViewService) : Controller
 {
-    [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    [HttpGet("/admin/chat-bans")]
+    public async Task<IActionResult> Index(string? q, int page = 1, CancellationToken cancellationToken = default)
     {
-        var model = new ChatBansViewModel
-        {
-            Bans = await chatBanService.ListAsync(cancellationToken),
-            RecentSenders = await siteChatService.RecentSendersAsync(cancellationToken)
-        };
+        ViewBag.Admin = "active";
+        ViewBag.ChatBans = "active";
+
+        var bans = await chatBanService.ListAsync(cancellationToken);
+        var term = q?.Trim();
+
+        var filtered = bans
+            .Select(ban => new ChatBanResult(ban))
+            .Where(ban => string.IsNullOrEmpty(term)
+                          || ban.Name.Contains(term, StringComparison.OrdinalIgnoreCase)
+                          || ban.CommunityId.Contains(term, StringComparison.OrdinalIgnoreCase)
+                          || ban.SteamId.Contains(term, StringComparison.OrdinalIgnoreCase)
+                          || (ban.Reason?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false))
+            .ToList();
+
+        var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
+        var model = new ChatBansModel(new PagedListModel<ChatBanResult>(filtered, page, AppConsts.ChatBansPageSize), q, bans.Count, timeZone);
 
         return View(model);
     }
 
-    [HttpPost("")]
-    public async Task<IActionResult> Save(long communityId, string? name, string? reason, CancellationToken cancellationToken)
+    [HttpGet("/chat-bans")]
+    public IActionResult Legacy()
     {
-        var ban = await chatBanService.SaveAsync(communityId, name, reason, currentUser.CommunityId, currentUser.Name, cancellationToken);
-
-        if (ban == null)
-            TempData["Error"] = "That is not a valid SteamID64.";
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost("{communityId:long}/delete")]
-    public async Task<IActionResult> Remove(long communityId, CancellationToken cancellationToken)
-    {
-        await chatBanService.RemoveAsync(communityId, cancellationToken);
-
-        return RedirectToAction(nameof(Index));
+        return RedirectPermanent($"{AppConsts.ChatBansUrl}{Request.QueryString}");
     }
 }

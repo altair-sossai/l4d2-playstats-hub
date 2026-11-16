@@ -1,7 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
-using L4D2PlayStats.Hub.Web.Models.Live;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +32,7 @@ public class SiteController(BrandingStore brandingStore, ILiveViewService liveVi
     [RequireModule(HubModule.LiveServer)]
     public async Task<IActionResult> Connect(CancellationToken cancellationToken)
     {
-        var server = await MainServerAsync(cancellationToken);
+        var server = await liveViewService.MainServerAsync(cancellationToken);
 
         return server?.ConnectUrl == null ? Redirect("/servers") : Redirect(server.ConnectUrl);
     }
@@ -42,30 +41,18 @@ public class SiteController(BrandingStore brandingStore, ILiveViewService liveVi
     [RequireModule(HubModule.LiveServer)]
     public async Task<IActionResult> Server(CancellationToken cancellationToken)
     {
-        var server = await MainServerAsync(cancellationToken);
+        var server = await liveViewService.MainServerAsync(cancellationToken);
         if (server == null)
             return Ok(null);
-
-        var teamSize = server.Snapshot.Configuration?.TeamSize ?? AppConsts.DefaultTeamSize;
 
         return Ok(new
         {
             publicId = server.Server.PublicId,
-            name = server.Server.Name,
+            name = server.Name,
             address = server.Server.Address,
             map = server.Map,
-            players = server.Snapshot.PlayerCount,
-            max_players = teamSize * 2
+            players = server.Players,
+            max_players = server.MaxPlayers
         });
-    }
-
-    private async Task<ServerCardViewModel?> MainServerAsync(CancellationToken cancellationToken)
-    {
-        var list = await liveViewService.ListAsync(cancellationToken);
-
-        return list.Servers
-            .OrderByDescending(server => server.Snapshot.PlayerCount)
-            .ThenByDescending(server => server.Online)
-            .FirstOrDefault();
     }
 }

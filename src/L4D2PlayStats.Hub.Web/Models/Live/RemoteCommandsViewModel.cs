@@ -7,4 +7,5 @@ public class RemoteCommandsViewModel
 {
     public IReadOnlyList<GameServer> Servers { get; init; } = [];
     public IReadOnlyList<RemoteCommandLog> Logs { get; init; } = [];
+    public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 }

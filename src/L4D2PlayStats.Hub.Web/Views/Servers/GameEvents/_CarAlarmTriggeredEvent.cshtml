@@ -1,0 +1,29 @@
+@model CarAlarmTriggeredEvent
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor!))
+<span class="game-event-action">@L["triggered a car alarm"]</span>
+@if (Model.Reason != CarAlarmReason.Unknown)
+{
+    <text>(@TextGameEventCarAlarm(Model.Reason))</text>
+}
+@if (Model.Infected != null)
+{
+    <text> @L["assisted by"]</text>
+    @(Html.EventPlayer(Model.Infected, L["a special infected"]))
+}
+<text>.</text>
+
+@functions {
+    private Microsoft.Extensions.Localization.LocalizedString TextGameEventCarAlarm(object key)
+    {
+        return key.ToString() switch
+        {
+            "Boomer" => L["boomer"],
+            "Explosion" => L["explosion"],
+            "Hit" => L["hit"],
+            "Touched" => L["touched"],
+            _ => L[key.ToString()!]
+        };
+    }
+}

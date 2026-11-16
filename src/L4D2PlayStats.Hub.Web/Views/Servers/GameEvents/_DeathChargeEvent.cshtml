@@ -1,0 +1,15 @@
+@model DeathChargeEvent
+
+@{
+    var height = (int)Math.Round(Model.Height);
+}
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor, L["a charger"]))
+<span class="game-event-danger">@L["death-charged"]</span>
+@(Html.EventPlayer(Model.Victim, L["a survivor"]))
+@if (!Model.WasCarried)
+{
+    <text> @L["by bowling"]</text>
+}
+(@Html.EventStat(L["height: {0}"].Value, height)).

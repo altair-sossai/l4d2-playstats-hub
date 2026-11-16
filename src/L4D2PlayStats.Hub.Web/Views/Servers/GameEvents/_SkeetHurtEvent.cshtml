@@ -1,0 +1,12 @@
+@model SkeetHurtEvent
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor!))
+<span class="game-event-action">@L["skeeted"]</span>
+@(Html.EventPlayer(Model.Hunter, L["a hunter"]))
+(@L["already chipped"], <span class="game-event-danger">@L["{0} damage", Model.Damage]</span>).
+
+@if (Model.IsOverkill)
+{
+    <text> @L["Would've skeeted at full HP."]</text>
+}

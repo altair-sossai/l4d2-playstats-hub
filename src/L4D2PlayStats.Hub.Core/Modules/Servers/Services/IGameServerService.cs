@@ -9,6 +9,7 @@ public interface IGameServerService
     Task<GameServer?> FindAsync(string publicId, CancellationToken cancellationToken = default);
     Task<GameServerCredentials> CreateAsync(string name, string? address, CancellationToken cancellationToken = default);
     Task<GameServer?> UpdateAsync(int id, string name, string? address, bool enabled, CancellationToken cancellationToken = default);
+    Task<GameServer?> SetAlternativeAddressAsync(int id, string? alternativeAddress, CancellationToken cancellationToken = default);
     Task<GameServerCredentials?> RegenerateKeyAsync(int id, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
     Task<GameServerAuthentication> AuthenticateAsync(string? token, CancellationToken cancellationToken = default);

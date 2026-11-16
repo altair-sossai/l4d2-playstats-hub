@@ -1,0 +1,9 @@
+@model RoundLiveEvent
+
+@{
+    var roundText = (Model.SecondHalf ? L["second round"] : L["first round"]).Value;
+    var round = Html.EventSpan("game-event-highlight", roundText);
+    var live = Html.EventSpan("game-event-action", L["live"].Value);
+}
+
+@Html.EventFormat(L["The {0} is {1}."].Value, round, live)

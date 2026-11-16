@@ -142,4 +142,5 @@ public static class AppConsts
     public const string Steam3Pattern = @"^\[?U:\d:(\d+)]?$";
     public const string SteamCommunityIdPattern = @"^(\d{16,})$";
     public const string SteamProfilePattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
+    public const string SteamProfileUrlPattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
 }

@@ -1,0 +1,6 @@
+@model WitchCrownHurtEvent
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor!))
+<span class="game-event-action">@L["draw-crowned a witch"]</span>
+(<span class="game-event-danger">@L["{0} damage, {1} chip", Model.Damage, Model.ChipDamage]</span>).

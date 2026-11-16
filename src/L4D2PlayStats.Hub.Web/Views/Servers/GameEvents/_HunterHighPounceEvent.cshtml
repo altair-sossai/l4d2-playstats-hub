@@ -1,0 +1,24 @@
+@model HunterHighPounceEvent
+
+@{
+    var height = (int)Math.Round(Model.Height);
+    var damage = (int)Math.Round(Model.CalculatedDamage);
+
+    var details = new HtmlContentBuilder();
+    details.Append("(");
+
+    if (damage > 0)
+    {
+        details.AppendHtml(Html.EventSpan("game-event-danger", L["{0} damage", damage].Value));
+        details.Append(", ");
+    }
+
+    details.AppendHtml(Html.EventStat(L["height: {0}"].Value, height));
+    details.Append(").");
+}
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor, L["a hunter"]))
+<span class="game-event-danger">@L["high-pounced"]</span>
+@(Html.EventPlayer(Model.Victim, L["a survivor"]))
+@details

@@ -1,0 +1,6 @@
+@model TongueCutEvent
+
+<span class="game-event-stars">@Model.StarsText()</span>
+@(Html.EventPlayer(Model.Actor!))
+<span class="game-event-action">@L["cut the tongue of"]</span>
+@(Html.EventPlayer(Model.Smoker, L["a smoker"])).

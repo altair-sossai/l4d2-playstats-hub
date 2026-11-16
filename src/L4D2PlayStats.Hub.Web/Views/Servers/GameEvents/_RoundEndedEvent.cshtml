@@ -1,0 +1,9 @@
+@model RoundEndedEvent
+
+@{
+    var survivor = Html.EventSpan("game-event-highlight", Model.SurvivorScore.ToString());
+    var infected = Html.EventSpan("game-event-highlight", Model.InfectedScore.ToString());
+    var difference = Html.EventSpan("game-event-action", Model.Difference.ToString());
+}
+
+@L["Round over"] (@Html.EventFormat(L["{0} x {1}"].Value, survivor, infected)) - @Html.EventFormat(L["difference of {0}"].Value, difference).

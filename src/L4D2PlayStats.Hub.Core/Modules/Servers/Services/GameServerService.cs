@@ -59,6 +59,19 @@ public class GameServerService(HubDbContext dbContext, IGameServerPresence prese
         return server;
     }
 
+    public async Task<GameServer?> SetAlternativeAddressAsync(int id, string? alternativeAddress, CancellationToken cancellationToken = default)
+    {
+        var server = await FindAsync(id, cancellationToken);
+        if (server == null)
+            return null;
+
+        server.AlternativeAddress = Normalize(alternativeAddress);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return server;
+    }
+
     public async Task<GameServerCredentials?> RegenerateKeyAsync(int id, CancellationToken cancellationToken = default)
     {
         var server = await FindAsync(id, cancellationToken);

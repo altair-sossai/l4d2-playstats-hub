@@ -1,57 +1,90 @@
 @model ServerListViewModel
-<div id="server-cards" hx-get="/servers" hx-trigger="every @(AppConsts.ServerListRefreshInSeconds)s" hx-swap="outerHTML">
-    @if (Model.Servers.Count == 0)
-    {
-        <div class="alert alert-secondary">@L["No game server available yet."]</div>
-    }
-    <div class="row g-3">
-        @foreach (var card in Model.Servers)
-        {
-            var configuration = card.Snapshot.Configuration;
-            var scoreboard = card.Snapshot.Scoreboard;
 
-            <div class="col-md-6 col-xl-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <h2 class="h5 mb-1"><a class="text-decoration-none stretched-link" href="/servers/@card.Server.PublicId">@card.Server.Name</a></h2>
-                            <span class="small text-nowrap"><span class="status-dot status-@(card.Online ? "Online" : "Offline")"></span>@L[card.Online ? "Online" : "Offline"]</span>
-                        </div>
-                        <div class="small text-body-secondary mb-3">
-                            @if (!string.IsNullOrEmpty(card.Campaign))
-                            {
-                                <span>@card.Campaign · </span>
-                            }
-                            <span>@(string.IsNullOrEmpty(card.Map) ? L["Unknown map"].Value : card.Map)</span>
-                            @if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
-                            {
-                                <span>· @configuration.Name</span>
-                            }
-                            @if (configuration is { TeamSize: > 0 })
-                            {
-                                <span>· @(configuration.TeamSize)v@(configuration.TeamSize)</span>
-                            }
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="score">
-                                <span class="@(scoreboard?.IsSurvivorsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.SurvivorScore ?? 0)</span>
-                                <span class="text-body-secondary">×</span>
-                                <span class="@(scoreboard?.IsInfectedsWinning == true ? "text-win" : "")">@Display.Number(scoreboard?.InfectedScore ?? 0)</span>
-                            </div>
-                            <div class="text-end small">
-                                <div>@card.Snapshot.PlayerCount @L["players"]</div>
-                            </div>
-                        </div>
-                    </div>
+@if (Model.Servers.Count == 0)
+{
+    <div class="alert alert-info text-center">@L["No game server available yet."]</div>
+}
+
+<div class="row">
+    @foreach (var card in Model.Servers)
+    {
+        var configuration = card.Snapshot.Configuration;
+        var round = card.Snapshot.Round;
+        var scoreboard = card.Snapshot.Scoreboard;
+        var labelSurvivor = scoreboard?.IsDraw != false ? "default" : scoreboard.IsSurvivorsWinning ? "success" : "danger";
+        var labelInfected = scoreboard?.IsDraw != false ? "default" : scoreboard.IsInfectedsWinning ? "success" : "danger";
+        var map = new List<string>();
+        var mode = new List<string>();
+
+        if (!string.IsNullOrEmpty(card.Campaign))
+        {
+            map.Add(card.Campaign);
+        }
+
+        map.Add(string.IsNullOrEmpty(card.Map) ? L["Unknown map"].Value : card.Map);
+
+        if (round != null)
+        {
+            map.Add((round.InSecondHalfOfRound ? L["2nd round"] : L["1st round"]).Value);
+        }
+
+        if (configuration != null && !string.IsNullOrEmpty(configuration.Name))
+        {
+            mode.Add(configuration.Name);
+        }
+
+        if (configuration is { TeamSize: > 0 })
+        {
+            mode.Add($"{configuration.TeamSize}v{configuration.TeamSize}");
+        }
+
+        <div class="col-xs-12 col-sm-6 col-md-4" id="server-card-@card.Server.PublicId">
+            <div class="panel panel-default server-card">
+                <div class="panel-heading text-center">
+                    <a href="@AppConsts.ServersUrl/@card.Server.PublicId" class="bold">@card.Name</a>
+                    <span class="label label-@(card.Online ? "success" : "default")" style="margin-left: 5px">
+                        @(card.Online ? L["Online"] : L["Offline"])
+                    </span>
+                </div>
+                <table class="table table-condensed">
+                    <tbody>
+                    <tr>
+                        <th class="slim text-right">@L["Map"]:</th>
+                        <td>@string.Join(" - ", map)</td>
+                    </tr>
+                    <tr>
+                        <th class="slim text-right">@L["Configuration"]:</th>
+                        <td>@(mode.Count == 0 ? "-" : string.Join(" - ", mode))</td>
+                    </tr>
+                    <tr>
+                        <th class="slim text-right">@L["Scoreboard"]:</th>
+                        <td class="text-nowrap">
+                            <span class="label label-@labelSurvivor" data-toggle="tooltip" data-placement="top" title="@L["Survivors"]">
+                                @((scoreboard?.SurvivorScore ?? 0).ToString("N0"))
+                            </span>
+                            <span class="label label-@labelInfected" data-toggle="tooltip" data-placement="top" title="@L["Infecteds"]" style="margin-left: 5px">
+                                @((scoreboard?.InfectedScore ?? 0).ToString("N0"))
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="slim text-right">@L["Players"]:</th>
+                        <td>@card.Players.ToString("N0") / @card.MaxPlayers.ToString("N0")</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="panel-footer text-center">
+                    <a href="@AppConsts.ServersUrl/@card.Server.PublicId" class="btn btn-sm btn-default">
+                        <span class="glyphicon glyphicon-eye-open"></span> @L["Watch"]
+                    </a>
                     @if (card.ConnectUrl != null)
                     {
-                        <div class="card-footer position-relative" style="z-index: 2;">
-                            <a class="btn btn-sm btn-outline-primary" href="@card.ConnectUrl">@L["Connect"]</a>
-                            <code class="ms-2 small">@card.Server.Address</code>
-                        </div>
+                        <a href="@card.ConnectUrl" class="btn btn-sm btn-primary" style="margin-left: 5px">
+                            connect @card.ServerIp
+                        </a>
                     }
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>

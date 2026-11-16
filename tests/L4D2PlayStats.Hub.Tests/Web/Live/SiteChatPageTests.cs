@@ -26,8 +26,8 @@ public class SiteChatPageTests
         var messages = factory.Services.GetRequiredService<ILiveServerStore>().For(credentials.Server.Id).SiteMessages;
         var page = await client.GetStringAsync(LivePage);
 
-        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.AreEqual(LivePage, response.Headers.Location!.OriginalString);
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("\"success\":true", await response.Content.ReadAsStringAsync());
         Assert.HasCount(1, messages);
         Assert.AreEqual("hello from the site", messages[0].Text);
         Assert.AreEqual(HubWebFactory.Player.ToString(), messages[0].CommunityId);
@@ -39,8 +39,6 @@ public class SiteChatPageTests
     {
         using var factory = new LiveWebFactory();
         using var client = factory.Client(HubWebFactory.Player);
-
-        client.DefaultRequestHeaders.Add("HX-Request", "true");
 
         await factory.CompleteSetupAsync();
         await factory.EnableAsync();
@@ -56,10 +54,10 @@ public class SiteChatPageTests
         var messages = factory.Services.GetRequiredService<ILiveServerStore>().For(credentials.Server.Id).SiteMessages;
 
         Assert.AreEqual(HttpStatusCode.OK, first.StatusCode);
-        Assert.Contains("Message sent.", await first.Content.ReadAsStringAsync());
+        Assert.Contains("\"success\":true", await first.Content.ReadAsStringAsync());
         Assert.AreEqual(HttpStatusCode.OK, second.StatusCode);
         Assert.Contains("Too many messages.", await second.Content.ReadAsStringAsync());
-        Assert.Contains("Message sent.", await third.Content.ReadAsStringAsync());
+        Assert.Contains("\"success\":true", await third.Content.ReadAsStringAsync());
         Assert.HasCount(2, messages);
     }
 

@@ -1,63 +1,123 @@
-@using L4D2PlayStats.Hub.Web.Models.Live
 @model PlayerConnectionsViewModel
+
 @{
     ViewData["Title"] = L["Player connections"].Value;
+
+    var culture = CultureInfo.CurrentUICulture;
     var details = Model.Details;
+    var players = new List<(PlayerConnectionResult Player, bool Searched)>();
+
+    if (details?.Player != null)
+    {
+        players.Add((details.Player, true));
+        players.AddRange(details.RelatedPlayers.Select(related => (related, false)));
+    }
 }
-<h1 class="h3">@L["Player connections"]</h1>
-<partial name="_AdminNav"/>
 
-<p class="text-body-secondary">@L["Shows the accounts that connected to a game server from the same address as a player. Connections older than three months are deleted."]</p>
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    <style>
+        .admin-header + .nav {
+            margin-bottom: 15px;
+        }
 
-<form class="d-flex gap-2 mb-4" method="get" action="/admin/player-connections" style="max-width: 480px;">
-    <input class="form-control" name="communityId" type="number" required placeholder="SteamID64" value="@Model.CommunityId" aria-label="SteamID64">
-    <button class="btn btn-primary" type="submit">@L["Search"]</button>
+        a.admin-item {
+            text-decoration: none;
+        }
+
+        .pc-searched {
+            background: rgba(128, 128, 128, .12);
+        }
+    </style>
+}
+
+<div class="admin-header">
+    <h3>@L["Player connections"]</h3>
+    <a class="btn btn-default" href="/admin">
+        <span class="glyphicon glyphicon-chevron-left"></span> @L["Administration"]
+    </a>
+</div>
+
+<partial name="_AdminNav" optional="true"/>
+
+<p class="text-muted">@L["Shows the accounts that connected to a game server from the same address as a player. Connections older than three months are deleted."]</p>
+
+<form method="get" class="admin-filters" action="/admin/player-connections">
+    <input type="text" name="communityId" value="@Model.Query" class="form-control admin-search" placeholder="@L["Steam ID or profile URL"]" aria-label="@L["Steam ID or profile URL"]" required/>
+    <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span> @L["Search"]
+    </button>
+    @if (!string.IsNullOrEmpty(Model.Query))
+    {
+        <a class="btn btn-link" href="/admin/player-connections">@L["Clear filters"]</a>
+    }
 </form>
+
+@if (!string.IsNullOrEmpty(Model.Query) && Model.CommunityId == null)
+{
+    <div class="alert alert-danger">@L["The Steam ID is invalid."]</div>
+}
 
 @if (details != null)
 {
     if (details.Player == null)
     {
-        <div class="alert alert-secondary">@L["No connection recorded for this player."]</div>
+        <div class="admin-list">
+            <div class="admin-empty">@L["No connection recorded for this player."]</div>
+        </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>@L["Name"]</th>
-                    <th>SteamID64</th>
-                    <th>@L["First seen"]</th>
-                    <th>@L["Last seen"]</th>
-                    <th class="numeric">@L["Connections"]</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="row-highlight">
-                    <td>@details.Player.Name</td>
-                    <td><a href="@details.Player.ProfileUrl" rel="noopener" target="_blank">@details.Player.CommunityId</a></td>
-                    <td>@details.Player.FirstConnectedAtUtc.ToString("u")</td>
-                    <td>@details.Player.LastConnectedAtUtc.ToString("u")</td>
-                    <td class="numeric">@details.Player.ConnectionCount</td>
-                </tr>
-                @foreach (var related in details.RelatedPlayers)
-                {
-                    <tr>
-                        <td>@related.Name</td>
-                        <td><a href="/admin/player-connections?communityId=@related.CommunityId">@related.CommunityId</a></td>
-                        <td>@related.FirstConnectedAtUtc.ToString("u")</td>
-                        <td>@related.LastConnectedAtUtc.ToString("u")</td>
-                        <td class="numeric">@related.ConnectionCount</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+        <div class="admin-stats">
+            <div>
+                <strong>@details.Player.ConnectionCount.ToString("N0", culture)</strong>
+                <small>@L["connections of this player"]</small>
+            </div>
+            <div>
+                <strong>@details.RelatedPlayers.Count.ToString("N0", culture)</strong>
+                <small>@L["other accounts on the same address"]</small>
+            </div>
         </div>
+
+        <div class="admin-list">
+            @foreach (var (player, searched) in players)
+            {
+                var name = string.IsNullOrWhiteSpace(player.Name) ? player.CommunityId : player.Name;
+
+                <a class="admin-item @(searched ? "pc-searched" : null)" href="/admin/player-connections?communityId=@player.CommunityId">
+                    <img class="admin-avatar" src="@($"{AppConsts.AvatarUrl}{player.CommunityId}")" alt="@name" onerror="imgOnError(this)"/>
+                    <div class="admin-main">
+                        <div class="admin-title">
+                            @name
+                            @if (searched)
+                            {
+                                <span class="label label-primary" style="margin-left: 5px">@L["Searched player"]</span>
+                            }
+                        </div>
+                        <small>@player.SteamId · @player.CommunityId</small>
+                        <small>@L["First seen"]: @LiveDisplay.ShortDateTime(player.FirstConnectedAtUtc, Model.TimeZone)</small>
+                    </div>
+                    <div class="admin-side">
+                        <strong>@LiveDisplay.ShortDateTime(player.LastConnectedAtUtc, Model.TimeZone)</strong>
+                        <small>@L["Last seen"]</small>
+                        <small>@player.ConnectionCount.ToString("N0", culture) @L["Connections"]</small>
+                    </div>
+                </a>
+            }
+        </div>
+
+        <p class="text-muted" style="margin-top: 10px">
+            <a href="@details.Player.ProfileUrl" target="_blank" rel="noopener noreferrer">@L["Steam profile"]</a>
+            @if (Model.RankingEnabled)
+            {
+                <span> · </span>
+                <a href="@($"{AppConsts.PlayerUrl}{details.Player.CommunityId}")">@L["Player"]</a>
+            }
+        </p>
 
         if (details.RelatedPlayers.Count == 0)
         {
-            <div class="text-body-secondary">@L["No other account used the same address."]</div>
+            <p class="text-muted">@L["No other account used the same address."]</p>
         }
     }
 }
