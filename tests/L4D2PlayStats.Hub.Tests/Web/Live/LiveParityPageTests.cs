@@ -244,6 +244,7 @@ public class LiveParityPageTests
         Assert.AreEqual(30, status.Signal!.MaxPlayers);
         Assert.AreEqual(1, badge.GetProperty("players").GetInt32());
         Assert.AreEqual(30, badge.GetProperty("max_players").GetInt32());
+        Assert.AreEqual("Zone | Competitive", badge.GetProperty("name").GetString());
         Assert.Contains("Follow the Zone Brasil server, map Dark Carnival, and its 1 connected players.", page);
         Assert.Contains("/imgs/campaigns/dark-carnival.jpg", page);
         Assert.Contains("<code>connect 200.100.50.1:27015</code>", page);

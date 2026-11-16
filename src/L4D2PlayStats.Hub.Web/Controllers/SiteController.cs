@@ -48,7 +48,7 @@ public class SiteController(BrandingStore brandingStore, ILiveViewService liveVi
         return Ok(new
         {
             publicId = server.Server.PublicId,
-            name = server.Server.Name,
+            name = server.Name,
             address = server.Server.Address,
             map = server.Map,
             players = server.Players,

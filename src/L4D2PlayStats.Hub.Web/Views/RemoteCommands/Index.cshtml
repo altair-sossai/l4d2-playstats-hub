@@ -10,6 +10,10 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     <style>
+        .admin-header + .nav {
+            margin-bottom: 15px;
+        }
+
         .rc-command {
             font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         }
