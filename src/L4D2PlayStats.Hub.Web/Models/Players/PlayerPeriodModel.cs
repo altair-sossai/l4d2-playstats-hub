@@ -7,6 +7,7 @@ public class PlayerPeriodModel
 {
     public Season? Season { get; init; }
     public int? Year { get; init; }
+    public bool AllTime { get; init; }
     public required Season CurrentSeason { get; init; }
     public required IReadOnlyList<PlayerPeriodOption> Options { get; init; }
     public bool IsCurrent => Season != null && Season.Id == CurrentSeason.Id;
@@ -16,6 +17,9 @@ public class PlayerPeriodModel
     {
         get
         {
+            if (AllTime)
+                return PlayerUrls.AllTimeQuery();
+
             if (Year != null)
                 return PlayerUrls.YearQuery(Year.Value);
 

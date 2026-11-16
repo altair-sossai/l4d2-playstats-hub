@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
@@ -33,7 +34,7 @@ public class PlayerViewService(
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer) : IPlayerViewService
 {
-    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, CancellationToken cancellationToken = default)
+    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default)
     {
         var current = await seasonService.GetCurrentAsync(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
@@ -45,7 +46,11 @@ public class PlayerViewService(
             .Where(season => season.StartsAt.Year == now.Year || season.Id == current.Id)
             .Select(season => new PlayerPeriodOption { Season = season, Query = season.Id == current.Id ? null : PlayerUrls.SeasonQuery(season.Id) })
             .Concat(years.Select(value => new PlayerPeriodOption { Year = value, Query = PlayerUrls.YearQuery(value) }))
+            .Append(new PlayerPeriodOption { AllTime = true, Query = PlayerUrls.AllTimeQuery() })
             .ToList();
+
+        if (allTime)
+            return new PlayerPeriodModel { AllTime = true, CurrentSeason = current, Options = options };
 
         if (year != null)
             return years.Contains(year.Value) ? new PlayerPeriodModel { Year = year, CurrentSeason = current, Options = options } : null;
@@ -55,8 +60,21 @@ public class PlayerViewService(
         return selected == null ? null : new PlayerPeriodModel { Season = selected, CurrentSeason = current, Options = options };
     }
 
-    private Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken)
+    private Task<List<PlayerMatch>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
     {
+        if (period.AllTime)
+            return playerMatchService.LastOfAllTimeAsync(communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+
+        return period.Year != null
+            ? playerMatchService.LastInYearAsync(period.Year.Value, communityIds, AppConsts.PlayerRecentMatches, cancellationToken)
+            : playerMatchService.LastAsync(period.Season!.Id, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken = default)
+    {
+        if (period.AllTime)
+            return rankingService.AllTimeAsync(cancellationToken);
+
         return period.Year != null
             ? rankingService.YearAsync(period.Year.Value, cancellationToken)
             : rankingService.SeasonAsync(period.Season!.Id, cancellationToken);
@@ -86,9 +104,7 @@ public class PlayerViewService(
 
         long[] communityIds = secondPlayer == null ? [firstPlayer.CommunityId] : [firstPlayer.CommunityId, secondPlayer.CommunityId];
 
-        var matches = period.Year != null
-            ? await playerMatchService.LastInYearAsync(period.Year.Value, communityIds, AppConsts.PlayerRecentMatches, cancellationToken)
-            : await playerMatchService.LastAsync(period.Season!.Id, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+        var matches = await MatchesAsync(period, communityIds, cancellationToken);
 
         var relatedPlayers = modules.IsEnabled(HubModule.LiveServer)
             ? await playerConnectionService.RelatedAsync(communityId, cancellationToken)

@@ -1,8 +1,7 @@
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 using L4D2PlayStats.Hub.Web.Services;
@@ -14,12 +13,12 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class HomeController(
     ISettingsService settingsService,
     ISeasonService seasonService,
-    IRankingService rankingService,
+    IPlayerViewService playerViewService,
     IRankingHistoryService rankingHistoryService,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet("/")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int? season = null, int? year = null, string? period = null, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         if (!modules.IsEnabled(HubModule.Ranking))
@@ -27,14 +26,20 @@ public class HomeController(
 
         ViewBag.Home = "active";
 
-        var season = await seasonService.GetCurrentAsync(cancellationToken);
+        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
+        if (selected == null)
+            return NotFound();
+
         var now = await seasonService.SiteNowAsync(cancellationToken);
-        var players = await rankingService.SeasonAsync(season.Id, cancellationToken);
-        var nextResetIn = (int)Math.Ceiling((season.EndsAt - now).TotalDays);
+        var players = await playerViewService.RankingAsync(selected, cancellationToken);
+        var nextResetIn = (int)Math.Ceiling((selected.CurrentSeason.EndsAt - now).TotalDays);
 
-        if (players.Count > 0)
-            return View(new HomeModel { Ranking = [.. players.Select(player => new RankingModel(localizer, player))], NextResetIn = nextResetIn });
-
-        return View(new HomeModel { NextResetIn = nextResetIn, LastHistory = await rankingHistoryService.LastAsync(cancellationToken) });
+        return View(new HomeModel
+        {
+            Ranking = [.. players.Select(player => new RankingModel(localizer, player))],
+            NextResetIn = nextResetIn,
+            Period = selected,
+            LastHistory = players.Count == 0 && selected.IsCurrent ? await rankingHistoryService.LastAsync(cancellationToken) : null
+        });
     }
 }

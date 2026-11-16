@@ -363,6 +363,15 @@
                     <li class="nav-fit @ViewBag.Home">
                         <a href="/">@L["Ranking"]</a>
                     </li>
+                }
+                @if (communityRanking)
+                {
+                    <li class="nav-fit @ViewBag.Community">
+                        <a href="/community">@L["Community"]</a>
+                    </li>
+                }
+                @if (ranking)
+                {
                     <li class="nav-fit @ViewBag.LastMatches">
                         <a href="/matches">@L["Last matches"]</a>
                     </li>
@@ -383,12 +392,6 @@
                 {
                     <li class="nav-fit @ViewBag.AntiCheat">
                         <a href="@AppConsts.AntiCheatUrl">@L["Anti-Cheat"]</a>
-                    </li>
-                }
-                @if (communityRanking)
-                {
-                    <li class="nav-fit @ViewBag.Community">
-                        <a href="/community">@L["Community"]</a>
                     </li>
                 }
                 <li class="dropdown @(ViewBag.Players ?? ViewBag.History ?? ViewBag.Patent)" id="nav-more" data-own="@(ranking ? "true" : "false")" style="@(ranking ? null : "display: none")">

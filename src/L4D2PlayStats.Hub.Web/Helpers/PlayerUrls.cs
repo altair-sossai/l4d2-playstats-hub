@@ -34,6 +34,11 @@ public static class PlayerUrls
         return $"{AppConsts.PlayerSeasonParameter}={seasonId}";
     }
 
+    public static string AllTimeQuery()
+    {
+        return $"{AppConsts.PlayerPeriodParameter}={AppConsts.AllTimeHistoryId}";
+    }
+
     public static string YearQuery(int year)
     {
         return $"{AppConsts.PlayerYearParameter}={year}";

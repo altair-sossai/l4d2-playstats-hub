@@ -35,7 +35,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Botón que despliega la navbar en teléfonos | _Layout.cshtml:313-318 | done | |
 | Logo que enlaza a la página de inicio | _Layout.cshtml:319-321 | adapted | El logo lo sube el administrador (era un archivo fijo con el nombre del sitio antiguo). Sin logo, el nombre del sitio se muestra como texto. |
 | Insignia de jugadores en línea junto al logo, pulsante, que enlaza a la página del servidor | _Layout.cshtml:322-324 | done | Solo se muestra cuando el módulo de servidor en vivo está activado. |
-| Menú: Clasificación, Últimos partidos, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada elemento sigue a su módulo. Comunidad (nuevo) va después de ellos. |
+| Menú: Clasificación, Últimos partidos, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada elemento sigue a su módulo. Comunidad (nuevo) va justo después de Clasificación. Cuando los elementos no caben en una línea, los últimos pasan solos a "Más". |
 | Menú "Más": Jugadores, Patentes, Historia, con iconos y un separador | _Layout.cshtml:344-369 | done | |
 | Menú "Admin" para administradores: Baneos del Chat, Compras de skins, Precios de skins, con iconos | _Layout.cshtml:370-398 | done | Además, el área de Administración del hub y los ajustes del Anti-Cheat. |
 | Píldora de estrellas con el saldo del jugador con sesión iniciada, tooltip y etiqueta | _Layout.cshtml:403-411, 647-681 | done | Lee `GET /api/shop/wallet`, guardado en el session storage como antes. |
@@ -88,6 +88,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Seis primeros: un panel por jugador (resaltado si es el jugador con sesión iniciada), etiqueta del puesto por color, nombre, avatar redondo, victorias y derrotas, etiquetas de porcentaje de victorias, MVP de SI, MVP de CI, juegos y rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
 | Seis primeros: botón "Ver ranking completo" | _LastRankingTopSix.cshtml:113-115 | done | Abre ese período en el historial. |
 | Con el módulo de ranking desactivado | (nuevo) | adapted | Una página de bienvenida breve; el sitio antiguo no tenía módulos. |
+| Selector de período | (nuevo) | adapted | Añadido del hub encima de la tabla, con el estilo de la página de historial. La temporada actual es la predeterminada; también ofrece las otras temporadas del año actual, un elemento por año y todo el tiempo. Un año y todo el tiempo muestran la misma tabla sin las columnas de patente y XP, que pertenecen a una temporada. |
 
 ## Historial (`/history/{id?}`)
 

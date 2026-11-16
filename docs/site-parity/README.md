@@ -18,7 +18,7 @@ Each checklist lists every item of the old screens of one area: columns, fields,
 
 | Checklist | Screens | Done | Adapted | Not ported |
 |---|---|---|---|---|
-| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat | 80 | 23 | 1 |
+| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat | 80 | 24 | 1 |
 | [players.md](players.md) | Players list, player page, comparison, player not ranked | 150 | 23 | 0 |
 | [matches.md](matches.md) | Last matches, match details, map statistics | 128 | 18 | 1 |
 | [server.md](server.md) | Live server, chat, game events, chat bans | 153 | 25 | 1 |

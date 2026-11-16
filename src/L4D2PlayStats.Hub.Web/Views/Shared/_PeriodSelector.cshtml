@@ -1,3 +1,4 @@
+@using L4D2PlayStats.Hub.Web.Models.Players
 @model PlayerPeriodSelectorModel
 
 @functions {
@@ -11,11 +12,17 @@
 
     private string OptionLabel(PlayerPeriodOption option)
     {
+        if (option.AllTime)
+            return L["All time"];
+
         return option.Season != null ? SeasonLabel(option.Season) : RankingPeriod.ForYear(option.Year!.Value).Label(L);
     }
 
     private string SelectedLabel()
     {
+        if (Model.Period.AllTime)
+            return L["All time"];
+
         return Model.Period.Season != null ? SeasonLabel(Model.Period.Season) : RankingPeriod.ForYear(Model.Period.Year!.Value).Label(L);
     }
 
@@ -33,7 +40,7 @@
             @{ var yearsStarted = false; }
             @foreach (var option in Model.Period.Options)
             {
-                if (option.Year != null && !yearsStarted)
+                if ((option.Year != null || option.AllTime) && !yearsStarted)
                 {
                     yearsStarted = true;
 

@@ -1,5 +1,7 @@
 using System.Net;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -106,6 +108,88 @@ public class PeriodGroupingTests
         Assert.Contains("id=\"nav-more-menu\"", body);
         Assert.Contains("window.fitNavbar = fit", body);
         Assert.Contains("class=\"nav-fit active\"", body);
+    }
+
+    [TestMethod]
+    public async Task ThePlayerPagesOfferAllTime()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await TwoYearsAsync(factory);
+
+        var current = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
+        var allTime = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}?period=all-time");
+        var list = await client.GetStringAsync("/players?period=all-time");
+
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?period=all-time", current);
+        Assert.Contains("The Parish", allTime);
+        Assert.Contains("Dark Carnival", allTime);
+        Assert.DoesNotContain("onclick=\"editPunishment(", allTime);
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?period=all-time", list);
+    }
+
+    [TestMethod]
+    public async Task TheHomeRankingLetsTheVisitorChooseThePeriod()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        var (now, before, _) = await TwoYearsAsync(factory);
+
+        var current = await client.GetStringAsync("/");
+        var oldYear = await client.GetStringAsync($"/?year={before.Year}");
+        var allTime = await client.GetStringAsync("/?period=all-time");
+        var unknown = await client.GetAsync("/?year=1900");
+
+        Assert.Contains("Displayed period", current);
+        Assert.Contains("Current season", current);
+        Assert.Contains($"href=\"/?year={now.Year}\"", current);
+        Assert.Contains($"href=\"/?year={before.Year}\"", current);
+        Assert.Contains("href=\"/?period=all-time\"", current);
+        Assert.Contains("/imgs/patents/", current);
+        Assert.Contains("Next reset in", current);
+
+        Assert.Contains($"Year of {before.Year}", oldYear);
+        Assert.Contains("table-ranking", oldYear);
+        Assert.DoesNotContain("/imgs/patents/", oldYear);
+        Assert.DoesNotContain("Next reset in", oldYear);
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?year={before.Year}", oldYear);
+        Assert.Contains("href=\"/\"", oldYear);
+
+        Assert.Contains("table-ranking", allTime);
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?period=all-time", allTime);
+        Assert.AreEqual(HttpStatusCode.NotFound, unknown.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task TheCommunityRankingSitsNextToTheRankingInTheMenu()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        await factory.RunAsync(async services =>
+        {
+            var settings = services.GetRequiredService<ISettingsService>();
+            var modules = await settings.GetAsync<ModuleSettings>();
+
+            modules.CommunityRanking = true;
+
+            await settings.SaveAsync(modules);
+
+            return true;
+        });
+
+        var body = await client.GetStringAsync("/");
+        var ranking = body.IndexOf("<a href=\"/\">Ranking</a>", StringComparison.Ordinal);
+        var community = body.IndexOf("<a href=\"/community\">", StringComparison.Ordinal);
+        var matches = body.IndexOf("<a href=\"/matches\">", StringComparison.Ordinal);
+
+        Assert.IsGreaterThan(0, ranking);
+        Assert.IsGreaterThan(ranking, community);
+        Assert.IsGreaterThan(community, matches);
     }
 
     private static async Task<(DateTime Now, DateTime Before, int OldSeason)> TwoYearsAsync(HubWebFactory factory)

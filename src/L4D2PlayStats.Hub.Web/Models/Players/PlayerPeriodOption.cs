@@ -6,5 +6,6 @@ public class PlayerPeriodOption
 {
     public Season? Season { get; init; }
     public int? Year { get; init; }
+    public bool AllTime { get; init; }
     public string? Query { get; init; }
 }

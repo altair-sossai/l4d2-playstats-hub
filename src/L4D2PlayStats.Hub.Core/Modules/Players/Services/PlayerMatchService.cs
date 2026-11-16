@@ -12,6 +12,11 @@ public class PlayerMatchService(HubDbContext dbContext) : IPlayerMatchService
         return LastAsync(dbContext.Matches.Where(m => m.SeasonId == seasonId), communityIds, recentMatches, cancellationToken);
     }
 
+    public Task<List<PlayerMatch>> LastOfAllTimeAsync(IReadOnlyCollection<long> communityIds, int recentMatches, CancellationToken cancellationToken = default)
+    {
+        return LastAsync(dbContext.Matches, communityIds, recentMatches, cancellationToken);
+    }
+
     public Task<List<PlayerMatch>> LastInYearAsync(int year, IReadOnlyCollection<long> communityIds, int recentMatches, CancellationToken cancellationToken = default)
     {
         var start = new DateTime(year, 1, 1);

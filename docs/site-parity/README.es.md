@@ -18,7 +18,7 @@ Cada lista de verificación enumera todos los elementos de las pantallas antigua
 
 | Lista de verificación | Pantallas | Hechos | Adaptados | No portados |
 |---|---|---|---|---|
-| [site.es.md](site.es.md) | Layout, ranking, historial, patentes, Anti-Cheat | 80 | 23 | 1 |
+| [site.es.md](site.es.md) | Layout, ranking, historial, patentes, Anti-Cheat | 80 | 24 | 1 |
 | [players.es.md](players.es.md) | Lista de jugadores, página del jugador, comparación, jugador fuera del ranking | 150 | 23 | 0 |
 | [matches.es.md](matches.es.md) | Últimas partidas, detalles de la partida, estadísticas del mapa | 128 | 18 | 1 |
 | [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 153 | 25 | 1 |

@@ -35,7 +35,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Navbar toggle button for phones | _Layout.cshtml:313-318 | done | |
 | Logo linking to the home page | _Layout.cshtml:319-321 | adapted | The logo is uploaded by the administrator (it was a fixed file with the old site's name). Without one, the site name is shown as text. |
 | Players online badge next to the logo, pulsating, linking to the server page | _Layout.cshtml:322-324 | done | Shown only when the live server module is on. |
-| Menu: Ranking, Last matches, Server, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Each item follows its module. Community (new) comes after them. |
+| Menu: Ranking, Last matches, Server, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Each item follows its module. Community (new) comes right after Ranking. When the items do not fit in one line, the last ones move into "More" by themselves. |
 | Menu "More": Players, Patents, History, with icons and a divider | _Layout.cshtml:344-369 | done | |
 | Menu "Admin" for administrators: Chat bans, Skin purchases, Skin prices, with icons | _Layout.cshtml:370-398 | done | Plus the hub's Administration area and the Anti-Cheat settings. |
 | Stars pill with the signed-in player's balance, tooltip and label | _Layout.cshtml:403-411, 647-681 | done | Reads `GET /api/shop/wallet`, cached in the session storage as before. |
@@ -88,6 +88,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Top six: one panel per player (highlighted if it is the signed-in player), place label by colour, name, round avatar, wins and losses, labels for win rate, SI MVP, CI MVP, games and rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
 | Top six: "View full ranking" button | _LastRankingTopSix.cshtml:113-115 | done | Opens that period in the history. |
 | With the ranking module off | (new) | adapted | A short welcome page; the old site had no modules. |
+| Period selector | (new) | adapted | Hub addition above the table, in the style of the history page. The current season is the default; it also offers the other seasons of the current year, one entry per year and all time. A year and all time show the same table without the patent and XP columns, which belong to a season. |
 
 ## History (`/history/{id?}`)
 
