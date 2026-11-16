@@ -123,7 +123,7 @@ La compilación del juego usada en la prueba se cerró sola antes de que la pág
 
 **El enfoque adoptado:** dos capas en lugar de limitar todo el sitio a 2012.
 
-- El sitio principal está pensado para navegadores actuales, con Bootstrap 5 y htmx.
+- El sitio principal mantiene la base del sitio que reemplaza: Bootstrap 3 y jQuery, que se sabe que funcionan dentro del juego, con Chart.js y diffDOM.
 - Tres páginas para el juego viven bajo `/ingame`: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. Siguen las reglas de arriba y son las que abre el plugin del juego.
 
 Las páginas disponibles dentro del juego existen por duplicado, así que ese conjunto se mantiene pequeño. Una prueba falla si alguna de ellas empieza a usar algo que este navegador no tiene. La [hoja de ruta](roadmap.es.md#front-end) tiene el resto de las decisiones de front-end.

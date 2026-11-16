@@ -166,7 +166,7 @@ Uma checklist mostra o que foi encontrado: conexão, plugin de envio, gravação
 
 O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não tem flexbox, grid nem propriedades personalizadas. As medições estão em [in-game-browser.pt.md](in-game-browser.pt.md).
 
-- **Site principal.** Páginas renderizadas no servidor com Bootstrap 5 e htmx, sem etapa de build com Node. A área administrativa é feita do mesmo jeito.
+- **Site principal.** Páginas renderizadas no servidor que mantêm o visual e o conteúdo do site que este projeto substitui: Bootstrap 3 com os temas escuro e claro, jQuery, Chart.js e diffDOM, sem etapa de build com Node. Cada página do site antigo foi portada item por item; os checklists estão em [site-parity](site-parity/README.md). As páginas que são novas aqui (assistente, administração, ranking da comunidade) seguem o mesmo visual.
 - **Páginas dentro do jogo.** Três páginas somente leitura em `/ingame`, sem script, que cabem no painel do jogo. Um teste falha se elas começarem a usar algo que aquele navegador não tem.
 
 ## Testes
@@ -196,7 +196,7 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 |---|---|---|
 | 1. Fundação | Banco de dados, configurações e módulos, login com a Steam, assistente, cadastro e status de servidores de jogo. | Concluída |
 | 2. Estatísticas e ranking | Envio, montagem de partidas, pontuação, punições, temporadas e regras de modos de jogo. | Concluída |
-| 3. Site | Ranking, partidas, jogadores, patentes, área administrativa e as páginas dentro do jogo, em três idiomas. | Concluída |
+| 3. Site | Ranking, histórico, partidas, jogadores, patentes, página do Anti-Cheat, área administrativa e as páginas dentro do jogo, em três idiomas. | Concluída; cada tela do site antigo portada e conferida item por item |
 | 4. Servidor ao vivo | Estado ao vivo por servidor, seletor de servidor, chat do site, comandos remotos e banimentos do chat. | Concluída, ainda não vista com um servidor de jogo real |
 | 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, ainda não testada com os assets reais |
 | 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |

@@ -166,7 +166,7 @@ Una lista de verificación muestra qué se encontró: conexión, plugin de subid
 
 El navegador que está dentro del juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
 
-- **Sitio principal.** Páginas renderizadas en el servidor con Bootstrap 5 y htmx, sin ningún paso de compilación con Node. El área de administración está hecha de la misma forma.
+- **Sitio principal.** Páginas renderizadas en el servidor que mantienen el aspecto y el contenido del sitio que este proyecto reemplaza: Bootstrap 3 con sus temas oscuro y claro, jQuery, Chart.js y diffDOM, sin ningún paso de compilación con Node. Cada página del sitio antiguo se portó elemento por elemento; las listas de comprobación están en [site-parity](site-parity/README.md). Las páginas que son nuevas aquí (asistente, administración, ranking de la comunidad) siguen el mismo aspecto.
 - **Páginas dentro del juego.** Tres páginas de solo lectura bajo `/ingame`, sin scripts, que caben en el panel del juego. Una prueba falla si empiezan a usar algo que ese navegador no tiene.
 
 ## Pruebas
@@ -196,7 +196,7 @@ Un programa de consola aparte, fuera de este repositorio, mueve los datos de pro
 |---|---|---|
 | 1. Base | Base de datos, ajustes y módulos, inicio de sesión con Steam, asistente, registro y estado de los servidores de juego. | Hecho |
 | 2. Estadísticas y ranking | Subida, armado de partidas, puntuación, sanciones, temporadas y reglas de modos de juego. | Hecho |
-| 3. Sitio web | Ranking, partidas, jugadores, patentes, área de administración y las páginas dentro del juego, en tres idiomas. | Hecho |
+| 3. Sitio web | Ranking, historial, partidas, jugadores, patentes, página del Anti-Cheat, área de administración y las páginas dentro del juego, en tres idiomas. | Hecho; cada pantalla del sitio antiguo portada y comprobada elemento por elemento |
 | 4. Servidor en vivo | Estado en vivo por servidor, selector de servidor, chat del sitio, comandos remotos y baneos del chat. | Hecho, todavía no se ha visto con un servidor de juego real |
 | 5. Tienda de skins de armas | Tienda, regalos, reembolsos, importación del catálogo y reembolso de temporada. | Hecho, todavía no se ha probado con los assets reales |
 | 6. Plugins | Los cinco plugins con una sola dirección y un solo token, heartbeat y prueba de conexión. | Compilados, todavía no se han ejecutado en un servidor de juego |

@@ -98,6 +98,7 @@ A migração acontece passo a passo. Os repositórios antigos são arquivados qu
 | [plugins/README.pt.md](plugins/README.pt.md) | Todos os plugins, configurações e comandos. |
 | [docs/roadmap.pt.md](docs/roadmap.pt.md) | Arquitetura, decisões, o que está pronto e o que está em aberto. |
 | [docs/in-game-browser.pt.md](docs/in-game-browser.pt.md) | O que o navegador dentro do jogo suporta. |
+| [docs/site-parity](docs/site-parity/README.md) | Cada tela do site que está sendo substituído, item por item, e a situação dela aqui. |
 | [CONTRIBUTING.pt.md](CONTRIBUTING.pt.md) | Como o código está organizado e as regras para mudanças. |
 
 O inglês é o idioma padrão deste repositório. Todo documento também tem uma versão em português (`.pt.md`) e uma em espanhol (`.es.md`).

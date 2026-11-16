@@ -98,7 +98,7 @@ Every value is followed by ` | ` and the second player's value in yellow when co
 |---|---|---|---|
 | Panel "General statistics" | Views/Players/Details.cshtml:666-669 | done | |
 | Ranking (`#position`) | Views/Players/Details.cshtml:674-682 | done | |
-| Steam ID with the copy icon and the "Text copied!" popover | Views/Players/Details.cshtml:684-700 | adapted | Same field, icon (dark or light by theme) and behaviour. The value is written as `STEAM_1:x:y`, the form the hub uses everywhere and the one the game itself prints; the old site wrote `STEAM_0:x:y`. |
+| Steam ID with the copy icon and the "Text copied!" popover | Views/Players/Details.cshtml:684-700 | done | Same field, icon (dark or light by theme) and behaviour, written as `STEAM_0:x:y` like the old site. |
 | Name (second player on a new line) | Views/Players/Details.cshtml:703-711 | done | The most used name (`MainName`), as before. |
 | Profile URL as a link in a new tab, with the copy button | Views/Players/Details.cshtml:713-733 | done | |
 | Previous names: up to 5 labels with tooltip; the second player's in yellow labels after the separator; the row only exists when the first player has names | Views/Players/Details.cshtml:735-754 | done | |
@@ -126,7 +126,7 @@ Every value is followed by ` | ` and the second player's value in yellow when co
 | Panel (`panel-warning`) only when another account connected from the same address | Views/Players/Details.cshtml:943-948 | adapted | Same panel, shown to every visitor as before. It needs the live server module, which is where the connections are recorded. |
 | Columns: Name, Steam ID, Last login, Connections, Profile URL | Views/Players/Details.cshtml:951-959 | done | |
 | Avatar of 32 px and name linking to that account's page | Views/Players/Details.cshtml:964-967 | done | |
-| Steam ID with the copy button | Views/Players/Details.cshtml:968-974 | adapted | `STEAM_1:x:y` form, as above. |
+| Steam ID with the copy button | Views/Players/Details.cshtml:968-974 | done | `STEAM_0:x:y` form, as above. |
 | Last login (`g` format) | Views/Players/Details.cshtml:975 | adapted | The hub stores the moment in UTC and shows it in the site's time zone; the old site showed its server's local time. |
 | Number of connections | Views/Players/Details.cshtml:976 | done | |
 | Profile URL as a link (new tab, `noopener noreferrer`) with the copy button | Views/Players/Details.cshtml:977-985 | done | |
@@ -218,7 +218,7 @@ The card is the old `Views/LastMatches/_Match.cshtml`, kept here as `Views/Playe
 | Panel "Available information" | Views/Players/PlayerNotFound.cshtml:49-52 | done | |
 | Name, when known | Views/Players/PlayerNotFound.cshtml:56-62 | adapted | Taken from the connection information, as before, or from the name the hub recorded in a past match. |
 | Community ID with the copy button | Views/Players/PlayerNotFound.cshtml:63-69 | done | |
-| Steam ID with the copy button | Views/Players/PlayerNotFound.cshtml:70-79 | adapted | `STEAM_1:x:y` form, as on the player page. |
+| Steam ID with the copy button | Views/Players/PlayerNotFound.cshtml:70-79 | done | `STEAM_0:x:y` form, as on the player page. |
 | Last login, when known | Views/Players/PlayerNotFound.cshtml:80-86 | adapted | Site time zone, as above. |
 | Connections, when known | Views/Players/PlayerNotFound.cshtml:87-93 | done | |
 | Profile URL (new tab) with the copy button | Views/Players/PlayerNotFound.cshtml:94-105 | done | |

@@ -93,7 +93,7 @@ Um teste falha quando o modelo e as migrations do banco de dados em uso não bat
 
 ## Páginas web
 
-- As páginas são views Razor renderizadas no servidor, com Bootstrap 5 e htmx. As duas bibliotecas estão em `wwwroot/lib`; não há etapa de build com Node.
+- As páginas são views Razor renderizadas no servidor que mantêm o visual do site que este projeto substitui: Bootstrap 3 com os temas escuro e claro, jQuery, Chart.js, diffDOM e lity, todos em `wwwroot`. Algumas páginas administrativas também carregam o htmx de `wwwroot/lib`. Não há etapa de build com Node. Uma página que existia no site antigo é um porte dela: leia [docs/site-parity](docs/site-parity/README.md) antes de alterar uma.
 - Todo texto exibido a um visitante passa pelo localizador: `@L["Text in English"]`. O texto em inglês é a chave. As traduções ficam em `Resources/pt-BR.json` e `Resources/es-ES.json`. Quando uma palavra em inglês precisa de duas traduções, use uma chave com um prefixo de contexto, como `Rarity.Common`, e informe o texto em inglês dela em `Resources/en-US.json`.
 - Um formulário que faz POST precisa de `asp-antiforgery="true"`, e o controller dele precisa de `[AutoValidateAntiforgeryToken]`. Um checkbox vinculado a um booleano é seguido por um input hidden com o mesmo nome e o valor `false`.
 - As páginas administrativas usam `[Authorize(Policy = AppConsts.AdministratorPolicy)]` e ficam em `/admin`.

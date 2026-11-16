@@ -166,7 +166,7 @@ A checklist shows what was found: connection, upload plugin, statistics writing,
 
 The browser inside the game is Chromium 18 from 2012. It runs ES5 only and has no flexbox, grid or custom properties. The measurements are in [in-game-browser.md](in-game-browser.md).
 
-- **Main site.** Server-rendered pages with Bootstrap 5 and htmx, with no Node build step. The admin area is built the same way.
+- **Main site.** Server-rendered pages that keep the look and the content of the site this project replaces: Bootstrap 3 with its dark and light themes, jQuery, Chart.js and diffDOM, with no Node build step. Every page of the old site was ported item by item; the checklists are in [site-parity](site-parity/README.md). The pages that are new here (wizard, administration, community ranking) follow the same look.
 - **In-game pages.** Three read-only pages under `/ingame`, with no script, that fit the game's panel. A test fails if they start using something that browser lacks.
 
 ## Tests
@@ -196,7 +196,7 @@ A separate console program, outside this repository, moves the production data o
 |---|---|---|
 | 1. Foundation | Database, settings and modules, Steam sign-in, wizard, game server registration and status. | Done |
 | 2. Statistics and ranking | Upload, match assembly, scoring, punishments, seasons and game mode rules. | Done |
-| 3. Website | Ranking, matches, players, patents, admin area and the in-game pages, in three languages. | Done |
+| 3. Website | Ranking, history, matches, players, patents, Anti-Cheat page, admin area and the in-game pages, in three languages. | Done; every screen of the old site ported and checked item by item |
 | 4. Live server | Live state per server, server picker, site chat, remote commands and chat bans. | Done, not yet seen with a real game server |
 | 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, not yet tried with the real assets |
 | 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |

@@ -123,7 +123,7 @@ A build de teste do jogo fechou sozinha antes que a página chegasse a estes doi
 
 **A abordagem adotada:** duas camadas, em vez de prender o site inteiro a 2012.
 
-- O site principal é voltado para os navegadores atuais, com Bootstrap 5 e htmx.
+- O site principal mantém a base do site que ele substitui: Bootstrap 3 e jQuery, que sabidamente funcionam dentro do jogo, com Chart.js e diffDOM.
 - Três páginas para o jogo ficam em `/ingame`: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. Elas seguem as regras acima e são o que o plugin do jogo abre.
 
 As páginas disponíveis no jogo existem em dobro, então esse conjunto continua pequeno. Um teste falha se uma delas começar a usar algo que este navegador não tem. O [roadmap](roadmap.pt.md#front-end) tem o restante das decisões de front-end.
