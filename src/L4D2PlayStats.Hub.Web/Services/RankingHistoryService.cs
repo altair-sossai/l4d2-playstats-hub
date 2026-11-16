@@ -21,7 +21,8 @@ public class RankingHistoryService(ISeasonService seasonService, IRankingService
 
         foreach (var year in seasons.Select(season => season.StartsAt.Year).Distinct().Order())
         {
-            periods.AddRange(finished.Where(season => season.StartsAt.Year == year).Select(RankingPeriod.ForSeason));
+            if (year == now.Year)
+                periods.AddRange(finished.Where(season => season.StartsAt.Year == year).Select(RankingPeriod.ForSeason));
 
             periods.Add(RankingPeriod.ForYear(year));
         }
@@ -37,7 +38,7 @@ public class RankingHistoryService(ISeasonService seasonService, IRankingService
 
         var period = string.IsNullOrEmpty(historyId)
             ? periods[^1]
-            : periods.FirstOrDefault(p => p.Id.Equals(historyId, StringComparison.OrdinalIgnoreCase));
+            : periods.FirstOrDefault(p => p.Id.Equals(historyId, StringComparison.OrdinalIgnoreCase)) ?? await PastSeasonAsync(historyId, cancellationToken);
 
         if (period == null)
             return null;
@@ -66,6 +67,17 @@ public class RankingHistoryService(ISeasonService seasonService, IRankingService
         var season = await seasonService.FindAsync(seasonId, cancellationToken);
 
         return season == null ? null : RankingPeriod.ForSeason(season).Id;
+    }
+
+    private async Task<RankingPeriod?> PastSeasonAsync(string historyId, CancellationToken cancellationToken)
+    {
+        var now = await seasonService.SiteNowAsync(cancellationToken);
+        var seasons = await seasonService.ListAsync(cancellationToken);
+
+        return seasons
+            .Where(season => season.EndsAt <= now)
+            .Select(RankingPeriod.ForSeason)
+            .FirstOrDefault(period => period.Id.Equals(historyId, StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task<IReadOnlyList<RankingPlayer>> PlayersAsync(RankingPeriod period, CancellationToken cancellationToken)

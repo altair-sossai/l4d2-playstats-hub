@@ -206,7 +206,8 @@ public partial class PlayerPagesTests
         Assert.Contains("Current season", current);
         Assert.Contains("Dark Carnival", current);
         Assert.DoesNotContain("The Parish", current);
-        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?season={past}", current);
+        Assert.Contains(before.Year == now.Year ? $"/player/{StatisticsBuilder.PlayerA1}?season={past}" : $"/player/{StatisticsBuilder.PlayerA1}?year={before.Year}", current);
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?year={now.Year}", current);
         Assert.Contains("The Parish", old);
         Assert.DoesNotContain("Dark Carnival", old);
         Assert.Contains($"?season={past}\"", old);

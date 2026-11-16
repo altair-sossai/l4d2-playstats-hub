@@ -11,11 +11,11 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class MatchesController(IMatchViewService matchViewService, IMatchResultService matchResultService) : Controller
 {
     [HttpGet("/matches")]
-    public async Task<IActionResult> Index(int? season, int? server, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(int? season, int? year, int? server, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.LastMatches = "active";
 
-        var model = await matchViewService.ListAsync(season, server, page, cancellationToken);
+        var model = await matchViewService.ListAsync(season, year, server, page, cancellationToken);
 
         return View(model);
     }

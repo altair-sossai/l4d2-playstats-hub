@@ -3,6 +3,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 public class MatchFilter
 {
     public int? SeasonId { get; set; }
+    public int? Year { get; set; }
     public int? GameServerId { get; set; }
     public long? CommunityId { get; set; }
     public bool RankingOnly { get; set; }

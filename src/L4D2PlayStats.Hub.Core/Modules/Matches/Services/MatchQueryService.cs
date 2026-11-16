@@ -13,6 +13,14 @@ public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
         if (filter.SeasonId != null)
             query = query.Where(m => m.SeasonId == filter.SeasonId);
 
+        if (filter.Year != null)
+        {
+            var start = new DateTime(filter.Year.Value, 1, 1);
+            var end = start.AddYears(1);
+
+            query = query.Where(m => m.LastFileDate >= start && m.LastFileDate < end);
+        }
+
         if (filter.GameServerId != null)
             query = query.Where(m => m.GameServerId == filter.GameServerId);
 

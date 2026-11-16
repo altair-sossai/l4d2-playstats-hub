@@ -47,7 +47,7 @@ Checked against the rendered pages of a copy of the production data and against 
 | Dropdown "Order by: **statistic**" with the caret | Views/Players/Index.cshtml:67-71 | done | |
 | Dropdown items: the 25 statistics, each linking to `orderBy={statistic}&asc=False` | Views/Players/Index.cshtml:72-81 | done | The link keeps the displayed season. |
 | Statistic names: Experience, Games, Wins, Loss, Rage quit, SI MVP awards, CI MVP awards, FF LVP awards, Deaths, Times incapacitated, SI damage taken, Commons killed, SI killed, Damage to SI, Damage to Tank, Rock hits taken, Total skeets, Melee skeets, Total levels, Total crowns, FF dealt (non-incap.), SI damage (excl. Tank), Damage as Tank (upright), Spit damage (upright), Total pounce damage | Views/Players/Index.cshtml:15-27, Resources/SharedResource*.resx | done | `Helpers/PlayerProperties.cs`. |
-| Period selector (new) | - | adapted | Hub addition, next to the "Order by" dropdown and in the style of the history page: "Displayed period: **From MM/YYYY to MM/YYYY**", listing every season. Only shown when there is more than one season. |
+| Period selector (new) | - | adapted | Hub addition, next to the "Order by" dropdown and in the style of the history page: "Displayed period: **From MM/YYYY to MM/YYYY**". It lists the seasons of the current year and then one entry per year ("Year of YYYY"), which shows the ranking and the matches of that whole year. Only shown when there is more than one choice. |
 | Table `table-striped table-hover table-bordered table-condensed` | Views/Players/Index.cshtml:86 | done | |
 | Column `#` (slim, centered) | Views/Players/Index.cshtml:89, :113 | done | |
 | Column "Player" over two cells (avatar and name) | Views/Players/Index.cshtml:90 | done | |

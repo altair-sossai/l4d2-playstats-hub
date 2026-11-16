@@ -5,7 +5,7 @@
 @{
     var site = await Settings.GetAsync<SiteSettings>();
     var topPlayer = Model.Players.FirstOrDefault();
-    var seasonId = Model.Period.SeasonId;
+    var seasonId = Model.Period.Query;
 
     ViewData["PageMetadata"] = new PageMetadata
     {

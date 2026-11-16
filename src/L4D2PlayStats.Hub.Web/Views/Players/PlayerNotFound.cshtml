@@ -5,7 +5,7 @@
     var playerName = Model.Name ?? Model.CommunityId.ToString();
 
     var site = await Settings.GetAsync<SiteSettings>();
-    var seasonId = Model.Period?.SeasonId;
+    var seasonId = Model.Period?.Query;
 
     ViewData["PageMetadata"] = new PageMetadata
     {

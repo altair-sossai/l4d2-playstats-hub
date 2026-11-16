@@ -96,7 +96,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Page metadata: "History - period", description, image and name of the winner | PageMetadata/HistoryPageMetadata.cs | done | |
 | Page styles | Views/History/Index.cshtml:13-32 | done | |
 | Header "History" | Index.cshtml:34 | done | |
-| Period selector showing the displayed period | Index.cshtml:36-85 | adapted | Lists all time, every year and every finished season. The old site listed only the two-month periods of the current year; a long list scrolls. |
+| Period selector showing the displayed period | Index.cshtml:36-85 | done | All time, each year, and the finished seasons of the current year, as in the old site. A season of an earlier year still opens by its address. |
 | Period names: "From MM/YYYY to MM/YYYY", "Year of YYYY", "All time" | Index.cshtml:42-57 | done | |
 | Default period: the current year | Controllers/HistoryController.cs:26 | done | |
 | Table columns: #, Player (avatar and name), Wins, Loss, Games, SI MVP awards, CI MVP awards, Win rate, Rage quit | Index.cshtml:87-101 | done | |

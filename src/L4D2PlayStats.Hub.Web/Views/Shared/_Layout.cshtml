@@ -294,6 +294,10 @@
                 display: none;
             }
         }
+
+        .nav-compact .nav-stars-label {
+            display: none;
+        }
     </style>
 
     @await RenderSectionAsync("Styles", false)
@@ -353,47 +357,48 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-navbar-collapse">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav" id="nav-main">
                 @if (ranking)
                 {
-                    <li class="@ViewBag.Home">
+                    <li class="nav-fit @ViewBag.Home">
                         <a href="/">@L["Ranking"]</a>
                     </li>
-                    <li class="@ViewBag.LastMatches">
+                    <li class="nav-fit @ViewBag.LastMatches">
                         <a href="/matches">@L["Last matches"]</a>
                     </li>
                 }
                 @if (liveServer)
                 {
-                    <li class="@ViewBag.Server">
+                    <li class="nav-fit @ViewBag.Server">
                         <a href="/servers">@L["Server"]</a>
                     </li>
                 }
                 @if (skinShop)
                 {
-                    <li class="@ViewBag.Skins">
+                    <li class="nav-fit @ViewBag.Skins">
                         <a href="/skins">@L["Skins"]</a>
                     </li>
                 }
                 @if (antiCheat)
                 {
-                    <li class="@ViewBag.AntiCheat">
+                    <li class="nav-fit @ViewBag.AntiCheat">
                         <a href="@AppConsts.AntiCheatUrl">@L["Anti-Cheat"]</a>
                     </li>
                 }
                 @if (communityRanking)
                 {
-                    <li class="@ViewBag.Community">
+                    <li class="nav-fit @ViewBag.Community">
                         <a href="/community">@L["Community"]</a>
                     </li>
                 }
-                @if (ranking)
-                {
-                    <li class="dropdown @(ViewBag.Players ?? ViewBag.History ?? ViewBag.Patent)">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            @L["More"] <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
+                <li class="dropdown @(ViewBag.Players ?? ViewBag.History ?? ViewBag.Patent)" id="nav-more" data-own="@(ranking ? "true" : "false")" style="@(ranking ? null : "display: none")">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        @L["More"] <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="nav-more-menu">
+                        <li role="separator" class="divider" id="nav-fit-divider" style="display: none"></li>
+                        @if (ranking)
+                        {
                             <li class="@ViewBag.Players">
                                 <a href="/players">
                                     <img src="~/imgs/menu/players.svg" alt="" class="img-responsive img-header-icon">
@@ -413,9 +418,9 @@
                                     @L["History"]
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-                }
+                        }
+                    </ul>
+                </li>
                 @if (administrator)
                 {
                     <li class="dropdown @ViewBag.Admin">
@@ -561,6 +566,65 @@
     </div>
 </nav>
 
+<script>
+    (function () {
+        var collapse = document.getElementById('bs-navbar-collapse');
+        var main = document.getElementById('nav-main');
+        var more = document.getElementById('nav-more');
+        var menu = document.getElementById('nav-more-menu');
+        var divider = document.getElementById('nav-fit-divider');
+        var navbar = collapse.parentNode.parentNode;
+        var header = navbar.querySelector('.navbar-header');
+        var ownItems = more.getAttribute('data-own') === 'true';
+
+        function wraps() {
+            return collapse.offsetHeight > header.offsetHeight * 1.5;
+        }
+
+        function markActive() {
+            if (menu.querySelector('li.active'))
+                more.classList.add('active');
+            else
+                more.classList.remove('active');
+        }
+
+        function restore() {
+            var moved = menu.querySelectorAll('li.nav-fit');
+
+            for (var index = 0; index < moved.length; index++)
+                main.insertBefore(moved[index], more);
+
+            divider.style.display = 'none';
+            more.style.display = ownItems ? '' : 'none';
+            navbar.classList.remove('nav-compact');
+        }
+
+        function fit() {
+            restore();
+
+            if (window.innerWidth >= @AppConsts.NavbarDesktopWidth && wraps()) {
+                navbar.classList.add('nav-compact');
+
+                var items = main.querySelectorAll('li.nav-fit');
+
+                for (var index = items.length - 1; index >= 0 && wraps(); index--) {
+                    more.style.display = '';
+                    divider.style.display = ownItems ? '' : 'none';
+                    menu.insertBefore(items[index], menu.firstChild);
+                }
+            }
+
+            markActive();
+        }
+
+        window.fitNavbar = fit;
+        window.addEventListener('resize', fit);
+        window.addEventListener('load', fit);
+
+        fit();
+    })();
+</script>
+
 <div class="container-fluid main-container">
     @if (TempData["Error"] is string error)
     {
@@ -665,12 +729,14 @@
                         $('#server-info').hide();
                         $('#game-info-chat').hide();
                         document.title = baseTitle;
+                        fitNavbar();
                         return;
                     }
 
                     $('#server-status').text('● ' + serverInfo.players + '/' + serverInfo.max_players);
                     $('#server-info').show();
                     $('#game-info-chat').show();
+                    fitNavbar();
                     document.title = '🟢 ' + serverInfo.players + '/' + serverInfo.max_players + ' | ' + baseTitle;
                 },
                 complete: function () {
@@ -724,6 +790,7 @@
             $stars.find('.nav-stars-value').text(balance.toLocaleString(document.documentElement.lang || undefined));
             $stars.find('.nav-stars-label').text(balance === 1 ? @Json.Serialize(L["star available"].Value) : @Json.Serialize(L["stars available"].Value));
             $stars.show();
+            fitNavbar();
 
             try {
                 sessionStorage.setItem(navStarsKey, balance);

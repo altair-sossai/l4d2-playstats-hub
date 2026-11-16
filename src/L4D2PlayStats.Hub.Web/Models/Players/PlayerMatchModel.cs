@@ -40,7 +40,7 @@ public class PlayerMatchModel
     public IReadOnlyList<PlayerMatchMap> Maps { get; }
     public PlayerMatchTeamModel Winner => Teams.MaxBy(team => team.Score)!;
     public int Diff => Math.Abs(_match.TeamAScore - _match.TeamBScore);
-    public int? SeasonId { get; init; }
+    public string? Period { get; init; }
 
     public bool Includes(long communityId)
     {

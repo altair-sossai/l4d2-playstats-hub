@@ -96,7 +96,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Metadatos de página: "Historia - período", descripción, imagen y nombre del ganador | PageMetadata/HistoryPageMetadata.cs | done | |
 | Estilos de página | Views/History/Index.cshtml:13-32 | done | |
 | Encabezado "Historia" | Index.cshtml:34 | done | |
-| Selector de período que indica el período mostrado | Index.cshtml:36-85 | adapted | Lista todo el tiempo, cada año y cada temporada terminada. El sitio antiguo solo listaba los períodos de dos meses del año actual; una lista larga se desplaza. |
+| Selector de período que indica el período mostrado | Index.cshtml:36-85 | done | Todo el tiempo, cada año y las temporadas terminadas del año actual, como en el sitio antiguo. Una temporada de un año anterior se sigue abriendo por su dirección. |
 | Nombres de los períodos: "De MM/YYYY a MM/YYYY", "Año de YYYY", "Todo el tiempo" | Index.cshtml:42-57 | done | |
 | Período predeterminado: el año actual | Controllers/HistoryController.cs:26 | done | |
 | Columnas de la tabla: #, Jugador (avatar y nombre), Victorias, Derrota, Juegos, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Rage quit | Index.cshtml:87-101 | done | |

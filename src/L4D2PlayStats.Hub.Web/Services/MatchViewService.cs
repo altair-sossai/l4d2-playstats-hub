@@ -19,9 +19,14 @@ public class MatchViewService(
     ICampaignImageService campaignImageService,
     ICurrentUser currentUser) : IMatchViewService
 {
-    public async Task<LastMatchesModel> ListAsync(int? seasonId, int? serverId, int page, CancellationToken cancellationToken = default)
+    public async Task<LastMatchesModel> ListAsync(int? seasonId, int? year, int? serverId, int page, CancellationToken cancellationToken = default)
     {
-        var filter = new MatchFilter { SeasonId = seasonId, GameServerId = serverId, Page = page, PageSize = AppConsts.LastMatchesPageSize };
+        if (seasonId != null)
+            year = null;
+
+        var filter = new MatchFilter { SeasonId = seasonId, Year = year, GameServerId = serverId, Page = page, PageSize = AppConsts.LastMatchesPageSize };
+        var seasons = await seasonService.ListAsync(cancellationToken);
+        var now = await seasonService.SiteNowAsync(cancellationToken);
         var servers = await gameServerService.ListAsync(cancellationToken);
         var result = await matchResultService.ListAsync(filter, cancellationToken);
         var firstItem = result.Total == 0 ? 0 : (result.Page - 1) * result.PageSize + 1;
@@ -30,11 +35,15 @@ public class MatchViewService(
         return new LastMatchesModel
         {
             Matches = await CardsAsync(result.Matches, servers, true, cancellationToken),
-            Seasons = await seasonService.ListAsync(cancellationToken),
+            Seasons = [.. seasons.Where(season => season.StartsAt <= now && (season.StartsAt.Year == now.Year || season.Id == seasonId))],
+            Years = [.. seasons.Where(season => season.StartsAt <= now).Select(season => season.StartsAt.Year).Distinct().OrderByDescending(value => value)],
+            HasPeriodChoices = seasons.Count > 1,
+            Year = year,
+            Url = (season, selectedYear, server) => PageUrl(null, season, selectedYear, server),
             Servers = servers,
             SeasonId = seasonId,
             ServerId = serverId,
-            Pagination = new PaginationModel(result.Page, result.Pages, firstItem, lastItem, result.Total, number => PageUrl(number, seasonId, serverId))
+            Pagination = new PaginationModel(result.Page, result.Pages, firstItem, lastItem, result.Total, number => PageUrl(number, seasonId, year, serverId))
         };
     }
 
@@ -110,16 +119,22 @@ public class MatchViewService(
         ];
     }
 
-    private static string PageUrl(int page, int? seasonId, int? serverId)
+    private static string PageUrl(int? page, int? seasonId, int? year, int? serverId)
     {
-        var parts = new List<string> { $"page={page}" };
+        var parts = new List<string>();
+
+        if (page != null)
+            parts.Add($"page={page}");
 
         if (seasonId != null)
             parts.Add($"season={seasonId}");
 
+        if (year != null)
+            parts.Add($"year={year}");
+
         if (serverId != null)
             parts.Add($"server={serverId}");
 
-        return $"{AppConsts.MatchesUrl}?{string.Join('&', parts)}";
+        return parts.Count == 0 ? AppConsts.MatchesUrl : $"{AppConsts.MatchesUrl}?{string.Join('&', parts)}";
     }
 }

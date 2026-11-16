@@ -63,7 +63,7 @@ How it was checked: the details page and the statistics page of one real match (
 | Social image: thumbnail of the latest match's campaign, alt text with its name | PageMetadata/LastMatchesPageMetadata.cs:19-20 | done | |
 | Heading `h4.text-center` "Last matches" | Views/LastMatches/Index.cshtml:13 | done | |
 | `div.match` with one card per match | Views/LastMatches/Index.cshtml:15-20 | done | |
-| Season filter | (new) | adapted | Hub addition, in the old look: a small select at the right, above the list ("All seasons" by default), so past seasons stay browsable. Hidden while there is a single season and a single server. |
+| Season filter | (new) | adapted | Hub addition, in the old look: a small select at the right, above the list ("All seasons" by default, then the seasons of the current year and one entry per year), so past seasons stay browsable. Hidden while there is a single season and a single server. |
 | Server filter | (new) | adapted | Hub addition: a second select, shown only when there is more than one game server. |
 | Pagination | (new) | adapted | Hub addition, with the shared `_Pagination` partial, shown when there is more than one page. |
 | Empty list | Views/LastMatches/Index.cshtml:15-20 | adapted | The old page showed nothing; the hub shows "No match found" in the same heading style. |

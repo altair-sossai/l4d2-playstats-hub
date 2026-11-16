@@ -259,7 +259,7 @@ public partial class AdminPagesTests
     [GeneratedRegex("""<li class="active">\s*<a href="/admin">""")]
     private static partial Regex AdministrationItemActive();
 
-    [GeneratedRegex("""<li class="active">\s*<a href="/community">""")]
+    [GeneratedRegex("""<li class="nav-fit active">\s*<a href="/community">""")]
     private static partial Regex CommunityMenuActive();
 
     [GeneratedRegex("""<input type="checkbox" id="module-AntiCheat"[^>]*>""")]

@@ -33,26 +33,45 @@ public class PlayerViewService(
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer) : IPlayerViewService
 {
-    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, CancellationToken cancellationToken = default)
+    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, CancellationToken cancellationToken = default)
     {
         var current = await seasonService.GetCurrentAsync(cancellationToken);
+        var now = await seasonService.SiteNowAsync(cancellationToken);
         var seasons = await seasonService.ListAsync(cancellationToken);
         var started = seasons.Where(season => season.StartsAt <= current.StartsAt).ToList();
+        var years = started.Select(season => season.StartsAt.Year).Distinct().OrderByDescending(value => value).ToList();
+
+        var options = started
+            .Where(season => season.StartsAt.Year == now.Year || season.Id == current.Id)
+            .Select(season => new PlayerPeriodOption { Season = season, Query = season.Id == current.Id ? null : PlayerUrls.SeasonQuery(season.Id) })
+            .Concat(years.Select(value => new PlayerPeriodOption { Year = value, Query = PlayerUrls.YearQuery(value) }))
+            .ToList();
+
+        if (year != null)
+            return years.Contains(year.Value) ? new PlayerPeriodModel { Year = year, CurrentSeason = current, Options = options } : null;
+
         var selected = seasonId == null ? current : started.FirstOrDefault(season => season.Id == seasonId);
 
-        return selected == null ? null : new PlayerPeriodModel { Season = selected, CurrentSeason = current, Seasons = started };
+        return selected == null ? null : new PlayerPeriodModel { Season = selected, CurrentSeason = current, Options = options };
+    }
+
+    private Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken)
+    {
+        return period.Year != null
+            ? rankingService.YearAsync(period.Year.Value, cancellationToken)
+            : rankingService.SeasonAsync(period.Season!.Id, cancellationToken);
     }
 
     public async Task<PlayersModel> ListAsync(PlayerPeriodModel period, PlayerResultProperty orderBy, bool asc, CancellationToken cancellationToken = default)
     {
-        var players = await rankingService.SeasonAsync(period.Season.Id, cancellationToken);
+        var players = await RankingAsync(period, cancellationToken);
 
         return new PlayersModel(PlayerProperties.Sort(players, orderBy, asc), orderBy, asc, period);
     }
 
     public async Task<PlayerDetailsModel?> DetailsAsync(PlayerPeriodModel period, long communityId, long? compareWith, CancellationToken cancellationToken = default)
     {
-        var players = await rankingService.SeasonAsync(period.Season.Id, cancellationToken);
+        var players = await RankingAsync(period, cancellationToken);
         var firstPlayer = players.FirstOrDefault(player => player.CommunityId == communityId);
         var secondPlayer = compareWith == null ? null : players.FirstOrDefault(player => player.CommunityId == compareWith);
 
@@ -67,7 +86,9 @@ public class PlayerViewService(
 
         long[] communityIds = secondPlayer == null ? [firstPlayer.CommunityId] : [firstPlayer.CommunityId, secondPlayer.CommunityId];
 
-        var matches = await playerMatchService.LastAsync(period.Season.Id, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+        var matches = period.Year != null
+            ? await playerMatchService.LastInYearAsync(period.Year.Value, communityIds, AppConsts.PlayerRecentMatches, cancellationToken)
+            : await playerMatchService.LastAsync(period.Season!.Id, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
 
         var relatedPlayers = modules.IsEnabled(HubModule.LiveServer)
             ? await playerConnectionService.RelatedAsync(communityId, cancellationToken)
@@ -76,7 +97,7 @@ public class PlayerViewService(
         var firstPlayerRanking = new RankingModel(localizer, firstPlayer);
         var secondPlayerRanking = secondPlayer == null ? null : new RankingModel(localizer, secondPlayer);
         var knownNames = await KnownNamesAsync(players, firstPlayer, secondPlayer, cancellationToken);
-        var matchModels = matches.Select(match => new PlayerMatchModel(match, today, timeZone) { SeasonId = period.SeasonId }).ToList();
+        var matchModels = matches.Select(match => new PlayerMatchModel(match, today, timeZone) { Period = period.Query }).ToList();
 
         IReadOnlyCollection<Skin> skins = skinShop ? await skinService.ListAsync(cancellationToken) : [];
         var assetsUrl = skinShop ? (await settingsService.GetAsync<SkinShopSettings>(cancellationToken)).AssetsUrl : null;
@@ -86,7 +107,7 @@ public class PlayerViewService(
             SkinShop = skinShop,
             FirstPlayerSkins = skinShop ? await PlayerSkinsAsync(skins, firstPlayer.CommunityId, assetsUrl, cancellationToken) : null,
             SecondPlayerSkins = skinShop && secondPlayer != null ? await PlayerSkinsAsync(skins, secondPlayer.CommunityId, assetsUrl, cancellationToken) : null,
-            Administrator = await currentUser.IsAdministratorAsync(),
+            Administrator = period.Season != null && await currentUser.IsAdministratorAsync(),
             TimeZone = TimeZone(site)
         };
     }

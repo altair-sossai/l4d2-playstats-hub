@@ -25,4 +25,5 @@ public static partial class AppConsts
     public const string PlayersUrl = "/players";
     public const string PlayerUrl = "/player";
     public const string PlayerSeasonParameter = "season";
+    public const string PlayerYearParameter = "year";
 }

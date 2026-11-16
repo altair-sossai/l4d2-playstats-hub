@@ -46,7 +46,7 @@ public partial class MatchPagesTests
         Assert.Contains("&quot;data&quot;:[300,300]", body);
         Assert.Contains("&quot;labels&quot;:[&quot;c2m1_highway&quot;,&quot;c2m2_fairgrounds&quot;]", body);
         Assert.Contains("See the latest L4D2 PlayStats matches, including scores, campaigns, and players.", body);
-        Assert.IsTrue(Regex.IsMatch(body, "<li class=\"active\">\\s*<a href=\"/matches\">"));
+        Assert.IsTrue(Regex.IsMatch(body, "<li class=\"nav-fit active\">\\s*<a href=\"/matches\">"));
     }
 
     [TestMethod]
@@ -100,9 +100,9 @@ public partial class MatchPagesTests
         var several = await client.GetStringAsync("/matches");
 
         Assert.DoesNotContain("Alpha Arena", single);
-        Assert.DoesNotContain("name=\"server\"", single);
+        Assert.DoesNotContain("aria-label=\"Server\"", single);
         Assert.Contains(" - Alpha Arena</small>", several);
-        Assert.Contains("name=\"server\"", several);
+        Assert.Contains("aria-label=\"Server\"", several);
         Assert.Contains("Beta Arena</option>", several);
     }
 

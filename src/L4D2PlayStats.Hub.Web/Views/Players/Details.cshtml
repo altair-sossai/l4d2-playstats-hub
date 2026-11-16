@@ -20,7 +20,7 @@
     var copyIcon = light ? "copy-light.png" : "copy-dark.png";
 
     var site = await Settings.GetAsync<SiteSettings>();
-    var seasonId = Model.Period.SeasonId;
+    var seasonId = Model.Period.Query;
     var antiforgeryToken = Model.Administrator ? Antiforgery.GetAndStoreTokens(Context).RequestToken : null;
 
     ViewData["PageMetadata"] = new PageMetadata
@@ -528,7 +528,7 @@
             location.reload();
         }
 
-        var punishmentSeasonId = @Json.Serialize(Model.Period.Season.Id);
+        var punishmentSeasonId = @Json.Serialize(Model.Period.Season?.Id);
         var punishmentHeaders = { "@AppConsts.PlayerAntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
 
         function addPunishments(communityId, lostExperiencePoints) {

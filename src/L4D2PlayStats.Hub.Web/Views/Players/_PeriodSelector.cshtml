@@ -2,11 +2,21 @@
 
 @functions {
 
-    private string PeriodLabel(Season season)
+    private string SeasonLabel(Season season)
     {
         var label = RankingPeriod.ForSeason(season).Label(L);
 
         return season.Id == Model.Period.CurrentSeason.Id ? $"{label} ({L["Current season"].Value})" : label;
+    }
+
+    private string OptionLabel(PlayerPeriodOption option)
+    {
+        return option.Season != null ? SeasonLabel(option.Season) : RankingPeriod.ForYear(option.Year!.Value).Label(L);
+    }
+
+    private string SelectedLabel()
+    {
+        return Model.Period.Season != null ? SeasonLabel(Model.Period.Season) : RankingPeriod.ForYear(Model.Period.Year!.Value).Label(L);
     }
 
 }
@@ -16,14 +26,22 @@
     <div class="dropdown period-selector" style="display: inline-block; vertical-align: top; max-width: 100%; margin-bottom: 5px">
         <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" style="max-width: 100%; white-space: normal">
             @L["Displayed period"]:
-            <b>@PeriodLabel(Model.Period.Season)</b>
+            <b>@SelectedLabel()</b>
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" style="max-height: 60vh; overflow-y: auto">
-            @foreach (var season in Model.Period.Seasons)
+            @{ var yearsStarted = false; }
+            @foreach (var option in Model.Period.Options)
             {
+                if (option.Year != null && !yearsStarted)
+                {
+                    yearsStarted = true;
+
+                    <li role="separator" class="divider"></li>
+                }
+
                 <li>
-                    <a href="@Model.Url(Model.Period.IdOf(season))">@PeriodLabel(season)</a>
+                    <a href="@Model.Url(option.Query)">@OptionLabel(option)</a>
                 </li>
             }
         </ul>

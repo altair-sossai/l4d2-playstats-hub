@@ -63,7 +63,7 @@ Como foi conferido: a página de detalhes e a página de estatísticas de uma pa
 | Imagem social: miniatura da campanha da partida mais recente, texto alternativo com o nome dela | PageMetadata/LastMatchesPageMetadata.cs:19-20 | done | |
 | Título `h4.text-center` "Últimos jogos" | Views/LastMatches/Index.cshtml:13 | done | |
 | `div.match` com um cartão por partida | Views/LastMatches/Index.cshtml:15-20 | done | |
-| Filtro de temporada | (novo) | adapted | Acréscimo do hub, no visual antigo: um select pequeno à direita, acima da lista ("Todas as temporadas" por padrão), para que dê para navegar pelas temporadas passadas. Oculto enquanto há uma única temporada e um único servidor. |
+| Filtro de temporada | (novo) | adapted | Acréscimo do hub, no visual antigo: um select pequeno à direita, acima da lista ("Todas as temporadas" por padrão, depois as temporadas do ano atual e um item por ano), para que dê para navegar pelas temporadas passadas. Oculto enquanto há uma única temporada e um único servidor. |
 | Filtro de servidor | (novo) | adapted | Acréscimo do hub: um segundo select, exibido só quando há mais de um servidor de jogo. |
 | Paginação | (novo) | adapted | Acréscimo do hub, com a partial compartilhada `_Pagination`, exibida quando há mais de uma página. |
 | Lista vazia | Views/LastMatches/Index.cshtml:15-20 | adapted | A página antiga não mostrava nada; o hub mostra "Nenhuma partida encontrada" no mesmo estilo de título. |

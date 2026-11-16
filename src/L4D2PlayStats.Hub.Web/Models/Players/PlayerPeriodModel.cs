@@ -1,18 +1,25 @@
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
+using L4D2PlayStats.Hub.Web.Helpers;
 
 namespace L4D2PlayStats.Hub.Web.Models.Players;
 
 public class PlayerPeriodModel
 {
-    public required Season Season { get; init; }
+    public Season? Season { get; init; }
+    public int? Year { get; init; }
     public required Season CurrentSeason { get; init; }
-    public required IReadOnlyList<Season> Seasons { get; init; }
-    public bool IsCurrent => Season.Id == CurrentSeason.Id;
-    public int? SeasonId => IsCurrent ? null : Season.Id;
-    public bool HasChoices => Seasons.Count > 1;
+    public required IReadOnlyList<PlayerPeriodOption> Options { get; init; }
+    public bool IsCurrent => Season != null && Season.Id == CurrentSeason.Id;
+    public bool HasChoices => Options.Count > 1;
 
-    public int? IdOf(Season season)
+    public string? Query
     {
-        return season.Id == CurrentSeason.Id ? null : season.Id;
+        get
+        {
+            if (Year != null)
+                return PlayerUrls.YearQuery(Year.Value);
+
+            return Season == null || IsCurrent ? null : PlayerUrls.SeasonQuery(Season.Id);
+        }
     }
 }

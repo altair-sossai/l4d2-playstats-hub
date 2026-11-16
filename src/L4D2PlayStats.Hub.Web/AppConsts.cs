@@ -23,6 +23,7 @@ public static partial class AppConsts
     public const int DefaultTeamSize = 4;
     public const int RankingVisiblePlayers = 50;
     public const int PaginationWindow = 2;
+    public const int NavbarDesktopWidth = 768;
     public const int PlayerPickerPreviousNames = 5;
     public const int RankingListedPlayers = 100;
     public const string AllTimeHistoryId = "all-time";
