@@ -98,6 +98,32 @@ public partial class AdminPagesTests
     }
 
     [TestMethod]
+    public async Task TheWizardSavesTheModulesAndGoesOnToTheGameServer()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.RunAsync(services => services.GetRequiredService<IAdministratorService>().AddAsync(HubWebFactory.Administrator, "Admin"));
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        var response = await HubWebFactory.PostFormAsync(client, "/setup?step=modules", "/setup/modules", new Dictionary<string, string>
+        {
+            ["Ranking"] = "true",
+            ["LiveServer"] = "false",
+            ["CommunityRanking"] = "true",
+            ["AntiCheat"] = "true"
+        });
+
+        var modules = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<ModuleSettings>());
+
+        Assert.AreEqual("/setup?step=server", response.Headers.Location!.OriginalString);
+        Assert.IsTrue(modules.Ranking);
+        Assert.IsFalse(modules.LiveServer);
+        Assert.IsTrue(modules.CommunityRanking);
+        Assert.IsTrue(modules.AntiCheat);
+    }
+
+    [TestMethod]
     public async Task TheThemeCanBeChangedDuringTheSetup()
     {
         using var factory = new HubWebFactory();

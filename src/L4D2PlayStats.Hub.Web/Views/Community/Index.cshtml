@@ -42,6 +42,11 @@
                 margin-right: 10px;
                 font-style: italic;
             }
+
+        .community-detail {
+            display: block;
+            white-space: nowrap;
+        }
     </style>
 }
 
@@ -129,8 +134,9 @@ else
                         @player.Name.TruncatePlayerName()
                     }
                     <span class="show-mobile">
-                        <br/>
-                        <small class="text-muted">@L["Comparisons"]: @player.Comparisons · @L["Draws"]: @player.Draws · @L["Losses"]: @player.Losses</small>
+                        <small class="text-muted community-detail">@L["Comparisons"]: @player.Comparisons</small>
+                        <small class="text-muted community-detail">@L["Draws"]: @player.Draws</small>
+                        <small class="text-muted community-detail">@L["Losses"]: @player.Losses</small>
                     </span>
                 </td>
                 <td class="text-center vertical-align-middle">
