@@ -15,5 +15,6 @@
   "The logo was not changed: it must be a PNG, JPG, WEBP or GIF image.": "El logo no se cambió: tiene que ser una imagen PNG, JPG, WEBP o GIF.",
   "The logo was not changed: the file is too large.": "El logo no se cambió: el archivo es demasiado grande.",
   "The Google Analytics ID was not changed: it can only have letters, digits and hyphens.": "El ID de Google Analytics no se cambió: solo puede tener letras, números y guiones.",
-  "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.": "Algunos enlaces del pie de página quedaron fuera: cada línea debe tener un texto, una barra vertical y una dirección que empiece con http:// o https://."
+  "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.": "Algunos enlaces del pie de página quedaron fuera: cada línea debe tener un texto, una barra vertical y una dirección que empiece con http:// o https://.",
+  "Optional. Player avatars load without it; with a key they load faster.": "Opcional. Los avatares de los jugadores se cargan sin ella; con la clave, se cargan más rápido."
 }
