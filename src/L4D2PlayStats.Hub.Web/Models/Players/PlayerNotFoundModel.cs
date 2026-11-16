@@ -9,7 +9,7 @@ public class PlayerNotFoundModel(long communityId, PlayerConnectionResult? playe
 
     public long CommunityId { get; } = communityId;
     public string? Name { get; } = player?.Name ?? knownName;
-    public string? SteamId => player?.SteamId ?? (_valid ? SteamIds.SteamId(CommunityId) : null);
+    public string? SteamId => _valid ? SteamIds.DisplaySteamId(CommunityId) : null;
     public string? ProfileUrl => player?.ProfileUrl ?? (_valid ? SteamIds.ProfileUrl(CommunityId) : null);
     public DateTime? LastConnectedAtUtc { get; } = player?.LastConnectedAtUtc;
     public long? ConnectionCount { get; } = player?.ConnectionCount;

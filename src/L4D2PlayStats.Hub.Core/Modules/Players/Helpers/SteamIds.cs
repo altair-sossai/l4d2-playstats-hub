@@ -14,6 +14,13 @@ public static class SteamIds
         return $"STEAM_1:{accountId % 2}:{accountId / 2}";
     }
 
+    public static string DisplaySteamId(long communityId)
+    {
+        var accountId = communityId - AppConsts.SteamCommunityIdBase;
+
+        return $"STEAM_0:{accountId % 2}:{accountId / 2}";
+    }
+
     public static string Steam3(long communityId)
     {
         return $"[U:1:{communityId - AppConsts.SteamCommunityIdBase}]";

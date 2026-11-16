@@ -723,18 +723,18 @@
 
             <th>@L["Steam ID"]:</th>
             <td data-label="@L["Steam ID"]:" colspan="3">
-                @firstPlayer.SteamId
+                @SteamIds.DisplaySteamId(firstPlayer.CommunityId)
                 <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
                      data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
-                     onclick="copyTextToClipboard('@firstPlayer.SteamId', this)"/>
+                     onclick="copyTextToClipboard('@SteamIds.DisplaySteamId(firstPlayer.CommunityId)', this)"/>
                 @if (secondPlayer != null)
                 {
                     <span class="separator"> | </span>
                     <span class="second">
-                        @secondPlayer.SteamId
+                        @SteamIds.DisplaySteamId(secondPlayer.CommunityId)
                         <img src="~/imgs/icons/@copyIcon" alt="@L["Copy"]" class="icon-copy"
                              data-toggle="popover" data-placement="top" data-content="@L["Text copied!"]"
-                             onclick="copyTextToClipboard('@secondPlayer.SteamId', this)"/>
+                             onclick="copyTextToClipboard('@SteamIds.DisplaySteamId(secondPlayer.CommunityId)', this)"/>
                     </span>
                 }
             </td>
@@ -1006,10 +1006,10 @@
                         <a href="@PlayerUrls.Details(long.Parse(relatedPlayer.CommunityId), null, seasonId)">@relatedPlayer.Name</a>
                     </td>
                     <td data-label="@L["Steam ID"]:">
-                        @relatedPlayer.SteamId
+                        @SteamIds.DisplaySteamId(long.Parse(relatedPlayer.CommunityId))
                         @if (!string.IsNullOrWhiteSpace(relatedPlayer.SteamId))
                         {
-                            @await Html.PartialAsync("_CopyButton", relatedPlayer.SteamId)
+                            @await Html.PartialAsync("_CopyButton", SteamIds.DisplaySteamId(long.Parse(relatedPlayer.CommunityId)))
                         }
                     </td>
                     <td data-label="@L["Last login"]:">@Model.LocalTime(relatedPlayer.LastConnectedAtUtc).ToString("g")</td>

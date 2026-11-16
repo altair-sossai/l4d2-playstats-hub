@@ -150,10 +150,10 @@
                         <a href="@PlayerUrls.Details(long.Parse(relatedPlayer.CommunityId), null, seasonId)">@relatedPlayer.Name</a>
                     </td>
                     <td data-label="@L["Steam ID"]:">
-                        @relatedPlayer.SteamId
+                        @SteamIds.DisplaySteamId(long.Parse(relatedPlayer.CommunityId))
                         @if (!string.IsNullOrWhiteSpace(relatedPlayer.SteamId))
                         {
-                            @await Html.PartialAsync("_CopyButton", relatedPlayer.SteamId)
+                            @await Html.PartialAsync("_CopyButton", SteamIds.DisplaySteamId(long.Parse(relatedPlayer.CommunityId)))
                         }
                     </td>
                     <td data-label="@L["Last login"]:">@Model.LocalTime(relatedPlayer.LastConnectedAtUtc).ToString("g")</td>
