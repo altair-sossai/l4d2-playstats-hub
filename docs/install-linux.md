@@ -4,6 +4,8 @@
 
 This is the recommended way to run L4D2 PlayStats Hub. One command installs everything, and the site then guides you through the rest.
 
+The screenshots on this page are the real output of the installer, recorded on a clean Ubuntu 24.04 machine where the commands ran as root (so without `sudo`). Your addresses, dates and setup code will be different.
+
 ## Contents
 
 - [What you need](#what-you-need)
@@ -50,27 +52,23 @@ Paste this line and press Enter:
 curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
 ```
 
-It takes about a minute. At the end it prints something like this:
+It takes about a minute. It installs the few packages the application needs, downloads the latest release, creates the `l4d2-playstats-hub` service and waits until the site answers. At the end it prints the address of the site and the setup code:
 
-```text
-L4D2 PlayStats Hub is running.
+![The output of the installer](images/en/install-linux-installer.webp)
 
-  Site address:            http://203.0.113.10:5080
-
-  Next step: open the site address. It asks for this setup code:
-
-      98ff3a8f5d5022bd4f66103c009e8162
-```
-
-Keep the address and the setup code. You can see the code again at any time:
+Keep the address and the setup code. On a VPS the address is the public address of the machine. You can see the code again at any time:
 
 ```bash
 playstats-hub setup-code
 ```
 
+![The setup code shown again](images/en/install-linux-setup-code.webp)
+
 ## Step 3: open the site
 
 Open the site address in your browser. The first page asks for the setup code.
+
+![The first page of the site asks for the setup code](images/en/wizard-setup-code.webp)
 
 1. Paste the setup code.
 2. Click **Continue with Steam** and sign in.
@@ -83,12 +81,14 @@ The site asks a few questions, one page at a time:
 
 | Page | What you decide |
 |---|---|
-| Site | The name of the site, its language, your time zone, and how many months a season lasts. |
-| Modules | What the site has: ranking, live server, skin shop, community ranking, chat. |
+| Site | The name and logo of the site, its default language, your time zone, how many months a season lasts, and an optional Steam Web API key. |
+| Modules | What the site has: ranking, live server, site chat, remote commands, skin shop, community ranking, Anti-Cheat page. |
 | Game server | A name for your game server. The site gives you the lines to paste into its configuration. |
 | Finish | Confirms. Everything can be changed later in the administration area. |
 
-On the game server page, the site shows whether your server is connected and what is missing. [Connecting a game server](game-server.md) explains that part in detail.
+![The game server step, with the lines to paste into the game server](images/en/wizard-server-token.webp)
+
+The site shows whether your server is connected and what is missing. [First-run setup](manual/first-run.md) shows every page of the wizard, and [Connecting a game server](game-server.md) explains the game server side in detail.
 
 ## Using a domain with HTTPS
 
@@ -125,6 +125,14 @@ The game address is set on the game server, in `playstats_ingame_url`. See [Conn
 | `playstats-hub restart` | Restarts the application. |
 | `playstats-hub setup-code` | Shows the setup code while the setup is not done. |
 | `playstats-hub add-admin <SteamID64>` | Makes a Steam account an administrator of the site. |
+| `playstats-hub stop`, `playstats-hub start` | Stops or starts the application. |
+| `playstats-hub` | Lists the commands. |
+
+![The list of commands](images/en/install-linux-commands.webp)
+
+`playstats-hub status` shows whether the service is running, since when, and its latest log lines:
+
+![The status of the service](images/en/install-linux-status.webp)
 
 ## Updating
 
@@ -132,7 +140,11 @@ The game address is set on the game server, in `playstats_ingame_url`. See [Conn
 playstats-hub update
 ```
 
-It installs the latest version and keeps your database and configuration. To install a specific version, give its name: `playstats-hub update v1.2.0`.
+It runs the installer again: it installs the latest version and keeps your database and configuration. To install a specific version, give its name: `playstats-hub update v1.2.0`.
+
+![An update keeps the existing configuration](images/en/install-linux-update.webp)
+
+If the setup is not finished yet, the summary at the end shows the setup code again; otherwise it says that your data and configuration were kept.
 
 ## Backup and restore
 
@@ -142,7 +154,11 @@ Everything that matters is in one folder. This command saves it in one file:
 playstats-hub backup
 ```
 
-The site stops for a few seconds while the copy is made. The file goes to `/root`, with the date in its name. Copy it to another machine.
+The site stops for a few seconds while the copy is made. The file goes to `/root`, with the date in its name. Copy it to another machine. To save it somewhere else, give a path: `playstats-hub backup /backups/hub.tar.gz`.
+
+![A backup](images/en/install-linux-backup.webp)
+
+The file has the data folder (the database, the avatars, the logo and the keys) and `hub.env`. [Backups and updates](manual/backups-and-updates.md) explains what each part is.
 
 To bring a backup back, on the same VPS or on a new one where you ran the installer:
 

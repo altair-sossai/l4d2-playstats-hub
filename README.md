@@ -10,6 +10,7 @@ One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, 
 
 - [Why this project exists](#why-this-project-exists)
 - [What it does](#what-it-does)
+- [A short tour](#a-short-tour)
 - [Installing](#installing)
 - [How it fits together](#how-it-fits-together)
 - [What stays outside this repository](#what-stays-outside-this-repository)
@@ -38,6 +39,22 @@ This repository brings the logic together so that any server owner can run the s
 - **Three languages.** English, Portuguese and Spanish.
 - **Your choice of database.** SQLite by default, with no server to install. SQL Server, PostgreSQL and MySQL are supported.
 
+## A short tour
+
+The ranking of the season opens the site. Each player has a page with their results, statistics and relations, and each match has its details.
+
+![The ranking of the current season](docs/images/en/ranking.webp)
+
+The live server page follows the match in progress on each game server.
+
+![The live server page](docs/images/en/server-live.webp)
+
+Players spend the stars they earned as MVP in the weapon skin shop.
+
+![The weapon skin shop](docs/images/en/skins.webp)
+
+The [user manual](docs/manual/README.md) explains every page, how the numbers are calculated, and every setting, with screenshots.
+
 ## Installing
 
 On a Linux VPS, one command installs the site:
@@ -56,6 +73,7 @@ This command downloads the latest published version. The application can also be
 | [Installing with Docker](docs/install-docker.md) | If you already use containers. |
 | [Installing on Azure](docs/install-azure.md) | A virtual machine or App Service. |
 | [Connecting a game server](docs/game-server.md) | The plugins and their settings. |
+| [User manual](docs/manual/README.md) | Every feature of the site, for administrators and players. |
 
 ## How it fits together
 
@@ -90,6 +108,7 @@ The migration happens step by step. The old repositories are archived when it is
 
 | Document | Contents |
 |---|---|
+| [docs/manual/](docs/manual/README.md) | The user manual: every page and setting of the site, with screenshots. |
 | [docs/install-linux.md](docs/install-linux.md) | Installing, updating and backing up on a Linux VPS. |
 | [docs/install-docker.md](docs/install-docker.md) | Running the published image. |
 | [docs/install-azure.md](docs/install-azure.md) | Running on Azure. |
@@ -100,6 +119,7 @@ The migration happens step by step. The old repositories are archived when it is
 | [docs/in-game-browser.md](docs/in-game-browser.md) | What the browser inside the game supports. |
 | [docs/site-parity](docs/site-parity/README.md) | Every screen of the site being replaced, item by item, and its status here. |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How the code is organised and the rules for changes. |
+| [tools/screenshots](tools/screenshots/README.md) | The tool that takes the screenshots of the documentation. |
 
 English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.
 

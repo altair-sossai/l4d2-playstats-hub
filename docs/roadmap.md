@@ -74,7 +74,7 @@ One ASP.NET Core application that is the website, the API for the plugins, the a
 | Skin catalog | The catalog and the pictures live in the assets repository, and the application imports the catalog. |
 | Plugins | Target servers based on L4D2 Competitive Rework. One address and one token for all of them. |
 | Remote commands | Sending commands from the site to a game server is a module, off by default, with an audit log. |
-| Anti-cheat | Reserved as a module, turned off, with no implementation for now. |
+| Anti-cheat | A module, off by default, that shows the Anti-Cheat page with the download and the instructions. The Anti-Cheat program and its service are separate projects. |
 | Front end | Two layers: the main site for current browsers, and a few pages made for the browser inside the game. |
 | In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, and the latest matches. |
 | Admin area | Server-rendered like the rest of the site. A single-page framework such as Angular is allowed if a screen needs it, and is not used. |
@@ -97,7 +97,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Remote commands | Commands sent from the site to a game server. Needs the live server. | Off |
 | Weapon skin shop | Stars, purchases, gifts and equipped skins. Needs the ranking. | Off |
 | Community ranking | Pairwise voting and its ranking. | Off |
-| Anti-cheat | Reserved. | Off |
+| Anti-Cheat | The page with the Anti-Cheat download and instructions. | Off |
 
 A module that is off disappears from the menu and its pages answer as not found.
 
@@ -156,9 +156,9 @@ For each game server, the site shows the two lines to paste into its configurati
 | State | Meaning |
 |---|---|
 | Waiting | Never connected. |
-| Connected | A signal arrived in the last seconds. |
+| Connected | A signal arrived in the last 90 seconds. |
 | Offline | Shows when it was last seen. |
-| Invalid key | The identifier arrived with the wrong key. |
+| Invalid key | The identifier arrived with the wrong key in the last 10 minutes. |
 
 A checklist shows what was found: connection, upload plugin, statistics writing, first file received, live data and the skins plugin. The `sm_playstats_test` command runs the same check from the game server console.
 
