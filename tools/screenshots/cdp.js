@@ -68,14 +68,20 @@ async function launch(options = {}) {
     });
 
     page.close = async () => {
+        const exited = new Promise(resolve => {
+            process_.once('exit', resolve);
+            setTimeout(resolve, 10000);
+        });
+
         try {
             await page.send('Browser.close');
         } catch {
         }
 
+        await exited;
         socket.close();
         process_.kill();
-        await sleep(500);
+        await sleep(1000);
 
         try {
             fs.rmSync(profile, { recursive: true, force: true });
