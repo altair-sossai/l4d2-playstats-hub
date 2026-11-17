@@ -26,7 +26,7 @@ public Plugin myinfo =
     name        = "L4D2 - Show Patent Icon",
     author      = "Altair Sossai",
     description = "Show the patent icon of the players",
-    version     = "2.0.0",
+    version     = "2.0.1",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -65,6 +65,10 @@ public void OnRoundIsLive()
 public void OnMapStart()
 {
     PrecacheAllPatentFiles();
+}
+
+public void OnConfigsExecuted()
+{
     RefreshPlayersPatent();
 }
 
@@ -292,8 +296,17 @@ void RefreshPlayersLevel()
         int level;
 
         if (GetClientAuthId(i, AuthId_SteamID64, communityId, sizeof(communityId)) && PlayersPatent.GetValue(communityId, level))
-            playersLevel[i] = level;
+            playersLevel[i] = ClampLevel(level);
         else
             playersLevel[i] = 0;
     }
+}
+int ClampLevel(int level)
+{
+    int maxLevel = hMaxLevel.IntValue;
+
+    if (level < 0)
+        return 0;
+
+    return level > maxLevel ? maxLevel : level;
 }

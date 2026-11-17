@@ -63,7 +63,7 @@ public Plugin myinfo =
 	name = "L4D2 Weapon Skins",
 	author = "Altair Sossai",
 	description = "Lets players use the custom weapon skins they bought in the skin shop, downloaded through FastDL",
-	version = "4.0.0",
+	version = "4.0.1",
 	url = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -134,7 +134,10 @@ bool
 	g_bReadyUpAvailable = false,
 	g_bWorldModelsEnabled = false,
 	g_bSkinsLoaded = false,
-	g_bPlayersLoaded = false;
+	g_bPlayersLoaded = false,
+	g_bSkinsRequestFailing = false,
+	g_bPlayersRequestFailing = false,
+	g_bEquipRequestFailing = false;
 
 int g_iActiveWeaponRef[MAXPLAYERS + 1] = { INVALID_ENT_REFERENCE, ... };
 int g_iActiveSkin[MAXPLAYERS + 1] = { -1, ... };
@@ -171,8 +174,6 @@ public void OnPluginStart()
 
 	HookEvent("round_start", Event_RoundChanged, EventHookMode_PostNoCopy);
 	HookEvent("round_end", Event_RoundChanged, EventHookMode_PostNoCopy);
-
-	AutoExecConfig(false);
 
 	g_hSkins = new ArrayList(sizeof(WeaponSkin));
 	g_hWeaponModels = new ArrayList(sizeof(WeaponModels));
@@ -993,12 +994,49 @@ void SaveEquippedSkin(const char[] steamId, const char[] weapon, const char[] na
 	delete body;
 }
 
-void OnEquippedSkinSaved(HTTPResponse response, any value)
+void OnEquippedSkinSaved(HTTPResponse response, any value, const char[] error)
 {
 	if (response.Status != HTTPStatus_OK)
 	{
-		LogError("Could not save the equipped skin (HTTP %d)", response.Status);
+		LogRequestFailure(g_bEquipRequestFailing, "save the equipped skin", response.Status, error);
+		return;
 	}
+
+	LogRequestRecovery(g_bEquipRequestFailing, "saving the equipped skins");
+}
+
+void LogRequestFailure(bool &failing, const char[] action, HTTPStatus status, const char[] error)
+{
+	if (failing)
+	{
+		return;
+	}
+
+	failing = true;
+
+	if (status == HTTPStatus_Invalid)
+	{
+		LogError("Could not %s: %s. Logged once until it works again.", action, error);
+	}
+	else if (status == HTTPStatus_NotFound)
+	{
+		LogError("Could not %s (HTTP 404): the skin shop is turned off on the site, or %s is not the address of the site. Logged once until it works again.", action, PLAYSTATS_HUB_URL_CVAR);
+	}
+	else
+	{
+		LogError("Could not %s (HTTP %d). Logged once until it works again.", action, status);
+	}
+}
+
+void LogRequestRecovery(bool &failing, const char[] action)
+{
+	if (!failing)
+	{
+		return;
+	}
+
+	failing = false;
+	LogMessage("The site answered again: %s works.", action);
 }
 
 void RefreshShop()
@@ -1020,13 +1058,15 @@ void RefreshShop()
 	playersRequest.Get(OnPlayerSkinsResponse, GetEngineTime());
 }
 
-void OnPurchasedSkinsResponse(HTTPResponse response, any value)
+void OnPurchasedSkinsResponse(HTTPResponse response, any value, const char[] error)
 {
 	if (response.Status != HTTPStatus_OK || !PlayStatsHub_HasJson(response))
 	{
-		LogError("Could not load the purchased skins (HTTP %d)", response.Status);
+		LogRequestFailure(g_bSkinsRequestFailing, "load the purchased skins", response.Status, error);
 		return;
 	}
+
+	LogRequestRecovery(g_bSkinsRequestFailing, "loading the purchased skins");
 
 	JSONArray skins = view_as<JSONArray>(response.Data);
 	if (!ReadPurchasedSkins(skins))
@@ -1038,13 +1078,15 @@ void OnPurchasedSkinsResponse(HTTPResponse response, any value)
 	SaveCache(skins, SKINS_CACHE_PATH);
 }
 
-void OnPlayerSkinsResponse(HTTPResponse response, any requestedAt)
+void OnPlayerSkinsResponse(HTTPResponse response, any requestedAt, const char[] error)
 {
 	if (response.Status != HTTPStatus_OK || !PlayStatsHub_HasJson(response))
 	{
-		LogError("Could not load the player skins (HTTP %d)", response.Status);
+		LogRequestFailure(g_bPlayersRequestFailing, "load the player skins", response.Status, error);
 		return;
 	}
+
+	LogRequestRecovery(g_bPlayersRequestFailing, "loading the player skins");
 
 	JSONArray players = view_as<JSONArray>(response.Data);
 	if (!ReadPlayerSkins(players, view_as<float>(requestedAt)))
@@ -1664,7 +1706,11 @@ bool PrepareWeaponModels(WeaponModels models)
 
 	if (!FileExists(models.viewModel) || !FileExists(models.worldModel))
 	{
-		LogError("Weapon \"%s\" models were not found on the server", models.weapon);
+		if (IsEnabled())
+		{
+			LogError("Weapon \"%s\" models were not found on the server: %s", models.weapon, models.viewModel);
+		}
+
 		return false;
 	}
 
@@ -1727,7 +1773,11 @@ bool PrepareSkin(WeaponSkin skin)
 
 	if (!DirExists(skin.materials))
 	{
-		LogError("Skin \"%s\" materials were not found on the server", skin.name);
+		if (IsEnabled())
+		{
+			LogError("Skin \"%s\" materials were not found on the server: %s", skin.name, skin.materials);
+		}
+
 		return false;
 	}
 
