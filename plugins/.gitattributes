@@ -1,3 +1,4 @@
-scripting/include/** -text
-scripting/include/l4d2_playstats_hub.inc text eol=lf
+left4dead2/addons/sourcemod/scripting/include/** -text
+left4dead2/addons/sourcemod/scripting/include/l4d2_playstats_hub.inc text eol=lf
+left4dead2/addons/sourcemod/plugins/*.smx binary
 *.sh text eol=lf
