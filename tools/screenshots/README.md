@@ -35,7 +35,7 @@ Start the site on an empty data folder. It prints the setup code and writes it t
 node tools/screenshots/capture.js wizard --base http://localhost:5103 --lang en --admin 76561198000000000 --setup-code <code>
 ```
 
-The wizard runs only once per data folder. For each language, stop the site, empty the folder, start it again and use the new code. The tool hides the development sign-in field before each capture, since a production site does not show it, and sends a heartbeat as a game server would, so the connection status turns green.
+The wizard runs only once per data folder. For each language, stop the site, empty the folder, start it again and use the new code. The tool hides the development sign-in field before each capture, since a production site does not show it. After the last step it opens the page of the new server in the administration area and sends a heartbeat as a game server would, so the connection status turns green.
 
 ## The rest of the site
 
@@ -49,7 +49,9 @@ The `site` command expects a copy of real data with:
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
 ```
 
-Before the live server shots it sends the live match of each server, the way the plugins do, and waits for the delay of the live page. The shop shots buy the first skin the player can afford, so each run needs a skin that player does not own yet.
+Before the live server shots it sends the live match of each server, the way the plugins do, and waits for the delay of the live page. Restart the site before each language, so the live chat starts empty. Before the shop shots it refunds the purchases of the player, then buys the first skin the player can afford. The chat ban shots add a ban for `--banned`.
+
+The development sign-in has no Steam name, so the menu, the purchases and the audit logs show `Player <SteamID64>` for the signed-in user.
 
 ## The terminal windows
 
@@ -72,7 +74,9 @@ node tools/screenshots/capture.js terminal
 | `--base` | Address of the site. |
 | `--lang` | `en`, `pt` or `es`. It sets the interface language before the first shot. |
 | `--admin` | SteamID64 of an administrator of that site. |
-| `--player` | SteamID64 used for the player page, the shop and the in-game pages. |
+| `--player` | SteamID64 used for the player page, the shop and the in-game pages. Its purchases are refunded before the shop shots, so it can buy again. |
+| `--voter` | SteamID64 of a player who can still vote today, for the voting page. Default: `--player`. |
+| `--banned` | SteamID64 used in the chat ban shots. Default: `--player`. |
 | `--token` | Token of a game server, `identifier:key`. Repeat it for a second server. |
 | `--setup-code` | The setup code, for the wizard. |
 | `--only` | Comma-separated names of the shots to take again. |

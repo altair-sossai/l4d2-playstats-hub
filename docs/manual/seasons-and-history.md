@@ -47,7 +47,7 @@ Choosing a period changes every number on the page: positions, wins, MVPs and th
 
 The selector of this page lists all time, every year, and the seasons of the current year that are already finished. It opens on the current year. The ranking of a past season of an earlier year is reached from the period selector of the ranking page.
 
-The table shows, for each player: wins, losses, games, SI MVP and CI MVP awards, win rate and rage quits. The top three have a medal.
+The players are in the order of the ranking of that period, by experience, although the experience itself is not a column here. The table shows, for each player: wins, losses, games, SI MVP and CI MVP awards, win rate and rage quits. The top three have a medal.
 
 ## Years and all time
 

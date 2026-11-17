@@ -25,7 +25,7 @@ Every player who played on your game servers has a page with their results, thei
 ![The players list](../images/en/players.webp)
 
 - **Order by** chooses the statistic: experience, games, wins, losses, rage quits, MVP awards, deaths, damage, skeets, levels, crowns, friendly fire and the infected numbers.
-- The column of the chosen statistic shows each player's total, and **Per game** shows the average per game. Hover it to see the number of games.
+- The column of the chosen statistic shows each player's total, and **Per game** shows the average per game. Hover the ⓘ icon to see the number of games. Click the column header to reverse the order.
 - The [period selector](seasons-and-history.md#the-period-selector) chooses a season, a year or all time.
 
 The list has the same players as the ranking of the period, all of them and not only the top 100.
