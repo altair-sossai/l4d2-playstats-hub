@@ -6,6 +6,8 @@ public class HubState
 
     public SemaphoreSlim WriteLock { get; } = new(1, 1);
 
+    public SemaphoreSlim SeasonLock { get; } = new(1, 1);
+
     public long DataVersion => Interlocked.Read(ref _dataVersion);
 
     public void DataChanged()
