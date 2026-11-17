@@ -37,15 +37,15 @@ public class HubWebFactory : WebApplicationFactory<Program>
             services.AddDbContext<HubDbContext>(_database.Configure);
 
             services
-                .AddAuthentication(TestAuthenticationHandler.Scheme)
-                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationHandler.Scheme, _ => { });
+                .AddAuthentication(TestAuthenticationHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationHandler.SchemeName, _ => { });
 
             services.PostConfigure<AuthenticationOptions>(options =>
             {
-                options.DefaultScheme = TestAuthenticationHandler.Scheme;
-                options.DefaultAuthenticateScheme = TestAuthenticationHandler.Scheme;
-                options.DefaultChallengeScheme = TestAuthenticationHandler.Scheme;
-                options.DefaultForbidScheme = TestAuthenticationHandler.Scheme;
+                options.DefaultScheme = TestAuthenticationHandler.SchemeName;
+                options.DefaultAuthenticateScheme = TestAuthenticationHandler.SchemeName;
+                options.DefaultChallengeScheme = TestAuthenticationHandler.SchemeName;
+                options.DefaultForbidScheme = TestAuthenticationHandler.SchemeName;
             });
         });
     }
