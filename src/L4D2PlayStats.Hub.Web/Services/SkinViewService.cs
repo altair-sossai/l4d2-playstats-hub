@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
@@ -156,12 +157,12 @@ public class SkinViewService(
     {
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
-        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
+        return SiteTime.Zone(site.TimeZone);
     }
 
     private static DateTime ToSiteTime(DateTime utc, TimeZoneInfo timeZone)
     {
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
+        return SiteTime.FromUtc(utc, timeZone);
     }
 
     private static string Text(long communityId)

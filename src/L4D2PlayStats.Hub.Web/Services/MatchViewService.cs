@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
@@ -102,8 +103,7 @@ public class MatchViewService(
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
 
-        if (!TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone))
-            timeZone = TimeZoneInfo.Utc;
+        var timeZone = SiteTime.Zone(site.TimeZone);
 
         return
         [

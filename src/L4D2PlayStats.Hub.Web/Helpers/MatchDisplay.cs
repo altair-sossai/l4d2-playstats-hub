@@ -1,10 +1,12 @@
+using SiteClock = L4D2PlayStats.Hub.Core.Modules.Settings.Helpers.SiteTime;
+
 namespace L4D2PlayStats.Hub.Web.Helpers;
 
 public static class MatchDisplay
 {
     public static DateTime SiteTime(DateTime utc, TimeZoneInfo timeZone)
     {
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
+        return SiteClock.FromUtc(utc, timeZone);
     }
 
     public static DateTime? SiteTime(DateTime? utc, TimeZoneInfo timeZone)

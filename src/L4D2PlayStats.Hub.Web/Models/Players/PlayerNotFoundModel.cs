@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 
@@ -19,6 +20,6 @@ public class PlayerNotFoundModel(long communityId, PlayerConnectionResult? playe
 
     public DateTime LocalTime(DateTime utc)
     {
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), TimeZone);
+        return SiteTime.FromUtc(utc, TimeZone);
     }
 }

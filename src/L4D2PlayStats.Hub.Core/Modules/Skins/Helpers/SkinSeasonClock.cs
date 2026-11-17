@@ -1,11 +1,12 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 
 public static class SkinSeasonClock
 {
     public static DateTime ToUtc(DateTime siteTime, string? timeZoneId)
     {
-        if (string.IsNullOrEmpty(timeZoneId) || !TimeZoneInfo.TryFindSystemTimeZoneById(timeZoneId, out var timeZone))
-            timeZone = TimeZoneInfo.Utc;
+        var timeZone = SiteTime.Zone(timeZoneId);
 
         var local = DateTime.SpecifyKind(siteTime, DateTimeKind.Unspecified);
 

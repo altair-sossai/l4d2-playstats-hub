@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
@@ -113,6 +114,6 @@ public class LiveViewService(
     {
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
-        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
+        return SiteTime.Zone(site.TimeZone);
     }
 }

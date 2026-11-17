@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
@@ -185,6 +186,6 @@ public class PlayerViewService(
 
     private static TimeZoneInfo TimeZone(SiteSettings site)
     {
-        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
+        return SiteTime.Zone(site.TimeZone);
     }
 }

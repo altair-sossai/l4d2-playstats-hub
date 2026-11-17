@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
@@ -25,14 +26,14 @@ public static class LiveDisplay
 
     public static string Time(DateTime utc, TimeZoneInfo timeZone)
     {
-        var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
+        var local = SiteTime.FromUtc(utc, timeZone);
 
         return local.ToString(AppConsts.LiveTimeFormat, CultureInfo.InvariantCulture);
     }
 
     public static string ShortDateTime(DateTime utc, TimeZoneInfo timeZone)
     {
-        var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
+        var local = SiteTime.FromUtc(utc, timeZone);
 
         return local.ToString(AppConsts.ShortDateTimeFormat, CultureInfo.CurrentUICulture);
     }
