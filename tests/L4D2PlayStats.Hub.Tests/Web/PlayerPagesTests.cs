@@ -251,7 +251,7 @@ public partial class PlayerPagesTests
 
         await factory.StartSkinShopAsync();
 
-        var stars = await factory.RunAsync(services => services.GetRequiredService<IRankingService>().StarsAsync());
+        var stars = await factory.RunAsync(StarsOracle.CountAsync);
         var player = stars.OrderByDescending(pair => pair.Value).ThenBy(pair => pair.Key).First().Key;
 
         await factory.ShopAsync(shop => shop.GiftAsync(player, SkinSamples.GoldMagnum, HubWebFactory.Administrator, "Admin"));

@@ -9,5 +9,4 @@ public interface IRankingService
     Task<IReadOnlyList<RankingPlayer>> YearAsync(int year, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<RankingPlayer>> AllTimeAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<RankingPlayer>> MatchAsync(int matchId, CancellationToken cancellationToken = default);
-    Task<Dictionary<long, int>> StarsAsync(CancellationToken cancellationToken = default);
 }

@@ -43,7 +43,7 @@ public static class SkinTestHubExtensions
 
     public static Task<Dictionary<long, int>> StarsAsync(this TestHub hub)
     {
-        return hub.RunAsync(services => services.GetRequiredService<IRankingService>().StarsAsync());
+        return hub.RunAsync(StarsOracle.CountAsync);
     }
 
     public static Task<T> ShopAsync<T>(this TestHub hub, Func<ISkinShopService, Task<T>> action)
