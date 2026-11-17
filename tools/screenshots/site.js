@@ -29,6 +29,20 @@ async function discover(runner) {
     return vars;
 }
 
+async function refundPlayer(runner) {
+    const player = runner.context.player || defaultPlayer;
+
+    await runner.signIn(runner.context.admin);
+    await runner.page.goto(runner.url(`/admin/skins?player=${player}`), 300);
+    await runner.page.evaluate(`Promise.all(Array.from(document.querySelectorAll('[data-player="${player}"][data-gift="0"]')).map(item => $.ajax({
+        url: '/api/shop/refund',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+        data: JSON.stringify({ communityId: '${player}', skinId: item.getAttribute('data-skin') })
+    }))).then(() => true)`);
+}
+
 async function feedLive(runner) {
     const tokens = runner.context.tokens;
 
@@ -61,10 +75,11 @@ function shots(vars) {
         { name: 'players', path: '/players', full: true, maxHeight: 1100 },
         { name: 'servers', path: '/servers', before: [{ run: feedLive }, { go: '/servers' }], full: true, maxHeight: 900 },
         { name: 'server-live', path: '/servers', before: [{ eval: firstLiveServer, navigates: true, settle: 2500 }], full: true, maxHeight: 1500 },
+        { before: [{ run: refundPlayer }], always: true },
         { name: 'skins-signed-out', user: null, path: '/skins', height: 900 },
         { name: 'skins', user: player, path: '/skins', height: 900 },
         { name: 'skins-how-it-works', user: player, path: '/skins', before: [hideFloating, `$('#sk-howto').collapse('show')`], clip: '#sk-howto', padding: 8 },
-        { name: 'skins-details', user: player, path: '/skins', height: 900, before: [`$('#sk-shop .sk-card.sk-open').not('.sk-owned').first().click()`, { sleep: 800 }] },
+        { name: 'skins-details', user: player, path: '/skins', height: 1400, before: [hideFloating, `$('#sk-shop .sk-card.sk-open').not('.sk-owned').first().click()`, { sleep: 800 }], clip: '#sk-modal .modal-content', from: '#sk-modal .sk-modal-tags', padding: 0 },
         { name: 'skins-buy', user: player, path: '/skins', height: 900, before: [`$('#sk-only-affordable').prop('checked', true).trigger('change')`, { sleep: 500 }, `$('#sk-shop .sk-card:visible').not('.sk-owned').find('.sk-buy').first().click()`, { sleep: 800 }] },
         { name: 'skins-bought', user: player, height: 900, before: [`$('.sk-confirm-buy').click()`, { sleep: 2500 }] },
         { name: 'skins-mine', user: player, path: '/skins#mine', height: 900, before: [`$('a[data-target="#sk-mine"]').tab('show')`, { sleep: 500 }] },

@@ -243,6 +243,13 @@ class Page {
             clip = { x: 0, y: scrollY, width: this.width, height: this.height };
         }
 
+        if (options.from) {
+            const start = await this.box(options.from, options.padding === undefined ? 10 : options.padding);
+
+            if (start)
+                options = { ...options, top: start.y };
+        }
+
         if (options.top !== undefined) {
             clip.height = clip.y + clip.height - options.top;
             clip.y = options.top;

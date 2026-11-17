@@ -2,6 +2,11 @@ const { Runner } = require('./runner');
 const live = require('./live');
 
 const hideDevelopmentSignIn = `(() => { const field = document.querySelector('#developmentCommunityId'); if (field) field.closest('.form-group').style.display = 'none'; })()`;
+const readToken = async runner => {
+    const text = await runner.page.evaluate(`document.querySelector('pre.server-config').innerText`);
+
+    runner.token = text.match(/playstats_token "([^"]+)"/)[1];
+};
 const submit = selector => ({ eval: `document.querySelector(${JSON.stringify(selector)}).closest('form').querySelector('[type=submit]').click()`, navigates: true });
 
 function shots(context) {
@@ -26,30 +31,26 @@ function shots(context) {
         {
             name: 'wizard-server-token',
             user: null,
-            before: [`document.querySelector('#Name').value = 'L4D2 Competitive #1'; document.querySelector('#Address').value = '203.0.113.10:27015'`, submit('#Name'), { wait: 'pre.server-config' }],
+            before: [`document.querySelector('#Name').value = 'L4D2 Competitive #1'; document.querySelector('#Address').value = '203.0.113.10:27015'`, submit('#Name'), { wait: 'pre.server-config' }, { run: readToken }],
+            settle: 0,
             full: true,
             always: true
         },
+        { name: 'wizard-finish', user: null, before: [{ eval: `location.href = '/setup?step=finish'`, navigates: true }], full: true, always: true },
+        { name: 'wizard-done', user: null, before: [submit('form[action="/setup/finish"] [type=submit]'), { sleep: 800 }], full: true, maxHeight: 800, always: true },
         {
-            name: 'wizard-server-connected',
+            name: 'first-server-connected',
             user: null,
             before: [
-                {
-                    run: async runner => {
-                        const text = await runner.page.evaluate(`document.querySelector('pre.server-config').innerText`);
-                        const token = text.match(/playstats_token "([^"]+)"/)[1];
-
-                        await live.heartbeat(runner.context.base, token, 0);
-                    }
-                },
+                { go: '/admin/servers' },
+                { eval: `location.href = document.querySelector('a[href^="/admin/servers/"]').getAttribute('href')`, navigates: true },
+                { run: runner => live.heartbeat(runner.context.base, runner.token, 0) },
                 { wait: '.status-dot.status-Online' },
                 { sleep: 800 }
             ],
             full: true,
             always: true
-        },
-        { name: 'wizard-finish', user: null, before: [{ eval: `location.href = '/setup?step=finish'`, navigates: true }], full: true, always: true },
-        { name: 'wizard-done', user: null, before: [submit('form[action="/setup/finish"] [type=submit]'), { sleep: 800 }], full: true, maxHeight: 800, always: true }
+        }
     ];
 }
 
