@@ -45,8 +45,8 @@ public void OnPluginStart()
 {
     PlayStatsHub_CreateConVars();
 
-    hIconVersion = CreateConVar("patent_icon_version", "1", "Version of the patent icon", FCVAR_PROTECTED);
-    hMaxLevel = CreateConVar("patent_icon_max_level", "15", "Max level of the patent", FCVAR_PROTECTED);
+    hIconVersion = CreateConVar("patent_icon_version", "2", "Version in the file names of the patent sprites, materials/sprites/patent_<level>_v<version>.vmt, both with two digits", _, true, 1.0);
+    hMaxLevel = CreateConVar("patent_icon_max_level", "15", "Highest patent level that has a sprite", _, true, 1.0);
 
     PlayersPatent = new StringMap();
 
