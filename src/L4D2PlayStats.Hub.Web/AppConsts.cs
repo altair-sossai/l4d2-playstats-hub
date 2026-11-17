@@ -19,8 +19,11 @@ public static partial class AppConsts
     public const string LogoFile = "logo";
     public const string LogoUrl = "/site/logo";
     public const int LogoCacheInSeconds = 3600;
-    public const int LogoMaxBytes = 1048576;
-    public const int DefaultTeamSize = 4;
+    public const int BytesPerMegabyte = 1048576;
+    public const int LogoMaxBytes = BytesPerMegabyte;
+    public const string AntiforgeryHeader = "RequestVerificationToken";
+    public const string ShortTimeFormat = "HH:mm";
+    public const string ShortDateTimeFormat = "g";
     public const int RankingVisiblePlayers = 50;
     public const int PaginationWindow = 2;
     public const int NavbarDesktopWidth = 768;
@@ -33,7 +36,6 @@ public static partial class AppConsts
     public const int HistoryPodiumPlayers = 6;
     public const int LoginCookieInDays = 30;
 
-    public const string DefaultCulture = "en-US";
     public const string ResourcesFolder = "Resources";
     public static readonly string[] SupportedCultures = ["en-US", "pt-BR", "es-ES"];
 
@@ -105,7 +107,6 @@ public static partial class AppConsts
     public const int RemoteCommandLogSize = 100;
     public const int PlayerConnectionCleanupIntervalInHours = 24;
     public const string SteamConnectUrl = "steam://connect/";
-    public const string LiveTimeFormat = "HH:mm";
     public const string EmptyAvatarUrl = "/imgs/avatar-empty.png";
     public const string SkinShopUrl = "/skins";
     public const string SkinAdminUrl = "/admin/skins";

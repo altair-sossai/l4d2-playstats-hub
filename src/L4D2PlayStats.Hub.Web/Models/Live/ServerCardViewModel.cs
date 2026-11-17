@@ -1,3 +1,4 @@
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
@@ -20,7 +21,7 @@ public class ServerCardViewModel
     public string? ServerIp => Server.Address;
     public string? ServerDns => Server.AlternativeAddress;
     public int Players => Snapshot.PlayerCount;
-    public int MaxPlayers => Status.Signal?.MaxPlayers ?? (Snapshot.Configuration is { TeamSize: > 0 } configuration ? configuration.TeamSize : AppConsts.DefaultTeamSize) * 2;
+    public int MaxPlayers => Status.Signal?.MaxPlayers ?? (Snapshot.Configuration is { TeamSize: > 0 } configuration ? configuration.TeamSize : CoreConsts.DefaultTeamSize) * 2;
     public bool AnyPlayerConnected => Snapshot.AnyPlayerConnected;
     public string? ConnectUrl => string.IsNullOrEmpty(Server.Address) ? null : $"{AppConsts.SteamConnectUrl}{Server.Address}";
 }

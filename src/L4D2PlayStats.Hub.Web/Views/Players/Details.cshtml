@@ -530,7 +530,7 @@
         }
 
         var punishmentSeasonId = @Json.Serialize(Model.Period.Season?.Id);
-        var punishmentHeaders = { "@AppConsts.PlayerAntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
+        var punishmentHeaders = { "@AppConsts.AntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
 
         function addPunishments(communityId, lostExperiencePoints) {
             var command = { 

@@ -21,7 +21,7 @@
     var index = Array.FindIndex(steps, step => step.Key == current);
     var cultures = new Dictionary<string, string> { ["en-US"] = "English", ["pt-BR"] = "Português", ["es-ES"] = "Español" };
     var logoTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
-    var logoMegabytes = AppConsts.LogoMaxBytes / AppConsts.LogoBytesPerMegabyte;
+    var logoMegabytes = AppConsts.LogoMaxBytes / AppConsts.BytesPerMegabyte;
 }
 
 @section Styles {

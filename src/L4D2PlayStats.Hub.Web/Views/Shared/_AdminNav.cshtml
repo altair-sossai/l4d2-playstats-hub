@@ -30,7 +30,7 @@
         items.Add(("/admin/player-connections", L["Player connections"].Value));
 
     if (modules.IsEnabled(HubModule.AntiCheat))
-        items.Add((AppConsts.AdminNavAntiCheatUrl, L["Anti-Cheat"].Value));
+        items.Add((AppConsts.AntiCheatAdminUrl, L["Anti-Cheat"].Value));
 }
 <ul class="nav nav-pills" style="margin-bottom: 16px">
     @foreach (var item in items)

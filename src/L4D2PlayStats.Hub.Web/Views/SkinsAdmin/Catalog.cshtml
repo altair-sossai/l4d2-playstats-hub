@@ -40,7 +40,7 @@
 @if (Model.UpdatedAt != null)
 {
     <p class="text-muted">
-        <small>@L["Last change"]: @Model.UpdatedAt.Value.ToString(AppConsts.SkinPurchaseDateFormat, culture)</small>
+        <small>@L["Last change"]: @Model.UpdatedAt.Value.ToString(AppConsts.ShortDateTimeFormat, culture)</small>
     </p>
 }
 

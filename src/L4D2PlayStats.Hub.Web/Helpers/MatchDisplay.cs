@@ -18,7 +18,7 @@ public static class MatchDisplay
     {
         var local = SiteTime(utc, timeZone);
 
-        return local == null ? string.Empty : $"{local.Value:d} {local.Value.ToString(AppConsts.MatchTimeFormat)}";
+        return local == null ? string.Empty : $"{local.Value:d} {local.Value.ToString(AppConsts.ShortTimeFormat)}";
     }
 
     public static string Elapsed(TimeSpan? elapsed)

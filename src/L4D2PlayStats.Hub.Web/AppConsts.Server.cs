@@ -10,7 +10,7 @@ public static partial class AppConsts
     public const string ServersUrl = "/servers";
     public const string ServersApiUrl = "/api/servers";
     public const string ChatBansUrl = "/admin/chat-bans";
-    public const string LivePlayerUrl = "/player/";
+    public const string PlayerUrlPrefix = $"{PlayerUrl}/";
     public const string AvatarUrl = "/avatar/";
     public const string CopyIconLight = "copy-light.png";
     public const string CopyIconDark = "copy-dark.png";
@@ -27,5 +27,4 @@ public static partial class AppConsts
     public const string LinkTargetBlank = "_blank";
     public const string LinkRelExternal = "noopener noreferrer";
     public const char EventStar = '★';
-    public const string ShortDateTimeFormat = "g";
 }

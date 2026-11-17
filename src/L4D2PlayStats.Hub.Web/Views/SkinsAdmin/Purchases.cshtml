@@ -336,7 +336,7 @@
         var title = row.SkinTitle(culture);
         var image = row.Skin == null ? AppConsts.SkinEmptyImage : SkinDisplay.Image(Model.AssetsUrl, row.Skin);
         var weapon = row.Skin == null ? string.Empty : L[SkinWeapons.Name(row.Skin.Weapon)].Value;
-        var date = row.Date.ToString(AppConsts.SkinPurchaseDateFormat, culture);
+        var date = row.Date.ToString(AppConsts.ShortDateTimeFormat, culture);
         var price = purchase.Gift ? L["Gift"].Value : $"{purchase.Price.ToString("N0", culture)} ⭐";
         var rarity = row.Skin == null ? null : SkinDisplay.RarityKey(row.Skin.Rarity);
         var shopUrl = row.Skin is { Available: true } ? $"{Url.Action("Index", "Skins")}#{SkinDisplay.Anchor(row.Skin)}" : string.Empty;

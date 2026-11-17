@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
@@ -90,7 +91,7 @@ if (HubCommands.IsCommand(args))
 var cultures = Cultures.Supported();
 var localization = new RequestLocalizationOptions
 {
-    DefaultRequestCulture = new RequestCulture(AppConsts.DefaultCulture),
+    DefaultRequestCulture = new RequestCulture(CoreConsts.DefaultCulture),
     SupportedCultures = cultures,
     SupportedUICultures = cultures
 };

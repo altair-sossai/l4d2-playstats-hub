@@ -9,5 +9,4 @@ public static partial class AppConsts
     public const int AntiCheatVersionCacheInMinutes = 5;
     public const int AntiCheatFailureCacheInSeconds = 30;
     public const int AntiCheatTimeoutInSeconds = 10;
-    public const double BytesPerMegabyte = 1048576d;
 }
