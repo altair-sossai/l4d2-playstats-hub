@@ -56,8 +56,15 @@ install_packages() {
   fi
 }
 
+cleanup() {
+  if [ -n "${WORK_DIR:-}" ] && [ -d "${WORK_DIR}" ]; then
+    rm -rf "${WORK_DIR}"
+  fi
+}
+
 download_package() {
   WORK_DIR="$(mktemp -d)"
+  trap cleanup EXIT
   ARCHIVE="${WORK_DIR}/${NAME}.tar.gz"
 
   if [ -n "${PACKAGE}" ]; then
@@ -79,6 +86,15 @@ download_package() {
 install_application() {
   step "Installing the application in ${APP_DIR}"
 
+  local staging="${APP_DIR}.new"
+
+  rm -rf "${staging}"
+  mkdir -p "${staging}"
+  tar -xzf "${ARCHIVE}" -C "${staging}" || { rm -rf "${staging}"; fail "The package could not be extracted. The installed application was not changed."; }
+  [ -f "${staging}/${EXECUTABLE}" ] || { rm -rf "${staging}"; fail "The package does not contain ${EXECUTABLE}. The installed application was not changed."; }
+  chmod +x "${staging}/${EXECUTABLE}"
+  chown -R root:root "${staging}"
+
   if systemctl list-unit-files "${NAME}.service" >/dev/null 2>&1 && systemctl is-active --quiet "${NAME}"; then
     systemctl stop "${NAME}"
   fi
@@ -88,18 +104,31 @@ install_application() {
   fi
 
   rm -rf "${APP_DIR}"
-  mkdir -p "${APP_DIR}" "${DATA_DIR}" "${CONFIG_DIR}"
-  tar -xzf "${ARCHIVE}" -C "${APP_DIR}"
-  chmod +x "${APP_DIR}/${EXECUTABLE}"
-  chown -R root:root "${APP_DIR}"
+  mv "${staging}" "${APP_DIR}"
+  mkdir -p "${DATA_DIR}" "${CONFIG_DIR}"
   chown -R "${SERVICE_USER}:${SERVICE_USER}" "${DATA_DIR}"
   chmod 750 "${DATA_DIR}"
-  rm -rf "${WORK_DIR}"
+}
+
+configured_port() {
+  sed -n 's/^ASPNETCORE_URLS=.*:\([0-9][0-9]*\).*$/\1/p' "${ENV_FILE}" | head -n 1
 }
 
 write_configuration() {
   if [ -f "${ENV_FILE}" ]; then
     step "Keeping the existing configuration in ${ENV_FILE}"
+
+    local kept
+    kept="$(configured_port)"
+
+    if [ -n "${kept}" ]; then
+      if [ -n "${HUB_PORT:-}" ] && [ "${HUB_PORT}" != "${kept}" ]; then
+        printf '  HUB_PORT=%s was ignored: the kept configuration listens on port %s. Edit %s to change it.\n' "${HUB_PORT}" "${kept}" "${ENV_FILE}"
+      fi
+
+      PORT="${kept}"
+    fi
+
     return
   fi
 
@@ -176,12 +205,16 @@ case "\${1:-help}" in
   backup)
     target="\${2:-/root/${NAME}-backup-\$(date +%Y%m%d-%H%M%S).tar.gz}"
     systemctl stop ${NAME}
+    trap 'systemctl start ${NAME}' EXIT
     tar -czf "\${target}" -C "${DATA_DIR}" . -C "${CONFIG_DIR}" hub.env
-    systemctl start ${NAME}
     echo "Backup written to \${target}"
     ;;
   restore)
     source="\${2:?Usage: playstats-hub restore <backup file>}"
+    if ! tar -tzf "\${source}" 2>/dev/null | grep -qx 'hub.env'; then
+      echo "\${source} is not a backup made by playstats-hub backup. Nothing was changed." >&2
+      exit 1
+    fi
     systemctl stop ${NAME}
     find "${DATA_DIR}" -mindepth 1 -delete
     tar -xzf "\${source}" -C "${DATA_DIR}" --exclude=hub.env
