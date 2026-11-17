@@ -11,7 +11,7 @@ public class ServerCardViewModel
     public GameServerStatus Status { get; init; } = null!;
     public LiveSnapshot Snapshot { get; init; } = null!;
     public string? Campaign { get; init; }
-    public string CampaignImage { get; init; } = AppConsts.LiveNoCampaignImage;
+    public required string CampaignImage { get; init; }
     public bool RankingEnabled { get; init; }
     public bool AntiCheatPage { get; init; }
     public bool Online => Status.State == GameServerConnectionState.Online;

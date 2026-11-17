@@ -7,7 +7,6 @@ public static partial class AppConsts
     public const int LivePageMaxFeedItems = 300;
     public const int ServerPickerRefreshInMilliseconds = 10000;
     public const int ChatBansPageSize = 20;
-    public const string LiveNoCampaignImage = "/imgs/campaigns/no-image.jpg";
     public const string ServersUrl = "/servers";
     public const string ServersApiUrl = "/api/servers";
     public const string ChatBansUrl = "/admin/chat-bans";

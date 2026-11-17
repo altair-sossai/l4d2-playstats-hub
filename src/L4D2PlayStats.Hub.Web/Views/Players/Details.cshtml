@@ -4,6 +4,7 @@
 @inject ICurrentUser CurrentUser
 @inject ISettingsService Settings
 @inject IAntiforgery Antiforgery
+@inject ICampaignImageService CampaignImages
 
 @{
     var firstPlayerRanking = Model.FirstPlayerRanking;
@@ -1300,7 +1301,7 @@
             @foreach (var campaign in Model.Campaigns)
             {
                 <div class="campaign-card">
-                    <img class="campaign-cover" src="@PlayerUrls.CampaignThumb(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@PlayerUrls.CampaignThumb(null)'"/>
+                    <img class="campaign-cover" src="@CampaignImages.Url(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@CampaignImages.NoImage'"/>
                     <div class="campaign-body">
                         <div class="campaign-title">
                             <strong>@campaign.Name</strong>
