@@ -1,5 +1,6 @@
 #pragma semicolon 1
 #pragma newdecls required
+#pragma dynamic 16384
 
 #include <sourcemod>
 #include <sdktools>
@@ -25,7 +26,7 @@ public Plugin myinfo =
     name        = "L4D2 - Show Patent Icon",
     author      = "Altair Sossai",
     description = "Show the patent icon of the players",
-    version     = "2.0.0",
+    version     = "2.0.1",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -44,8 +45,8 @@ public void OnPluginStart()
 {
     PlayStatsHub_CreateConVars();
 
-    hIconVersion = CreateConVar("patent_icon_version", "1", "Version of the patent icon", FCVAR_PROTECTED);
-    hMaxLevel = CreateConVar("patent_icon_max_level", "15", "Max level of the patent", FCVAR_PROTECTED);
+    hIconVersion = CreateConVar("patent_icon_version", "2", "Version in the file names of the patent sprites, materials/sprites/patent_<level>_v<version>.vmt, both with two digits", _, true, 1.0);
+    hMaxLevel = CreateConVar("patent_icon_max_level", "15", "Highest patent level that has a sprite", _, true, 1.0);
 
     PlayersPatent = new StringMap();
 
@@ -64,6 +65,10 @@ public void OnRoundIsLive()
 public void OnMapStart()
 {
     PrecacheAllPatentFiles();
+}
+
+public void OnConfigsExecuted()
+{
     RefreshPlayersPatent();
 }
 
@@ -291,8 +296,17 @@ void RefreshPlayersLevel()
         int level;
 
         if (GetClientAuthId(i, AuthId_SteamID64, communityId, sizeof(communityId)) && PlayersPatent.GetValue(communityId, level))
-            playersLevel[i] = level;
+            playersLevel[i] = ClampLevel(level);
         else
             playersLevel[i] = 0;
     }
+}
+int ClampLevel(int level)
+{
+    int maxLevel = hMaxLevel.IntValue;
+
+    if (level < 0)
+        return 0;
+
+    return level > maxLevel ? maxLevel : level;
 }

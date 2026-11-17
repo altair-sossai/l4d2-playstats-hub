@@ -1,5 +1,6 @@
 #pragma semicolon 1
 #pragma newdecls required
+#pragma dynamic 16384
 
 #include <sourcemod>
 #include <sdktools>
@@ -26,7 +27,7 @@ public Plugin myinfo =
     name        = "L4D2 - Game Info Sync",
     author      = "Altair Sossai",
     description = "Sends the live match to L4D2 PlayStats Hub: scoreboard, players, events and chat",
-    version     = "2.0.0",
+    version     = "2.0.1",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -954,7 +955,7 @@ void CheckForNewExternalMessagesResponse(HTTPResponse httpResponse, any value)
         CPrintToChatAll("%t", "ExternalChatMessage", name, text);
 
         PrintToConsoleAll("%t", "ExternalConsoleMessage", name, steamId, text);
-        PrintToConsoleAll(profileUrl);
+        PrintToConsoleAll("%s", profileUrl);
 
         delete message;
     }
@@ -1151,7 +1152,7 @@ float GetSurvivorProgress(int client)
 
     Address navArea = L4D2Direct_GetTerrorNavArea(origin);
     if (navArea != Address_Null)
-        return Max(0.0, Min(L4D2Direct_GetTerrorNavAreaFlow(navArea) / GetMapMaxFlowDistanceCached(), 1.0));
+        return Max(0.0, Min(ToMapFraction(L4D2Direct_GetTerrorNavAreaFlow(navArea)), 1.0));
 
     return 0.0;
 }
@@ -1163,9 +1164,16 @@ int GetCurrentProgress()
 
 float GetBossProximity()
 {
-	float proximity = GetMaxSurvivorCompletion() + g_hVersusBossBuffer.FloatValue / GetMapMaxFlowDistanceCached();
+	float proximity = GetMaxSurvivorCompletion() + ToMapFraction(g_hVersusBossBuffer.FloatValue);
 
 	return (proximity > 1.0) ? 1.0 : proximity;
+}
+
+float ToMapFraction(float flow)
+{
+	float maxFlow = GetMapMaxFlowDistanceCached();
+
+	return maxFlow > 0.0 ? flow / maxFlow : 0.0;
 }
 
 float GetMaxSurvivorCompletion()
@@ -1183,7 +1191,7 @@ float GetMaxSurvivorCompletion()
 		}
 	}
 
-	return (flow / GetMapMaxFlowDistanceCached());
+	return ToMapFraction(flow);
 }
 
 bool GetIsInReady()
@@ -1220,12 +1228,20 @@ int GetAntiCheatStatus()
 
 int GetRoundTankFlow()
 {
-	return RoundToNearest(L4D2Direct_GetVSTankFlowPercent(InSecondHalfOfRound()) + g_hVersusBossBuffer.FloatValue / GetMapMaxFlowDistanceCached());
+	int round = InSecondHalfOfRound() ? 1 : 0;
+	if (!L4D2Direct_GetVSTankToSpawnThisRound(round))
+		return 0;
+
+	return RoundToNearest(L4D2Direct_GetVSTankFlowPercent(round) * 100.0);
 }
 
 int GetRoundWitchFlow()
 {
-	return RoundToNearest(L4D2Direct_GetVSWitchFlowPercent(InSecondHalfOfRound()) + g_hVersusBossBuffer.FloatValue / GetMapMaxFlowDistanceCached());
+	int round = InSecondHalfOfRound() ? 1 : 0;
+	if (!L4D2Direct_GetVSWitchToSpawnThisRound(round))
+		return 0;
+
+	return RoundToNearest(L4D2Direct_GetVSWitchFlowPercent(round) * 100.0);
 }
 
 float GetMapMaxFlowDistanceCached()

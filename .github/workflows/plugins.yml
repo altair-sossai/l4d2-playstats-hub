@@ -7,24 +7,27 @@ on:
     paths: ['plugins/**', '.github/workflows/plugins.yml']
 
 env:
-  SOURCEMOD_VERSION: '1.12'
+  SOURCEMOD_BUILD: '1.12.0.7260'
+  SOURCEMOD_PACKAGE: 'sourcemod-1.12.0-git7260-linux.tar.gz'
+  SOURCEMOD_SHA256: 'b01719e6143bc7d5bb63aae8086d031574da6ef838f041ba4b8ab72c8c75b888'
 
 jobs:
-  compile:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Download SourceMod
         run: |
           mkdir -p "$RUNNER_TEMP/sourcemod"
-          curl --fail --silent --show-error --location "https://www.sourcemod.net/latest.php?version=${SOURCEMOD_VERSION}&os=linux" --output "$RUNNER_TEMP/sourcemod.tar.gz"
+          curl --fail --silent --show-error --location "https://github.com/alliedmodders/sourcemod/releases/download/${SOURCEMOD_BUILD}/${SOURCEMOD_PACKAGE}" --output "$RUNNER_TEMP/sourcemod.tar.gz"
+          echo "${SOURCEMOD_SHA256}  $RUNNER_TEMP/sourcemod.tar.gz" | sha256sum --check
           tar -xzf "$RUNNER_TEMP/sourcemod.tar.gz" -C "$RUNNER_TEMP/sourcemod" addons/sourcemod/scripting
           chmod +x "$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64"
           echo "SPCOMP=$RUNNER_TEMP/sourcemod/addons/sourcemod/scripting/spcomp64" >> "$GITHUB_ENV"
-      - name: Compile the plugins
-        run: bash plugins/build.sh
+      - name: Check that the committed plugins match their sources
+        run: bash plugins/build.sh --check
       - uses: actions/upload-artifact@v4
         with:
           name: l4d2-playstats-hub-plugins
-          path: plugins/compiled/*.smx
+          path: plugins/left4dead2
           if-no-files-found: error

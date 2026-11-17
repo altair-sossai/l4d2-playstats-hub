@@ -6,15 +6,15 @@ The plugins in this folder are released under the GNU General Public License, ve
 
 | Files | Author |
 |---|---|
-| `scripting/l4d2_playstats_sync.sp`, `scripting/l4d2_gameinfo_sync.sp`, `scripting/l4d2_ranking.sp`, `scripting/l4d2_show_patent_icon.sp`, `scripting/l4d2_weapon_skins.sp` | Altair Sossai. Moved here from [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server). |
-| `scripting/include/l4d2_playstats_hub.inc` | Altair Sossai. |
-| `translations/**`, `configs/weapon_skins.cfg`, `cfg/playstats.cfg.example` | Altair Sossai. |
+| `l4d2_playstats_sync.sp`, `l4d2_gameinfo_sync.sp`, `l4d2_ranking.sp`, `l4d2_show_patent_icon.sp`, `l4d2_weapon_skins.sp` in `left4dead2/addons/sourcemod/scripting/`, and their compiled `.smx` files in `left4dead2/addons/sourcemod/plugins/` | Altair Sossai. Moved here from [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server). |
+| `left4dead2/addons/sourcemod/scripting/include/l4d2_playstats_hub.inc` | Altair Sossai. |
+| `left4dead2/addons/sourcemod/translations/**`, `left4dead2/addons/sourcemod/configs/weapon_skins.cfg`, `left4dead2/cfg/playstats.cfg`, `build.ps1`, `build.sh` | Altair Sossai. |
 
 ## Third-party include files
 
 These files are needed only to compile the plugins. They are copied without changes, and each one keeps the license and the copyright notices of its project.
 
-| Files in `scripting/include/` | Project | Source |
+| Files in `left4dead2/addons/sourcemod/scripting/include/` | Project | Source |
 |---|---|---|
 | `ripext.inc`, `ripext/http.inc`, `ripext/json.inc` | REST in Pawn, by Erik Minekus | <https://github.com/ErikMinekus/sm-ripext> |
 | `left4dhooks.inc`, `left4dhooks_anim.inc`, `left4dhooks_lux_library.inc`, `left4dhooks_silver.inc`, `left4dhooks_stocks.inc` | Left 4 DHooks Direct, by SilverShot, based on Left 4 Downtown 2 | <https://github.com/SilvDev/Left4DHooks> |

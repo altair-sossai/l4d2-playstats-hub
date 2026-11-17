@@ -2,31 +2,37 @@
 
 🌐 **English** | [Português](game-server.pt.md) | [Español](game-server.es.md)
 
-How to make a Left 4 Dead 2 server send its matches to your site. You repeat these steps for each game server; one site can receive any number of them.
+How to make a Left 4 Dead 2 server send its matches to your site, step by step. You repeat these steps for each game server; one site can receive any number of them. Every setting, command and file is described in detail in [the plugins guide](../plugins/README.md).
 
 ## Contents
 
 - [What the game server needs](#what-the-game-server-needs)
 - [Step 1: register the server on the site](#step-1-register-the-server-on-the-site)
-- [Step 2: copy the plugins](#step-2-copy-the-plugins)
-- [Step 3: paste the two lines](#step-3-paste-the-two-lines)
-- [Step 4: check the connection](#step-4-check-the-connection)
+- [Step 2: install REST in Pawn](#step-2-install-rest-in-pawn)
+- [Step 3: copy the plugins](#step-3-copy-the-plugins)
+- [Step 4: set the address and the token](#step-4-set-the-address-and-the-token)
 - [Step 5: load the plugins in your match modes](#step-5-load-the-plugins-in-your-match-modes)
+- [Step 6: check the connection](#step-6-check-the-connection)
+- [Optional: weapon skins and patent icons](#optional-weapon-skins-and-patent-icons)
 - [The ranking inside the game](#the-ranking-inside-the-game)
 - [What each status means](#what-each-status-means)
+- [Updating the plugins](#updating-the-plugins)
 - [Coming from the old setup](#coming-from-the-old-setup)
 - [If something goes wrong](#if-something-goes-wrong)
 
 ## What the game server needs
 
-The plugins are made for servers based on [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework), such as ZoneMod servers.
+The plugins are made for servers based on [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework), such as ZoneMod servers. Competitive Rework already brings almost everything they need:
 
-| Requirement | Why |
-|---|---|
-| SourceMod 1.12 | Runs the plugins. |
-| [REST in Pawn](https://github.com/ErikMinekus/sm-ripext) extension | Lets the plugins call the site. |
-| `l4d2_playstats` plugin | Comes with L4D2 Competitive Rework. It writes the statistics file of each map. |
-| `sm_stats_writestats 1` | Tells `l4d2_playstats` to write those files. The match modes of L4D2 Competitive Rework already set it. |
+| Requirement | Why | Comes with Competitive Rework |
+|---|---|---|
+| SourceMod 1.12 or newer | Runs the plugins. | Yes |
+| [REST in Pawn](https://github.com/ErikMinekus/sm-ripext/releases) extension | Lets the plugins call the site. | **No: step 2** |
+| [Left 4 DHooks Direct](https://github.com/SilvDev/Left4DHooks/releases) (`left4dhooks`) | Used by the live match, ranking and patent plugins. | Yes |
+| `l4d2_playstats` plugin | Writes the statistics file of each map. | Yes |
+| `readyup`, `pause`, `l4d_boss_percent`, `l4d2_hybrid_scoremod`, `l4d2_skill_detect` | Optional: more details in the live match. | Yes |
+
+On a server without Competitive Rework, install SourceMod 1.12 and Left 4 DHooks Direct first; the statistics need `l4d2_playstats`, which comes only with Competitive Rework. The full list, with links, is in [the requirements of the plugins guide](../plugins/README.md#requirements).
 
 ## Step 1: register the server on the site
 
@@ -41,73 +47,115 @@ playstats_url "https://stats.example.com"
 playstats_token "my-server:3f9c…"
 ```
 
-Copy them now. The key inside the token is shown only once. If you lose it, click **Generate a new key** on the same page.
+Copy them now. The key inside the token is shown only once. If you lose it, click **Generate a new key** on the same page; the old key stops working at once.
 
-## Step 2: copy the plugins
+## Step 2: install REST in Pawn
 
-Download `l4d2-playstats-hub-plugins.zip` from the [releases page](https://github.com/altair-sossai/l4d2-playstats-hub/releases). The folders inside it match the folders of the game server, so extract it over the `left4dead2` folder.
+1. Download the latest `sm-ripext-<version>-linux.zip` (Linux server) or `sm-ripext-<version>-windows.zip` (Windows server) from the [REST in Pawn releases](https://github.com/ErikMinekus/sm-ripext/releases).
+2. Extract it into the `left4dead2` folder of the server, the one with `gameinfo.txt`. It adds `addons/sourcemod/extensions/rip.ext.so` (or `.dll`) and `addons/sourcemod/configs/ripext/ca-bundle.crt`.
 
-| File | Where it goes |
+Skip this step if `sm exts list`, in the server console, already shows `REST in Pawn`.
+
+## Step 3: copy the plugins
+
+Get the plugins in one of two ways:
+
+- download `l4d2-playstats-hub-plugins.zip` from the [releases page](https://github.com/altair-sossai/l4d2-playstats-hub/releases) and extract it, or
+- download or clone [this repository](https://github.com/altair-sossai/l4d2-playstats-hub) and open its `plugins` folder.
+
+Both have a folder named `left4dead2` laid out like the game folder of the server. **Copy everything inside that `left4dead2` folder into the `left4dead2` folder of the server.** Every file lands in its place:
+
+| File | What it is |
 |---|---|
-| `l4d2_playstats_sync.smx` | `addons/sourcemod/plugins/` |
-| The other `.smx` files | `addons/sourcemod/plugins/`, or `plugins/optional/` if a match mode loads them |
-| `translations/` | `addons/sourcemod/translations/` |
-| `configs/weapon_skins.cfg` | `addons/sourcemod/configs/` |
+| `addons/sourcemod/plugins/*.smx` | The five plugins. |
+| `addons/sourcemod/scripting/` | Their sources, only for compiling. |
+| `addons/sourcemod/translations/` | The chat texts. |
+| `addons/sourcemod/configs/weapon_skins.cfg` | The weapons and skins of the skins plugin. |
+| `cfg/playstats.cfg` | Your settings. You edit it in the next step. |
 
-Keep `l4d2_playstats_sync.smx` in `plugins/` itself, not in a subfolder. It has to load when the server starts, so the site sees the server even when no match is being played.
+Keep the plugins in `addons/sourcemod/plugins/` itself, not in `optional/`, so they load when the server starts and the site sees the server even when no match is being played.
+
+`l4d2_playstats_sync.smx` is the only one every server needs. Delete the `.smx` of the plugins you do not want:
 
 | Plugin | What it does | Module of the site |
 |---|---|---|
 | `l4d2_playstats_sync` | Sends the statistics files and tells the site the server is alive. | Always needed |
+| `l4d2_gameinfo_sync` | Sends the live match: scoreboard, players, events and chat. | Live server |
 | `l4d2_ranking` | Opens the ranking inside the game with `!ranking`. | Ranking |
 | `l4d2_show_patent_icon` | Shows each player's patent icon in game. | Ranking |
-| `l4d2_gameinfo_sync` | Sends the live match: scoreboard, players, events and chat. | Live server |
 | `l4d2_weapon_skins` | Applies the weapon skins players own. | Weapon skin shop |
 
-You only need the plugins of the modules you turned on.
+## Step 4: set the address and the token
 
-## Step 3: paste the two lines
+1. Open `cfg/playstats.cfg` on the server.
+2. Paste the two lines from step 1 where the file says `Paste the two lines here`.
+3. Open `cfg/server.cfg` and add this line at the end:
 
-Open `cfg/server.cfg` on the game server and paste the two lines from step 1 at the end.
+   ```text
+   exec playstats.cfg
+   ```
 
-Restart the game server, or change the map.
+That is all you must change. The rest of `cfg/playstats.cfg` lists every other setting of the five plugins, turned off with `//` and with its default value; each one has an explanation above it.
 
-## Step 4: check the connection
+`cfg/playstats.cfg` also turns on `sm_stats_writestats 1`, which makes `l4d2_playstats` write the statistics files. Its default is `0`, and the ZoneMod match modes of Competitive Rework do not change it. If your match modes already set it with `confogl_addcvar`, delete that line from `cfg/playstats.cfg`.
+
+Each setting belongs in one place: `cfg/playstats.cfg` for the ones that are the same in every match mode, or `confogl_addcvar` in a match mode for one that must differ. Never set `playstats_url` or `playstats_token` with `confogl_addcvar`: Confogl prints the old and the new value of the settings it tracks in the chat, and the players would see the token.
+
+## Step 5: load the plugins in your match modes
+
+When a match mode of Competitive Rework loads, it unloads every plugin and loads only the ones in its lists. The list shared by every mode is `cfg/sharedplugins.cfg`. Add these lines to it, leaving out the plugins you deleted:
+
+```text
+sm plugins load l4d2_playstats_sync.smx
+sm plugins load l4d2_gameinfo_sync.smx
+sm plugins load l4d2_ranking.smx
+sm plugins load l4d2_show_patent_icon.smx
+sm plugins load l4d2_weapon_skins.smx
+```
+
+Then restart the game server.
+
+Statistics are sent from every mode. On the site, **Administration → Game modes** decides which modes count toward the ranking.
+
+## Step 6: check the connection
 
 On the site, the page of the game server updates by itself. In a few seconds it should say **Connected**, with a list of what was found:
 
 - Connection with this site
 - Statistics upload plugin loaded
-- Statistics writing enabled
+- Statistics writing enabled (it turns on when a match mode loads `l4d2_playstats`)
 - First statistics file received (after the first complete map)
+- Live match data arriving (when the live server module is on)
+- Weapon skins plugin loaded (when the skin shop module is on)
 
-You can also check from the game server. Type this in its console:
+You can also check from the game server. Type these in its console:
 
 ```text
+sm exts list
+sm plugins list
 sm_playstats_test
 ```
 
-It answers with the name of the server and of the site, or says exactly what is wrong.
+`sm exts list` must show `REST in Pawn`, and `sm plugins list` must show the plugins you copied, none of them marked as failed. `sm_playstats_test` answers with the name of the server and of the site, the modules turned on and the plugins loaded, or says exactly what is wrong. [The plugins guide](../plugins/README.md#checking-the-installation) explains each answer.
 
-## Step 5: load the plugins in your match modes
+## Optional: weapon skins and patent icons
 
-Match modes of L4D2 Competitive Rework unload and load plugins when they start. If you put a plugin in `plugins/optional/`, add it to the plugin list of each mode where it should run, for example in `cfg/cfgogl/zonemod/confogl_plugins.cfg`:
+The patent icons and the weapon skins are files that are not part of the game, so players download them from your server. They are in [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
-```text
-sm plugins load optional/l4d2_ranking.smx
-sm plugins load optional/l4d2_show_patent_icon.smx
-```
+1. Copy its `models/` and `materials/` folders into the `left4dead2` folder of the server.
+2. Put `models/`, `materials/` and the contents of `fastdl/` on a web server players can reach (a FastDL), laid out like the game folder.
+3. In `cfg/server.cfg`, set `sm_cvar sv_allowdownload 1` and `sm_cvar sv_downloadurl "<address of that folder>"`.
+4. In `cfg/playstats.cfg`, turn the skins on: delete the `//` in front of `weapon_skins_enabled` and set it to `"1"`.
+5. Restart the server while it is empty.
 
-Settings of those plugins go in the same mode, with `confogl_addcvar`. [The plugins guide](../plugins/README.md) lists every setting.
-
-Statistics are sent from every mode. On the site, **Administration → Game modes** decides which modes count toward the ranking.
+The details, and how to check that the files are found, are in [Weapon skin and patent files](../plugins/README.md#weapon-skin-and-patent-files).
 
 ## The ranking inside the game
 
-`!ranking` opens a simple version of the ranking in the game's own browser. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site:
+`!ranking` opens a simple version of the ranking in the game's own browser. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
 
 ```text
-confogl_addcvar playstats_ingame_url "http://203.0.113.10:5080"
+playstats_ingame_url "http://203.0.113.10:5080"
 ```
 
 When `playstats_ingame_url` is empty, the plugin uses `playstats_url`. [Installing on a Linux VPS](install-linux.md#the-address-used-inside-the-game) explains which address to use.
@@ -116,10 +164,14 @@ When `playstats_ingame_url` is empty, the plugin uses `playstats_url`. [Installi
 
 | Status | Meaning | What to do |
 |---|---|---|
-| Waiting | The server never reached the site. | Check the two lines, and that `l4d2_playstats_sync.smx` is in `plugins/`. Run `sm_playstats_test`. |
-| Connected | A signal arrived in the last seconds. | Nothing. |
-| Offline | The server was seen before but not now. | Normal while the game server is off or empty and hibernating. |
+| Waiting for the first connection | The server never reached the site. | Check `cfg/playstats.cfg` and the `exec playstats.cfg` line, and that `l4d2_playstats_sync.smx` is loaded. Run `sm_playstats_test`. |
+| Connected | A heartbeat arrived in the last seconds. | Nothing. |
+| Offline | The server was seen before but not now. | Normal while the game server is off, or empty and hibernating. |
 | Invalid key | The identifier arrived with the wrong key. | Paste the token again, or generate a new key on the site. |
+
+## Updating the plugins
+
+Copy the new `left4dead2` folder over the old one, **except `cfg/playstats.cfg`**, which has your address and token. Every other file can be replaced; see [Updating](../plugins/README.md#updating) for the exceptions and a command that skips that file. Then restart the server while it is empty.
 
 ## Coming from the old setup
 
@@ -132,15 +184,18 @@ If the game server used the earlier plugins, remove their settings, or they keep
 | `l4d2_web_url`, `l4d2_web_secret` | Removed. Everything uses `playstats_url` and `playstats_token`. |
 | `ranking_url` | `playstats_ingame_url`, only if the game needs a different address |
 
-Look for them in `cfg/server.cfg`, in your secrets file and in the `shared_cvars.cfg` of each match mode.
+Look for them in `cfg/server.cfg`, in your secrets file, and in the `shared_cvars.cfg` of each match mode. Old settings set with `confogl_addcvar playstats_url` must go too, so that `cfg/playstats.cfg` is the only place for the address and the token. Replace the old `.smx` files, including those in `addons/sourcemod/plugins/optional/`, with the new ones, so there is only one copy of each plugin.
 
 ## If something goes wrong
 
 | What you see | What to do |
 |---|---|
-| `sm_playstats_test` is an unknown command | `l4d2_playstats_sync.smx` is not loaded. Check the folder and run `sm plugins list`. |
-| "URL not set" | The two lines did not run. They must be in a file the server executes at startup, after the plugin is loaded. |
-| "Cannot reach the address" | The game server cannot open the site. Test the address from that machine, and check the firewall. |
-| Connected, but no statistics file arrives | Play a complete map in versus. Check `sm_stats_writestats`, and that `l4d2_playstats` is loaded in that mode. |
+| `sm_playstats_test` is an unknown command | `l4d2_playstats_sync.smx` is not loaded. Check the folder and run `sm plugins list` to see its error. |
+| A plugin needs REST in Pawn | Do step 2 again with the zip of the system of the server. |
+| "URL not set" or "Token not set" | The lines did not run. Check that `cfg/server.cfg` ends with `exec playstats.cfg` and that your two lines in `cfg/playstats.cfg` do not start with `//`. |
+| "Unknown identifier", "Wrong key" or "Token not accepted" | Paste the token again, or generate a new key on the site. |
+| "Cannot reach ..." | The game server cannot open the site. Test the address from that machine with `curl -I`, check the firewall, and see [Troubleshooting](../plugins/README.md#troubleshooting) for HTTPS errors. |
+| Works outside matches, stops when a match mode loads | Do step 5. |
+| Connected, but no statistics file arrives | Play a complete map in versus. Check that `sm_playstats_test` says statistics writing is on during the match. |
 | Matches arrive but do not count for the ranking | On the site, open **Administration → Game modes** and see which rule the configuration falls into. |
 | `!ranking` opens an empty panel | Set `playstats_ingame_url` to a plain HTTP address of the site. |

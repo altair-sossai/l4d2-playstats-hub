@@ -32,7 +32,7 @@ public Plugin myinfo =
     name        = "L4D2 - Player Statistics Sync",
     author      = "Altair Sossai",
     description = "Connects the game server to L4D2 PlayStats Hub and uploads the statistics files written by l4d2_playstats",
-    version     = "2.0.0",
+    version     = "2.0.1",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -44,7 +44,8 @@ bool
     g_bHeartbeatScheduled = false,
     g_bHeartbeatPending = false,
     g_bHeartbeatRepeat = false,
-    g_bHibernating = false;
+    g_bHibernating = false,
+    g_bUploadFailing = false;
 
 PlayStatsHubResult g_iLastResult = PlayStatsHubResult_Unknown;
 
@@ -634,6 +635,12 @@ void OnUploadAnswered(HTTPResponse response, DataPack pack, const char[] error)
 
     if (response.Status == HTTPStatus_OK)
     {
+        if (g_bUploadFailing)
+        {
+            g_bUploadFailing = false;
+            LogMessage("Statistics files are being sent again.");
+        }
+
         if (MustBeDeleted(response))
             DeleteStatisticsFile(fileName);
         else
@@ -650,12 +657,17 @@ void OnUploadAnswered(HTTPResponse response, DataPack pack, const char[] error)
         return;
     }
 
-    if (response.Status == HTTPStatus_Invalid)
-        LogError("Could not send %s: %s", fileName, error);
-    else
-        LogError("Could not send %s (HTTP %d)", fileName, response.Status);
-
     delete g_hQueue;
+
+    if (g_bUploadFailing)
+        return;
+
+    g_bUploadFailing = true;
+
+    if (response.Status == HTTPStatus_Invalid)
+        LogError("Could not send %s: %s. The files stay on the server and are tried again at the next round start; this is logged once until a file is sent.", fileName, error);
+    else
+        LogError("Could not send %s (HTTP %d). The files stay on the server and are tried again at the next round start; this is logged once until a file is sent.", fileName, response.Status);
 }
 
 bool MustBeDeleted(HTTPResponse response)
