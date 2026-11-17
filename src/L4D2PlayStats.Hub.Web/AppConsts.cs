@@ -64,6 +64,7 @@ public static partial class AppConsts
     public const int AvatarMaxAgeInHours = 24;
     public const int AvatarActivePlayerInDays = 180;
     public const int AvatarBatchSize = 100;
+    public const int AvatarQueueMaxSize = 1000;
     public const int AvatarBatchesPerRun = 5;
     public const int AvatarRetryInHours = 6;
     public const int AvatarKeylessPerRun = 120;
@@ -75,6 +76,8 @@ public static partial class AppConsts
     public const string SteamProfileXmlUrl = "https://steamcommunity.com/profiles/{0}/?xml=1";
     public const string SteamProfileAvatarPattern = @"<avatarFull><!\[CDATA\[(https://[^\]]+)\]\]></avatarFull>";
     public const int SteamTimeoutInSeconds = 10;
+    public const string SteamHttpClient = "Steam";
+    public const string AvatarTemporaryExtension = ".tmp";
     public const string SteamSummariesUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/";
 
     public const string ServerUrlCvar = "playstats_url";
