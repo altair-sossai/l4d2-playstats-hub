@@ -1,0 +1,74 @@
+[
+  {
+    "name": "install-linux-installer",
+    "blocks": [
+      { "command": "curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | bash", "output": "linux-install.log" }
+    ]
+  },
+  {
+    "name": "install-linux-status",
+    "blocks": [
+      { "command": "playstats-hub status", "output": "linux-status.log" }
+    ]
+  },
+  {
+    "name": "install-linux-setup-code",
+    "blocks": [
+      { "command": "playstats-hub setup-code", "output": "linux-setup-code.log" }
+    ]
+  },
+  {
+    "name": "install-linux-backup",
+    "blocks": [
+      { "command": "playstats-hub backup", "output": "linux-backup.log" },
+      { "command": "ls -lh /root/*.tar.gz", "output": "linux-backup-ls.log" }
+    ]
+  },
+  {
+    "name": "install-linux-update",
+    "blocks": [
+      { "command": "playstats-hub update", "output": "linux-update.log" }
+    ]
+  },
+  {
+    "name": "install-linux-commands",
+    "blocks": [
+      { "command": "playstats-hub", "output": "linux-help.log" }
+    ]
+  },
+  {
+    "name": "install-docker-up",
+    "directory": "~/playstats",
+    "blocks": [
+      { "command": "cat docker-compose.yml", "output": "docker-cat.log" },
+      { "command": "docker compose up -d", "output": "docker-up.log" }
+    ]
+  },
+  {
+    "name": "install-docker-setup-code",
+    "directory": "~/playstats",
+    "blocks": [
+      { "command": "docker compose logs hub | grep \"setup code\"", "output": "docker-code.log" },
+      { "command": "docker compose ps", "output": "docker-ps.log" }
+    ]
+  },
+  {
+    "name": "install-docker-update",
+    "directory": "~/playstats",
+    "blocks": [
+      { "command": "docker compose pull", "output": "docker-pull.log" },
+      { "command": "docker compose up -d", "output": "docker-up2.log" }
+    ]
+  },
+  {
+    "name": "install-docker-backup",
+    "directory": "~/playstats",
+    "blocks": [
+      { "command": "docker compose stop hub", "output": "docker-stop.log" },
+      { "command": "docker volume ls", "output": "docker-vol.log" },
+      { "command": "docker run --rm -v playstats_hub-data:/data -v \"$PWD\":/backup alpine tar -czf /backup/hub-backup.tar.gz -C /data .", "output": "docker-backup.log" },
+      { "command": "docker compose start hub", "output": "docker-start.log" },
+      { "command": "ls -lh hub-backup.tar.gz", "output": "docker-ls.log" }
+    ]
+  }
+]
