@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Players.Models;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
@@ -19,7 +20,7 @@ public class PlayerMatchTests
     private static readonly DateTime Night = new(2026, 11, 14, 21, 0, 0);
 
     [TestMethod]
-    public async Task TheLastMatchesOfAPlayerCarryTheScoreOfEachMapInTheOrderPlayed()
+    public async Task TheRecentMatchesOfAPlayerCarryTheScoreOfEachMapInTheOrderPlayed()
     {
         using var hub = new TestHub();
 
@@ -29,20 +30,21 @@ public class PlayerMatchTests
         await hub.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", Night.AddMinutes(15), 2, 450, 900));
         await hub.UploadAsync(server, StatisticsBuilder.Map("c2m3_coaster", Night.AddMinutes(30), 3, 800, 1200));
 
-        var matches = await LastAsync(hub, [StatisticsBuilder.PlayerA1]);
-        var match = matches.Single();
+        var ids = await RecentAsync(hub, [StatisticsBuilder.PlayerA1]);
+        var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter { Ids = ids }));
+        var match = page.Matches.Single();
 
         CollectionAssert.AreEqual(new[] { "c2m1_highway", "c2m2_fairgrounds", "c2m3_coaster" }, match.Maps.Select(map => map.MapName).ToList());
         CollectionAssert.AreEqual(new[] { 300, 450, 800 }, match.Maps.Select(map => map.TeamAScore).ToList());
         CollectionAssert.AreEqual(new[] { 200, 900, 1200 }, match.Maps.Select(map => map.TeamBScore).ToList());
-        Assert.AreEqual(800, match.Match.TeamAScore);
-        Assert.AreEqual(1200, match.Match.TeamBScore);
-        Assert.IsNotEmpty(match.Match.Players);
-        Assert.IsNotNull(match.Match.GameServer);
+        Assert.AreEqual(800, match.ScoreA);
+        Assert.AreEqual(1200, match.ScoreB);
+        Assert.IsNotEmpty(match.TeamA!.Players);
+        Assert.IsNotNull(match.GameServerName);
     }
 
     [TestMethod]
-    public async Task TheLastMatchesComeNewestFirst()
+    public async Task TheRecentMatchesComeNewestFirst()
     {
         using var hub = new TestHub();
 
@@ -51,13 +53,13 @@ public class PlayerMatchTests
         await UploadMatchAsync(hub, server, Night.AddDays(-1), "c2m1_highway", "c2m2_fairgrounds");
         await UploadMatchAsync(hub, server, Night, "c5m1_waterfront", "c5m2_park");
 
-        var matches = await LastAsync(hub, [StatisticsBuilder.PlayerA1]);
+        var ids = await RecentAsync(hub, [StatisticsBuilder.PlayerA1]);
 
-        CollectionAssert.AreEqual(new[] { "The Parish", "Dark Carnival" }, matches.Select(match => match.Match.Campaign).ToList());
+        CollectionAssert.AreEqual(new[] { "The Parish", "Dark Carnival" }, await CampaignsAsync(hub, ids));
     }
 
     [TestMethod]
-    public async Task OnlyTheMostRecentMatchesOfTheSeasonAreSearched()
+    public async Task OnlyTheMostRecentMatchesOfThePeriodAreSearched()
     {
         using var hub = new TestHub();
 
@@ -66,13 +68,13 @@ public class PlayerMatchTests
         await UploadMatchAsync(hub, server, Night.AddDays(-1), "c2m1_highway", "c2m2_fairgrounds");
         await UploadMatchAsync(hub, server, Night, "c5m1_waterfront", "c5m2_park");
 
-        var matches = await LastAsync(hub, [StatisticsBuilder.PlayerA1], 1);
+        var ids = await RecentAsync(hub, [StatisticsBuilder.PlayerA1], 1);
 
-        Assert.AreEqual("The Parish", matches.Single().Match.Campaign);
+        CollectionAssert.AreEqual(new[] { "The Parish" }, await CampaignsAsync(hub, ids));
     }
 
     [TestMethod]
-    public async Task APlayerWhoWasNotOnATeamHasNoLastMatches()
+    public async Task APlayerWhoWasNotOnATeamHasNoRecentMatches()
     {
         using var hub = new TestHub();
 
@@ -80,12 +82,12 @@ public class PlayerMatchTests
 
         await UploadMatchAsync(hub, server, Night, "c2m1_highway", "c2m2_fairgrounds");
 
-        Assert.IsEmpty(await LastAsync(hub, [Stranger]));
-        Assert.IsEmpty(await LastAsync(hub, []));
+        Assert.IsEmpty(await RecentAsync(hub, [Stranger]));
+        Assert.IsEmpty(await RecentAsync(hub, []));
     }
 
     [TestMethod]
-    public async Task AMatchOfAnotherSeasonIsNotListed()
+    public async Task AMatchOfAnotherSeasonOrYearIsNotListed()
     {
         using var hub = new TestHub();
 
@@ -94,9 +96,12 @@ public class PlayerMatchTests
         await UploadMatchAsync(hub, server, Night, "c2m1_highway", "c2m2_fairgrounds");
 
         var seasonId = await SeasonIdAsync(hub);
-        var matches = await hub.RunAsync(services => services.GetRequiredService<IPlayerMatchService>().LastAsync(seasonId + 1000, [StatisticsBuilder.PlayerA1], RecentMatches));
+        var service = (IServiceProvider services) => services.GetRequiredService<IPlayerMatchService>();
 
-        Assert.IsEmpty(matches);
+        Assert.IsEmpty(await hub.RunAsync(services => service(services).RecentMatchIdsAsync(seasonId + 1000, null, [StatisticsBuilder.PlayerA1], RecentMatches)));
+        Assert.IsEmpty(await hub.RunAsync(services => service(services).RecentMatchIdsAsync(null, Night.Year - 1, [StatisticsBuilder.PlayerA1], RecentMatches)));
+        Assert.HasCount(1, await hub.RunAsync(services => service(services).RecentMatchIdsAsync(null, Night.Year, [StatisticsBuilder.PlayerA1], RecentMatches)));
+        Assert.HasCount(1, await hub.RunAsync(services => service(services).RecentMatchIdsAsync(null, null, [StatisticsBuilder.PlayerA1], RecentMatches)));
     }
 
     [TestMethod]
@@ -109,7 +114,7 @@ public class PlayerMatchTests
 
         await UploadMatchAsync(hub, server, Night, "c2m1_highway", "c2m2_fairgrounds");
 
-        Assert.HasCount(1, await LastAsync(hub, [Stranger, opponent]));
+        Assert.HasCount(1, await RecentAsync(hub, [Stranger, opponent]));
     }
 
     [TestMethod]
@@ -152,12 +157,20 @@ public class PlayerMatchTests
             await hub.UploadAsync(server, StatisticsBuilder.Map(maps[index], start.AddMinutes(15 * index), index + 1, 300 * (index + 1), 250 * (index + 1)));
     }
 
-    private static async Task<List<PlayerMatch>> LastAsync(TestHub hub, long[] communityIds, int recentMatches = RecentMatches)
+    private static async Task<List<int>> RecentAsync(TestHub hub, long[] communityIds, int recentMatches = RecentMatches)
     {
         var seasonId = await SeasonIdAsync(hub);
 
-        return await hub.RunAsync(services => services.GetRequiredService<IPlayerMatchService>().LastAsync(seasonId, communityIds, recentMatches));
+        return await hub.RunAsync(services => services.GetRequiredService<IPlayerMatchService>().RecentMatchIdsAsync(seasonId, null, communityIds, recentMatches));
     }
+
+    private static async Task<List<string?>> CampaignsAsync(TestHub hub, List<int> ids)
+    {
+        var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter { Ids = ids }));
+
+        return [.. page.Matches.Select(match => match.Campaign)];
+    }
+
 
     private static Task<int> SeasonIdAsync(TestHub hub)
     {

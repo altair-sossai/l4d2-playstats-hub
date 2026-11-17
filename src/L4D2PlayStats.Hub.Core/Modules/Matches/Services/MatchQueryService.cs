@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,17 +9,13 @@ public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
 {
     public async Task<MatchPage> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
     {
-        var query = dbContext.Matches.AsNoTracking();
+        var query = dbContext.Matches.AsNoTracking().InPeriod(filter.SeasonId, filter.Year);
 
-        if (filter.SeasonId != null)
-            query = query.Where(m => m.SeasonId == filter.SeasonId);
-
-        if (filter.Year != null)
+        if (filter.Ids != null)
         {
-            var start = new DateTime(filter.Year.Value, 1, 1);
-            var end = start.AddYears(1);
+            var ids = filter.Ids.ToList();
 
-            query = query.Where(m => m.LastFileDate >= start && m.LastFileDate < end);
+            query = query.Where(m => ids.Contains(m.Id));
         }
 
         if (filter.GameServerId != null)
@@ -37,8 +34,7 @@ public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
         var matches = await query
             .Include(m => m.GameServer)
             .Include(m => m.Players)
-            .OrderByDescending(m => m.LastFileDate)
-            .ThenByDescending(m => m.Id)
+            .NewestFirst()
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsSplitQuery()
@@ -65,8 +61,7 @@ public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
             .AsNoTracking()
             .Where(m => m.CountsForRanking)
             .Include(m => m.Players)
-            .OrderByDescending(m => m.LastFileDate)
-            .ThenByDescending(m => m.Id)
+            .NewestFirst()
             .FirstOrDefaultAsync(cancellationToken);
     }
 }

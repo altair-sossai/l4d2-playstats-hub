@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Punishments.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
@@ -42,9 +43,7 @@ public class RankingService(
     {
         return CachedAsync($"year_{year}", async () =>
         {
-            var start = new DateTime(year, 1, 1);
-            var end = start.AddYears(1);
-            var matches = await LoadAsync(dbContext.Matches.Where(m => m.LastFileDate >= start && m.LastFileDate < end), cancellationToken);
+            var matches = await LoadAsync(dbContext.Matches.InYear(year), cancellationToken);
 
             return await CalculateAsync(matches, new Dictionary<long, int>(), cancellationToken);
         });

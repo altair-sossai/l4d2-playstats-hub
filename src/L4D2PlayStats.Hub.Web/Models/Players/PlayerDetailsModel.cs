@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 
 namespace L4D2PlayStats.Hub.Web.Models.Players;
@@ -8,7 +9,7 @@ public class PlayerDetailsModel(
     RankingModel firstPlayerRanking,
     RankingModel? secondPlayerRanking,
     IReadOnlyList<RankingPlayer> players,
-    IReadOnlyList<PlayerMatchModel> matches,
+    IReadOnlyList<MatchCardModel> matches,
     IReadOnlyList<PlayerConnectionResult> relatedPlayers,
     IReadOnlyDictionary<long, string> knownNames,
     PlayerPeriodModel period)
@@ -27,11 +28,7 @@ public class PlayerDetailsModel(
     public bool Administrator { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 
-    public IReadOnlyList<PlayerMatchModel> LastMatches { get; } =
-    [
-        .. matches.Where(match => match.Includes(firstPlayerRanking.Player.CommunityId)
-                                  || (secondPlayerRanking != null && match.Includes(secondPlayerRanking.Player.CommunityId)))
-    ];
+    public IReadOnlyList<MatchCardModel> LastMatches { get; } = matches;
 
     private Dictionary<long, PlayerRelation> FirstPlayerRelations => FirstPlayerRanking.Player.Relations;
     private Dictionary<long, PlayerRelation> SecondPlayerRelations => SecondPlayerRanking?.Player.Relations ?? [];

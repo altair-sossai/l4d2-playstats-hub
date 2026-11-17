@@ -1280,7 +1280,7 @@
     <div class="match">
         @foreach (var match in Model.LastMatches)
         {
-            @await Html.PartialAsync("_PlayerMatch", match)
+            @await Html.PartialAsync("../Matches/_Match", match)
         }
     </div>
 }

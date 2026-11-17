@@ -1,7 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
-using L4D2PlayStats.Hub.Core.Modules.Players.Models;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
@@ -15,6 +15,7 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
+using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,7 @@ public class PlayerViewService(
     ISeasonService seasonService,
     IRankingService rankingService,
     IPlayerMatchService playerMatchService,
+    IMatchViewService matchViewService,
     IPlayerConnectionService playerConnectionService,
     ISkinService skinService,
     ISkinShopService skinShopService,
@@ -60,14 +62,14 @@ public class PlayerViewService(
         return selected == null ? null : new PlayerPeriodModel { Season = selected, CurrentSeason = current, Options = options };
     }
 
-    private Task<List<PlayerMatch>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<MatchCardModel>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
     {
-        if (period.AllTime)
-            return playerMatchService.LastOfAllTimeAsync(communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+        var ids = await playerMatchService.RecentMatchIdsAsync(period.Season?.Id, period.Year, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
 
-        return period.Year != null
-            ? playerMatchService.LastInYearAsync(period.Year.Value, communityIds, AppConsts.PlayerRecentMatches, cancellationToken)
-            : playerMatchService.LastAsync(period.Season!.Id, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+        if (ids.Count == 0)
+            return [];
+
+        return await matchViewService.CardsAsync(new MatchFilter { Ids = ids, PageSize = ids.Count }, period.Query, cancellationToken);
     }
 
     public Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken = default)
@@ -98,7 +100,6 @@ public class PlayerViewService(
 
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
-        var today = await seasonService.SiteNowAsync(cancellationToken);
         var skinShop = modules.IsEnabled(HubModule.SkinShop);
         var timeZone = TimeZone(site);
 
@@ -113,18 +114,17 @@ public class PlayerViewService(
         var firstPlayerRanking = new RankingModel(localizer, firstPlayer);
         var secondPlayerRanking = secondPlayer == null ? null : new RankingModel(localizer, secondPlayer);
         var knownNames = await KnownNamesAsync(players, firstPlayer, secondPlayer, cancellationToken);
-        var matchModels = matches.Select(match => new PlayerMatchModel(match, today, timeZone) { Period = period.Query }).ToList();
 
         IReadOnlyCollection<Skin> skins = skinShop ? await skinService.ListAsync(cancellationToken) : [];
         var assetsUrl = skinShop ? (await settingsService.GetAsync<SkinShopSettings>(cancellationToken)).AssetsUrl : null;
 
-        return new PlayerDetailsModel(firstPlayerRanking, secondPlayerRanking, players, matchModels, relatedPlayers, knownNames, period)
+        return new PlayerDetailsModel(firstPlayerRanking, secondPlayerRanking, players, matches, relatedPlayers, knownNames, period)
         {
             SkinShop = skinShop,
             FirstPlayerSkins = skinShop ? await PlayerSkinsAsync(skins, firstPlayer.CommunityId, assetsUrl, cancellationToken) : null,
             SecondPlayerSkins = skinShop && secondPlayer != null ? await PlayerSkinsAsync(skins, secondPlayer.CommunityId, assetsUrl, cancellationToken) : null,
             Administrator = period.Season != null && await currentUser.IsAdministratorAsync(),
-            TimeZone = TimeZone(site)
+            TimeZone = timeZone
         };
     }
 

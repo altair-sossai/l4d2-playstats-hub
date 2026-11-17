@@ -100,6 +100,28 @@ public partial class PlayerPagesTests
     }
 
     [TestMethod]
+    public async Task TheMatchCardsOfThePlayerPageKeepThePeriodOnThePlayerLinks()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await StartAsync(factory);
+
+        var opponent = StatisticsBuilder.Sample().Survivors('B')[0];
+        var matchId = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.Select(match => match.Id).SingleAsync());
+
+        var allTime = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}?period=all-time");
+        var current = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
+        var matches = await client.GetStringAsync("/matches");
+
+        Assert.Contains($"href=\"/player/{opponent}?period=all-time\"", allTime);
+        Assert.Contains($"href=\"/matches/{matchId}\"", allTime);
+        Assert.Contains($"href=\"/player/{opponent}\"", current);
+        Assert.Contains($"href=\"/player/{opponent}\"", matches);
+        Assert.DoesNotContain($"href=\"/player/{opponent}?", matches);
+    }
+
+    [TestMethod]
     public async Task TwoPlayersCanBeCompared()
     {
         using var factory = new HubWebFactory();
