@@ -557,7 +557,7 @@
         }
 
         function editPunishment(communityId, punishment) {
-            var output = prompt("@Html.Raw(L["How many experience points should the user lose?"])", punishment);
+            var output = prompt(@Json.Serialize(L["How many experience points should the user lose?"].Value), punishment);
 
             if (!output)
                 return;
