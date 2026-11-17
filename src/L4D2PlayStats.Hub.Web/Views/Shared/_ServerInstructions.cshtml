@@ -3,23 +3,25 @@
     var server = Model.Status.Server;
     var token = Model.Token ?? $"{server.PublicId}:{L["YOUR-KEY"].Value}";
     var configuration = $"{AppConsts.ServerUrlCvar} \"{Model.SiteUrl}\"\n{AppConsts.ServerTokenCvar} \"{token}\"";
+    var plugins = string.Join("\n", AppConsts.ServerPlugins.Select(plugin => string.Format(AppConsts.ServerPluginLoadFormat, plugin)));
 }
 <ol class="server-steps">
     <li>
-        @L["Download the PlayStats plugins and copy them to the game server."]
-        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/releases" rel="noopener" target="_blank"><u>@L["Download"]</u></a>
+        @L["Download the PlayStats plugins and copy everything inside their left4dead2 folder into the left4dead2 folder of the game server."]
+        <a href="@AppConsts.ServerReleasesUrl" rel="noopener" target="_blank"><u>@L["Download"]</u></a>
         ·
-        <a href="https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/plugins/README.md" rel="noopener" target="_blank"><u>@L["Step-by-step guide"]</u></a>
-        <small class="text-muted" style="display: block">@L["Put l4d2_playstats_sync.smx in addons/sourcemod/plugins itself, not in a subfolder, so it loads when the server starts."]</small>
+        <a href="@AppConsts.ServerGuideUrl" rel="noopener" target="_blank"><u>@L["Step-by-step guide"]</u></a>
+        <small class="text-muted" style="display: block">@L["Keep the plugins in addons/sourcemod/plugins itself, not in a subfolder such as optional, so they load when the server starts."]</small>
     </li>
     <li>
         @L["The server needs SourceMod, the REST in Pawn extension and the l4d2_playstats plugin, which comes with L4D2 Competitive Rework."]
     </li>
     <li>
-        @L["Paste these lines into cfg/server.cfg on the game server:"]
+        @string.Format(L["Paste these lines into {0} on the game server and add {1} at the end of cfg/server.cfg:"].Value, AppConsts.ServerConfigFile, AppConsts.ServerConfigExec)
         @await Html.PartialAsync("_CopyButton", configuration)
         <pre class="server-config">@(AppConsts.ServerUrlCvar) "@Model.SiteUrl"
 @(AppConsts.ServerTokenCvar) "@token"</pre>
+        <small class="text-muted" style="display: block; margin-bottom: 10px">@L["Pasting the two lines straight into cfg/server.cfg also works."]</small>
         @if (Model.Token != null)
         {
             <div class="alert alert-warning" style="margin-bottom: 0">
@@ -31,6 +33,11 @@
         {
             <small class="text-muted" style="display: block">@L["The key is not stored in readable form. Generate a new key if you need the full token again."]</small>
         }
+    </li>
+    <li>
+        @L["On L4D2 Competitive Rework a match mode unloads every plugin when it loads. Add these lines to cfg/sharedplugins.cfg, leaving out the plugins you do not use:"]
+        @await Html.PartialAsync("_CopyButton", plugins)
+        <pre class="server-config">@plugins</pre>
     </li>
     <li>@L["Restart the game server or change the map. The status below updates by itself."] @L["You can also type sm_playstats_test in the server console to see the result there."]</li>
 </ol>

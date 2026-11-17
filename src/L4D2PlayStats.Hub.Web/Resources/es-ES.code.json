@@ -1,0 +1,7 @@
+{
+  "Download the PlayStats plugins and copy everything inside their left4dead2 folder into the left4dead2 folder of the game server.": "Descarga los plugins de PlayStats y copia todo lo que hay dentro de su carpeta left4dead2 en la carpeta left4dead2 del servidor de juego.",
+  "Keep the plugins in addons/sourcemod/plugins itself, not in a subfolder such as optional, so they load when the server starts.": "Deja los plugins directamente en addons/sourcemod/plugins, no en una subcarpeta como optional, para que se carguen cuando arranca el servidor.",
+  "Paste these lines into {0} on the game server and add {1} at the end of cfg/server.cfg:": "Pega estas líneas en {0} en el servidor de juego y añade {1} al final de cfg/server.cfg:",
+  "Pasting the two lines straight into cfg/server.cfg also works.": "Pegar las dos líneas directamente en cfg/server.cfg también funciona.",
+  "On L4D2 Competitive Rework a match mode unloads every plugin when it loads. Add these lines to cfg/sharedplugins.cfg, leaving out the plugins you do not use:": "En L4D2 Competitive Rework, un modo de partida descarga todos los plugins al cargarse. Añade estas líneas a cfg/sharedplugins.cfg, dejando fuera los plugins que no uses:"
+}

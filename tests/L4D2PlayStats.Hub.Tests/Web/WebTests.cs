@@ -376,6 +376,29 @@ public class WebTests
     }
 
     [TestMethod]
+    public async Task TheServerPageExplainsThePluginFolderTheConfigurationFileAndTheMatchModes()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        var created = await HubWebFactory.PostFormAsync(client, "/admin/servers", "/admin/servers", new Dictionary<string, string> { ["Name"] = "My Server" });
+        var html = await client.GetStringAsync(created.Headers.Location!.OriginalString);
+
+        Assert.Contains("left4dead2 folder", html);
+        Assert.Contains("cfg/playstats.cfg", html);
+        Assert.Contains("exec playstats.cfg", html);
+        Assert.Contains("cfg/sharedplugins.cfg", html);
+        Assert.Contains("blob/main/docs/game-server.md", html);
+        Assert.DoesNotContain("plugins/README.md", html);
+
+        foreach (var plugin in new[] { "l4d2_playstats_sync", "l4d2_gameinfo_sync", "l4d2_ranking", "l4d2_show_patent_icon", "l4d2_weapon_skins" })
+            Assert.Contains($"sm plugins load {plugin}.smx", html, plugin);
+    }
+
+    [TestMethod]
     public async Task AFormWithoutTheAntiforgeryTokenIsRefused()
     {
         using var factory = new HubWebFactory();
