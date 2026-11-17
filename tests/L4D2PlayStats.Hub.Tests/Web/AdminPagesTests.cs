@@ -98,6 +98,31 @@ public partial class AdminPagesTests
     }
 
     [TestMethod]
+    public async Task TheServerStatusOfTheWizardAnswersWhileTheSetupIsPending()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.RunAsync(services => services.GetRequiredService<IAdministratorService>().AddAsync(HubWebFactory.Administrator, "Admin"));
+
+        var credentials = await factory.CreateServerAsync("Wizard Server");
+
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+        using var anonymous = factory.Client();
+
+        var status = await administrator.GetAsync($"/admin/servers/{credentials.Server.Id}/status");
+        var page = await administrator.GetAsync($"/admin/servers/{credentials.Server.Id}");
+        var stranger = await anonymous.GetAsync($"/admin/servers/{credentials.Server.Id}/status");
+        var html = await status.Content.ReadAsStringAsync();
+
+        Assert.AreEqual(System.Net.HttpStatusCode.OK, status.StatusCode);
+        Assert.Contains($"id=\"server-status-{credentials.Server.Id}\"", html);
+        Assert.DoesNotContain("<html", html);
+        Assert.AreEqual(System.Net.HttpStatusCode.Redirect, page.StatusCode);
+        Assert.AreEqual("/setup", page.Headers.Location?.OriginalString);
+        Assert.AreNotEqual(System.Net.HttpStatusCode.OK, stranger.StatusCode);
+    }
+
+    [TestMethod]
     public async Task TheWizardSavesTheModulesAndGoesOnToTheGameServer()
     {
         using var factory = new HubWebFactory();

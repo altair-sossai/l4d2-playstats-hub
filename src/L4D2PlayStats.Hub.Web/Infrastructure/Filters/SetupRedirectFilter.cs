@@ -19,6 +19,8 @@ public class SetupRedirectFilter(ISetupService setupService) : IAsyncResourceFil
                      || path.StartsWithSegments(AppConsts.ThemeSwitchPath)
                      || path.StartsWithSegments("/dev");
 
+        exempt = exempt || context.ActionDescriptor.EndpointMetadata.OfType<AllowDuringSetupAttribute>().Any();
+
         if (!exempt && await setupService.IsPendingAsync(context.HttpContext.RequestAborted))
         {
             context.Result = new RedirectResult("/setup");

@@ -11,6 +11,7 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,6 +112,7 @@ public class AdminController(
     }
 
     [HttpGet("servers/{id:int}/status")]
+    [AllowDuringSetup]
     public async Task<IActionResult> ServerStatus(int id, CancellationToken cancellationToken)
     {
         var server = await gameServerService.FindAsync(id, cancellationToken);
