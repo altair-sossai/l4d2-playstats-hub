@@ -4,7 +4,7 @@
 
 There are two ways to run L4D2 PlayStats Hub on Azure. The first is the same as on any VPS and is the one we recommend.
 
-> **Status of this guide.** The virtual machine path uses the Linux installer, which is tested. The App Service path was written from the Azure documentation and has not been run end to end yet. If a step does not match what you see, please open an issue.
+> **Status of this guide.** The virtual machine path uses the Linux installer, which is tested. The App Service path was written from the Azure documentation and has not been run end to end yet, so this page has no screenshots of it. If a step does not match what you see, please open an issue.
 
 ## Contents
 
@@ -14,7 +14,7 @@ There are two ways to run L4D2 PlayStats Hub on Azure. The first is the same as 
 
 ## Option 1: a virtual machine
 
-Create a Linux virtual machine and follow [Installing on a Linux VPS](install-linux.md). Nothing is different.
+Create a Linux virtual machine and follow [Installing on a Linux VPS](install-linux.md). Nothing is different, and the screenshots of that guide show what you will see.
 
 | Setting | Suggested value |
 |---|---|
@@ -68,7 +68,7 @@ az webapp log config --resource-group playstats --name my-playstats --docker-con
 az webapp log tail --resource-group playstats --name my-playstats
 ```
 
-Look for the line that says `Setup is pending`. Then open `https://my-playstats.azurewebsites.net`, paste the code, sign in with Steam and follow the pages.
+Look for the line that says `Setup is pending`. Then open `https://my-playstats.azurewebsites.net`, paste the code, sign in with Steam and follow the pages. [First-run setup](manual/first-run.md) shows each of them.
 
 Two things to know about App Service:
 
