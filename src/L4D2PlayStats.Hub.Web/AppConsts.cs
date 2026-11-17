@@ -21,6 +21,9 @@ public static partial class AppConsts
     public const int LogoCacheInSeconds = 3600;
     public const int BytesPerMegabyte = 1048576;
     public const int LogoMaxBytes = BytesPerMegabyte;
+    public const int ImageSignatureLength = 12;
+    public const int WebpSignatureOffset = 8;
+    public const int SettingsFormMaxBytes = 2 * BytesPerMegabyte;
     public const string AntiforgeryHeader = "RequestVerificationToken";
     public const string ShortTimeFormat = "HH:mm";
     public const string ShortDateTimeFormat = "g";
@@ -75,6 +78,7 @@ public static partial class AppConsts
     public const int AvatarKeylessPauseInMinutes = 10;
     public const string AvatarContentType = "image/jpeg";
     public const string NoStore = "no-store";
+    public const string NoSniff = "nosniff";
     public const string SteamProfileXmlUrl = "https://steamcommunity.com/profiles/{0}/?xml=1";
     public const string SteamProfileAvatarPattern = @"<avatarFull><!\[CDATA\[(https://[^\]]+)\]\]></avatarFull>";
     public const int SteamTimeoutInSeconds = 10;

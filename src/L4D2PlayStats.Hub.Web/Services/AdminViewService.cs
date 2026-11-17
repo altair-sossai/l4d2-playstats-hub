@@ -107,6 +107,14 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
 
         await using var content = logo.OpenReadStream();
 
+        var header = new byte[AppConsts.ImageSignatureLength];
+        var read = await content.ReadAtLeastAsync(header, header.Length, false, cancellationToken);
+
+        if (!ImageSignature.IsImage(header.AsSpan(0, read)))
+            return AppConsts.LogoUnsupportedMessage;
+
+        content.Position = 0;
+
         await brandingStore.SaveLogoAsync(content, logo.FileName, cancellationToken);
 
         return null;

@@ -15,7 +15,12 @@ public class SiteController(BrandingStore brandingStore, ILiveViewService liveVi
         var path = brandingStore.LogoPath;
         var contentType = brandingStore.LogoContentType;
 
-        return path == null || contentType == null ? NotFound() : PhysicalFile(path, contentType);
+        if (path == null || contentType == null)
+            return NotFound();
+
+        Response.Headers.XContentTypeOptions = AppConsts.NoSniff;
+
+        return PhysicalFile(path, contentType);
     }
 
     [HttpGet("/theme/{theme}")]

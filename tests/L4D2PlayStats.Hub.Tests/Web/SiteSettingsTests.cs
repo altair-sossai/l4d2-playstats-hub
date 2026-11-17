@@ -183,6 +183,7 @@ public class SiteSettingsTests
         Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
         Assert.AreEqual(HttpStatusCode.OK, logo.StatusCode);
         Assert.AreEqual(PngContentType, logo.Content.Headers.ContentType!.MediaType);
+        Assert.AreEqual("nosniff", logo.Headers.GetValues("X-Content-Type-Options").Single());
         CollectionAssert.AreEqual(Png, content);
         Assert.Contains($"<img src=\"{WebConsts.LogoUrl}?v=", home);
         Assert.DoesNotContain("class=\"navbar-brand site-name\"", home);
@@ -274,6 +275,28 @@ public class SiteSettingsTests
     }
 
     [TestMethod]
+    [DataRow("logo.png")]
+    [DataRow("logo.jpg")]
+    [DataRow("logo.gif")]
+    [DataRow("logo.webp")]
+    public async Task AFileThatIsNotReallyAnImageIsRefusedAsTheLogo(string fileName)
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await PostAsync(client, SettingsPage, SettingsPage, Fields([]), fileName, "<html><script>alert(1)</script></html>"u8.ToArray());
+
+        var logo = await client.GetAsync(WebConsts.LogoUrl);
+        var settings = await client.GetStringAsync(SettingsPage);
+
+        Assert.AreEqual(HttpStatusCode.NotFound, logo.StatusCode);
+        Assert.Contains(HtmlEncoder.Default.Encode(WebConsts.LogoUnsupportedMessage), settings);
+    }
+
+    [TestMethod]
     public async Task ALogoLargerThanTheLimitIsRefusedAndTheCurrentOneStays()
     {
         using var factory = new HubWebFactory();
@@ -302,7 +325,10 @@ public class SiteSettingsTests
 
         using var client = factory.Client(HubWebFactory.Administrator);
 
-        await PostAsync(client, SettingsPage, SettingsPage, Fields([]), "logo.webp", new byte[WebConsts.LogoMaxBytes]);
+        var webp = new byte[WebConsts.LogoMaxBytes];
+        "RIFF\0\0\0\0WEBP"u8.CopyTo(webp);
+
+        await PostAsync(client, SettingsPage, SettingsPage, Fields([]), "logo.webp", webp);
 
         var logo = await client.GetAsync(WebConsts.LogoUrl);
 

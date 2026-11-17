@@ -160,6 +160,7 @@ public class AdminController(
     }
 
     [HttpPost("settings")]
+    [RequestSizeLimit(AppConsts.SettingsFormMaxBytes)]
     public async Task<IActionResult> SaveSettings(SettingsViewModel model, CancellationToken cancellationToken)
     {
         var problems = await adminViewService.SaveAsync(model, cancellationToken);
