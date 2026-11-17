@@ -54,9 +54,15 @@ public class SkinViewService(
         var timeZone = await TimeZoneAsync(cancellationToken);
         var playerId = long.TryParse(player?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var parsed) ? parsed : (long?)null;
 
+        var ids = purchases.Select(purchase => purchase.CommunityId)
+            .Concat(purchases.Where(purchase => purchase.GiftedByCommunityId != null).Select(purchase => purchase.GiftedByCommunityId!.Value))
+            .Append(playerId ?? 0)
+            .Distinct()
+            .ToList();
+
         var names = await dbContext.PlayerProfiles
             .AsNoTracking()
-            .Where(profile => profile.Name != null)
+            .Where(profile => profile.Name != null && ids.Contains(profile.CommunityId))
             .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name!, cancellationToken);
 
         var rows = purchases
