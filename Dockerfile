@@ -13,8 +13,10 @@ RUN dotnet publish src/L4D2PlayStats.Hub.Web --configuration Release --no-restor
 FROM mcr.microsoft.com/dotnet/aspnet:11.0
 WORKDIR /app
 COPY --from=build /app .
+COPY --chmod=755 deploy/docker/entrypoint.sh /usr/local/bin/hub-entrypoint
 ENV ASPNETCORE_URLS=http://+:8080 \
     Hub__DataDirectory=/data
 VOLUME /data
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "L4D2PlayStats.Hub.Web.dll"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD ["dotnet", "/app/L4D2PlayStats.Hub.Web.dll", "health"]
+ENTRYPOINT ["hub-entrypoint"]

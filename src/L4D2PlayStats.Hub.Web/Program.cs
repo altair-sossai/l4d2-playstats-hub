@@ -8,6 +8,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
+using L4D2PlayStats.Hub.Web.Infrastructure.Health;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
@@ -21,6 +22,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+
+if (HealthCheck.IsCommand(args))
+    return await HealthCheck.RunAsync(args);
 
 var builder = WebApplication.CreateBuilder(args);
 
