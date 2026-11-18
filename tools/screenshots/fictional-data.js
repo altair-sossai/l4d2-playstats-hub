@@ -20,11 +20,16 @@ const nameColumns = {
     ChatBans: ['CommunityId', 'Name'],
     Administrators: ['CommunityId', 'Name'],
     SkinPurchase: ['CommunityId', 'PlayerName'],
-    RemoteCommandLogs: ['AdministratorCommunityId', 'AdministratorName']
+    RemoteCommandLogs: ['AdministratorCommunityId', 'AdministratorName'],
+    AntiCheatWhitelist: ['CommunityId', 'Name'],
+    AntiCheatRequired: ['CommunityId', 'Name'],
+    AntiCheatAccessSettings: ['UpdatedByCommunityId', 'UpdatedByName']
 };
 const extraNameColumns = {
     ChatBans: [['CreatedByCommunityId', 'CreatedByName']],
-    SkinPurchase: [['GiftedByCommunityId', 'GiftedByName']]
+    SkinPurchase: [['GiftedByCommunityId', 'GiftedByName']],
+    AntiCheatWhitelist: [['AddedByCommunityId', 'AddedByName']],
+    AntiCheatRequired: [['AddedByCommunityId', 'AddedByName']]
 };
 const freeTextColumns = { ChatBans: ['Reason'], Punishments: ['Reason'], RemoteCommandLogs: ['Command'] };
 

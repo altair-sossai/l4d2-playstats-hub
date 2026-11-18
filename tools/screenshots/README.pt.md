@@ -67,7 +67,7 @@ O comando `site` espera uma pasta de dados, como a cópia fictícia acima, com:
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
 ```
 
-Antes das capturas do servidor ao vivo, ela envia a partida ao vivo de cada servidor, do jeito que os plugins fazem, com os jogadores do topo do ranking do site, e espera o atraso da página ao vivo. Reinicie o site antes de cada idioma, para que o chat ao vivo comece vazio. Antes das capturas da loja, ela faz o reembolso das compras do jogador e depois compra a primeira skin que o jogador consegue pagar. As capturas de banimento do chat adicionam um banimento para o `--banned`.
+Antes das capturas do servidor ao vivo, ela envia a partida ao vivo de cada servidor, do jeito que os plugins fazem, com os jogadores do topo do ranking do site, e espera o atraso da página ao vivo. Reinicie o site antes de cada idioma, para que o chat ao vivo comece vazio. Antes das capturas da loja, ela faz o reembolso das compras do jogador e depois compra a primeira skin que o jogador consegue pagar. As capturas de banimento do chat adicionam um banimento para o `--banned`. Antes da captura das configurações do Anti-Cheat, ela coloca os dois primeiros jogadores do ranking na whitelist e os seis seguintes na lista obrigatória, e salva o modo.
 
 O login de desenvolvimento não tem nome do Steam, então o menu, as compras e os registros de auditoria mostram `Player <SteamID64>` para o usuário logado.
 
