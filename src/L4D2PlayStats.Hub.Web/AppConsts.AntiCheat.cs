@@ -3,6 +3,7 @@ namespace L4D2PlayStats.Hub.Web;
 public static partial class AppConsts
 {
     public const string AntiCheatUrl = "/anti-cheat";
+    public const string CompetitiveWordStem = "competitiv";
     public const string AntiCheatAdminUrl = "/admin/anti-cheat";
     public const string AntiCheatVersionPath = "/v1/client/version";
     public const string AntiCheatVersionCacheKey = "AntiCheatVersion";

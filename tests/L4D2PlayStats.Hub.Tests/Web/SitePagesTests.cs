@@ -135,6 +135,23 @@ public class SitePagesTests
     }
 
     [TestMethod]
+    [DataRow("L4D2 Competitive", "L4D2 Competitive")]
+    [DataRow("Zone Server", "Zone Server competitive server")]
+    public async Task TheAntiCheatKickerDoesNotRepeatTheWordCompetitive(string siteName, string expected)
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+        await factory.SaveAsync(new ModuleSettings { AntiCheat = true });
+        await factory.SaveAsync(new SiteSettings { Name = siteName });
+
+        var body = await client.GetStringAsync("/anti-cheat");
+
+        Assert.Contains($"<span class=\"aac-kicker\">{expected}</span>", body);
+    }
+
+    [TestMethod]
     public async Task TheAntiCheatPageOnlyExistsWhenItsModuleIsOn()
     {
         using var factory = new HubWebFactory();

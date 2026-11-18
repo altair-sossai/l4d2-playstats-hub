@@ -4,6 +4,7 @@
 
 @{
     var site = await Settings.GetAsync<SiteSettings>();
+    var kicker = site.Name.Contains(AppConsts.CompetitiveWordStem, StringComparison.OrdinalIgnoreCase) ? site.Name : L["{0} competitive server", site.Name].Value;
 
     ViewData["PageMetadata"] = new PageMetadata
     {
@@ -316,7 +317,7 @@
 <section class="aac-hero">
     <div class="row aac-hero-row">
         <div class="col-md-7">
-            <span class="aac-kicker">@L["{0} competitive server", site.Name]</span>
+            <span class="aac-kicker">@kicker</span>
             <h1>@L["Anti-Cheat"]</h1>
             <p class="lead">@L["To play on the competitive server, open the game through the Anti-Cheat."]</p>
 
