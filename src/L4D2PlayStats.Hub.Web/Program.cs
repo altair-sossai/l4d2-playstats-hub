@@ -7,6 +7,7 @@ using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
+using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
@@ -104,6 +105,11 @@ var localization = new RequestLocalizationOptions
 localization.RequestCultureProviders.Add(new SiteCultureProvider());
 
 app.UseForwardedHeaders();
+
+if (!app.Environment.IsDevelopment())
+    app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandlingPath = AppConsts.ErrorPath, SuppressDiagnosticsCallback = _ => true });
+
+app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecute(AppConsts.ErrorStatusPath));
 app.UseMiddleware<ErrorLoggingMiddleware>();
 app.UseRequestLocalization(localization);
 app.UseResponseCompression();

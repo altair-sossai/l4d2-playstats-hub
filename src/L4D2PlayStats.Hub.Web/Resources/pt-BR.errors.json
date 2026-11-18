@@ -1,0 +1,12 @@
+{
+  "Page not found": "Página não encontrada",
+  "The address you opened does not exist or was moved. Check it and try again.": "O endereço que você abriu não existe ou mudou de lugar. Confira e tente de novo.",
+  "Access denied": "Acesso negado",
+  "You do not have permission to open this page.": "Você não tem permissão para abrir esta página.",
+  "Something went wrong": "Algo deu errado",
+  "The site could not show this page. Try again in a moment, and if it keeps happening, tell an administrator of the site.": "O site não conseguiu mostrar esta página. Tente de novo daqui a pouco e, se continuar acontecendo, avise um administrador do site.",
+  "The page could not be opened": "Não foi possível abrir a página",
+  "The request could not be completed. Go back and try again.": "Não foi possível concluir o pedido. Volte e tente de novo.",
+  "Error {0}": "Erro {0}",
+  "Back to the home page": "Voltar para a página inicial"
+}

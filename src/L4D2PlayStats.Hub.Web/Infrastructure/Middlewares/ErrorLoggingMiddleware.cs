@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
+
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
 
 public class ErrorLoggingMiddleware(RequestDelegate next, ILogger<ErrorLoggingMiddleware> logger)
@@ -8,7 +10,7 @@ public class ErrorLoggingMiddleware(RequestDelegate next, ILogger<ErrorLoggingMi
         {
             await next(context);
 
-            if (context.Response.StatusCode >= StatusCodes.Status400BadRequest)
+            if (context.Response.StatusCode >= StatusCodes.Status400BadRequest && !ErrorPages.IsReExecuted(context))
                 logger.LogWarning("Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
