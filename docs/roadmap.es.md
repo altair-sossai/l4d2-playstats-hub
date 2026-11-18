@@ -74,7 +74,7 @@ Una sola aplicación ASP.NET Core que es el sitio web, la API para los plugins, 
 | Catálogo de skins | El catálogo y las imágenes viven en el repositorio de assets, y la aplicación importa el catálogo. |
 | Plugins | Están pensados para servidores basados en L4D2 Competitive Rework. Una sola dirección y un solo token para todos. |
 | Comandos remotos | Enviar comandos desde el sitio a un servidor de juego es un módulo, desactivado de forma predeterminada, con un registro de auditoría. |
-| Anti-cheat | Reservado como módulo, desactivado, sin implementación por ahora. |
+| Anti-cheat | Un módulo, desactivado de forma predeterminada, que muestra la página del Anti-Cheat con la descarga y las instrucciones. El programa Anti-Cheat y su servicio son proyectos aparte. |
 | Front-end | Dos capas: el sitio principal para navegadores actuales, y unas pocas páginas hechas para el navegador que está dentro del juego. |
 | Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. |
 | Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única como Angular si una pantalla lo necesita, pero no se usa. |
@@ -97,7 +97,7 @@ El núcleo siempre está activado: registro de servidores de juego, subida de es
 | Comandos remotos | Comandos enviados desde el sitio a un servidor de juego. Necesita el servidor en vivo. | Desactivado |
 | Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. Necesita el ranking. | Desactivado |
 | Ranking de la comunidad | Votación por pares y su ranking. | Desactivado |
-| Anti-cheat | Reservado. | Desactivado |
+| Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat. | Desactivado |
 
 Un módulo desactivado desaparece del menú y sus páginas responden como no encontradas.
 
@@ -156,9 +156,9 @@ Para cada servidor de juego, el sitio muestra las dos líneas que hay que pegar 
 | Estado | Significado |
 |---|---|
 | En espera | Nunca se conectó. |
-| Conectado | Llegó una señal en los últimos segundos. |
+| Conectado | Llegó una señal en los últimos 90 segundos. |
 | Fuera de línea | Muestra cuándo se lo vio por última vez. |
-| Clave inválida | El identificador llegó con la clave equivocada. |
+| Clave inválida | El identificador llegó con la clave equivocada en los últimos 10 minutos. |
 
 Una lista de verificación muestra qué se encontró: conexión, plugin de subida, escritura de estadísticas, primer archivo recibido, datos en vivo y el plugin de skins. El comando `sm_playstats_test` ejecuta la misma verificación desde la consola del servidor de juego.
 

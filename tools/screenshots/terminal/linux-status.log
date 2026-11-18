@@ -1,0 +1,20 @@
+[0;1;32m*[0m l4d2-playstats-hub.service - L4D2 PlayStats Hub
+     Loaded: loaded (]8;;file://vps/etc/systemd/system/l4d2-playstats-hub.service/etc/systemd/system/l4d2-playstats-hub.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Tue 2026-11-17 23:06:03 UTC; 8s ago
+   Main PID: 1281 (L4D2PlayStats.H)
+      Tasks: 37 (limit: 3562)
+     Memory: 91.6M ()
+     CGroup: /docker/39fe6e28d61345ddd181c4d42be6576571f2546f6829132d1cca340204785851/system.slice/l4d2-playstats-hub.service
+             `-[0;38;5;245m1281 /opt/l4d2-playstats-hub/L4D2PlayStats.Hub.Web[0m
+
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]: warn: Microsoft.AspNetCore.DataProtection.K...r[35]
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]:       No XML encryptor configured. Key {497...form.
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]: info: Microsoft.Hosting.Lifetime[14]
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]:       Now listening on: http://0.0.0.0:5080
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]: info: Microsoft.Hosting.Lifetime[0]
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]:       Application started. Press Ctrl+C to ...down.
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]: info: Microsoft.Hosting.Lifetime[0]
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]:       Hosting environment: Production
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]: info: Microsoft.Hosting.Lifetime[0]
+Nov 17 23:06:05 vps L4D2PlayStats.Hub.Web[1281]:       Content root path: /opt/l4d2-playstats-hub
+Hint: Some lines were ellipsized, use -l to show in full.

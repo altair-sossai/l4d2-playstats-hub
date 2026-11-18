@@ -4,12 +4,13 @@
 
 Uma única aplicação web auto-hospedada para servidores competitivos de Left 4 Dead 2: ranking, estatísticas de partidas, visualização do servidor ao vivo, loja de skins de armas e um ranking da comunidade, junto com os plugins SourceMod que a alimentam.
 
-> **Status: primeira versão publicada, migração em andamento.** A aplicação, os plugins, o instalador Linux e a imagem Docker estão disponíveis nos [lançamentos](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
+> **Status: primeira versão publicada, migração em andamento.** A aplicação, os plugins, o instalador para Linux e a imagem Docker estão disponíveis nas [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
 
 ## Conteúdo
 
 - [Por que este projeto existe](#por-que-este-projeto-existe)
 - [O que ele faz](#o-que-ele-faz)
+- [Um passeio rápido](#um-passeio-rápido)
 - [Instalação](#instalação)
 - [Como tudo se encaixa](#como-tudo-se-encaixa)
 - [O que fica fora deste repositório](#o-que-fica-fora-deste-repositório)
@@ -31,12 +32,28 @@ Este repositório reúne a lógica para que qualquer dono de servidor possa roda
 - **Modos de jogo que você configura.** Você escolhe quais modos contam para o ranking e quantos mapas formam uma partida ranqueada.
 - **Servidor ao vivo.** Placar, jogadores, eventos e chat da partida em andamento, para cada servidor.
 - **Loja de skins de armas.** Os jogadores ganham estrelas com MVPs e as gastam em skins.
-- **Ranking da comunidade.** Os jogadores votam em pares de jogadores, e os votos formam um segundo ranking.
+- **Ranking da comunidade.** Os jogadores votam em duplas de jogadores, e os votos formam um segundo ranking.
 - **Páginas para dentro do jogo.** O `!ranking` abre uma versão leve do ranking, feita para o navegador do próprio jogo.
 - **Módulos.** O administrador liga ou desliga cada um desses recursos.
-- **Configuração guiada.** Um assistente de primeira execução e uma página de status que mostra se cada servidor de jogo está conectado e o que está faltando.
+- **Configuração guiada.** Um assistente de primeira configuração e uma página de status que mostra se cada servidor de jogo está conectado e o que está faltando.
 - **Três idiomas.** Inglês, português e espanhol.
 - **Banco de dados à sua escolha.** SQLite por padrão, sem servidor para instalar. SQL Server, PostgreSQL e MySQL são suportados.
+
+## Um passeio rápido
+
+O ranking da temporada abre o site. Cada jogador tem uma página com os resultados, as estatísticas e as relações dele, e cada partida tem os seus detalhes.
+
+![O ranking da temporada atual](docs/images/pt/ranking.webp)
+
+A página do servidor ao vivo acompanha a partida em andamento em cada servidor de jogo.
+
+![A página do servidor ao vivo](docs/images/pt/server-live.webp)
+
+Os jogadores gastam as estrelas que ganharam como MVP na loja de skins de armas.
+
+![A loja de skins de armas](docs/images/pt/skins.webp)
+
+O [manual do usuário](docs/manual/README.pt.md) explica cada página, como os números são calculados e cada configuração, com capturas de tela.
 
 ## Instalação
 
@@ -46,7 +63,7 @@ Em uma VPS Linux, um único comando instala o site:
 curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
 ```
 
-Ele imprime o endereço do site e um código de configuração. Abra o endereço, cole o código, entre com a Steam, e o site guia você pelo resto.
+Ele mostra o endereço do site e um código de configuração. Abra o endereço, cole o código, faça login com o Steam, e o site guia você pelo resto.
 
 Esse comando baixa a versão publicada mais recente. A aplicação também pode ser [executada a partir do código-fonte](CONTRIBUTING.pt.md#como-rodar).
 
@@ -56,6 +73,7 @@ Esse comando baixa a versão publicada mais recente. A aplicação também pode 
 | [Instalando com Docker](docs/install-docker.pt.md) | Se você já usa contêineres. |
 | [Instalando no Azure](docs/install-azure.pt.md) | Uma máquina virtual ou o App Service. |
 | [Conectando um servidor de jogo](docs/game-server.pt.md) | Os plugins e as configurações deles. |
+| [Manual do usuário](docs/manual/README.pt.md) | Todos os recursos do site, para administradores e jogadores. |
 
 ## Como tudo se encaixa
 
@@ -90,6 +108,7 @@ A migração acontece passo a passo. Os repositórios antigos são arquivados qu
 
 | Documento | Conteúdo |
 |---|---|
+| [docs/manual/](docs/manual/README.pt.md) | O manual do usuário: cada página e configuração do site, com capturas de tela. |
 | [docs/install-linux.pt.md](docs/install-linux.pt.md) | Instalação, atualização e backup em uma VPS Linux. |
 | [docs/install-docker.pt.md](docs/install-docker.pt.md) | Como rodar a imagem publicada. |
 | [docs/install-azure.pt.md](docs/install-azure.pt.md) | Como rodar no Azure. |
@@ -100,6 +119,7 @@ A migração acontece passo a passo. Os repositórios antigos são arquivados qu
 | [docs/in-game-browser.pt.md](docs/in-game-browser.pt.md) | O que o navegador dentro do jogo suporta. |
 | [docs/site-parity](docs/site-parity/README.pt.md) | Cada tela do site que está sendo substituído, item por item, e a situação dela aqui. |
 | [CONTRIBUTING.pt.md](CONTRIBUTING.pt.md) | Como o código está organizado e as regras para mudanças. |
+| [tools/screenshots](tools/screenshots/README.pt.md) | A ferramenta que tira as capturas de tela da documentação. |
 
 O inglês é o idioma padrão deste repositório. Todo documento também tem uma versão em português (`.pt.md`) e uma em espanhol (`.es.md`).
 

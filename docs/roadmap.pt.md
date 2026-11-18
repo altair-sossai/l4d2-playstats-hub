@@ -74,7 +74,7 @@ O [CONTRIBUTING.pt.md](../CONTRIBUTING.pt.md) descreve as pastas e as regras de 
 | Catálogo de skins | O catálogo e as imagens ficam no repositório de assets, e a aplicação importa o catálogo. |
 | Plugins | Voltados para servidores baseados no L4D2 Competitive Rework. Um endereço e um token para todos eles. |
 | Comandos remotos | Enviar comandos do site para um servidor de jogo é um módulo, desligado por padrão, com log de auditoria. |
-| Anti-cheat | Reservado como módulo, desligado, sem implementação por enquanto. |
+| Anti-cheat | Um módulo, desligado por padrão, que mostra a página do Anti-Cheat com o download e as instruções. O programa Anti-Cheat e o serviço dele são projetos separados. |
 | Front-end | Duas camadas: o site principal, para os navegadores atuais, e algumas páginas feitas para o navegador dentro do jogo. |
 | Páginas dentro do jogo | Só o essencial: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. |
 | Área administrativa | Renderizada no servidor, como o resto do site. Um framework de página única, como o Angular, é permitido se alguma tela precisar, e não é usado. |
@@ -97,7 +97,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 | Comandos remotos | Comandos enviados do site para um servidor de jogo. Precisa do servidor ao vivo. | Desligado |
 | Loja de skins de armas | Estrelas, compras, presentes e skins equipadas. Precisa do ranking. | Desligado |
 | Ranking da comunidade | Votação em pares e o ranking dela. | Desligado |
-| Anti-cheat | Reservado. | Desligado |
+| Anti-Cheat | A página com o download e as instruções do Anti-Cheat. | Desligado |
 
 Um módulo desligado some do menu, e as páginas dele respondem como não encontradas.
 
@@ -156,9 +156,9 @@ Para cada servidor de jogo, o site mostra as duas linhas que devem ser coladas n
 | Estado | Significado |
 |---|---|
 | Aguardando | Nunca conectou. |
-| Conectado | Um sinal chegou nos últimos segundos. |
+| Conectado | Um sinal chegou nos últimos 90 segundos. |
 | Offline | Mostra quando foi visto pela última vez. |
-| Chave inválida | O identificador chegou com a chave errada. |
+| Chave inválida | O identificador chegou com a chave errada nos últimos 10 minutos. |
 
 Uma checklist mostra o que foi encontrado: conexão, plugin de envio, gravação de estatísticas, primeiro arquivo recebido, dados ao vivo e o plugin de skins. O comando `sm_playstats_test` roda a mesma verificação pelo console do servidor de jogo.
 

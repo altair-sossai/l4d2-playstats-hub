@@ -1,0 +1,11 @@
+Usage: playstats-hub <command>
+  status        Show whether the application is running
+  logs [lines]  Show the latest log lines
+  follow        Follow the log
+  restart       Restart the application
+  stop | start  Stop or start the application
+  setup-code    Show the code asked by the first-run setup page
+  add-admin <id> Make a SteamID64 an administrator of the site
+  backup [file] Save the database, avatars and configuration in one file
+  restore <file> Replace the current data with a backup file
+  update [tag]  Install the latest version, or the given one, keeping the data

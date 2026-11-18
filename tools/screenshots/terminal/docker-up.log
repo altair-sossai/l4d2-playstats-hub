@@ -1,0 +1,1491 @@
+[1A[1B[0G[?25l[+] Running 0/1
+ [33m⠋[0m hub Pulling                                                                             [34m0.1s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠙[0m hub Pulling                                                                             [34m0.2s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠹[0m hub Pulling                                                                             [34m0.3s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠸[0m hub Pulling                                                                             [34m0.4s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠼[0m hub Pulling                                                                             [34m0.5s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠴[0m hub Pulling                                                                             [34m0.6s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠦[0m hub Pulling                                                                             [34m0.7s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠧[0m hub Pulling                                                                             [34m0.8s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠇[0m hub Pulling                                                                             [34m0.9s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠏[0m hub Pulling                                                                             [34m1.0s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠋[0m hub Pulling                                                                             [34m1.1s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠙[0m hub Pulling                                                                             [34m1.2s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠹[0m hub Pulling                                                                             [34m1.3s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠸[0m hub Pulling                                                                             [34m1.4s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠼[0m hub Pulling                                                                             [34m1.5s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠴[0m hub Pulling                                                                             [34m1.6s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠦[0m hub Pulling                                                                             [34m1.7s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠧[0m hub Pulling                                                                             [34m1.8s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠇[0m hub Pulling                                                                             [34m1.9s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠏[0m hub Pulling                                                                             [34m2.0s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠋[0m hub Pulling                                                                             [34m2.1s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/1
+ [33m⠙[0m hub Pulling                                                                             [34m2.2s [0m
+[?25h[1A[1A[0G[?25l[+] Running 0/10
+ [33m⠹[0m hub [[32m⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.3s [0m
+   [33m⠋[0m 517b871c26ea Pulling fs layer                                                         [34m0.1s [0m
+   [33m⠋[0m 96aae9022e0e Pulling fs layer                                                         [34m0.1s [0m
+   [33m⠋[0m 15a4e69865af Pulling fs layer                                                         [34m0.1s [0m
+   [33m⠋[0m 3967328960e9 Waiting                                                                  [34m0.1s [0m
+   [33m⠋[0m f3523a159cfb Waiting                                                                  [34m0.1s [0m
+   [33m⠋[0m 867c673287a2 Waiting                                                                  [34m0.1s [0m
+   [33m⠋[0m 6d6098a0a038 Waiting                                                                  [34m0.1s [0m
+   [33m⠋[0m 1c6dcda30b0d Waiting                                                                  [34m0.1s [0m
+   [33m⠋[0m 56e8c0b7c30a Waiting                                                                  [34m0.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 0/10
+ [33m⠸[0m hub [[32m⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.4s [0m
+   [33m⠙[0m 517b871c26ea Pulling fs layer                                                         [34m0.2s [0m
+   [33m⠙[0m 96aae9022e0e Pulling fs layer                                                         [34m0.2s [0m
+   [33m⠙[0m 15a4e69865af Pulling fs layer                                                         [34m0.2s [0m
+   [33m⠙[0m 3967328960e9 Waiting                                                                  [34m0.2s [0m
+   [33m⠙[0m f3523a159cfb Waiting                                                                  [34m0.2s [0m
+   [33m⠙[0m 867c673287a2 Waiting                                                                  [34m0.2s [0m
+   [33m⠙[0m 6d6098a0a038 Waiting                                                                  [34m0.2s [0m
+   [33m⠙[0m 1c6dcda30b0d Waiting                                                                  [34m0.2s [0m
+   [33m⠙[0m 56e8c0b7c30a Waiting                                                                  [34m0.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 1/10
+ [33m⠼[0m hub [[32m⠀⣿⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.5s [0m
+   [33m⠹[0m 517b871c26ea Downloading    436kB/42.17MB                                             [34m0.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠹[0m 15a4e69865af Pulling fs layer                                                         [34m0.3s [0m
+   [33m⠹[0m 3967328960e9 Waiting                                                                  [34m0.3s [0m
+   [33m⠹[0m f3523a159cfb Waiting                                                                  [34m0.3s [0m
+   [33m⠹[0m 867c673287a2 Waiting                                                                  [34m0.3s [0m
+   [33m⠹[0m 6d6098a0a038 Waiting                                                                  [34m0.3s [0m
+   [33m⠹[0m 1c6dcda30b0d Waiting                                                                  [34m0.3s [0m
+   [33m⠹[0m 56e8c0b7c30a Waiting                                                                  [34m0.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 1/10
+ [33m⠴[0m hub [[32m⠀⣿⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.6s [0m
+   [33m⠸[0m 517b871c26ea Downloading  1.719MB/42.17MB                                             [34m0.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠸[0m 15a4e69865af Downloading  196.6kB/18.16MB                                             [34m0.4s [0m
+   [33m⠸[0m 3967328960e9 Waiting                                                                  [34m0.4s [0m
+   [33m⠸[0m f3523a159cfb Waiting                                                                  [34m0.4s [0m
+   [33m⠸[0m 867c673287a2 Waiting                                                                  [34m0.4s [0m
+   [33m⠸[0m 6d6098a0a038 Waiting                                                                  [34m0.4s [0m
+   [33m⠸[0m 1c6dcda30b0d Waiting                                                                  [34m0.4s [0m
+   [33m⠸[0m 56e8c0b7c30a Waiting                                                                  [34m0.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 1/10
+ [33m⠦[0m hub [[32m⠀⣿⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.7s [0m
+   [33m⠼[0m 517b871c26ea Downloading   3.02MB/42.17MB                                             [34m0.5s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠼[0m 15a4e69865af Downloading  583.5kB/18.16MB                                             [34m0.5s [0m
+   [33m⠼[0m 3967328960e9 Waiting                                                                  [34m0.5s [0m
+   [33m⠼[0m f3523a159cfb Waiting                                                                  [34m0.5s [0m
+   [33m⠼[0m 867c673287a2 Waiting                                                                  [34m0.5s [0m
+   [33m⠼[0m 6d6098a0a038 Waiting                                                                  [34m0.5s [0m
+   [33m⠼[0m 1c6dcda30b0d Waiting                                                                  [34m0.5s [0m
+   [33m⠼[0m 56e8c0b7c30a Waiting                                                                  [34m0.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 1/10
+ [33m⠧[0m hub [[32m⠀⣿⠀⠀⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.8s [0m
+   [33m⠴[0m 517b871c26ea Downloading   3.02MB/42.17MB                                             [34m0.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠴[0m 15a4e69865af Downloading  976.7kB/18.16MB                                             [34m0.6s [0m
+   [33m⠴[0m 3967328960e9 Waiting                                                                  [34m0.6s [0m
+   [33m⠴[0m f3523a159cfb Waiting                                                                  [34m0.6s [0m
+   [33m⠴[0m 867c673287a2 Waiting                                                                  [34m0.6s [0m
+   [33m⠴[0m 6d6098a0a038 Waiting                                                                  [34m0.6s [0m
+   [33m⠴[0m 1c6dcda30b0d Waiting                                                                  [34m0.6s [0m
+   [33m⠴[0m 56e8c0b7c30a Waiting                                                                  [34m0.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠇[0m hub [[32m⠀⣿⠀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m2.9s [0m
+   [33m⠦[0m 517b871c26ea Downloading   4.75MB/42.17MB                                             [34m0.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠦[0m 15a4e69865af Downloading  1.358MB/18.16MB                                             [34m0.7s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠦[0m f3523a159cfb Waiting                                                                  [34m0.7s [0m
+   [33m⠦[0m 867c673287a2 Waiting                                                                  [34m0.7s [0m
+   [33m⠦[0m 6d6098a0a038 Waiting                                                                  [34m0.7s [0m
+   [33m⠦[0m 1c6dcda30b0d Waiting                                                                  [34m0.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Waiting                                                                  [34m0.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠏[0m hub [[32m⡀⣿⠀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.0s [0m
+   [33m⠧[0m 517b871c26ea Downloading  6.475MB/42.17MB                                             [34m0.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠧[0m 15a4e69865af Downloading  1.358MB/18.16MB                                             [34m0.8s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠧[0m f3523a159cfb Waiting                                                                  [34m0.8s [0m
+   [33m⠧[0m 867c673287a2 Waiting                                                                  [34m0.8s [0m
+   [33m⠧[0m 6d6098a0a038 Waiting                                                                  [34m0.8s [0m
+   [33m⠧[0m 1c6dcda30b0d Waiting                                                                  [34m0.8s [0m
+   [33m⠧[0m 56e8c0b7c30a Waiting                                                                  [34m0.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠋[0m hub [[32m⡀⣿⠀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.1s [0m
+   [33m⠇[0m 517b871c26ea Downloading  8.213MB/42.17MB                                             [34m0.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠇[0m 15a4e69865af Downloading  1.747MB/18.16MB                                             [34m0.9s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠇[0m f3523a159cfb Waiting                                                                  [34m0.9s [0m
+   [33m⠇[0m 867c673287a2 Waiting                                                                  [34m0.9s [0m
+   [33m⠇[0m 6d6098a0a038 Waiting                                                                  [34m0.9s [0m
+   [33m⠇[0m 1c6dcda30b0d Waiting                                                                  [34m0.9s [0m
+   [33m⠇[0m 56e8c0b7c30a Waiting                                                                  [34m0.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠙[0m hub [[32m⡀⣿⠀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.2s [0m
+   [33m⠏[0m 517b871c26ea Downloading   9.94MB/42.17MB                                             [34m1.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠏[0m 15a4e69865af Downloading   2.14MB/18.16MB                                             [34m1.0s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠏[0m f3523a159cfb Waiting                                                                  [34m1.0s [0m
+   [33m⠏[0m 867c673287a2 Waiting                                                                  [34m1.0s [0m
+   [33m⠏[0m 6d6098a0a038 Waiting                                                                  [34m1.0s [0m
+   [33m⠏[0m 1c6dcda30b0d Waiting                                                                  [34m1.0s [0m
+   [33m⠏[0m 56e8c0b7c30a Waiting                                                                  [34m1.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠹[0m hub [[32m⣀⣿⡀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.3s [0m
+   [33m⠋[0m 517b871c26ea Downloading  11.68MB/42.17MB                                             [34m1.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠋[0m 15a4e69865af Downloading  2.725MB/18.16MB                                             [34m1.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠋[0m f3523a159cfb Waiting                                                                  [34m1.1s [0m
+   [33m⠋[0m 867c673287a2 Waiting                                                                  [34m1.1s [0m
+   [33m⠋[0m 6d6098a0a038 Waiting                                                                  [34m1.1s [0m
+   [33m⠋[0m 1c6dcda30b0d Waiting                                                                  [34m1.1s [0m
+   [33m⠋[0m 56e8c0b7c30a Waiting                                                                  [34m1.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠸[0m hub [[32m⣀⣿⡀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.4s [0m
+   [33m⠙[0m 517b871c26ea Downloading   13.4MB/42.17MB                                             [34m1.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠙[0m 15a4e69865af Downloading  3.506MB/18.16MB                                             [34m1.2s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠙[0m f3523a159cfb Downloading  393.2kB/38.82MB                                             [34m1.2s [0m
+   [33m⠙[0m 867c673287a2 Waiting                                                                  [34m1.2s [0m
+   [33m⠙[0m 6d6098a0a038 Waiting                                                                  [34m1.2s [0m
+   [33m⠙[0m 1c6dcda30b0d Waiting                                                                  [34m1.2s [0m
+   [33m⠙[0m 56e8c0b7c30a Waiting                                                                  [34m1.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠼[0m hub [[32m⣀⣿⡀⣿⠀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.5s [0m
+   [33m⠹[0m 517b871c26ea Downloading  15.57MB/42.17MB                                             [34m1.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠹[0m 15a4e69865af Downloading  4.091MB/18.16MB                                             [34m1.3s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠹[0m f3523a159cfb Downloading  2.783MB/38.82MB                                             [34m1.3s [0m
+   [33m⠹[0m 867c673287a2 Waiting                                                                  [34m1.3s [0m
+   [33m⠹[0m 6d6098a0a038 Waiting                                                                  [34m1.3s [0m
+   [33m⠹[0m 1c6dcda30b0d Waiting                                                                  [34m1.3s [0m
+   [33m⠹[0m 56e8c0b7c30a Waiting                                                                  [34m1.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠴[0m hub [[32m⣄⣿⣀⣿⡀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.6s [0m
+   [33m⠸[0m 517b871c26ea Downloading  18.16MB/42.17MB                                             [34m1.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠸[0m 15a4e69865af Downloading  5.064MB/18.16MB                                             [34m1.4s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠸[0m f3523a159cfb Downloading  5.174MB/38.82MB                                             [34m1.4s [0m
+   [33m⠸[0m 867c673287a2 Waiting                                                                  [34m1.4s [0m
+   [33m⠸[0m 6d6098a0a038 Waiting                                                                  [34m1.4s [0m
+   [33m⠸[0m 1c6dcda30b0d Waiting                                                                  [34m1.4s [0m
+   [33m⠸[0m 56e8c0b7c30a Waiting                                                                  [34m1.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠦[0m hub [[32m⣄⣿⣀⣿⡀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.7s [0m
+   [33m⠼[0m 517b871c26ea Downloading  18.16MB/42.17MB                                             [34m1.5s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠼[0m 15a4e69865af Downloading  6.417MB/18.16MB                                             [34m1.5s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠼[0m f3523a159cfb Downloading  5.174MB/38.82MB                                             [34m1.5s [0m
+   [33m⠼[0m 867c673287a2 Waiting                                                                  [34m1.5s [0m
+   [33m⠼[0m 6d6098a0a038 Waiting                                                                  [34m1.5s [0m
+   [33m⠼[0m 1c6dcda30b0d Waiting                                                                  [34m1.5s [0m
+   [33m⠼[0m 56e8c0b7c30a Waiting                                                                  [34m1.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠧[0m hub [[32m⣄⣿⣄⣿⡀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.8s [0m
+   [33m⠴[0m 517b871c26ea Downloading  20.33MB/42.17MB                                             [34m1.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠴[0m 15a4e69865af Downloading  8.164MB/18.16MB                                             [34m1.6s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠴[0m f3523a159cfb Downloading  7.966MB/38.82MB                                             [34m1.6s [0m
+   [33m⠴[0m 867c673287a2 Waiting                                                                  [34m1.6s [0m
+   [33m⠴[0m 6d6098a0a038 Waiting                                                                  [34m1.6s [0m
+   [33m⠴[0m 1c6dcda30b0d Waiting                                                                  [34m1.6s [0m
+   [33m⠴[0m 56e8c0b7c30a Waiting                                                                  [34m1.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠇[0m hub [[32m⣤⣿⣤⣿⣀⠀⠀⠀⠀[0m] Pulling                                                                 [34m3.9s [0m
+   [33m⠦[0m 517b871c26ea Downloading  22.94MB/42.17MB                                             [34m1.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠦[0m 15a4e69865af Downloading  9.924MB/18.16MB                                             [34m1.7s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠦[0m f3523a159cfb Downloading  10.37MB/38.82MB                                             [34m1.7s [0m
+   [33m⠦[0m 867c673287a2 Waiting                                                                  [34m1.7s [0m
+   [33m⠦[0m 6d6098a0a038 Waiting                                                                  [34m1.7s [0m
+   [33m⠦[0m 1c6dcda30b0d Waiting                                                                  [34m1.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Waiting                                                                  [34m1.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠏[0m hub [[32m⣤⣿⣦⣿⣀⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.0s [0m
+   [33m⠧[0m 517b871c26ea Downloading  25.54MB/42.17MB                                             [34m1.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠧[0m 15a4e69865af Downloading  11.85MB/18.16MB                                             [34m1.8s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠧[0m f3523a159cfb Downloading  12.76MB/38.82MB                                             [34m1.8s [0m
+   [33m⠧[0m 867c673287a2 Waiting                                                                  [34m1.8s [0m
+   [33m⠧[0m 6d6098a0a038 Waiting                                                                  [34m1.8s [0m
+   [33m⠧[0m 1c6dcda30b0d Waiting                                                                  [34m1.8s [0m
+   [33m⠧[0m 56e8c0b7c30a Waiting                                                                  [34m1.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠋[0m hub [[32m⣦⣿⣦⣿⣄⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.1s [0m
+   [33m⠇[0m 517b871c26ea Downloading  28.14MB/42.17MB                                             [34m1.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠇[0m 15a4e69865af Downloading  11.85MB/18.16MB                                             [34m1.9s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠇[0m f3523a159cfb Downloading  15.13MB/38.82MB                                             [34m1.9s [0m
+   [33m⠇[0m 867c673287a2 Waiting                                                                  [34m1.9s [0m
+   [33m⠇[0m 6d6098a0a038 Waiting                                                                  [34m1.9s [0m
+   [33m⠇[0m 1c6dcda30b0d Waiting                                                                  [34m1.9s [0m
+   [33m⠇[0m 56e8c0b7c30a Waiting                                                                  [34m1.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 2/10
+ [33m⠙[0m hub [[32m⣦⣿⣶⣿⣄⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.2s [0m
+   [33m⠏[0m 517b871c26ea Downloading  30.74MB/42.17MB                                             [34m2.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [33m⠏[0m 15a4e69865af Downloading  14.18MB/18.16MB                                             [34m2.0s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠏[0m f3523a159cfb Downloading  17.54MB/38.82MB                                             [34m2.0s [0m
+   [33m⠏[0m 867c673287a2 Waiting                                                                  [34m2.0s [0m
+   [33m⠏[0m 6d6098a0a038 Waiting                                                                  [34m2.0s [0m
+   [33m⠏[0m 1c6dcda30b0d Waiting                                                                  [34m2.0s [0m
+   [33m⠏[0m 56e8c0b7c30a Waiting                                                                  [34m2.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 3/10
+ [33m⠹[0m hub [[32m⣶⣿⣿⣿⣤⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.3s [0m
+   [33m⠋[0m 517b871c26ea Downloading  33.34MB/42.17MB                                             [34m2.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠋[0m f3523a159cfb Downloading  19.91MB/38.82MB                                             [34m2.1s [0m
+   [33m⠋[0m 867c673287a2 Waiting                                                                  [34m2.1s [0m
+   [33m⠋[0m 6d6098a0a038 Waiting                                                                  [34m2.1s [0m
+   [33m⠋[0m 1c6dcda30b0d Waiting                                                                  [34m2.1s [0m
+   [33m⠋[0m 56e8c0b7c30a Waiting                                                                  [34m2.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 3/10
+ [33m⠸[0m hub [[32m⣶⣿⣿⣿⣤⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.4s [0m
+   [33m⠙[0m 517b871c26ea Downloading  35.93MB/42.17MB                                             [34m2.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠙[0m f3523a159cfb Downloading   22.3MB/38.82MB                                             [34m2.2s [0m
+   [33m⠙[0m 867c673287a2 Waiting                                                                  [34m2.2s [0m
+   [33m⠙[0m 6d6098a0a038 Waiting                                                                  [34m2.2s [0m
+   [33m⠙[0m 1c6dcda30b0d Waiting                                                                  [34m2.2s [0m
+   [33m⠙[0m 56e8c0b7c30a Waiting                                                                  [34m2.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 3/10
+ [33m⠼[0m hub [[32m⣷⣿⣿⣿⣦⠀⠀⠀⠀[0m] Pulling                                                                 [34m4.5s [0m
+   [33m⠹[0m 517b871c26ea Downloading  38.96MB/42.17MB                                             [34m2.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠹[0m f3523a159cfb Downloading  25.11MB/38.82MB                                             [34m2.3s [0m
+   [33m⠹[0m 867c673287a2 Waiting                                                                  [34m2.3s [0m
+   [33m⠹[0m 6d6098a0a038 Waiting                                                                  [34m2.3s [0m
+   [33m⠹[0m 1c6dcda30b0d Waiting                                                                  [34m2.3s [0m
+   [33m⠹[0m 56e8c0b7c30a Waiting                                                                  [34m2.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 4/10
+ [33m⠴[0m hub [[32m⣷⣿⣿⣿⣦⣿⠀⠀⠀[0m] Pulling                                                                 [34m4.6s [0m
+   [33m⠸[0m 517b871c26ea Downloading  38.96MB/42.17MB                                             [34m2.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠸[0m f3523a159cfb Downloading  27.49MB/38.82MB                                             [34m2.4s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠸[0m 6d6098a0a038 Waiting                                                                  [34m2.4s [0m
+   [33m⠸[0m 1c6dcda30b0d Waiting                                                                  [34m2.4s [0m
+   [33m⠸[0m 56e8c0b7c30a Waiting                                                                  [34m2.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 5/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣶⣿⠀⠀⠀[0m] Pulling                                                                 [34m4.7s [0m
+   [32m✔[0m 517b871c26ea Download complete [32m[0m                                                       [34m2.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠼[0m f3523a159cfb Downloading  29.47MB/38.82MB                                             [34m2.5s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠼[0m 6d6098a0a038 Waiting                                                                  [34m2.5s [0m
+   [33m⠼[0m 1c6dcda30b0d Waiting                                                                  [34m2.5s [0m
+   [33m⠼[0m 56e8c0b7c30a Waiting                                                                  [34m2.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 4/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣶⣿⠀⠀⠀[0m] Pulling                                                                 [34m4.8s [0m
+   [33m⠼[0m 517b871c26ea Extracting    426kB/42.17MB                                              [34m2.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠴[0m f3523a159cfb Downloading  29.47MB/38.82MB                                             [34m2.6s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠴[0m 6d6098a0a038 Downloading  147.5kB/13.19MB                                             [34m2.6s [0m
+   [33m⠴[0m 1c6dcda30b0d Waiting                                                                  [34m2.6s [0m
+   [33m⠴[0m 56e8c0b7c30a Waiting                                                                  [34m2.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 5/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣶⣿⡀⣿⠀[0m] Pulling                                                                 [34m4.9s [0m
+   [33m⠴[0m 517b871c26ea Extracting     7.242MB/42.17MB                                           [34m2.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠦[0m f3523a159cfb Downloading    31.46MB/38.82MB                                           [34m2.7s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠦[0m 6d6098a0a038 Downloading    2.905MB/13.19MB                                           [34m2.7s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Waiting                                                                  [34m2.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 5/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣷⣿⣄⣿⠀[0m] Pulling                                                                 [34m5.0s [0m
+   [33m⠦[0m 517b871c26ea Extracting     10.22MB/42.17MB                                           [34m2.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠧[0m f3523a159cfb Downloading    34.25MB/38.82MB                                           [34m2.8s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠧[0m 6d6098a0a038 Downloading    5.829MB/13.19MB                                           [34m2.8s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠧[0m 56e8c0b7c30a Waiting                                                                  [34m2.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 5/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣷⣿⣤⣿⠀[0m] Pulling                                                                 [34m5.1s [0m
+   [33m⠧[0m 517b871c26ea Extracting     15.76MB/42.17MB                                           [34m2.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [33m⠇[0m f3523a159cfb Downloading    36.63MB/38.82MB                                           [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠇[0m 6d6098a0a038 Downloading    8.131MB/13.19MB                                           [34m2.9s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠇[0m 56e8c0b7c30a Waiting                                                                  [34m2.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 6/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣶⣿⠀[0m] 105.8MB / 170.8MB Pulling                                               [34m5.2s [0m
+   [33m⠇[0m 517b871c26ea Extracting     18.32MB/42.17MB                                           [34m3.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [33m⠏[0m 6d6098a0a038 Downloading    10.85MB/13.19MB                                           [34m3.0s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠏[0m 56e8c0b7c30a Downloading    534.3kB/58.45MB                                           [34m3.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⠀[0m] 111.2MB / 170.8MB Pulling                                               [34m5.3s [0m
+   [33m⠏[0m 517b871c26ea Extracting     18.74MB/42.17MB                                           [34m3.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠋[0m 56e8c0b7c30a Downloading    3.732MB/58.45MB                                           [34m3.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⠀[0m] 112.8MB / 170.8MB Pulling                                               [34m5.4s [0m
+   [33m⠋[0m 517b871c26ea Extracting     20.45MB/42.17MB                                           [34m3.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠙[0m 56e8c0b7c30a Downloading    5.331MB/58.45MB                                           [34m3.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⠀[0m] 114.4MB / 170.8MB Pulling                                               [34m5.5s [0m
+   [33m⠙[0m 517b871c26ea Extracting     25.13MB/42.17MB                                           [34m3.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠹[0m 56e8c0b7c30a Downloading    6.938MB/58.45MB                                           [34m3.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⠀[0m] 114.4MB / 170.8MB Pulling                                               [34m5.6s [0m
+   [33m⠹[0m 517b871c26ea Extracting     32.37MB/42.17MB                                           [34m3.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠸[0m 56e8c0b7c30a Downloading    6.938MB/58.45MB                                           [34m3.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⡀[0m]   116MB / 170.8MB Pulling                                               [34m5.7s [0m
+   [33m⠸[0m 517b871c26ea Extracting     35.78MB/42.17MB                                           [34m3.5s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠼[0m 56e8c0b7c30a Downloading     8.55MB/58.45MB                                           [34m3.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⡀[0m] 118.2MB / 170.8MB Pulling                                               [34m5.8s [0m
+   [33m⠼[0m 517b871c26ea Extracting     35.78MB/42.17MB                                           [34m3.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠴[0m 56e8c0b7c30a Downloading    10.68MB/58.45MB                                           [34m3.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⡀[0m] 119.8MB / 170.8MB Pulling                                               [34m5.9s [0m
+   [33m⠴[0m 517b871c26ea Extracting     35.78MB/42.17MB                                           [34m3.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Downloading    12.29MB/58.45MB                                           [34m3.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⡀[0m] 121.4MB / 170.8MB Pulling                                               [34m6.0s [0m
+   [33m⠦[0m 517b871c26ea Extracting     35.78MB/42.17MB                                           [34m3.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠧[0m 56e8c0b7c30a Downloading     13.9MB/58.45MB                                           [34m3.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣀[0m] 123.5MB / 170.8MB Pulling                                               [34m6.1s [0m
+   [33m⠧[0m 517b871c26ea Extracting     36.63MB/42.17MB                                           [34m3.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠇[0m 56e8c0b7c30a Downloading    16.03MB/58.45MB                                           [34m3.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣀[0m] 125.7MB / 170.8MB Pulling                                               [34m6.2s [0m
+   [33m⠇[0m 517b871c26ea Extracting     38.76MB/42.17MB                                           [34m4.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠏[0m 56e8c0b7c30a Downloading    18.18MB/58.45MB                                           [34m4.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣀[0m] 127.3MB / 170.8MB Pulling                                               [34m6.3s [0m
+   [33m⠏[0m 517b871c26ea Extracting     38.76MB/42.17MB                                           [34m4.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠋[0m 56e8c0b7c30a Downloading    19.78MB/58.45MB                                           [34m4.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣀[0m] 127.3MB / 170.8MB Pulling                                               [34m6.4s [0m
+   [33m⠋[0m 517b871c26ea Extracting     38.76MB/42.17MB                                           [34m4.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠙[0m 56e8c0b7c30a Downloading    19.78MB/58.45MB                                           [34m4.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣀[0m] 128.9MB / 170.8MB Pulling                                               [34m6.5s [0m
+   [33m⠙[0m 517b871c26ea Extracting     38.76MB/42.17MB                                           [34m4.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠹[0m 56e8c0b7c30a Downloading    21.38MB/58.45MB                                           [34m4.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣄[0m] 130.5MB / 170.8MB Pulling                                               [34m6.6s [0m
+   [33m⠹[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠸[0m 56e8c0b7c30a Downloading    22.99MB/58.45MB                                           [34m4.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣄[0m] 132.1MB / 170.8MB Pulling                                               [34m6.7s [0m
+   [33m⠸[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.5s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠼[0m 56e8c0b7c30a Downloading     24.6MB/58.45MB                                           [34m4.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣄[0m] 134.2MB / 170.8MB Pulling                                               [34m6.8s [0m
+   [33m⠼[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠴[0m 56e8c0b7c30a Downloading    26.73MB/58.45MB                                           [34m4.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣤[0m]   138MB / 170.8MB Pulling                                               [34m6.9s [0m
+   [33m⠴[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Downloading    30.47MB/58.45MB                                           [34m4.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣤[0m] 139.6MB / 170.8MB Pulling                                               [34m7.0s [0m
+   [33m⠦[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠧[0m 56e8c0b7c30a Downloading    32.07MB/58.45MB                                           [34m4.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣤[0m] 139.6MB / 170.8MB Pulling                                               [34m7.1s [0m
+   [33m⠧[0m 517b871c26ea Extracting     39.19MB/42.17MB                                           [34m4.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠇[0m 56e8c0b7c30a Downloading    32.07MB/58.45MB                                           [34m4.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣤[0m] 141.2MB / 170.8MB Pulling                                               [34m7.2s [0m
+   [33m⠇[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠏[0m 56e8c0b7c30a Downloading    33.69MB/58.45MB                                           [34m5.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣤[0m] 142.8MB / 170.8MB Pulling                                               [34m7.3s [0m
+   [33m⠏[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠋[0m 56e8c0b7c30a Downloading    35.28MB/58.45MB                                           [34m5.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m] 144.4MB / 170.8MB Pulling                                               [34m7.4s [0m
+   [33m⠋[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠙[0m 56e8c0b7c30a Downloading    36.89MB/58.45MB                                           [34m5.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m]   146MB / 170.8MB Pulling                                               [34m7.5s [0m
+   [33m⠙[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠹[0m 56e8c0b7c30a Downloading    38.49MB/58.45MB                                           [34m5.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m] 147.6MB / 170.8MB Pulling                                               [34m7.6s [0m
+   [33m⠹[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.4s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠸[0m 56e8c0b7c30a Downloading    40.11MB/58.45MB                                           [34m5.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m] 147.6MB / 170.8MB Pulling                                               [34m7.7s [0m
+   [33m⠸[0m 517b871c26ea Extracting     39.62MB/42.17MB                                           [34m5.5s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠼[0m 56e8c0b7c30a Downloading    40.11MB/58.45MB                                           [34m5.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m] 149.2MB / 170.8MB Pulling                                               [34m7.8s [0m
+   [33m⠼[0m 517b871c26ea Extracting     40.04MB/42.17MB                                           [34m5.6s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠴[0m 56e8c0b7c30a Downloading    41.71MB/58.45MB                                           [34m5.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣦[0m] 150.8MB / 170.8MB Pulling                                               [34m7.9s [0m
+   [33m⠴[0m 517b871c26ea Extracting     40.04MB/42.17MB                                           [34m5.7s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Downloading    43.31MB/58.45MB                                           [34m5.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m] 152.4MB / 170.8MB Pulling                                               [34m8.0s [0m
+   [33m⠦[0m 517b871c26ea Extracting     40.89MB/42.17MB                                           [34m5.8s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠧[0m 56e8c0b7c30a Downloading    44.93MB/58.45MB                                           [34m5.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m]   154MB / 170.8MB Pulling                                               [34m8.1s [0m
+   [33m⠧[0m 517b871c26ea Extracting     40.89MB/42.17MB                                           [34m5.9s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠇[0m 56e8c0b7c30a Downloading    46.54MB/58.45MB                                           [34m5.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m]   154MB / 170.8MB Pulling                                               [34m8.2s [0m
+   [33m⠇[0m 517b871c26ea Extracting     40.89MB/42.17MB                                           [34m6.0s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠏[0m 56e8c0b7c30a Downloading    46.54MB/58.45MB                                           [34m6.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m] 156.2MB / 170.8MB Pulling                                               [34m8.3s [0m
+   [33m⠏[0m 517b871c26ea Extracting     41.75MB/42.17MB                                           [34m6.1s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠋[0m 56e8c0b7c30a Downloading    48.15MB/58.45MB                                           [34m6.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m] 157.9MB / 170.8MB Pulling                                               [34m8.4s [0m
+   [33m⠋[0m 517b871c26ea Extracting     41.75MB/42.17MB                                           [34m6.2s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠙[0m 56e8c0b7c30a Downloading    49.76MB/58.45MB                                           [34m6.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣶[0m] 159.9MB / 170.8MB Pulling                                               [34m8.5s [0m
+   [33m⠙[0m 517b871c26ea Extracting     42.17MB/42.17MB                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Download complete [32m[0m                                                       [34m0.2s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠹[0m 56e8c0b7c30a Downloading    51.36MB/58.45MB                                           [34m6.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣷[0m] 161.5MB / 170.8MB Pulling                                               [34m8.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [33m⠹[0m 96aae9022e0e Extracting        389B/389B                                              [34m6.4s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠸[0m 56e8c0b7c30a Downloading    52.96MB/58.45MB                                           [34m6.4s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣷[0m] 163.1MB / 170.8MB Pulling                                               [34m8.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [33m⠸[0m 96aae9022e0e Extracting        389B/389B                                              [34m6.5s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠼[0m 56e8c0b7c30a Downloading    54.56MB/58.45MB                                           [34m6.5s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣷[0m] 163.1MB / 170.8MB Pulling                                               [34m8.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [33m⠼[0m 96aae9022e0e Extracting        389B/389B                                              [34m6.6s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠴[0m 56e8c0b7c30a Downloading    54.56MB/58.45MB                                           [34m6.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 7/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣷[0m] 164.7MB / 170.8MB Pulling                                               [34m8.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [33m⠴[0m 96aae9022e0e Extracting        389B/389B                                              [34m6.7s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [33m⠦[0m 56e8c0b7c30a Downloading    56.17MB/58.45MB                                           [34m6.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [33m⠦[0m 96aae9022e0e Extracting          389B/389B                                            [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Download complete [32m[0m                                                       [34m2.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠋[0m 15a4e69865af Extracting       196.6kB/18.16MB                                         [34m6.9s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠙[0m 15a4e69865af Extracting       196.6kB/18.16MB                                         [34m7.0s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠹[0m 15a4e69865af Extracting       196.6kB/18.16MB                                         [34m7.1s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠸[0m 15a4e69865af Extracting       196.6kB/18.16MB                                         [34m7.2s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠼[0m 15a4e69865af Extracting       393.2kB/18.16MB                                         [34m7.3s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.3MB / 170.8MB Pulling                                               [34m9.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠴[0m 15a4e69865af Extracting       10.03MB/18.16MB                                         [34m7.4s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 166.9MB / 170.8MB Pulling                                               [34m9.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠦[0m 15a4e69865af Extracting        17.3MB/18.16MB                                         [34m7.5s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.1MB / 170.8MB Pulling                                               [34m9.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠧[0m 15a4e69865af Extracting        17.5MB/18.16MB                                         [34m7.6s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.1MB / 170.8MB Pulling                                               [34m9.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [33m⠇[0m 15a4e69865af Extracting        17.5MB/18.16MB                                         [34m7.7s [0m
+   [32m✔[0m 3967328960e9 Download complete [32m[0m                                                       [34m0.6s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [33m⠦[0m 3967328960e9 Extracting       3.603kB/3.603kB                                         [34m7.8s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [33m⠧[0m 3967328960e9 Extracting       3.603kB/3.603kB                                         [34m7.9s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [33m⠇[0m 3967328960e9 Extracting       3.603kB/3.603kB                                         [34m8.0s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [33m⠏[0m 3967328960e9 Extracting       3.603kB/3.603kB                                         [34m8.1s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [33m⠋[0m 3967328960e9 Extracting       3.603kB/3.603kB                                         [34m8.2s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Download complete [32m[0m                                                       [34m2.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m10.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [33m⠏[0m f3523a159cfb Extracting       393.2kB/38.82MB                                         [34m8.7s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m11.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [33m⠋[0m f3523a159cfb Extracting       9.044MB/38.82MB                                         [34m8.8s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m11.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [33m⠙[0m f3523a159cfb Extracting       9.044MB/38.82MB                                         [34m8.9s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m11.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [33m⠹[0m f3523a159cfb Extracting       17.69MB/38.82MB                                         [34m9.0s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 167.8MB / 170.8MB Pulling                                              [34m11.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [33m⠸[0m f3523a159cfb Extracting       27.53MB/38.82MB                                         [34m9.1s [0m
+   [32m✔[0m 867c673287a2 Download complete [32m[0m                                                       [34m2.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [33m⠸[0m 867c673287a2 Extracting          155B/155B                                            [34m9.2s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [33m⠼[0m 867c673287a2 Extracting          155B/155B                                            [34m9.3s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [33m⠴[0m 867c673287a2 Extracting          155B/155B                                            [34m9.4s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [33m⠦[0m 867c673287a2 Extracting          155B/155B                                            [34m9.5s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [33m⠧[0m 867c673287a2 Extracting          155B/155B                                            [34m9.6s [0m
+   [32m✔[0m 6d6098a0a038 Download complete [32m[0m                                                       [34m3.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m11.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠋[0m 6d6098a0a038 Extracting       163.8kB/13.19MB                                         [34m9.7s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠙[0m 6d6098a0a038 Extracting       163.8kB/13.19MB                                         [34m9.8s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠹[0m 6d6098a0a038 Extracting       163.8kB/13.19MB                                         [34m9.9s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠸[0m 6d6098a0a038 Extracting       163.8kB/13.19MB                                        [34m10.0s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠼[0m 6d6098a0a038 Extracting       163.8kB/13.19MB                                        [34m10.1s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠴[0m 6d6098a0a038 Extracting       327.7kB/13.19MB                                        [34m10.2s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m]   170MB / 170.8MB Pulling                                              [34m12.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [33m⠦[0m 6d6098a0a038 Extracting        9.83MB/13.19MB                                        [34m10.3s [0m
+   [32m✔[0m 1c6dcda30b0d Download complete [32m[0m                                                       [34m2.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m12.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠦[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.4s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m12.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠧[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.5s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m12.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠇[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.6s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m12.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠏[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.7s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠋[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.8s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [33m⠙[0m 1c6dcda30b0d Extracting           93B/93B                                            [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠴[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 9/10
+ [33m⠦[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.7s [0m
+   [32m✔[0m 517b871c26ea Pull complete   [32m[0m                                                         [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete   [32m[0m                                                         [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete   [32m[0m                                                         [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete   [32m[0m                                                         [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete   [32m[0m                                                         [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete   [32m[0m                                                         [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete   [32m[0m                                                        [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete   [32m[0m                                                        [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Download complete [32m[0m                                                       [34m6.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠧[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.8s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠧[0m 56e8c0b7c30a Extracting  557.1kB/58.45MB                                             [34m11.6s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠇[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m13.9s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠇[0m 56e8c0b7c30a Extracting  8.913MB/58.45MB                                             [34m11.7s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠏[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m14.0s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠏[0m 56e8c0b7c30a Extracting  16.71MB/58.45MB                                             [34m11.8s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠋[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m14.1s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠋[0m 56e8c0b7c30a Extracting  26.18MB/58.45MB                                             [34m11.9s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠙[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m14.2s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠙[0m 56e8c0b7c30a Extracting  33.42MB/58.45MB                                             [34m12.0s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠹[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m14.3s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠹[0m 56e8c0b7c30a Extracting  41.78MB/58.45MB                                             [34m12.1s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠸[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.1MB / 170.8MB Pulling                                              [34m14.4s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠸[0m 56e8c0b7c30a Extracting  49.58MB/58.45MB                                             [34m12.2s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[+] Running 8/10
+ [33m⠼[0m hub [[32m⣿⣿⣿⣿⣿⣿⣿⣿⣿[0m] 170.8MB / 170.8MB Pulling                                              [34m14.5s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [33m⠼[0m 56e8c0b7c30a Extracting  58.45MB/58.45MB                                             [34m12.3s [0m
+[?25h[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[1A[0G[?25l[34m[+] Running 10/10[0m
+ [32m✔[0m hub Pulled               [32m[0m                                                              [34m14.6s [0m
+   [32m✔[0m 517b871c26ea Pull complete [32m[0m                                                           [34m6.3s [0m
+   [32m✔[0m 96aae9022e0e Pull complete [32m[0m                                                           [34m6.8s [0m
+   [32m✔[0m 15a4e69865af Pull complete [32m[0m                                                           [34m7.8s [0m
+   [32m✔[0m 3967328960e9 Pull complete [32m[0m                                                           [34m8.3s [0m
+   [32m✔[0m f3523a159cfb Pull complete [32m[0m                                                           [34m9.2s [0m
+   [32m✔[0m 867c673287a2 Pull complete [32m[0m                                                           [34m9.7s [0m
+   [32m✔[0m 6d6098a0a038 Pull complete [32m[0m                                                          [34m10.4s [0m
+   [32m✔[0m 1c6dcda30b0d Pull complete [32m[0m                                                          [34m10.9s [0m
+   [32m✔[0m 56e8c0b7c30a Pull complete [32m[0m                                                          [34m12.3s [0m
+[?25h[1A[1B[0G[?25l[+] Running 0/1
+ [33m⠋[0m Network playstats_default  Creating                                                     [34m0.0s [0m
+[?25h[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠋[0m Container playstats-hub-1  Creating                                                     [34m0.1s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠙[0m Container playstats-hub-1  Creating                                                     [34m0.2s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠹[0m Container playstats-hub-1  Creating                                                     [34m0.3s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠸[0m Container playstats-hub-1  Creating                                                     [34m0.4s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠼[0m Container playstats-hub-1  Creating                                                     [34m0.5s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠴[0m Container playstats-hub-1  Creating                                                     [34m0.6s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠦[0m Container playstats-hub-1  Creating                                                     [34m0.7s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠧[0m Container playstats-hub-1  Creating                                                     [34m0.8s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠇[0m Container playstats-hub-1  Creating                                                     [34m0.9s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠏[0m Container playstats-hub-1  Creating                                                     [34m1.0s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠋[0m Container playstats-hub-1  Creating                                                     [34m1.1s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠙[0m Container playstats-hub-1  Creating                                                     [34m1.2s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠹[0m Container playstats-hub-1  Creating                                                     [34m1.3s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠸[0m Container playstats-hub-1  Creating                                                     [34m1.4s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠼[0m Container playstats-hub-1  Creating                                                     [34m1.5s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠴[0m Container playstats-hub-1  Creating                                                     [34m1.6s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠦[0m Container playstats-hub-1  Creating                                                     [34m1.7s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠧[0m Container playstats-hub-1  Starting                                                     [34m1.8s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[+] Running 2/3
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [33m⠇[0m Container playstats-hub-1  Starting                                                     [34m1.9s [0m
+[?25h[1A[1A[1A[1A[0G[?25l[34m[+] Running 3/3[0m
+ [32m✔[0m Network playstats_default  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Volume playstats_hub-data  [32mCreated[0m                                                      [34m0.0s [0m
+ [32m✔[0m Container playstats-hub-1  [32mStarted[0m                                                      [34m1.9s [0m
+[?25h

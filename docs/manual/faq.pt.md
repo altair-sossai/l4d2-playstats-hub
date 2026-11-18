@@ -1,0 +1,95 @@
+# Dúvidas e problemas
+
+🌐 [English](faq.md) | **Português** | [Español](faq.es.md)
+
+Dúvidas comuns de jogadores e administradores, e o que fazer quando algo não funciona. Os problemas da instalação em si também estão listados no fim de cada guia de instalação: [Linux](../install-linux.pt.md#se-algo-der-errado), [Docker](../install-docker.pt.md), e os do servidor de jogo em [Conectando um servidor de jogo](../game-server.pt.md).
+
+[Voltar ao manual](README.pt.md)
+
+## Conteúdo
+
+- [Para jogadores](#para-jogadores)
+- [Para administradores](#para-administradores)
+- [Resolvendo problemas](#resolvendo-problemas)
+
+## Para jogadores
+
+**Joguei uma partida e ela não está no ranking.**
+Só as partidas ranqueadas contam. Uma partida é ranqueada quando a configuração e o tamanho do time dela se encaixam em uma regra de modo de jogo que conta, e ela tem mapas suficientes: com a regra padrão, 4v4 e pelo menos 2 mapas da mesma campanha em sequência. Mapas avulsos, 1v1 e outros modos aparecem como **Casual**. A partida também só aparece depois que o último mapa dela é enviado, alguns segundos depois de o mapa terminar.
+
+**Minha vitória contou como rage quit.**
+Um jogador que estava no primeiro mapa da partida e não está no último mapa é contado como rage quit, mesmo que tenha voltado depois ou perdido a conexão. Veja [Ranking > Vitórias, derrotas, empates e rage quits](ranking.pt.md#vitórias-derrotas-empates-e-rage-quits).
+
+**Entrei no meio de uma partida e não ganhei a vitória.**
+Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem entrou depois ganha só os pontos de MVP.
+
+**Minha experiência não mudou depois de um empate.**
+Um empate não dá vitória nem derrota, só os pontos de MVP.
+
+**Por que a minha experiência zerou?**
+Começou uma nova temporada. A temporada passada fica em **Mais > Histórico** e no seletor de período.
+
+**Meu nome está antigo ou errado.**
+O site mostra o nome que você mais usou no período. Os seus outros nomes ficam em **Nomes anteriores**, na sua página.
+
+**Como eu ganho estrelas?**
+Uma estrela por cada prêmio de MVP de SI e de MVP de CI em uma partida ranqueada. Veja [Loja de skins de armas > Estrelas](skin-shop.pt.md#estrelas).
+
+**Minhas skins sumiram.**
+Se o site faz o reembolso das skins no fim da temporada, as skins compradas são recolhidas quando começa uma nova temporada, e as estrelas voltam para você. Compre de novo. Presentes nunca são recolhidos.
+
+**Comprei uma skin e não vejo ela no jogo.**
+Ela aparece a partir da próxima troca de mapa. No jogo, `!skin status` mostra o que você tem.
+
+**O site diz que preciso de mais partidas para votar.**
+O ranking da comunidade pede um número mínimo de partidas, contadas em todas as temporadas: 10 por padrão.
+
+**A página do servidor ao vivo está atrasada em relação ao jogo.**
+Ela fica cerca de 15 segundos atrás, de propósito.
+
+## Para administradores
+
+**Como eu adiciono outro administrador?**
+Em [Administração > Administradores](administration.pt.md#administradores), com o SteamID64 dele. Se você não consegue mais fazer login, use `playstats-hub add-admin <SteamID64>` no Linux.
+
+**Como eu adiciono um segundo servidor de jogo?**
+Em [Administração > Servidores de jogo](administration.pt.md#servidores-de-jogo). Cada servidor recebe o próprio token. Os resultados dos jogadores se somam entre todos os servidores.
+
+**Perdi o token de um servidor de jogo.**
+O site não guarda a chave. Abra a página do servidor e clique em **Gerar uma nova chave**, depois coloque o novo token na configuração do servidor de jogo.
+
+**Mudei os modos de jogo e as partidas antigas não mudaram.**
+As regras valem para os arquivos novos. Use **Reprocessar todas as partidas** na [visão geral](administration.pt.md#visão-geral).
+
+**Mudei os pontos e todas as temporadas mudaram.**
+É o esperado: os rankings são calculados a partir das partidas com os pontos atuais. As temporadas não têm uma cópia congelada.
+
+**Posso mudar a duração da temporada no meio de uma temporada?**
+Sim. A temporada atual mantém as datas dela; a nova duração vale a partir da próxima.
+
+**Tem como remover uma partida?**
+Não. Uma partida vem dos arquivos de estatísticas. Para corrigir um resultado errado, [edite o placar do mapa](matches.pt.md#editando-o-placar-de-um-mapa).
+
+**Como eu importo os dados do meu site antigo?**
+A migração de dados é um programa separado, fora deste repositório, que envia os arquivos de estatísticas antigos pelo mesmo caminho que os plugins usam. Veja [o roadmap](../roadmap.pt.md#migração-de-dados).
+
+**Posso rodar duas cópias do site atrás de um balanceador de carga?**
+Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.
+
+## Resolvendo problemas
+
+| O que você vê | O que fazer |
+|---|---|
+| Toda página leva para a página de configuração | A configuração não foi concluída. Faça login com a conta de administrador e conclua. Veja [Configuração inicial](first-run.pt.md). |
+| O código de configuração é recusado | Copie de novo: `playstats-hub setup-code`, ou `docker compose logs hub \| grep "setup code"`. Ele só funciona até o primeiro administrador fazer login. |
+| O servidor de jogo fica em **Aguardando a primeira conexão** | Confira as duas linhas no `cfg/server.cfg`, se o `l4d2_playstats_sync.smx` está na própria `addons/sourcemod/plugins/` e se o servidor de jogo consegue alcançar o endereço do site. Rode `sm_playstats_test` no console do servidor. |
+| O servidor de jogo mostra **Chave inválida** | O token na configuração do servidor de jogo não é o atual. Copie o token completo de novo, ou gere uma nova chave. |
+| Conectado, mas nenhum arquivo de estatísticas chega | Confira **Gravação de estatísticas ativada** na lista de verificação (`sm_stats_writestats 1`), e se um mapa foi jogado até o fim. |
+| As partidas chegam, mas são todas **Casual** | Nenhuma regra de modo de jogo as conta. A visão geral avisa sobre configurações sem regra. Veja [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo). |
+| Uma campanha personalizada gera uma partida por mapa | A campanha não está na lista, e mapas desconhecidos só são juntados quando vêm um depois do outro em até 2 horas. [Adicione a campanha](game-modes-and-campaigns.pt.md#campanhas) e depois reprocesse. |
+| A página do servidor ao vivo está vazia | O módulo do servidor ao vivo precisa estar ligado, o `l4d2_gameinfo_sync` precisa estar carregado e precisa haver uma partida em andamento. Depois de reiniciar o site, espere a próxima atualização do servidor de jogo. |
+| O `!ranking` abre um painel vazio | O jogo não consegue abrir o endereço HTTPS. Defina `playstats_ingame_url` com um endereço HTTP simples do site. Veja [Páginas dentro do jogo](in-game-pages.pt.md#o-endereço-usado-pelo-jogo). |
+| Os avatares não carregam | Eles são baixados em segundo plano. Espere alguns minutos, ou defina uma chave da Steam Web API em [Configurações](administration.pt.md#site). |
+| Os jogadores foram deslogados depois de mudar o site de lugar | A pasta `keys` não foi copiada. Eles só precisam fazer login de novo. |
+| As imagens das skins não carregam | Confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja). |
+| Uma página responde "não encontrada" | O módulo dela está desligado. Veja [Módulos](administration.pt.md#módulos). |

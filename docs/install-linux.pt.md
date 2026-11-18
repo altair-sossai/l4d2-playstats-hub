@@ -4,6 +4,8 @@
 
 Esta é a forma recomendada de rodar o L4D2 PlayStats Hub. Um único comando instala tudo, e depois o próprio site guia você pelo restante.
 
+As capturas de tela desta página são a saída real do instalador, gravada em uma máquina Ubuntu 24.04 limpa, onde os comandos rodaram como root (por isso sem `sudo`). Os seus endereços, datas e código de configuração vão ser diferentes.
+
 ## Conteúdo
 
 - [O que você precisa](#o-que-você-precisa)
@@ -50,27 +52,23 @@ Cole esta linha e pressione Enter:
 curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
 ```
 
-Leva cerca de um minuto. No final, ele mostra algo parecido com isto:
+Leva cerca de um minuto. Ele instala os poucos pacotes de que a aplicação precisa, baixa a release mais recente, cria o serviço `l4d2-playstats-hub` e espera até o site responder. No final, ele mostra o endereço do site e o código de configuração:
 
-```text
-L4D2 PlayStats Hub is running.
+![A saída do instalador](images/pt/install-linux-installer.webp)
 
-  Site address:            http://203.0.113.10:5080
-
-  Next step: open the site address. It asks for this setup code:
-
-      98ff3a8f5d5022bd4f66103c009e8162
-```
-
-Guarde o endereço e o código de configuração. Você pode ver o código de novo a qualquer momento:
+Guarde o endereço e o código de configuração. Em uma VPS, o endereço é o endereço público da máquina. Você pode ver o código de novo a qualquer momento:
 
 ```bash
 playstats-hub setup-code
 ```
 
+![O código de configuração mostrado de novo](images/pt/install-linux-setup-code.webp)
+
 ## Passo 3: abra o site
 
 Abra o endereço do site no seu navegador. A primeira página pede o código de configuração.
+
+![A primeira página do site pede o código de configuração](images/pt/wizard-setup-code.webp)
 
 1. Cole o código de configuração.
 2. Clique em **Continuar com o Steam** e faça login.
@@ -83,12 +81,14 @@ O site faz algumas perguntas, uma página por vez:
 
 | Página | O que você decide |
 |---|---|
-| Site | O nome do site, o idioma, o seu fuso horário e quantos meses dura uma temporada. |
-| Módulos | O que o site tem: ranking, servidor ao vivo, loja de skins, ranking da comunidade, chat. |
+| Site | O nome e a logo do site, o idioma padrão, o seu fuso horário, quantos meses dura uma temporada e uma chave opcional da Steam Web API. |
+| Módulos | O que o site tem: ranking, servidor ao vivo, chat do site, comandos remotos, loja de skins, ranking da comunidade, página do Anti-Cheat. |
 | Servidor de jogo | Um nome para o seu servidor de jogo. O site entrega as linhas que você deve colar na configuração dele. |
 | Concluir | Confirma. Tudo pode ser alterado depois na área de administração. |
 
-Na página do servidor de jogo, o site mostra se o seu servidor está conectado e o que está faltando. [Conectando um servidor de jogo](game-server.pt.md) explica essa parte em detalhes.
+![O passo do servidor de jogo, com as linhas para colar no servidor de jogo](images/pt/wizard-server-token.webp)
+
+O site mostra se o seu servidor está conectado e o que está faltando. A [Configuração inicial](manual/first-run.pt.md) mostra cada página do assistente, e [Conectando um servidor de jogo](game-server.pt.md) explica o lado do servidor de jogo em detalhes.
 
 ## Usando um domínio com HTTPS
 
@@ -123,8 +123,16 @@ O endereço do jogo é definido no servidor de jogo, em `playstats_ingame_url`. 
 | `playstats-hub logs` | Mostra as últimas linhas do log. |
 | `playstats-hub follow` | Acompanha o log enquanto ele é escrito. |
 | `playstats-hub restart` | Reinicia a aplicação. |
-| `playstats-hub setup-code` | Mostra o código de configuração enquanto a configuração inicial não foi concluída. |
+| `playstats-hub setup-code` | Mostra o código de configuração enquanto a configuração não foi concluída. |
 | `playstats-hub add-admin <SteamID64>` | Torna uma conta Steam administradora do site. |
+| `playstats-hub stop`, `playstats-hub start` | Para ou inicia a aplicação. |
+| `playstats-hub` | Lista os comandos. |
+
+![A lista de comandos](images/pt/install-linux-commands.webp)
+
+O `playstats-hub status` mostra se o serviço está rodando, desde quando, e as últimas linhas do log:
+
+![O status do serviço](images/pt/install-linux-status.webp)
 
 ## Atualizando
 
@@ -132,7 +140,11 @@ O endereço do jogo é definido no servidor de jogo, em `playstats_ingame_url`. 
 playstats-hub update
 ```
 
-Ele instala a versão mais recente e mantém o seu banco de dados e a sua configuração. Para instalar uma versão específica, informe o nome dela: `playstats-hub update v1.2.0`.
+Ele executa o instalador de novo: instala a versão mais recente e mantém o seu banco de dados e a sua configuração. Para instalar uma versão específica, informe o nome dela: `playstats-hub update v1.2.0`.
+
+![Uma atualização mantém a configuração existente](images/pt/install-linux-update.webp)
+
+Se a configuração ainda não foi concluída, o resumo no final mostra o código de configuração de novo; caso contrário, ele diz que os seus dados e a sua configuração foram mantidos.
 
 ## Backup e restauração
 
@@ -142,7 +154,11 @@ Tudo o que importa fica em uma única pasta. Este comando salva essa pasta em um
 playstats-hub backup
 ```
 
-O site para por alguns segundos enquanto a cópia é feita. O arquivo vai para `/root`, com a data no nome. Copie-o para outra máquina.
+O site para por alguns segundos enquanto a cópia é feita. O arquivo vai para `/root`, com a data no nome. Copie-o para outra máquina. Para salvar em outro lugar, informe um caminho: `playstats-hub backup /backups/hub.tar.gz`.
+
+![Um backup](images/pt/install-linux-backup.webp)
+
+O arquivo tem a pasta de dados (o banco de dados, os avatares, a logo e as chaves) e o `hub.env`. [Backups e atualizações](manual/backups-and-updates.pt.md) explica o que é cada parte.
 
 Para restaurar um backup, na mesma VPS ou em uma nova onde você executou o instalador:
 

@@ -4,7 +4,7 @@
 
 Há duas formas de rodar o L4D2 PlayStats Hub no Azure. A primeira é igual à de qualquer VPS e é a que recomendamos.
 
-> **Situação deste guia.** O caminho da máquina virtual usa o instalador para Linux, que é testado. O caminho do App Service foi escrito a partir da documentação do Azure e ainda não foi executado de ponta a ponta. Se algum passo não corresponder ao que você vê, por favor abra uma issue.
+> **Situação deste guia.** O caminho da máquina virtual usa o instalador para Linux, que é testado. O caminho do App Service foi escrito a partir da documentação do Azure e ainda não foi executado de ponta a ponta, por isso esta página não tem capturas de tela dele. Se algum passo não corresponder ao que você vê, por favor abra uma issue.
 
 ## Conteúdo
 
@@ -14,7 +14,7 @@ Há duas formas de rodar o L4D2 PlayStats Hub no Azure. A primeira é igual à d
 
 ## Opção 1: uma máquina virtual
 
-Crie uma máquina virtual Linux e siga [Instalando em uma VPS Linux](install-linux.pt.md). Nada muda.
+Crie uma máquina virtual Linux e siga [Instalando em uma VPS Linux](install-linux.pt.md). Nada muda, e as capturas de tela desse guia mostram o que você vai ver.
 
 | Configuração | Valor sugerido |
 |---|---|
@@ -26,7 +26,7 @@ No portal, as portas de entrada ficam na página **Rede** da máquina virtual. O
 
 ## Opção 2: App Service com um contêiner
 
-O App Service roda a imagem Docker que cada versão publica. Você precisa da [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), com login feito por `az login`.
+O App Service roda a imagem Docker que cada release publica. Você precisa da [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), com login feito por `az login`.
 
 Escolha um nome para o site. Ele precisa ser único no Azure, porque o endereço passa a ser `https://NAME.azurewebsites.net`. Os comandos abaixo usam `my-playstats`.
 
@@ -68,7 +68,7 @@ az webapp log config --resource-group playstats --name my-playstats --docker-con
 az webapp log tail --resource-group playstats --name my-playstats
 ```
 
-Procure a linha que diz `Setup is pending`. Depois abra `https://my-playstats.azurewebsites.net`, cole o código, faça login com o Steam e siga as páginas.
+Procure a linha que diz `Setup is pending`. Depois abra `https://my-playstats.azurewebsites.net`, cole o código, faça login com o Steam e siga as páginas. A [Configuração inicial](manual/first-run.pt.md) mostra cada uma delas.
 
 Duas coisas que você precisa saber sobre o App Service:
 

@@ -1,0 +1,2 @@
+NAME              IMAGE                                             COMMAND                  SERVICE   CREATED          STATUS          PORTS
+playstats-hub-1   ghcr.io/altair-sossai/l4d2-playstats-hub:latest   "dotnet L4D2PlayStat…"   hub       15 seconds ago   Up 13 seconds   0.0.0.0:5080->8080/tcp, [::]:5080->8080/tcp
