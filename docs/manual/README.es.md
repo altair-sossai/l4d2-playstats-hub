@@ -58,6 +58,6 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 
 ## Sobre las capturas de pantalla
 
-Las capturas muestran una copia de los datos de una comunidad real, en español. Las mismas capturas existen en inglés y en portugués en las otras versiones de este manual. Se tomaron con la [herramienta de capturas](../../tools/screenshots/README.es.md), que puede volver a tomarlas cuando las páginas cambien.
+Las capturas muestran datos ficticios, en español: las partidas de una comunidad real, en la que cada jugador se reemplazó por uno inventado, con apodo, avatar y SteamID inventados. Ningún jugador en ellas es una persona real. Las mismas capturas existen en inglés y en portugués en las otras versiones de este manual. Se tomaron con la [herramienta de capturas](../../tools/screenshots/README.es.md), que hace esa copia ficticia de los datos y puede volver a tomar las capturas cuando las páginas cambien.
 
-Algunas capturas se tomaron con el inicio de sesión de desarrollo, que muestra el SteamID64 del usuario conectado (por ejemplo `Player 76561198141521946`) donde un sitio real muestra el nombre de Steam.
+Algunas capturas se tomaron con el inicio de sesión de desarrollo, que muestra el SteamID64 del usuario conectado (por ejemplo `Player 76561201960265728`) donde un sitio real muestra el nombre de Steam.

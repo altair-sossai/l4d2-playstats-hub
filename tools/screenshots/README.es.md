@@ -37,9 +37,27 @@ node tools/screenshots/capture.js wizard --base http://localhost:5103 --lang en 
 
 El asistente se ejecuta una sola vez por carpeta de datos. Para cada idioma, detén el sitio, vacía la carpeta, vuelve a iniciarlo y usa el código nuevo. La herramienta oculta el campo del inicio de sesión de desarrollo antes de cada captura, porque un sitio de producción no lo muestra. Después del último paso abre la página del servidor nuevo en el área de administración y envía una señal como lo haría un servidor de juego, para que el estado de la conexión se ponga en verde.
 
+## Datos ficticios
+
+Las capturas de pantalla de la documentación muestran jugadores ficticios. Se tomaron sobre una copia de los datos de una comunidad real en la que cada persona se reemplazó por una inventada, así que las partidas, los rankings y los números parecen reales, pero ningún apodo, avatar, SteamID ni dirección pertenece a nadie. [fictional-data.js](fictional-data.js) hace esa copia a partir de una carpeta de datos propia:
+
+```bash
+node tools/screenshots/fictional-data.js --from /path/to/real/data --to /path/to/fictional/data
+```
+
+- Solo lee la carpeta de `--from`, y se detiene si otro programa, como el sitio, tiene abierta su base de datos (se detecta en Windows y en Linux). Detén el sitio antes, o pasa una copia de la carpeta.
+- La carpeta de `--to` tiene que ser nueva o estar vacía. Recibe la base de datos, el logo y avatares nuevos; los avatares reales y las claves no se copian.
+- Cada SteamID pasa a uno cuyo número de cuenta empieza en 4.000.000.000, un rango que Steam todavía no usa, así que ningún enlace de perfil lleva a una persona real. Los administradores van primero, así que el primero es siempre `76561201960265728`. Los SteamID cambian en todas las tablas, en los ajustes y en los archivos de estadísticas en bruto, en todos los formatos en que aparecen (SteamID64, `STEAM_x:y:z` y `[U:1:n]`).
+- Cada nombre pasa a un apodo de jugador inventado, el mismo para la misma persona en todas partes, incluidos los archivos de estadísticas en bruto y los nombres anteriores. Un jugador que usó varios nombres recibe varios nombres ficticios.
+- Cada jugador que tenía avatar recibe uno nuevo, un cuadrado de color con iniciales o una forma simple, dibujado en Edge o en Chrome.
+- Las direcciones IP de las conexiones de jugadores pasan a direcciones de los rangos de documentación (`198.51.100.0/24` y `192.0.2.0/24`). Los servidores de juego pasan a `L4D2 Competitive #1`, `#2`... en `203.0.113.10`, con los identificadores `l4d2-competitive-1`, `l4d2-competitive-2`...: sus tokens conservan la misma clave con el identificador nuevo.
+- El catálogo de skins se queda como está, porque da el crédito a los autores de las skins en el Workshop de Steam.
+
+Los nombres, los SteamID y los avatares salen de una semilla aleatoria, que la herramienta muestra; pásala de nuevo con `--seed` para obtener el mismo resultado a partir de los mismos datos. Necesita Node 22.16 o más reciente, sin flags. Cuando termina, inicia el sitio sobre la carpeta nueva, inicia sesión con el SteamID64 que mostró para el administrador y ejecuta **Administración > Vista general > Reprocesar todas las partidas**, para que cada partida se arme de nuevo a partir de los archivos ficticios.
+
 ## El resto del sitio
 
-El comando `site` espera una copia de datos reales con:
+El comando `site` espera una carpeta de datos, como la copia ficticia de arriba, con:
 
 - todos los módulos activados en **Administración > Módulos**;
 - dos servidores de juego, con sus tokens;
@@ -49,7 +67,7 @@ El comando `site` espera una copia de datos reales con:
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
 ```
 
-Antes de las capturas del servidor en vivo envía la partida en vivo de cada servidor, como lo hacen los plugins, y espera el retraso de la página en vivo. Reinicia el sitio antes de cada idioma, para que el chat en vivo empiece vacío. Antes de las capturas de la tienda reembolsa las compras del jugador y luego compra la primera skin que el jugador puede pagar. Las capturas del baneo del chat agregan un baneo para `--banned`.
+Antes de las capturas del servidor en vivo envía la partida en vivo de cada servidor, como lo hacen los plugins, con los jugadores de la parte de arriba del ranking del sitio, y espera el retraso de la página en vivo. Reinicia el sitio antes de cada idioma, para que el chat en vivo empiece vacío. Antes de las capturas de la tienda reembolsa las compras del jugador y luego compra la primera skin que el jugador puede pagar. Las capturas del baneo del chat agregan un baneo para `--banned`.
 
 El inicio de sesión de desarrollo no tiene nombre de Steam, así que el menú, las compras y los registros de auditoría muestran `Player <SteamID64>` para el usuario que inició sesión.
 
@@ -60,6 +78,8 @@ Los archivos de [terminal/](terminal/) son la salida real de los comandos, graba
 ```bash
 docker exec -t <container> bash -c "stty cols 96 rows 30; playstats-hub status" > tools/screenshots/terminal/linux-status.log
 ```
+
+Para los comandos de Docker, instala Docker dentro de ese contenedor (`curl -fsSL https://get.docker.com | sh`) y dale a su `/var/lib/docker` y a su `/var/lib/containerd` volúmenes propios (`-v <volume>:/var/lib/docker`), porque las imágenes no se descomprimen en el sistema de archivos del propio contenedor.
 
 Luego:
 
@@ -74,7 +94,7 @@ node tools/screenshots/capture.js terminal
 | `--base` | Dirección del sitio. |
 | `--lang` | `en`, `pt` o `es`. Define el idioma de la interfaz antes de la primera captura. |
 | `--admin` | SteamID64 de un administrador de ese sitio. |
-| `--player` | SteamID64 que se usa para la página del jugador, la tienda y las páginas dentro del juego. Sus compras se reembolsan antes de las capturas de la tienda, para que pueda volver a comprar. |
+| `--player` | SteamID64 que se usa para la página del jugador, la tienda y las páginas dentro del juego. Sus compras se reembolsan antes de las capturas de la tienda, para que pueda volver a comprar. Predeterminado: el primer jugador del ranking. |
 | `--voter` | SteamID64 de un jugador que todavía puede votar hoy, para la página de votación. Predeterminado: `--player`. |
 | `--banned` | SteamID64 que se usa en las capturas del baneo del chat. Predeterminado: `--player`. |
 | `--token` | Token de un servidor de juego, `identifier:key`. Repítelo para un segundo servidor. |

@@ -37,9 +37,27 @@ node tools/screenshots/capture.js wizard --base http://localhost:5103 --lang en 
 
 The wizard runs only once per data folder. For each language, stop the site, empty the folder, start it again and use the new code. The tool hides the development sign-in field before each capture, since a production site does not show it. After the last step it opens the page of the new server in the administration area and sends a heartbeat as a game server would, so the connection status turns green.
 
+## Fictional data
+
+The screenshots of the documentation show fictional players. They were taken on a copy of the data of a real community in which every person was replaced by a made-up one, so the matches, the rankings and the numbers look real but no nickname, avatar, SteamID or address belongs to anyone. [fictional-data.js](fictional-data.js) makes that copy from a data folder of your own:
+
+```bash
+node tools/screenshots/fictional-data.js --from /path/to/real/data --to /path/to/fictional/data
+```
+
+- It only reads the folder in `--from`, and stops if another program, such as the site, has its database open (detected on Windows and Linux). Stop the site first, or give a copy of the folder.
+- The folder in `--to` must be new or empty. It gets the database, the logo and new avatars; the real avatars and the keys are not copied.
+- Every SteamID becomes one whose account number starts at 4,000,000,000, a range Steam does not use yet, so no profile link leads to a real person. The administrators come first, so the first one is always `76561201960265728`. The SteamIDs change in every table, in the settings and in the raw statistics files, in every format they appear in (SteamID64, `STEAM_x:y:z` and `[U:1:n]`).
+- Every name becomes a made-up gamer tag, the same one for the same person everywhere, the raw statistics files and the previous names included. A player who used several names gets several fictional names.
+- Every player who had an avatar gets a new one, a coloured square with initials or a simple shape, drawn in Edge or Chrome.
+- The IP addresses of the player connections become addresses of the documentation ranges (`198.51.100.0/24` and `192.0.2.0/24`). The game servers become `L4D2 Competitive #1`, `#2`... at `203.0.113.10`, with the identifiers `l4d2-competitive-1`, `l4d2-competitive-2`...: their tokens keep the same key with the new identifier.
+- The skin catalog is kept as it is, since it credits the authors of the skins on the Steam Workshop.
+
+The names, SteamIDs and avatars come from a random seed, which the tool prints; pass it again with `--seed` to get the same result from the same data. It needs Node 22.16 or later, with no flags. When it finishes, start the site on the new folder, sign in with the SteamID64 it printed for the administrator and run **Administration > Overview > Reprocess all matches**, so every match is built again from the fictional files.
+
 ## The rest of the site
 
-The `site` command expects a copy of real data with:
+The `site` command expects a data folder, such as the fictional copy above, with:
 
 - every module turned on in **Administration > Modules**;
 - two game servers, with their tokens;
@@ -49,7 +67,7 @@ The `site` command expects a copy of real data with:
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
 ```
 
-Before the live server shots it sends the live match of each server, the way the plugins do, and waits for the delay of the live page. Restart the site before each language, so the live chat starts empty. Before the shop shots it refunds the purchases of the player, then buys the first skin the player can afford. The chat ban shots add a ban for `--banned`.
+Before the live server shots it sends the live match of each server, the way the plugins do, with the players at the top of the ranking of the site, and waits for the delay of the live page. Restart the site before each language, so the live chat starts empty. Before the shop shots it refunds the purchases of the player, then buys the first skin the player can afford. The chat ban shots add a ban for `--banned`.
 
 The development sign-in has no Steam name, so the menu, the purchases and the audit logs show `Player <SteamID64>` for the signed-in user.
 
@@ -60,6 +78,8 @@ The files in [terminal/](terminal/) are the real output of the commands, recorde
 ```bash
 docker exec -t <container> bash -c "stty cols 96 rows 30; playstats-hub status" > tools/screenshots/terminal/linux-status.log
 ```
+
+For the Docker commands, install Docker inside that container (`curl -fsSL https://get.docker.com | sh`) and give its `/var/lib/docker` and `/var/lib/containerd` volumes of their own (`-v <volume>:/var/lib/docker`), since images do not unpack on the file system of the container itself.
 
 Then:
 
@@ -74,7 +94,7 @@ node tools/screenshots/capture.js terminal
 | `--base` | Address of the site. |
 | `--lang` | `en`, `pt` or `es`. It sets the interface language before the first shot. |
 | `--admin` | SteamID64 of an administrator of that site. |
-| `--player` | SteamID64 used for the player page, the shop and the in-game pages. Its purchases are refunded before the shop shots, so it can buy again. |
+| `--player` | SteamID64 used for the player page, the shop and the in-game pages. Its purchases are refunded before the shop shots, so it can buy again. Default: the first player of the ranking. |
 | `--voter` | SteamID64 of a player who can still vote today, for the voting page. Default: `--player`. |
 | `--banned` | SteamID64 used in the chat ban shots. Default: `--player`. |
 | `--token` | Token of a game server, `identifier:key`. Repeat it for a second server. |

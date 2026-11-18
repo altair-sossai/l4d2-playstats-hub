@@ -58,6 +58,6 @@ Pages for players and pages for administrators are marked in the list below. The
 
 ## About the screenshots
 
-The screenshots show a copy of the data of a real community, in English. The same screenshots exist in Portuguese and Spanish in the translated versions of this manual. They were taken with the [screenshot tool](../../tools/screenshots/README.md), which can take them again after the pages change.
+The screenshots show fictional data, in English: the matches of a real community, in which every player was replaced by a made-up one, with an invented nickname, avatar and SteamID. No player in them is a real person. The same screenshots exist in Portuguese and Spanish in the translated versions of this manual. They were taken with the [screenshot tool](../../tools/screenshots/README.md), which makes that fictional copy of the data and can take the screenshots again after the pages change.
 
-Some screenshots were taken with the development sign-in, which shows the SteamID64 of the signed-in user (for example `Player 76561198141521946`) where a real site shows the Steam name.
+Some screenshots were taken with the development sign-in, which shows the SteamID64 of the signed-in user (for example `Player 76561201960265728`) where a real site shows the Steam name.

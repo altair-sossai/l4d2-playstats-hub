@@ -4,7 +4,7 @@
 
 Use this if you already run your services in containers. If you just have a Linux VPS, the [installer](install-linux.md) is simpler.
 
-The screenshots on this page are the real output of the commands, recorded on a clean Ubuntu 24.04 machine with Docker 29 and Compose 2.40, in a folder named `playstats`. Your times and setup code will be different.
+The screenshots on this page are the real output of the commands, recorded on a clean Ubuntu 24.04 machine with Docker 29 and Compose 5.8, in a folder named `playstats`. Your times and setup code will be different.
 
 ## Contents
 

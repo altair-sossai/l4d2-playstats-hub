@@ -3,7 +3,6 @@ const live = require('./live');
 const { sleep } = require('./cdp');
 
 const phone = 390;
-const defaultPlayer = '76561199139309093';
 
 async function discover(runner) {
     const page = runner.page;
@@ -16,12 +15,17 @@ async function discover(runner) {
     await runner.signIn(runner.context.admin);
 
     const vars = {};
+
+    await page.goto(runner.url('/'), 300);
+    runner.context.livePlayers = await page.evaluate(`Array.from(new Map(Array.from(document.querySelectorAll('table a[href^="/player/"]')).filter(a => a.textContent.trim()).map(a => [a.getAttribute('href').split('/').pop(), a.textContent.trim()])).entries())`);
+    runner.context.player = runner.context.player || (runner.context.livePlayers[0] || [])[0];
+
     const matches = await links('/matches', /^\/matches\/\d+$/);
 
     vars.match = matches[0];
     vars.mapStatistics = (await links(vars.match, /^\/matches\/\d+\/statistics\/\d+$/))[0];
     vars.servers = await links('/admin/servers', /^\/admin\/servers\/\d+$/);
-    vars.player = runner.context.player || defaultPlayer;
+    vars.player = runner.context.player;
     vars.admin = runner.context.admin;
     vars.voter = runner.context.voter || vars.player;
     vars.banned = runner.context.banned || vars.player;
@@ -30,7 +34,7 @@ async function discover(runner) {
 }
 
 async function refundPlayer(runner) {
-    const player = runner.context.player || defaultPlayer;
+    const player = runner.context.player;
 
     await runner.signIn(runner.context.admin);
     await runner.page.goto(runner.url(`/admin/skins?player=${player}`), 300);
@@ -47,7 +51,7 @@ async function feedLive(runner) {
     const tokens = runner.context.tokens;
 
     for (let index = 0; index < tokens.length; index++)
-        await live.feed(runner.context.base, tokens[index], index, !runner.fed);
+        await live.feed(runner.context.base, tokens[index], index, !runner.fed, runner.context.livePlayers);
 
     runner.fed = true;
     await sleep(17000);
