@@ -3,6 +3,7 @@ using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
@@ -129,7 +130,9 @@ app.MapControllers();
 if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConsts.DevelopmentSignInSetting))
     app.MapGet("/dev/sign-in/{communityId:long}", async (long communityId, string? returnUrl, HttpContext httpContext) =>
     {
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, communityId.ToString()), new Claim(ClaimTypes.Name, $"Player {communityId}") };
+        var knownName = await httpContext.RequestServices.GetRequiredService<IPlayerNameService>().KnownNameAsync(communityId, httpContext.RequestAborted);
+        var name = string.IsNullOrWhiteSpace(knownName) ? string.Format(AppConsts.DevelopmentSignInNameFormat, communityId) : knownName;
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, communityId.ToString()), new Claim(ClaimTypes.Name, name) };
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
 
         await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties { IsPersistent = true });

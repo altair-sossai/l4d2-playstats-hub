@@ -104,6 +104,7 @@ public static partial class AppConsts
     public const string AdminAddAction = "add";
 
     public const string DevelopmentSignInSetting = "Development:AllowTestSignIn";
+    public const string DevelopmentSignInNameFormat = "Player {0}";
     public const string SteamOpenIdPattern = @"openid/id/(\d+)$";
 
     public const string HtmxRequestHeader = "HX-Request";

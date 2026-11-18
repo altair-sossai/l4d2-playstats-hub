@@ -69,7 +69,7 @@ node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --
 
 Before the live server shots it sends the live match of each server, the way the plugins do, with the players at the top of the ranking of the site, and waits for the delay of the live page. Restart the site before each language, so the live chat starts empty. Before the shop shots it refunds the purchases of the player, then buys the first skin the player can afford. The chat ban shots add a ban for `--banned`. Before the Anti-Cheat settings shot it puts the first two players of the ranking on the whitelist and the next six on the required list, and saves the mode.
 
-The development sign-in has no Steam name, so the menu, the purchases and the audit logs show `Player <SteamID64>` for the signed-in user.
+The development sign-in has no Steam name, so it uses the name the site knows for that player. The menu, the purchases and the audit logs show `Player <SteamID64>` only for a user the site does not know.
 
 ## The terminal windows
 
