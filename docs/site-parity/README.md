@@ -18,10 +18,10 @@ Each checklist lists every item of the old screens of one area: columns, fields,
 
 | Checklist | Screens | Done | Adapted | Not ported |
 |---|---|---|---|---|
-| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat | 80 | 24 | 1 |
+| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat, Anti-Cheat settings | 104 | 37 | 1 |
 | [players.md](players.md) | Players list, player page, comparison, player not ranked | 150 | 23 | 0 |
 | [matches.md](matches.md) | Last matches, match details, map statistics | 128 | 18 | 1 |
-| [server.md](server.md) | Live server, chat, game events, chat bans | 153 | 25 | 1 |
+| [server.md](server.md) | Live server, chat, game events, chat bans | 154 | 25 | 1 |
 | [skins.md](skins.md) | Skin shop, gifts, prices, purchases | 143 | 14 | 0 |
 | [admin.md](admin.md) | Pages that exist only here: wizard, administration, community ranking | 183 | 11 | 1 |
 

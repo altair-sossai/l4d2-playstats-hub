@@ -243,6 +243,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Modal de detalles: editar y guardar el motivo | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Modal de detalles: quitar con una segunda confirmación | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |
 | Modal de agregar: campo de Steam ID o URL del perfil | `Web/Views/ChatBans/Index.cshtml:153` | done |  |
+| Modal de agregar: un Steam ID escrito muestra la foto y el nombre del jugador | `Web/Views/ChatBans/Index.cshtml:348-371` | done | La misma búsqueda de los ajustes del Anti-Cheat, `/api/admin/players/lookup`. |
 | Modal de agregar: "Elegir de la lista" abre el selector de jugadores | `Web/Views/ChatBans/Index.cshtml:158`, `:334` | done |  |
 | Modal de agregar: motivo | `Web/Views/ChatBans/Index.cshtml:165` | done |  |
 | Modal de agregar: remitentes recientes con avatar, nombre, último mensaje y "Ya baneado" | `Web/Views/ChatBans/Index.cshtml:169`, `:284` | done |  |
@@ -278,7 +279,7 @@ Estas no existían en el sitio antiguo. Se listan para que en el port no se pier
 
 ## Notas
 
-- Totales: 153 `done`, 25 `adapted`, 1 `not ported`.
+- Totales: 154 `done`, 25 `adapted`, 1 `not ported`.
 - Las tablas de jugadores antiguas no muestran ningún icono de patente: ni `Views/Server/_Players.cshtml` ni la página en producción lo tienen, así que ahí no hay nada que portar.
 - Los estados se comprobaron frente a las páginas renderizadas: lado a lado con `https://l4d2.com.br/server` (escritorio, ancho de teléfono y tema claro), con una partida simulada que envía todos los eventos del juego, y manejando las páginas en un navegador headless (filtro del feed, envío de un mensaje, la terminal, el modal de información del servidor, todos los modales de la página de baneos de chat).
 - El plugin del servidor de juego envía los slots del servidor en su heartbeat (`maxPlayers`) a partir de este cambio. Un servidor de juego que todavía ejecute el plugin anterior muestra como máximo el doble del tamaño del equipo.

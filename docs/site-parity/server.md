@@ -243,6 +243,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Details modal: edit and save the reason | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Details modal: remove with a second confirmation | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |
 | Add modal: Steam ID or profile URL field | `Web/Views/ChatBans/Index.cshtml:153` | done |  |
+| Add modal: a typed Steam ID shows the photo and the name of the player | `Web/Views/ChatBans/Index.cshtml:348-371` | done | Same lookup as the Anti-Cheat settings, `/api/admin/players/lookup`. |
 | Add modal: "Choose from the list" opens the player picker | `Web/Views/ChatBans/Index.cshtml:158`, `:334` | done |  |
 | Add modal: reason | `Web/Views/ChatBans/Index.cshtml:165` | done |  |
 | Add modal: recent senders with avatar, name, last message and "Already banned" | `Web/Views/ChatBans/Index.cshtml:169`, `:284` | done |  |
@@ -278,7 +279,7 @@ These did not exist in the old site. They are listed so that nothing the hub had
 
 ## Notes
 
-- Totals: 153 `done`, 25 `adapted`, 1 `not ported`.
+- Totals: 154 `done`, 25 `adapted`, 1 `not ported`.
 - The old players tables show no patent icon: neither `Views/Server/_Players.cshtml` nor the page in production has one, so there is nothing to port there.
 - The statuses were checked against the rendered pages: side by side with `https://l4d2.com.br/server` (desktop, phone width and light theme), with a simulated match that sends every game event, and by driving the pages in a headless browser (feed filter, sending a message, the terminal, the server info modal, every modal of the chat bans page).
 - The game server plugin sends the server slots in its heartbeat (`maxPlayers`) from this change on. A game server still running the previous plugin shows twice the team size as the maximum.

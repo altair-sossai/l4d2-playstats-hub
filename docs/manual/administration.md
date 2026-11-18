@@ -12,7 +12,7 @@ This page covers the overview, the game servers, the modules, the settings and t
 | Purchases, Prices, Catalog, Shop settings | [Weapon skin shop > For administrators](skin-shop.md#for-administrators) |
 | Community ranking | [Community ranking > For administrators](community-ranking.md#for-administrators) |
 | Chat bans, Remote commands, Player connections | [Moderation](moderation.md) |
-| Anti-Cheat page | [Anti-Cheat page > For administrators](anti-cheat.md#for-administrators) |
+| Anti-Cheat settings | [Anti-Cheat > For administrators](anti-cheat.md#for-administrators) |
 
 An item whose module is off is not in the menu.
 
@@ -37,7 +37,7 @@ Every administration page has the same menu on the left, with the page you are o
 | Game servers | Game servers, Remote commands, Player connections, Chat bans |
 | Ranking | Game modes, Campaigns, Community ranking |
 | Skin shop | Purchases, Prices, Catalog, Shop settings |
-| Anti-Cheat | Anti-Cheat page |
+| Anti-Cheat | Anti-Cheat settings |
 
 A page whose module is off is not in the menu, and a group with no pages left disappears. On a long page the menu stays in view while you scroll. The menu at the top of the site stays as it is, with **Admin** to come back here from any page.
 
@@ -95,7 +95,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Remote commands | Commands sent by administrators from the site to a game server. | Live server | Off | No **Remote commands** page and no terminal on the live page. |
 | Weapon skin shop | Stars, purchases, gifts and equipped skins. | Ranking | Off | No **Skins** menu item, no stars in the menu bar, no Skins tab on the player page. The game server gets no skins. |
 | Community ranking | Pairwise voting and its ranking. | | Off | No **Community** menu item. |
-| Anti-Cheat | The page with the Anti-Cheat download and instructions. | | Off | No **Anti-Cheat** menu item. |
+| Anti-Cheat | The page with the Anti-Cheat download and instructions, and who must use the Anti-Cheat on the game servers. | | Off | No **Anti-Cheat** menu item and no **Anti-Cheat settings** page. The anti-cheat plugin gets no mode or lists from the site. |
 
 A module whose requirement is off behaves as off, even when its own box is ticked.
 

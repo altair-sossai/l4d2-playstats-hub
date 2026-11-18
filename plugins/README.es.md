@@ -124,7 +124,7 @@ La cvar del token está protegida: el juego nunca envía su valor a los jugadore
 
 La página que abre `l4d2_ranking` es `<address>/ingame?steamid=<SteamID64 of the player>`. El navegador del juego es Chromium 18, de 2012, y no se espera que abra sitios HTTPS actuales. Si el panel se queda en blanco, sirve el sitio por HTTP simple en otra dirección o puerto y pon esa dirección en `playstats_ingame_url`. Consulta [docs/in-game-browser.es.md](../docs/in-game-browser.es.md).
 
-`l4d2_gameinfo_sync` envía al sitio la dirección IP de cada jugador que se conecta, y el sitio la usa para encontrar cuentas que comparten una dirección. También ejecuta, como comandos del servidor, los comandos que los administradores del sitio envían desde la página **Comandos remotos**: quien controle una cuenta de administrador del sitio puede ejecutar cualquier comando del servidor, como con RCON.
+`l4d2_gameinfo_sync` envía al sitio la dirección IP de cada jugador que se conecta, y el sitio la usa para encontrar cuentas que comparten una dirección. También ejecuta, como comandos del servidor, los comandos que los administradores del sitio envían desde la página **Comandos remotos**: quien controle una cuenta de administrador del sitio puede ejecutar cualquier comando del servidor, como con RCON. También ejecuta el `sm_aac sync` que el sitio pone en cola después de un cambio en los ajustes del Anti-Cheat, incluso con el módulo de comandos remotos desactivado.
 
 ## Modos de partida de L4D2 Competitive Rework
 
@@ -256,6 +256,7 @@ Cada solicitud lleva el encabezado `Authorization: <playstats_token>`. Los valor
 | `l4d2_ranking` | Ninguna. Abre `/ingame?steamid=...` en el juego del jugador. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
+| `l4d2-anti-cheat` (aparte, 1.5.0 o posterior, con `l4d2_web_url` y `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |
 
 El heartbeat se envía cuando se ejecutaron los archivos de configuración, luego cada 30 segundos mientras el servidor no está hibernando, y justo después de que cambia `playstats_url` o `playstats_token`. Solo hay un heartbeat en curso a la vez, con los timeouts por defecto de REST in Pawn (10 segundos para conectar, 30 en total).
 

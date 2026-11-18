@@ -124,7 +124,7 @@ The token cvar is protected: the game never sends its value to players, and Sour
 
 The page `l4d2_ranking` opens is `<address>/ingame?steamid=<SteamID64 of the player>`. The browser inside the game is Chromium 18, from 2012, and is not expected to open current HTTPS sites. If the panel stays blank, serve the site over plain HTTP on another address or port and put that address in `playstats_ingame_url`. See [docs/in-game-browser.md](../docs/in-game-browser.md).
 
-`l4d2_gameinfo_sync` sends the IP address of each player who connects to the site, which uses it to find accounts that share an address. It also runs, as server commands, the commands that site administrators send from the **Remote commands** page: whoever controls an administrator account of the site can run any server command, like with RCON.
+`l4d2_gameinfo_sync` sends the IP address of each player who connects to the site, which uses it to find accounts that share an address. It also runs, as server commands, the commands that site administrators send from the **Remote commands** page: whoever controls an administrator account of the site can run any server command, like with RCON. It also runs the `sm_aac sync` the site queues after a change on the Anti-Cheat settings, even with the remote commands module off.
 
 ## L4D2 Competitive Rework match modes
 
@@ -256,6 +256,7 @@ Every request carries the header `Authorization: <playstats_token>`. SteamID64 v
 | `l4d2_ranking` | None. It opens `/ingame?steamid=...` in the player's game. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
+| `l4d2-anti-cheat` (separate, 1.5.0 or newer, with `l4d2_web_url` and `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |
 
 The heartbeat is sent when the configuration files have run, then every 30 seconds while the server is not hibernating, and right after `playstats_url` or `playstats_token` changes. Only one heartbeat is in flight at a time, with the default timeouts of REST in Pawn (10 seconds to connect, 30 in total).
 

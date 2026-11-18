@@ -127,6 +127,20 @@ public class AntiCheatPagesTests
     }
 
     [TestMethod]
+    public async Task TheAddressOfTheOldSiteRedirectsToTheSettings()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await AntiCheatServerApiTests.StartAsync(factory);
+
+        var response = await client.GetAsync("/anti-cheat-admin?list=whitelist");
+
+        Assert.AreEqual(HttpStatusCode.MovedPermanently, response.StatusCode);
+        Assert.AreEqual("/admin/anti-cheat?list=whitelist", response.Headers.Location!.OriginalString);
+    }
+
+    [TestMethod]
     public async Task TheAntiCheatSettingsAreTheItemOfTheAdministrationMenu()
     {
         using var factory = new LiveWebFactory();

@@ -18,10 +18,10 @@ Cada checklist lista todos os itens das telas antigas de uma área: colunas, cam
 
 | Checklist | Telas | Prontos | Adaptados | Não portados |
 |---|---|---|---|---|
-| [site.pt.md](site.pt.md) | Layout, ranking, histórico, patentes, Anti-Cheat | 80 | 24 | 1 |
+| [site.pt.md](site.pt.md) | Layout, ranking, histórico, patentes, Anti-Cheat, configurações do Anti-Cheat | 104 | 37 | 1 |
 | [players.pt.md](players.pt.md) | Lista de jogadores, página do jogador, comparação, jogador fora do ranking | 150 | 23 | 0 |
 | [matches.pt.md](matches.pt.md) | Últimos jogos, detalhes da partida, estatísticas do mapa | 128 | 18 | 1 |
-| [server.pt.md](server.pt.md) | Servidor ao vivo, chat, eventos do jogo, banimentos de chat | 153 | 25 | 1 |
+| [server.pt.md](server.pt.md) | Servidor ao vivo, chat, eventos do jogo, banimentos de chat | 154 | 25 | 1 |
 | [skins.pt.md](skins.pt.md) | Loja de skins, presentes, preços, compras | 143 | 14 | 0 |
 | [admin.pt.md](admin.pt.md) | Páginas que só existem aqui: assistente, administração, ranking da comunidade | 183 | 11 | 1 |
 

@@ -40,7 +40,7 @@ The page lists every ban, with the player, the date, the reason and who banned. 
 
 ![Adding a chat ban](../images/en/admin-chat-bans-add.webp)
 
-- Type a Steam ID in any format or a profile link, or choose from the list. **Recent chat senders** lists who wrote in the site chat in the last hour, so the player who just misbehaved is one click away. When you type an ID instead, the list shows the ID instead of the name.
+- Type a Steam ID in any format or a profile link, or choose from the list. **Recent chat senders** lists who wrote in the site chat in the last hour, so the player who just misbehaved is one click away. When you type an ID instead, the name and the photo of the player show under the field after a moment.
 - The reason is optional, up to 300 characters. The banned player sees it in place of the chat box.
 
 A ban applies to the site chat of every game server. It does not mute the player inside the game; that is done with the tools of the game server.
@@ -57,7 +57,7 @@ With the remote commands module on, administrators can send SourceMod commands f
 
 The command is queued. The game server asks the site for queued commands on its next check and runs the command. If no game server picks it up within 5 minutes, it is dropped.
 
-Every command is recorded in the **Audit log**: the command, the administrator, the server, when it was sent, and whether it was delivered to the game server and when. The counters show how many commands were sent and how many were delivered.
+Every command is recorded in the **Audit log**: the command, the administrator, the server, when it was sent, and whether it was delivered to the game server and when. The counters show how many commands were sent and how many were delivered. The log also lists the `sm_aac sync` the site sends to every game server after a change on the [Anti-Cheat settings](anti-cheat.md#for-administrators); that one is sent even when this module is off.
 
 Administrators can also send a command from the chat box of the live server page, and the **Terminal** button there helps to build one.
 

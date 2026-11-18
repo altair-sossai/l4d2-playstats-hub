@@ -59,6 +59,12 @@ public class AntiCheatAdminController(ISettingsService settingsService, IAntiChe
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet(AppConsts.AntiCheatAdminLegacyUrl)]
+    public IActionResult Legacy()
+    {
+        return RedirectPermanent($"{AppConsts.AntiCheatAdminUrl}{Request.QueryString}");
+    }
+
     private static string? Clean(string? address)
     {
         var trimmed = address?.Trim();

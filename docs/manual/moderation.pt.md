@@ -40,7 +40,7 @@ A página lista todos os banimentos, com o jogador, a data, o motivo e quem bani
 
 ![Adicionando um banimento do chat](../images/pt/admin-chat-bans-add.webp)
 
-- Digite um Steam ID em qualquer formato ou um link de perfil, ou escolha na lista. **Últimas mensagens no chat** lista quem escreveu no chat do site na última hora, então o jogador que acabou de se comportar mal está a um clique. Quando você digita um ID, a lista mostra o ID no lugar do nome.
+- Digite um Steam ID em qualquer formato ou um link de perfil, ou escolha na lista. **Últimas mensagens no chat** lista quem escreveu no chat do site na última hora, então o jogador que acabou de se comportar mal está a um clique. Quando você digita um ID, o nome e a foto do jogador aparecem abaixo do campo depois de um instante.
 - O motivo é opcional, com até 300 caracteres. O jogador banido vê o motivo no lugar da caixa de chat.
 
 Um banimento vale para o chat do site de todos os servidores de jogo. Ele não silencia o jogador dentro do jogo; isso é feito com as ferramentas do servidor de jogo.
@@ -57,7 +57,7 @@ Com o módulo de comandos remotos ligado, os administradores podem enviar comand
 
 O comando entra em uma fila. O servidor de jogo pergunta ao site pelos comandos na fila na próxima verificação e executa o comando. Se nenhum servidor de jogo o pegar em 5 minutos, ele é descartado.
 
-Todo comando fica registrado no **Registro de auditoria**: o comando, o administrador, o servidor, quando foi enviado e se foi entregue ao servidor de jogo, e quando. Os contadores mostram quantos comandos foram enviados e quantos foram entregues.
+Todo comando fica registrado no **Registro de auditoria**: o comando, o administrador, o servidor, quando foi enviado e se foi entregue ao servidor de jogo, e quando. Os contadores mostram quantos comandos foram enviados e quantos foram entregues. O registro também lista o `sm_aac sync` que o site envia a cada servidor de jogo depois de uma alteração nas [Configurações do Anti-Cheat](anti-cheat.pt.md#para-administradores); esse é enviado mesmo com este módulo desligado.
 
 Os administradores também podem enviar um comando pela caixa de chat da página do servidor ao vivo, e o botão **Terminal** de lá ajuda a montar um.
 
