@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -209,6 +210,52 @@ public class SiteSettingsTests
 
         Assert.AreEqual("image/gif", logo.Content.Headers.ContentType!.MediaType);
         CollectionAssert.AreEqual(second, content);
+    }
+
+    [TestMethod]
+    public async Task TheSettingsPageAsksWhoCanSeeRelatedAccountsAndStartsWithEveryone()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        var html = await client.GetStringAsync(SettingsPage);
+
+        Assert.Contains("<h3 class=\"panel-title\">Privacy</h3>", html);
+        Assert.Contains("<label for=\"Privacy_RelatedAccounts\">Who can see related accounts</label>", html);
+        Assert.Contains("<option value=\"Everyone\" selected=\"selected\">Everyone</option>", html);
+        Assert.Contains("<option value=\"Administrators\">Administrators only</option>", html);
+        Assert.Contains("gameinfo_related_accounts_chat", html);
+    }
+
+    [TestMethod]
+    public async Task TheAdministratorLimitsRelatedAccountsToAdministratorsAndBack()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await PostAsync(client, SettingsPage, SettingsPage, Fields(new Dictionary<string, string> { ["Privacy.RelatedAccounts"] = "Administrators" }));
+
+        var limited = await PrivacyAsync(factory);
+        var html = await client.GetStringAsync(SettingsPage);
+
+        await PostAsync(client, SettingsPage, SettingsPage, Fields(new Dictionary<string, string> { ["Privacy.RelatedAccounts"] = "Everyone" }));
+
+        var everyone = await PrivacyAsync(factory);
+
+        await PostAsync(client, SettingsPage, SettingsPage, Fields(new Dictionary<string, string> { ["Privacy.RelatedAccounts"] = "7" }));
+
+        var invalid = await PrivacyAsync(factory);
+
+        Assert.AreEqual(RelatedAccountsVisibility.Administrators, limited.RelatedAccounts);
+        Assert.Contains("<option value=\"Administrators\" selected=\"selected\">Administrators only</option>", html);
+        Assert.AreEqual(RelatedAccountsVisibility.Everyone, everyone.RelatedAccounts);
+        Assert.AreEqual(RelatedAccountsVisibility.Everyone, invalid.RelatedAccounts);
     }
 
     [TestMethod]
@@ -430,6 +477,11 @@ public class SiteSettingsTests
             fields[change.Key] = change.Value;
 
         return fields;
+    }
+
+    private static Task<PrivacySettings> PrivacyAsync(HubWebFactory factory)
+    {
+        return factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<PrivacySettings>());
     }
 
     private static Task<SiteSettings> SiteAsync(HubWebFactory factory)

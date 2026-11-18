@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Helpers;
@@ -32,6 +33,7 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
             Site = await settingsService.GetAsync<SiteSettings>(cancellationToken),
             Season = await settingsService.GetAsync<SeasonSettings>(cancellationToken),
             Ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken),
+            Privacy = await settingsService.GetAsync<PrivacySettings>(cancellationToken),
             TimeZones = [.. TimeZoneInfo.GetSystemTimeZones().Select(zone => zone.Id).OrderBy(id => id)]
         };
     }
@@ -73,6 +75,7 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
         await settingsService.SaveAsync(site, cancellationToken);
         await settingsService.SaveAsync(season, cancellationToken);
         await settingsService.SaveAsync(ranking, cancellationToken);
+        await settingsService.SaveAsync(Privacy(model.Privacy), cancellationToken);
 
         var logoProblem = await SaveLogoAsync(model, cancellationToken);
 
@@ -118,6 +121,11 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
         await brandingStore.SaveLogoAsync(content, logo.FileName, cancellationToken);
 
         return null;
+    }
+
+    private static PrivacySettings Privacy(PrivacySettings privacy)
+    {
+        return new PrivacySettings { RelatedAccounts = Enum.IsDefined(privacy.RelatedAccounts) ? privacy.RelatedAccounts : RelatedAccountsVisibility.Everyone };
     }
 
     private static string? MetaKeywords(string? text)

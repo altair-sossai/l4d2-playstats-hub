@@ -187,6 +187,22 @@
                     <span class="help-block" style="margin-bottom: 0">@L["Points apply to every season right away. The option about unknown maps applies to new matches, or to all of them after a reprocess."]</span>
                 </div>
             </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Privacy"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="Privacy_RelatedAccounts">@L["Who can see related accounts"]</label>
+                        <select class="form-control" id="Privacy_RelatedAccounts" name="Privacy.RelatedAccounts">
+                            <option value="@RelatedAccountsVisibility.Everyone" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Everyone)">@L["Everyone"]</option>
+                            <option value="@RelatedAccountsVisibility.Administrators" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Administrators)">@L["Administrators only"]</option>
+                        </select>
+                        <span class="help-block" style="margin-bottom: 0">@L["Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.", AppConsts.RelatedAccountsChatCvar]</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

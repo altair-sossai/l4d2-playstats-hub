@@ -108,7 +108,7 @@ public class PlayerViewService(
 
         var matches = await MatchesAsync(period, communityIds, cancellationToken);
 
-        var relatedPlayers = modules.IsEnabled(HubModule.LiveServer)
+        var relatedPlayers = modules.IsEnabled(HubModule.LiveServer) && await RelatedAccountsVisibleAsync(cancellationToken)
             ? await playerConnectionService.RelatedAsync(communityId, cancellationToken)
             : [];
 
@@ -140,6 +140,7 @@ public class PlayerViewService(
         var connectionInfo = modules.IsEnabled(HubModule.LiveServer)
             ? await playerConnectionService.DetailsAsync(communityId, cancellationToken)
             : new PlayerConnectionDetails(null, []);
+        var relatedPlayers = await RelatedAccountsVisibleAsync(cancellationToken) ? connectionInfo.RelatedPlayers : [];
 
         var knownName = await dbContext.PlayerProfiles
             .AsNoTracking()
@@ -147,11 +148,18 @@ public class PlayerViewService(
             .Select(profile => profile.Name)
             .FirstOrDefaultAsync(cancellationToken);
 
-        return new PlayerNotFoundModel(communityId, connectionInfo.Player, connectionInfo.RelatedPlayers, knownName)
+        return new PlayerNotFoundModel(communityId, connectionInfo.Player, relatedPlayers, knownName)
         {
             Period = period,
             TimeZone = TimeZone(site)
         };
+    }
+
+    private async Task<bool> RelatedAccountsVisibleAsync(CancellationToken cancellationToken)
+    {
+        var privacy = await settingsService.GetAsync<PrivacySettings>(cancellationToken);
+
+        return privacy.RelatedAccounts == RelatedAccountsVisibility.Everyone || await currentUser.IsAdministratorAsync();
     }
 
     private async Task<PlayerSkinsModel> PlayerSkinsAsync(IReadOnlyCollection<Skin> skins, long communityId, string? assetsUrl, CancellationToken cancellationToken)

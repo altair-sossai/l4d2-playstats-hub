@@ -21,4 +21,5 @@ public static partial class AppConsts
     public const string AdminSteamIdPlaceholder = "7656119...";
     public const string AdminServerAddressPlaceholder = "play.example.com:27015";
     public const string AdminPublicUrlPlaceholder = "https://stats.example.com";
+    public const string RelatedAccountsChatCvar = "gameinfo_related_accounts_chat";
 }

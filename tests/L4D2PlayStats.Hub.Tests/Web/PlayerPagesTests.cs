@@ -5,6 +5,7 @@ using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
@@ -195,6 +196,54 @@ public partial class PlayerPagesTests
         Assert.Contains("Smurf account", unranked);
         Assert.Contains("Connections:", unranked);
         Assert.DoesNotContain("Related accounts", withoutLiveServer);
+    }
+
+    [TestMethod]
+    public async Task EveryoneSeesTheRelatedAccountsByDefault()
+    {
+        using var factory = new HubWebFactory();
+
+        await StartAsync(factory);
+        await ConnectAsync(factory, StatisticsBuilder.PlayerA1, "Main");
+        await ConnectAsync(factory, Smurf, "Smurf account");
+
+        foreach (var user in new long?[] { null, HubWebFactory.Player, HubWebFactory.Administrator })
+        {
+            using var client = factory.Client(user);
+
+            Assert.Contains("Smurf account", await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}"), user?.ToString());
+            Assert.Contains("Related accounts", await client.GetStringAsync($"/player/{Smurf}"), user?.ToString());
+        }
+    }
+
+    [TestMethod]
+    public async Task OnlyAdministratorsSeeTheRelatedAccountsWhenTheSettingSaysSo()
+    {
+        using var factory = new HubWebFactory();
+
+        await StartAsync(factory);
+        await ConnectAsync(factory, StatisticsBuilder.PlayerA1, "Main");
+        await ConnectAsync(factory, Smurf, "Smurf account");
+        await factory.SaveAsync(new PrivacySettings { RelatedAccounts = RelatedAccountsVisibility.Administrators });
+
+        using var visitor = factory.Client();
+        using var player = factory.Client(HubWebFactory.Player);
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+
+        foreach (var client in new[] { visitor, player })
+        {
+            var ranked = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
+            var unranked = await client.GetStringAsync($"/player/{Smurf}");
+
+            Assert.DoesNotContain("Related accounts", ranked);
+            Assert.DoesNotContain("Smurf account", ranked);
+            Assert.DoesNotContain("Related accounts", unranked);
+            Assert.Contains("Player not ranked", unranked);
+            Assert.Contains("Connections:", unranked);
+        }
+
+        Assert.Contains("Smurf account", await administrator.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}"));
+        Assert.Contains("Related accounts", await administrator.GetStringAsync($"/player/{Smurf}"));
     }
 
     [TestMethod]
