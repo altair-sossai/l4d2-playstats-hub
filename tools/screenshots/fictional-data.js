@@ -237,7 +237,7 @@ class Mapping {
             this.fictional.set(key, names);
         }
 
-        for (const [key, names] of this.fictional)
+        for (const names of this.fictional.values())
             for (const [lower, name] of names)
                 if (lower.length >= 4 && !this.wordNames.has(lower))
                     this.wordNames.set(lower, name);

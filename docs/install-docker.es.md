@@ -4,7 +4,7 @@
 
 Usa esta opción si ya ejecutas tus servicios en contenedores. Si solo tienes un VPS Linux, el [instalador](install-linux.es.md) es más sencillo.
 
-Las capturas de pantalla de esta página son la salida real de los comandos, grabada en una máquina Ubuntu 24.04 limpia con Docker 29 y Compose 2.40, en una carpeta llamada `playstats`. Tus horarios y tu código de configuración serán distintos.
+Las capturas de pantalla de esta página son la salida real de los comandos, grabada en una máquina Ubuntu 24.04 limpia con Docker 29 y Compose 5.8, en una carpeta llamada `playstats`. Tus horarios y tu código de configuración serán distintos.
 
 ## Contenido
 
