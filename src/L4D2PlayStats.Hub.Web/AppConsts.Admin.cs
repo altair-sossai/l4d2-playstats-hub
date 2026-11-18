@@ -22,4 +22,16 @@ public static partial class AppConsts
     public const string AdminServerAddressPlaceholder = "play.example.com:27015";
     public const string AdminPublicUrlPlaceholder = "https://stats.example.com";
     public const string RelatedAccountsChatCvar = "gameinfo_related_accounts_chat";
+
+    public const string AdminUrl = "/admin";
+    public const string AdminServersUrl = "/admin/servers";
+    public const string AdminModulesUrl = "/admin/modules";
+    public const string AdminSettingsUrl = "/admin/settings";
+    public const string AdminGameModesUrl = "/admin/game-modes";
+    public const string AdminCampaignsUrl = "/admin/campaigns";
+    public const string AdminAdministratorsUrl = "/admin/administrators";
+    public const string AdminCommunityUrl = "/admin/community";
+    public const string RemoteCommandsUrl = "/admin/remote-commands";
+    public const string PlayerConnectionsUrl = "/admin/player-connections";
+    public const string AdminMenuId = "admin-menu-items";
 }

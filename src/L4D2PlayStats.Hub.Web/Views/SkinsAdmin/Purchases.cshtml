@@ -256,8 +256,6 @@
 
 @Html.AntiForgeryToken()
 
-@await Html.PartialAsync("_SkinsAdminNav")
-
 <div class="admin-header">
     <h3>@L["Skin purchases"]</h3>
     @if (Model.TotalPurchases + Model.TotalGifts > 0)

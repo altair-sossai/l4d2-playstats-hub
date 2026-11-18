@@ -1,0 +1,108 @@
+@inject ISettingsService Settings
+@{
+    var path = (Context.Request.Path.Value ?? string.Empty).TrimEnd('/');
+    var modules = await Settings.GetAsync<ModuleSettings>();
+
+    var site = new List<(string Url, string Title, string Page, string Icon)>
+    {
+        (AppConsts.AdminUrl, L["Overview"].Value, L["Overview"].Value, "dashboard"),
+        (AppConsts.AdminSettingsUrl, L["Settings"].Value, L["Settings"].Value, "cog"),
+        (AppConsts.AdminModulesUrl, L["Modules"].Value, L["Modules"].Value, "th-large"),
+        (AppConsts.AdminAdministratorsUrl, L["Administrators"].Value, L["Administrators"].Value, "user")
+    };
+
+    var servers = new List<(string Url, string Title, string Page, string Icon)>
+    {
+        (AppConsts.AdminServersUrl, L["Game servers"].Value, L["Game servers"].Value, "hdd")
+    };
+
+    if (modules.IsEnabled(HubModule.RemoteCommands))
+        servers.Add((AppConsts.RemoteCommandsUrl, L["Remote commands"].Value, L["Remote commands"].Value, "console"));
+
+    if (modules.IsEnabled(HubModule.LiveServer))
+        servers.Add((AppConsts.PlayerConnectionsUrl, L["Player connections"].Value, L["Player connections"].Value, "transfer"));
+
+    if (modules.IsEnabled(HubModule.SiteChat))
+        servers.Add((AppConsts.ChatBansUrl, L["Chat bans"].Value, L["Chat bans"].Value, "~/imgs/menu/chat-bans.svg"));
+
+    var ranking = new List<(string Url, string Title, string Page, string Icon)>
+    {
+        (AppConsts.AdminGameModesUrl, L["Game modes"].Value, L["Game modes"].Value, "flag"),
+        (AppConsts.AdminCampaignsUrl, L["Campaigns"].Value, L["Campaigns"].Value, "map-marker")
+    };
+
+    if (modules.IsEnabled(HubModule.CommunityRanking))
+        ranking.Add((AppConsts.AdminCommunityUrl, L["Community ranking"].Value, L["Community ranking"].Value, "thumbs-up"));
+
+    var skins = new List<(string Url, string Title, string Page, string Icon)>();
+
+    if (modules.IsEnabled(HubModule.SkinShop))
+    {
+        skins.Add((AppConsts.SkinAdminUrl, L["Purchases"].Value, L["Skin purchases"].Value, "~/imgs/menu/skin-purchases.svg"));
+        skins.Add((AppConsts.SkinPricesUrl, L["Prices"].Value, L["Skin prices"].Value, "~/imgs/menu/skin-prices.svg"));
+        skins.Add((AppConsts.SkinCatalogUrl, L["Catalog"].Value, L["Skin catalog"].Value, "th-list"));
+        skins.Add((AppConsts.SkinSettingsUrl, L["Shop settings"].Value, L["Shop settings"].Value, "wrench"));
+    }
+
+    var antiCheat = new List<(string Url, string Title, string Page, string Icon)>();
+
+    if (modules.IsEnabled(HubModule.AntiCheat))
+        antiCheat.Add((AppConsts.AntiCheatAdminUrl, L["Anti-Cheat page"].Value, L["Anti-Cheat"].Value, "lock"));
+
+    var sections = new[]
+    {
+        (Title: L["Site"].Value, Items: site),
+        (Title: L["Game servers"].Value, Items: servers),
+        (Title: L["Ranking"].Value, Items: ranking),
+        (Title: L["Skin shop"].Value, Items: skins),
+        (Title: L["Anti-Cheat"].Value, Items: antiCheat)
+    }.Where(section => section.Items.Count > 0).ToList();
+
+    var active = sections
+        .SelectMany(section => section.Items)
+        .Where(item => path.Equals(item.Url, StringComparison.OrdinalIgnoreCase) || path.StartsWith($"{item.Url}/", StringComparison.OrdinalIgnoreCase))
+        .OrderByDescending(item => item.Url.Length)
+        .FirstOrDefault();
+}
+<nav class="panel panel-default admin-menu" aria-label="@L["Administration menu"]">
+    <a class="panel-heading admin-menu-toggle collapsed" role="button" data-toggle="collapse" href="#@AppConsts.AdminMenuId" aria-expanded="false" aria-controls="@AppConsts.AdminMenuId" title="@L["Open the administration menu"]">
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+        <span class="admin-menu-current">
+            <small>@L["Administration"]</small>
+            @if (active.Url != null)
+            {
+                <strong>@active.Page</strong>
+            }
+        </span>
+        <span class="caret"></span>
+    </a>
+    <div class="panel-heading admin-menu-title">
+        <span class="glyphicon glyphicon-wrench"></span> @L["Administration"]
+    </div>
+    <div id="@AppConsts.AdminMenuId" class="collapse admin-menu-items">
+        @foreach (var group in sections)
+        {
+            <div class="admin-menu-heading">@group.Title</div>
+            <ul class="nav nav-pills nav-stacked">
+                @foreach (var item in group.Items)
+                {
+                    var selected = item.Url == active.Url;
+
+                    <li role="presentation" class="@(selected ? "active" : "")">
+                        <a href="@item.Url" aria-current="@(selected ? "page" : null)">
+                            @if (item.Icon.EndsWith(".svg"))
+                            {
+                                <img src="@Url.Content(item.Icon)" alt="" class="admin-menu-icon">
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-@item.Icon admin-menu-icon"></span>
+                            }
+                            @item.Title
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</nav>
