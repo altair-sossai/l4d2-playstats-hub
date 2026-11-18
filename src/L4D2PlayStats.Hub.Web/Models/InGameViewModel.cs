@@ -11,5 +11,4 @@ public class InGameViewModel
     public RankingRow? Me { get; init; }
     public IReadOnlyList<Match> Matches { get; init; } = [];
     public long? SteamId { get; init; }
-    public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 }

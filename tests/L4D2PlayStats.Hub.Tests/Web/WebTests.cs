@@ -284,7 +284,7 @@ public class WebTests
     }
 
     [TestMethod]
-    public async Task TheMatchesForTheGameShowTheDateInTheLanguageAndTimeZoneOfTheSite()
+    public async Task TheMatchesForTheGameShowTheDateInTheLanguageOfTheSite()
     {
         using var factory = new HubWebFactory();
 
@@ -298,13 +298,12 @@ public class WebTests
 
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", now, 1, 300, 200));
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", now.AddMinutes(15), 2, 600, 500));
-        await factory.SaveAsync(new SiteSettings { TimeZone = "America/Sao_Paulo", DefaultCulture = "pt-BR" });
+        await factory.SaveAsync(new SiteSettings { DefaultCulture = "pt-BR" });
 
         var last = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.Select(match => match.LastFileDate).SingleAsync());
-        var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(last, DateTimeKind.Utc), TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo"));
         var html = await client.GetStringAsync("/ingame/matches");
 
-        Assert.Contains(local.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture), html);
+        Assert.Contains(last.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture), html);
     }
 
     [TestMethod]
