@@ -1,3 +1,6 @@
+using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +28,34 @@ public class ChatBanTests
         Assert.AreEqual("Admin", ban.CreatedByName);
         Assert.AreEqual(hub.Clock.UtcNow, ban.CreatedAtUtc);
         Assert.IsNull(ban.UpdatedAtUtc);
+    }
+
+    [TestMethod]
+    public async Task ABanWithoutANameTakesTheNameTheSiteKnows()
+    {
+        using var hub = new TestHub();
+
+        const long Bob = 76561198000000002;
+
+        await hub.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+
+            dbContext.PlayerProfiles.Add(new PlayerProfile { CommunityId = Alice, Name = "Alice", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
+
+            return await dbContext.SaveChangesAsync();
+        });
+
+        await hub.RunAsync(services => services.GetRequiredService<IPlayerConnectionService>().RegisterAsync(new PlayerConnectionCommand { CommunityId = Bob.ToString(), IpAddress = "10.0.0.2", Name = "Bob" }));
+        await hub.RunAsync(services => services.GetRequiredService<IChatBanService>().SaveAsync(Alice, null, "Spam", Admin, "Admin"));
+        await hub.RunAsync(services => services.GetRequiredService<IChatBanService>().SaveAsync(Bob, " ", "Spam", Admin, "Admin"));
+        await hub.RunAsync(services => services.GetRequiredService<IChatBanService>().SaveAsync(76561198000000003, null, "Spam", Admin, "Admin"));
+
+        var bans = await hub.RunAsync(services => services.GetRequiredService<IChatBanService>().ListAsync());
+
+        Assert.AreEqual("Alice", bans.Single(ban => ban.CommunityId == Alice).Name);
+        Assert.AreEqual("Bob", bans.Single(ban => ban.CommunityId == Bob).Name);
+        Assert.IsNull(bans.Single(ban => ban.CommunityId == 76561198000000003).Name);
     }
 
     [TestMethod]
