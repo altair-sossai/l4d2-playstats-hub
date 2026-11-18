@@ -22,8 +22,8 @@ Each checklist lists every item of the old screens of one area: columns, fields,
 | [players.md](players.md) | Players list, player page, comparison, player not ranked | 150 | 23 | 0 |
 | [matches.md](matches.md) | Last matches, match details, map statistics | 128 | 18 | 1 |
 | [server.md](server.md) | Live server, chat, game events, chat bans | 153 | 25 | 1 |
-| [skins.md](skins.md) | Skin shop, gifts, prices, purchases | 144 | 13 | 0 |
-| [admin.md](admin.md) | Pages that exist only here: wizard, administration, community ranking | 185 | 9 | 1 |
+| [skins.md](skins.md) | Skin shop, gifts, prices, purchases | 143 | 14 | 0 |
+| [admin.md](admin.md) | Pages that exist only here: wizard, administration, community ranking | 183 | 11 | 1 |
 
 The first five compare the hub with the old site. The last one compares the pages that are new here with their first version, which used another look, so that nothing was lost when they were converted.
 

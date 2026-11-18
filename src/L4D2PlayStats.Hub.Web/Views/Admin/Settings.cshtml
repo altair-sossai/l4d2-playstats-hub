@@ -16,8 +16,6 @@
     <h3>@L["Settings"]</h3>
 </div>
 
-<partial name="_AdminNav"/>
-
 @if (TempData[AppConsts.SettingsProblemsTempData] is string[] problems)
 {
     foreach (var problem in problems)

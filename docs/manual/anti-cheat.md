@@ -31,7 +31,7 @@ The texts of the page are part of the site and are translated with it.
 
 ## For administrators
 
-**Administration > Anti-Cheat** has two addresses.
+**Administration > Anti-Cheat page** has two addresses.
 
 ![The Anti-Cheat settings](../images/en/admin-anti-cheat.webp)
 

@@ -8,7 +8,7 @@ As páginas desta área só existem no hub: o site antigo não tem assistente de
 
 Situação: `done` = presente com o mesmo conteúdo e comportamento, no visual do site antigo; `adapted` = presente, mas alterado, pelo motivo indicado; `not ported` = removido, pelo motivo indicado.
 
-Totais: 185 done, 9 adapted, 1 not ported.
+Totais: 183 done, 11 adapted, 1 not ported.
 
 Como foi conferido: todas as páginas foram abertas em um navegador sobre uma cópia de dados reais (6.636 arquivos de estatísticas) e sobre uma pasta de dados vazia (o assistente inteiro, do código de configuração até "Concluir"), no tema escuro e no claro, com 1280 e com 400 pixels de largura, em inglês e em português; nenhuma página tem rolagem lateral em 400 pixels. Cada formulário foi enviado ao menos uma vez. `AdminPagesTests`, `SiteSettingsTests` e `FooterLinksTests` cobrem o layout, o menu, as novas configurações e a logo.
 
@@ -50,14 +50,14 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 
 | Item | Onde hoje | Situação | Observações |
 |---|---|---|---|
-| Links: Visão geral, Servidores de jogo, Módulos, Configurações, Modos de jogo, Campanhas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `done` | Pílulas do Bootstrap 3. |
-| Link "Skins", só com a loja de skins ligada | `Views/Shared/_AdminNav.cshtml:18` | `done` |  |
+| Links: Visão geral, Servidores de jogo, Módulos, Configurações, Modos de jogo, Campanhas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `adapted` | A fileira de pílulas agora é um menu lateral (`Views/Shared/_AdminMenu.cshtml`, no `_AdminLayout`) em todas as páginas de administrador, agrupado em Site, Servidores de jogo, Ranking, Loja de skins e Anti-Cheat. A fileira faltava nas páginas de bans de chat, do Anti-Cheat e de skins, e o administrador perdia o caminho de volta; agora o menu está sempre lá. No celular ele se recolhe em um controle acima do conteúdo que mostra a página atual. |
+| Link "Skins", só com a loja de skins ligada | `Views/Shared/_AdminNav.cshtml:18` | `adapted` | Substituído pelas quatro páginas de skins (Compras, Preços, Catálogo, Configurações da loja) no grupo Loja de skins do menu lateral, que também substitui a fileira de abas delas. |
 | Link "Ranking da comunidade", só com o ranking da comunidade ligado | `Views/Shared/_AdminNav.cshtml:21` | `done` |  |
 | Link "Bans de chat", só com o chat do site ligado | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
 | Link "Comandos remotos", só com os comandos remotos ligados | `Views/Shared/_AdminNav.cshtml:27` | `done` |  |
 | Link "Conexões de jogadores", só com o servidor ao vivo ligado | `Views/Shared/_AdminNav.cshtml:30` | `done` |  |
 | Link "Anti-Cheat" (`/admin/anti-cheat`), só com o módulo Anti-Cheat ligado | novo | `done` | Adicionado. |
-| O link da página atual fica destacado | `Views/Shared/_AdminNav.cshtml:35` | `done` |  |
+| O link da página atual fica destacado | `Views/Shared/_AdminNav.cshtml:35` | `done` | Também nas subpáginas: a página de um servidor de jogo destaca Servidores de jogo. |
 
 ### `_ServerStatus`
 

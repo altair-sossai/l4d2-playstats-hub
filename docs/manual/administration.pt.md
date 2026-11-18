@@ -2,29 +2,48 @@
 
 🌐 [English](administration.md) | **Português** | [Español](administration.es.md)
 
-A área de administração é onde o site é configurado. Ela só é acessível para administradores: **Admin > Administração** no menu, ou `/admin`. Todas as páginas têm a mesma fileira de abas no topo.
+A área de administração é onde o site é configurado. Ela só é acessível para administradores: **Admin > Administração** no menu, ou `/admin`. Todas as páginas da área têm o [menu da administração](#o-menu-da-administração) à esquerda.
 
 Esta página cobre a visão geral, os servidores de jogo, os módulos, as configurações e os administradores. As outras páginas da administração são explicadas junto com o recurso delas:
 
-| Aba | Explicada em |
+| Item do menu | Explicado em |
 |---|---|
 | Modos de jogo, Campanhas | [Modos de jogo e campanhas](game-modes-and-campaigns.pt.md) |
-| Skins | [Loja de skins de armas > Para administradores](skin-shop.pt.md#para-administradores) |
+| Compras, Preços, Catálogo, Configurações da loja | [Loja de skins de armas > Para administradores](skin-shop.pt.md#para-administradores) |
 | Ranking da comunidade | [Ranking da comunidade > Para administradores](community-ranking.pt.md#para-administradores) |
 | Bans de chat, Comandos remotos, Conexões de jogadores | [Moderação](moderation.pt.md) |
-| Anti-Cheat | [Página do Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
+| Página do Anti-Cheat | [Página do Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
 
-Uma aba cujo módulo está desligado não aparece.
+Um item cujo módulo está desligado não aparece no menu.
 
 [Voltar ao manual](README.pt.md)
 
 ## Conteúdo
 
+- [O menu da administração](#o-menu-da-administração)
 - [Visão geral](#visão-geral)
 - [Servidores de jogo](#servidores-de-jogo)
 - [Módulos](#módulos)
 - [Configurações](#configurações)
 - [Administradores](#administradores)
+
+## O menu da administração
+
+Todas as páginas da administração têm o mesmo menu à esquerda, com a página em que você está destacada. A página de um servidor de jogo destaca **Servidores de jogo**. O menu agrupa as páginas:
+
+| Grupo | Páginas |
+|---|---|
+| Site | Visão geral, Configurações, Módulos, Administradores |
+| Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Bans de chat |
+| Ranking | Modos de jogo, Campanhas, Ranking da comunidade |
+| Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
+| Anti-Cheat | Página do Anti-Cheat |
+
+Uma página cujo módulo está desligado não aparece no menu, e um grupo que fica sem páginas some. Em uma página comprida, o menu continua à vista enquanto você rola. O menu do topo do site continua como está, com **Admin** para voltar para cá de qualquer página.
+
+No celular, o menu fica recolhido em uma barra acima da página, que mostra a página em que você está. Toque nela para abrir a lista completa:
+
+![O menu da administração aberto no celular](../images/pt/admin-phone-menu.webp)
 
 ## Visão geral
 

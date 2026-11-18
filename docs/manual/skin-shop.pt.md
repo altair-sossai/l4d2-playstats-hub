@@ -128,7 +128,7 @@ O nome do autor vem do perfil dele na Steam, e não só do catálogo. Uma vez po
 
 ## Para administradores
 
-A loja tem quatro páginas em **Administração > Skins**.
+A loja tem quatro páginas, no grupo **Loja de skins** do [menu da administração](administration.pt.md#o-menu-da-administração).
 
 ### Compras
 

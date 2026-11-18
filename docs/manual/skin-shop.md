@@ -128,7 +128,7 @@ The author's name comes from their Steam profile, not only from the catalog. Onc
 
 ## For administrators
 
-The shop has four pages under **Administration > Skins**.
+The shop has four pages, in the **Skin shop** group of the [administration menu](administration.md#the-administration-menu).
 
 ### Purchases
 

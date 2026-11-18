@@ -8,7 +8,7 @@ Las páginas de esta área solo existen en el hub: el sitio antiguo no tiene asi
 
 Estado: `done` = presente con el mismo contenido y comportamiento, con el aspecto del sitio antiguo; `adapted` = presente pero cambiado, por el motivo indicado; `not ported` = eliminado, por el motivo indicado.
 
-Totales: 185 done, 9 adapted, 1 not ported.
+Totales: 183 done, 11 adapted, 1 not ported.
 
 Cómo se comprobó: cada página se abrió en un navegador sobre una copia de datos reales (6.636 archivos de estadísticas) y sobre una carpeta de datos vacía (todo el asistente, desde el código de configuración hasta "Finalizar"), en el tema oscuro y en el claro, a 1280 y a 400 píxeles de ancho, en inglés y en portugués; ninguna página se desplaza hacia los lados a 400 píxeles. Cada formulario se envió al menos una vez. `AdminPagesTests`, `SiteSettingsTests` y `FooterLinksTests` cubren el layout, el menú, los ajustes nuevos y el logo.
 
@@ -50,14 +50,14 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 
 | Elemento | Dónde hoy | Estado | Notas |
 |---|---|---|---|
-| Enlaces: Vista general, Servidores de juego, Módulos, Configuración, Modos de juego, Campañas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `done` | Píldoras de Bootstrap 3. |
-| Enlace "Skins", solo con la tienda de skins activada | `Views/Shared/_AdminNav.cshtml:18` | `done` |  |
+| Enlaces: Vista general, Servidores de juego, Módulos, Configuración, Modos de juego, Campañas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `adapted` | La fila de píldoras ahora es un menú lateral (`Views/Shared/_AdminMenu.cshtml`, en `_AdminLayout`) en todas las páginas de administrador, agrupado en Sitio, Servidores de juego, Clasificación, Tienda de skins y Anti-Cheat. La fila faltaba en las páginas de baneos de chat, del Anti-Cheat y de skins, y el administrador perdía el camino de vuelta; ahora el menú siempre está ahí. En el teléfono se recoge en un control encima del contenido que muestra la página actual. |
+| Enlace "Skins", solo con la tienda de skins activada | `Views/Shared/_AdminNav.cshtml:18` | `adapted` | Sustituido por las cuatro páginas de skins (Compras, Precios, Catálogo, Ajustes de la tienda) en el grupo Tienda de skins del menú lateral, que también sustituye su propia fila de pestañas. |
 | Enlace "Ranking de la comunidad", solo con el ranking de la comunidad activado | `Views/Shared/_AdminNav.cshtml:21` | `done` |  |
 | Enlace "Baneos de chat", solo con el chat del sitio activado | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
 | Enlace "Comandos remotos", solo con los comandos remotos activados | `Views/Shared/_AdminNav.cshtml:27` | `done` |  |
 | Enlace "Conexiones de jugadores", solo con el servidor en vivo activado | `Views/Shared/_AdminNav.cshtml:30` | `done` |  |
 | Enlace "Anti-Cheat" (`/admin/anti-cheat`), solo con el módulo Anti-Cheat activado | nuevo | `done` | Añadido. |
-| El enlace de la página actual está resaltado | `Views/Shared/_AdminNav.cshtml:35` | `done` |  |
+| El enlace de la página actual está resaltado | `Views/Shared/_AdminNav.cshtml:35` | `done` | También en las subpáginas: la página de un servidor de juego resalta Servidores de juego. |
 
 ### `_ServerStatus`
 

@@ -10,10 +10,6 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     <style>
-        .admin-header + .nav {
-            margin-bottom: 15px;
-        }
-
         .rc-command {
             font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         }
@@ -30,8 +26,6 @@
         <span class="glyphicon glyphicon-chevron-left"></span> @L["Administration"]
     </a>
 </div>
-
-<partial name="_AdminNav" optional="true"/>
 
 @if (TempData["Queued"] is string queued)
 {

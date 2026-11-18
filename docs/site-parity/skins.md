@@ -203,7 +203,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 |---|---|---|---|
 | Skin catalog page (`/admin/skins/catalog`): totals, last change, import from a file, import from the configured address | Views/SkinsAdmin/Catalog.cshtml | done | Restyled with `_AdminStyles` (header, stats, panels). The last change is shown in the site time zone. |
 | Shop settings page (`/admin/skins/settings`): refund at the end of a season, address of the assets, address of the catalog | Views/SkinsAdmin/Settings.cshtml | done | Restyled with Bootstrap 3 panels. New: the two addresses of the notice for skin authors. |
-| Tabs that link the four administrator pages | Views/Shared/_SkinsAdminNav.cshtml | done | Bootstrap 3 tabs above the header of the four pages. On the prices and purchases pages they are an addition to the old layout, needed to reach the two hub-only pages. |
+| Tabs that link the four administrator pages | Views/Shared/_SkinsAdminNav.cshtml | adapted | The tabs are gone: the four pages are in the Skin shop group of the administration side menu (`Views/Shared/_AdminMenu.cshtml`), which every administrator page shows, so the way to the rest of the administration is not lost on these pages. The content of the pages is unchanged. |
 
 ## Wording
 

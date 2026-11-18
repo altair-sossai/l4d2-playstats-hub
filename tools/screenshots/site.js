@@ -130,7 +130,8 @@ function shots(vars) {
         { name: 'admin-chat-bans', path: '/admin/chat-bans', full: true },
         { name: 'admin-remote-commands', path: '/admin/remote-commands', full: true },
         { name: 'admin-player-connections', path: `/admin/player-connections?communityId=${player}`, full: true },
-        { name: 'admin-anti-cheat', path: '/admin/anti-cheat', full: true }
+        { name: 'admin-anti-cheat', path: '/admin/anti-cheat', full: true },
+        { name: 'admin-phone-menu', width: phone, path: '/admin/servers', before: [`$('.admin-menu-toggle').click()`, { sleep: 800 }], full: true, maxHeight: 1100 }
     ];
 }
 

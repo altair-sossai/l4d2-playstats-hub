@@ -17,10 +17,6 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     <style>
-        .admin-header + .nav {
-            margin-bottom: 15px;
-        }
-
         a.admin-item {
             text-decoration: none;
         }
@@ -37,8 +33,6 @@
         <span class="glyphicon glyphicon-chevron-left"></span> @L["Administration"]
     </a>
 </div>
-
-<partial name="_AdminNav" optional="true"/>
 
 <p class="text-muted">@L["Shows the accounts that connected to a game server from the same address as a player. Connections older than three months are deleted."]</p>
 

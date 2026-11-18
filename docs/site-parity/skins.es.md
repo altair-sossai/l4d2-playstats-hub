@@ -203,7 +203,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 |---|---|---|---|
 | Página del catálogo de skins (`/admin/skins/catalog`): totales, último cambio, importación desde un archivo, importación desde la dirección configurada | Views/SkinsAdmin/Catalog.cshtml | done | Adaptada a `_AdminStyles` (encabezado, estadísticas, paneles). El último cambio se muestra en la zona horaria del sitio. |
 | Página de ajustes de la tienda (`/admin/skins/settings`): reembolso al final de una temporada, dirección de los assets, dirección del catálogo | Views/SkinsAdmin/Settings.cshtml | done | Adaptada a los paneles de Bootstrap 3. Nuevo: las dos direcciones del aviso para autores de skins. |
-| Pestañas que enlazan las cuatro páginas de administrador | Views/Shared/_SkinsAdminNav.cshtml | done | Pestañas de Bootstrap 3 encima del encabezado de las cuatro páginas. En las páginas de precios y de compras son un añadido al layout antiguo, necesario para llegar a las dos páginas exclusivas del hub. |
+| Pestañas que enlazan las cuatro páginas de administrador | Views/Shared/_SkinsAdminNav.cshtml | adapted | Las pestañas ya no están: las cuatro páginas están en el grupo Tienda de skins del menú lateral de la administración (`Views/Shared/_AdminMenu.cshtml`), que muestran todas las páginas de administrador, así que el camino al resto de la administración no se pierde en estas páginas. El contenido de las páginas no cambió. |
 
 ## Redacción
 

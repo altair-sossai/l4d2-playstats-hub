@@ -2,29 +2,48 @@
 
 🌐 **English** | [Português](administration.pt.md) | [Español](administration.es.md)
 
-The administration area is where the site is configured. It is open only to administrators: **Admin > Administration** in the menu, or `/admin`. Every page has the same row of tabs at the top.
+The administration area is where the site is configured. It is open only to administrators: **Admin > Administration** in the menu, or `/admin`. Every page of the area has the [administration menu](#the-administration-menu) on the left.
 
 This page covers the overview, the game servers, the modules, the settings and the administrators. Other administration pages are explained with their feature:
 
-| Tab | Explained in |
+| Menu item | Explained in |
 |---|---|
 | Game modes, Campaigns | [Game modes and campaigns](game-modes-and-campaigns.md) |
-| Skins | [Weapon skin shop > For administrators](skin-shop.md#for-administrators) |
+| Purchases, Prices, Catalog, Shop settings | [Weapon skin shop > For administrators](skin-shop.md#for-administrators) |
 | Community ranking | [Community ranking > For administrators](community-ranking.md#for-administrators) |
 | Chat bans, Remote commands, Player connections | [Moderation](moderation.md) |
-| Anti-Cheat | [Anti-Cheat page > For administrators](anti-cheat.md#for-administrators) |
+| Anti-Cheat page | [Anti-Cheat page > For administrators](anti-cheat.md#for-administrators) |
 
-A tab whose module is off is not shown.
+An item whose module is off is not in the menu.
 
 [Back to the manual](README.md)
 
 ## Contents
 
+- [The administration menu](#the-administration-menu)
 - [Overview](#overview)
 - [Game servers](#game-servers)
 - [Modules](#modules)
 - [Settings](#settings)
 - [Administrators](#administrators)
+
+## The administration menu
+
+Every administration page has the same menu on the left, with the page you are on highlighted. The page of one game server highlights **Game servers**. The menu groups the pages:
+
+| Group | Pages |
+|---|---|
+| Site | Overview, Settings, Modules, Administrators |
+| Game servers | Game servers, Remote commands, Player connections, Chat bans |
+| Ranking | Game modes, Campaigns, Community ranking |
+| Skin shop | Purchases, Prices, Catalog, Shop settings |
+| Anti-Cheat | Anti-Cheat page |
+
+A page whose module is off is not in the menu, and a group with no pages left disappears. On a long page the menu stays in view while you scroll. The menu at the top of the site stays as it is, with **Admin** to come back here from any page.
+
+On a phone the menu is folded into a bar above the page that names the page you are on. Tap it to open the full list:
+
+![The administration menu open on a phone](../images/en/admin-phone-menu.webp)
 
 ## Overview
 
