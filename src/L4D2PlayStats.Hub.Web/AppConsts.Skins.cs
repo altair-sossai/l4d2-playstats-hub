@@ -17,4 +17,10 @@ public static partial class AppConsts
     public const string SkinCatalogDownloadFailed = "The catalog could not be downloaded.";
     public const string SkinCatalogNoFile = "Choose the catalog file first.";
     public const string SkinSettingsInvalidUrl = "An address must start with http:// or https://.";
+    public const int SkinAuthorSyncIntervalInHours = 24;
+    public const int SkinAuthorCheckIntervalInMinutes = 60;
+    public const int SkinAuthorSyncStartDelayInSeconds = 90;
+    public const int SkinAuthorsPerRun = 300;
+    public const string SkinAuthorSyncTempData = "SkinAuthorSync";
+    public const string SkinAuthorSyncNoAnswer = "Steam did not answer. Try again in a few minutes.";
 }

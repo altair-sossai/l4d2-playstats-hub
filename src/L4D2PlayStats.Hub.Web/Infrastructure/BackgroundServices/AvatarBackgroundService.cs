@@ -1,25 +1,22 @@
-using System.Net;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
+using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 
-public partial class AvatarBackgroundService(
+public class AvatarBackgroundService(
     IServiceProvider serviceProvider,
-    IHttpClientFactory httpClientFactory,
+    SteamProfileClient steamProfileClient,
     AvatarStore avatarStore,
     AvatarQueue avatarQueue,
     IClock clock,
     ILogger<AvatarBackgroundService> logger) : BackgroundService
 {
     private DateTime _nextSweepAtUtc = DateTime.MinValue;
-    private DateTime _pausedUntilUtc = DateTime.MinValue;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -40,9 +37,10 @@ public partial class AvatarBackgroundService(
 
     internal async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        var now = clock.UtcNow;
-        if (now < _pausedUntilUtc)
+        if (steamProfileClient.Paused)
             return;
+
+        var now = clock.UtcNow;
 
         using var scope = serviceProvider.CreateScope();
 
@@ -72,16 +70,12 @@ public partial class AvatarBackgroundService(
         if (ids.Count == 0)
             return;
 
-        var client = httpClientFactory.CreateClient(AppConsts.SteamHttpClient);
-        client.Timeout = TimeSpan.FromSeconds(AppConsts.SteamTimeoutInSeconds);
+        var lookup = await steamProfileClient.LookupAsync(ids, key, cancellationToken);
+        var client = steamProfileClient.CreateClient();
 
-        var addresses = key == null
-            ? await ProfileAddressesAsync(client, ids, cancellationToken)
-            : await SummaryAddressesAsync(client, key, ids, cancellationToken);
-
-        foreach (var (communityId, address) in addresses)
-            if (Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps)
-                await DownloadAsync(client, communityId, uri, cancellationToken);
+        foreach (var profile in lookup.Profiles.Values)
+            if (Uri.TryCreate(profile.AvatarUrl, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps)
+                await DownloadAsync(client, profile.CommunityId, uri, cancellationToken);
 
         var profiles = await dbContext.PlayerProfiles
             .Where(p => ids.Contains(p.CommunityId))
@@ -104,81 +98,4 @@ public partial class AvatarBackgroundService(
             logger.LogInformation("Could not download the avatar of {CommunityId}: {Message}", communityId, exception.Message);
         }
     }
-
-    private static async Task<Dictionary<long, string>> SummaryAddressesAsync(HttpClient client, string key, IEnumerable<long> ids, CancellationToken cancellationToken)
-    {
-        var addresses = new Dictionary<long, string>();
-
-        foreach (var batch in ids.Chunk(AppConsts.AvatarBatchSize))
-        {
-            var url = $"{AppConsts.SteamSummariesUrl}?key={Uri.EscapeDataString(key)}&steamids={string.Join(",", batch)}";
-
-            using var response = await client.GetAsync(url, cancellationToken);
-            if (!response.IsSuccessStatusCode)
-                break;
-
-            using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
-
-            if (!document.RootElement.TryGetProperty("response", out var body) || !body.TryGetProperty("players", out var players))
-                continue;
-
-            foreach (var player in players.EnumerateArray())
-                if (player.TryGetProperty("steamid", out var steamId) && long.TryParse(steamId.GetString(), out var communityId) && player.TryGetProperty("avatarfull", out var avatar))
-                    addresses[communityId] = avatar.GetString() ?? string.Empty;
-        }
-
-        return addresses;
-    }
-
-    private async Task<Dictionary<long, string>> ProfileAddressesAsync(HttpClient client, IEnumerable<long> ids, CancellationToken cancellationToken)
-    {
-        var addresses = new Dictionary<long, string>();
-
-        foreach (var batch in ids.Chunk(AppConsts.AvatarKeylessParallel))
-        {
-            var results = await Task.WhenAll(batch.Select(id => ProfileAddressAsync(client, id, cancellationToken)));
-
-            foreach (var (communityId, address, limited) in results)
-            {
-                if (limited)
-                {
-                    _pausedUntilUtc = clock.UtcNow.AddMinutes(AppConsts.AvatarKeylessPauseInMinutes);
-
-                    return addresses;
-                }
-
-                if (address != null)
-                    addresses[communityId] = address;
-            }
-
-            await Task.Delay(AppConsts.AvatarKeylessDelayInMilliseconds, cancellationToken);
-        }
-
-        return addresses;
-    }
-
-    private static async Task<(long CommunityId, string? Address, bool Limited)> ProfileAddressAsync(HttpClient client, long communityId, CancellationToken cancellationToken)
-    {
-        try
-        {
-            using var response = await client.GetAsync(string.Format(AppConsts.SteamProfileXmlUrl, communityId), cancellationToken);
-
-            if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                return (communityId, null, true);
-
-            if (!response.IsSuccessStatusCode)
-                return (communityId, null, false);
-
-            var match = AvatarFull().Match(await response.Content.ReadAsStringAsync(cancellationToken));
-
-            return (communityId, match.Success ? match.Groups[1].Value : null, false);
-        }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException)
-        {
-            return (communityId, null, false);
-        }
-    }
-
-    [GeneratedRegex(AppConsts.SteamProfileAvatarPattern)]
-    private static partial Regex AvatarFull();
 }

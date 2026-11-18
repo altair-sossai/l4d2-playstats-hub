@@ -124,6 +124,8 @@ Choose the player by Steam ID (any format), by profile link, or from the list, t
 
 Every skin shows its author with a link to their Steam profile and to the original Workshop page. The **Are you the author?** notice explains that the project is non-profit, that stars cannot be bought with money, and how an author can ask for a skin to be removed: a message on Steam or a request on GitHub, if the administrator set those addresses.
 
+The author's name comes from their Steam profile, not only from the catalog. Once a day the site asks Steam for the current name of every author and updates their skins when someone changed it, so the shop always credits the name the author uses today. Importing the catalog again keeps the name read from Steam. It works without a Steam Web API key; with a key, set in the site settings, it is faster.
+
 ## For administrators
 
 The shop has four pages under **Administration > Skins**.
@@ -152,7 +154,7 @@ The catalog is the `skins.json` file of the [assets repository](https://github.c
 - updates the skins that exist and adds the new ones;
 - takes off sale the skins that are no longer in the file; players keep the ones they own.
 
-The page shows how many skins are in the catalog, for sale and off sale, and when it last changed.
+The page shows how many skins are in the catalog, for sale and off sale, and when it last changed. The **Author names** panel shows how many authors there are, how many were checked on Steam, when the last check ran and when an author last changed their name. **Check the names now** runs the check at once instead of waiting for the daily one.
 
 ### Prices
 

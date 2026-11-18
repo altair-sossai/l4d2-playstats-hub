@@ -124,6 +124,8 @@ Escolha o jogador pelo Steam ID (em qualquer formato), pelo link do perfil ou pe
 
 Cada skin mostra o autor dela com um link para o perfil dele na Steam e para a página original do Workshop. O aviso **É o autor?** explica que o projeto não tem fins lucrativos, que as estrelas não podem ser compradas com dinheiro e como um autor pode pedir a remoção de uma skin: uma mensagem na Steam ou um pedido no GitHub, se o administrador definiu esses endereços.
 
+O nome do autor vem do perfil dele na Steam, e não só do catálogo. Uma vez por dia o site pergunta à Steam o nome atual de cada autor e atualiza as skins dele quando alguém mudou de nome, então a loja sempre credita o nome que o autor usa hoje. Importar o catálogo de novo mantém o nome lido da Steam. Funciona sem a chave da Steam Web API; com a chave, definida nas configurações do site, fica mais rápido.
+
 ## Para administradores
 
 A loja tem quatro páginas em **Administração > Skins**.
@@ -152,7 +154,7 @@ O catálogo é o arquivo `skins.json` do [repositório de assets](https://github
 - atualiza as skins que já existem e adiciona as novas;
 - tira de venda as skins que não estão mais no arquivo; os jogadores ficam com as que já têm.
 
-A página mostra quantas skins estão no catálogo, à venda e fora de venda, e quando ele mudou pela última vez.
+A página mostra quantas skins estão no catálogo, à venda e fora de venda, e quando ele mudou pela última vez. O painel **Nomes dos autores** mostra quantos autores existem, quantos foram conferidos na Steam, quando foi a última conferência e quando um autor mudou de nome pela última vez. **Conferir os nomes agora** roda a conferência na hora, sem esperar a diária.
 
 ### Preços
 

@@ -87,6 +87,7 @@ public class SkinCatalogService(
     {
         var now = clock.UtcNow;
         var skins = await dbContext.Set<Skin>().Include(skin => skin.Texts).ToDictionaryAsync(skin => skin.Id, cancellationToken);
+        var authorNames = await dbContext.Set<SkinAuthor>().AsNoTracking().Where(author => author.Name != null).ToDictionaryAsync(author => author.CommunityId, author => author.Name!, cancellationToken);
         var listed = entries.Select(entry => entry.Id!).ToHashSet();
         var added = new HashSet<string>();
 
@@ -100,6 +101,9 @@ public class SkinCatalogService(
             }
 
             Apply(skin, entry);
+
+            if (skin.AuthorCommunityId != null && authorNames.TryGetValue(skin.AuthorCommunityId.Value, out var authorName))
+                skin.AuthorName = authorName;
         }
 
         var removed = skins.Values.Where(skin => skin.Available && !listed.Contains(skin.Id)).ToList();

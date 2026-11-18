@@ -44,6 +44,39 @@
     </p>
 }
 
+@if (TempData[AppConsts.SkinAuthorSyncTempData] is string synced)
+{
+    <div class="alert alert-success">@L["Author names checked on Steam: {0} authors, {1} skins renamed.", SkinDisplay.Arguments(synced)]</div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>@L["Author names"]</strong>
+    </div>
+    <div class="panel-body">
+        <p>@L["The name of each author comes from their Steam profile. The site checks it every day and updates the skins when an author changes their name, even after the catalog is imported again."]</p>
+        <p class="text-muted">
+            <small>
+                @L["Authors"]: @Model.Authors.Authors.ToString("N0", culture)
+                · @L["checked"]: @Model.Authors.Synced.ToString("N0", culture)
+                @if (Model.AuthorsSyncedAt != null)
+                {
+                    <text>· @L["last check"]: @Model.AuthorsSyncedAt.Value.ToString(AppConsts.ShortDateTimeFormat, culture)</text>
+                }
+                @if (Model.AuthorRenamedAt != null)
+                {
+                    <text>· @L["last name change"]: @Model.AuthorRenamedAt.Value.ToString(AppConsts.ShortDateTimeFormat, culture)</text>
+                }
+            </small>
+        </p>
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/authors" style="margin: 0">
+            <button class="btn btn-default" type="submit" @(Model.Authors.Authors == 0 ? "disabled" : null)>
+                <span class="glyphicon glyphicon-refresh"></span> @L["Check the names now"]
+            </button>
+        </form>
+    </div>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <strong>@L["Import from a file"]</strong>

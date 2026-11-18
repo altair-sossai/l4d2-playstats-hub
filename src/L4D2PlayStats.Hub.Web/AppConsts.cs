@@ -83,6 +83,7 @@ public static partial class AppConsts
     public const string SteamProfileAvatarPattern = @"<avatarFull><!\[CDATA\[(https://[^\]]+)\]\]></avatarFull>";
     public const int SteamTimeoutInSeconds = 10;
     public const string SteamHttpClient = "Steam";
+    public const string SteamProfileNamePattern = @"<steamID><!\[CDATA\[(.*?)\]\]></steamID>";
     public const string AvatarTemporaryExtension = ".tmp";
     public const string SteamSummariesUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/";
 

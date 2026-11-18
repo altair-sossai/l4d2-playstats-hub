@@ -23,6 +23,7 @@ public class SkinViewService(
     ISkinShopService skinShopService,
     ISeasonService seasonService,
     ISettingsService settingsService,
+    ISkinAuthorService skinAuthorService,
     ICurrentUser currentUser) : ISkinViewService
 {
     public async Task<SkinsModel> ShopAsync(CancellationToken cancellationToken = default)
@@ -134,6 +135,7 @@ public class SkinViewService(
         var available = await skins.CountAsync(skin => skin.Available, cancellationToken);
         var timeZone = await TimeZoneAsync(cancellationToken);
         DateTime? updatedAtUtc = total == 0 ? null : await skins.MaxAsync(skin => skin.UpdatedAtUtc, cancellationToken);
+        var authors = await skinAuthorService.StatusAsync(cancellationToken);
 
         return new SkinCatalogViewModel
         {
@@ -141,7 +143,10 @@ public class SkinViewService(
             Total = total,
             Available = available,
             Unavailable = total - available,
-            UpdatedAt = updatedAtUtc == null ? null : ToSiteTime(updatedAtUtc.Value, timeZone)
+            UpdatedAt = updatedAtUtc == null ? null : ToSiteTime(updatedAtUtc.Value, timeZone),
+            Authors = authors,
+            AuthorsSyncedAt = authors.LastSyncedAtUtc == null ? null : ToSiteTime(authors.LastSyncedAtUtc.Value, timeZone),
+            AuthorRenamedAt = authors.LastRenamedAtUtc == null ? null : ToSiteTime(authors.LastRenamedAtUtc.Value, timeZone)
         };
     }
 

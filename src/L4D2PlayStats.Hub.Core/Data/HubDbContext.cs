@@ -7,6 +7,7 @@ using L4D2PlayStats.Hub.Core.Modules.Punishments;
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Skins;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
     public DbSet<MatchPlayer> MatchPlayers => Set<MatchPlayer>();
     public DbSet<PlayerProfile> PlayerProfiles => Set<PlayerProfile>();
     public DbSet<Punishment> Punishments => Set<Punishment>();
+    public DbSet<SkinAuthor> SkinAuthors => Set<SkinAuthor>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

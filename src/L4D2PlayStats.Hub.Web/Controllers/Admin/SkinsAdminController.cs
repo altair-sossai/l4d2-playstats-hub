@@ -21,6 +21,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 public class SkinsAdminController(
     ISkinViewService skinViewService,
     ISkinCatalogService skinCatalogService,
+    ISkinAuthorSyncService skinAuthorSyncService,
     ISettingsService settingsService) : Controller
 {
     [HttpGet("")]
@@ -75,6 +76,19 @@ public class SkinsAdminController(
     public async Task<IActionResult> FetchCatalog(CancellationToken cancellationToken)
     {
         return Imported(await skinCatalogService.ImportFromUrlAsync(cancellationToken));
+    }
+
+    [HttpPost("catalog/authors")]
+    public async Task<IActionResult> SyncAuthors(CancellationToken cancellationToken)
+    {
+        var result = await skinAuthorSyncService.SyncAsync(true, cancellationToken);
+
+        if (result.Due > 0 && result.Checked == 0)
+            TempData["Error"] = AppConsts.SkinAuthorSyncNoAnswer;
+        else
+            TempData[AppConsts.SkinAuthorSyncTempData] = string.Join(AppConsts.SkinTempDataSeparator, result.Checked, result.Renamed);
+
+        return RedirectToAction(nameof(Catalog));
     }
 
     [HttpGet("settings")]

@@ -685,6 +685,28 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.ToTable("Skin");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinAuthor", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RenamedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("SyncedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CommunityId");
+
+                    b.HasIndex("SyncedAtUtc");
+
+                    b.ToTable("SkinAuthors");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Skins.SkinEquipment", b =>
                 {
                     b.Property<int>("Id")

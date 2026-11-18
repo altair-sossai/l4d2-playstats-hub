@@ -6,6 +6,7 @@ using L4D2PlayStats.Hub.Core.DependencyInjection;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
+using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
 using L4D2PlayStats.Hub.Web.Infrastructure.Health;
@@ -55,11 +56,13 @@ builder.Services.Scan(scan => scan
 builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddSingleton<AvatarQueue>();
+builder.Services.AddSingleton<SteamProfileClient>();
 builder.Services.AddSingleton<BrandingStore>();
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
 builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();
 builder.Services.AddHostedService<SkinSeasonRefundBackgroundService>();
+builder.Services.AddHostedService<SkinAuthorSyncBackgroundService>();
 
 builder.Services
     .AddAuthentication(options =>
