@@ -37,7 +37,7 @@ public static class SkinWebFactoryExtensions
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", night, 1, 300, 200));
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", night.AddMinutes(15), 2, 600, 500));
 
-        var stars = await factory.RunAsync(services => services.GetRequiredService<IRankingService>().StarsAsync());
+        var stars = await factory.RunAsync(StarsOracle.CountAsync);
 
         return stars.OrderByDescending(pair => pair.Value).ThenBy(pair => pair.Key).First().Key;
     }

@@ -1,6 +1,5 @@
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using System.Globalization;
-using System.Text;
 
 namespace L4D2PlayStats.Hub.Web.Helpers;
 
@@ -19,24 +18,6 @@ public static class Display
         return season.StartsAt.Year == last.Year
             ? $"{first} – {final} {last.Year}"
             : $"{first} {season.StartsAt.Year} – {final} {last.Year}";
-    }
-
-    public static string CampaignImage(string? campaign)
-    {
-        if (string.IsNullOrEmpty(campaign))
-            return "/imgs/campaigns/no-image.jpg";
-
-        var builder = new StringBuilder();
-
-        foreach (var character in campaign.ToLowerInvariant())
-        {
-            if (character is >= 'a' and <= 'z' or >= '0' and <= '9')
-                builder.Append(character);
-            else if (character is ' ' or '-' && builder.Length > 0 && builder[^1] != '-')
-                builder.Append('-');
-        }
-
-        return $"/imgs/campaigns/{builder.ToString().Trim('-')}.jpg";
     }
 
     public static string Percent(decimal value)

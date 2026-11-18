@@ -45,6 +45,9 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
         if (!string.IsNullOrWhiteSpace(name))
             ban.Name = Limit(name, AppConsts.LivePlayerNameMaxLength);
 
+        if (string.IsNullOrWhiteSpace(ban.Name))
+            ban.Name = Limit(await KnownNameAsync(communityId, cancellationToken), AppConsts.LivePlayerNameMaxLength);
+
         ban.Reason = Limit(reason, AppConsts.ChatBanReasonMaxLength);
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -62,6 +65,25 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+
+    private async Task<string?> KnownNameAsync(long communityId, CancellationToken cancellationToken)
+    {
+        var profile = await dbContext.PlayerProfiles
+            .AsNoTracking()
+            .Where(p => p.CommunityId == communityId && p.Name != null)
+            .Select(p => p.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(profile))
+            return profile;
+
+        return await dbContext.Set<PlayerConnection>()
+            .AsNoTracking()
+            .Where(c => c.CommunityId == communityId)
+            .OrderByDescending(c => c.LastSeenAtUtc)
+            .Select(c => c.Name)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     private static string? Limit(string? value, int length)

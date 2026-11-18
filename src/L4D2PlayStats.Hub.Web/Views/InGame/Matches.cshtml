@@ -24,7 +24,7 @@ else
             var teamB = string.Join(", ", match.Players.Where(p => p.TeamB).Select(p => p.Name));
 
             <tr>
-                <td class="muted">@match.LastFileDate.ToString("dd/MM HH:mm")</td>
+                <td class="muted">@match.LastFileDate.ToString("d") @match.LastFileDate.ToString(AppConsts.ShortTimeFormat)</td>
                 <td>@(match.Campaign ?? L["Custom campaign"].Value)</td>
                 <td style="white-space: normal;">@teamA</td>
                 <td class="num @(match.TeamAScore > match.TeamBScore ? "win" : "")">@match.TeamAScore</td>

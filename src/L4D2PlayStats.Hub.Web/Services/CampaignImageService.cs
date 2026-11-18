@@ -1,13 +1,17 @@
+using System.Text;
+
 namespace L4D2PlayStats.Hub.Web.Services;
 
 public class CampaignImageService(IWebHostEnvironment environment) : ICampaignImageService
 {
+    public string NoImage => $"/{Path(AppConsts.NoCampaignImage)}";
+
     public string Url(string? campaign)
     {
         var id = Id(campaign);
 
         if (id.Length == 0 || !environment.WebRootFileProvider.GetFileInfo(Path(id)).Exists)
-            id = AppConsts.NoCampaignImage;
+            return NoImage;
 
         return $"/{Path(id)}";
     }
@@ -22,8 +26,16 @@ public class CampaignImageService(IWebHostEnvironment environment) : ICampaignIm
         if (string.IsNullOrEmpty(campaign))
             return string.Empty;
 
-        var id = campaign.ToLowerInvariant().Replace(' ', '-');
+        var builder = new StringBuilder();
 
-        return string.Concat(id.Where(character => character is >= 'a' and <= 'z' or >= '0' and <= '9' or '-'));
+        foreach (var character in campaign.ToLowerInvariant())
+        {
+            if (character is >= 'a' and <= 'z' or >= '0' and <= '9')
+                builder.Append(character);
+            else if (character is ' ' or '-' && builder.Length > 0 && builder[^1] != '-')
+                builder.Append('-');
+        }
+
+        return builder.ToString().Trim('-');
     }
 }

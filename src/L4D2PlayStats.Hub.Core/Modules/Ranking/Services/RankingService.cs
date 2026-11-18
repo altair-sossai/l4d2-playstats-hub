@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Punishments.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
@@ -28,7 +29,7 @@ public class RankingService(
             var matches = await LoadAsync(dbContext.Matches.Where(m => m.SeasonId == seasonId), cancellationToken);
 
             return await CalculateAsync(matches, punishments, cancellationToken);
-        });
+        }, cancellationToken);
     }
 
     public async Task<IReadOnlyList<RankingPlayer>> CurrentAsync(CancellationToken cancellationToken = default)
@@ -42,12 +43,10 @@ public class RankingService(
     {
         return CachedAsync($"year_{year}", async () =>
         {
-            var start = new DateTime(year, 1, 1);
-            var end = start.AddYears(1);
-            var matches = await LoadAsync(dbContext.Matches.Where(m => m.LastFileDate >= start && m.LastFileDate < end), cancellationToken);
+            var matches = await LoadAsync(dbContext.Matches.InYear(year), cancellationToken);
 
             return await CalculateAsync(matches, new Dictionary<long, int>(), cancellationToken);
-        });
+        }, cancellationToken);
     }
 
     public Task<IReadOnlyList<RankingPlayer>> AllTimeAsync(CancellationToken cancellationToken = default)
@@ -57,7 +56,7 @@ public class RankingService(
             var matches = await LoadAsync(dbContext.Matches, cancellationToken);
 
             return await CalculateAsync(matches, new Dictionary<long, int>(), cancellationToken);
-        });
+        }, cancellationToken);
     }
 
     public async Task<IReadOnlyList<RankingPlayer>> MatchAsync(int matchId, CancellationToken cancellationToken = default)
@@ -70,22 +69,6 @@ public class RankingService(
         var matches = await LoadAsync(dbContext.Matches.Where(m => m.Id == matchId), cancellationToken, false);
 
         return await CalculateAsync(matches, punishments, cancellationToken);
-    }
-
-    public Task<Dictionary<long, int>> StarsAsync(CancellationToken cancellationToken = default)
-    {
-        return CachedAsync("stars", async () =>
-        {
-            var rows = await dbContext.MatchPlayers
-                .AsNoTracking()
-                .Where(p => p.Match!.CountsForRanking && (p.TeamA || p.TeamB))
-                .Select(p => new { p.CommunityId, p.TeamA, p.TeamB, p.MvpSiDamage, p.MvpCommon })
-                .ToListAsync(cancellationToken);
-
-            return rows
-                .GroupBy(row => row.CommunityId)
-                .ToDictionary(group => group.Key, group => group.Sum(row => (row.MvpSiDamage + row.MvpCommon) * ((row.TeamA ? 1 : 0) + (row.TeamB ? 1 : 0))));
-        });
     }
 
     private async Task<List<RankingMatch>> LoadAsync(IQueryable<Match> query, CancellationToken cancellationToken, bool rankingOnly = true)
@@ -111,17 +94,33 @@ public class RankingService(
         return RankingCalculator.Calculate(matches, punishments, settings);
     }
 
-    private async Task<T> CachedAsync<T>(string scope, Func<Task<T>> factory)
+    private async Task<T> CachedAsync<T>(string scope, Func<Task<T>> factory, CancellationToken cancellationToken)
     {
+        var changes = hubState.DataChangeToken;
         var key = $"ranking_{scope}_{hubState.DataVersion}";
 
-        var value = await memoryCache.GetOrCreateAsync(key, async entry =>
+        if (memoryCache.TryGetValue(key, out T? cached))
+            return cached!;
+
+        var gate = hubState.Gate($"ranking_{scope}");
+
+        await gate.WaitAsync(cancellationToken);
+
+        try
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(AppConsts.RankingCacheInMinutes);
+            if (memoryCache.TryGetValue(key, out cached))
+                return cached!;
 
-            return await factory();
-        });
+            var value = await factory();
+            var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(AppConsts.RankingCacheInMinutes) };
 
-        return value!;
+            memoryCache.Set(key, value, options.AddExpirationToken(changes));
+
+            return value;
+        }
+        finally
+        {
+            gate.Release();
+        }
     }
 }

@@ -11,7 +11,13 @@ public class MatchCardModel
     public required string CampaignImage { get; init; }
     public bool ShowDetailsButton { get; init; } = true;
     public bool ShowServer { get; init; }
+    public string? PlayerPeriod { get; init; }
 
     public DateTime MatchStart => MatchDisplay.SiteTime(Match.MatchStart, TimeZone);
     public string DetailsUrl => $"{AppConsts.MatchesUrl}/{Match.Id}";
+
+    public string PlayerUrl(long communityId)
+    {
+        return PlayerUrls.Details(communityId, null, PlayerPeriod);
+    }
 }

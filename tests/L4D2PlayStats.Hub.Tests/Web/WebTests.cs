@@ -284,6 +284,29 @@ public class WebTests
     }
 
     [TestMethod]
+    public async Task TheMatchesForTheGameShowTheDateInTheLanguageOfTheSite()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        var credentials = await factory.CreateServerAsync();
+        using var server = factory.ServerClient(credentials);
+        using var client = factory.Client();
+
+        var now = RecentNight();
+
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", now, 1, 300, 200));
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", now.AddMinutes(15), 2, 600, 500));
+        await factory.SaveAsync(new SiteSettings { DefaultCulture = "pt-BR" });
+
+        var last = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.Select(match => match.LastFileDate).SingleAsync());
+        var html = await client.GetStringAsync("/ingame/matches");
+
+        Assert.Contains(last.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture), html);
+    }
+
+    [TestMethod]
     public async Task ThePageForTheGameHighlightsThePlayerWhoOpenedIt()
     {
         using var factory = new HubWebFactory();
@@ -373,6 +396,29 @@ public class WebTests
         Assert.Contains("playstats_token \"my-server:", first);
         Assert.DoesNotContain("YOUR-KEY", first);
         Assert.Contains("YOUR-KEY", second);
+    }
+
+    [TestMethod]
+    public async Task TheServerPageExplainsThePluginFolderTheConfigurationFileAndTheMatchModes()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        var created = await HubWebFactory.PostFormAsync(client, "/admin/servers", "/admin/servers", new Dictionary<string, string> { ["Name"] = "My Server" });
+        var html = await client.GetStringAsync(created.Headers.Location!.OriginalString);
+
+        Assert.Contains("left4dead2 folder", html);
+        Assert.Contains("cfg/playstats.cfg", html);
+        Assert.Contains("exec playstats.cfg", html);
+        Assert.Contains("cfg/sharedplugins.cfg", html);
+        Assert.Contains("blob/main/docs/game-server.md", html);
+        Assert.DoesNotContain("plugins/README.md", html);
+
+        foreach (var plugin in new[] { "l4d2_playstats_sync", "l4d2_gameinfo_sync", "l4d2_ranking", "l4d2_show_patent_icon", "l4d2_weapon_skins" })
+            Assert.Contains($"sm plugins load {plugin}.smx", html, plugin);
     }
 
     [TestMethod]

@@ -21,14 +21,6 @@ public static class PlayerUrls
         return $"{AppConsts.PlayersUrl}?orderBy={orderBy}&asc={asc}" + Period(period, '&');
     }
 
-    public static string CampaignThumb(string? campaign)
-    {
-        var name = string.IsNullOrEmpty(campaign) ? AppConsts.PlayerCampaignThumbFallback : campaign;
-        var slug = string.Concat(name.ToLowerInvariant().Replace(' ', '-').Where(c => c is >= 'a' and <= 'z' or >= '0' and <= '9' or '-'));
-
-        return $"{AppConsts.PlayerCampaignThumbFolder}{slug}{AppConsts.PlayerCampaignThumbExtension}";
-    }
-
     public static string SeasonQuery(int seasonId)
     {
         return $"{AppConsts.PlayerSeasonParameter}={seasonId}";

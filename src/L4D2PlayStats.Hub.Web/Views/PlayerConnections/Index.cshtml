@@ -111,7 +111,7 @@
             @if (Model.RankingEnabled)
             {
                 <span> · </span>
-                <a href="@($"{AppConsts.LivePlayerUrl}{details.Player.CommunityId}")">@L["Player"]</a>
+                <a href="@($"{AppConsts.PlayerUrlPrefix}{details.Player.CommunityId}")">@L["Player"]</a>
             }
         </p>
 

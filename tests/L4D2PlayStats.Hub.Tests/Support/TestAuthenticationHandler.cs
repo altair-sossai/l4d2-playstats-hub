@@ -9,7 +9,7 @@ namespace L4D2PlayStats.Hub.Tests.Support;
 public class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    public const string Scheme = "Test";
+    public const string SchemeName = "Test";
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -19,8 +19,8 @@ public class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptio
             return Task.FromResult(AuthenticateResult.NoResult());
 
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user), new Claim(ClaimTypes.Name, $"Player {user}") };
-        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme));
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName));
 
-        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme)));
+        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, SchemeName)));
     }
 }

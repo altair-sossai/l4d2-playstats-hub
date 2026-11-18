@@ -7,12 +7,11 @@ using L4D2PlayStats.Hub.Core.Modules.GameModes.Models;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Punishments.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +32,6 @@ public class AdminController(
     IAdministratorService administratorService,
     ISettingsService settingsService,
     IMatchBuildService matchBuildService,
-    IPunishmentService punishmentService,
-    IStatisticsService statisticsService,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -115,6 +112,7 @@ public class AdminController(
     }
 
     [HttpGet("servers/{id:int}/status")]
+    [AllowDuringSetup]
     public async Task<IActionResult> ServerStatus(int id, CancellationToken cancellationToken)
     {
         var server = await gameServerService.FindAsync(id, cancellationToken);
@@ -164,6 +162,7 @@ public class AdminController(
     }
 
     [HttpPost("settings")]
+    [RequestSizeLimit(AppConsts.SettingsFormMaxBytes)]
     public async Task<IActionResult> SaveSettings(SettingsViewModel model, CancellationToken cancellationToken)
     {
         var problems = await adminViewService.SaveAsync(model, cancellationToken);
@@ -281,33 +280,5 @@ public class AdminController(
         TempData["Reprocessed"] = await matchBuildService.RebuildAllAsync(cancellationToken);
 
         return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost("punishments")]
-    public async Task<IActionResult> AddPunishment(int seasonId, long communityId, int points, string? reason, CancellationToken cancellationToken)
-    {
-        await punishmentService.AddAsync(seasonId, communityId, points, reason, currentUser.CommunityId, cancellationToken);
-
-        return Redirect($"/player/{communityId}?season={seasonId}");
-    }
-
-    [HttpPost("punishments/delete")]
-    public async Task<IActionResult> RemovePunishment(int seasonId, long communityId, CancellationToken cancellationToken)
-    {
-        await punishmentService.RemoveAsync(seasonId, communityId, cancellationToken);
-
-        return Redirect($"/player/{communityId}?season={seasonId}");
-    }
-
-    [HttpPost("statistics/{fileId:int}/score")]
-    public async Task<IActionResult> UpdateScore(int fileId, int teamAScore, int teamBScore, CancellationToken cancellationToken)
-    {
-        var file = await statisticsService.UpdateScoreAsync(fileId, teamAScore, teamBScore, cancellationToken);
-        if (file == null)
-            return BadRequest();
-
-        var updated = await statisticsService.FindAsync(fileId, cancellationToken);
-
-        return updated?.MatchId == null ? Redirect("/matches") : Redirect($"/matches/{updated.MatchId}");
     }
 }

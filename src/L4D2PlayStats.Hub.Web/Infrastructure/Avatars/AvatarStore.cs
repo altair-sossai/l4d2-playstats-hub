@@ -13,6 +13,10 @@ public class AvatarStore(HubPaths paths)
     {
         Directory.CreateDirectory(_directory);
 
-        await File.WriteAllBytesAsync(PathFor(communityId), image, cancellationToken);
+        var path = PathFor(communityId);
+        var temporary = $"{path}.{Guid.NewGuid():N}{AppConsts.AvatarTemporaryExtension}";
+
+        await File.WriteAllBytesAsync(temporary, image, cancellationToken);
+        File.Move(temporary, path, true);
     }
 }

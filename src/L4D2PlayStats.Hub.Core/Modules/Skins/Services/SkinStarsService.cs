@@ -10,9 +10,12 @@ public class SkinStarsService(HubDbContext dbContext, HubState hubState, IMemory
 {
     public async Task<SkinStars> GetAsync(long communityId, CancellationToken cancellationToken = default)
     {
+        var changes = hubState.DataChangeToken;
+
         var stars = await memoryCache.GetOrCreateAsync($"{AppConsts.SkinStarsCacheKey}_{hubState.DataVersion}", async entry =>
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(AppConsts.RankingCacheInMinutes);
+            entry.AddExpirationToken(changes);
 
             return await LoadAsync(cancellationToken);
         });

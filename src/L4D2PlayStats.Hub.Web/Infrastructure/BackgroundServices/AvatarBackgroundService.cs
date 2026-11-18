@@ -38,7 +38,7 @@ public partial class AvatarBackgroundService(
         }
     }
 
-    private async Task RefreshAsync(CancellationToken cancellationToken)
+    internal async Task RefreshAsync(CancellationToken cancellationToken)
     {
         var now = clock.UtcNow;
         if (now < _pausedUntilUtc)
@@ -72,7 +72,7 @@ public partial class AvatarBackgroundService(
         if (ids.Count == 0)
             return;
 
-        var client = httpClientFactory.CreateClient();
+        var client = httpClientFactory.CreateClient(AppConsts.SteamHttpClient);
         client.Timeout = TimeSpan.FromSeconds(AppConsts.SteamTimeoutInSeconds);
 
         var addresses = key == null
@@ -81,7 +81,7 @@ public partial class AvatarBackgroundService(
 
         foreach (var (communityId, address) in addresses)
             if (Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps)
-                await avatarStore.SaveAsync(communityId, await client.GetByteArrayAsync(uri, cancellationToken), cancellationToken);
+                await DownloadAsync(client, communityId, uri, cancellationToken);
 
         var profiles = await dbContext.PlayerProfiles
             .Where(p => ids.Contains(p.CommunityId))
@@ -91,6 +91,18 @@ public partial class AvatarBackgroundService(
             profile.AvatarUpdatedAtUtc = now;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task DownloadAsync(HttpClient client, long communityId, Uri uri, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await avatarStore.SaveAsync(communityId, await client.GetByteArrayAsync(uri, cancellationToken), cancellationToken);
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
+        {
+            logger.LogInformation("Could not download the avatar of {CommunityId}: {Message}", communityId, exception.Message);
+        }
     }
 
     private static async Task<Dictionary<long, string>> SummaryAddressesAsync(HttpClient client, string key, IEnumerable<long> ids, CancellationToken cancellationToken)

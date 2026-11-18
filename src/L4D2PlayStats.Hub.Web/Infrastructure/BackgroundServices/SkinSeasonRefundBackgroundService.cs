@@ -1,6 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 
-namespace L4D2PlayStats.Hub.Web.Services;
+namespace L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 
 public class SkinSeasonRefundBackgroundService(IServiceProvider serviceProvider, ILogger<SkinSeasonRefundBackgroundService> logger) : BackgroundService
 {

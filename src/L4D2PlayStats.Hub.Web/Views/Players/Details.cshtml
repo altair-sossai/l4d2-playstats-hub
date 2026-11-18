@@ -4,6 +4,7 @@
 @inject ICurrentUser CurrentUser
 @inject ISettingsService Settings
 @inject IAntiforgery Antiforgery
+@inject ICampaignImageService CampaignImages
 
 @{
     var firstPlayerRanking = Model.FirstPlayerRanking;
@@ -529,7 +530,7 @@
         }
 
         var punishmentSeasonId = @Json.Serialize(Model.Period.Season?.Id);
-        var punishmentHeaders = { "@AppConsts.PlayerAntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
+        var punishmentHeaders = { "@AppConsts.AntiforgeryHeader": @Json.Serialize(antiforgeryToken ?? string.Empty) };
 
         function addPunishments(communityId, lostExperiencePoints) {
             var command = { 
@@ -556,7 +557,7 @@
         }
 
         function editPunishment(communityId, punishment) {
-            var output = prompt("@Html.Raw(L["How many experience points should the user lose?"])", punishment);
+            var output = prompt(@Json.Serialize(L["How many experience points should the user lose?"].Value), punishment);
 
             if (!output)
                 return;
@@ -1280,7 +1281,7 @@
     <div class="match">
         @foreach (var match in Model.LastMatches)
         {
-            @await Html.PartialAsync("_PlayerMatch", match)
+            @await Html.PartialAsync("../Matches/_Match", match)
         }
     </div>
 }
@@ -1300,7 +1301,7 @@
             @foreach (var campaign in Model.Campaigns)
             {
                 <div class="campaign-card">
-                    <img class="campaign-cover" src="@PlayerUrls.CampaignThumb(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@PlayerUrls.CampaignThumb(null)'"/>
+                    <img class="campaign-cover" src="@CampaignImages.Url(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@CampaignImages.NoImage'"/>
                     <div class="campaign-body">
                         <div class="campaign-title">
                             <strong>@campaign.Name</strong>

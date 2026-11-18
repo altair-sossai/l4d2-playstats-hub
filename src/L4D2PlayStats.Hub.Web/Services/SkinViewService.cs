@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
@@ -53,9 +54,15 @@ public class SkinViewService(
         var timeZone = await TimeZoneAsync(cancellationToken);
         var playerId = long.TryParse(player?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var parsed) ? parsed : (long?)null;
 
+        var ids = purchases.Select(purchase => purchase.CommunityId)
+            .Concat(purchases.Where(purchase => purchase.GiftedByCommunityId != null).Select(purchase => purchase.GiftedByCommunityId!.Value))
+            .Append(playerId ?? 0)
+            .Distinct()
+            .ToList();
+
         var names = await dbContext.PlayerProfiles
             .AsNoTracking()
-            .Where(profile => profile.Name != null)
+            .Where(profile => profile.Name != null && ids.Contains(profile.CommunityId))
             .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name!, cancellationToken);
 
         var rows = purchases
@@ -156,12 +163,12 @@ public class SkinViewService(
     {
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
-        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
+        return SiteTime.Zone(site.TimeZone);
     }
 
     private static DateTime ToSiteTime(DateTime utc, TimeZoneInfo timeZone)
     {
-        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
+        return SiteTime.FromUtc(utc, timeZone);
     }
 
     private static string Text(long communityId)

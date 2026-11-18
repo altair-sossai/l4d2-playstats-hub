@@ -10,7 +10,6 @@ public static partial class AppConsts
     public const string SkinPurchaseRarityCssPrefix = "ska-rarity-";
     public const string SkinPickerRarityCssPrefix = "sp-";
     public const string SkinAnchorPrefix = "skin-";
-    public const string SkinPurchaseDateFormat = "g";
     public const int SkinSeasonMonthsInYear = 12;
     public const string SkinCatalogInvalidFile = "That file is not a valid skin catalog.";
     public const string SkinCatalogEmpty = "That catalog has no skins.";

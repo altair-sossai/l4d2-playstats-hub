@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
@@ -34,7 +35,7 @@ public class MatchViewService(
 
         return new LastMatchesModel
         {
-            Matches = await CardsAsync(result.Matches, servers, true, cancellationToken),
+            Matches = await CardsAsync(result.Matches, servers, true, null, cancellationToken),
             Seasons = [.. seasons.Where(season => season.StartsAt <= now && (season.StartsAt.Year == now.Year || season.Id == seasonId))],
             Years = [.. seasons.Where(season => season.StartsAt <= now).Select(season => season.StartsAt.Year).Distinct().OrderByDescending(value => value)],
             HasPeriodChoices = seasons.Count > 1,
@@ -47,12 +48,12 @@ public class MatchViewService(
         };
     }
 
-    public async Task<IReadOnlyList<MatchCardModel>> CardsAsync(MatchFilter filter, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<MatchCardModel>> CardsAsync(MatchFilter filter, string? playerPeriod = null, CancellationToken cancellationToken = default)
     {
         var servers = await gameServerService.ListAsync(cancellationToken);
         var result = await matchResultService.ListAsync(filter, cancellationToken);
 
-        return await CardsAsync(result.Matches, servers, true, cancellationToken);
+        return await CardsAsync(result.Matches, servers, true, playerPeriod, cancellationToken);
     }
 
     public async Task<MatchDetailsModel?> DetailsAsync(int id, CancellationToken cancellationToken = default)
@@ -92,18 +93,17 @@ public class MatchViewService(
     private async Task<MatchCardModel> DetailsCardAsync(MatchResult match, CancellationToken cancellationToken)
     {
         var servers = await gameServerService.ListAsync(cancellationToken);
-        var cards = await CardsAsync([match], servers, false, cancellationToken);
+        var cards = await CardsAsync([match], servers, false, null, cancellationToken);
 
         return cards[0];
     }
 
-    private async Task<IReadOnlyList<MatchCardModel>> CardsAsync(IReadOnlyList<MatchResult> matches, List<GameServer> servers, bool showDetailsButton, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<MatchCardModel>> CardsAsync(IReadOnlyList<MatchResult> matches, List<GameServer> servers, bool showDetailsButton, string? playerPeriod, CancellationToken cancellationToken)
     {
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
 
-        if (!TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone))
-            timeZone = TimeZoneInfo.Utc;
+        var timeZone = SiteTime.Zone(site.TimeZone);
 
         return
         [
@@ -114,7 +114,8 @@ public class MatchViewService(
                 Today = now.Date,
                 CampaignImage = campaignImageService.Url(match.Campaign),
                 ShowDetailsButton = showDetailsButton,
-                ShowServer = servers.Count > 1
+                ShowServer = servers.Count > 1,
+                PlayerPeriod = playerPeriod
             })
         ];
     }

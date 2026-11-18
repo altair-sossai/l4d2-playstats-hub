@@ -231,12 +231,12 @@
                                         {
                                             <tr class="@(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
                                                 <td style="padding: 2px" class="slim">
-                                                    <a href="/player/@player.CommunityId" title="@player.Name">
+                                                    <a href="@Model.PlayerUrl(player.CommunityId)" title="@player.Name">
                                                         <img src="/avatar/@player.CommunityId" alt="@player.Name" title="@player.Name" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
                                                     </a>
                                                 </td>
                                                 <td class="vertical-align-middle">
-                                                    <a href="/player/@player.CommunityId">@(player.Name?.TruncatePlayerName() ?? "-")</a>
+                                                    <a href="@Model.PlayerUrl(player.CommunityId)">@(player.Name?.TruncatePlayerName() ?? "-")</a>
                                                     @if (player.MvpSiDamage > 0 || player.MvpCommon > 0)
                                                     {
                                                         <small> | </small>

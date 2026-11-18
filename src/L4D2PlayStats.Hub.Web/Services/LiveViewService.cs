@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
@@ -19,7 +20,7 @@ public class LiveViewService(
     ISettingsService settingsService,
     IChatBanService chatBanService,
     ICurrentUser currentUser,
-    IWebHostEnvironment environment) : ILiveViewService
+    ICampaignImageService campaignImageService) : ILiveViewService
 {
     public async Task<GameServer?> FindServerAsync(string publicId, CancellationToken cancellationToken = default)
     {
@@ -62,7 +63,6 @@ public class LiveViewService(
         var status = presence.GetStatus(server);
         var map = status.Signal?.Map;
         var campaign = string.IsNullOrEmpty(map) ? null : catalog.FindUsingMapName(map)?.Name;
-        var image = Display.CampaignImage(campaign);
 
         return new ServerCardViewModel
         {
@@ -70,7 +70,7 @@ public class LiveViewService(
             Status = status,
             Snapshot = liveDataService.Snapshot(server),
             Campaign = campaign,
-            CampaignImage = environment.WebRootFileProvider.GetFileInfo(image).Exists ? image : AppConsts.LiveNoCampaignImage,
+            CampaignImage = campaignImageService.Url(campaign),
             RankingEnabled = modules.IsEnabled(HubModule.Ranking),
             AntiCheatPage = modules.IsEnabled(HubModule.AntiCheat)
         };
@@ -113,6 +113,6 @@ public class LiveViewService(
     {
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
-        return TimeZoneInfo.TryFindSystemTimeZoneById(site.TimeZone, out var timeZone) ? timeZone : TimeZoneInfo.Utc;
+        return SiteTime.Zone(site.TimeZone);
     }
 }

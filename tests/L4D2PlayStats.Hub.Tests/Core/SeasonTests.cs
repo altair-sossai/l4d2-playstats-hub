@@ -1,9 +1,13 @@
+using L4D2PlayStats.Hub.Core;
+using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
@@ -127,5 +131,38 @@ public class SeasonTests
 
         Assert.AreEqual(new DateTime(2026, 7, 1), season.StartsAt);
         Assert.AreEqual(new DateTime(2027, 1, 1), season.EndsAt);
+    }
+
+    [TestMethod]
+    public async Task ASeasonCreatedWhileAnotherRequestWaitsIsReusedInsteadOfCreatedTwice()
+    {
+        using var hub = new TestHub();
+
+        var date = new DateTime(2026, 11, 15);
+        var hubState = hub.Scope().ServiceProvider.GetRequiredService<HubState>();
+
+        await hubState.SeasonLock.WaitAsync();
+
+        using var waiting = hub.Scope();
+        var pending = waiting.ServiceProvider.GetRequiredService<ISeasonService>().GetOrCreateAsync(date);
+
+        await Task.Delay(200);
+
+        await hub.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+
+            dbContext.Seasons.AddRange(SeasonCalendar.Missing([], date, AppConsts.DefaultSeasonLengthInMonths));
+
+            return await dbContext.SaveChangesAsync();
+        });
+
+        hubState.SeasonLock.Release();
+
+        var season = await pending;
+        var seasons = await hub.RunAsync(services => services.GetRequiredService<HubDbContext>().Seasons.CountAsync());
+
+        Assert.IsTrue(season.Contains(date));
+        Assert.AreEqual(1, seasons);
     }
 }

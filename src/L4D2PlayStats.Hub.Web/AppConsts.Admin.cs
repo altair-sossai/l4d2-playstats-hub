@@ -2,7 +2,6 @@ namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
 {
-    public const int LogoBytesPerMegabyte = 1048576;
     public const string LogoUnsupportedMessage = "The logo was not changed: it must be a PNG, JPG, WEBP or GIF image.";
     public const string LogoTooLargeMessage = "The logo was not changed: the file is too large.";
 
@@ -19,7 +18,6 @@ public static partial class AppConsts
 
     public const string SetupWizardUrl = "/setup";
     public const string ThemeSwitchPath = "/theme";
-    public const string AdminNavAntiCheatUrl = "/admin/anti-cheat";
     public const string AdminSteamIdPlaceholder = "7656119...";
     public const string AdminServerAddressPlaceholder = "play.example.com:27015";
     public const string AdminPublicUrlPlaceholder = "https://stats.example.com";

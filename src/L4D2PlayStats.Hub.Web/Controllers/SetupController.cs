@@ -93,6 +93,7 @@ public class SetupController(
     }
 
     [HttpPost("site")]
+    [RequestSizeLimit(AppConsts.SettingsFormMaxBytes)]
     public async Task<IActionResult> Site(SettingsViewModel model, CancellationToken cancellationToken)
     {
         if (!await currentUser.IsAdministratorAsync())
