@@ -1,5 +1,7 @@
 Unable to find image 'alpine:latest' locally
 latest: Pulling from library/alpine
 
-[1A[2K881fc932939e: Pulling fs layer [1B[1A[2K881fc932939e: Downloading  48.55kB/3.854MB[1B[1A[2K881fc932939e: Downloading  294.3kB/3.854MB[1B[1A[2K881fc932939e: Downloading   1.13MB/3.854MB[1B[1A[2K881fc932939e: Downloading  2.752MB/3.854MB[1B[1A[2K881fc932939e: Verifying Checksum [1B[1A[2K881fc932939e: Download complete [1B[1A[2K881fc932939e: Extracting  65.54kB/3.854MB[1B[1A[2K881fc932939e: Extracting  3.854MB/3.854MB[1B[1A[2K881fc932939e: Extracting  3.854MB/3.854MB[1B[1A[2K881fc932939e: Pull complete [1BDigest: sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+[1A[2K881fc932939e: Pulling fs layer [1B
+[1A[2K86ff264fe568: Download complete [1B
+[1A[2Kc35a7d82b8fa: Download complete [1B[3A[2K881fc932939e: Downloading  1.049MB/3.854MB[3B[3A[2K881fc932939e: Downloading  1.049MB/3.854MB[3B[3A[2K881fc932939e: Downloading  2.097MB/3.854MB[3B[3A[2K881fc932939e: Downloading  3.854MB/3.854MB[3B[3A[2K881fc932939e: Download complete [3B[3A[2K881fc932939e: Extracting 1 s[3B[3A[2K881fc932939e: Pull complete [3BDigest: sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
 Status: Downloaded newer image for alpine:latest
