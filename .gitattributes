@@ -4,3 +4,5 @@
 *.ico binary
 *.woff2 binary
 tools/screenshots/terminal/*.log -text
+*.webp binary
+*.gif binary
