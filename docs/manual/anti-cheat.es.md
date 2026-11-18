@@ -31,7 +31,7 @@ Los textos de la página son parte del sitio y se traducen con él.
 
 ## Para administradores
 
-**Administración > Anti-Cheat** tiene dos direcciones.
+**Administración > Página del Anti-Cheat** tiene dos direcciones.
 
 ![Los ajustes del Anti-Cheat](../images/es/admin-anti-cheat.webp)
 

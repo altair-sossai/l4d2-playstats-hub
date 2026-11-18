@@ -22,8 +22,8 @@ Cada checklist lista todos os itens das telas antigas de uma área: colunas, cam
 | [players.pt.md](players.pt.md) | Lista de jogadores, página do jogador, comparação, jogador fora do ranking | 150 | 23 | 0 |
 | [matches.pt.md](matches.pt.md) | Últimos jogos, detalhes da partida, estatísticas do mapa | 128 | 18 | 1 |
 | [server.pt.md](server.pt.md) | Servidor ao vivo, chat, eventos do jogo, banimentos de chat | 153 | 25 | 1 |
-| [skins.pt.md](skins.pt.md) | Loja de skins, presentes, preços, compras | 144 | 13 | 0 |
-| [admin.pt.md](admin.pt.md) | Páginas que só existem aqui: assistente, administração, ranking da comunidade | 185 | 9 | 1 |
+| [skins.pt.md](skins.pt.md) | Loja de skins, presentes, preços, compras | 143 | 14 | 0 |
+| [admin.pt.md](admin.pt.md) | Páginas que só existem aqui: assistente, administração, ranking da comunidade | 183 | 11 | 1 |
 
 Os cinco primeiros comparam o hub com o site antigo. O último compara as páginas que são novas aqui com a primeira versão delas, que usava outro visual, para que nada se perdesse na conversão.
 

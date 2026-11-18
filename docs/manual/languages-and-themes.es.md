@@ -31,7 +31,7 @@ El tema oscuro es el predeterminado. El tema claro se elige en el mismo menú de
 
 ## En un teléfono
 
-En una pantalla angosta, el menú se pliega en un botón arriba a la derecha. Tócalo para abrir el menú.
+En una pantalla angosta, el menú se pliega en un botón arriba a la derecha. Tócalo para abrir el menú. El [menú de administración](administration.es.md#el-menú-de-administración) se pliega de la misma forma, en una barra encima de la página.
 
 ![El menú abierto en un teléfono](../images/es/phone-menu.webp)
 

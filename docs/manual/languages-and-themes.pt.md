@@ -31,7 +31,7 @@ O tema escuro é o padrão. O tema claro é escolhido no mesmo menu de configura
 
 ## No celular
 
-Em uma tela estreita, o menu se recolhe em um botão no canto superior direito. Toque nele para abrir o menu.
+Em uma tela estreita, o menu se recolhe em um botão no canto superior direito. Toque nele para abrir o menu. O [menu da administração](administration.pt.md#o-menu-da-administração) se recolhe do mesmo jeito, em uma barra acima da página.
 
 ![O menu aberto no celular](../images/pt/phone-menu.webp)
 

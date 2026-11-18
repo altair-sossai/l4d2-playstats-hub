@@ -8,7 +8,7 @@ The pages of this area exist only in the hub: the old site has no setup wizard, 
 
 Status: `done` = present with the same content and behaviour, in the old site's look; `adapted` = present but changed, for the reason given; `not ported` = gone, for the reason given.
 
-Totals: 185 done, 9 adapted, 1 not ported.
+Totals: 183 done, 11 adapted, 1 not ported.
 
 How it was checked: every page was opened in a browser on a copy of real data (6,636 statistics files) and on an empty data folder (the whole wizard, from the setup code to "Finish"), in the dark and in the light theme, at 1280 and at 400 pixels wide, in English and in Portuguese; no page scrolls sideways at 400 pixels. Each form was posted at least once. `AdminPagesTests`, `SiteSettingsTests` and `FooterLinksTests` cover the layout, the menu, the new settings and the logo.
 
@@ -50,14 +50,14 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 
 | Item | Where today | Status | Notes |
 |---|---|---|---|
-| Links: Overview, Game servers, Modules, Settings, Game modes, Campaigns, Administrators | `Views/Shared/_AdminNav.cshtml:8` | `done` | Bootstrap 3 pills. |
-| Link "Skins", only with the skin shop on | `Views/Shared/_AdminNav.cshtml:18` | `done` |  |
+| Links: Overview, Game servers, Modules, Settings, Game modes, Campaigns, Administrators | `Views/Shared/_AdminNav.cshtml:8` | `adapted` | The row of pills is now a side menu (`Views/Shared/_AdminMenu.cshtml`, in `_AdminLayout`) on every administrator page, grouped in Site, Game servers, Ranking, Skin shop and Anti-Cheat. The row was missing on the chat bans, Anti-Cheat and skin pages, so the administrator lost the way back; the menu is now always there. On phones it collapses into a control above the content that names the current page. |
+| Link "Skins", only with the skin shop on | `Views/Shared/_AdminNav.cshtml:18` | `adapted` | Replaced by the four skin pages (Purchases, Prices, Catalog, Shop settings) in the Skin shop group of the side menu, which also replaces their own row of tabs. |
 | Link "Community ranking", only with the community ranking on | `Views/Shared/_AdminNav.cshtml:21` | `done` |  |
 | Link "Chat bans", only with the site chat on | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
 | Link "Remote commands", only with the remote commands on | `Views/Shared/_AdminNav.cshtml:27` | `done` |  |
 | Link "Player connections", only with the live server on | `Views/Shared/_AdminNav.cshtml:30` | `done` |  |
 | Link "Anti-Cheat" (`/admin/anti-cheat`), only with the Anti-Cheat module on | new | `done` | Added. |
-| The link of the current page is highlighted | `Views/Shared/_AdminNav.cshtml:35` | `done` |  |
+| The link of the current page is highlighted | `Views/Shared/_AdminNav.cshtml:35` | `done` | Sub-pages too: the page of one game server highlights Game servers. |
 
 ### `_ServerStatus`
 

@@ -2,29 +2,48 @@
 
 🌐 [English](administration.md) | [Português](administration.pt.md) | **Español**
 
-El área de administración es donde se configura el sitio. Solo está abierta para los administradores: **Admin > Administración** en el menú, o `/admin`. Todas las páginas tienen la misma fila de pestañas arriba.
+El área de administración es donde se configura el sitio. Solo está abierta para los administradores: **Admin > Administración** en el menú, o `/admin`. Todas las páginas del área tienen el [menú de administración](#el-menú-de-administración) a la izquierda.
 
 Esta página cubre la vista general, los servidores de juego, los módulos, la configuración y los administradores. Las demás páginas de administración se explican junto con su función:
 
-| Pestaña | Se explica en |
+| Elemento del menú | Se explica en |
 |---|---|
 | Modos de juego, Campañas | [Modos de juego y campañas](game-modes-and-campaigns.es.md) |
-| Skins | [Tienda de skins de armas > Para administradores](skin-shop.es.md#para-administradores) |
+| Compras, Precios, Catálogo, Ajustes de la tienda | [Tienda de skins de armas > Para administradores](skin-shop.es.md#para-administradores) |
 | Ranking de la comunidad | [Ranking de la comunidad > Para administradores](community-ranking.es.md#para-administradores) |
 | Baneos de chat, Comandos remotos, Conexiones de jugadores | [Moderación](moderation.es.md) |
-| Anti-Cheat | [Página del Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
+| Página del Anti-Cheat | [Página del Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
 
-Una pestaña cuyo módulo está desactivado no se muestra.
+Un elemento cuyo módulo está desactivado no aparece en el menú.
 
 [Volver al manual](README.es.md)
 
 ## Contenido
 
+- [El menú de administración](#el-menú-de-administración)
 - [Vista general](#vista-general)
 - [Servidores de juego](#servidores-de-juego)
 - [Módulos](#módulos)
 - [Configuración](#configuración)
 - [Administradores](#administradores)
+
+## El menú de administración
+
+Todas las páginas de administración tienen el mismo menú a la izquierda, con la página en la que estás resaltada. La página de un servidor de juego resalta **Servidores de juego**. El menú agrupa las páginas:
+
+| Grupo | Páginas |
+|---|---|
+| Sitio | Vista general, Configuración, Módulos, Administradores |
+| Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos de chat |
+| Clasificación | Modos de juego, Campañas, Ranking de la comunidad |
+| Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
+| Anti-Cheat | Página del Anti-Cheat |
+
+Una página cuyo módulo está desactivado no aparece en el menú, y un grupo que se queda sin páginas desaparece. En una página larga, el menú sigue a la vista mientras te desplazas. El menú de arriba del sitio sigue igual, con **Admin** para volver aquí desde cualquier página.
+
+En el teléfono, el menú queda plegado en una barra encima de la página, que muestra la página en la que estás. Tócala para abrir la lista completa:
+
+![El menú de administración abierto en un teléfono](../images/es/admin-phone-menu.webp)
 
 ## Vista general
 

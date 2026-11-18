@@ -31,7 +31,7 @@ The dark theme is the default. The light theme is chosen in the same settings me
 
 ## On a phone
 
-On a narrow screen the menu folds into a button at the top right. Tap it to open the menu.
+On a narrow screen the menu folds into a button at the top right. Tap it to open the menu. The [administration menu](administration.md#the-administration-menu) folds the same way, into a bar above the page.
 
 ![The menu open on a phone](../images/en/phone-menu.webp)
 
