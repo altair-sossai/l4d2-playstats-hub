@@ -55,7 +55,7 @@ After **Create**, the page of the new server shows the token once, with the inst
 
 | Block | What it has |
 |---|---|
-| How to connect this server | The download of the plugins, the two lines for `cfg/server.cfg`, and what to do next. After the first time, the key part of the token is shown as `YOUR-KEY`, because the site does not keep it. |
+| How to connect this server | The download of the plugins, the two lines for `cfg/playstats.cfg` (with `exec playstats.cfg` in `cfg/server.cfg`), the `sm plugins load` lines for `cfg/sharedplugins.cfg`, and what to do next. After the first time, the key part of the token is shown as `YOUR-KEY`, because the site does not keep it. |
 | Status | The [connection status](first-run.md#the-connection-status) and the checklist, updated every 3 seconds, and the last hostname, map, configuration and SourceMod version the server reported. |
 | Details | The name, the two addresses, **Enabled**, and the identifier. A disabled server is not shown on the live server page, and the site refuses what it sends. |
 | Key | **Generate a new key** creates a new token and shows it once. The game server is disconnected until its configuration has the new token. **Delete** removes a server that never sent a statistics file; a server with files can only be disabled. |

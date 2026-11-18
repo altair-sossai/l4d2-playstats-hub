@@ -150,7 +150,7 @@ Every value is followed by ` | ` and the second player's value in yellow when co
 
 ## Player page: General tab, "Last matches"
 
-The card is the old `Views/LastMatches/_Match.cshtml`, kept here as `Views/Players/_PlayerMatch.cshtml` so the player page does not depend on the matches area, which was ported in parallel.
+The card is the old `Views/LastMatches/_Match.cshtml`. The player page renders the shared matches card, `Views/Matches/_Match.cshtml`, the same one the match list uses; it no longer has its own copy.
 
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|

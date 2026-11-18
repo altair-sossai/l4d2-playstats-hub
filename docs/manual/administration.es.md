@@ -55,7 +55,7 @@ Después de **Crear**, la página del servidor nuevo muestra el token una sola v
 
 | Bloque | Qué tiene |
 |---|---|
-| Cómo conectar este servidor | La descarga de los plugins, las dos líneas para `cfg/server.cfg` y qué hacer después. Después de la primera vez, la parte de la clave del token se muestra como `TU-CLAVE`, porque el sitio no la guarda. |
+| Cómo conectar este servidor | La descarga de los plugins, las dos líneas para `cfg/playstats.cfg` (con `exec playstats.cfg` en `cfg/server.cfg`), las líneas `sm plugins load` para `cfg/sharedplugins.cfg` y qué hacer después. Después de la primera vez, la parte de la clave del token se muestra como `TU-CLAVE`, porque el sitio no la guarda. |
 | Estado | El [estado de la conexión](first-run.es.md#el-estado-de-la-conexión) y la lista de verificación, actualizados cada 3 segundos, y el último nombre de host, mapa, configuración y versión de SourceMod que informó el servidor. |
 | Detalles | El nombre, las dos direcciones, **Activado** y el identificador. Un servidor desactivado no se muestra en la página del servidor en vivo, y el sitio rechaza lo que envía. |
 | Clave | **Generar una nueva clave** crea un token nuevo y lo muestra una sola vez. El servidor de juego queda desconectado hasta que su configuración tenga el token nuevo. **Eliminar** borra un servidor que nunca envió un archivo de estadísticas; un servidor con archivos solo se puede desactivar. |

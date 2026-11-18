@@ -26,7 +26,7 @@ El panel tiene tres pestañas. Muestran solo la temporada actual, y solo las par
 
 Un jugador sin ninguna partida del ranking en la temporada ve un mensaje corto en su lugar.
 
-**Partidas**: las últimas 10 partidas del ranking de la temporada, con la fecha (día/mes), la campaña, los jugadores de cada equipo y el marcador. El marcador ganador está en verde.
+**Partidas**: las últimas 10 partidas del ranking de la temporada, con la fecha y la hora, la campaña, los jugadores de cada equipo y el marcador. El marcador ganador está en verde.
 
 ![Las últimas partidas, dentro del juego](../images/es/ingame-matches.webp)
 

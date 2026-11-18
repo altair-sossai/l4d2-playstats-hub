@@ -150,7 +150,7 @@ Em uma comparação, todo valor é seguido de ` | ` e do valor do segundo jogado
 
 ## Página do jogador: aba Geral, "Últimos jogos"
 
-O cartão é o antigo `Views/LastMatches/_Match.cshtml`, mantido aqui como `Views/Players/_PlayerMatch.cshtml` para que a página do jogador não dependa da área de partidas, que foi portada em paralelo.
+O cartão é o antigo `Views/LastMatches/_Match.cshtml`. A página do jogador usa o cartão de partidas compartilhado, `Views/Matches/_Match.cshtml`, o mesmo da lista de partidas; ela não tem mais uma cópia própria.
 
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|

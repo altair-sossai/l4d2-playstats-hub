@@ -68,14 +68,17 @@ Click **Create**. The site creates an identifier and a key for the server and sh
 
 ![The instructions and the token of the new game server](../images/en/wizard-server-token.webp)
 
-1. Download the plugins and copy them to the game server. [Connecting a game server](../game-server.md) explains where each file goes.
+1. Download the plugins and copy everything inside their `left4dead2` folder into the `left4dead2` folder of the game server. [Connecting a game server](../game-server.md) explains where each file goes.
 2. The game server needs SourceMod, the REST in Pawn extension, and the `l4d2_playstats` plugin that comes with L4D2 Competitive Rework.
-3. Paste the two lines into `cfg/server.cfg` of the game server. The first line is the address of the site; the second is the token of this server.
-4. Restart the game server or change the map.
+3. Paste the two lines into `cfg/playstats.cfg` on the game server, and add `exec playstats.cfg` at the end of `cfg/server.cfg`. The first line is the address of the site; the second is the token of this server. Pasting the two lines straight into `cfg/server.cfg` also works.
+4. On L4D2 Competitive Rework, a match mode unloads every plugin when it loads. Add the `sm plugins load` lines shown on the page to `cfg/sharedplugins.cfg`, leaving out the plugins you do not use. The copy button next to them copies them all.
+5. Restart the game server or change the map.
 
 **Copy the token now.** The key is shown only once. The site keeps only a hash of it, so it cannot show it again. If you lose it, generate a new key on the page of the server in [Administration > Game servers](administration.md#game-servers).
 
-Under the instructions, the panel shows the [connection status](#the-connection-status) of the server: **Waiting for the first connection** until the game server reaches the site.
+Under the instructions, the panel shows the [connection status](#the-connection-status) of the server: **Waiting for the first connection** until the game server reaches the site. It updates by itself every 3 seconds, and turns green when the game server connects:
+
+![The connection status in the wizard, once the game server connects](../images/en/wizard-server-connected.webp)
 
 You do not have to wait for it. Click **Continue** to go to the last step. The same instructions and status are on the page of the server in [Administration > Game servers](administration.md#game-servers), where you can follow the connection after the setup.
 
@@ -95,7 +98,7 @@ From here:
 
 ## The connection status
 
-The same panel appears in the wizard and on the page of each game server in the administration area. It shows the state of the connection and a checklist, and on the server page it updates by itself every 3 seconds. This is the page of the server created above, a few seconds after the game server sent its first signal:
+The same panel appears in the wizard and on the page of each game server in the administration area. It shows the state of the connection and a checklist, and updates by itself every 3 seconds. This is the page of the server created above, a few seconds after the game server sent its first signal:
 
 ![The page of the new server in the administration area, connected](../images/en/first-server-connected.webp)
 

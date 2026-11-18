@@ -26,7 +26,7 @@ O painel tem três abas. Elas mostram só a temporada atual, e só as partidas r
 
 Um jogador sem nenhuma partida ranqueada na temporada vê uma mensagem curta no lugar.
 
-**Partidas**: as últimas 10 partidas ranqueadas da temporada, com a data (dia/mês), a campanha, os jogadores de cada time e o placar. O placar vencedor fica em verde.
+**Partidas**: as últimas 10 partidas ranqueadas da temporada, com a data e a hora, a campanha, os jogadores de cada time e o placar. O placar vencedor fica em verde.
 
 ![As últimas partidas, dentro do jogo](../images/pt/ingame-matches.webp)
 
