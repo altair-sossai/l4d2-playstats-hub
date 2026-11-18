@@ -284,6 +284,30 @@ public class WebTests
     }
 
     [TestMethod]
+    public async Task TheMatchesForTheGameShowTheDateInTheLanguageAndTimeZoneOfTheSite()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        var credentials = await factory.CreateServerAsync();
+        using var server = factory.ServerClient(credentials);
+        using var client = factory.Client();
+
+        var now = RecentNight();
+
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", now, 1, 300, 200));
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", now.AddMinutes(15), 2, 600, 500));
+        await factory.SaveAsync(new SiteSettings { TimeZone = "America/Sao_Paulo", DefaultCulture = "pt-BR" });
+
+        var last = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.Select(match => match.LastFileDate).SingleAsync());
+        var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(last, DateTimeKind.Utc), TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo"));
+        var html = await client.GetStringAsync("/ingame/matches");
+
+        Assert.Contains(local.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture), html);
+    }
+
+    [TestMethod]
     public async Task ThePageForTheGameHighlightsThePlayerWhoOpenedIt()
     {
         using var factory = new HubWebFactory();

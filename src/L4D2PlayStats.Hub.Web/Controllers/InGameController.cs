@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
@@ -54,7 +55,8 @@ public class InGameController(
             Players = [.. ranking.Take(AppConsts.InGameRankingPlayers).Select(player => new RankingRow(player))],
             Me = me == null ? null : new RankingRow(me),
             Matches = page?.Matches ?? [],
-            SteamId = steamId
+            SteamId = steamId,
+            TimeZone = SiteTime.Zone(site.TimeZone)
         };
     }
 }
