@@ -547,7 +547,10 @@
                         @if (CurrentUser.IsAuthenticated)
                         {
                             <li>
-                                <a href="/logout?returnUrl=@returnUrl">
+                                <form id="logout-form" method="post" action="/logout?returnUrl=@returnUrl" style="display: none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <a href="#" onclick="document.getElementById('logout-form').submit(); return false;">
                                     <img src="~/imgs/logout.png" alt="@L["Click here to logout"]" title="@L["Click here to logout"]" class="img-responsive img-header-icon">
                                     @L["Click here to logout"]
                                 </a>

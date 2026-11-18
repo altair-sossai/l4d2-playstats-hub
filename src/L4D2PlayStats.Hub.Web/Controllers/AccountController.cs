@@ -13,7 +13,8 @@ public class AccountController : Controller
         return Challenge(new AuthenticationProperties { RedirectUri = Local(returnUrl), IsPersistent = true });
     }
 
-    [HttpGet("logout")]
+    [HttpPost("logout")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout(string? returnUrl = null)
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

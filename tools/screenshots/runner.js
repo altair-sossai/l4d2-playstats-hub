@@ -23,7 +23,10 @@ class Runner {
         if (user === this.user)
             return;
 
-        await this.page.goto(this.url('/logout?returnUrl=/'), 200);
+        await this.page.goto(this.url('/'), 200);
+
+        if (await this.page.evaluate("!!document.getElementById('logout-form')"))
+            await this.page.act("document.getElementById('logout-form').submit()", { navigates: true, settle: 200 });
 
         if (user)
             await this.page.goto(this.url(`/dev/sign-in/${user}?returnUrl=/`), 200);
