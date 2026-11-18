@@ -29,7 +29,7 @@ The menu at the top of every page leads to the features. A feature the administr
 | Last matches | Every match, newest first. | [Matches](matches.md) |
 | Server | The match in progress on your game servers. | [Live server](live-server.md) |
 | Skins | The weapon skin shop. | [Weapon skin shop](skin-shop.md) |
-| Anti-Cheat | The page that offers the Anti-Cheat program. | [Anti-Cheat page](anti-cheat.md) |
+| Anti-Cheat | The page that offers the Anti-Cheat program and tells a signed-in player whether they must use it. | [Anti-Cheat](anti-cheat.md) |
 | More > Players | Every player of the period, with the totals of any statistic. | [Players](players.md) |
 | More > Patents | The patent levels. | [Patents](patents.md) |
 | More > History | The final ranking of past seasons and years. | [Seasons and history](seasons-and-history.md) |

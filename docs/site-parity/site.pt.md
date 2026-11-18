@@ -137,4 +137,53 @@ A página pertence ao módulo Anti-Cheat, que vem desligado por padrão. Quando 
 | "Problemas comuns": cinco perguntas que abrem e fecham | Index.cshtml:430-447 | done | |
 | "Sobre o -insecure (sem VAC)" | Index.cshtml:449-458 | adapted | Usa o nome do site em vez do endereço fixo. |
 | Privacidade: o que é enviado e o que nunca é enviado | Index.cshtml:459-484 | done | |
+| Jogador que entrou: se a conta Steam dele precisa usar o Anti-Cheat | Index.cshtml:319-325, Controllers/AntiCheatController.cs:45-55 | done | Oculto para visitantes que não entraram. |
 | Endereços do serviço e do download | Core/AppConsts.cs:15-16 | adapted | Configurações em `/admin/anti-cheat` em vez de endereços fixos. |
+
+## Configurações do Anti-Cheat (`/admin/anti-cheat`)
+
+O site antigo ganhou esta página com os modos de uso do plugin de anti-cheat 1.5.0. Aqui ela é o item Anti-Cheat do menu da administração, e guarda os endereços da página do Anti-Cheat abaixo das listas.
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| Só administradores | Controllers/AntiCheatAdminController.cs:11-12 | adapted | Também precisa do módulo Anti-Cheat. |
+| Endereço `/anti-cheat-admin` | Controllers/AntiCheatAdminController.cs:17 | adapted | A página fica em `/admin/anti-cheat`; o endereço antigo redireciona para ela, mantendo a lista e a busca. |
+| Item de menu "Configurações do Anti-Cheat" | Views/Shared/_Layout.cshtml:383-388 | adapted | No grupo Anti-Cheat do menu lateral da administração em vez do menu suspenso Admin. |
+| Cabeçalho com o botão "Adicionar jogador" | Views/AntiCheatAdmin/Index.cshtml:121-126 | done | |
+| Texto de abertura | Index.cshtml:128 | done | |
+| "Modo de uso": as duas opções com a ajuda delas, a escolhida destacada | Index.cshtml:130-146 | done | |
+| Quem mudou o modo por último, no site ou no jogo, e quando; ou "Ainda não salvo no site" | Index.cshtml:147-157 | done | Datas no fuso horário das configurações do site. |
+| "Salvar modo", habilitado só quando a escolha é diferente do modo salvo, depois o recarregamento | Index.cshtml:158-161, :343-361 | done | |
+| Título e ajuda da lista mostrada, link para a outra lista com a contagem dela | Index.cshtml:164-168 | done | |
+| Aviso quando a lista mostrada não é a que está em uso, com um link de volta | Index.cshtml:170-176 | done | |
+| Contador de jogadores na lista | Index.cshtml:178-183 | done | |
+| Busca por nome ou Steam ID, com "Limpar filtros" | Index.cshtml:185-195, Controllers/AntiCheatAdminController.cs:24-30 | done | |
+| Item da lista: avatar, nome, Steam ID e SteamID64, data de adição e "por <administrador> no site / no jogo" | Index.cshtml:197-222 | done | O Steam ID é escrito como `STEAM_1:...`, como em todo o hub. |
+| Texto de lista vazia | Index.cshtml:200 | done | |
+| Paginação, 20 por página, mantendo a lista e a busca | Index.cshtml:224, Controllers/AntiCheatAdminController.cs:15 | done | |
+| Modal de detalhes: avatar, nome com link para a página do jogador, IDs, link do perfil da Steam, adicionado em, adicionado por | Index.cshtml:226-250, :363-382 | done | O nome leva ao perfil da Steam quando o módulo de ranking está desligado. |
+| Modal de detalhes: remover com uma segunda confirmação, depois o recarregamento | Index.cshtml:251-260, :384-406 | done | |
+| Modal de adição, com a lista no título: campo de Steam ID ou URL do perfil | Index.cshtml:265-279 | done | |
+| Modal de adição: prévia do jogador digitado com foto, nome, IDs e "Jogador do site" ou "Perfil Steam (nunca jogou aqui)" | Index.cshtml:285, :408-476 | done | |
+| Modal de adição: "Escolher jogador" abre o seletor de jogadores | Index.cshtml:280-283, :478-496 | done | |
+| Modal de adição: "Este jogador já está nesta lista." e Salvar desabilitado | Index.cshtml:425-436 | done | |
+| Mensagens de sucesso e de erro, depois o recarregamento | Index.cshtml:498-520 | done | |
+| Estilos (`_AdminStyles`, cartões dos modos, cabeçalho da lista, prévia, avatar redondo) | Index.cshtml:24-118 | done | |
+| Painel "Página do Anti-Cheat" com os endereços do serviço e do download | novo | done | A página do hub que já existia, mantida abaixo das listas. |
+
+## API de acesso ao Anti-Cheat e regras
+
+| Item | Onde no site antigo | Situação | Observações |
+|---|---|---|---|
+| `GET /api/anti-cheat-access` (administrador) | Controllers/Api/AntiCheatAccessController.cs:20 | adapted | Os mesmos dados; o modo é escrito `everyone` ou `listed`. |
+| `PUT /api/anti-cheat-access/mode` (administrador) | Controllers/Api/AntiCheatAccessController.cs:28 | adapted | Mesmo caminho e mesmo JSON. Precisa do token antifalsificação da página no cabeçalho `RequestVerificationToken`. Os textos de erro são traduzidos. |
+| `POST /api/anti-cheat-access/{whitelist ou required}` (administrador) | Controllers/Api/AntiCheatAccessController.cs:41 | adapted | Mesmo caminho e mesmo JSON, com o mesmo cabeçalho de token. O jogador é informado como SteamID64, Steam ID, Steam3 ou URL do perfil. |
+| `DELETE /api/anti-cheat-access/{list}/{communityId}` (administrador) | Controllers/Api/AntiCheatAccessController.cs:61 | adapted | Mesmo caminho, com o mesmo cabeçalho de token. |
+| `GET /api/admin/players/lookup?id=` (administrador) | Controllers/Api/AdminPlayersController.cs:48, Core/Players/Services/PlayerLookupService.cs | adapted | O nome vem do ranking, depois dos perfis dos jogadores e das conexões dos servidores de jogo, senão da Steam com a chave do site ou o perfil público, guardado por 4 horas. A foto é a cópia do site, ou a foto da Steam até o site ter uma. |
+| `GET /api/anti-cheat-access/server` (servidor de jogo) | Controllers/Api/AntiCheatAccessController.cs:74 | adapted | Autorizado com o token de um servidor de jogo cadastrado, o valor de `l4d2_web_secret`, em vez do segredo único do site. Mesmo JSON; `mode` é `null` até um modo ser salvo. |
+| `PUT /api/anti-cheat-access/server/mode` (servidor de jogo) | Controllers/Api/AntiCheatAccessController.cs:81 | adapted | O mesmo token acima. Mesmo JSON. |
+| `POST /api/anti-cheat-access/server/{list}` e `DELETE /api/anti-cheat-access/server/{list}?player=` (servidor de jogo) | Controllers/Api/AntiCheatAccessController.cs:93, :112 | adapted | O mesmo token acima. Mesmo JSON, com o Steam ID escrito `STEAM_1:...`. |
+| O modo e as duas listas em tabelas próprias, com quem as mudou e de onde | Core/AntiCheatAccess/Repositories | adapted | Tabelas `AntiCheatAccessSettings`, `AntiCheatWhitelist` e `AntiCheatRequired` no banco de dados do site em vez de tabelas do Azure com cache de 12 horas. |
+| Nomes cortados em 64 caracteres; adicionar um jogador que já está na lista mantém a primeira entrada | Core/AntiCheatAccess/Services/AntiCheatAccessService.cs:73-111, :184 | done | |
+| Uma alteração vinda do jogo registra "no jogo" e o administrador, `Console` por padrão | Controllers/Api/AntiCheatAccessController.cs:126-136 | done | |
+| Uma alteração no site enfileira `sm_aac sync`, nunca duas vezes | Core/AntiCheatAccess/Services/AntiCheatAccessService.cs:170-182 | adapted | Enfileirado para cada servidor de jogo habilitado em vez do único servidor, gravado no registro de comandos remotos e entregue mesmo com o módulo de comandos remotos desligado. Precisa do módulo de servidor ao vivo, cujo plugin busca os comandos. Alterações vindas do jogo não o enfileiram. |

@@ -47,6 +47,29 @@ async function refundPlayer(runner) {
     }))).then(() => true)`);
 }
 
+async function fillAntiCheat(runner) {
+    const players = runner.context.livePlayers.slice(0, 8);
+    const whitelist = players.slice(0, 2);
+    const required = players.slice(2);
+
+    await runner.signIn(runner.context.admin);
+    await runner.page.goto(runner.url('/admin/anti-cheat'), 300);
+    await runner.page.evaluate(`(async () => {
+        const headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
+        const send = (type, url, data) => $.ajax({ url: url, type: type, headers: headers, contentType: 'application/json', data: JSON.stringify(data) });
+
+        for (const [id, name] of ${JSON.stringify(whitelist)})
+            await send('POST', '/api/anti-cheat-access/whitelist', { player: id, name: name });
+
+        for (const [id, name] of ${JSON.stringify(required)})
+            await send('POST', '/api/anti-cheat-access/required', { player: id, name: name });
+
+        await send('PUT', '/api/anti-cheat-access/mode', { mode: 'listed' });
+
+        return true;
+    })()`);
+}
+
 async function feedLive(runner) {
     const tokens = runner.context.tokens;
 
@@ -130,7 +153,7 @@ function shots(vars) {
         { name: 'admin-chat-bans', path: '/admin/chat-bans', full: true },
         { name: 'admin-remote-commands', path: '/admin/remote-commands', full: true },
         { name: 'admin-player-connections', path: `/admin/player-connections?communityId=${player}`, full: true },
-        { name: 'admin-anti-cheat', path: '/admin/anti-cheat', full: true },
+        { name: 'admin-anti-cheat', path: '/admin/anti-cheat', before: [{ run: fillAntiCheat }, { go: '/admin/anti-cheat' }, hideFloating], full: true },
         { name: 'admin-phone-menu', width: phone, path: '/admin/servers', before: [`$('.admin-menu-toggle').click()`, { sleep: 800 }], full: true, maxHeight: 1100 }
     ];
 }

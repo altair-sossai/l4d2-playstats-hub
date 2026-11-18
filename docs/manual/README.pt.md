@@ -32,7 +32,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 | [Servidor ao vivo](live-server.pt.md) | Todos | A partida em andamento em cada servidor de jogo, a escolha do servidor e o chat do site. |
 | [Loja de skins de armas](skin-shop.pt.md) | Todos | Estrelas, compra e equipamento de skins, presentes, reembolsos no fim da temporada e as configurações da loja. |
 | [Ranking da comunidade](community-ranking.pt.md) | Todos | A votação em duplas de jogadores, a pontuação, os limites de votos e suas configurações. |
-| [Página do Anti-Cheat](anti-cheat.pt.md) | Todos | A página que oferece o download do Anti-Cheat, e suas configurações. |
+| [Anti-Cheat](anti-cheat.pt.md) | Todos | A página que oferece o download do Anti-Cheat, quem precisa usar o Anti-Cheat nos servidores de jogo, e suas configurações. |
 | [Páginas dentro do jogo](in-game-pages.pt.md) | Todos | O que o `!ranking` abre dentro do Left 4 Dead 2. |
 | [Idiomas, temas e celular](languages-and-themes.pt.md) | Todos | Os três idiomas, o tema escuro e o tema claro, e o layout no celular. |
 

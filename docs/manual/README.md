@@ -32,7 +32,7 @@ Pages for players and pages for administrators are marked in the list below. The
 | [Live server](live-server.md) | Everyone | The match in progress on each game server, the server picker and the site chat. |
 | [Weapon skin shop](skin-shop.md) | Everyone | Stars, buying and equipping skins, gifts, refunds at the end of the season, and the shop settings. |
 | [Community ranking](community-ranking.md) | Everyone | Voting on pairs of players, the rating, the vote limits and their settings. |
-| [Anti-Cheat page](anti-cheat.md) | Everyone | The page that offers the Anti-Cheat download, and its settings. |
+| [Anti-Cheat](anti-cheat.md) | Everyone | The page that offers the Anti-Cheat download, who must use the Anti-Cheat on the game servers, and its settings. |
 | [Pages inside the game](in-game-pages.md) | Everyone | What `!ranking` opens inside Left 4 Dead 2. |
 | [Languages, themes and phones](languages-and-themes.md) | Everyone | The three languages, the dark and light themes, and the layout on a phone. |
 

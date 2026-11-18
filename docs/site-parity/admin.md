@@ -56,7 +56,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Link "Chat bans", only with the site chat on | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
 | Link "Remote commands", only with the remote commands on | `Views/Shared/_AdminNav.cshtml:27` | `done` |  |
 | Link "Player connections", only with the live server on | `Views/Shared/_AdminNav.cshtml:30` | `done` |  |
-| Link "Anti-Cheat" (`/admin/anti-cheat`), only with the Anti-Cheat module on | new | `done` | Added. |
+| Link "Anti-Cheat" (`/admin/anti-cheat`), only with the Anti-Cheat module on | new | `done` | Added. Named "Anti-Cheat settings" since the page got the usage modes and the lists. |
 | The link of the current page is highlighted | `Views/Shared/_AdminNav.cshtml:35` | `done` | Sub-pages too: the page of one game server highlights Game servers. |
 
 ### `_ServerStatus`

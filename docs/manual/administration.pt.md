@@ -12,7 +12,7 @@ Esta página cobre a visão geral, os servidores de jogo, os módulos, as config
 | Compras, Preços, Catálogo, Configurações da loja | [Loja de skins de armas > Para administradores](skin-shop.pt.md#para-administradores) |
 | Ranking da comunidade | [Ranking da comunidade > Para administradores](community-ranking.pt.md#para-administradores) |
 | Bans de chat, Comandos remotos, Conexões de jogadores | [Moderação](moderation.pt.md) |
-| Página do Anti-Cheat | [Página do Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
+| Configurações do Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
 
 Um item cujo módulo está desligado não aparece no menu.
 
@@ -37,7 +37,7 @@ Todas as páginas da administração têm o mesmo menu à esquerda, com a págin
 | Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Bans de chat |
 | Ranking | Modos de jogo, Campanhas, Ranking da comunidade |
 | Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
-| Anti-Cheat | Página do Anti-Cheat |
+| Anti-Cheat | Configurações do Anti-Cheat |
 
 Uma página cujo módulo está desligado não aparece no menu, e um grupo que fica sem páginas some. Em uma página comprida, o menu continua à vista enquanto você rola. O menu do topo do site continua como está, com **Admin** para voltar para cá de qualquer página.
 
@@ -95,7 +95,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 | Comandos remotos | Comandos enviados pelos administradores do site para um servidor de jogo. | Servidor ao vivo | Desligado | Sem a página **Comandos remotos** e sem terminal na página ao vivo. |
 | Loja de skins de armas | Estrelas, compras, presentes e skins equipadas. | Ranking | Desligado | Sem o item **Skins** no menu, sem estrelas na barra do menu, sem a aba Skins na página do jogador. O servidor de jogo não recebe skins. |
 | Ranking da comunidade | Votação em duplas e o ranking dela. | | Desligado | Sem o item **Comunidade** no menu. |
-| Anti-Cheat | A página com o download e as instruções do Anti-Cheat. | | Desligado | Sem o item **Anti-Cheat** no menu. |
+| Anti-Cheat | A página com o download e as instruções do Anti-Cheat, e quem precisa usar o Anti-Cheat nos servidores de jogo. | | Desligado | Sem o item **Anti-Cheat** no menu e sem a página **Configurações do Anti-Cheat**. O plugin de anti-cheat não recebe modo nem listas do site. |
 
 Um módulo cujo requisito está desligado se comporta como desligado, mesmo com a própria caixa marcada.
 

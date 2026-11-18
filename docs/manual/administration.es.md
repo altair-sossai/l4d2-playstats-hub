@@ -12,7 +12,7 @@ Esta página cubre la vista general, los servidores de juego, los módulos, la c
 | Compras, Precios, Catálogo, Ajustes de la tienda | [Tienda de skins de armas > Para administradores](skin-shop.es.md#para-administradores) |
 | Ranking de la comunidad | [Ranking de la comunidad > Para administradores](community-ranking.es.md#para-administradores) |
 | Baneos de chat, Comandos remotos, Conexiones de jugadores | [Moderación](moderation.es.md) |
-| Página del Anti-Cheat | [Página del Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
+| Ajustes del Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
 
 Un elemento cuyo módulo está desactivado no aparece en el menú.
 
@@ -37,7 +37,7 @@ Todas las páginas de administración tienen el mismo menú a la izquierda, con 
 | Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos de chat |
 | Clasificación | Modos de juego, Campañas, Ranking de la comunidad |
 | Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
-| Anti-Cheat | Página del Anti-Cheat |
+| Anti-Cheat | Ajustes del Anti-Cheat |
 
 Una página cuyo módulo está desactivado no aparece en el menú, y un grupo que se queda sin páginas desaparece. En una página larga, el menú sigue a la vista mientras te desplazas. El menú de arriba del sitio sigue igual, con **Admin** para volver aquí desde cualquier página.
 
@@ -95,7 +95,7 @@ El núcleo siempre está activado: el registro de servidores de juego, la subida
 | Comandos remotos | Comandos que los administradores envían desde el sitio a un servidor de juego. | Servidor en vivo | Desactivado | No hay página **Comandos remotos** ni terminal en la página en vivo. |
 | Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. | Ranking | Desactivado | No hay elemento **Skins** en el menú, ni estrellas en la barra del menú, ni pestaña Skins en la página del jugador. El servidor de juego no recibe skins. |
 | Ranking de la comunidad | Votación por parejas y su ranking. | | Desactivado | No hay elemento **Comunidad** en el menú. |
-| Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat. | | Desactivado | No hay elemento **Anti-Cheat** en el menú. |
+| Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat, y quién debe usar el Anti-Cheat en los servidores de juego. | | Desactivado | No hay elemento **Anti-Cheat** en el menú ni página **Ajustes del Anti-Cheat**. El plugin de anti-cheat no recibe modo ni listas del sitio. |
 
 Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque su propia casilla esté marcada.
 

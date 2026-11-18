@@ -56,7 +56,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Enlace "Baneos de chat", solo con el chat del sitio activado | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
 | Enlace "Comandos remotos", solo con los comandos remotos activados | `Views/Shared/_AdminNav.cshtml:27` | `done` |  |
 | Enlace "Conexiones de jugadores", solo con el servidor en vivo activado | `Views/Shared/_AdminNav.cshtml:30` | `done` |  |
-| Enlace "Anti-Cheat" (`/admin/anti-cheat`), solo con el módulo Anti-Cheat activado | nuevo | `done` | Añadido. |
+| Enlace "Anti-Cheat" (`/admin/anti-cheat`), solo con el módulo Anti-Cheat activado | nuevo | `done` | Añadido. Se llama "Ajustes del Anti-Cheat" desde que la página recibió los modos de uso y las listas. |
 | El enlace de la página actual está resaltado | `Views/Shared/_AdminNav.cshtml:35` | `done` | También en las subpáginas: la página de un servidor de juego resalta Servidores de juego. |
 
 ### `_ServerStatus`

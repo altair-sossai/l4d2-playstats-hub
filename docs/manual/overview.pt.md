@@ -29,7 +29,7 @@ O menu no topo de cada página leva aos recursos. Um recurso que o administrador
 | Últimos jogos | Todas as partidas, das mais recentes para as mais antigas. | [Partidas](matches.pt.md) |
 | Servidor | A partida em andamento nos seus servidores de jogo. | [Servidor ao vivo](live-server.pt.md) |
 | Skins | A loja de skins de armas. | [Loja de skins de armas](skin-shop.pt.md) |
-| Anti-Cheat | A página que oferece o programa Anti-Cheat. | [Página do Anti-Cheat](anti-cheat.pt.md) |
+| Anti-Cheat | A página que oferece o programa Anti-Cheat e diz a um jogador que entrou se ele precisa usá-lo. | [Anti-Cheat](anti-cheat.pt.md) |
 | Mais > Jogadores | Todos os jogadores do período, com os totais de qualquer estatística. | [Jogadores](players.pt.md) |
 | Mais > Patentes | Os níveis de patente. | [Patentes](patents.pt.md) |
 | Mais > Histórico | O ranking final de temporadas e anos passados. | [Temporadas e histórico](seasons-and-history.pt.md) |

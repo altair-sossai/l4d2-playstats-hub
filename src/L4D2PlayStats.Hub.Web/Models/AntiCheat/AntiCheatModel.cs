@@ -9,6 +9,7 @@ public class AntiCheatModel(ClientVersionResponse? latest, string? fallbackDownl
     public string? Sha256 { get; init; } = latest?.Sha256;
     public long? SizeBytes { get; init; } = latest?.SizeBytes;
     public DateTimeOffset? PublishedAt { get; init; } = latest?.PublishedAt;
+    public bool? CurrentUserRequired { get; init; }
     public string? SizeText => SizeBytes is > 0 ? (SizeBytes.Value / (double)AppConsts.BytesPerMegabyte).ToString("0.0", CultureInfo.CurrentCulture) + " MB" : null;
 
     private static bool IsHttps(string? url)

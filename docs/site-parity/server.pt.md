@@ -243,6 +243,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Modal de detalhes: editar e salvar o motivo | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Modal de detalhes: remover com uma segunda confirmação | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |
 | Modal de adição: campo de Steam ID ou URL do perfil | `Web/Views/ChatBans/Index.cshtml:153` | done |  |
+| Modal de adição: um Steam ID digitado mostra a foto e o nome do jogador | `Web/Views/ChatBans/Index.cshtml:348-371` | done | A mesma busca das configurações do Anti-Cheat, `/api/admin/players/lookup`. |
 | Modal de adição: "Escolher da lista" abre o seletor de jogadores | `Web/Views/ChatBans/Index.cshtml:158`, `:334` | done |  |
 | Modal de adição: motivo | `Web/Views/ChatBans/Index.cshtml:165` | done |  |
 | Modal de adição: remetentes recentes com avatar, nome, última mensagem e "Já banido" | `Web/Views/ChatBans/Index.cshtml:169`, `:284` | done |  |
@@ -278,7 +279,7 @@ Estas não existiam no site antigo. Estão listadas para que nada do que o hub t
 
 ## Observações
 
-- Totais: 153 `done`, 25 `adapted`, 1 `not ported`.
+- Totais: 154 `done`, 25 `adapted`, 1 `not ported`.
 - As tabelas antigas de jogadores não mostram ícone de patente: nem `Views/Server/_Players.cshtml` nem a página em produção têm um, então não há nada a portar ali.
 - As situações foram conferidas com as páginas renderizadas: lado a lado com `https://l4d2.com.br/server` (desktop, largura de celular e tema claro), com uma partida simulada que envia todos os eventos do jogo, e controlando as páginas em um navegador headless (filtro do feed, envio de uma mensagem, o terminal, o modal de informações do servidor, todos os modais da página de banimentos de chat).
 - O plugin do servidor de jogo envia os slots do servidor no heartbeat (`maxPlayers`) a partir desta alteração. Um servidor de jogo que ainda roda o plugin anterior mostra o dobro do tamanho do time como máximo.

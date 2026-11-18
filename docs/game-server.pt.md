@@ -14,6 +14,7 @@ Como fazer um servidor de Left 4 Dead 2 enviar as partidas dele para o seu site,
 - [Passo 5: carregue os plugins nos seus modos de partida](#passo-5-carregue-os-plugins-nos-seus-modos-de-partida)
 - [Passo 6: verifique a conexão](#passo-6-verifique-a-conexão)
 - [Opcional: skins de armas e ícones de patente](#opcional-skins-de-armas-e-ícones-de-patente)
+- [Opcional: o plugin do Anti-Cheat](#opcional-o-plugin-do-anti-cheat)
 - [O ranking dentro do jogo](#o-ranking-dentro-do-jogo)
 - [O que cada status significa](#o-que-cada-status-significa)
 - [Atualizando os plugins](#atualizando-os-plugins)
@@ -150,6 +151,37 @@ Os ícones de patente e as skins de armas são arquivos que não fazem parte do 
 
 Os detalhes, e como verificar se os arquivos foram encontrados, estão em [Arquivos de skins de armas e de patentes](../plugins/README.pt.md#arquivos-de-skins-de-armas-e-de-patentes).
 
+## Opcional: o plugin do Anti-Cheat
+
+O plugin de anti-cheat (`l4d2-anti-cheat.smx`, versão 1.5.0 ou mais nova) não faz parte deste pacote: ele vem com o programa Anti-Cheat e o serviço próprio dele. Conectado ao site, ele lê do site quem precisa usar o Anti-Cheat, e as alterações feitas no jogo com `!aac config` são salvas no site. Veja [Quem precisa usar o Anti-Cheat](manual/anti-cheat.pt.md#quem-precisa-usar-o-anti-cheat).
+
+1. No site, ligue o módulo **Anti-Cheat** em **Administração → Módulos**.
+2. Adicione estas duas linhas ao `cfg/playstats.cfg`, com o mesmo endereço e o mesmo token de `playstats_url` e `playstats_token`:
+
+   ```text
+   l4d2_web_url "https://stats.example.com"
+   l4d2_web_secret "my-server:3f9c…"
+   ```
+
+3. Escolha o modo que o servidor de jogo usa até que um seja salvo no site, com `anti_cheat_mode` no `shared_cvars.cfg` dos seus modos de partida, por exemplo `confogl_addcvar anti_cheat_mode 1`.
+4. Reinicie o servidor enquanto ele está vazio.
+
+| Configuração | O que significa |
+|---|---|
+| `l4d2_web_url` | O endereço deste site. O plugin chama `<endereço>/api/anti-cheat-access/server`. |
+| `l4d2_web_secret` | O token deste servidor de jogo, o mesmo valor de `playstats_token`. Cada servidor de jogo tem o seu. |
+| `anti_cheat_mode` | `0`: todos precisam usar o Anti-Cheat, exceto os jogadores da whitelist. `1`: só os jogadores da lista obrigatória precisam usá-lo (o padrão do plugin). O modo salvo em **Administração → Configurações do Anti-Cheat** vale mais; este valor só conta até que um modo seja salvo lá. |
+
+Nunca defina `l4d2_web_secret` com `confogl_addcvar`, pelo mesmo motivo do `playstats_token`. As outras configurações do plugin, como o endereço e o token do serviço próprio dele, não mudam.
+
+Depois de uma alteração no site, o `l4d2_gameinfo_sync` roda `sm_aac sync` no servidor de jogo em segundos. Sem o módulo de servidor ao vivo, o plugin lê o site sozinho a cada minuto. Para verificar a conexão, digite `sm_aac sync` e depois `sm_aac list` no console do servidor de jogo, ou pergunte ao site a partir dessa máquina:
+
+```text
+curl -H "Authorization: my-server:3f9c…" https://stats.example.com/api/anti-cheat-access/server
+```
+
+A resposta traz o modo (`null` até que um seja salvo) e as duas listas. `401` quer dizer que o token está errado, e `404` que o módulo Anti-Cheat está desligado.
+
 ## O ranking dentro do jogo
 
 O `!ranking` abre uma versão simples do ranking no navegador do próprio jogo. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
@@ -181,7 +213,7 @@ Se o servidor de jogo usava os plugins anteriores, remova as configurações del
 |---|---|
 | `playstats_url` apontando para a API antiga | O endereço deste site |
 | `playstats_access_token` | `playstats_token` |
-| `l4d2_web_url`, `l4d2_web_secret` | Removidas. Tudo usa `playstats_url` e `playstats_token`. |
+| `l4d2_web_url`, `l4d2_web_secret` | Os plugins do PlayStats não as leem mais: eles usam `playstats_url` e `playstats_token`. Só o plugin de anti-cheat ainda as lê; veja [Opcional: o plugin do Anti-Cheat](#opcional-o-plugin-do-anti-cheat). |
 | `ranking_url` | `playstats_ingame_url`, só se o jogo precisar de outro endereço |
 
 Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Substitua os arquivos `.smx` antigos, inclusive os de `addons/sourcemod/plugins/optional/`, pelos novos, para que exista só uma cópia de cada plugin.

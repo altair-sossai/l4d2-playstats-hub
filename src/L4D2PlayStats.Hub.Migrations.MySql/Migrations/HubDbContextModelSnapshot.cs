@@ -36,6 +36,90 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.ToTable("Administrators");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.AntiCheat.AntiCheatAccessSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("UpdatedByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UpdatedByName")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<int>("UpdatedFrom")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AntiCheatAccessSettings", (string)null);
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.AntiCheat.AntiCheatRequiredPlayer", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("AddedByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AddedByName")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<int>("AddedFrom")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.HasKey("CommunityId");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.ToTable("AntiCheatRequired", (string)null);
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.AntiCheat.AntiCheatWhitelistPlayer", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("AddedByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AddedByName")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<int>("AddedFrom")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.HasKey("CommunityId");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.ToTable("AntiCheatWhitelist", (string)null);
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Campaigns.Campaign", b =>
                 {
                     b.Property<int>("Id")

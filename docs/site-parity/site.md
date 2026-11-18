@@ -137,4 +137,53 @@ The page belongs to the Anti-Cheat module, which is off by default. When the adm
 | "Common problems": five questions that open and close | Index.cshtml:430-447 | done | |
 | "About -insecure (no VAC)" | Index.cshtml:449-458 | adapted | Names the site instead of the fixed address. |
 | Privacy: what is sent and what is never sent | Index.cshtml:459-484 | done | |
+| Signed-in player: whether their Steam account must use the Anti-Cheat | Index.cshtml:319-325, Controllers/AntiCheatController.cs:45-55 | done | Hidden from visitors who are not signed in. |
 | Service and download addresses | Core/AppConsts.cs:15-16 | adapted | Settings on `/admin/anti-cheat` instead of fixed addresses. |
+
+## Anti-Cheat settings (`/admin/anti-cheat`)
+
+The old site added this page with the usage modes of the anti-cheat plugin 1.5.0. Here it is the Anti-Cheat item of the administration menu, and it keeps the addresses of the Anti-Cheat page below the lists.
+
+| Item | Where in the old site | Status | Notes |
+|---|---|---|---|
+| Administrators only | Controllers/AntiCheatAdminController.cs:11-12 | adapted | Also needs the Anti-Cheat module. |
+| Address `/anti-cheat-admin` | Controllers/AntiCheatAdminController.cs:17 | adapted | The page is at `/admin/anti-cheat`; the old address redirects to it, keeping the list and the search. |
+| Menu item "Anti-Cheat settings" | Views/Shared/_Layout.cshtml:383-388 | adapted | In the Anti-Cheat group of the administration side menu instead of the Admin dropdown. |
+| Header with the "Add player" button | Views/AntiCheatAdmin/Index.cshtml:121-126 | done | |
+| Lead text | Index.cshtml:128 | done | |
+| "Usage mode": the two choices with their help, the chosen one highlighted | Index.cshtml:130-146 | done | |
+| Who changed the mode last, on the site or in the game, and when; or "Not saved on the site yet" | Index.cshtml:147-157 | done | Dates in the time zone of the site settings. |
+| "Save mode", enabled only when the choice differs from the saved mode, then reload | Index.cshtml:158-161, :343-361 | done | |
+| Title and help of the shown list, link to the other list with its count | Index.cshtml:164-168 | done | |
+| Notice when the shown list is not the one in use, with a link back | Index.cshtml:170-176 | done | |
+| Counter of players on the list | Index.cshtml:178-183 | done | |
+| Search by name or Steam ID, with "Clear filters" | Index.cshtml:185-195, Controllers/AntiCheatAdminController.cs:24-30 | done | |
+| List item: avatar, name, Steam ID and SteamID64, date added and "by <administrator> on the site / in the game" | Index.cshtml:197-222 | done | The Steam ID is written `STEAM_1:...`, as everywhere in the hub. |
+| Empty list text | Index.cshtml:200 | done | |
+| Pagination, 20 per page, keeping the list and the search | Index.cshtml:224, Controllers/AntiCheatAdminController.cs:15 | done | |
+| Details modal: avatar, name linked to the player page, IDs, Steam profile link, added on, added by | Index.cshtml:226-250, :363-382 | done | The name links to the Steam profile when the ranking module is off. |
+| Details modal: remove with a second confirmation, then reload | Index.cshtml:251-260, :384-406 | done | |
+| Add modal, titled with the list: Steam ID or profile URL field | Index.cshtml:265-279 | done | |
+| Add modal: preview of the typed player with photo, name, IDs and "Player on the site" or "Steam profile (never played here)" | Index.cshtml:285, :408-476 | done | |
+| Add modal: "Pick a player" opens the player picker | Index.cshtml:280-283, :478-496 | done | |
+| Add modal: "This player is already on this list." and Save disabled | Index.cshtml:425-436 | done | |
+| Success and error messages, then reload | Index.cshtml:498-520 | done | |
+| Styles (`_AdminStyles`, mode cards, list header, preview, round avatar) | Index.cshtml:24-118 | done | |
+| Panel "Anti-Cheat page" with the service and download addresses | new | done | The hub page that already existed, kept below the lists. |
+
+## Anti-Cheat access API and rules
+
+| Item | Where in the old site | Status | Notes |
+|---|---|---|---|
+| `GET /api/anti-cheat-access` (administrator) | Controllers/Api/AntiCheatAccessController.cs:20 | adapted | Same data; the mode is written `everyone` or `listed`. |
+| `PUT /api/anti-cheat-access/mode` (administrator) | Controllers/Api/AntiCheatAccessController.cs:28 | adapted | Same path and JSON. It needs the antiforgery token of the page in the `RequestVerificationToken` header. Error texts are translated. |
+| `POST /api/anti-cheat-access/{whitelist or required}` (administrator) | Controllers/Api/AntiCheatAccessController.cs:41 | adapted | Same path and JSON, with the same token header. The player is given as SteamID64, Steam ID, Steam3 or profile URL. |
+| `DELETE /api/anti-cheat-access/{list}/{communityId}` (administrator) | Controllers/Api/AntiCheatAccessController.cs:61 | adapted | Same path, with the same token header. |
+| `GET /api/admin/players/lookup?id=` (administrator) | Controllers/Api/AdminPlayersController.cs:48, Core/Players/Services/PlayerLookupService.cs | adapted | The name comes from the ranking, then from the player profiles and the game server connections, otherwise from Steam with the site key or the public profile, kept for 4 hours. The photo is the copy of the site, or the Steam photo until the site has one. |
+| `GET /api/anti-cheat-access/server` (game server) | Controllers/Api/AntiCheatAccessController.cs:74 | adapted | Authorized with the token of a registered game server, the value of `l4d2_web_secret`, instead of the single secret of the site. Same JSON; `mode` is `null` until a mode is saved. |
+| `PUT /api/anti-cheat-access/server/mode` (game server) | Controllers/Api/AntiCheatAccessController.cs:81 | adapted | Same token as above. Same JSON. |
+| `POST /api/anti-cheat-access/server/{list}` and `DELETE /api/anti-cheat-access/server/{list}?player=` (game server) | Controllers/Api/AntiCheatAccessController.cs:93, :112 | adapted | Same token as above. Same JSON, the Steam ID written `STEAM_1:...`. |
+| The mode and the two lists in their own tables, with who changed them and from where | Core/AntiCheatAccess/Repositories | adapted | Tables `AntiCheatAccessSettings`, `AntiCheatWhitelist` and `AntiCheatRequired` in the database of the site instead of Azure tables with a 12-hour cache. |
+| Names cut at 64 characters; adding a player who is already on the list keeps the first entry | Core/AntiCheatAccess/Services/AntiCheatAccessService.cs:73-111, :184 | done | |
+| A change from the game records "in the game" and the administrator, `Console` by default | Controllers/Api/AntiCheatAccessController.cs:126-136 | done | |
+| A change on the site queues `sm_aac sync`, never twice | Core/AntiCheatAccess/Services/AntiCheatAccessService.cs:170-182 | adapted | Queued for every enabled game server instead of the single one, written to the remote commands log, and delivered even with the remote commands module off. It needs the live server module, whose plugin fetches the commands. Changes from the game do not queue it. |

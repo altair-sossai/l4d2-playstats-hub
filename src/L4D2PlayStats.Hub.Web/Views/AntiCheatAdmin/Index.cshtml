@@ -1,22 +1,238 @@
-@model AntiCheatSettings
+@using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums
+@using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Extensions
+@using L4D2PlayStats.Hub.Web.Models.AntiCheat
+@model AntiCheatAdminModel
+@inject ISettingsService Settings
 @{
     ViewData["PageMetadata"] = new PageMetadata
     {
-        Title = L["Anti-Cheat"],
-        Description = L["Anti-Cheat"],
+        Title = L["Anti-Cheat settings"],
+        Description = L["Anti-Cheat settings"],
         NoIndex = true
     };
+
+    var culture = CultureInfo.CurrentUICulture;
+    var modules = await Settings.GetAsync<ModuleSettings>();
+    var ranking = modules.IsEnabled(HubModule.Ranking);
+    var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
+    var pagination = PaginationModel.Of(Model.Players, number => $"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}&{query}page={number}");
+    var whitelistShown = Model.ShownList == AntiCheatAccessList.Whitelist;
+    var listTitle = whitelistShown ? L["Except these players"].Value : L["Only these players"].Value;
+    var listHelp = whitelistShown ? L["Whitelist: these players can play without the Anti-Cheat while everyone must use it."].Value : L["Required list: these players must run the Anti-Cheat while no one else has to."].Value;
+    var otherListName = Model.OtherList == AntiCheatAccessList.Whitelist ? L["whitelist"].Value : L["required list"].Value;
+    var updatedAt = Model.Access.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(Model.Access.UpdatedAtUtc.Value, Model.TimeZone);
+    var updatedFrom = Model.Access.UpdatedFrom == AntiCheatAccessSource.Game ? L["in the game"].Value : L["on the site"].Value;
 }
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
+    <style>
+        .aca-modes {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -6px 6px;
+        }
+
+        .aca-mode {
+            display: flex;
+            flex: 1 1 280px;
+            margin: 0 6px 8px;
+            padding: 12px 14px;
+            border: 1px solid rgba(128, 128, 128, .3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+            .aca-mode.aca-selected {
+                border-color: #3c9a5f;
+                background: rgba(60, 154, 95, .12);
+            }
+
+            .aca-mode input {
+                margin: 3px 10px 0 0;
+                flex: 0 0 auto;
+            }
+
+            .aca-mode strong {
+                display: block;
+            }
+
+            .aca-mode small {
+                display: block;
+                opacity: .75;
+            }
+
+        .aca-mode-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+            .aca-mode-footer small {
+                flex: 1 1 240px;
+                margin: 0 12px 6px 0;
+                opacity: .75;
+            }
+
+        .aca-list-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin: 6px 0 10px;
+        }
+
+            .aca-list-header h4 {
+                flex: 1 1 auto;
+                margin: 0 12px 4px 0;
+                font-weight: bold;
+            }
+
+        .aca-preview {
+            display: flex;
+            align-items: center;
+            min-height: 52px;
+            margin-top: 8px;
+        }
+
+            .aca-preview img {
+                width: 48px;
+                height: 48px;
+                margin-right: 10px;
+                border-radius: 50%;
+                flex: 0 0 auto;
+            }
+
+            .aca-preview strong,
+            .aca-preview small {
+                display: block;
+            }
+
+            .aca-preview small {
+                opacity: .75;
+            }
+
+        .aca-details-avatar {
+            width: 96px !important;
+            height: 96px !important;
+            border-radius: 50% !important;
+        }
+
+        .aca-page-panel {
+            margin-top: 24px;
+        }
+    </style>
 }
 
+@Html.AntiForgeryToken()
+
 <div class="admin-header">
-    <h3>@L["Anti-Cheat"]</h3>
+    <h3>@L["Anti-Cheat settings"]</h3>
+    <button type="button" class="btn btn-primary aca-add">
+        <span class="glyphicon glyphicon-plus"></span> @L["Add player"]
+    </button>
 </div>
 
-<div class="panel panel-default">
+<p class="text-muted">@L["Choose who must run the Anti-Cheat on the game server and keep one list of players for each mode. The server picks up every change within a minute."]</p>
+
+<h4>@L["Usage mode"]</h4>
+<div class="aca-modes">
+    <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Everyone ? "aca-selected" : "")">
+        <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Everyone.ToName()" @(Model.Mode == AntiCheatAccessMode.Everyone ? "checked" : "")/>
+        <span>
+            <strong>@L["Everyone must use it"]</strong>
+            <small>@L["Every player needs the Anti-Cheat running to play. The players on the list below are exempt."]</small>
+        </span>
+    </label>
+    <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Listed ? "aca-selected" : "")">
+        <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Listed.ToName()" @(Model.Mode == AntiCheatAccessMode.Listed ? "checked" : "")/>
+        <span>
+            <strong>@L["No one, except these players"]</strong>
+            <small>@L["Only the players on the list below need the Anti-Cheat running to play."]</small>
+        </span>
+    </label>
+</div>
+<div class="aca-mode-footer">
+    <small class="aca-mode-status">
+        @if (!Model.Access.ModeSaved)
+        {
+            @L["Not saved on the site yet: the server is using the anti_cheat_mode value from its config file."]
+        }
+        else if (!string.IsNullOrWhiteSpace(Model.Access.UpdatedByName) && updatedAt != null)
+        {
+            @string.Format(L["Last changed by {0} {1} on {2}."].Value, Model.Access.UpdatedByName, updatedFrom, updatedAt)
+        }
+    </small>
+    <button type="button" class="btn btn-success aca-save-mode" @(Model.Access.ModeSaved ? "disabled" : "")>
+        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save mode"]
+    </button>
+</div>
+<div class="aca-mode-message"></div>
+
+<div class="aca-list-header">
+    <h4>@listTitle</h4>
+    <a href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.OtherListName}")">@string.Format(L["See the {0} ({1})"].Value, otherListName, Model.OtherCount.ToString("N0", culture))</a>
+</div>
+<p class="text-muted">@listHelp</p>
+
+@if (!Model.ShowingActiveList)
+{
+    <div class="alert alert-info">
+        @L["This list is not used in the current mode. It stays saved for when the mode changes."]
+        <a class="alert-link" href="@AppConsts.AntiCheatAdminUrl">@L["See the list in use"]</a>
+    </div>
+}
+
+<div class="admin-stats">
+    <div>
+        <strong>@Model.ShownCount.ToString("N0", culture)</strong>
+        <small>@L["players on this list"]</small>
+    </div>
+</div>
+
+<form method="get" class="admin-filters" action="@AppConsts.AntiCheatAdminUrl">
+    <input type="hidden" name="list" value="@Model.ShownListName"/>
+    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name or Steam ID"]"/>
+    <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-search"></span> @L["Search"]
+    </button>
+    @if (!string.IsNullOrEmpty(Model.Query))
+    {
+        <a class="btn btn-link" href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}")">@L["Clear filters"]</a>
+    }
+</form>
+
+<div class="admin-list">
+    @if (Model.Players.Items.Count == 0)
+    {
+        <div class="admin-empty">@L["No players on this list."]</div>
+    }
+    @foreach (var player in Model.Players.Items)
+    {
+        var addedAt = LiveDisplay.ShortDateTime(player.CreatedAtUtc, Model.TimeZone);
+        var addedFrom = player.AddedFrom == nameof(AntiCheatAccessSource.Game) ? L["in the game"].Value : L["on the site"].Value;
+        var addedBy = string.IsNullOrWhiteSpace(player.AddedByName) ? addedFrom : string.Format(L["by {0} {1}"].Value, player.AddedByName, addedFrom);
+
+        <div class="admin-item aca-player"
+             data-community-id="@player.CommunityId" data-name="@player.Name" data-avatar="@player.AvatarUrl" data-steam-id="@player.SteamId"
+             data-profile-url="@player.ProfileUrl" data-added-at="@addedAt" data-added-by="@addedBy">
+            <img class="admin-avatar" src="@player.AvatarUrl" alt="@player.Name" onerror="imgOnError(this)"/>
+            <div class="admin-main">
+                <div class="admin-title">@player.Name</div>
+                <small>@player.SteamId · @player.CommunityId</small>
+            </div>
+            <div class="admin-side">
+                <strong>@addedAt</strong>
+                <small>@addedBy</small>
+            </div>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_Pagination", pagination)
+
+<div class="panel panel-default aca-page-panel">
     <div class="panel-heading">
         <h3 class="panel-title">@L["Anti-Cheat page"]</h3>
     </div>
@@ -26,12 +242,12 @@
         <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
             <div class="form-group">
                 <label for="serviceUrl">@L["Anti-Cheat service address"]</label>
-                <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.ServiceUrl" placeholder="https://">
+                <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.Settings.ServiceUrl" placeholder="https://">
                 <p class="help-block">@L["Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://."]</p>
             </div>
             <div class="form-group">
                 <label for="downloadUrl">@L["Download address"]</label>
-                <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.DownloadUrl" placeholder="https://">
+                <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.Settings.DownloadUrl" placeholder="https://">
                 <p class="help-block">@L["Used when the service does not answer or is not set. Must start with https://."]</p>
             </div>
             <button class="btn btn-primary" type="submit">@L["Save"]</button>
@@ -39,3 +255,311 @@
         </form>
     </div>
 </div>
+
+<div id="aca-details-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@listTitle</h4>
+            </div>
+            <div class="modal-body">
+                <div class="admin-details">
+                    <img class="aca-avatar aca-details-avatar" src="" alt="" onerror="imgOnError(this)"/>
+                    <dl>
+                        <dt>@L["Player"]</dt>
+                        <dd>
+                            <a class="aca-player-link" href="#"></a><br/>
+                            <small class="aca-ids text-muted"></small><br/>
+                            <a class="aca-steam-link" href="#" target="_blank" rel="noopener noreferrer">@L["Steam profile"]</a>
+                        </dd>
+                        <dt>@L["Added on"]</dt>
+                        <dd class="aca-added-at"></dd>
+                        <dt>@L["Added by"]</dt>
+                        <dd class="aca-added-by"></dd>
+                    </dl>
+                </div>
+                <div class="alert alert-warning admin-confirm aca-remove-confirm">@L["Remove this player from the list? The server applies it within a minute."]</div>
+                <div class="aca-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                <button type="button" class="btn btn-danger aca-remove">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Remove from the list"]
+                </button>
+                <button type="button" class="btn btn-danger aca-remove-yes" style="display: none">@L["Yes, remove"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="aca-add-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">@string.Format(L["Add to: {0}"].Value, listTitle)</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="aca-add-player">@L["Steam ID or profile URL"]</label>
+                    <div class="input-group">
+                        <input type="text" id="aca-add-player" class="form-control" placeholder="76561198000000000" autocomplete="off"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default aca-pick-player">
+                                <span class="glyphicon glyphicon-user"></span> @L["Pick a player"]
+                            </button>
+                        </span>
+                    </div>
+                    <div class="aca-preview"></div>
+                </div>
+                <div class="aca-add-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-primary aca-add-save" disabled>@L["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_PlayerPickerModal")
+
+@section Scripts {
+    <script>
+        $(function () {
+            var shownList = @Json.Serialize(Model.ShownListName);
+            var savedMode = @Json.Serialize(Model.Access.ModeSaved ? Model.Mode.ToName() : null);
+            var pageUrl = @Json.Serialize(AppConsts.AntiCheatAdminUrl);
+            var apiUrl = @Json.Serialize(AppConsts.AntiCheatAccessApiUrl);
+            var lookupUrl = @Json.Serialize(AppConsts.PlayerLookupUrl);
+            var playerUrl = @Json.Serialize(ranking ? AppConsts.PlayerUrlPrefix : null);
+            var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
+            var texts = {
+                saved: @Json.Serialize(L["Player added."].Value),
+                removed: @Json.Serialize(L["Player removed."].Value),
+                modeSaved: @Json.Serialize(L["Mode saved."].Value),
+                searching: @Json.Serialize(L["Looking up..."].Value),
+                notFound: @Json.Serialize(L["This is not a valid Steam ID or profile URL."].Value),
+                known: @Json.Serialize(L["Player on the site"].Value),
+                steam: @Json.Serialize(L["Steam profile (never played here)"].Value),
+                noName: @Json.Serialize(L["Name not found"].Value),
+                already: @Json.Serialize(L["This player is already on this list."].Value),
+                error: @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
+            };
+            var listedIds = @Json.Serialize(Model.Access[Model.ShownList].Select(player => player.CommunityId.ToString()));
+
+            var selected = null;
+            var picked = null;
+            var lookupTimer = null;
+            var lookupSequence = 0;
+
+            function escapeHtml(text) {
+                return $('<div/>').text(text == null ? '' : text).html();
+            }
+
+            function message($target, success, text) {
+                $target.html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + escapeHtml(text) + '</div>');
+            }
+
+            function errorText(xhr) {
+                return (xhr.responseJSON && xhr.responseJSON.errorMessage) || texts.error;
+            }
+
+            $('input[name="aca-mode"]').on('change', function () {
+                var mode = $('input[name="aca-mode"]:checked').val();
+
+                $('.aca-mode').removeClass('aca-selected');
+                $(this).closest('.aca-mode').addClass('aca-selected');
+                $('.aca-save-mode').prop('disabled', mode === savedMode);
+            });
+
+            $('.aca-save-mode').on('click', function () {
+                var $button = $(this);
+                var mode = $('input[name="aca-mode"]:checked').val();
+
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: apiUrl + '/mode',
+                    type: 'PUT',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify({ mode: mode })
+                }).done(function () {
+                    message($('.aca-mode-message'), true, texts.modeSaved);
+                    setTimeout(function () { location.href = pageUrl; }, 900);
+                }).fail(function (xhr) {
+                    message($('.aca-mode-message'), false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+
+            $('.aca-player').on('click', function () {
+                var $item = $(this);
+                var $modal = $('#aca-details-modal');
+                var profileUrl = $item.data('profile-url');
+
+                selected = { communityId: $item.data('community-id').toString(), name: $item.data('name') };
+
+                $modal.find('.aca-avatar').attr({ src: $item.data('avatar'), alt: selected.name });
+                $modal.find('.aca-player-link').text(selected.name).attr('href', playerUrl ? playerUrl + encodeURIComponent(selected.communityId) : (profileUrl || '#'));
+                $modal.find('.aca-ids').text(($item.data('steam-id') || '') + ' · ' + selected.communityId);
+                $modal.find('.aca-steam-link').attr('href', profileUrl || '#').toggle(!!profileUrl);
+                $modal.find('.aca-added-at').text($item.data('added-at'));
+                $modal.find('.aca-added-by').text($item.data('added-by'));
+                $modal.find('.aca-remove-confirm').hide();
+                $modal.find('.aca-message').empty();
+                $modal.find('.aca-remove').show();
+                $modal.find('.aca-remove-yes').hide();
+                $modal.find('button').prop('disabled', false);
+                $modal.modal('show');
+            });
+
+            $('.aca-remove').on('click', function () {
+                $('#aca-details-modal .aca-remove-confirm').show();
+                $(this).hide();
+                $('#aca-details-modal .aca-remove-yes').show();
+            });
+
+            $('.aca-remove-yes').on('click', function () {
+                var $button = $(this);
+                var $message = $('#aca-details-modal .aca-message');
+
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: apiUrl + '/' + shownList + '/' + encodeURIComponent(selected.communityId),
+                    type: 'DELETE',
+                    headers: headers
+                }).done(function () {
+                    message($message, true, texts.removed);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+
+            function showPreview(player) {
+                var $preview = $('#aca-add-modal .aca-preview').empty();
+
+                if (!player)
+                    return;
+
+                var origin = player.knownOnSite ? texts.known : texts.steam;
+                var $info = $('<div></div>');
+
+                $info.append($('<strong></strong>').text(player.name || texts.noName));
+                $info.append($('<small></small>').text((player.steamId || '') + ' · ' + player.communityId));
+                $info.append($('<small></small>').text(origin));
+
+                $preview.append($('<img alt="" onerror="imgOnError(this)"/>').attr('src', player.avatarUrl || ''));
+                $preview.append($info);
+            }
+
+            function setPicked(player) {
+                picked = player;
+                showPreview(player);
+
+                var already = !!player && listedIds.indexOf(player.communityId) >= 0;
+
+                $('#aca-add-modal .aca-add-message').empty();
+                if (already)
+                    message($('#aca-add-modal .aca-add-message'), false, texts.already);
+
+                $('#aca-add-modal .aca-add-save').prop('disabled', !player || already);
+            }
+
+            function lookup(value) {
+                var sequence = ++lookupSequence;
+                var $preview = $('#aca-add-modal .aca-preview');
+
+                if ($.trim(value) === '') {
+                    setPicked(null);
+                    return;
+                }
+
+                $preview.html('<span class="text-muted">' + escapeHtml(texts.searching) + '</span>');
+
+                $.getJSON(lookupUrl, { id: $.trim(value) }).done(function (player) {
+                    if (sequence === lookupSequence)
+                        setPicked(player);
+                }).fail(function () {
+                    if (sequence !== lookupSequence)
+                        return;
+
+                    setPicked(null);
+                    $preview.html('<span class="text-danger">' + escapeHtml(texts.notFound) + '</span>');
+                });
+            }
+
+            $('.aca-add').on('click', function () {
+                $('#aca-add-player').val('');
+                setPicked(null);
+                $('#aca-add-modal').modal('show');
+            });
+
+            $('#aca-add-modal').on('shown.bs.modal', function () {
+                $('#aca-add-player').focus();
+            });
+
+            $('#aca-add-player').on('input', function () {
+                var value = $(this).val();
+
+                $('#aca-add-modal .aca-add-save').prop('disabled', true);
+                clearTimeout(lookupTimer);
+                lookupTimer = setTimeout(function () { lookup(value); }, 400);
+            });
+
+            $('.aca-pick-player').on('click', function () {
+                $('#aca-add-modal').one('hidden.bs.modal', function () {
+                    PlayerPicker.open(function (player) {
+                        if (player) {
+                            lookupSequence++;
+                            clearTimeout(lookupTimer);
+                            $('#aca-add-player').val(player.communityId);
+                            setPicked({
+                                communityId: player.communityId,
+                                steamId: player.steamId,
+                                name: player.name,
+                                avatarUrl: player.avatarUrl,
+                                knownOnSite: true
+                            });
+                        }
+
+                        $('#aca-add-modal').modal('show');
+                    });
+                }).modal('hide');
+            });
+
+            $('.aca-add-save').on('click', function () {
+                var $button = $(this);
+                var $message = $('#aca-add-modal .aca-add-message');
+
+                if (!picked)
+                    return;
+
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: apiUrl + '/' + shownList,
+                    type: 'POST',
+                    headers: headers,
+                    contentType: 'application/json',
+                    data: JSON.stringify({ player: picked.communityId, name: picked.name || null })
+                }).done(function () {
+                    message($message, true, texts.saved);
+                    setTimeout(function () { location.reload(); }, 900);
+                }).fail(function (xhr) {
+                    message($message, false, errorText(xhr));
+                    $button.prop('disabled', false);
+                });
+            });
+        });
+    </script>
+}

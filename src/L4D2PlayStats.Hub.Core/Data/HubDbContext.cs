@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Modules.Administrators;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns;
 using L4D2PlayStats.Hub.Core.Modules.GameModes;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
@@ -29,6 +30,9 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
     public DbSet<PlayerProfile> PlayerProfiles => Set<PlayerProfile>();
     public DbSet<Punishment> Punishments => Set<Punishment>();
     public DbSet<SkinAuthor> SkinAuthors => Set<SkinAuthor>();
+    public DbSet<AntiCheatAccessSetting> AntiCheatAccessSettings => Set<AntiCheatAccessSetting>();
+    public DbSet<AntiCheatWhitelistPlayer> AntiCheatWhitelist => Set<AntiCheatWhitelistPlayer>();
+    public DbSet<AntiCheatRequiredPlayer> AntiCheatRequired => Set<AntiCheatRequiredPlayer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

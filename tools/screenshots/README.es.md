@@ -67,9 +67,9 @@ El comando `site` espera una carpeta de datos, como la copia ficticia de arriba,
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
 ```
 
-Antes de las capturas del servidor en vivo envía la partida en vivo de cada servidor, como lo hacen los plugins, con los jugadores de la parte de arriba del ranking del sitio, y espera el retraso de la página en vivo. Reinicia el sitio antes de cada idioma, para que el chat en vivo empiece vacío. Antes de las capturas de la tienda reembolsa las compras del jugador y luego compra la primera skin que el jugador puede pagar. Las capturas del baneo del chat agregan un baneo para `--banned`.
+Antes de las capturas del servidor en vivo envía la partida en vivo de cada servidor, como lo hacen los plugins, con los jugadores de la parte de arriba del ranking del sitio, y espera el retraso de la página en vivo. Reinicia el sitio antes de cada idioma, para que el chat en vivo empiece vacío. Antes de las capturas de la tienda reembolsa las compras del jugador y luego compra la primera skin que el jugador puede pagar. Las capturas del baneo del chat agregan un baneo para `--banned`. Antes de la captura de los ajustes del Anti-Cheat pone a los dos primeros jugadores del ranking en la whitelist y a los seis siguientes en la lista obligatoria, y guarda el modo.
 
-El inicio de sesión de desarrollo no tiene nombre de Steam, así que el menú, las compras y los registros de auditoría muestran `Player <SteamID64>` para el usuario que inició sesión.
+El inicio de sesión de desarrollo no tiene nombre de Steam, así que usa el nombre que el sitio conoce para ese jugador. El menú, las compras y los registros de auditoría solo muestran `Player <SteamID64>` para un usuario que el sitio no conoce.
 
 ## Las ventanas de terminal
 
