@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Encodings.Web;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
@@ -65,7 +66,7 @@ public class MatchTimeTests
 
     private static string Card(DateTime value)
     {
-        return string.Format(English, "{0:d} at {0:t}", value);
+        return HtmlEncoder.Default.Encode(string.Format(English, "{0:d} at {0:t}", value));
     }
 
     private static async Task<HubWebFactory> FactoryAsync(bool withoutStart)
