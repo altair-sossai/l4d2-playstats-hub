@@ -120,6 +120,30 @@ public class SitePagesTests
     }
 
     [TestMethod]
+    public async Task TheAvatarAlsoAnswersWithAnImageExtensionSoTheLightboxOpensItAsAnImage()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        var credentials = await factory.CreateServerAsync();
+        using var server = factory.ServerClient(credentials);
+
+        var now = DateTime.Now.Date.AddHours(-3);
+
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", now, 1, 300, 200));
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", now.AddMinutes(15), 2, 600, 500));
+
+        var response = await client.GetAsync($"/avatar/{StatisticsBuilder.PlayerA1}.jpg");
+        var page = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
+
+        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.AreEqual("/imgs/avatar-empty.png", response.Headers.Location?.ToString());
+        Assert.Contains($"src=\"/avatar/{StatisticsBuilder.PlayerA1}.jpg\"", page);
+    }
+
+    [TestMethod]
     public async Task AnAvatarThatIsNotDownloadedYetFallsBackWithoutBeingCached()
     {
         using var factory = new HubWebFactory();

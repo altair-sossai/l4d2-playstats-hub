@@ -7,6 +7,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class AvatarController(AvatarStore avatarStore, AvatarQueue avatarQueue) : Controller
 {
     [HttpGet("/avatar/{communityId:long}")]
+    [HttpGet("/avatar/{communityId:long}.jpg")]
     public IActionResult Index(long communityId)
     {
         var path = avatarStore.PathFor(communityId);

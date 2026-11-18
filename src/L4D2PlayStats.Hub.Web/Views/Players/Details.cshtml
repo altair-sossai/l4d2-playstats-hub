@@ -638,7 +638,7 @@
         </ul>
     </div>
 
-    <img src="/avatar/@firstPlayer.CommunityId" alt="@firstPlayer.MainName" title="@firstPlayer.MainName" class="img-responsive img-thumbnail" style="margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+    <img src="/avatar/@(firstPlayer.CommunityId).jpg" alt="@firstPlayer.MainName" title="@firstPlayer.MainName" class="img-responsive img-thumbnail" style="margin-top: 5px" onerror="imgOnError(this)" data-lity/>
 
     <hr/>
 
@@ -669,7 +669,7 @@
     </div>
     @if (secondPlayer != null)
     {
-        <img src="/avatar/@secondPlayer.CommunityId" alt="@secondPlayer.MainName" title="@secondPlayer.MainName" class="img-responsive img-thumbnail" style="background-color: #FFBC00; margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+        <img src="/avatar/@(secondPlayer.CommunityId).jpg" alt="@secondPlayer.MainName" title="@secondPlayer.MainName" class="img-responsive img-thumbnail" style="background-color: #FFBC00; margin-top: 5px" onerror="imgOnError(this)" data-lity/>
     }
 </div>
 <div class="col-xs-10 right-side">
