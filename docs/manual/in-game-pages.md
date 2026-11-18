@@ -14,7 +14,7 @@ Players can see the ranking without leaving Left 4 Dead 2. The `!ranking` chat c
 
 ## The three pages
 
-The panel has three tabs. They show the current season only, and only ranked matches.
+The panel has three tabs. They show the current season only, and only ranked matches. The bar at the top names that season as the site does, such as **From 11/2026 to 12/2026**.
 
 **Ranking**: the top 50 players, with patent, experience, wins, losses, win rate and MVPs. The row of the player who opened the panel is highlighted.
 

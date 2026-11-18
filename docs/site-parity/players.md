@@ -26,7 +26,7 @@ Checked against the rendered pages of a copy of the production data and against 
 | Query `season` (new) | - | adapted | Hub addition: both pages accept `?season={id}` to show a past season. An unknown season answers 404. Without it the current season is shown, as before. |
 | Avatars loaded before rendering | Controllers/PlayersController.cs:33, :60-61, :66-69, :85 | adapted | Avatars are served by `/avatar/{communityId}` and downloaded on demand; no preload call is needed. |
 | Last matches: the 50 most recent matches of the season, any game mode, filtered to the ones where either player is on a team | Controllers/PlayersController.cs:77, Core/Matches/MatchesServiceCached.cs:19, Models/PlayerDetailsModel.cs:22-32 | done | Same rule, over the displayed season and every game server (`IPlayerMatchService`, `AppConsts.PlayerRecentMatches`). |
-| Related accounts from the connection information | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | done | `IPlayerConnectionService.RelatedAsync`. Empty when the live server module is off. |
+| Related accounts from the connection information | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | adapted | `IPlayerConnectionService.RelatedAsync`. Empty when the live server module is off, and for visitors who are not administrators when Settings > Privacy limits related accounts to administrators (the default is everyone, as before). |
 | Owned skins and wallet of each player | Controllers/PlayersController.cs:87-93, :99-106 | done | Only read when the skin shop module is on. |
 | Patent progress of each player | Controllers/PlayersController.cs:71-75 | done | `RankingModel` / `PatentProgressModel` of the base. |
 | `POST /api/punishments` (administrator, body `{ communityId, lostExperiencePoints }`) | Controllers/Api/PunishmentsController.cs:15-24, api Core/Modules/Punishments/Services/PunishmentsService.cs:14-31 | adapted | Same address, verb and body; points are added to what the player already lost, as before. The body also takes `seasonId` (the displayed season; the current one when missing) and the call asks for the antiforgery token in the `RequestVerificationToken` header. The answer carries the player's total for the season. |
@@ -125,7 +125,7 @@ Every value is followed by ` | ` and the second player's value in yellow when co
 
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
-| Panel (`panel-warning`) only when another account connected from the same address | Views/Players/Details.cshtml:943-948 | adapted | Same panel, shown to every visitor as before. It needs the live server module, which is where the connections are recorded. |
+| Panel (`panel-warning`) only when another account connected from the same address | Views/Players/Details.cshtml:943-948 | adapted | Same panel. It is shown to every visitor by default, as before; the setting Settings > Privacy > "Who can see related accounts" can limit it to administrators. It needs the live server module, which is where the connections are recorded. |
 | Columns: Name, Steam ID, Last login, Connections, Profile URL | Views/Players/Details.cshtml:951-959 | done | |
 | Avatar of 32 px and name linking to that account's page | Views/Players/Details.cshtml:964-967 | done | |
 | Steam ID with the copy button | Views/Players/Details.cshtml:968-974 | done | `STEAM_0:x:y` form, as above. |
@@ -224,7 +224,7 @@ The card is the old `Views/LastMatches/_Match.cshtml`. The player page renders t
 | Last login, when known | Views/Players/PlayerNotFound.cshtml:80-86 | adapted | Site time zone, as above. |
 | Connections, when known | Views/Players/PlayerNotFound.cshtml:87-93 | done | |
 | Profile URL (new tab) with the copy button | Views/Players/PlayerNotFound.cshtml:94-105 | done | |
-| Panel "Related accounts" with the same five columns as on the player page | Views/Players/PlayerNotFound.cshtml:112-160 | done | With the live server module. |
+| Panel "Related accounts" with the same five columns as on the player page | Views/Players/PlayerNotFound.cshtml:112-160 | adapted | With the live server module, and following the same privacy setting as the player page. |
 | Button "Return to ranking page" | Views/Players/PlayerNotFound.cshtml:162-164 | done | |
 | Styles (avatar size, header cells, phone margin) | Views/Players/PlayerNotFound.cshtml:15-34 | done | |
 | Page metadata: title "{name or id} - Player details" | PageMetadata/PlayerNotFoundPageMetadata.cs:14 | done | |

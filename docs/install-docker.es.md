@@ -11,6 +11,7 @@ Las capturas de pantalla de esta página son la salida real de los comandos, gra
 - [Lo que necesitas](#lo-que-necesitas)
 - [Cómo iniciarlo](#cómo-iniciarlo)
 - [El código de configuración](#el-código-de-configuración)
+- [Comprobación de estado](#comprobación-de-estado)
 - [Actualizar](#actualizar)
 - [Copia de seguridad](#copia-de-seguridad)
 - [Agregar un administrador](#agregar-un-administrador)
@@ -53,6 +54,8 @@ El sitio queda en `http://YOUR-SERVER-ADDRESS:5080`. La base de datos, los avata
 
 Ejecuta un solo contenedor de la aplicación. La partida en vivo se guarda en memoria, y dos contenedores tendrían cada uno la suya.
 
+La aplicación se ejecuta con el usuario sin privilegios `app` de la imagen de .NET, no como root. Cuando el contenedor inicia, primero le da a ese usuario la propiedad de la carpeta de datos y después inicia el sitio.
+
 ## El código de configuración
 
 La primera página del sitio pide un código de configuración. Léelo en el registro:
@@ -66,6 +69,16 @@ docker compose logs hub | grep "setup code"
 `docker compose ps` muestra el contenedor y su puerto. Abre el sitio, pega el código, inicia sesión con Steam y sigue las páginas. [Configuración inicial](manual/first-run.es.md) muestra cada una de ellas.
 
 ![La primera página del sitio pide el código de configuración](images/es/wizard-setup-code.webp)
+
+## Comprobación de estado
+
+La imagen tiene una comprobación de estado que no necesita herramientas adicionales: cada 30 segundos Docker ejecuta `dotnet L4D2PlayStats.Hub.Web.dll health` dentro del contenedor, que le pide `/api/ping` al sitio en su propio puerto. `docker compose ps` muestra el contenedor como `healthy` cuando el sitio responde, y como `unhealthy` después de tres fallos seguidos. Para ejecutar la comprobación a mano:
+
+```bash
+docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll health
+```
+
+Muestra la respuesta y termina con 0 cuando el sitio está funcionando, o con 1 cuando no.
 
 ## Actualizar
 
@@ -82,6 +95,8 @@ docker compose up -d
 ![Actualizar con Docker](images/es/install-docker-update.webp)
 
 Para quedarte en una versión específica, reemplaza `latest` en el archivo de Compose por la versión, como `v1.2.0`.
+
+Las imágenes hasta la v0.3.0 ejecutaban la aplicación como root, así que los archivos de un volumen existente pertenecen a root. Un contenedor más nuevo cambia su propietario a `app` al iniciar, así que la actualización no necesita nada más. Si inicias el contenedor con un `user:` fijo en el archivo de Compose, no puede cambiar el propietario; corrígelo una vez con `docker run --rm -v hub-data:/data alpine chown -R 1654:1654 /data` (1654 es el usuario `app` de la imagen).
 
 ## Copia de seguridad
 
@@ -122,8 +137,10 @@ docker compose start hub
 Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la máquina:
 
 ```bash
-docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>
+docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>
 ```
+
+`-u app` ejecuta el comando con el mismo usuario que el sitio, así que los archivos que toca conservan el propietario correcto.
 
 ## Configuración
 
@@ -134,8 +151,20 @@ Los ajustes son variables de entorno. Agrégalas bajo `environment:` en el archi
 | `Hub__DataDirectory` | Carpeta con la base de datos, los avatares y las claves. | `/data` |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` o `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Cómo conectarse a la base de datos. | `Data Source=hub.db` |
+| `Hub__TrustedProxies` | Proxies inversos cuyas cabeceras `X-Forwarded-For`, `X-Forwarded-Proto` y `X-Forwarded-Host` acepta el sitio: direcciones IP o redes como `172.16.0.0/12`, separadas por comas. El propio contenedor (`127.0.0.1` y `::1`) siempre es de confianza. | vacío |
 
 Si pones un proxy inverso con HTTPS delante del contenedor, mantén una dirección HTTP simple accesible para el juego. [La dirección usada dentro del juego](install-linux.es.md#la-dirección-usada-dentro-del-juego) explica por qué.
+
+Un proxy inverso nunca está en la dirección de loopback del contenedor: tanto si se ejecuta en otro contenedor como en el host, el sitio normalmente ve una dirección privada de la red de Docker, como `172.18.0.2` o la puerta de enlace `172.18.0.1`. Mientras esa dirección no esté en `Hub__TrustedProxies`, el sitio ignora las cabeceras reenviadas, así que ve `http` en lugar de `https` y la dirección del proxy en lugar de la del visitante. Confía en la red de tus contenedores:
+
+```yaml
+services:
+  hub:
+    environment:
+      Hub__TrustedProxies: "172.16.0.0/12"
+```
+
+`docker network inspect` muestra la subred exacta si prefieres un rango más estrecho. No confíes en una red a la que los visitantes llegan directamente, o cualquiera de ellos podría fingir que viene de otro lugar.
 
 ## Construir la imagen tú mismo
 

@@ -76,6 +76,9 @@ The data migration is a separate program, outside this repository, that uploads 
 **Can I run two copies of the site behind a load balancer?**
 No. The live match is kept in the memory of one process. Run one copy.
 
+**Who sees the related accounts of a player?**
+Everyone, by default, as on the old site. [Settings > Privacy](administration.md#privacy) can limit them to administrators. The game chat announcement is a separate setting of the plugin, `gameinfo_related_accounts_chat`.
+
 ## Troubleshooting
 
 | What you see | What to do |
@@ -92,4 +95,7 @@ No. The live match is kept in the memory of one process. Run one copy.
 | Avatars do not load | They are downloaded in the background. Wait a few minutes, or set a Steam Web API key in [Settings](administration.md#site). |
 | Players were signed out after moving the site | The `keys` folder was not copied. They only need to sign in again. |
 | Skin pictures do not load | Check **Address of the assets** in the [shop settings](skin-shop.md#shop-settings). |
-| A page answers "not found" | Its module is off. See [Modules](administration.md#modules). |
+| A page shows **Page not found** | The address is wrong, or its module is off. See [Modules](administration.md#modules). |
+| A page shows **Something went wrong** | The site hit an unexpected error. The details are in the log: `playstats-hub logs`, or `docker compose logs hub`. |
+| Behind a reverse proxy, the site sees `http` instead of `https`, or the address of the proxy instead of the visitor | The proxy is not on the same machine, so the site ignores its forwarded headers. Add its address or network to `Hub__TrustedProxies`. See [Installing with Docker > Configuration](../install-docker.md#configuration). |
+| `docker compose ps` shows the container as `unhealthy` | The site does not answer `/api/ping` on its own port. Read `docker compose logs hub`, and check that `ASPNETCORE_URLS` still has an `http` address. |

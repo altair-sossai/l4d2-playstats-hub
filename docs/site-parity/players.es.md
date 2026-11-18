@@ -26,7 +26,7 @@ Comprobado frente a las páginas renderizadas con una copia de los datos de prod
 | Parámetro de consulta `season` (nuevo) | - | adapted | Añadido del hub: las dos páginas aceptan `?season={id}` para mostrar una temporada pasada. Una temporada desconocida responde 404. Sin él se muestra la temporada actual, como antes. |
 | Avatares cargados antes de renderizar | Controllers/PlayersController.cs:33, :60-61, :66-69, :85 | adapted | Los avatares los sirve `/avatar/{communityId}` y se descargan bajo demanda; no hace falta ninguna llamada de precarga. |
 | Últimas partidas: las 50 partidas más recientes de la temporada, de cualquier modo de juego, filtradas a aquellas en las que alguno de los dos jugadores está en un equipo | Controllers/PlayersController.cs:77, Core/Matches/MatchesServiceCached.cs:19, Models/PlayerDetailsModel.cs:22-32 | done | Misma regla, sobre la temporada mostrada y todos los servidores de juego (`IPlayerMatchService`, `AppConsts.PlayerRecentMatches`). |
-| Cuentas relacionadas a partir de la información de conexión | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | done | `IPlayerConnectionService.RelatedAsync`. Vacío cuando el módulo de servidor en vivo está desactivado. |
+| Cuentas relacionadas a partir de la información de conexión | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | adapted | `IPlayerConnectionService.RelatedAsync`. Vacío cuando el módulo de servidor en vivo está desactivado, y para los visitantes que no son administradores cuando Configuración > Privacidad limita las cuentas relacionadas a los administradores (el valor predeterminado es todos, como antes). |
 | Skins adquiridas y monedero de cada jugador | Controllers/PlayersController.cs:87-93, :99-106 | done | Solo se leen cuando el módulo de la tienda de skins está activado. |
 | Progreso de patente de cada jugador | Controllers/PlayersController.cs:71-75 | done | `RankingModel` / `PatentProgressModel` de la base. |
 | `POST /api/punishments` (administrador, cuerpo `{ communityId, lostExperiencePoints }`) | Controllers/Api/PunishmentsController.cs:15-24, api Core/Modules/Punishments/Services/PunishmentsService.cs:14-31 | adapted | Misma dirección, verbo y cuerpo; los puntos se suman a lo que el jugador ya había perdido, como antes. El cuerpo acepta también `seasonId` (la temporada mostrada; la actual cuando falta) y la llamada exige el token antiforgery en el encabezado `RequestVerificationToken`. La respuesta lleva el total del jugador en la temporada. |
@@ -125,7 +125,7 @@ Cada valor va seguido de ` | ` y del valor del segundo jugador en amarillo al co
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Panel (`panel-warning`) solo cuando otra cuenta se conectó desde la misma dirección | Views/Players/Details.cshtml:943-948 | adapted | El mismo panel, mostrado a todos los visitantes como antes. Necesita el módulo de servidor en vivo, que es donde se registran las conexiones. |
+| Panel (`panel-warning`) solo cuando otra cuenta se conectó desde la misma dirección | Views/Players/Details.cshtml:943-948 | adapted | El mismo panel. De forma predeterminada se muestra a todos los visitantes, como antes; el ajuste Configuración > Privacidad > "Quién puede ver las cuentas relacionadas" puede limitarlo a los administradores. Necesita el módulo de servidor en vivo, que es donde se registran las conexiones. |
 | Columnas: Nombre, Steam ID, Último acceso, Conexiones, URL del perfil | Views/Players/Details.cshtml:951-959 | done | |
 | Avatar de 32 px y nombre que enlazan a la página de esa cuenta | Views/Players/Details.cshtml:964-967 | done | |
 | Steam ID con el botón de copiar | Views/Players/Details.cshtml:968-974 | done | Formato `STEAM_0:x:y`, como arriba. |
@@ -224,7 +224,7 @@ La tarjeta es la antigua `Views/LastMatches/_Match.cshtml`. La página del jugad
 | Último acceso, cuando se conoce | Views/Players/PlayerNotFound.cshtml:80-86 | adapted | Zona horaria del sitio, como arriba. |
 | Conexiones, cuando se conocen | Views/Players/PlayerNotFound.cshtml:87-93 | done | |
 | URL del perfil (pestaña nueva) con el botón de copiar | Views/Players/PlayerNotFound.cshtml:94-105 | done | |
-| Panel "Cuentas relacionadas" con las mismas cinco columnas que en la página del jugador | Views/Players/PlayerNotFound.cshtml:112-160 | done | Con el módulo de servidor en vivo. |
+| Panel "Cuentas relacionadas" con las mismas cinco columnas que en la página del jugador | Views/Players/PlayerNotFound.cshtml:112-160 | adapted | Con el módulo de servidor en vivo, y siguiendo el mismo ajuste de privacidad que la página del jugador. |
 | Botón "Volver a la página de clasificación" | Views/Players/PlayerNotFound.cshtml:162-164 | done | |
 | Estilos (tamaño del avatar, celdas de encabezado, margen en teléfonos) | Views/Players/PlayerNotFound.cshtml:15-34 | done | |
 | Metadatos de página: título "{name or id} - Detalles del jugador" | PageMetadata/PlayerNotFoundPageMetadata.cs:14 | done | |

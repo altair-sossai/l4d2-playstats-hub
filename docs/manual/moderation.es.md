@@ -74,4 +74,4 @@ Escribe el Steam ID o el enlace del perfil del jugador y haz clic en **Buscar**.
 
 La dirección en sí nunca se muestra. Las conexiones de más de tres meses se borran.
 
-Las mismas cuentas se muestran en la página del jugador como [Cuentas relacionadas](players.es.md#cuentas-relacionadas).
+Las mismas cuentas se muestran en la página del jugador como [Cuentas relacionadas](players.es.md#cuentas-relacionadas), a todos los visitantes o solo a los administradores, según [Configuración > Privacidad](administration.es.md#privacidad).

@@ -22,6 +22,7 @@ The administrator chooses the length of a season, in months, from 1 to 24. The d
 - The first season starts at the beginning of a year and its blocks follow from there. With 2 months, seasons start in January, March, May, July, September and November. With 3 months, in January, April, July and October.
 - Each next season starts exactly where the previous one ended.
 - The dates use the time zone of the site, set in [Settings](administration.md#site). A season that ends on 31 December ends at midnight in that time zone.
+- Everywhere on the site a season is named by its first and last month, such as **From 01/2026 to 02/2026**, and the period selectors add **(Current season)** to the current one.
 - Each statistics file belongs to the season of the date the game server wrote in it. A file from before the first season creates the earlier seasons it needs, so imported old data finds its place.
 - A match never crosses two seasons. Maps played across midnight at the turn of a season make two matches.
 

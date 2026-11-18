@@ -56,7 +56,7 @@ Most `adapted` lines fall into a few groups:
 - **Several game servers.** With one server the pages look as before. With more than one, a server picker and the server name appear.
 - **Modules.** A block that belongs to a module (skin shop, live server, site chat, remote commands, Anti-Cheat) only shows while that module is on.
 - **One application.** Addresses that pointed to a separate API point to this one. Old addresses redirect to the new ones.
-- **Forms and scripts.** Requests that change data carry an antiforgery token.
+- **Forms and scripts.** Requests that change data carry an antiforgery token, signing out included.
 
 ## When you change a page
 

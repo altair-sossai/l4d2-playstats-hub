@@ -25,12 +25,12 @@ Toda partida jogada nos seus servidores de jogo tem uma página com as equipes, 
 Cada cartão mostra:
 
 - a campanha, a configuração (como `ZoneMod v2.9.2b`) e uma etiqueta **Competitiva** ou **Casual**;
-- a data e a hora da partida e quanto tempo ela durou;
+- a data e a hora da partida, no fuso horário do site, e quanto tempo ela durou;
 - qual equipe ganhou e por quantos pontos;
 - as duas equipes com o placar final, e cada jogador com os seus prêmios de MVP: uma estrela amarela para cada MVP de SI e uma estrela azul para cada MVP de CI;
 - um botão **Detalhes**.
 
-Os filtros no topo escolhem uma temporada, um ano ou todas as temporadas, e um servidor de jogo ou todos. Com um único servidor de jogo cadastrado, o filtro de servidor tem só esse servidor.
+Os filtros no topo escolhem uma temporada, um ano ou todas as temporadas, e um servidor de jogo ou todos. As temporadas aparecem pelo primeiro e pelo último mês, como nos seletores de período: **De 01/2026 até 02/2026**. Com um único servidor de jogo cadastrado, o filtro de servidor tem só esse servidor.
 
 ## Detalhes da partida
 

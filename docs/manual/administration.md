@@ -71,7 +71,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Module | What it contains | Needs | Default | When it is off |
 |---|---|---|---|---|
 | Ranking and statistics | Ranking, matches, players, patents, history, punishments and the pages inside the game. | | On | The first page shows a short welcome text. Matches are still built from the files, out of sight. |
-| Live server | The match in progress on each server. | | On | No **Server** menu item. The plugins' live data is refused. The related accounts and player connections are not shown. |
+| Live server | The match in progress on each server. | | On | No **Server** menu item. The plugins' live data is refused. The related accounts and player connections are not shown, whatever [Privacy](#privacy) says. |
 | Site chat | Writing in the game chat from the live page, and chat bans. | Live server | Off | No chat box on the live page and no **Chat bans** page. |
 | Remote commands | Commands sent by administrators from the site to a game server. | Live server | Off | No **Remote commands** page and no terminal on the live page. |
 | Weapon skin shop | Stars, purchases, gifts and equipped skins. | Ranking | Off | No **Skins** menu item, no stars in the menu bar, no Skins tab on the player page. The game server gets no skins. |
@@ -125,6 +125,14 @@ The points apply to every season right away, past seasons included, because the 
 
 [Ranking](ranking.md#how-experience-is-calculated) explains how these values are used.
 
+### Privacy
+
+| Setting | Default | What it does |
+|---|---|---|
+| Who can see related accounts | Everyone | **Everyone** shows the [Related accounts](players.md#related-accounts) panel to every visitor, as the old site did. **Administrators only** hides it from visitors and players who are not administrators, on the player page and on the page of a player who is not ranked. |
+
+This setting covers the site only. The `l4d2_gameinfo_sync` plugin still announces related accounts in the game chat while `gameinfo_related_accounts_chat` is `1`; set it to `0` in `cfg/playstats.cfg` to keep them out of the chat too. Administrators always see the connections in [Moderation > Player connections](moderation.md#player-connections).
+
 ## Administrators
 
 ![The administrators](../images/en/admin-administrators.webp)
@@ -134,6 +142,6 @@ The list shows every administrator and since when. To add one, give the SteamID6
 If you lose access to every administrator account, add one from the machine that runs the site:
 
 - Linux: `playstats-hub add-admin <SteamID64>`
-- Docker: `docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
+- Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 The SteamID64 is the long number in the address of a Steam profile, such as `76561198000000000`.

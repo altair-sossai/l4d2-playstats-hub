@@ -14,7 +14,7 @@ Os jogadores podem ver o ranking sem sair do Left 4 Dead 2. O comando de chat `!
 
 ## As três páginas
 
-O painel tem três abas. Elas mostram só a temporada atual, e só as partidas ranqueadas.
+O painel tem três abas. Elas mostram só a temporada atual, e só as partidas ranqueadas. A barra do topo mostra o nome dessa temporada como o site faz, por exemplo **De 11/2026 até 12/2026**.
 
 **Ranking**: os 50 melhores jogadores, com patente, experiência, vitórias, derrotas, taxa de vitória e MVPs. A linha do jogador que abriu o painel fica destacada.
 

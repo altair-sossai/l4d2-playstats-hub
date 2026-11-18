@@ -100,6 +100,8 @@ curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/ma
 
 O instalador adiciona o [Caddy](https://caddyserver.com/), que obtém e renova o certificado HTTPS sozinho. O seu site passa a ficar em `https://stats.example.com`.
 
+O Caddy roda na mesma máquina e fala com o site por `127.0.0.1`, então o site aceita o endereço do visitante e o esquema `https` que ele repassa sem nenhuma configuração. Um proxy em outra máquina precisa estar em `Hub__TrustedProxies` (veja [Alterando a configuração](#alterando-a-configuração)).
+
 Você pode fazer isso em uma máquina onde a aplicação já está instalada. Nada é perdido.
 
 ## O endereço usado dentro do jogo
@@ -178,6 +180,7 @@ Quase tudo é alterado na área de administração do site. As poucas configura�
 | `Hub__DataDirectory` | Pasta com o banco de dados, os avatares e as chaves. | `/var/lib/l4d2-playstats-hub` |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` ou `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Como chegar ao banco de dados. | `Data Source=hub.db` |
+| `Hub__TrustedProxies` | Outros proxies reversos cujos cabeçalhos `X-Forwarded-*` o site aceita: endereços IP ou redes como `10.0.0.0/8`, separados por vírgulas. Esta máquina (`127.0.0.1` e `::1`), onde o instalador coloca o Caddy, é sempre confiável. | vazio |
 
 Depois de editar o arquivo, reinicie: `playstats-hub restart`.
 

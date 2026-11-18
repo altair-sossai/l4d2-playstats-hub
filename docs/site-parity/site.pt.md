@@ -42,7 +42,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Avatar do jogador logado com link para a página do jogador, com o nome no celular | _Layout.cshtml:412-419 | done | |
 | Menu de configurações: trocar o tema | _Layout.cshtml:430-447, Controllers/HomeController.cs:42 | done | `/theme/{theme}`. |
 | Menu de configurações: English, Português, Español (o idioma atual fica oculto) | _Layout.cshtml:449-475, 545-554, 690-703 | adapted | Links simples (`/language?culture=`) em vez de um POST por AJAX seguido de um recarregamento. Mesmo resultado, e funciona sem script. |
-| Menu de configurações: entrar com a Steam / sair | _Layout.cshtml:477-494 | done | |
+| Menu de configurações: entrar com a Steam / sair | _Layout.cshtml:477-494 | adapted | Mesmos itens, ícones e textos. Sair é um `POST /logout` com o token antiforgery, enviado por um formulário oculto atrás do mesmo link, em vez do antigo `GET /logout`: outro site não consegue mais deslogar um visitante com um link ou uma imagem. O `returnUrl` continua trazendo o visitante de volta para a mesma página, só para endereços locais. |
 | Links do rodapé (repositório do servidor, GitHub, Steam) | _Layout.cshtml:507-521 | adapted | Os três links fixos viraram a configuração `SiteSettings.FooterLinks` (um por linha). O padrão é um link para o projeto. |
 | Ícone flutuante de "conectar" com o endereço do servidor no tooltip, oculto no celular | _Layout.cshtml:524-529, Controllers/ConnectController.cs | adapted | O endereço vem do servidor de jogo cadastrado com mais jogadores (`/connect`), e não de uma configuração fixa. Fica oculto quando nenhum servidor tem endereço. |
 | Scripts do jQuery, Bootstrap, diffDOM, Chart.js e lity | _Layout.cshtml:531-535 | done | |
@@ -54,9 +54,10 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Tag do Google Analytics | _Layout.cshtml:717-723 | adapted | O ID fixo virou a configuração opcional `SiteSettings.GoogleAnalyticsId`. |
 | Minificação do HTML e compressão HTTP | Program.cs:9-16, 65 | adapted | As respostas são comprimidas (Brotli/Gzip). O HTML não é minificado: não há efeito visível, e é uma dependência a menos. |
 | Aviso no log para toda requisição que termina em erro, e a exceção no caso de falhas | Middlewares/ErrorLoggingMiddleware.cs | done | Pelo logger da aplicação; uma instalação em Linux guarda isso no journal do sistema em vez de em `logs/app.log`. |
+| Página de erro para exceções não tratadas e para códigos como 404 | (novo) | adapted | Acréscimo do hub: o site antigo respondia um 500 vazio em produção. As páginas agora mostram uma página de erro traduzida no layout do site; a exceção continua indo para o log como acima. A API, as páginas dentro do jogo, os arquivos estáticos e as requisições feitas por scripts mantêm o status puro, e as páginas dentro do jogo recebem uma linha de texto simples no caso de exceção. |
 | JSON sem nulos e com enums como texto | Program.cs:21-25 | done | |
 | Login pela Steam com um cookie deslizante de 30 dias | Program.cs:28-39 | done | |
-| Endereços por convenção, como `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | O hub usa endereços explícitos (`/theme/...`, `/language`, `/login`, `/logout`). Os endereços que as pessoas de fato abrem (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) são os mesmos. |
+| Endereços por convenção, como `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | O hub usa endereços explícitos (`/theme/...`, `/language`, `/login`, `POST /logout`). Os endereços que as pessoas de fato abrem (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) são os mesmos. |
 | `POST /api/cache/clear` | Controllers/Api/CacheController.cs | not ported | O site antigo guardava em cache o que lia de uma API separada e precisava ser avisado para descartar esse cache. No hub, o site e a API são uma única aplicação, e cada envio atualiza o ranking sozinho. |
 
 ## Página inicial: ranking (`/`)
