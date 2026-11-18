@@ -99,6 +99,8 @@ With Docker:
 
 ![An update with Docker](../images/en/install-docker-update.webp)
 
+Images up to v0.3.0 ran the site as root; newer ones run it as the `app` user. A volume created by an older image is handed to that user when the new container starts, so nothing else is needed. [Installing with Docker > Updating](../install-docker.md#updating) has the details.
+
 A backup before an update costs a minute and lets you go back.
 
 The plugins of the game servers are released with the site. Check the release notes to see whether they changed; [Connecting a game server](../game-server.md) explains how to replace them.

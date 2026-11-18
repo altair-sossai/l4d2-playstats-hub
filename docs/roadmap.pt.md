@@ -78,7 +78,7 @@ O [CONTRIBUTING.pt.md](../CONTRIBUTING.pt.md) descreve as pastas e as regras de 
 | Front-end | Duas camadas: o site principal, para os navegadores atuais, e algumas páginas feitas para o navegador dentro do jogo. |
 | Páginas dentro do jogo | Só o essencial: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. |
 | Área administrativa | Renderizada no servidor, como o resto do site. Um framework de página única, como o Angular, é permitido se alguma tela precisar, e não é usado. |
-| Docker | Oferecido como alternativa ao script de instalação. |
+| Docker | Oferecido como alternativa ao script de instalação. O contêiner roda o site com um usuário sem privilégios e tem verificação de saúde. |
 | Dados antigos | Importados e recalculados. Não há compatibilidade retroativa com o armazenamento antigo. |
 | Idiomas | O inglês é o padrão. As versões em português e em espanhol derivam dele. |
 | Organização do código | Um tipo por arquivo, agrupados por módulo e depois por categoria. |

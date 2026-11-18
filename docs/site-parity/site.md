@@ -42,7 +42,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Signed-in player's avatar linking to the player page, with the name on phones | _Layout.cshtml:412-419 | done | |
 | Settings menu: switch theme | _Layout.cshtml:430-447, Controllers/HomeController.cs:42 | done | `/theme/{theme}`. |
 | Settings menu: English, Português, Español (the current one hidden) | _Layout.cshtml:449-475, 545-554, 690-703 | adapted | Plain links (`/language?culture=`) instead of an AJAX POST followed by a reload. Same result, works without script. |
-| Settings menu: sign in with Steam / sign out | _Layout.cshtml:477-494 | done | |
+| Settings menu: sign in with Steam / sign out | _Layout.cshtml:477-494 | adapted | Same items, icons and texts. Signing out is a `POST /logout` with the antiforgery token, sent by a hidden form behind the same link, instead of the old `GET /logout`: another site can no longer sign a visitor out with a link or an image. `returnUrl` still brings the visitor back to the same page, local addresses only. |
 | Footer links (server repository, GitHub, Steam) | _Layout.cshtml:507-521 | adapted | The three fixed links became the setting `SiteSettings.FooterLinks` (one per line). The default is a link to the project. |
 | Floating "connect" icon with the server address in the tooltip, hidden on phones | _Layout.cshtml:524-529, Controllers/ConnectController.cs | adapted | The address comes from the registered game server with the most players (`/connect`), not from a fixed setting. Hidden when no server has an address. |
 | jQuery, Bootstrap, diffDOM, Chart.js and lity scripts | _Layout.cshtml:531-535 | done | |
@@ -54,9 +54,10 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Google Analytics tag | _Layout.cshtml:717-723 | adapted | The fixed ID became the optional setting `SiteSettings.GoogleAnalyticsId`. |
 | HTML minification and HTTP compression | Program.cs:9-16, 65 | adapted | Responses are compressed (Brotli/Gzip). The markup is not minified: no visible effect, and one dependency less. |
 | Warning in the log for every request that ends in an error, and the exception for failures | Middlewares/ErrorLoggingMiddleware.cs | done | Through the application's logger; a Linux install keeps it in the system journal instead of `logs/app.log`. |
+| Error page for unhandled exceptions and for status codes such as 404 | (new) | adapted | Hub addition: the old site answered an empty 500 in production. Pages now show a translated error page in the site layout; the exception is still logged as above. The API, the pages inside the game, static files and requests made by scripts keep a bare status, and the pages inside the game get a plain text line for an exception. |
 | JSON without nulls and with enums as text | Program.cs:21-25 | done | |
 | Steam sign-in with a 30 day sliding cookie | Program.cs:28-39 | done | |
-| Conventional addresses such as `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | The hub uses explicit addresses (`/theme/...`, `/language`, `/login`, `/logout`). Addresses people actually open (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) are the same. |
+| Conventional addresses such as `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | The hub uses explicit addresses (`/theme/...`, `/language`, `/login`, `POST /logout`). Addresses people actually open (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) are the same. |
 | `POST /api/cache/clear` | Controllers/Api/CacheController.cs | not ported | The old site cached what it read from a separate API and had to be told to forget it. In the hub the site and the API are one application, and every upload refreshes the ranking by itself. |
 
 ## Home: ranking (`/`)

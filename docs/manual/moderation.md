@@ -74,4 +74,4 @@ Type the Steam ID or the profile link of the player and click **Search**. The pa
 
 The address itself is never shown. Connections older than three months are deleted.
 
-The same accounts are shown on the player page as [Related accounts](players.md#related-accounts).
+The same accounts are shown on the player page as [Related accounts](players.md#related-accounts), to every visitor or only to administrators depending on [Settings > Privacy](administration.md#privacy).

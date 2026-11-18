@@ -7,6 +7,7 @@ public class SettingsViewModel
     public SiteSettings Site { get; set; } = new();
     public SeasonSettings Season { get; set; } = new();
     public RankingSettings Ranking { get; set; } = new();
+    public PrivacySettings Privacy { get; set; } = new();
     public IReadOnlyList<string> TimeZones { get; set; } = [];
     public IFormFile? Logo { get; set; }
     public bool RemoveLogo { get; set; }

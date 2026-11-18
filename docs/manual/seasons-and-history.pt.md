@@ -22,6 +22,7 @@ O administrador escolhe a duração de uma temporada, em meses, de 1 a 24. O pad
 - A primeira temporada começa no início de um ano, e os blocos seguem a partir daí. Com 2 meses, as temporadas começam em janeiro, março, maio, julho, setembro e novembro. Com 3 meses, em janeiro, abril, julho e outubro.
 - Cada temporada seguinte começa exatamente onde a anterior terminou.
 - As datas usam o fuso horário do site, definido em [Configurações](administration.pt.md#site). Uma temporada que termina em 31 de dezembro termina à meia-noite nesse fuso horário.
+- Em todo o site uma temporada aparece pelo primeiro e pelo último mês, como **De 01/2026 até 02/2026**, e os seletores de período acrescentam **(Temporada atual)** à atual.
 - Cada arquivo de estatísticas pertence à temporada da data que o servidor de jogo gravou nele. Um arquivo de antes da primeira temporada cria as temporadas anteriores de que precisa, então dados antigos importados encontram o seu lugar.
 - Uma partida nunca atravessa duas temporadas. Mapas jogados antes e depois da meia-noite da virada de uma temporada formam duas partidas.
 

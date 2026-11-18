@@ -56,7 +56,7 @@ La mayoría de las líneas `adapted` caen en unos pocos grupos:
 - **Varios servidores de juego.** Con un solo servidor las páginas se ven como antes. Con más de uno aparecen un selector de servidor y el nombre del servidor.
 - **Módulos.** Un bloque que pertenece a un módulo (tienda de skins, servidor en vivo, chat del sitio, comandos remotos, Anti-Cheat) solo se muestra mientras ese módulo está activado.
 - **Una sola aplicación.** Las direcciones que apuntaban a una API separada apuntan a esta. Las direcciones antiguas redirigen a las nuevas.
-- **Formularios y scripts.** Las solicitudes que cambian datos llevan un token antiforgery.
+- **Formularios y scripts.** Las solicitudes que cambian datos llevan un token antiforgery, incluida la de cerrar sesión.
 
 ## Cuando cambies una página
 

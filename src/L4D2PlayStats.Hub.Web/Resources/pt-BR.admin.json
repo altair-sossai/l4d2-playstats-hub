@@ -16,5 +16,9 @@
   "The logo was not changed: the file is too large.": "A logo não foi alterada: o arquivo é grande demais.",
   "The Google Analytics ID was not changed: it can only have letters, digits and hyphens.": "O ID do Google Analytics não foi alterado: ele só pode ter letras, números e hifens.",
   "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.": "Alguns links do rodapé ficaram de fora: cada linha precisa ter um texto, uma barra vertical e um endereço que comece com http:// ou https://.",
-  "Optional. Player avatars load without it; with a key they load faster.": "Opcional. As fotos dos jogadores carregam sem ela; com a chave, carregam mais rápido."
+  "Optional. Player avatars load without it; with a key they load faster.": "Opcional. As fotos dos jogadores carregam sem ela; com a chave, carregam mais rápido.",
+  "Who can see related accounts": "Quem pode ver as contas relacionadas",
+  "Everyone": "Todos",
+  "Administrators only": "Somente administradores",
+  "Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.": "Contas relacionadas são outras contas Steam que se conectaram a um servidor de jogo pelo mesmo endereço IP. Elas aparecem nas páginas dos jogadores, como no site antigo. O plugin do jogo continua anunciando essas contas no chat do jogo enquanto {0} estiver ligado, seja qual for a escolha aqui."
 }

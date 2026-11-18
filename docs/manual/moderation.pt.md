@@ -74,4 +74,4 @@ Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**. A pági
 
 O endereço em si nunca aparece. Conexões com mais de três meses são excluídas.
 
-As mesmas contas aparecem na página do jogador como [Contas relacionadas](players.pt.md#contas-relacionadas).
+As mesmas contas aparecem na página do jogador como [Contas relacionadas](players.pt.md#contas-relacionadas), para todo visitante ou só para administradores, conforme [Configurações > Privacidade](administration.pt.md#privacidade).

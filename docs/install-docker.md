@@ -11,6 +11,7 @@ The screenshots on this page are the real output of the commands, recorded on a 
 - [What you need](#what-you-need)
 - [Starting it](#starting-it)
 - [The setup code](#the-setup-code)
+- [Health check](#health-check)
 - [Updating](#updating)
 - [Backup](#backup)
 - [Adding an administrator](#adding-an-administrator)
@@ -53,6 +54,8 @@ The site is at `http://YOUR-SERVER-ADDRESS:5080`. The database, the avatars and 
 
 Run only one container of the application. The live match is kept in memory, and two containers would each have their own.
 
+The application runs as the unprivileged `app` user of the .NET image, not as root. When the container starts, it first gives that user the ownership of the data folder, then starts the site.
+
 ## The setup code
 
 The first page of the site asks for a setup code. Read it from the log:
@@ -66,6 +69,16 @@ docker compose logs hub | grep "setup code"
 `docker compose ps` shows the container and its port. Open the site, paste the code, sign in with Steam, and follow the pages. [First-run setup](manual/first-run.md) shows each of them.
 
 ![The first page of the site asks for the setup code](images/en/wizard-setup-code.webp)
+
+## Health check
+
+The image has a health check that needs no extra tools: every 30 seconds Docker runs `dotnet L4D2PlayStats.Hub.Web.dll health` inside the container, which asks the site for `/api/ping` on its own port. `docker compose ps` shows the container as `healthy` once the site answers, and as `unhealthy` after three failures in a row. To run the check by hand:
+
+```bash
+docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll health
+```
+
+It prints the answer and ends with 0 when the site is up, or 1 when it is not.
 
 ## Updating
 
@@ -82,6 +95,8 @@ docker compose up -d
 ![Updating with Docker](images/en/install-docker-update.webp)
 
 To stay on a specific version, replace `latest` in the compose file with the version, such as `v1.2.0`.
+
+Images up to v0.3.0 ran the application as root, so the files in an existing volume belong to root. A newer container changes their owner to `app` when it starts, so the update needs nothing else. If you start the container with a fixed `user:` in the compose file, it cannot change the owner; fix it once with `docker run --rm -v hub-data:/data alpine chown -R 1654:1654 /data` (1654 is the `app` user of the image).
 
 ## Backup
 
@@ -122,8 +137,10 @@ docker compose start hub
 If you lose access to every administrator account, add one from the machine:
 
 ```bash
-docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>
+docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>
 ```
+
+`-u app` runs the command as the same user as the site, so the files it touches keep the right owner.
 
 ## Configuration
 
@@ -134,8 +151,20 @@ Settings are environment variables. Add them under `environment:` in the compose
 | `Hub__DataDirectory` | Folder with the database, avatars and keys. | `/data` |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` or `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | How to reach the database. | `Data Source=hub.db` |
+| `Hub__TrustedProxies` | Reverse proxies whose `X-Forwarded-For`, `X-Forwarded-Proto` and `X-Forwarded-Host` headers the site believes: IP addresses or networks such as `172.16.0.0/12`, separated by commas. The container itself (`127.0.0.1` and `::1`) is always trusted. | empty |
 
 If you put a reverse proxy with HTTPS in front of the container, keep a plain HTTP address reachable for the game. [The address used inside the game](install-linux.md#the-address-used-inside-the-game) explains why.
+
+A reverse proxy is never on the loopback address of the container: whether it runs in another container or on the host, the site usually sees a private address of the Docker network, such as `172.18.0.2` or the gateway `172.18.0.1`. Until that address is in `Hub__TrustedProxies`, the site ignores the forwarded headers, so it sees `http` instead of `https` and the address of the proxy instead of the visitor's. Trust the network of your containers:
+
+```yaml
+services:
+  hub:
+    environment:
+      Hub__TrustedProxies: "172.16.0.0/12"
+```
+
+`docker network inspect` shows the exact subnet if you prefer a narrower range. Do not trust a network that visitors reach directly, or any of them could pretend to come from somewhere else.
 
 ## Building the image yourself
 

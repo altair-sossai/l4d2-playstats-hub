@@ -39,7 +39,7 @@
     <a class="tab @(active == "ranking" ? "on" : "")" href="/ingame@(query)">@L["Ranking"]</a>
     <a class="tab @(active == "player" ? "on" : "")" href="/ingame/player@(query)">@L["My summary"]</a>
     <a class="tab @(active == "matches" ? "on" : "")" href="/ingame/matches@(query)">@L["Matches"]</a>
-    <div class="season">@Display.SeasonName(Model.Season)</div>
+    <div class="season">@RankingPeriod.ForSeason(Model.Season).Label(L)</div>
 </div>
 <div class="body">
     @RenderBody()

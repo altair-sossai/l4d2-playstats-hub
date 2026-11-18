@@ -25,12 +25,12 @@ Every match played on your game servers has a page with the teams, the score of 
 Each card shows:
 
 - the campaign, the configuration (such as `ZoneMod v2.9.2b`) and a **Competitive** or **Casual** label;
-- the date and time of the match and how long it lasted;
+- the date and time of the match, in the time zone of the site, and how long it lasted;
 - which team won and by how many points;
 - the two teams with their final score, and each player with their MVP awards: a yellow star for each SI MVP and a blue star for each CI MVP;
 - a **Details** button.
 
-The filters at the top choose a season, a year or all seasons, and one game server or all of them. With one game server registered, the server filter has only that server.
+The filters at the top choose a season, a year or all seasons, and one game server or all of them. Seasons are named by their first and last month, as in the period selectors: **From 01/2026 to 02/2026**. With one game server registered, the server filter has only that server.
 
 ## Match details
 

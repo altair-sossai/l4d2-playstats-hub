@@ -73,6 +73,29 @@ public class PeriodGroupingTests
     }
 
     [TestMethod]
+    public async Task TheMatchesListAndTheInGamePagesNameTheSeasonLikeThePeriodSelector()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        var (now, _, _) = await TwoYearsAsync(factory);
+
+        var current = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Seasons.AsNoTracking().Where(season => season.StartsAt <= now && season.EndsAt > now).SingleAsync());
+        var last = current.EndsAt.AddDays(-1);
+        var name = $"From {current.StartsAt:MM}/{current.StartsAt:yyyy} to {last:MM}/{last:yyyy}";
+
+        var matches = await client.GetStringAsync("/matches");
+        var inGame = await client.GetStringAsync("/ingame");
+        var player = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
+
+        Assert.Contains($"\">{name}</option>", matches);
+        Assert.Contains($"<div class=\"season\">{name}</div>", inGame);
+        Assert.Contains($"{name} (Current season)", player);
+        Assert.DoesNotContain(" – ", matches);
+        Assert.DoesNotContain(" – ", inGame);
+    }
+
+    [TestMethod]
     public async Task TheHistoryListsOnlyTheSeasonsOfThisYearButStillOpensAnOlderOne()
     {
         using var factory = new HubWebFactory();

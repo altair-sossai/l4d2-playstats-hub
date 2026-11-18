@@ -99,6 +99,8 @@ Com Docker:
 
 ![Uma atualização com Docker](../images/pt/install-docker-update.webp)
 
+As imagens até a v0.3.0 rodavam o site como root; as mais novas rodam com o usuário `app`. Um volume criado por uma imagem antiga passa para esse usuário quando o novo contêiner inicia, então não é preciso mais nada. [Instalando com Docker > Atualizando](../install-docker.pt.md#atualizando) tem os detalhes.
+
 Um backup antes de uma atualização custa um minuto e permite voltar atrás.
 
 Os plugins dos servidores de jogo são lançados junto com o site. Confira as notas da versão para ver se eles mudaram; [Conectando um servidor de jogo](../game-server.pt.md) explica como substituí-los.

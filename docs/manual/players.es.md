@@ -90,6 +90,8 @@ Dos tablas armadas a partir de las partidas de ranking del período:
 
 Cuando el módulo de servidor en vivo está activado, los servidores de juego informan la dirección desde la que se conecta cada jugador. Si otras cuentas se conectaron desde la misma dirección, la página del jugador muestra un panel **Cuentas relacionadas** con esas cuentas, su último inicio de sesión y cuántas conexiones tienen. La dirección en sí nunca se muestra.
 
+De forma predeterminada todos los visitantes ven el panel, como en el sitio antiguo. Un administrador puede limitarlo a los administradores en [Configuración > Privacidad](administration.es.md#privacidad). Ese ajuste no cambia el juego: el plugin `l4d2_gameinfo_sync` anuncia las cuentas relacionadas en el chat del juego cuando un jugador se conecta, salvo que `gameinfo_related_accounts_chat` esté en `0`.
+
 Los administradores tienen una búsqueda sobre los mismos datos en [Moderación > Conexiones de jugadores](moderation.es.md#conexiones-de-jugadores). Las conexiones de más de tres meses se borran.
 
 ## Castigos

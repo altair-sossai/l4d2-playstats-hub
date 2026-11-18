@@ -71,7 +71,7 @@ El núcleo siempre está activado: el registro de servidores de juego, la subida
 | Módulo | Qué contiene | Necesita | Predeterminado | Cuando está desactivado |
 |---|---|---|---|---|
 | Ranking y estadísticas | Ranking, partidas, jugadores, patentes, historia, castigos y las páginas dentro del juego. | | Activado | La primera página muestra un texto corto de bienvenida. Las partidas se siguen construyendo a partir de los archivos, sin que se vean. |
-| Servidor en vivo | La partida en curso en cada servidor. | | Activado | No hay elemento **Servidor** en el menú. Los datos en vivo de los plugins se rechazan. Las cuentas relacionadas y las conexiones de jugadores no se muestran. |
+| Servidor en vivo | La partida en curso en cada servidor. | | Activado | No hay elemento **Servidor** en el menú. Los datos en vivo de los plugins se rechazan. Las cuentas relacionadas y las conexiones de jugadores no se muestran, elijas lo que elijas en [Privacidad](#privacidad). |
 | Chat del sitio | Escribir en el chat del juego desde la página en vivo, y los baneos del chat. | Servidor en vivo | Desactivado | No hay cuadro de chat en la página en vivo ni página **Baneos de chat**. |
 | Comandos remotos | Comandos que los administradores envían desde el sitio a un servidor de juego. | Servidor en vivo | Desactivado | No hay página **Comandos remotos** ni terminal en la página en vivo. |
 | Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. | Ranking | Desactivado | No hay elemento **Skins** en el menú, ni estrellas en la barra del menú, ni pestaña Skins en la página del jugador. El servidor de juego no recibe skins. |
@@ -125,6 +125,14 @@ Los puntos se aplican a todas las temporadas de inmediato, incluidas las pasadas
 
 [Ranking](ranking.es.md#cómo-se-calcula-la-experiencia) explica cómo se usan estos valores.
 
+### Privacidad
+
+| Ajuste | Valor predeterminado | Qué hace |
+|---|---|---|
+| Quién puede ver las cuentas relacionadas | Todos | **Todos** muestra el panel [Cuentas relacionadas](players.es.md#cuentas-relacionadas) a cada visitante, como hacía el sitio antiguo. **Solo administradores** lo oculta a los visitantes y a los jugadores que no son administradores, en la página del jugador y en la página de un jugador que no está en el ranking. |
+
+Este ajuste solo afecta al sitio. El plugin `l4d2_gameinfo_sync` sigue anunciando las cuentas relacionadas en el chat del juego mientras `gameinfo_related_accounts_chat` esté en `1`; ponlo en `0` en `cfg/playstats.cfg` para sacarlas también del chat. Los administradores siempre ven las conexiones en [Moderación > Conexiones de jugadores](moderation.es.md#conexiones-de-jugadores).
+
 ## Administradores
 
 ![Los administradores](../images/es/admin-administrators.webp)
@@ -134,6 +142,6 @@ La lista muestra a cada administrador y desde cuándo lo es. Para agregar uno, i
 Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la máquina donde se ejecuta el sitio:
 
 - Linux: `playstats-hub add-admin <SteamID64>`
-- Docker: `docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
+- Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 El SteamID64 es el número largo de la dirección de un perfil de Steam, como `76561198000000000`.

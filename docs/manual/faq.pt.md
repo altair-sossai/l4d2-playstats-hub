@@ -76,6 +76,9 @@ A migração de dados é um programa separado, fora deste repositório, que envi
 **Posso rodar duas cópias do site atrás de um balanceador de carga?**
 Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.
 
+**Quem vê as contas relacionadas de um jogador?**
+Todo mundo, por padrão, como no site antigo. [Configurações > Privacidade](administration.pt.md#privacidade) pode restringi-las aos administradores. O aviso no chat do jogo é uma configuração separada do plugin, `gameinfo_related_accounts_chat`.
+
 ## Resolvendo problemas
 
 | O que você vê | O que fazer |
@@ -92,4 +95,7 @@ Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.
 | Os avatares não carregam | Eles são baixados em segundo plano. Espere alguns minutos, ou defina uma chave da Steam Web API em [Configurações](administration.pt.md#site). |
 | Os jogadores foram deslogados depois de mudar o site de lugar | A pasta `keys` não foi copiada. Eles só precisam fazer login de novo. |
 | As imagens das skins não carregam | Confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja). |
-| Uma página responde "não encontrada" | O módulo dela está desligado. Veja [Módulos](administration.pt.md#módulos). |
+| Uma página mostra **Página não encontrada** | O endereço está errado, ou o módulo dela está desligado. Veja [Módulos](administration.pt.md#módulos). |
+| Uma página mostra **Algo deu errado** | O site encontrou um erro inesperado. Os detalhes estão no log: `playstats-hub logs`, ou `docker compose logs hub`. |
+| Atrás de um proxy reverso, o site vê `http` em vez de `https`, ou o endereço do proxy em vez do visitante | O proxy não está na mesma máquina, então o site ignora os cabeçalhos que ele repassa. Adicione o endereço ou a rede dele em `Hub__TrustedProxies`. Veja [Instalando com Docker > Configuração](../install-docker.pt.md#configuração). |
+| O `docker compose ps` mostra o contêiner como `unhealthy` | O site não responde `/api/ping` na própria porta. Leia `docker compose logs hub` e confira se `ASPNETCORE_URLS` ainda tem um endereço `http`. |

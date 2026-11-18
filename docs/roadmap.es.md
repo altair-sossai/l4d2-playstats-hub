@@ -78,7 +78,7 @@ Una sola aplicación ASP.NET Core que es el sitio web, la API para los plugins, 
 | Front-end | Dos capas: el sitio principal para navegadores actuales, y unas pocas páginas hechas para el navegador que está dentro del juego. |
 | Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. |
 | Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única como Angular si una pantalla lo necesita, pero no se usa. |
-| Docker | Se ofrece como alternativa al script de instalación. |
+| Docker | Se ofrece como alternativa al script de instalación. El contenedor ejecuta el sitio con un usuario sin privilegios y tiene comprobación de estado. |
 | Datos antiguos | Se importan y se recalculan. No hay compatibilidad hacia atrás con el almacenamiento antiguo. |
 | Idiomas | El inglés es el predeterminado. Las versiones en portugués y en español se derivan de él. |
 | Organización del código | Un tipo por archivo, agrupados por módulo y luego por tipo. |

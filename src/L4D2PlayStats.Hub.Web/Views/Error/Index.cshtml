@@ -1,0 +1,49 @@
+@model ErrorViewModel
+@{
+    string title;
+    string message;
+
+    if (Model.NotFound)
+    {
+        title = L["Page not found"];
+        message = L["The address you opened does not exist or was moved. Check it and try again."];
+    }
+    else if (Model.Forbidden)
+    {
+        title = L["Access denied"];
+        message = L["You do not have permission to open this page."];
+    }
+    else if (Model.ServerError)
+    {
+        title = L["Something went wrong"];
+        message = L["The site could not show this page. Try again in a moment, and if it keeps happening, tell an administrator of the site."];
+    }
+    else
+    {
+        title = L["The page could not be opened"];
+        message = L["The request could not be completed. Go back and try again."];
+    }
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = title,
+        Description = message,
+        NoIndex = true
+    };
+}
+
+<div class="jumbotron text-center" style="margin-top: 20px">
+    <h2>@title</h2>
+
+    <p>
+        @message
+    </p>
+
+    <p class="text-muted">
+        @L["Error {0}", Model.StatusCode]
+    </p>
+
+    <a href="/" class="btn btn-primary">
+        @L["Back to the home page"]
+    </a>
+</div>

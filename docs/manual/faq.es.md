@@ -76,6 +76,9 @@ La migración de datos es un programa aparte, fuera de este repositorio, que sub
 **¿Puedo ejecutar dos copias del sitio detrás de un balanceador de carga?**
 No. La partida en vivo se guarda en la memoria de un solo proceso. Ejecuta una sola copia.
 
+**¿Quién ve las cuentas relacionadas de un jugador?**
+Todos, de forma predeterminada, como en el sitio antiguo. [Configuración > Privacidad](administration.es.md#privacidad) puede limitarlas a los administradores. El aviso en el chat del juego es un ajuste aparte del plugin, `gameinfo_related_accounts_chat`.
+
 ## Solución de problemas
 
 | Lo que ves | Qué hacer |
@@ -92,4 +95,7 @@ No. La partida en vivo se guarda en la memoria de un solo proceso. Ejecuta una s
 | Los avatares no cargan | Se descargan en segundo plano. Espera unos minutos, o define una clave de la Steam Web API en [Configuración](administration.es.md#sitio). |
 | Los jugadores perdieron la sesión después de mover el sitio | No se copió la carpeta `keys`. Solo tienen que volver a iniciar sesión. |
 | Las imágenes de las skins no cargan | Revisa **Dirección de los recursos** en los [ajustes de la tienda](skin-shop.es.md#ajustes-de-la-tienda). |
-| Una página responde "no encontrada" | Su módulo está desactivado. Consulta [Módulos](administration.es.md#módulos). |
+| Una página muestra **Página no encontrada** | La dirección está mal, o su módulo está desactivado. Consulta [Módulos](administration.es.md#módulos). |
+| Una página muestra **Algo salió mal** | El sitio encontró un error inesperado. Los detalles están en el registro: `playstats-hub logs`, o `docker compose logs hub`. |
+| Detrás de un proxy inverso, el sitio ve `http` en lugar de `https`, o la dirección del proxy en lugar de la del visitante | El proxy no está en la misma máquina, así que el sitio ignora las cabeceras que reenvía. Agrega su dirección o su red a `Hub__TrustedProxies`. Consulta [Instalar con Docker > Configuración](../install-docker.es.md#configuración). |
+| `docker compose ps` muestra el contenedor como `unhealthy` | El sitio no responde `/api/ping` en su propio puerto. Lee `docker compose logs hub` y comprueba que `ASPNETCORE_URLS` siga teniendo una dirección `http`. |

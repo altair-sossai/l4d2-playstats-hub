@@ -47,7 +47,7 @@ How it was checked: the details page and the statistics page of one real match (
 | Team totals: the sum of the team's players | api Core/Modules/Matches/Match.cs:69-94 | done | |
 | Percentages: player value divided by the team total, zero when the total is zero | api Core/Modules/Matches/Match.cs:166-218 | done | |
 | Winner: the team with the highest score; difference; draw | Sdk/Matches/Results/MatchResult.cs:19-29 | done | |
-| Match start (start of the first map), end (end of the last map) and elapsed time | api Core/Modules/Statistics/Extensions/StatisticsExtensions.cs:58-65, Match.cs:11-13 | done | |
+| Match start (start of the first map), end (end of the last map) and elapsed time | api Core/Modules/Statistics/Extensions/StatisticsExtensions.cs:58-65, Match.cs:11-13 | adapted | The start is the first round start of the first map, in UTC, as on the old site. The hub only accepts files with round times, so every match has it (all 1,832 matches of the production copy do). The old API fell back to the round date written in the file, a game server clock time, and the old site then shifted it as if it were UTC; for a match without a UTC start the hub shows the file date of its first map unchanged, the game server clock, and leaves the elapsed time out. |
 | Times shown in the site's local time | Sdk/Converters/DateTimeConverter.cs:10 | adapted | The old site used the time zone of the machine; the hub uses the time zone chosen in the site settings. |
 | Maps of the match, oldest first, with the score after each one | api Core/Modules/Matches/Match.cs:42-47, :218-223 | done | |
 | "Competitive": two maps or more and teams of four | api Core/Modules/Matches/Match.cs:31 | adapted | The hub marks as competitive the matches that count for the ranking, following the game modes the administrator registered (by default the same rule). |
@@ -63,7 +63,7 @@ How it was checked: the details page and the statistics page of one real match (
 | Social image: thumbnail of the latest match's campaign, alt text with its name | PageMetadata/LastMatchesPageMetadata.cs:19-20 | done | |
 | Heading `h4.text-center` "Last matches" | Views/LastMatches/Index.cshtml:13 | done | |
 | `div.match` with one card per match | Views/LastMatches/Index.cshtml:15-20 | done | |
-| Season filter | (new) | adapted | Hub addition, in the old look: a small select at the right, above the list ("All seasons" by default, then the seasons of the current year and one entry per year), so past seasons stay browsable. Hidden while there is a single season and a single server. |
+| Season filter | (new) | adapted | Hub addition, in the old look: a small select at the right, above the list ("All seasons" by default, then the seasons of the current year and one entry per year), so past seasons stay browsable. Seasons are named as in the period selectors of the old site, "From MM/YYYY to MM/YYYY". Hidden while there is a single season and a single server. |
 | Server filter | (new) | adapted | Hub addition: a second select, shown only when there is more than one game server. |
 | Pagination | (new) | adapted | Hub addition, with the shared `_Pagination` partial, shown when there is more than one page. |
 | Empty list | Views/LastMatches/Index.cshtml:15-20 | adapted | The old page showed nothing; the hub shows "No match found" in the same heading style. |

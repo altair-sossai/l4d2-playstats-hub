@@ -14,7 +14,7 @@ Los jugadores pueden ver el ranking sin salir de Left 4 Dead 2. El comando de ch
 
 ## Las tres páginas
 
-El panel tiene tres pestañas. Muestran solo la temporada actual, y solo las partidas del ranking.
+El panel tiene tres pestañas. Muestran solo la temporada actual, y solo las partidas del ranking. La barra de arriba nombra esa temporada como lo hace el sitio, por ejemplo **De 11/2026 a 12/2026**.
 
 **Clasificación**: los 50 mejores jugadores, con patente, experiencia, victorias, derrotas, porcentaje de victorias y MVP. La fila del jugador que abrió el panel aparece resaltada.
 

@@ -7,11 +7,14 @@ using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
+using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
+using L4D2PlayStats.Hub.Web.Infrastructure.Health;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
+using L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,6 +22,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+
+if (HealthCheck.IsCommand(args))
+    return await HealthCheck.RunAsync(args);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,14 +80,18 @@ builder.Services
     .AddAuthorizationBuilder()
     .AddPolicy(AppConsts.AdministratorPolicy, policy => policy.RequireAuthenticatedUser().AddRequirements(new AdministratorRequirement()));
 
+var trustedProxies = TrustedProxyList.Parse(builder.Configuration[AppConsts.TrustedProxiesSetting]);
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-    options.KnownIPNetworks.Clear();
-    options.KnownProxies.Clear();
+    trustedProxies.ApplyTo(options);
 });
 
 var app = builder.Build();
+
+if (trustedProxies.Invalid.Count > 0)
+    app.Logger.LogWarning("Ignored invalid entries in {Setting}: {Entries}", AppConsts.TrustedProxiesSetting, string.Join(", ", trustedProxies.Invalid));
 
 await app.InitializeHubAsync();
 
@@ -99,6 +109,11 @@ var localization = new RequestLocalizationOptions
 localization.RequestCultureProviders.Add(new SiteCultureProvider());
 
 app.UseForwardedHeaders();
+
+if (!app.Environment.IsDevelopment())
+    app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandlingPath = AppConsts.ErrorPath, SuppressDiagnosticsCallback = _ => true });
+
+app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecute(AppConsts.ErrorStatusPath));
 app.UseMiddleware<ErrorLoggingMiddleware>();
 app.UseRequestLocalization(localization);
 app.UseResponseCompression();

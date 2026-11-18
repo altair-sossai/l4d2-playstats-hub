@@ -90,6 +90,8 @@ Two tables built from the ranked matches of the period:
 
 When the live server module is on, the game servers report the address each player connects from. If other accounts connected from the same address, the player page shows a **Related accounts** panel with those accounts, their last login and how many connections they have. The address itself is never shown.
 
+By default every visitor sees the panel, as on the old site. An administrator can limit it to administrators in [Settings > Privacy](administration.md#privacy). That setting does not change the game: the `l4d2_gameinfo_sync` plugin announces related accounts in the game chat when a player connects, unless `gameinfo_related_accounts_chat` is `0`.
+
 Administrators have a search over the same data in [Moderation > Player connections](moderation.md#player-connections). Connections older than three months are deleted.
 
 ## Punishments
