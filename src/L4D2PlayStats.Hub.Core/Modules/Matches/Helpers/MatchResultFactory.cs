@@ -32,6 +32,7 @@ public static class MatchResultFactory
             FirstFileDate = match.FirstFileDate,
             LastFileDate = match.LastFileDate,
             MatchStart = match.StartedAtUtc ?? match.FirstFileDate,
+            MatchStartIsUtc = match.StartedAtUtc != null,
             MatchEnd = match.EndedAtUtc,
             Campaign = match.Campaign,
             Teams = [teamA, teamB],

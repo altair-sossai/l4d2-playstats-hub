@@ -12,8 +12,9 @@ public class MatchResult
     public DateTime FirstFileDate { get; init; }
     public DateTime LastFileDate { get; init; }
     public DateTime MatchStart { get; init; }
+    public bool MatchStartIsUtc { get; init; } = true;
     public DateTime? MatchEnd { get; init; }
-    public TimeSpan? MatchElapsed => MatchEnd - MatchStart;
+    public TimeSpan? MatchElapsed => MatchStartIsUtc ? MatchEnd - MatchStart : null;
     public string? Campaign { get; init; }
     public IReadOnlyList<MatchTeamResult> Teams { get; init; } = [];
     public IReadOnlyList<MatchMapResult> Maps { get; init; } = [];

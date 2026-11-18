@@ -25,7 +25,7 @@ public static class MatchFactory
             TeamSize = draft.TeamSize,
             FirstFileDate = draft.Oldest.File.FileDate,
             LastFileDate = draft.Newest.File.FileDate,
-            StartedAtUtc = oldest.MapStart ?? oldest.GameRound?.When,
+            StartedAtUtc = oldest.MapStart,
             EndedAtUtc = newest.MapEnd,
             TeamAScore = newest.Scoring?.TeamA?.Score ?? 0,
             TeamBScore = newest.Scoring?.TeamB?.Score ?? 0,

@@ -13,7 +13,7 @@ public class MatchCardModel
     public bool ShowServer { get; init; }
     public string? PlayerPeriod { get; init; }
 
-    public DateTime MatchStart => MatchDisplay.SiteTime(Match.MatchStart, TimeZone);
+    public DateTime MatchStart => Match.MatchStartIsUtc ? MatchDisplay.SiteTime(Match.MatchStart, TimeZone) : Match.MatchStart;
     public string DetailsUrl => $"{AppConsts.MatchesUrl}/{Match.Id}";
 
     public string PlayerUrl(long communityId)
