@@ -1,6 +1,7 @@
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 [Route("api/admin/players")]
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
 [ApiController]
-public class AdminPlayersApiController(IRankingService rankingService) : ControllerBase
+public class AdminPlayersApiController(IRankingService rankingService, IPlayerLookupService playerLookupService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
@@ -35,6 +36,14 @@ public class AdminPlayersApiController(IRankingService rankingService) : Control
         });
 
         return Ok(result);
+    }
+
+    [HttpGet("lookup")]
+    public async Task<IActionResult> LookupAsync([FromQuery] string? id, CancellationToken cancellationToken)
+    {
+        var player = await playerLookupService.LookupAsync(id, cancellationToken);
+
+        return player == null ? NotFound() : Ok(player);
     }
 
     private static List<string> PreviousNames(RankingPlayer player, RankingPlayer? allTimePlayer)

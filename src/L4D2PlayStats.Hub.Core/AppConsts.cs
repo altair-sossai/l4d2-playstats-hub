@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
+
 namespace L4D2PlayStats.Hub.Core;
 
 public static class AppConsts
@@ -101,6 +103,19 @@ public static class AppConsts
     public const string ServerCommandPrefix = "sm_";
     public const int ServerCommandMaxLength = 256;
     public const int RemoteCommandExpirationInMinutes = 5;
+
+    public const string AntiCheatModeEveryone = "everyone";
+    public const string AntiCheatModeListed = "listed";
+    public const string AntiCheatWhitelistName = "whitelist";
+    public const string AntiCheatRequiredName = "required";
+    public const AntiCheatAccessMode AntiCheatDefaultMode = AntiCheatAccessMode.Listed;
+    public const string AntiCheatSyncCommand = "sm_aac sync";
+    public const string AntiCheatGameAdminName = "Console";
+    public const int AntiCheatAccessNameMaxLength = 64;
+    public const int AntiCheatAccessSettingId = 1;
+    public const string AntiCheatWhitelistTable = "AntiCheatWhitelist";
+    public const string AntiCheatRequiredTable = "AntiCheatRequired";
+    public const string AntiCheatAccessSettingsTable = "AntiCheatAccessSettings";
 
     public const int PlayerConnectionRetentionInMonths = 3;
     public const int PlayerConnectionCleanupBatchSize = 100;

@@ -320,6 +320,13 @@
             <span class="aac-kicker">@kicker</span>
             <h1>@L["Anti-Cheat"]</h1>
             <p class="lead">@L["To play on the competitive server, open the game through the Anti-Cheat."]</p>
+            @if (Model.CurrentUserRequired is not null)
+            {
+                <div class="alert alert-info aac-access">
+                    <span class="glyphicon glyphicon-user"></span>
+                    @(Model.CurrentUserRequired.Value ? L["Your Steam account must have the Anti-Cheat running to play on our servers. Open it before you join."] : L["Your Steam account can play on our servers without the Anti-Cheat."])
+                </div>
+            }
 
             <div class="aac-download">
                 @if (Model.DownloadUrl != null)

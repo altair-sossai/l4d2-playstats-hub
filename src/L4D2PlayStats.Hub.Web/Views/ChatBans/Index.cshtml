@@ -193,6 +193,7 @@
 
             var selected = null;
             var playerUrl = @Json.Serialize(ranking ? AppConsts.PlayerUrlPrefix : null);
+            var lookupUrl = @Json.Serialize(AppConsts.PlayerLookupUrl);
             var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
 
             function escapeHtml(text) {
@@ -312,6 +313,7 @@
                             if (sender.alreadyBanned)
                                 return;
 
+                            lookupSequence++;
                             $('#cb-add-player').val(sender.communityId);
                             $('#cb-add-name').val(sender.name || '');
                             $('#cb-add-modal .cb-picked').text(sender.name || sender.communityId);
@@ -338,6 +340,7 @@
                 $('#cb-add-modal').one('hidden.bs.modal', function () {
                     PlayerPicker.open(function (player) {
                         if (player) {
+                            lookupSequence++;
                             $('#cb-add-player').val(player.communityId);
                             $('#cb-add-name').val(player.name || '');
                             $('#cb-add-modal .cb-picked').html('<img src="' + escapeHtml(player.avatarUrl) + '" alt="" style="width: 24px; border-radius: 50%; margin-right: 6px" onerror="imgOnError(this)"/>' + escapeHtml(player.name));
@@ -348,9 +351,29 @@
                 }).modal('hide');
             });
 
+            var lookupTimer = null;
+            var lookupSequence = 0;
+
             $('#cb-add-player').on('input', function () {
+                var value = $.trim($(this).val());
+                var sequence = ++lookupSequence;
+
                 $('#cb-add-name').val('');
                 $('#cb-add-modal .cb-picked').empty();
+                clearTimeout(lookupTimer);
+
+                if (value === '')
+                    return;
+
+                lookupTimer = setTimeout(function () {
+                    $.getJSON(lookupUrl, { id: value }).done(function (player) {
+                        if (sequence !== lookupSequence || !player)
+                            return;
+
+                        $('#cb-add-name').val(player.name || '');
+                        $('#cb-add-modal .cb-picked').html('<img src="' + escapeHtml(player.avatarUrl) + '" alt="" style="width: 24px; border-radius: 50%; margin-right: 6px" onerror="imgOnError(this)"/>' + escapeHtml(player.name || player.communityId));
+                    });
+                }, 400);
             });
 
             $('.cb-add-save').on('click', function () {

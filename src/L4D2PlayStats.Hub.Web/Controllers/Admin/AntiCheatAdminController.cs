@@ -1,7 +1,13 @@
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Extensions;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models;
+using L4D2PlayStats.Hub.Web.Models.AntiCheat;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,15 +17,31 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 [AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.AntiCheat)]
 [Route("admin/anti-cheat")]
-public class AntiCheatAdminController(ISettingsService settingsService) : Controller
+public class AntiCheatAdminController(ISettingsService settingsService, IAntiCheatAccessService accessService, ILiveViewService liveViewService) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? list, string? q, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
         ViewBag.AntiCheatAdmin = "active";
 
-        return View(await settingsService.GetAsync<AntiCheatSettings>(cancellationToken));
+        var settings = await settingsService.GetAsync<AntiCheatSettings>(cancellationToken);
+        var access = await accessService.GetAsync(cancellationToken);
+        var shownList = AntiCheatAccessNames.TryParseList(list, out var parsed) ? parsed : access.Mode.ListOf();
+        var term = q?.Trim();
+
+        var filtered = access[shownList]
+            .Select(player => new AntiCheatAccessPlayerResult(player))
+            .Where(player => string.IsNullOrEmpty(term)
+                             || player.Name.Contains(term, StringComparison.OrdinalIgnoreCase)
+                             || player.CommunityId.Contains(term, StringComparison.OrdinalIgnoreCase)
+                             || player.SteamId.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
+        var model = new AntiCheatAdminModel(settings, access, shownList, new PagedListModel<AntiCheatAccessPlayerResult>(filtered, page, AppConsts.AntiCheatAdminPageSize), q, timeZone);
+
+        return View(model);
     }
 
     [HttpPost("")]

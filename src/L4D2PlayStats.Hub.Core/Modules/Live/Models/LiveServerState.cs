@@ -20,6 +20,8 @@ public class LiveServerState(IClock clock)
     private readonly TimedValue<LiveConfiguration?> _configuration = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveConfigurationExpirationInMinutes), null);
     private readonly TimedFeed _feed = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveFeedRetentionInMinutes), AppConsts.LiveFeedMaxItems);
     private readonly TimedValue<IReadOnlyList<LiveInfected>> _infecteds = new(clock, Delay, PlayersExpiration, []);
+    private readonly List<QueuedCommand> _internalCommands = [];
+    private readonly Lock _internalCommandsLock = new();
     private readonly ConcurrentDictionary<string, string> _lastMessage = new();
     private readonly TimedValue<LiveRound?> _round = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveRoundExpirationInMinutes), null);
     private readonly TimedValue<LiveScoreboard?> _scoreboard = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveScoreboardExpirationInMinutes), null);
@@ -158,6 +160,45 @@ public class LiveServerState(IClock clock)
                 return command;
 
         return null;
+    }
+
+    public bool HasInternal(string fullCommand)
+    {
+        lock (_internalCommandsLock)
+        {
+            RemoveExpiredInternalCommands();
+
+            return _internalCommands.Any(command => command.Command.FullCommand == fullCommand);
+        }
+    }
+
+    public void EnqueueInternal(QueuedCommand command)
+    {
+        lock (_internalCommandsLock)
+            _internalCommands.Add(command);
+    }
+
+    public QueuedCommand? DequeueInternal()
+    {
+        lock (_internalCommandsLock)
+        {
+            RemoveExpiredInternalCommands();
+
+            if (_internalCommands.Count == 0)
+                return null;
+
+            var command = _internalCommands[0];
+            _internalCommands.RemoveAt(0);
+
+            return command;
+        }
+    }
+
+    private void RemoveExpiredInternalCommands()
+    {
+        var now = clock.UtcNow;
+
+        _internalCommands.RemoveAll(command => now - command.QueuedAtUtc >= CommandExpiration);
     }
 
     private bool OnCooldown(long communityId, DateTime now)

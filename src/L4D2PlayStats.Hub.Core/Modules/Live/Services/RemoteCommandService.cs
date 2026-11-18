@@ -49,13 +49,57 @@ public class RemoteCommandService(
         return new RemoteCommandResult(RemoteCommandStatus.Queued, log);
     }
 
+    public async Task<int> QueueInternalAsync(long administratorId, string? administratorName, string command, CancellationToken cancellationToken = default)
+    {
+        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
+        var serverCommand = ServerCommand.Parse(command);
+
+        if (!modules.IsEnabled(HubModule.LiveServer) || serverCommand == null)
+            return 0;
+
+        var servers = await dbContext.GameServers.AsNoTracking().Where(server => server.Enabled).OrderBy(server => server.Id).ToListAsync(cancellationToken);
+        var now = clock.UtcNow;
+        var queued = new List<(LiveServerState State, RemoteCommandLog Log)>();
+
+        foreach (var server in servers)
+        {
+            var state = store.For(server.Id);
+            if (state.HasInternal(serverCommand.FullCommand))
+                continue;
+
+            var log = new RemoteCommandLog
+            {
+                GameServerId = server.Id,
+                GameServerName = server.Name,
+                AdministratorCommunityId = administratorId,
+                AdministratorName = string.IsNullOrWhiteSpace(administratorName) ? null : administratorName.Trim(),
+                Command = serverCommand.FullCommand,
+                CreatedAtUtc = now
+            };
+
+            dbContext.Set<RemoteCommandLog>().Add(log);
+            queued.Add((state, log));
+        }
+
+        if (queued.Count == 0)
+            return 0;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        foreach (var (state, log) in queued)
+            state.EnqueueInternal(new QueuedCommand(log.Id, serverCommand, log.CreatedAtUtc));
+
+        return queued.Count;
+    }
+
     public async Task<ServerCommand?> DequeueAsync(GameServer server, CancellationToken cancellationToken = default)
     {
-        if (!await EnabledAsync(cancellationToken))
-            return null;
-
         var state = store.For(server.Id);
-        var queued = state.Dequeue();
+        var queued = state.DequeueInternal();
+
+        if (queued == null && await EnabledAsync(cancellationToken))
+            queued = state.Dequeue();
+
         if (queued == null)
             return null;
 
