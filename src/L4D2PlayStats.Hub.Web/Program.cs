@@ -12,6 +12,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
+using L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -74,14 +75,18 @@ builder.Services
     .AddAuthorizationBuilder()
     .AddPolicy(AppConsts.AdministratorPolicy, policy => policy.RequireAuthenticatedUser().AddRequirements(new AdministratorRequirement()));
 
+var trustedProxies = TrustedProxyList.Parse(builder.Configuration[AppConsts.TrustedProxiesSetting]);
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-    options.KnownIPNetworks.Clear();
-    options.KnownProxies.Clear();
+    trustedProxies.ApplyTo(options);
 });
 
 var app = builder.Build();
+
+if (trustedProxies.Invalid.Count > 0)
+    app.Logger.LogWarning("Ignored invalid entries in {Setting}: {Entries}", AppConsts.TrustedProxiesSetting, string.Join(", ", trustedProxies.Invalid));
 
 await app.InitializeHubAsync();
 
