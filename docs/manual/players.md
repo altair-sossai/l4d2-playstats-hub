@@ -53,7 +53,7 @@ Click a player anywhere on the site to open their page. It has a period selector
 
 **Statistics as survivor** and **Statistics as infected** add up the numbers of every ranked match of the period: MVP awards, kills, damage, deaths, skeets, levels, crowns and so on. The ⓘ icons explain the less obvious ones.
 
-**Last matches** lists the player's matches of the period with the same cards as the [match list](matches.md#the-match-list). The player's row is highlighted.
+**Last matches** lists the player's matches of the period with the same cards as the [match list](matches.md#the-match-list). When you are signed in, your own row is highlighted.
 
 ## Campaigns tab
 

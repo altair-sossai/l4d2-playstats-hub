@@ -53,7 +53,7 @@ Haz clic en un jugador en cualquier parte del sitio para abrir su página. Tiene
 
 **Estadísticas como superviviente** y **Estadísticas como infectado** suman los números de todas las partidas de ranking del período: premios de MVP, eliminaciones, daño, muertes, skeets, levels, crowns, etc. Los íconos ⓘ explican los menos obvios.
 
-**Últimos partidos** lista las partidas del jugador en el período con las mismas tarjetas que la [lista de partidas](matches.es.md#la-lista-de-partidas). La fila del jugador aparece resaltada.
+**Últimos partidos** lista las partidas del jugador en el período con las mismas tarjetas que la [lista de partidas](matches.es.md#la-lista-de-partidas). Cuando has iniciado sesión, tu propia fila aparece resaltada.
 
 ## Pestaña Campañas
 

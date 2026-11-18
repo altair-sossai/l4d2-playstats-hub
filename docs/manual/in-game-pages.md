@@ -26,7 +26,7 @@ The panel has three tabs. They show the current season only, and only ranked mat
 
 A player with no ranked match in the season sees a short message instead.
 
-**Matches**: the last 10 ranked matches of the season, with the date (day/month), the campaign, the players of each team and the score. The winning score is green.
+**Matches**: the last 10 ranked matches of the season, with the date and time, the campaign, the players of each team and the score. The winning score is green.
 
 ![The last matches, in the game](../images/en/ingame-matches.webp)
 

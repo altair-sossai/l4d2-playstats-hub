@@ -68,14 +68,17 @@ Haz clic en **Crear**. El sitio crea un identificador y una clave para el servid
 
 ![Las instrucciones y el token del nuevo servidor de juego](../images/es/wizard-server-token.webp)
 
-1. Descarga los plugins y cópialos al servidor de juego. [Conectar un servidor de juego](../game-server.es.md) explica dónde va cada archivo.
+1. Descarga los plugins y copia todo lo que hay dentro de su carpeta `left4dead2` en la carpeta `left4dead2` del servidor de juego. [Conectar un servidor de juego](../game-server.es.md) explica dónde va cada archivo.
 2. El servidor de juego necesita SourceMod, la extensión REST in Pawn y el plugin `l4d2_playstats` que viene con L4D2 Competitive Rework.
-3. Pega las dos líneas en `cfg/server.cfg` del servidor de juego. La primera línea es la dirección del sitio; la segunda es el token de este servidor.
-4. Reinicia el servidor de juego o cambia de mapa.
+3. Pega las dos líneas en `cfg/playstats.cfg` en el servidor de juego y añade `exec playstats.cfg` al final de `cfg/server.cfg`. La primera línea es la dirección del sitio; la segunda es el token de este servidor. Pegar las dos líneas directamente en `cfg/server.cfg` también funciona.
+4. En L4D2 Competitive Rework, un modo de partida descarga todos los plugins al cargarse. Añade las líneas `sm plugins load` que muestra la página a `cfg/sharedplugins.cfg`, dejando fuera los plugins que no uses. El botón de copiar junto a ellas las copia todas.
+5. Reinicia el servidor de juego o cambia de mapa.
 
 **Copia el token ahora.** La clave se muestra una sola vez. El sitio guarda solo un hash de ella, así que no puede volver a mostrarla. Si la pierdes, genera una nueva clave en la página del servidor en [Administración > Servidores de juego](administration.es.md#servidores-de-juego).
 
-Debajo de las instrucciones, el panel muestra el [estado de la conexión](#el-estado-de-la-conexión) del servidor: **Esperando la primera conexión** hasta que el servidor de juego llegue al sitio.
+Debajo de las instrucciones, el panel muestra el [estado de la conexión](#el-estado-de-la-conexión) del servidor: **Esperando la primera conexión** hasta que el servidor de juego llegue al sitio. Se actualiza solo cada 3 segundos y se pone verde cuando el servidor de juego se conecta:
+
+![El estado de la conexión en el asistente, cuando el servidor de juego se conecta](../images/es/wizard-server-connected.webp)
 
 No tienes que esperarlo. Haz clic en **Continuar** para ir al último paso. Las mismas instrucciones y el mismo estado están en la página del servidor en [Administración > Servidores de juego](administration.es.md#servidores-de-juego), donde puedes seguir la conexión después de la configuración.
 
@@ -95,7 +98,7 @@ A partir de aquí:
 
 ## El estado de la conexión
 
-El mismo panel aparece en el asistente y en la página de cada servidor de juego en el área de administración. Muestra el estado de la conexión y una lista de verificación, y en la página del servidor se actualiza solo cada 3 segundos. Esta es la página del servidor creado arriba, unos segundos después de que el servidor de juego enviara su primera señal:
+El mismo panel aparece en el asistente y en la página de cada servidor de juego en el área de administración. Muestra el estado de la conexión y una lista de verificación, y se actualiza solo cada 3 segundos. Esta es la página del servidor creado arriba, unos segundos después de que el servidor de juego enviara su primera señal:
 
 ![La página del nuevo servidor en el área de administración, conectado](../images/es/first-server-connected.webp)
 

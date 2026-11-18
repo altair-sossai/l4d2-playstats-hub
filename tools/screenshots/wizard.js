@@ -36,6 +36,19 @@ function shots(context) {
             full: true,
             always: true
         },
+        {
+            name: 'wizard-server-connected',
+            user: null,
+            before: [
+                { run: runner => live.heartbeat(runner.context.base, runner.token, 0) },
+                { wait: '.status-dot.status-Online' },
+                { sleep: 800 },
+                `$('#connect-icon').remove()`
+            ],
+            clip: '[id^="server-status-"]',
+            padding: 10,
+            always: true
+        },
         { name: 'wizard-finish', user: null, before: [{ eval: `location.href = '/setup?step=finish'`, navigates: true }], full: true, always: true },
         { name: 'wizard-done', user: null, before: [submit('form[action="/setup/finish"] [type=submit]'), { sleep: 800 }], full: true, maxHeight: 800, always: true },
         {

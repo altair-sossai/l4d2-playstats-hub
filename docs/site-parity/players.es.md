@@ -150,7 +150,7 @@ Cada valor va seguido de ` | ` y del valor del segundo jugador en amarillo al co
 
 ## Página del jugador: pestaña General, "Últimos partidos"
 
-La tarjeta es la antigua `Views/LastMatches/_Match.cshtml`, conservada aquí como `Views/Players/_PlayerMatch.cshtml` para que la página del jugador no dependa del área de partidas, que se portó en paralelo.
+La tarjeta es la antigua `Views/LastMatches/_Match.cshtml`. La página del jugador usa la tarjeta de partidas compartida, `Views/Matches/_Match.cshtml`, la misma de la lista de partidas; ya no tiene su propia copia.
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
