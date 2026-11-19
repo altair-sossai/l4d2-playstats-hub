@@ -2,7 +2,7 @@
 
 🌐 [English](first-run.md) | **Português** | [Español](first-run.es.md)
 
-Depois da instalação, o site abre um assistente de instalação. Ele roda uma única vez. Ele torna a sua conta Steam o primeiro administrador, pede as configurações básicas e cadastra o seu primeiro servidor de jogo. Tudo o que for escolhido aqui pode ser alterado depois na [área de administração](administration.pt.md).
+Depois da instalação, o site abre um assistente de configuração. Ele roda uma única vez. Ele torna a sua conta Steam o primeiro administrador, pede as configurações básicas e cadastra o seu primeiro servidor de jogo. Tudo o que for escolhido aqui pode ser alterado depois na [área de administração](administration.pt.md).
 
 [Voltar ao manual](README.pt.md)
 
@@ -31,7 +31,7 @@ Enquanto a configuração não for concluída, todas as páginas do site levam a
 
 ![A primeira página do assistente pede o código de configuração](../images/pt/wizard-setup-code.webp)
 
-Cole o código de configuração e clique em **Continuar com o Steam**. A Steam pede que você faça login e manda você de volta para o site.
+Cole o código de configuração e clique em **Continuar com a Steam**. O Steam pede que você faça login e manda você de volta para o site.
 
 ![O código de configuração colado](../images/pt/wizard-setup-code-filled.webp)
 

@@ -1,6 +1,6 @@
 {
   "Backup": "Backup",
-  "This site does not use SQLite, so the backup does not include the database: back it up with the tools of your database server. The backup still saves the keys and the logo.": "Este site não usa SQLite, então o backup não inclui o banco de dados: faça o backup dele com as ferramentas do seu servidor de banco de dados. O backup continua salvando as chaves e o logo.",
+  "This site does not use SQLite, so the backup does not include the database: back it up with the tools of your database server. The backup still saves the keys and the logo.": "Este site não usa SQLite, então o backup não inclui o banco de dados: faça o backup dele com as ferramentas do seu servidor de banco de dados. O backup continua salvando as chaves e a logo.",
   "Automatic backup": "Backup automático",
   "On": "Ligado",
   "Off": "Desligado",
@@ -15,7 +15,7 @@
   "Each backup is one zip file with:": "Cada backup é um arquivo zip com:",
   "a copy of the database, taken while the site runs": "uma cópia do banco de dados, tirada com o site no ar",
   "the keys that protect the sign-in cookies; without them everyone has to sign in again": "as chaves que protegem os cookies de login; sem elas todo mundo precisa entrar de novo",
-  "the logo of the site": "o logo do site",
+  "the logo of the site": "a logo do site",
   "the version of the site, the date and the list of files": "a versão do site, a data e a lista de arquivos",
   "The avatars are not included: the site downloads them again. The configuration file of the installation (hub.env, or the environment variables of Docker) is not in the data folder and is not included either: keep a copy of it yourself.": "Os avatares não entram: o site os baixa de novo. O arquivo de configuração da instalação (hub.env, ou as variáveis de ambiente do Docker) não fica na pasta de dados e também não entra: guarde uma cópia dele você mesmo.",
   "Azure Storage": "Azure Storage",

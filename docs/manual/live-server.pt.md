@@ -34,7 +34,7 @@ De cima para baixo:
 
 - **Abas dos servidores**, para trocar de servidor quando há vários.
 - **O cabeçalho**: o nome do servidor, a configuração e o tamanho das equipes, e um selo **Anti-Cheat ligado** quando o servidor informa que o Anti-Cheat está ativo.
-- **IP do Servidor**, com um botão de copiar. O ícone ⓘ abre o endereço e, se estiver definido, o endereço alternativo (como um nome DNS).
+- **IP do servidor**, com um botão de copiar. O ícone ⓘ abre o endereço e, se estiver definido, o endereço alternativo (como um nome DNS).
 - **Jogadores**: jogadores conectados e vagas.
 - **Mapa**: a campanha, o mapa e a rodada, com **Iniciado** ou **Pausado**.
 - **Placar**: o placar dos sobreviventes e dos infectados e a diferença.

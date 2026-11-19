@@ -42,12 +42,12 @@ O site pode fazer o próprio backup. Em [Administração > Backup](administratio
 |---|---|
 | `hub.db` | Uma cópia do banco SQLite, feita com a função de backup do SQLite com o site rodando, então ela é consistente mesmo enquanto chegam estatísticas. |
 | `keys/` | As chaves que protegem os cookies de login. |
-| `branding/` | O logo. |
+| `branding/` | A logo. |
 | `manifest.json` | A versão do site, a hora do backup em UTC, o provedor do banco e a lista de arquivos. |
 
 - Os avatares ficam de fora: o site os baixa de novo.
 - O `hub.env` (Linux) ou as variáveis de ambiente (Docker) ficam fora da pasta de dados e não entram no zip. Guarde uma cópia deles, ou rode `playstats-hub backup` de vez em quando, que inclui o `hub.env`.
-- Com SQL Server, PostgreSQL ou MySQL o zip não tem o `hub.db`: faça o backup desse banco com as ferramentas dele. O zip continua guardando as chaves e o logo.
+- Com SQL Server, PostgreSQL ou MySQL o zip não tem o `hub.db`: faça o backup desse banco com as ferramentas dele. O zip continua guardando as chaves e a logo.
 
 Os arquivos se chamam `<prefixo>-yyyyMMdd-HHmmss.zip`, em UTC, como `hub-backup-20261119-160000.zip`. Depois de cada envio, os arquivos mais antigos com o mesmo prefixo além da quantidade a manter (30 por padrão) são apagados. Os outros arquivos do contêiner nunca são tocados. Um backup que falha é tentado de novo 30 minutos depois, e a página mostra o erro.
 

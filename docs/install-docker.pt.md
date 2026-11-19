@@ -155,7 +155,7 @@ As configurações são variáveis de ambiente. Adicione-as em `environment:` no
 
 Se você colocar um proxy reverso com HTTPS na frente do contêiner, mantenha um endereço HTTP simples acessível para o jogo. [O endereço usado dentro do jogo](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica o motivo.
 
-Um proxy reverso nunca está no endereço de loopback do contêiner: rodando em outro contêiner ou no host, o site normalmente vê um endereço privado da rede do Docker, como `172.18.0.2` ou o gateway `172.18.0.1`. Enquanto esse endereço não estiver em `Hub__TrustedProxies`, o site ignora os cabeçalhos repassados, então vê `http` em vez de `https` e o endereço do proxy em vez do endereço do visitante. Confie na rede dos seus contêineres:
+Um proxy reverso nunca está no endereço de loopback do contêiner: esteja ele em outro contêiner ou no host, o site normalmente vê um endereço privado da rede do Docker, como `172.18.0.2` ou o gateway `172.18.0.1`. Enquanto esse endereço não estiver em `Hub__TrustedProxies`, o site ignora os cabeçalhos repassados, então vê `http` em vez de `https` e o endereço do proxy em vez do endereço do visitante. Confie na rede dos seus contêineres:
 
 ```yaml
 services:

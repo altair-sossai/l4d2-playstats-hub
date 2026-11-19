@@ -24,7 +24,7 @@ Uma punição tira experiência de um jogador em uma temporada.
 - Um número acima de zero adiciona uma punição. Várias punições na mesma temporada se somam.
 - `0` remove todas as punições daquele jogador naquela temporada.
 - A punição é subtraída da experiência do jogador naquela temporada, que nunca fica abaixo de zero. Ela aparece na página do jogador.
-- Ela não passa para a próxima temporada e não vale para os rankings de um ano ou de todos os tempos.
+- Ela não passa para a próxima temporada e não vale para os rankings de um ano ou de todo o período.
 
 As punições precisam do módulo de ranking.
 

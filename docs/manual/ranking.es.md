@@ -29,19 +29,19 @@ El ranking es la primera página del sitio. Lista los 100 mejores jugadores de l
 | Jugador | Avatar y nombre. Haz clic para abrir la [página del jugador](players.es.md). |
 | ¡Subir de nivel! / ¡Bajar de nivel! | La última partida de la temporada llevó a este jugador a una patente más alta o más baja. |
 | XP | Una barra con el progreso hacia la próxima patente. Pasa el mouse por encima para ver la experiencia, el próximo nivel y cuánto cambió la última partida. Verde significa que la última partida sumó experiencia; rojo, que la restó. |
-| Victorias, Derrota | Partidas de ranking ganadas y perdidas. Un rage quit cuenta como derrota. |
+| Victorias, Derrotas | Partidas de ranking ganadas y perdidas. Un rage quit cuenta como derrota. |
 | MVP de SI (veces), MVP de CI (veces) | Cuántas veces el jugador fue MVP. Consulta [MVP](#mvp). |
 | Porcentaje de victorias | Victorias divididas por victorias más derrotas. |
 | Juegos | Victorias más derrotas. Los empates no se incluyen. |
 | Rage quit | Partidas que el jugador abandonó antes del final. |
 
-Cuando iniciaste sesión, tu propia fila aparece resaltada en verde.
+Cuando tienes la sesión iniciada, tu propia fila aparece resaltada en verde.
 
 Encima de la tabla:
 
 - **Período mostrado** abre el [selector de período](#elegir-el-período).
 - **Próximo reinicio en N día(s)** indica cuándo termina la temporada actual y el ranking vuelve a empezar.
-- **Ver rankings anteriores** abre la [Historia](seasons-and-history.es.md#historia).
+- **Ver rankings anteriores** abre el [Historial](seasons-and-history.es.md#historial).
 
 Se muestran los primeros 50 jugadores; **Mostrar más...** muestra el resto del top 100. La lista completa de jugadores del período está en la página [Jugadores](players.es.md).
 
@@ -60,7 +60,7 @@ Cada partida de ranking cambia la experiencia de los jugadores que estuvieron en
 | Resultado | Experiencia |
 |---|---|
 | Victoria | +85 |
-| Derrota | −80 |
+| Derrotas | −80 |
 | Rage quit | −150, y nada más de esa partida |
 | Cada MVP de SI en la partida | +8 |
 | Cada MVP de CI en la partida | +6 |

@@ -46,8 +46,8 @@ Comprobado frente a las páginas renderizadas con una copia de los datos de prod
 | Estilos de página (márgenes de la tabla, de los párrafos y del encabezado) | Views/Players/Index.cshtml:47-61 | done | |
 | Desplegable "Ordenar por: **estadística**" con el caret | Views/Players/Index.cshtml:67-71 | done | |
 | Elementos del desplegable: las 25 estadísticas, cada una con enlace a `orderBy={statistic}&asc=False` | Views/Players/Index.cshtml:72-81 | done | El enlace conserva la temporada mostrada. |
-| Nombres de las estadísticas: Experiencia, Juegos, Victorias, Derrota, Rage quit, MVP de SI (veces), MVP de CI (veces), LVP de FF (veces), Muertes, Veces incapacitado, Daño recibido de SI, Commons muertos, SI muertos, Daño a SI, Daño al Tank, Rocas recibidas, Skeets totales, Melee skeets, Levels totales, Crowns totales, FF causado (sin incap.), Daño de SI (sin Tank), Daño como Tank (en pie), Daño de ácido (en pie), Daño total de pounce | Views/Players/Index.cshtml:15-27, Resources/SharedResource*.resx | done | `Helpers/PlayerProperties.cs`. |
-| Selector de período (nuevo) | - | adapted | Añadido del hub, junto al desplegable "Ordenar por" y con el estilo de la página de historial: "Período mostrado: **De MM/YYYY a MM/YYYY**". Lista las temporadas del año actual después un elemento por año ("Año de YYYY"), que muestra el ranking y las partidas de todo ese año, y "Todo el tiempo". Solo se muestra cuando hay más de una opción. |
+| Nombres de las estadísticas: Experiencia, Juegos, Victorias, Derrotas, Rage quit, MVP de SI (veces), MVP de CI (veces), LVP de FF (veces), Muertes, Veces incapacitado, Daño recibido de SI, Commons muertos, SI muertos, Daño a SI, Daño al Tank, Rocas recibidas, Skeets totales, Melee skeets, Levels totales, Crowns totales, FF causado (sin incap.), Daño de SI (sin Tank), Daño como Tank (en pie), Daño de ácido (en pie), Daño total de pounce | Views/Players/Index.cshtml:15-27, Resources/SharedResource*.resx | done | `Helpers/PlayerProperties.cs`. |
+| Selector de período (nuevo) | - | adapted | Añadido del hub, junto al desplegable "Ordenar por" y con el estilo de la página de historial: "Período mostrado: **De MM/YYYY a MM/YYYY**". Lista las temporadas del año actual y después un elemento por año ("Año de YYYY"), que muestra el ranking y las partidas de todo ese año, y "Todo el tiempo". Solo se muestra cuando hay más de una opción. |
 | Tabla `table-striped table-hover table-bordered table-condensed` | Views/Players/Index.cshtml:86 | done | |
 | Columna `#` (estrecha, centrada) | Views/Players/Index.cshtml:89, :113 | done | |
 | Columna "Jugador" sobre dos celdas (avatar y nombre) | Views/Players/Index.cshtml:90 | done | |
@@ -88,7 +88,7 @@ Comprobado frente a las páginas renderizadas con una copia de los datos de prod
 | Script: la pestaña nombrada en el hash de la dirección se abre al cargar | Views/Players/Details.cshtml:556-557 | done | |
 | Script: los enlaces de los desplegables de jugadores y de las tarjetas de relaciones conservan la pestaña abierta | Views/Players/Details.cshtml:559-562 | done | El selector de período hace lo mismo. |
 | Metadatos de página: título "{name} - Detalles del jugador", o "{first} vs {second}" al comparar | PageMetadata/PlayerDetailsPageMetadata.cs:16-18 | done | |
-| Metadatos de página: descripción "Consulta las estadísticas de {name}: posición #{n}, {n} partidos y {n} victorias." | PageMetadata/PlayerDetailsPageMetadata.cs:20-21 | done | |
+| Metadatos de página: descripción "Consulta las estadísticas de {name}: posición #{n}, {n} partidas y {n} victorias." | PageMetadata/PlayerDetailsPageMetadata.cs:20-21 | done | |
 | Metadatos de página: descripción de una comparación "Compara el rendimiento y las estadísticas de {first} y {second} en ..." | PageMetadata/PlayerDetailsPageMetadata.cs:22 | adapted | El texto nombraba "L4D2 Competitive"; ahora toma el nombre del sitio. |
 | Metadatos de página: avatar del primer jugador como imagen, nombre como texto alternativo, tipo de Open Graph `profile` | PageMetadata/PlayerDetailsPageMetadata.cs:24-29 | done | |
 
@@ -99,8 +99,8 @@ Cada valor va seguido de ` | ` y del valor del segundo jugador en amarillo al co
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | Panel "Estadísticas generales" | Views/Players/Details.cshtml:666-669 | done | |
-| Clasificación (`#position`) | Views/Players/Details.cshtml:674-682 | done | |
-| Steam ID con el icono de copiar y el popover "Texto copiado!" | Views/Players/Details.cshtml:684-700 | done | Mismo campo, icono (oscuro o claro según el tema) y comportamiento, escrito como `STEAM_0:x:y` igual que en el sitio antiguo. |
+| Ranking (`#position`) | Views/Players/Details.cshtml:674-682 | done | |
+| Steam ID con el icono de copiar y el popover "¡Texto copiado!" | Views/Players/Details.cshtml:684-700 | done | Mismo campo, icono (oscuro o claro según el tema) y comportamiento, escrito como `STEAM_0:x:y` igual que en el sitio antiguo. |
 | Nombre (el segundo jugador en una línea nueva) | Views/Players/Details.cshtml:703-711 | done | El nombre más usado (`MainName`), como antes. |
 | URL del perfil como enlace en una pestaña nueva, con el botón de copiar | Views/Players/Details.cshtml:713-733 | done | |
 | Nombres anteriores: hasta 5 etiquetas con tooltip; las del segundo jugador en etiquetas amarillas después del separador; la fila solo existe cuando el primer jugador tiene nombres | Views/Players/Details.cshtml:735-754 | done | |
@@ -110,7 +110,7 @@ Cada valor va seguido de ` | ` y del valor del segundo jugador en amarillo al co
 | Victorias | Views/Players/Details.cshtml:796-804 | done | |
 | Rage quit | Views/Players/Details.cshtml:805-813 | done | |
 | Porcentaje de victorias (`P0`) | Views/Players/Details.cshtml:816-824 | done | |
-| Derrota | Views/Players/Details.cshtml:825-833 | done | |
+| Derrotas | Views/Players/Details.cshtml:825-833 | done | |
 | Castigo ("0" o "-n XP") | Views/Players/Details.cshtml:35-38, :834-836, :848 | done | |
 | Administrador: botón "Editar" junto a cada castigo (tooltip abajo) | Views/Players/Details.cshtml:838-843, :850-855 | done | |
 | Administrador: el botón pregunta "¿Cuántos puntos de experiencia debería perder el usuario?" con 150 como sugerencia | Views/Players/Details.cshtml:530-531, :840 | done | |
@@ -148,13 +148,13 @@ Cada valor va seguido de ` | ` y del valor del segundo jugador en amarillo al co
 | Daño de SI (sin Tank) con el icono de ayuda y el tooltip; Daño como Tank (en pie) | Views/Players/Details.cshtml:1183-1206 | done | |
 | Daño de ácido (en pie); Daño total de pounce con el icono de ayuda y el tooltip | Views/Players/Details.cshtml:1208-1231 | done | |
 
-## Página del jugador: pestaña General, "Últimos partidos"
+## Página del jugador: pestaña General, "Últimas partidas"
 
 La tarjeta es la antigua `Views/LastMatches/_Match.cshtml`. La página del jugador usa la tarjeta de partidas compartida, `Views/Matches/_Match.cshtml`, la misma de la lista de partidas; ya no tiene su propia copia.
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Título "Últimos partidos" y la lista, solo cuando hay partidas | Views/Players/Details.cshtml:1236-1246 | done | |
+| Título "Últimas partidas" y la lista, solo cuando hay partidas | Views/Players/Details.cshtml:1236-1246 | done | |
 | Encabezado de la tarjeta: campaña, modo de juego en cursiva, etiqueta "Competitiva" (verde) o "Casual" (gris) | Views/LastMatches/_Match.cshtml:157-171 | adapted | "Competitiva" es una partida que cuenta para el ranking según las reglas de modos de juego del hub; la regla antigua era fija: dos o más mapas y equipos de cuatro. |
 | "El equipo X ganó por n puntos" | Views/LastMatches/_Match.cshtml:172-174 | done | |
 | Icono de calendario con "Hoy a las", "Ayer a las" o la fecha y la hora, y su tooltip | Views/LastMatches/_Match.cshtml:176-193 | done | Se muestra en la zona horaria del sitio. |
@@ -205,7 +205,7 @@ La tarjeta es la antigua `Views/LastMatches/_Match.cshtml`. La página del jugad
 | Encabezado de la tarjeta: nombre (enlace que cambia la página a ese jugador, conservando la comparación, cuando está en el ranking), "n Juegos" | Views/Players/Details.cshtml:1408-1416 | adapted | Un jugador que no está en el ranking se mostraba por el community id; el hub muestra el último nombre conocido cuando lo tiene. |
 | Botón de ayuda (signo de interrogación, tooltip "No entiendo, explícamelo") | Views/Players/Details.cshtml:1405-1407 | done | |
 | Avatar | Views/Players/Details.cshtml:1420-1422 | done | |
-| Tabla: "Jugando juntos" y "Jugando en contra" con Juegos, Victorias y Derrota, cantidades y porcentajes con tooltips, una columna por jugador al comparar (el segundo en amarillo) | Views/Players/Details.cshtml:1313-1335, :1424-1455 | done | |
+| Tabla: "Jugando juntos" y "Jugando en contra" con Juegos, Victorias y Derrotas, cantidades y porcentajes con tooltips, una columna por jugador al comparar (el segundo en amarillo) | Views/Players/Details.cshtml:1313-1335, :1424-1455 | done | |
 | Modal de ayuda por tarjeta: "Entendiendo los números", las tres frases con los nombres en color y los números en negrita, separadas por una línea para el segundo jugador, "Cerrar" | Views/Players/Details.cshtml:1337-1373, :1460-1493 | done | |
 | Solo 12 tarjetas al principio; el botón "Ver más jugadores" / "Ocultar" alterna el resto | Views/Players/Details.cshtml:564-579, :1402, :1498-1507, Core/AppConsts.cs:7 | done | `AppConsts.PlayerRelationsVisible`. |
 

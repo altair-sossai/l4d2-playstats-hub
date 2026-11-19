@@ -55,7 +55,7 @@ Copie-as agora. A chave dentro do token aparece só uma vez. Se você perdê-la,
 1. Baixe o `sm-ripext-<version>-linux.zip` (servidor Linux) ou o `sm-ripext-<version>-windows.zip` (servidor Windows) mais recente nas [releases do REST in Pawn](https://github.com/ErikMinekus/sm-ripext/releases).
 2. Extraia na pasta `left4dead2` do servidor, a que tem o `gameinfo.txt`. Ele adiciona `addons/sourcemod/extensions/rip.ext.so` (ou `.dll`) e `addons/sourcemod/configs/ripext/ca-bundle.crt`.
 
-Pule este passo se o `sm exts list`, no console do servidor, já mostra `REST in Pawn`.
+Pule este passo se o `sm exts list`, no console do servidor, já mostrar `REST in Pawn`.
 
 ## Passo 3: copie os plugins
 
@@ -224,7 +224,7 @@ Se o servidor de jogo usava os plugins anteriores, remova as configurações del
 | `playstats_access_token` | `playstats_token` |
 | `l4d2_web_url`, `l4d2_web_secret` | Os plugins do PlayStats não as leem mais: eles usam `playstats_url` e `playstats_token`. Só o plugin de anti-cheat ainda as lê; veja [Opcional: o plugin do Anti-Cheat](#opcional-o-plugin-do-anti-cheat). |
 | `ranking_url` | `playstats_ingame_url`, só se o jogo precisar de outro endereço |
-| O nome do site na dica do ranking e o endereço no link da loja de skins (`l4d2_web_url`) | `playstats_public_url`, só se os jogadores conhecem o site por outro endereço |
+| O nome do site na dica do ranking e o endereço no link da loja de skins (`l4d2_web_url`) | `playstats_public_url`, só se os jogadores conhecerem o site por outro endereço |
 
 Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Copie os novos arquivos `.smx` por cima dos antigos: os três de `addons/sourcemod/plugins/optional/` substituem os anteriores ali, então os modos de partida continuam carregando os plugins com as linhas que já têm. Se uma cópia antiga de algum deles estiver na própria `addons/sourcemod/plugins/`, apague-a, para que exista só uma cópia de cada plugin.
 

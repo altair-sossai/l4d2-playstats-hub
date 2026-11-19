@@ -35,9 +35,9 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Botón que despliega la navbar en teléfonos | _Layout.cshtml:313-318 | done | |
 | Logo que enlaza a la página de inicio | _Layout.cshtml:319-321 | adapted | El logo lo sube el administrador (era un archivo fijo con el nombre del sitio antiguo). Sin logo, el nombre del sitio se muestra como texto. |
 | Insignia de jugadores en línea junto al logo, pulsante, que enlaza a la página del servidor | _Layout.cshtml:322-324 | done | Solo se muestra cuando el módulo de servidor en vivo está activado. |
-| Menú: Clasificación, Últimos partidos, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada elemento sigue a su módulo. Comunidad (nuevo) va justo después de Clasificación. Cuando los elementos no caben en una línea, los últimos pasan solos a "Más". |
-| Menú "Más": Jugadores, Patentes, Historia, con iconos y un separador | _Layout.cshtml:344-369 | done | |
-| Menú "Admin" para administradores: Baneos del Chat, Compras de skins, Precios de skins, con iconos | _Layout.cshtml:370-398 | done | Además, el área de Administración del hub y los ajustes del Anti-Cheat. |
+| Menú: Ranking, Últimas partidas, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada elemento sigue a su módulo. Comunidad (nuevo) va justo después de Ranking. Cuando los elementos no caben en una línea, los últimos pasan solos a "Más". |
+| Menú "Más": Jugadores, Patentes, Historial, con iconos y un separador | _Layout.cshtml:344-369 | done | |
+| Menú "Admin" para administradores: Baneos del chat, Compras de skins, Precios de skins, con iconos | _Layout.cshtml:370-398 | done | Además, el área de Administración del hub y los ajustes del Anti-Cheat. |
 | Píldora de estrellas con el saldo del jugador con sesión iniciada, tooltip y etiqueta | _Layout.cshtml:403-411, 647-681 | done | Lee `GET /api/shop/wallet`, guardado en el session storage como antes. |
 | Avatar del jugador con sesión iniciada que enlaza a la página del jugador, con el nombre en teléfonos | _Layout.cshtml:412-419 | done | |
 | Menú de ajustes: cambiar de tema | _Layout.cshtml:430-447, Controllers/HomeController.cs:42 | done | `/theme/{theme}`. |
@@ -64,14 +64,14 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Metadatos de página: título "Clasificación", descripción, imagen y nombre del primer jugador | PageMetadata/HomePageMetadata.cs | done | |
+| Metadatos de página: título "Ranking", descripción, imagen y nombre del primer jugador | PageMetadata/HomePageMetadata.cs | done | |
 | Estilos de página: tamaño de las medallas, barra de progreso fina, color rojo de la barra, márgenes de la tabla y de los párrafos | Views/Home/Index.cshtml:18-46 | done | |
 | Encabezado "Top 100 jugadores" | Index.cshtml:75 | done | |
 | "Próximo reinicio en N día(s)" | Index.cshtml:78, Models/RankingPeriodModel.cs | adapted | Cuenta los días hasta el final de la temporada actual, sea cual sea su duración, en lugar de períodos fijos de dos meses. |
 | Enlace "Ver rankings anteriores" | Index.cshtml:80 | done | |
 | Tabla con franjas, hover, bordes y condensada | Index.cshtml:83 | done | |
-| Columnas: #, Patente, Jugador (avatar y nombre), XP, Victorias, Derrota, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Juegos, Rage quit | Index.cshtml:85-97 | done | |
-| Columnas ocultas en teléfonos (XP, Derrota, MVPs, Porcentaje de victorias, Juegos, Rage quit) | Index.cshtml:89-96 | done | |
+| Columnas: #, Patente, Jugador (avatar y nombre), XP, Victorias, Derrotas, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Juegos, Rage quit | Index.cshtml:85-97 | done | |
+| Columnas ocultas en teléfonos (XP, Derrotas, MVPs, Porcentaje de victorias, Juegos, Rage quit) | Index.cshtml:89-96 | done | |
 | Se listan los 100 primeros, con los 50 primeros visibles y el botón "Mostrar más" para el resto | Index.cshtml:103, 109, 198-207, 50-57 | done | |
 | Fila del jugador con sesión iniciada resaltada | Index.cshtml:109 | done | |
 | Medallas para los tres primeros puestos con tooltip; "#N" para los demás | Index.cshtml:111-125 | done | |
@@ -82,7 +82,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Barra de progreso de XP: tipo y pulso según la situación, rayada en el nivel máximo, segundo segmento para la ganancia o la pérdida del último juego | Index.cshtml:150-157, Models/RankingModel.cs | done | |
 | Tooltip del progreso: cambio de nivel, patente máxima, XP del último juego, próximo nivel, XP sobre el total, porcentaje | Models/RankingModel.cs:44-71 | done | |
 | Victorias con el tooltip "Victorias - N% Porcentaje de victorias" | Index.cshtml:158-162 | done | |
-| Derrota, MVP de SI, MVP de CI, Porcentaje de victorias, Juegos, Rage quit, cada uno con su tooltip | Index.cshtml:163-192 | done | |
+| Derrotas, MVP de SI, MVP de CI, Porcentaje de victorias, Juegos, Rage quit, cada uno con su tooltip | Index.cshtml:163-192 | done | |
 | Sin ranking todavía: los seis primeros del último ranking | Index.cshtml:60-65, Views/Home/_LastRankingTopSix.cshtml | done | |
 | Sin ranking y sin historial: el mensaje "No existen datos en este momento..." | Index.cshtml:66-71 | done | |
 | Seis primeros: trofeo, encabezado, período de referencia | _LastRankingTopSix.cshtml:36-61 | adapted | El texto del período cubre una temporada de cualquier duración. |
@@ -95,13 +95,13 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Metadatos de página: "Historia - período", descripción, imagen y nombre del ganador | PageMetadata/HistoryPageMetadata.cs | done | |
+| Metadatos de página: "Historial - período", descripción, imagen y nombre del ganador | PageMetadata/HistoryPageMetadata.cs | done | |
 | Estilos de página | Views/History/Index.cshtml:13-32 | done | |
-| Encabezado "Historia" | Index.cshtml:34 | done | |
+| Encabezado "Historial" | Index.cshtml:34 | done | |
 | Selector de período que indica el período mostrado | Index.cshtml:36-85 | done | Todo el tiempo, cada año y las temporadas terminadas del año actual, como en el sitio antiguo. Una temporada de un año anterior se sigue abriendo por su dirección. |
 | Nombres de los períodos: "De MM/YYYY a MM/YYYY", "Año de YYYY", "Todo el tiempo" | Index.cshtml:42-57 | done | |
 | Período predeterminado: el año actual | Controllers/HistoryController.cs:26 | done | |
-| Columnas de la tabla: #, Jugador (avatar y nombre), Victorias, Derrota, Juegos, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Rage quit | Index.cshtml:87-101 | done | |
+| Columnas de la tabla: #, Jugador (avatar y nombre), Victorias, Derrotas, Juegos, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Rage quit | Index.cshtml:87-101 | done | |
 | Columnas ocultas en teléfonos | Index.cshtml:93-99 | done | |
 | Top 100, fila del jugador con sesión iniciada resaltada, medallas, avatar, nombre acortado, tooltips en todos los números | Index.cshtml:103-171 | done | |
 | Período desconocido: "Historial no encontrado" con un botón para volver al ranking, no indexado | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |

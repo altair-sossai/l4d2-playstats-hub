@@ -4,7 +4,7 @@
 
 Algunas comunidades piden a los jugadores que abran el juego con un programa Anti-Cheat antes de entrar al servidor competitivo. La página **Anti-Cheat** del sitio explica cómo usar ese programa y ofrece su descarga, y los **Ajustes del Anti-Cheat** deciden quién debe usarlo en los servidores de juego.
 
-El Anti-Cheat en sí es un programa de Windows aparte, con su propio servicio, y es el plugin de anti-cheat del servidor de juego el que mueve a los espectadores a quien no lo tiene. Ninguno de los dos forma parte de este repositorio, y este sitio no comprueba si un jugador lo tiene abierto. El sitio muestra la página y guarda el modo de uso y las dos listas de jugadores que lee el plugin, y el servidor en vivo muestra una insignia **Anti-Cheat activado** cuando el servidor de juego lo informa.
+El Anti-Cheat en sí es un programa de Windows aparte, con su propio servicio, y es el plugin de anti-cheat del servidor de juego el que mueve a quien no lo tiene a los espectadores. Ninguno de los dos forma parte de este repositorio, y este sitio no comprueba si un jugador lo tiene abierto. El sitio muestra la página y guarda el modo de uso y las dos listas de jugadores que lee el plugin, y el servidor en vivo muestra una insignia **Anti-Cheat activado** cuando el servidor de juego lo informa.
 
 La página y los ajustes son un módulo, desactivado de forma predeterminada.
 

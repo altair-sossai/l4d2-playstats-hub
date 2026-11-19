@@ -37,7 +37,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | `/connect` redireciona para `steam://connect/<ip>` | `Web/Controllers/ConnectController.cs:8` | done | Já está no `SiteController`: vai para o servidor com mais jogadores, ou para `/servers` quando nenhum servidor tem endereço. |
 | Página de administrador `/chat-bans` | `Web/Controllers/ChatBansController.cs:17` | adapted | Agora `/admin/chat-bans`, como toda página de administrador do hub. `/chat-bans` redireciona para lá de forma permanente, mantendo a query string. |
 | Item de menu "Servidor" ativo (`ViewBag.Server`) | `Web/Controllers/ServerController.cs:19` | done |  |
-| Itens de menu "Admin" e "Bans do Chat" ativos | `Web/Controllers/ChatBansController.cs:20` | done |  |
+| Itens de menu "Admin" e "Bans do chat" ativos | `Web/Controllers/ChatBansController.cs:20` | done |  |
 
 ## Página do servidor
 
@@ -64,18 +64,18 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Título do painel: nome do servidor, nome da configuração e tamanho do time ("4v4"), unidos por " - " | `Web/Views/Server/_Header.cshtml:22` | adapted | O nome é o host name que o servidor de jogo envia no heartbeat (o site antigo consultava a Steam); antes do primeiro heartbeat, é o nome com que o servidor foi cadastrado. |
 | Rótulo do anti-cheat (ligado, desligado, API indisponível) com ícone de cadeado, cor e tooltip | `Web/Views/Server/_Header.cshtml:37` | done |  |
 | O rótulo do anti-cheat leva à página do anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | O rótulo é o mesmo. O link só é escrito enquanto o módulo de anti-cheat está ligado, porque o hub ainda não tem uma página de anti-cheat (o módulo está reservado). |
-| Rótulo "IP do Servidor" com o botão de ponto de interrogação que abre o modal de informações do servidor | `Web/Views/Server/_Header.cshtml:58` | done |  |
+| Rótulo "IP do servidor" com o botão de ponto de interrogação que abre o modal de informações do servidor | `Web/Views/Server/_Header.cshtml:58` | done |  |
 | Valor do IP do servidor com o ícone de copiar (copia `connect <ip>`, popover "Texto copiado!", ícone conforme o tema) | `Web/Views/Server/_Header.cshtml:65` | done | O endereço é o do servidor em exibição. O ícone de copiar fica de fora quando o servidor não tem endereço. |
 | Jogadores: conectados / máximo | `Web/Views/Server/_Header.cshtml:73` | adapted | Conectados é o número de jogadores no estado ao vivo (sobreviventes, infectados e espectadores) em vez da consulta à Steam. Máximo são os slots que o servidor de jogo envia no heartbeat (`maxPlayers`, adicionado ao plugin); com um plugin mais antigo, é o dobro do tamanho do time. |
-| Mapa: campanha, nome do mapa e round ("1º round" / "2º round") | `Web/Views/Server/_Header.cshtml:78` | adapted | O mapa vem do heartbeat do servidor de jogo (a cada 30 s) em vez da consulta à Steam. Os nomes das campanhas vêm do catálogo do hub. |
+| Mapa: campanha, nome do mapa e rodada ("1ª rodada" / "2ª rodada") | `Web/Views/Server/_Header.cshtml:78` | adapted | O mapa vem do heartbeat do servidor de jogo (a cada 30 s) em vez da consulta à Steam. Os nomes das campanhas vêm do catálogo do hub. |
 | Mapa: rótulo Pausado, Iniciando... ou Iniciado, com tooltip | `Web/Views/Server/_Header.cshtml:96` | done |  |
 | Placar: rótulos de sobreviventes e infectados, verde para quem lidera, vermelho para o outro, cinza no empate, com tooltips | `Web/Views/Server/_Header.cshtml:117` | done |  |
 | Placar: rótulo de diferença quando ela não é zero | `Web/Views/Server/_Header.cshtml:131` | done |  |
 | Pontos de progresso: atual / máximo e rótulo de percentual | `Web/Views/Server/_Header.cshtml:139` | done |  |
 | Bônus: atual / máximo e rótulo de percentual | `Web/Views/Server/_Header.cshtml:154` | done |  |
 | Percentual de progresso | `Web/Views/Server/_Header.cshtml:165` | done |  |
-| Tank: percentual, "Desabilitado" e os rótulos Vivo / Morto | `Web/Views/Server/_Header.cshtml:170` | done |  |
-| Bruxa: percentual ou "Desabilitado" | `Web/Views/Server/_Header.cshtml:196` | done |  |
+| Tank: percentual, "Desativado" e os rótulos Vivo / Morto | `Web/Views/Server/_Header.cshtml:170` | done |  |
+| Bruxa: percentual ou "Desativado" | `Web/Views/Server/_Header.cshtml:196` | done |  |
 | Layout para celular: `table-responsive` com `data-label` em todas as células | `Web/Views/Server/_Header.cshtml:55` | done |  |
 
 ## Jogadores
@@ -230,7 +230,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | Só administradores | `Web/Controllers/ChatBansController.cs:10` | done | Também precisa do módulo de chat do site. |
-| Cabeçalho "Bans do Chat" com o botão "Adicionar ban" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
+| Cabeçalho "Bans do chat" com o botão "Adicionar ban" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
 | Texto de abertura | `Web/Views/ChatBans/Index.cshtml:42` | done |  |
 | Contador de jogadores banidos | `Web/Views/ChatBans/Index.cshtml:44` | done |  |
 | Busca por nome, Steam ID ou motivo, com "Limpar filtros" | `Web/Views/ChatBans/Index.cshtml:51`, `Web/Controllers/ChatBansController.cs:25` | done |  |

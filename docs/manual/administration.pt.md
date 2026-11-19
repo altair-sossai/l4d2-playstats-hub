@@ -134,7 +134,7 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | Configuração | Padrão | O que faz |
 |---|---|---|
 | Vitória | 85 | Experiência por uma partida vencida. |
-| Derrotas | −80 | Experiência por uma partida perdida. |
+| Derrota | −80 | Experiência por uma partida perdida. |
 | Rage quit | −150 | Experiência por sair de uma partida antes do fim. Substitui todo o resto daquela partida. |
 | MVP em dano em infectados especiais, por rodada | 8 | Experiência por cada prêmio de MVP de SI. |
 | MVP em infectados comuns, por rodada | 6 | Experiência por cada prêmio de MVP de CI. |

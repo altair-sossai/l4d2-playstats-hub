@@ -71,7 +71,7 @@ Abra o endereço do site no seu navegador. A primeira página pede o código de 
 ![A primeira página do site pede o código de configuração](images/pt/wizard-setup-code.webp)
 
 1. Cole o código de configuração.
-2. Clique em **Continuar com o Steam** e faça login.
+2. Clique em **Continuar com a Steam** e faça login.
 
 A conta Steam com a qual você fizer login se torna o primeiro administrador. Depois disso, o código deixa de funcionar.
 
@@ -125,7 +125,7 @@ O endereço do jogo é definido no servidor de jogo, em `playstats_ingame_url`. 
 | `playstats-hub logs` | Mostra as últimas linhas do log. |
 | `playstats-hub follow` | Acompanha o log enquanto ele é escrito. |
 | `playstats-hub restart` | Reinicia a aplicação. |
-| `playstats-hub setup-code` | Mostra o código de configuração enquanto a configuração não foi concluída. |
+| `playstats-hub setup-code` | Mostra o código de configuração enquanto a configuração não estiver concluída. |
 | `playstats-hub add-admin <SteamID64>` | Torna uma conta Steam administradora do site. |
 | `playstats-hub stop`, `playstats-hub start` | Para ou inicia a aplicação. |
 | `playstats-hub` | Lista os comandos. |

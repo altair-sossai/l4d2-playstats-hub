@@ -45,7 +45,7 @@ As patentes pertencem a uma temporada. Elas recomeçam do nível 1 com a tempora
 
 ## Subida e queda de nível
 
-Quando a partida ranqueada mais recente leva um jogador para outra patente, o ranking mostra **Subiu de Nível!** ou **Caiu de Nível!** ao lado do nome, e a barra de XP mostra a mudança em verde ou vermelho. O aviso fica até a próxima partida ranqueada ser jogada.
+Quando a partida ranqueada mais recente leva um jogador para outra patente, o ranking mostra **Subiu de nível!** ou **Caiu de nível!** ao lado do nome, e a barra de XP mostra a mudança em verde ou vermelho. O aviso fica até a próxima partida ranqueada ser jogada.
 
 ## Patentes dentro do jogo
 

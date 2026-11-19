@@ -18,7 +18,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 | Página | Para | O que explica |
 |---|---|---|
 | [O que é a aplicação](overview.pt.md) | Todos | O que o site faz, os termos usados neste manual e como as partes se encaixam. |
-| [Configuração inicial](first-run.pt.md) | Administradores | O assistente de instalação, passo a passo, até o primeiro servidor de jogo conectado. |
+| [Configuração inicial](first-run.pt.md) | Administradores | O assistente de configuração, passo a passo, até o primeiro servidor de jogo conectado. |
 
 ### O site
 
@@ -34,7 +34,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 | [Ranking da comunidade](community-ranking.pt.md) | Todos | A votação em duplas de jogadores, a pontuação, os limites de votos e suas configurações. |
 | [Anti-Cheat](anti-cheat.pt.md) | Todos | A página que oferece o download do Anti-Cheat, quem precisa usar o Anti-Cheat nos servidores de jogo, e suas configurações. |
 | [Páginas dentro do jogo](in-game-pages.pt.md) | Todos | O que o `!ranking` abre dentro do Left 4 Dead 2. |
-| [Idiomas, temas e celular](languages-and-themes.pt.md) | Todos | Os três idiomas, o tema escuro e o tema claro, e o layout no celular. |
+| [Idiomas, temas e celulares](languages-and-themes.pt.md) | Todos | Os três idiomas, o tema escuro e o tema claro, e o layout no celular. |
 
 ### Administrando o site
 

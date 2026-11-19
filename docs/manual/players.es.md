@@ -42,18 +42,18 @@ Haz clic en un jugador en cualquier parte del sitio para abrir su página. Tiene
 
 | Elemento | Significado |
 |---|---|
-| Clasificación | Posición en el ranking del período. |
+| Ranking | Posición en el ranking del período. |
 | Steam ID, URL del perfil | La cuenta, con botones para copiar y un enlace al perfil de Steam. |
 | Nombre, Nombres anteriores | El nombre usado con más frecuencia y los otros nombres usados. |
 | Patente, XP | La patente y la experiencia en la temporada. Consulta [Patentes](patents.es.md). |
-| Juegos, Victorias, Derrota, Porcentaje de victorias, Rage quit | Como en el [ranking](ranking.es.md#la-página-del-ranking). |
+| Juegos, Victorias, Derrotas, Porcentaje de victorias, Rage quit | Como en el [ranking](ranking.es.md#la-página-del-ranking). |
 | Castigo | Experiencia quitada por un administrador en esta temporada. |
 | Racha de victorias más larga, Racha de derrotas más larga | La mayor cantidad de partidas ganadas o perdidas seguidas. |
 | Historial de partidas | Una franja con el resultado de cada partida, de la más antigua a la más reciente. |
 
 **Estadísticas como superviviente** y **Estadísticas como infectado** suman los números de todas las partidas de ranking del período: premios de MVP, eliminaciones, daño, muertes, skeets, levels, crowns, etc. Los íconos ⓘ explican los menos obvios.
 
-**Últimos partidos** lista las partidas del jugador en el período con las mismas tarjetas que la [lista de partidas](matches.es.md#la-lista-de-partidas). Cuando has iniciado sesión, tu propia fila aparece resaltada.
+**Últimas partidas** lista las partidas del jugador en el período con las mismas tarjetas que la [lista de partidas](matches.es.md#la-lista-de-partidas). Cuando has iniciado sesión, tu propia fila aparece resaltada.
 
 ## Pestaña Campañas
 

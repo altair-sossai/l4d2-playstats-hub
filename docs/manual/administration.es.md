@@ -36,7 +36,7 @@ Todas las páginas de administración tienen el mismo menú a la izquierda, con 
 |---|---|
 | Sitio | Vista general, Configuración, Módulos, Administradores, Copia de seguridad |
 | Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos de chat |
-| Clasificación | Modos de juego, Campañas, Ranking de la comunidad |
+| Ranking | Modos de juego, Campañas, Ranking de la comunidad |
 | Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
 | Anti-Cheat | Ajustes del Anti-Cheat |
 
@@ -134,7 +134,7 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Ajuste | Predeterminado | Qué hace |
 |---|---|---|
 | Victoria | 85 | Experiencia por una partida ganada. |
-| Derrota | −80 | Experiencia por una partida perdida. |
+| Derrotas | −80 | Experiencia por una partida perdida. |
 | Rage quit | −150 | Experiencia por salir de una partida antes del final. Reemplaza todo lo demás de esa partida. |
 | MVP en daño a infectados especiales, por ronda | 8 | Experiencia por cada premio de MVP de SI. |
 | MVP en infectados comunes, por ronda | 6 | Experiencia por cada premio de MVP de CI. |

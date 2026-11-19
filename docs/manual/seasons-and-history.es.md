@@ -10,7 +10,7 @@ El ranking se juega por temporadas. Al inicio de cada temporada todos vuelven a 
 
 - [Cómo funcionan las temporadas](#cómo-funcionan-las-temporadas)
 - [El selector de período](#el-selector-de-período)
-- [Historia](#historia)
+- [Historial](#historial)
 - [Años y todo el tiempo](#años-y-todo-el-tiempo)
 - [Cambiar la duración de la temporada](#cambiar-la-duración-de-la-temporada)
 - [Qué pasa al final de una temporada](#qué-pasa-al-final-de-una-temporada)
@@ -24,7 +24,7 @@ El administrador elige la duración de una temporada, en meses, de 1 a 24. El va
 - Las fechas usan la zona horaria del sitio, definida en [Configuración](administration.es.md#sitio). Una temporada que termina el 31 de diciembre termina a la medianoche en esa zona horaria.
 - En todo el sitio una temporada se nombra por su primer y su último mes, como **De 01/2026 a 02/2026**, y los selectores de período añaden **(Temporada actual)** a la actual.
 - Cada archivo de estadísticas pertenece a la temporada de la fecha que el servidor de juego escribió en él. Un archivo anterior a la primera temporada crea las temporadas anteriores que necesita, así que los datos antiguos importados encuentran su lugar.
-- Una partida nunca abarca dos temporadas. Los mapas jugados pasada la medianoche del cambio de temporada forman dos partidas.
+- Una partida nunca abarca dos temporadas. Los mapas jugados a uno y otro lado de la medianoche del cambio de temporada forman dos partidas.
 
 La página del ranking indica cuántos días quedan: **Próximo reinicio en N día(s)**.
 
@@ -40,9 +40,9 @@ El ranking, la lista de jugadores y la página del jugador tienen este selector.
 
 Elegir un período cambia todos los números de la página: posiciones, victorias, MVP y las partidas listadas. La elección va en la dirección de la página, así que se puede compartir un enlace a una temporada pasada. La lista de partidas tiene sus propios filtros de temporada, año y servidor de juego; consulta [Partidas](matches.es.md#la-lista-de-partidas).
 
-## Historia
+## Historial
 
-**Más > Historia** muestra el ranking final de un período terminado.
+**Más > Historial** muestra el ranking final de un período terminado.
 
 ![La página de historia](../images/es/history.webp)
 
