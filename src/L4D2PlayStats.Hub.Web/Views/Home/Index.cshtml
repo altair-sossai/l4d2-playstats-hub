@@ -7,6 +7,7 @@
 @{
     var modules = await Settings.GetAsync<ModuleSettings>();
     var voteInvite = modules.IsEnabled(HubModule.CommunityRanking);
+    var rankingSettings = await Settings.GetAsync<RankingSettings>();
     var topPlayer = Model.Ranking.MinBy(ranking => ranking.Player.Position)?.Player;
     var periodQuery = Model.Period.Query;
 
@@ -129,13 +130,13 @@ else
         @{
             var count = 0;
         }
-        @foreach (var ranking in Model.Ranking.Take(AppConsts.RankingListedPlayers))
+        @foreach (var ranking in Model.Ranking.Take(rankingSettings.HomeListedPlayers))
         {
             var player = ranking.Player;
             var patentProgress = ranking.PatentProgress;
             var patent = patentProgress.Patent;
 
-            <tr class="hover @(++count > AppConsts.RankingVisiblePlayers ? "hidden" : string.Empty) @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+            <tr class="hover @(++count > rankingSettings.HomeVisiblePlayers ? "hidden" : string.Empty) @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
                 <td class="text-center vertical-align-middle">
                     @switch (player.Position)
                     {
@@ -230,7 +231,7 @@ else
         </tbody>
     </table>
 
-    @if (Model.Ranking.Count > AppConsts.RankingVisiblePlayers)
+    @if (Model.Ranking.Count > rankingSettings.HomeVisiblePlayers)
     {
         <div class="row text-center" style="margin: 10px">
             <div class="col-md-12">

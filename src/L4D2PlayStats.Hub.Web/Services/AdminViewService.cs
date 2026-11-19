@@ -1,3 +1,4 @@
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
@@ -70,7 +71,7 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
         var season = new SeasonSettings { LengthInMonths = SeasonCalendar.NormalizeLength(model.Season.LengthInMonths) };
 
         var ranking = model.Ranking;
-        ranking.MinimumMatches = Math.Max(0, ranking.MinimumMatches);
+        ranking.Normalize();
 
         await settingsService.SaveAsync(site, cancellationToken);
         await settingsService.SaveAsync(season, cancellationToken);
@@ -125,7 +126,11 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
 
     private static PrivacySettings Privacy(PrivacySettings privacy)
     {
-        return new PrivacySettings { RelatedAccounts = Enum.IsDefined(privacy.RelatedAccounts) ? privacy.RelatedAccounts : RelatedAccountsVisibility.Everyone };
+        return new PrivacySettings
+        {
+            RelatedAccounts = Enum.IsDefined(privacy.RelatedAccounts) ? privacy.RelatedAccounts : RelatedAccountsVisibility.Everyone,
+            ConnectionRetentionInMonths = Math.Clamp(privacy.ConnectionRetentionInMonths, CoreConsts.PlayerConnectionMinRetentionInMonths, CoreConsts.PlayerConnectionMaxRetentionInMonths)
+        };
     }
 
     private static string? MetaKeywords(string? text)

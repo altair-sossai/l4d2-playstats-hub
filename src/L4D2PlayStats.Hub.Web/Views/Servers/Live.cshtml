@@ -156,7 +156,7 @@
 
     <script>
         var serverUrl = '@AppConsts.ServersUrl/@publicId';
-        var refreshInterval = @AppConsts.LivePageRefreshInMilliseconds;
+        var refreshInterval = @((await ChatSettings.GetAsync<LiveServerSettings>()).RefreshInMilliseconds);
         var requestTimeout = @AppConsts.LivePageRequestTimeoutInMilliseconds;
         var maxFeedItems = @AppConsts.LivePageMaxFeedItems;
         var feedAfter = 0;

@@ -1,4 +1,5 @@
 @model SettingsViewModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
 @inject BrandingStore Branding
 @{
     ViewData["Title"] = L["Settings"].Value;
@@ -175,6 +176,34 @@
                         <label for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"] @FieldHelp.More(L["Games (wins plus losses) a player needs in the period shown to be listed in the ranking. 0 lists everyone."], L["Minimum matches to appear in the ranking"], L["A player with fewer games than this, in the season or period shown, is left out of the ranking. Their matches still count for everybody else.\nOnly wins and losses count as games: draws and casual matches do not.\n0, the default, lists every player with at least one ranked match. A value such as 5 keeps players with a single lucky match out of the top positions."])</label>
                         <input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches">
                     </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Ranking_HomeListedPlayers">@L["Players in the ranking of the home page"] @FieldHelp.Tip(L["How many players the ranking of the home page and of previous seasons lists at most."])</label>
+                                <input class="form-control" id="Ranking_HomeListedPlayers" name="Ranking.HomeListedPlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeListedPlayers">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Ranking_HomeVisiblePlayers">@L["Players shown before Show more"] @FieldHelp.Tip(L["The home page shows this many players at first; Show more reveals the rest of the list."])</label>
+                                <input class="form-control" id="Ranking_HomeVisiblePlayers" name="Ranking.HomeVisiblePlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeVisiblePlayers">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Ranking_DefaultPunishment">@L["Default punishment, in points"] @FieldHelp.Tip(L["The value already filled in when an administrator punishes a player from the player page. It can still be changed for each punishment."])</label>
+                                <input class="form-control" id="Ranking_DefaultPunishment" name="Ranking.DefaultPunishment" type="number" min="1" max="@CoreConsts.MaxScore" value="@Model.Ranking.DefaultPunishment">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Ranking_MatchGapInHours">@L["Hours without files that split two matches"] @FieldHelp.More(L["Statistics files of a game server that are further apart than this belong to different matches."], L["Hours without files that split two matches"], L["The site joins the statistics files of a game server into matches. When more than this many hours pass between two files, the next file starts a new match, even on the same campaign.\nThe default, 6, keeps a match that was paused for a while in one piece and separates the matches of different nights.\nThe change applies to the files that arrive from now on. To apply it to the matches already built, use Reprocess all matches in the overview of the administration area."])</label>
+                                <input class="form-control" id="Ranking_MatchGapInHours" name="Ranking.MatchGapInHours" type="number" min="@CoreConsts.MatchMinGapInHours" max="@CoreConsts.MatchMaxGapInHours" value="@Model.Ranking.MatchGapInHours">
+                            </div>
+                        </div>
+                    </div>
                     <div class="checkbox">
                         <label for="Ranking_IncludeUnknownCampaigns">
                             <input type="checkbox" id="Ranking_IncludeUnknownCampaigns" name="Ranking.IncludeUnknownCampaigns" value="true" checked="@Model.Ranking.IncludeUnknownCampaigns">
@@ -197,7 +226,11 @@
                             <option value="@RelatedAccountsVisibility.Everyone" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Everyone)">@L["Everyone"]</option>
                             <option value="@RelatedAccountsVisibility.Administrators" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Administrators)">@L["Administrators only"]</option>
                         </select>
-                        <span class="help-block" style="margin-bottom: 0">@L["Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.", AppConsts.RelatedAccountsChatCvar]</span>
+                        <span class="help-block">@L["Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.", AppConsts.RelatedAccountsChatCvar]</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="Privacy_ConnectionRetentionInMonths">@L["Months to keep the player connections"] @FieldHelp.More(L["Connections older than this, with the IP addresses of the players, are deleted every day."], L["Months to keep the player connections"], L["When a player joins a game server, the site records the Steam account, the name and the IP address. These records feed Player connections and the related accounts.\nEvery day the site deletes the connections not seen for longer than this. A shorter period keeps less personal data, as data protection laws ask; a longer one finds more related accounts.\nThe default is 3 months. From 1 to 60."])</label>
+                        <input class="form-control" id="Privacy_ConnectionRetentionInMonths" name="Privacy.ConnectionRetentionInMonths" type="number" min="@CoreConsts.PlayerConnectionMinRetentionInMonths" max="@CoreConsts.PlayerConnectionMaxRetentionInMonths" value="@Model.Privacy.ConnectionRetentionInMonths">
                     </div>
                 </div>
             </div>

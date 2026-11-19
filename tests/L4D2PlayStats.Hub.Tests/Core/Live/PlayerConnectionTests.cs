@@ -2,6 +2,8 @@ using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -130,6 +132,22 @@ public class PlayerConnectionTests
         Assert.AreEqual(1, deleted);
         Assert.HasCount(1, connections);
         Assert.AreEqual(Bob, connections[0].CommunityId);
+    }
+
+    [TestMethod]
+    public async Task TheCleanupFollowsTheRetentionChosenByTheAdministrator()
+    {
+        using var hub = new TestHub();
+
+        await hub.RunAsync(services => services.GetRequiredService<ISettingsService>().SaveAsync(new PrivacySettings { ConnectionRetentionInMonths = 1 }));
+        await RegisterAsync(hub, Alice, Home, "Alice");
+
+        hub.Clock.UtcNow = hub.Clock.UtcNow.AddMonths(1).AddDays(1);
+
+        var deleted = await hub.RunAsync(services => services.GetRequiredService<IPlayerConnectionService>().CleanupAsync());
+
+        Assert.AreEqual(1, deleted);
+        Assert.IsEmpty(await ConnectionsAsync(hub));
     }
 
     [TestMethod]

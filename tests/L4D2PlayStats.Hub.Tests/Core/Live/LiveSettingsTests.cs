@@ -9,7 +9,7 @@ using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 namespace L4D2PlayStats.Hub.Tests.Core.Live;
 
 [TestClass]
-public class LiveDelayTests
+public class LiveSettingsTests
 {
     [TestMethod]
     public async Task TheDelayComesFromTheSettings()
@@ -20,9 +20,9 @@ public class LiveDelayTests
 
         using var scope = hub.Scope();
 
-        var delay = scope.ServiceProvider.GetRequiredService<ILiveDelay>().Current;
+        var delay = scope.ServiceProvider.GetRequiredService<ILiveSettings>().Current.DelayInSeconds;
 
-        Assert.AreEqual(TimeSpan.FromSeconds(4), delay);
+        Assert.AreEqual(4, delay);
     }
 
     [TestMethod]
@@ -32,15 +32,15 @@ public class LiveDelayTests
         using var scope = hub.Scope();
 
         var live = scope.ServiceProvider.GetRequiredService<ILiveDataService>();
-        var delay = scope.ServiceProvider.GetRequiredService<ILiveDelay>();
+        var settings = scope.ServiceProvider.GetRequiredService<ILiveSettings>();
         var credentials = await hub.CreateServerAsync();
 
-        delay.Set(0);
+        settings.Set(new LiveServerSettings { DelayInSeconds = 0 });
         live.UpdateScoreboard(credentials.Server, new LiveScoreboard { SurvivorScore = 10, InfectedScore = 0 });
 
         var immediate = live.Snapshot(credentials.Server).Scoreboard?.SurvivorScore;
 
-        delay.Set(30);
+        settings.Set(new LiveServerSettings { DelayInSeconds = 30 });
         live.UpdateScoreboard(credentials.Server, new LiveScoreboard { SurvivorScore = 20, InfectedScore = 0 });
 
         var held = live.Snapshot(credentials.Server).Scoreboard?.SurvivorScore;
@@ -55,13 +55,16 @@ public class LiveDelayTests
     }
 
     [TestMethod]
-    public void TheDelayStaysWithinItsRange()
+    public void TheLiveSettingsStayWithinTheirRanges()
     {
-        var settings = new LiveServerSettings { DelayInSeconds = 99999 };
+        var settings = new LiveServerSettings { DelayInSeconds = 99999, RefreshInMilliseconds = 10, OnlineWindowInSeconds = 1, RemoteCommandExpirationInMinutes = 999 };
 
         settings.Normalize();
 
         Assert.AreEqual(CoreConsts.LiveMaxDelayInSeconds, settings.DelayInSeconds);
+        Assert.AreEqual(CoreConsts.LiveMinRefreshInMilliseconds, settings.RefreshInMilliseconds);
+        Assert.AreEqual(CoreConsts.ServerMinOnlineWindowInSeconds, settings.OnlineWindowInSeconds);
+        Assert.AreEqual(CoreConsts.RemoteCommandMaxExpirationInMinutes, settings.RemoteCommandExpirationInMinutes);
         Assert.AreEqual(CoreConsts.LiveDelayInSeconds, new LiveServerSettings().DelayInSeconds);
     }
 }

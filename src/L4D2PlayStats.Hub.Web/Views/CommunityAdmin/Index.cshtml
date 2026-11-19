@@ -64,6 +64,10 @@
                         <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"] @FieldHelp.More(L["Players whose last match is older than this are no longer offered in the voting. 0 means no limit."], L["Maximum days since the last match to be compared"], L["It keeps the voting about the people who play now. With 90, for example, a player who has not played for three months stops appearing in the pairs.\nIt only affects the voting: the player keeps the rating and stays in the community ranking.\nWhen the player plays again, they are offered again."])</label>
                         <input class="form-control" id="CandidatePlayedWithinDays" name="CandidatePlayedWithinDays" type="number" min="0" value="@settings.CandidatePlayedWithinDays">
                     </div>
+                    <div class="form-group">
+                        <label for="OtherNamesShown">@L["Other names shown on each voting card"] @FieldHelp.Tip(L["Up to this many other names the player used in matches appear under the name on the voting card, the most used first, so voters recognize who changed names. 0 hides them."])</label>
+                        <input class="form-control" id="OtherNamesShown" name="OtherNamesShown" type="number" min="0" max="@CoreConsts.CommunityMaxBallotNames" value="@settings.OtherNamesShown">
+                    </div>
                     <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
                 </div>
             </div>

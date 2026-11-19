@@ -9,6 +9,7 @@ public class CommunityRankingSettings
     public int MinimumComparisonsToBeListed { get; set; } = AppConsts.DefaultCommunityMinimumComparisonsToBeListed;
     public int MaximumPlayersListed { get; set; } = AppConsts.DefaultCommunityMaximumPlayersListed;
     public bool ShowVoterNames { get; set; } = true;
+    public int OtherNamesShown { get; set; } = AppConsts.CommunityBallotNames;
     public int KFactor { get; set; } = AppConsts.DefaultCommunityKFactor;
     public int InitialRating { get; set; } = AppConsts.DefaultCommunityInitialRating;
 
@@ -20,6 +21,7 @@ public class CommunityRankingSettings
         CandidatePlayedWithinDays = Math.Max(0, CandidatePlayedWithinDays);
         MinimumComparisonsToBeListed = Math.Max(0, MinimumComparisonsToBeListed);
         MaximumPlayersListed = Math.Max(0, MaximumPlayersListed);
+        OtherNamesShown = Math.Clamp(OtherNamesShown, 0, AppConsts.CommunityMaxBallotNames);
         KFactor = Math.Clamp(KFactor, AppConsts.CommunityMinKFactor, AppConsts.CommunityMaxKFactor);
         InitialRating = Math.Max(0, InitialRating);
     }

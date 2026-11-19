@@ -36,7 +36,7 @@ public class AdminController(
     ISettingsService settingsService,
     IMatchBuildService matchBuildService,
     ISkinCatalogService skinCatalogService,
-    ILiveDelay liveDelay,
+    ILiveSettings liveSettings,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -87,7 +87,7 @@ public class AdminController(
         settings.Normalize();
 
         await settingsService.SaveAsync(settings, cancellationToken);
-        liveDelay.Set(settings.DelayInSeconds);
+        liveSettings.Set(settings);
         TempData["LiveSaved"] = true;
 
         return RedirectToAction(nameof(Servers));

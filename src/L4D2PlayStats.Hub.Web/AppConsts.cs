@@ -27,11 +27,9 @@ public static partial class AppConsts
     public const string AntiforgeryHeader = "RequestVerificationToken";
     public const string ShortTimeFormat = "HH:mm";
     public const string ShortDateTimeFormat = "g";
-    public const int RankingVisiblePlayers = 50;
     public const int PaginationWindow = 2;
     public const int NavbarDesktopWidth = 768;
     public const int PlayerPickerPreviousNames = 5;
-    public const int RankingListedPlayers = 100;
     public const string AllTimeHistoryId = "all-time";
     public const int LongPlayerNameLength = 15;
     public const int LongPlayerNameVisibleLength = 10;

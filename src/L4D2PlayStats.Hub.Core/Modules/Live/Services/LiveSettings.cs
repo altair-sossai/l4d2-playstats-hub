@@ -4,12 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class LiveDelay(IServiceScopeFactory scopeFactory) : ILiveDelay
+public class LiveSettings(IServiceScopeFactory scopeFactory) : ILiveSettings
 {
     private readonly Lock _lock = new();
-    private TimeSpan? _current;
+    private LiveServerSettings? _current;
 
-    public TimeSpan Current
+    public LiveServerSettings Current
     {
         get
         {
@@ -17,20 +17,22 @@ public class LiveDelay(IServiceScopeFactory scopeFactory) : ILiveDelay
             {
                 _current ??= Load();
 
-                return _current.Value;
+                return _current;
             }
         }
     }
 
-    public void Set(int seconds)
+    public void Set(LiveServerSettings settings)
     {
+        settings.Normalize();
+
         lock (_lock)
         {
-            _current = TimeSpan.FromSeconds(Math.Clamp(seconds, 0, AppConsts.LiveMaxDelayInSeconds));
+            _current = settings;
         }
     }
 
-    private TimeSpan Load()
+    private LiveServerSettings Load()
     {
         using var scope = scopeFactory.CreateScope();
 
@@ -38,6 +40,6 @@ public class LiveDelay(IServiceScopeFactory scopeFactory) : ILiveDelay
 
         settings.Normalize();
 
-        return TimeSpan.FromSeconds(settings.DelayInSeconds);
+        return settings;
     }
 }

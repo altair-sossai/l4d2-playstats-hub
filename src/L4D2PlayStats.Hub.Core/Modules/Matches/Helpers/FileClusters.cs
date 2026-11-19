@@ -4,12 +4,11 @@ namespace L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 
 public static class FileClusters
 {
-    public static (DateTime Start, DateTime End)? Around(IReadOnlyList<DateTime> orderedDates, DateTime fileDate)
+    public static (DateTime Start, DateTime End)? Around(IReadOnlyList<DateTime> orderedDates, DateTime fileDate, TimeSpan gap)
     {
         if (orderedDates.Count == 0)
             return null;
 
-        var gap = TimeSpan.FromHours(AppConsts.MatchClusterGapInHours);
         var index = 0;
 
         for (var i = 0; i < orderedDates.Count; i++)
@@ -27,9 +26,8 @@ public static class FileClusters
         return (orderedDates[start], orderedDates[end]);
     }
 
-    public static List<List<StatisticsFile>> Split(IReadOnlyList<StatisticsFile> orderedFiles)
+    public static List<List<StatisticsFile>> Split(IReadOnlyList<StatisticsFile> orderedFiles, TimeSpan gap)
     {
-        var gap = TimeSpan.FromHours(AppConsts.MatchClusterGapInHours);
         var clusters = new List<List<StatisticsFile>>();
         List<StatisticsFile>? current = null;
 

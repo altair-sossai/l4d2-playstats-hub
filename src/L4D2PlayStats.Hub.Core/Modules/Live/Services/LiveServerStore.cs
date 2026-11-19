@@ -4,7 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class LiveServerStore(IClock clock, ILiveDelay liveDelay) : ILiveServerStore
+public class LiveServerStore(IClock clock, ILiveSettings liveSettings) : ILiveServerStore
 {
     private readonly ConcurrentDictionary<int, LiveServerState> _states = new();
 
@@ -12,7 +12,7 @@ public class LiveServerStore(IClock clock, ILiveDelay liveDelay) : ILiveServerSt
 
     public LiveServerState For(int serverId)
     {
-        return _states.GetOrAdd(serverId, _ => new LiveServerState(clock, () => liveDelay.Current));
+        return _states.GetOrAdd(serverId, _ => new LiveServerState(clock, () => liveSettings.Current));
     }
 
     public void Forget(int serverId)

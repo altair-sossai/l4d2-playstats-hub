@@ -7,6 +7,7 @@
 @inject ICampaignImageService CampaignImages
 
 @{
+    var defaultPunishment = (await Settings.GetAsync<RankingSettings>()).DefaultPunishment;
     var firstPlayerRanking = Model.FirstPlayerRanking;
     var firstPlayer = firstPlayerRanking.Player;
     var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
@@ -878,7 +879,7 @@
 
                 @if (Model.Administrator)
                 {
-                    <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(firstPlayer.CommunityId)', '@AppConsts.PlayerDefaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                    <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(firstPlayer.CommunityId)', '@defaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
                         @L["Edit"]
                     </button>
                 }
@@ -890,7 +891,7 @@
 
                     @if (Model.Administrator)
                     {
-                        <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(secondPlayer.CommunityId)', '@AppConsts.PlayerDefaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
+                        <button type="button" class="btn btn-link btn-xs" onclick="editPunishment('@(secondPlayer.CommunityId)', '@defaultPunishment')" title="@L["Edit"]" data-toggle="tooltip" data-placement="bottom">
                             @L["Edit"]
                         </button>
                     }

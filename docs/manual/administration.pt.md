@@ -67,6 +67,8 @@ A lista mostra cada servidor com o identificador, o estado e o número de arquiv
 | Endereço em que os jogadores se conectam (opcional) | Mostrado na página do servidor ao vivo com um botão de copiar, e usado pelo botão `connect`. Por exemplo `play.example.com:27015` ou um IP e porta. |
 | Endereço alternativo, como um nome DNS (opcional) | Mostrado ao lado do endereço, como uma segunda forma de conectar. |
 
+O painel **Página do servidor ao vivo**, ao lado, define para todos os servidores: o atraso da página ao vivo (15 segundos), de quanto em quanto tempo uma página ao vivo aberta se atualiza (2600 ms), os segundos sem sinal até o servidor aparecer offline (90) e os minutos que um comando remoto espera o servidor (5).
+
 Depois de **Criar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
 
 ### A página de um servidor
@@ -139,6 +141,10 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | MVP em dano em infectados especiais, por rodada | 8 | Experiência por cada prêmio de MVP de SI. |
 | MVP em infectados comuns, por rodada | 6 | Experiência por cada prêmio de MVP de CI. |
 | Mínimo de partidas para aparecer no ranking | 0 | Jogos (vitórias mais derrotas) de que um jogador precisa para aparecer na lista. |
+| Jogadores no ranking da página inicial | 100 | Quantos jogadores, no máximo, o ranking da página inicial e das temporadas anteriores lista, até 500. |
+| Jogadores mostrados antes de Mostrar mais | 50 | Quantos deles aparecem antes de **Mostrar mais**. |
+| Punição padrão, em pontos | 150 | O valor que já vem preenchido ao punir um jogador pela página do jogador. |
+| Horas sem arquivos que separam duas partidas | 6 | Arquivos de um servidor de jogo mais distantes que isso pertencem a partidas diferentes. Vale para as novas partidas, ou para todas depois de **Reprocessar todas as partidas**. |
 | Manter partidas jogadas em mapas que não estão na lista de campanhas | Ligado | Veja [Partidas > Como os arquivos viram partidas](matches.pt.md#como-os-arquivos-viram-partidas). |
 
 Os pontos valem para todas as temporadas na hora, inclusive as passadas, porque os rankings são calculados a partir das partidas. A opção sobre mapas desconhecidos vale para as novas partidas, ou para todas depois de **Reprocessar todas as partidas**.
@@ -150,6 +156,7 @@ O [Ranking](ranking.pt.md#como-a-experiência-é-calculada) explica como esses v
 | Configuração | Padrão | O que faz |
 |---|---|---|
 | Quem pode ver as contas relacionadas | Todos | **Todos** mostra o painel [Contas relacionadas](players.pt.md#contas-relacionadas) para todo visitante, como o site antigo fazia. **Somente administradores** esconde o painel dos visitantes e dos jogadores que não são administradores, na página do jogador e na página de um jogador que não está no ranking. |
+| Meses para guardar as conexões dos jogadores | 3 | Conexões que não aparecem há mais tempo que isso, com os endereços IP, são apagadas todo dia. De 1 a 60. |
 
 Esta configuração vale só para o site. O plugin `l4d2_gameinfo_sync` continua anunciando as contas relacionadas no chat do jogo enquanto `gameinfo_related_accounts_chat` estiver em `1`; coloque `0` em `cfg/playstats.cfg` para tirá-las do chat também. Os administradores sempre veem as conexões em [Moderação > Conexões de jogadores](moderation.pt.md#conexões-de-jogadores).
 

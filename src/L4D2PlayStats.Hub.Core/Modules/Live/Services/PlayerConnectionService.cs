@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using System.Net;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
@@ -7,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class PlayerConnectionService(HubDbContext dbContext, IClock clock) : IPlayerConnectionService
+public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISettingsService settingsService) : IPlayerConnectionService
 {
     public async Task<List<PlayerConnectionResult>?> RegisterAsync(PlayerConnectionCommand? command, CancellationToken cancellationToken = default)
     {
@@ -61,7 +63,9 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock) : IPl
 
     public async Task<int> CleanupAsync(CancellationToken cancellationToken = default)
     {
-        var limit = clock.UtcNow.AddMonths(-AppConsts.PlayerConnectionRetentionInMonths);
+        var privacy = await settingsService.GetAsync<PrivacySettings>(cancellationToken);
+        var months = Math.Clamp(privacy.ConnectionRetentionInMonths, AppConsts.PlayerConnectionMinRetentionInMonths, AppConsts.PlayerConnectionMaxRetentionInMonths);
+        var limit = clock.UtcNow.AddMonths(-months);
         var deleted = 0;
 
         while (true)

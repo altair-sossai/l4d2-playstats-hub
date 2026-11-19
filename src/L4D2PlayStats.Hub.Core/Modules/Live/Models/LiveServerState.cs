@@ -7,29 +7,28 @@ using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
-public class LiveServerState(IClock clock, Func<TimeSpan> delay)
+public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
 {
-    public LiveServerState(IClock clock) : this(clock, () => TimeSpan.FromSeconds(AppConsts.LiveDelayInSeconds))
+    public LiveServerState(IClock clock) : this(clock, () => new LiveServerSettings())
     {
     }
 
     private static readonly TimeSpan PlayersExpiration = TimeSpan.FromMinutes(AppConsts.LivePlayersExpirationInMinutes);
     private static readonly TimeSpan SiteChatRetention = TimeSpan.FromMinutes(AppConsts.SiteChatRetentionInMinutes);
-    private static readonly TimeSpan CommandExpiration = TimeSpan.FromMinutes(AppConsts.RemoteCommandExpirationInMinutes);
 
     private readonly Lock _chatLock = new();
     private readonly ConcurrentQueue<QueuedCommand> _commands = new();
-    private readonly TimedValue<LiveConfiguration?> _configuration = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveConfigurationExpirationInMinutes), null);
-    private readonly TimedFeed _feed = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveFeedRetentionInMinutes), AppConsts.LiveFeedMaxItems);
-    private readonly TimedValue<IReadOnlyList<LiveInfected>> _infecteds = new(clock, delay, PlayersExpiration, []);
+    private readonly TimedValue<LiveConfiguration?> _configuration = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), TimeSpan.FromMinutes(AppConsts.LiveConfigurationExpirationInMinutes), null);
+    private readonly TimedFeed _feed = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), TimeSpan.FromMinutes(AppConsts.LiveFeedRetentionInMinutes), AppConsts.LiveFeedMaxItems);
+    private readonly TimedValue<IReadOnlyList<LiveInfected>> _infecteds = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), PlayersExpiration, []);
     private readonly List<QueuedCommand> _internalCommands = [];
     private readonly Lock _internalCommandsLock = new();
     private readonly ConcurrentDictionary<string, string> _lastMessage = new();
-    private readonly TimedValue<LiveRound?> _round = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveRoundExpirationInMinutes), null);
-    private readonly TimedValue<LiveScoreboard?> _scoreboard = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveScoreboardExpirationInMinutes), null);
+    private readonly TimedValue<LiveRound?> _round = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), TimeSpan.FromMinutes(AppConsts.LiveRoundExpirationInMinutes), null);
+    private readonly TimedValue<LiveScoreboard?> _scoreboard = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), TimeSpan.FromMinutes(AppConsts.LiveScoreboardExpirationInMinutes), null);
     private readonly List<SiteChatMessage> _siteMessages = [];
-    private readonly TimedValue<IReadOnlyList<LivePlayer>> _spectators = new(clock, delay, PlayersExpiration, []);
-    private readonly TimedValue<IReadOnlyList<LiveSurvivor>> _survivors = new(clock, delay, PlayersExpiration, []);
+    private readonly TimedValue<IReadOnlyList<LivePlayer>> _spectators = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), PlayersExpiration, []);
+    private readonly TimedValue<IReadOnlyList<LiveSurvivor>> _survivors = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), PlayersExpiration, []);
 
     public IReadOnlyList<FeedItem> Feed => _feed.Items;
 
@@ -159,7 +158,7 @@ public class LiveServerState(IClock clock, Func<TimeSpan> delay)
     public QueuedCommand? Dequeue()
     {
         while (_commands.TryDequeue(out var command))
-            if (clock.UtcNow - command.QueuedAtUtc < CommandExpiration)
+            if (clock.UtcNow - command.QueuedAtUtc < TimeSpan.FromMinutes(settings().RemoteCommandExpirationInMinutes))
                 return command;
 
         return null;
@@ -201,7 +200,7 @@ public class LiveServerState(IClock clock, Func<TimeSpan> delay)
     {
         var now = clock.UtcNow;
 
-        _internalCommands.RemoveAll(command => now - command.QueuedAtUtc >= CommandExpiration);
+        _internalCommands.RemoveAll(command => now - command.QueuedAtUtc >= TimeSpan.FromMinutes(settings().RemoteCommandExpirationInMinutes));
     }
 
     private bool OnCooldown(long communityId, DateTime now, SiteChatSettings limits)

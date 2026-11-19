@@ -1,11 +1,12 @@
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using System.Collections.Concurrent;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 
-public class GameServerPresence(IClock clock) : IGameServerPresence
+public class GameServerPresence(IClock clock, ILiveSettings liveSettings) : IGameServerPresence
 {
     private readonly ConcurrentDictionary<string, DateTime> _invalidKeys = new(StringComparer.OrdinalIgnoreCase);
     private readonly ConcurrentDictionary<int, DateTime> _lastLiveData = new();
@@ -67,7 +68,7 @@ public class GameServerPresence(IClock clock) : IGameServerPresence
             status.State = GameServerConnectionState.InvalidKey;
         else if (lastSeen == null)
             status.State = GameServerConnectionState.Waiting;
-        else if (now - lastSeen.Value <= TimeSpan.FromSeconds(AppConsts.ServerOnlineWindowInSeconds))
+        else if (now - lastSeen.Value <= TimeSpan.FromSeconds(liveSettings.Current.OnlineWindowInSeconds))
             status.State = GameServerConnectionState.Online;
         else
             status.State = GameServerConnectionState.Offline;

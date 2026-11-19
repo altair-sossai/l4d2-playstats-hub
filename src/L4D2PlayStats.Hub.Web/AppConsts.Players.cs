@@ -6,7 +6,6 @@ public static partial class AppConsts
     public const int PlayerRecentMatches = 50;
     public const int PlayerPreviousNamesVisible = 5;
     public const int PlayerDropdownNameLength = 10;
-    public const int PlayerDefaultPunishment = 150;
     public const string PlayerOpenGraphType = "profile";
     public const string PlayerSkinAnchor = "#skin-";
     public const string PlayersUrl = "/players";

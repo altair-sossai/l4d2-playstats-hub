@@ -29,6 +29,12 @@ public static class AppConsts
 
     public const int UploadRetryWindowInHours = 12;
     public const int MatchClusterGapInHours = 6;
+    public const int MatchMinGapInHours = 1;
+    public const int MatchMaxGapInHours = 72;
+    public const int PlayerDefaultPunishment = 150;
+    public const int RankingVisiblePlayers = 50;
+    public const int RankingListedPlayers = 100;
+    public const int RankingMaxListedPlayers = 500;
     public const int UnknownCampaignMapGapInHours = 2;
     public const int MaxScore = 10000;
 
@@ -64,6 +70,7 @@ public static class AppConsts
     public const int DefaultCommunityMinimumComparisonsToBeListed = 5;
     public const int DefaultCommunityMaximumPlayersListed = 100;
     public const int CommunityBallotNames = 4;
+    public const int CommunityMaxBallotNames = 10;
     public const int CommunityVotesPageSize = 30;
     public const int DefaultCommunityKFactor = 32;
     public const int DefaultCommunityInitialRating = 1500;
@@ -82,6 +89,13 @@ public static class AppConsts
 
     public const int LiveDelayInSeconds = 15;
     public const int LiveMaxDelayInSeconds = 600;
+    public const int LiveRefreshInMilliseconds = 2600;
+    public const int LiveMinRefreshInMilliseconds = 1000;
+    public const int LiveMaxRefreshInMilliseconds = 60000;
+    public const int ServerMinOnlineWindowInSeconds = 30;
+    public const int ServerMaxOnlineWindowInSeconds = 3600;
+    public const int RemoteCommandMinExpirationInMinutes = 1;
+    public const int RemoteCommandMaxExpirationInMinutes = 60;
     public const int LiveConfigurationExpirationInMinutes = 120;
     public const int LiveRoundExpirationInMinutes = 120;
     public const int LiveScoreboardExpirationInMinutes = 10;
@@ -125,6 +139,8 @@ public static class AppConsts
     public const string AntiCheatAccessSettingsTable = "AntiCheatAccessSettings";
 
     public const int PlayerConnectionRetentionInMonths = 3;
+    public const int PlayerConnectionMinRetentionInMonths = 1;
+    public const int PlayerConnectionMaxRetentionInMonths = 60;
     public const int PlayerConnectionCleanupBatchSize = 100;
     public const int IpAddressMaxLength = 45;
     public const int SkinIdMaxLength = 64;

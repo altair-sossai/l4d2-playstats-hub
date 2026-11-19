@@ -67,6 +67,8 @@ The list shows each server with its identifier, its state and the number of stat
 | Address players connect to (optional) | Shown on the live server page with a copy button, and used by the `connect` button. For example `play.example.com:27015` or an IP and port. |
 | Alternative address, such as a DNS name (optional) | Shown next to the address, as a second way to connect. |
 
+The panel **Live server page**, next to it, sets for every server: the delay of the live page (15 seconds), how often an open live page refreshes (2600 ms), the seconds without a signal before a server shows offline (90) and the minutes a remote command waits for the server (5).
+
 After **Create**, the page of the new server shows the token once, with the instructions. Copy it then: see [First-run setup > Step 4](first-run.md#step-4-the-game-server).
 
 ### The page of a server
@@ -139,6 +141,10 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | MVP in special infected damage, per round | 8 | Experience for each SI MVP award. |
 | MVP in common infected, per round | 6 | Experience for each CI MVP award. |
 | Minimum matches to appear in the ranking | 0 | Games (wins plus losses) a player needs to be listed. |
+| Players in the ranking of the home page | 100 | How many players the ranking of the home page and of previous seasons lists at most, up to 500. |
+| Players shown before Show more | 50 | How many of them appear before **Show more**. |
+| Default punishment, in points | 150 | The value already filled in when punishing a player from the player page. |
+| Hours without files that split two matches | 6 | Files of a game server further apart than this belong to different matches. Applies to new matches, or to all of them after **Reprocess all matches**. |
 | Keep matches played on maps that are not in the campaign list | On | See [Matches > How files become matches](matches.md#how-files-become-matches). |
 
 The points apply to every season right away, past seasons included, because the rankings are calculated from the matches. The option about unknown maps applies to new matches, or to all of them after **Reprocess all matches**.
@@ -150,6 +156,7 @@ The points apply to every season right away, past seasons included, because the 
 | Setting | Default | What it does |
 |---|---|---|
 | Who can see related accounts | Everyone | **Everyone** shows the [Related accounts](players.md#related-accounts) panel to every visitor, as the old site did. **Administrators only** hides it from visitors and players who are not administrators, on the player page and on the page of a player who is not ranked. |
+| Months to keep the player connections | 3 | Connections not seen for longer than this, with the IP addresses, are deleted every day. From 1 to 60. |
 
 This setting covers the site only. The `l4d2_gameinfo_sync` plugin still announces related accounts in the game chat while `gameinfo_related_accounts_chat` is `1`; set it to `0` in `cfg/playstats.cfg` to keep them out of the chat too. Administrators always see the connections in [Moderation > Player connections](moderation.md#player-connections).
 

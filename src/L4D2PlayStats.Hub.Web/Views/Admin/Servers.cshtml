@@ -92,6 +92,18 @@
                         <label for="DelayInSeconds">@L["Delay of the live page, in seconds"] @FieldHelp.More(L["How far behind the game the live page shows the score, the players and the events."], L["Delay of the live page, in seconds"], L["The live page waits this many seconds before showing what the game server sends: the score, the players, their health, the game chat and the events of the feed. It stops someone who is watching the site from telling a team where the other team is.\nMessages sent from the site appear at once.\nThe change applies to what the game server sends from then on, without a restart. 0 shows everything right away."])</label>
                         <input class="form-control" id="DelayInSeconds" name="DelayInSeconds" type="number" min="0" max="@CoreConsts.LiveMaxDelayInSeconds" value="@live.DelayInSeconds">
                     </div>
+                    <div class="form-group">
+                        <label for="RefreshInMilliseconds">@L["Refresh of the live page, in milliseconds"] @FieldHelp.More(L["How often an open live page asks the site for new data."], L["Refresh of the live page, in milliseconds"], L["Each open live page asks the site for the score, the players and the feed at this interval. Lower values make the page feel faster but multiply the requests: with 20 people watching and 2600 ms, the site answers about 8 requests per second.\nThe default is 2600. From 1000 to 60000. The change applies to pages opened after saving."])</label>
+                        <input class="form-control" id="RefreshInMilliseconds" name="RefreshInMilliseconds" type="number" min="@CoreConsts.LiveMinRefreshInMilliseconds" max="@CoreConsts.LiveMaxRefreshInMilliseconds" value="@live.RefreshInMilliseconds">
+                    </div>
+                    <div class="form-group">
+                        <label for="OnlineWindowInSeconds">@L["Seconds without a signal before a server is offline"] @FieldHelp.Tip(L["A game server that sent nothing for longer than this shows as offline on the site and in the administration. The plugins send a sign of life every few seconds, so 90 is safe; raise it if the server shows offline while it is running."])</label>
+                        <input class="form-control" id="OnlineWindowInSeconds" name="OnlineWindowInSeconds" type="number" min="@CoreConsts.ServerMinOnlineWindowInSeconds" max="@CoreConsts.ServerMaxOnlineWindowInSeconds" value="@live.OnlineWindowInSeconds">
+                    </div>
+                    <div class="form-group">
+                        <label for="RemoteCommandExpirationInMinutes">@L["Minutes a remote command waits for the server"] @FieldHelp.Tip(L["A command sent from Remote commands or the live page is dropped if the game server does not pick it up in this time, so an old command is not run when the server comes back much later."])</label>
+                        <input class="form-control" id="RemoteCommandExpirationInMinutes" name="RemoteCommandExpirationInMinutes" type="number" min="@CoreConsts.RemoteCommandMinExpirationInMinutes" max="@CoreConsts.RemoteCommandMaxExpirationInMinutes" value="@live.RemoteCommandExpirationInMinutes">
+                    </div>
                     <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                     </button>

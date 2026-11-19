@@ -1,8 +1,10 @@
 @using L4D2PlayStats.Hub.Web.Models.Ranking
 @model HistoryModel
 @inject ICurrentUser CurrentUser
+@inject ISettingsService Settings
 
 @{
+    var rankingSettings = await Settings.GetAsync<RankingSettings>();
     var winner = Model.Players.MinBy(player => player.Position);
     var period = Model.History.Label(L);
 
@@ -72,7 +74,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var player in Model.Players.Take(AppConsts.RankingListedPlayers))
+    @foreach (var player in Model.Players.Take(rankingSettings.HomeListedPlayers))
     {
         <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
             <td class="text-center vertical-align-middle">

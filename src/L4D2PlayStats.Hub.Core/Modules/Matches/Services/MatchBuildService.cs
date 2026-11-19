@@ -30,7 +30,8 @@ public class MatchBuildService(
             .Select(f => f.FileDate)
             .ToListAsync(cancellationToken);
 
-        var cluster = FileClusters.Around(dates, fileDate);
+        var ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken);
+        var cluster = FileClusters.Around(dates, fileDate, ranking.MatchGap);
         if (cluster == null)
             return;
 
@@ -51,6 +52,7 @@ public class MatchBuildService(
             .Distinct()
             .ToListAsync(cancellationToken);
 
+        var gap = (await settingsService.GetAsync<RankingSettings>(cancellationToken)).MatchGap;
         var matches = 0;
 
         foreach (var scope in scopes)
@@ -60,7 +62,7 @@ public class MatchBuildService(
                 .OrderBy(f => f.FileDate)
                 .ToListAsync(cancellationToken);
 
-            foreach (var cluster in FileClusters.Split(files))
+            foreach (var cluster in FileClusters.Split(files, gap))
                 matches += await RebuildAsync(scope.GameServerId, scope.SeasonId, cluster, cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);

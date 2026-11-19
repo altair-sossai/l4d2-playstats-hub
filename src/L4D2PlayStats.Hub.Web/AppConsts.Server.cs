@@ -2,7 +2,6 @@ namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
 {
-    public const int LivePageRefreshInMilliseconds = 2600;
     public const int LivePageRequestTimeoutInMilliseconds = 2000;
     public const int LivePageMaxFeedItems = 300;
     public const int ServerPickerRefreshInMilliseconds = 10000;
