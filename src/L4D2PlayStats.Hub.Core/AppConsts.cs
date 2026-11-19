@@ -161,7 +161,8 @@ public static class AppConsts
     public const string SteamIdPattern = @"^STEAM_\d:(\d):(\d+)$";
     public const string Steam3Pattern = @"^\[?U:\d:(\d+)]?$";
     public const string SteamCommunityIdPattern = @"^(\d{16,})$";
-    public const string SteamProfileUrlPattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
+    public const string SteamProfileUrlPattern = @"^(?:https?:\/\/)?(?:www\.)?steamcommunity\.com\/profiles\/(\d{16,})\/?$";
+    public const int PlayerDirectoryPageSize = 25;
 
     public const int BackupDefaultIntervalInHours = 8;
     public const int BackupMinIntervalInHours = 1;

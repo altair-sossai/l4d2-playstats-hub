@@ -67,10 +67,10 @@ Con el módulo del servidor en vivo activado, los servidores de juego informan l
 
 ![Las cuentas que comparten una dirección con un jugador](../images/es/admin-player-connections.webp)
 
-Escribe el Steam ID o el enlace del perfil del jugador y haz clic en **Buscar**. La página muestra:
+Escribe el Steam ID o el enlace del perfil del jugador y haz clic en **Buscar**, o haz clic en el botón de jugador junto al campo y elige en la [búsqueda de jugadores](administration.es.md#la-búsqueda-de-jugadores); la búsqueda se hace en cuanto eliges. La página muestra:
 
 - cuántas conexiones tiene el jugador y cuántas otras cuentas usaron la misma dirección;
-- cada cuenta, con sus Steam IDs, cuándo se vio por primera y por última vez, y cuántas conexiones tiene.
+- cada cuenta, con su Steam ID (el SteamID64 aparece al pasar el ratón), cuándo se vio por primera y por última vez, y cuántas conexiones tiene.
 
 La dirección en sí nunca se muestra. Las conexiones de más de tres meses se borran.
 

@@ -109,6 +109,6 @@ El factor K y la puntuación inicial se aplican a los votos nuevos. **Reconstrui
 
 **Reiniciar el ranking de la comunidad**, en un panel rojo, borra todos los votos y todas las puntuaciones, y el ranking de la comunidad vuelve a empezar desde cero; los ajustes se conservan. Una ventana muestra cuántos votos y jugadores se borrarán y pide confirmación, ya que no se puede deshacer.
 
-**Votantes** lista a todos los que votaron, con su cantidad de votos y su último voto. **Quitar votos** elimina todos los votos de un votante y reconstruye las puntuaciones sin ellos, por ejemplo cuando alguien votó de mala fe.
+**Votantes** lista a todos los que votaron, con su cantidad de votos y su último voto. **Quitar votos** elimina todos los votos de un votante y reconstruye las puntuaciones sin ellos, por ejemplo cuando alguien votó de mala fe. El campo acepta al votante en cualquier formato de Steam ID o como enlace del perfil, y el botón de búsqueda junto a él abre la [búsqueda de jugadores](administration.es.md#la-búsqueda-de-jugadores).
 
 Desactivar el módulo del ranking de la comunidad en [Módulos](administration.es.md#módulos) quita **Comunidad** del menú. Los votos se conservan.

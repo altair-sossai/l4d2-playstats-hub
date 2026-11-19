@@ -157,7 +157,7 @@ This setting covers the site only. The `l4d2_gameinfo_sync` plugin still announc
 
 ![The administrators](../images/en/admin-administrators.webp)
 
-The list shows every administrator and since when. To add one, give the SteamID64 of the account and, optionally, a name. **Remove** takes the rights away. You cannot remove yourself, and the last administrator cannot be removed.
+The list shows every administrator and since when. To add one, give the account as a SteamID64, a Steam ID such as `STEAM_1:0:123` or `[U:1:123]`, or a profile link, and, optionally, a name. The search button next to the field opens the [player search](#the-player-search); the chosen player also fills in the name when it is empty. **Remove** takes the rights away. You cannot remove yourself, and the last administrator cannot be removed.
 
 If you lose access to every administrator account, add one from the machine that runs the site:
 
@@ -165,6 +165,10 @@ If you lose access to every administrator account, add one from the machine that
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 The SteamID64 is the long number in the address of a Steam profile, such as `76561198000000000`.
+
+### The player search
+
+Every field of the administration that takes a player has a button next to it that opens the same search window: administrators, community ranking voters, player connections, chat bans, the Anti-Cheat lists and skin gifts. It lists the players who played a match or connected to a game server, the most recent first, with their photo, name, Steam ID, when they were last seen and their position in the current ranking. Type part of a name or a Steam ID in any format to filter, and **Load more** shows the next players. Clicking a player fills in the field. A Steam ID that never played here can still be chosen.
 
 ## Backup
 

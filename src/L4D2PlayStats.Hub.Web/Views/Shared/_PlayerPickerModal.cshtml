@@ -1,169 +1,304 @@
+@if (Context.Items[AppConsts.PlayerPickerModalItem] == null)
+{
+    Context.Items[AppConsts.PlayerPickerModalItem] = true;
 
-<style>
-    .pp-list {
-        max-height: 420px;
-        margin: 10px 0 0;
-        overflow-y: auto;
-    }
+    <style>
+        .pp-list {
+            max-height: 420px;
+            max-height: min(420px, 55vh);
+            margin: 10px 0 0;
+            overflow-y: auto;
+        }
 
-        .pp-list .list-group-item {
+            .pp-list .list-group-item {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            .pp-list .pp-note {
+                display: block;
+                cursor: default;
+            }
+
+            .pp-list img {
+                width: 36px;
+                height: 36px;
+                margin-right: 10px;
+                border-radius: 50%;
+                flex: 0 0 auto;
+            }
+
+            .pp-list .label {
+                margin-left: 8px;
+                flex: 0 0 auto;
+            }
+
+        .pp-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+            .pp-info strong,
+            .pp-info small {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .pp-info small {
+                opacity: .7;
+            }
+
+        @@media (max-width: 767px) {
+            .pp-info small.pp-meta {
+                white-space: normal;
+            }
+        }
+
+        .pp-footer {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            cursor: pointer;
+            justify-content: space-between;
+            margin-top: 8px;
         }
 
-        .pp-list img {
-            width: 36px;
-            height: 36px;
-            margin-right: 10px;
-            border-radius: 50%;
-            flex: 0 0 auto;
+            .pp-footer > * {
+                margin-top: 4px;
+            }
+
+        .pp-more {
+            display: none;
         }
+    </style>
 
-    .pp-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-        .pp-info strong,
-        .pp-info small {
-            display: block;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .pp-info small {
-            opacity: .7;
-        }
-</style>
-
-<div id="pp-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">@L["Choose a player"]</h4>
-            </div>
-            <div class="modal-body">
-                <input type="text" class="form-control pp-search" placeholder="@L["Search by name or Steam ID..."]"/>
-                <div class="list-group pp-list"></div>
-                <small class="text-muted">@L["Shows the players of the current ranking (with their position) and of the all-time history."]</small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+    <div id="pp-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">@L["Choose a player"]</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control pp-search" placeholder="@L["Search by name or Steam ID..."]" autocomplete="off"/>
+                    <div class="list-group pp-list"></div>
+                    <div class="pp-footer">
+                        <small class="text-muted pp-count"></small>
+                        <button type="button" class="btn btn-default btn-sm pp-more">@L["Load more"]</button>
+                    </div>
+                    <small class="text-muted" style="display: block; margin-top: 8px">@L["Most recent first: the players who played a match or connected to a game server, with their position in the current ranking. A Steam ID in any format or a profile link also works."]</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var texts = {
-            loading: @Json.Serialize(L["Loading players..."].Value),
-            empty: @Json.Serialize(L["No players found."].Value),
-            error: @Json.Serialize(L["Could not load the players. Close and try again."].Value),
-            history: @Json.Serialize(L["Shared.PlayerPickerModal.FromHistory"].Value),
-            refine: @Json.Serialize(L["More players found. Refine the search to see the others."].Value),
-            alsoKnownAs: @Json.Serialize(L["Also known as:"].Value)
-        };
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var texts = {
+                loading: @Json.Serialize(L["Loading players..."].Value),
+                empty: @Json.Serialize(L["No players found."].Value),
+                error: @Json.Serialize(L["Could not load the players. Close and try again."].Value),
+                history: @Json.Serialize(L["Shared.PlayerPickerModal.FromHistory"].Value),
+                alsoKnownAs: @Json.Serialize(L["Also known as:"].Value),
+                lastSeen: @Json.Serialize(L["Last seen"].Value),
+                neverSeen: @Json.Serialize(L["Never seen on the servers"].Value),
+                unknown: @Json.Serialize(L["Unknown player"].Value),
+                count: @Json.Serialize(L["{0} of {1} players"].Value)
+            };
 
-        var $modal = $('#pp-modal');
-        var $search = $modal.find('.pp-search');
-        var $list = $modal.find('.pp-list');
-        var players = null;
-        var callback = null;
-        var chosen = null;
-        var maxItems = 60;
+            var searchUrl = @Json.Serialize(AppConsts.PlayerSearchUrl);
+            var delay = @AppConsts.PlayerSearchDelayInMilliseconds;
+            var $modal = $('#pp-modal');
+            var $search = $modal.find('.pp-search');
+            var $list = $modal.find('.pp-list');
+            var $more = $modal.find('.pp-more');
+            var $count = $modal.find('.pp-count');
+            var callback = null;
+            var chosen = null;
+            var term = '';
+            var page = 0;
+            var sequence = 0;
+            var timer = null;
 
-        function escapeHtml(text) {
-            return $('<div/>').text(text == null ? '' : text).html();
-        }
-
-        function note(text) {
-            $list.html('<div class="list-group-item text-muted">' + escapeHtml(text) + '</div>');
-        }
-
-        function render() {
-            if (players == null)
-                return;
-
-            var term = $.trim($search.val()).toLowerCase();
-            var matches = players.filter(function (player) {
-                var names = [player.name || ''].concat(player.previousNames || []).join(' ').toLowerCase();
-
-                return term === '' || names.indexOf(term) >= 0 || player.communityId.indexOf(term) >= 0 || (player.steamId || '').toLowerCase().indexOf(term) >= 0;
-            });
-
-            $list.empty();
-
-            if (matches.length === 0) {
-                note(texts.empty);
-                return;
+            function escapeHtml(text) {
+                return $('<div/>').text(text == null ? '' : text).html();
             }
 
-            $.each(matches.slice(0, maxItems), function (index, player) {
-                var badge = player.position ? '#' + player.position : texts.history;
-                var $item = $('<a href="#" class="list-group-item"></a>');
+            function format(text) {
+                var values = Array.prototype.slice.call(arguments, 1);
 
-                $item.append('<img src="' + escapeHtml(player.avatarUrl) + '" alt="" onerror="imgOnError(this)"/>');
+                return text.replace(/\{(\d+)\}/g, function (match, index) {
+                    return values[index];
+                });
+            }
+
+            function note(text) {
+                $list.html('<div class="list-group-item pp-note text-muted">' + escapeHtml(text) + '</div>');
+            }
+
+            function item(player) {
+                var $item = $('<a href="#" class="list-group-item pp-player"></a>');
+                var seen = player.lastSeen ? texts.lastSeen + ': ' + player.lastSeen : texts.neverSeen;
                 var aliases = (player.previousNames || []).length > 0 ? '<small>' + escapeHtml(texts.alsoKnownAs + ' ' + player.previousNames.join(', ')) + '</small>' : '';
+                var badge = player.position ? '#' + player.position : (player.ranked ? texts.history : '');
 
-                $item.append('<div class="pp-info"><strong>' + escapeHtml(player.name) + '</strong><small>' + escapeHtml(player.steamId || '') + ' · ' + escapeHtml(player.communityId) + '</small>' + aliases + '</div>');
-                $item.append('<span class="label label-default">' + escapeHtml(badge) + '</span>');
+                $item.attr('data-community-id', player.communityId);
+                $item.append('<img src="' + escapeHtml(player.avatarUrl) + '" alt="" onerror="imgOnError(this)"/>');
+                $item.append('<div class="pp-info"><strong>' + escapeHtml(player.name || texts.unknown) + '</strong><small class="pp-meta"><span title="SteamID64: ' + escapeHtml(player.communityId) + '">' + escapeHtml(player.steamId) + '</span> · ' + escapeHtml(seen) + '</small>' + aliases + '</div>');
+
+                if (badge !== '')
+                    $item.append('<span class="label label-default">' + escapeHtml(badge) + '</span>');
+
                 $item.on('click', function (event) {
                     event.preventDefault();
                     chosen = player;
                     $modal.modal('hide');
                 });
 
-                $list.append($item);
-            });
+                return $item;
+            }
 
-            if (matches.length > maxItems)
-                $list.append('<div class="list-group-item text-muted">' + escapeHtml(texts.refine) + '</div>');
-        }
+            function load(reset) {
+                var current = ++sequence;
 
-        $search.on('input', render);
-
-        $modal.on('shown.bs.modal', function () {
-            $search.focus();
-        });
-
-        $modal.on('hidden.bs.modal', function () {
-            var done = callback;
-            var player = chosen;
-
-            callback = null;
-            chosen = null;
-
-            if (done)
-                done(player);
-        });
-
-        window.PlayerPicker = {
-            open: function (onClose) {
-                callback = onClose;
-                chosen = null;
-                $search.val('');
-                $modal.modal('show');
-
-                if (players != null) {
-                    render();
-                    return;
+                if (reset) {
+                    page = 0;
+                    $more.hide();
+                    $count.text('');
+                    note(texts.loading);
                 }
 
-                note(texts.loading);
+                $more.prop('disabled', true);
 
-                $.getJSON('/api/admin/players').done(function (result) {
-                    players = result || [];
-                    render();
+                $.getJSON(searchUrl, { q: term, page: page + 1 }).done(function (result) {
+                    if (current !== sequence)
+                        return;
+
+                    if (reset)
+                        $list.empty();
+
+                    page = result.page;
+
+                    $.each(result.players || [], function (index, player) {
+                        $list.append(item(player));
+                    });
+
+                    var shown = $list.children('.pp-player').length;
+
+                    if (shown === 0)
+                        note(texts.empty);
+
+                    $count.text(shown > 0 ? format(texts.count, shown, result.total) : '');
+                    $more.toggle(!!result.hasMore).prop('disabled', false);
                 }).fail(function () {
-                    note(texts.error);
+                    if (current !== sequence)
+                        return;
+
+                    $more.hide();
+
+                    if (reset)
+                        note(texts.error);
+                    else
+                        $list.append('<div class="list-group-item pp-note text-danger">' + escapeHtml(texts.error) + '</div>');
                 });
             }
-        };
-    });
-</script>
+
+            function search() {
+                clearTimeout(timer);
+                term = $.trim($search.val());
+                load(true);
+            }
+
+            $search.on('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(search, delay);
+            });
+
+            $search.on('keydown', function (event) {
+                if (event.key !== 'Enter')
+                    return;
+
+                event.preventDefault();
+                search();
+            });
+
+            $more.on('click', function () {
+                load(false);
+            });
+
+            $modal.on('shown.bs.modal', function () {
+                $search.focus();
+            });
+
+            $modal.on('hidden.bs.modal', function () {
+                var done = callback;
+                var player = chosen;
+
+                clearTimeout(timer);
+                sequence++;
+                callback = null;
+                chosen = null;
+
+                if (done)
+                    done(player);
+            });
+
+            window.PlayerPicker = {
+                open: function (onClose) {
+                    callback = onClose;
+                    chosen = null;
+                    term = '';
+                    $search.val('');
+                    $modal.modal('show');
+                    load(true);
+                }
+            };
+
+            $(document).on('click', '[data-player-picker]', function (event) {
+                event.preventDefault();
+
+                var $button = $(this);
+                var $target = $($button.attr('data-player-picker'));
+                var $name = $($button.attr('data-player-picker-name') || []);
+                var $parent = $button.closest('.modal');
+
+                function pick() {
+                    window.PlayerPicker.open(function (player) {
+                        if (player) {
+                            $target.val(player.communityId).trigger('input').trigger('change');
+
+                            if ($name.length > 0 && $.trim($name.val()) === '' && player.name)
+                                $name.val(player.name).trigger('input');
+
+                            var form = $target.closest('form')[0];
+
+                            if (form && $button.is('[data-player-picker-submit]')) {
+                                if (form.requestSubmit)
+                                    form.requestSubmit();
+                                else
+                                    form.submit();
+                            }
+                        }
+
+                        if ($parent.length > 0)
+                            $parent.modal('show');
+                        else
+                            $target.focus();
+                    });
+                }
+
+                if ($parent.length > 0)
+                    $parent.one('hidden.bs.modal', pick).modal('hide');
+                else
+                    pick();
+            });
+        });
+    </script>
+}

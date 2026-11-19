@@ -37,7 +37,14 @@
 <p class="text-muted">@L["Shows the accounts that connected to a game server from the same address as a player. Connections older than three months are deleted."]</p>
 
 <form method="get" class="admin-filters" action="/admin/player-connections">
-    <input type="text" name="communityId" value="@Model.Query" class="form-control admin-search" placeholder="@L["Steam ID or profile URL"]" aria-label="@L["Steam ID or profile URL"]" required/>
+    <div class="input-group admin-search">
+        <input type="text" id="pc-player-id" name="communityId" value="@Model.Query" class="form-control" placeholder="@L["Steam ID or profile URL"]" aria-label="@L["Steam ID or profile URL"]" autocomplete="off" required/>
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default" data-player-picker="#pc-player-id" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                <span class="glyphicon glyphicon-user"></span>
+            </button>
+        </span>
+    </div>
     <span style="align-self: center">@FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</span>
     <button type="submit" class="btn btn-default">
         <span class="glyphicon glyphicon-search"></span> @L["Search"]
@@ -89,7 +96,7 @@
                                 <span class="label label-primary" style="margin-left: 5px">@L["Searched player"]</span>
                             }
                         </div>
-                        <small>@player.SteamId · @player.CommunityId</small>
+                        <small title="SteamID64: @player.CommunityId">@player.SteamId</small>
                         <small>@L["First seen"]: @LiveDisplay.ShortDateTime(player.FirstConnectedAtUtc, Model.TimeZone)</small>
                     </div>
                     <div class="admin-side">
@@ -116,3 +123,5 @@
         }
     }
 }
+
+@await Html.PartialAsync("_PlayerPickerModal")

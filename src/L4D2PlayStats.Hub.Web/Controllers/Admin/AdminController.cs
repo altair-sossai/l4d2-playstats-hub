@@ -258,10 +258,12 @@ public class AdminController(
     }
 
     [HttpPost("administrators")]
-    public async Task<IActionResult> AddAdministrator(long communityId, string? name, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddAdministrator(string? communityId, string? name, CancellationToken cancellationToken)
     {
-        if (SteamIds.IsValid(communityId))
-            await administratorService.AddAsync(communityId, name, cancellationToken);
+        var parsed = SteamIdParser.Parse(communityId);
+
+        if (parsed != null)
+            await administratorService.AddAsync(parsed.Value, name, cancellationToken);
         else
             TempData["Error"] = "That is not a valid SteamID64.";
 

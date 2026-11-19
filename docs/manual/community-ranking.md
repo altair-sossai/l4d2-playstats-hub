@@ -109,6 +109,6 @@ The K factor and the initial rating apply to new votes. **Rebuild the ratings** 
 
 **Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
 
-**Voters** lists everybody who voted, with their number of votes and their last vote. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith.
+**Voters** lists everybody who voted, with their number of votes and their last vote. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
 
 Turning off the community ranking module in [Modules](administration.md#modules) removes **Community** from the menu. The votes are kept.
