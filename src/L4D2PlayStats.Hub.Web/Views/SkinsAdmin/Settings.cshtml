@@ -37,17 +37,19 @@
         <div class="panel-body">
             <div class="form-group">
                 <label for="AssetsUrl">@L["Address of the assets"]</label>
-                <input class="form-control" id="AssetsUrl" name="AssetsUrl" value="@Model.AssetsUrl" placeholder="https://assets.example.com"/>
+                <input class="form-control" id="AssetsUrl" name="AssetsUrl" value="@Model.AssetsUrl" placeholder="@CoreConsts.SkinDefaultAssetsUrl"/>
                 <p class="help-block">
                     @L["Where the pictures published from the assets repository are served."]
                     @L["Thumbnails"]: <code>@($"/{CoreConsts.SkinThumbnailsFolder}/<id>{CoreConsts.SkinThumbnailExtension}")</code>
                     · @L["Photos"]: <code>@($"/{CoreConsts.SkinShotsFolder}/<id>/1{CoreConsts.SkinShotExtension}")</code>
                 </p>
+                <p class="help-block">@L["Leave it empty to use {0}, where the photos of the skins are published.", CoreConsts.SkinDefaultAssetsUrl]</p>
+                <p class="help-block">@L["The skins of the bundled catalog have their thumbnails in the site itself. Only a skin without one reads its thumbnail from this address."]</p>
             </div>
             <div class="form-group" style="margin-bottom: 0">
                 <label for="CatalogUrl">@L["Address of the catalog"]</label>
                 <input class="form-control" id="CatalogUrl" name="CatalogUrl" value="@Model.CatalogUrl" placeholder="https://assets.example.com/skins/skins.json"/>
-                <p class="help-block" style="margin-bottom: 0">@L["The skins.json file of the assets repository. It is downloaded when you import the catalog from the configured address."]</p>
+                <p class="help-block" style="margin-bottom: 0">@L["A skins.json file, downloaded when you import the catalog from the configured address. Optional: the hub already comes with a catalog."]</p>
             </div>
         </div>
     </div>

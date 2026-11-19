@@ -5,6 +5,7 @@ public static partial class AppConsts
     public const int SkinListPageSize = 20;
     public const string SkinCatalogUrl = "/admin/skins/catalog";
     public const string SkinSettingsUrl = "/admin/skins/settings";
+    public const string SkinBundledThumbnailsPath = "imgs/skins";
     public const string SkinEmptyImage = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
     public const string SkinRarityCssPrefix = "sk-rarity-";
     public const string SkinPurchaseRarityCssPrefix = "ska-rarity-";

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Modules\Campaigns\Data\campaigns.json" />
+    <EmbeddedResource Include="Modules\Skins\Data\skins.json" />
   </ItemGroup>
 
   <ItemGroup>

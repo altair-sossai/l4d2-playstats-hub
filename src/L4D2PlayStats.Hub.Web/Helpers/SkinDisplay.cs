@@ -35,11 +35,6 @@ public static class SkinDisplay
         return $"{AppConsts.SkinPurchaseRarityCssPrefix}{RarityName(rarity)}";
     }
 
-    public static string Image(string? assetsUrl, Skin skin)
-    {
-        return SkinAssets.Thumbnail(assetsUrl, skin.Id) ?? AppConsts.SkinEmptyImage;
-    }
-
     public static string? Shots(string? assetsUrl, Skin skin)
     {
         return skin.HasShots ? SkinAssets.ShotsFolder(assetsUrl, skin.Id) : null;

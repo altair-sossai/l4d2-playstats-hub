@@ -6,6 +6,7 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
 using Microsoft.Extensions.DependencyInjection;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Skins;
 
@@ -112,7 +113,7 @@ public class SkinPagesTests
     }
 
     [TestMethod]
-    public async Task TheShopUsesThePicturesOfTheAssetsAddress()
+    public async Task TheShopUsesTheDefaultAssetsAddressUntilAnotherIsSet()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
@@ -125,8 +126,10 @@ public class SkinPagesTests
 
         var with = await client.GetStringAsync("/skins");
 
-        Assert.DoesNotContain("class=\"sk-gallery\"", without);
-        Assert.DoesNotContain("og:image", without);
+        Assert.Contains($"class=\"sk-gallery\" data-shots=\"{CoreConsts.SkinDefaultAssetsUrl}/skin-shots/gold-magnum/\" data-version=\"2\"", without);
+        Assert.Contains($"<meta property=\"og:image\" content=\"{CoreConsts.SkinDefaultAssetsUrl}/skins/galaxy-pump.jpg\">", without);
+        Assert.DoesNotContain(AssetsUrl, without);
+        Assert.DoesNotContain(CoreConsts.SkinDefaultAssetsUrl, with);
         Assert.Contains($"src=\"{AssetsUrl}/skins/gold-magnum.jpg\"", with);
         Assert.Contains($"<meta property=\"og:image\" content=\"{AssetsUrl}/skins/galaxy-pump.jpg\">", with);
         Assert.Contains($"class=\"sk-gallery\" data-shots=\"{AssetsUrl}/skin-shots/gold-magnum/\" data-version=\"2\"", with);

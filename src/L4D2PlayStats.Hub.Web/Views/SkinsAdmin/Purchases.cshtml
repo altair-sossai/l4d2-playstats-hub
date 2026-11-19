@@ -1,4 +1,5 @@
 @model SkinPurchasesAdminModel
+@inject SkinThumbnailStore SkinThumbnails
 
 @{
     ViewData["Title"] = L["Skin purchases"].Value;
@@ -332,7 +333,7 @@
     {
         var purchase = row.Purchase;
         var title = row.SkinTitle(culture);
-        var image = row.Skin == null ? AppConsts.SkinEmptyImage : SkinDisplay.Image(Model.AssetsUrl, row.Skin);
+        var image = row.Skin == null ? AppConsts.SkinEmptyImage : SkinThumbnails.Image(Model.AssetsUrl, row.Skin);
         var weapon = row.Skin == null ? string.Empty : L[SkinWeapons.Name(row.Skin.Weapon)].Value;
         var date = row.Date.ToString(AppConsts.ShortDateTimeFormat, culture);
         var price = purchase.Gift ? L["Gift"].Value : $"{purchase.Price.ToString("N0", culture)} ⭐";
