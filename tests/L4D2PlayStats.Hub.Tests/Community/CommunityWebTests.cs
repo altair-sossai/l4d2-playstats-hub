@@ -521,12 +521,17 @@ public class CommunityWebTests
         var page = await visitor.GetStringAsync("/community/votes");
         var ofPlayer = await visitor.GetStringAsync($"/community/votes?player={pair.Right}");
         var ranking = await visitor.GetStringAsync("/community");
+        var ofVoter = await visitor.GetStringAsync($"/community/votes?voter={site.Voter}");
+        var ofOther = await visitor.GetStringAsync($"/community/votes?voter={pair.Left}");
 
         Assert.Contains($"/avatar/{site.Voter}", page);
         Assert.Contains($"href=\"/community/votes?player={pair.Left}\"", page);
+        Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", page);
         Assert.Contains("vf-player vf-win", page);
-        Assert.Contains("vf-player vf-lose", page);
+        Assert.Contains("vf-player vf-right vf-lose", page);
         Assert.Contains($"/avatar/{pair.Right}", ofPlayer);
+        Assert.Contains("class=\"vf-row\"", ofVoter);
+        Assert.DoesNotContain("class=\"vf-row\"", ofOther);
         Assert.Contains("href=\"/community/votes\"", ranking);
     }
 

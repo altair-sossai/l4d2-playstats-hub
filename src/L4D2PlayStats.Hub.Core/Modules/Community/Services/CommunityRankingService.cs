@@ -36,11 +36,10 @@ public class CommunityRankingService(
         return [.. ratings.Select((r, index) => new CommunityRankingEntry(index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Comparisons, r.Wins, r.Draws, r.Losses))];
     }
 
-    public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? playerId, int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? voterId, long? playerId, int skip, int take, CancellationToken cancellationToken = default)
     {
-        var votes = await dbContext.Set<CommunityVote>()
-            .AsNoTracking()
-            .Where(v => v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel)
+        var votes = await JudgingVotes()
+            .Where(v => voterId == null || v.VoterId == voterId)
             .Where(v => playerId == null || v.LeftPlayerId == playerId || v.RightPlayerId == playerId)
             .OrderByDescending(v => v.Id)
             .Skip(Math.Max(0, skip))
@@ -50,6 +49,25 @@ public class CommunityRankingService(
         var names = await playerService.NamesAsync([.. votes.SelectMany(v => new[] { v.VoterId, v.LeftPlayerId, v.RightPlayerId })], cancellationToken);
 
         return [.. votes.Select(v => new CommunityVoteFeedItem(v.Id, v.VoterId, names[v.VoterId], v.LeftPlayerId, names[v.LeftPlayerId], v.RightPlayerId, names[v.RightPlayerId], v.Outcome, v.CreatedAtUtc))];
+    }
+
+    public Task<CommunityRating?> RatingAsync(long communityId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Set<CommunityRating>().AsNoTracking().FirstOrDefaultAsync(r => r.CommunityId == communityId, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<CommunityVoteParticipant>> VoteParticipantsAsync(CancellationToken cancellationToken = default)
+    {
+        var voters = await JudgingVotes().Select(v => v.VoterId).Distinct().ToListAsync(cancellationToken);
+        var lefts = await JudgingVotes().Select(v => v.LeftPlayerId).Distinct().ToListAsync(cancellationToken);
+        var rights = await JudgingVotes().Select(v => v.RightPlayerId).Distinct().ToListAsync(cancellationToken);
+        var voterIds = voters.ToHashSet();
+        var playerIds = lefts.Concat(rights).ToHashSet();
+        var names = await playerService.NamesAsync([.. voterIds.Concat(playerIds)], cancellationToken);
+
+        return [.. names
+            .Select(pair => new CommunityVoteParticipant(pair.Key, pair.Value, voterIds.Contains(pair.Key), playerIds.Contains(pair.Key)))
+            .OrderBy(participant => participant.Name, StringComparer.CurrentCultureIgnoreCase)];
     }
 
     public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(CancellationToken cancellationToken = default)
@@ -160,6 +178,13 @@ public class CommunityRankingService(
         dbContext.RemoveRange(ratings.Where(rating => rating.Comparisons == 0));
 
         return votes.Count;
+    }
+
+    private IQueryable<CommunityVote> JudgingVotes()
+    {
+        return dbContext.Set<CommunityVote>()
+            .AsNoTracking()
+            .Where(v => v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel);
     }
 
     private static void Reset(CommunityRating rating, CommunityRankingSettings settings)

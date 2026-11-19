@@ -210,9 +210,9 @@ public class CommunityRankingServiceTests
         var same = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.SameLevel))!;
         var right = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Right))!;
 
-        var latest = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, 0, 10));
-        var paged = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, 1, 1));
-        var ofPlayer = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(left.Left, 0, 10));
+        var latest = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, null, 0, 10));
+        var paged = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, null, 1, 1));
+        var ofPlayer = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, left.Left, 0, 10));
 
         CollectionAssert.AreEqual(new[] { CommunityVoteOutcome.Right, CommunityVoteOutcome.SameLevel, CommunityVoteOutcome.Left }, latest.Select(vote => vote.Outcome).ToArray());
         Assert.AreEqual(right.Left, latest[0].LeftPlayerId);

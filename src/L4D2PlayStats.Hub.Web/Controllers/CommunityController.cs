@@ -55,20 +55,28 @@ public class CommunityController(
     }
 
     [HttpGet(AppConsts.CommunityVotesPage)]
-    public async Task<IActionResult> Votes(long? player, int page, CancellationToken cancellationToken)
+    public async Task<IActionResult> Votes(long? voter, long? player, int page, CancellationToken cancellationToken)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+        var voterId = settings.ShowVoterNames ? voter : null;
         var current = Math.Max(1, page);
         var size = CoreConsts.CommunityVotesPageSize;
-        var votes = await communityRankingService.LatestVotesAsync(player, (current - 1) * size, size + 1, cancellationToken);
-        var names = player == null ? null : await communityPlayerService.NamesAsync([player.Value], cancellationToken);
+        var votes = await communityRankingService.LatestVotesAsync(voterId, player, (current - 1) * size, size + 1, cancellationToken);
+        var participants = await communityRankingService.VoteParticipantsAsync(cancellationToken);
+        var filtered = new[] { voterId, player }.Where(id => id != null).Select(id => id!.Value).ToList();
+        var names = await communityPlayerService.NamesAsync(filtered, cancellationToken);
+        var rating = player == null ? null : await communityRankingService.RatingAsync(player.Value, cancellationToken);
 
         var model = new CommunityVotesViewModel
         {
             Votes = [.. votes.Take(size)],
+            VoterId = voterId,
+            VoterName = voterId == null ? null : names[voterId.Value],
             PlayerId = player,
-            PlayerName = names?[player!.Value],
+            PlayerName = player == null ? null : names[player.Value],
+            PlayerRating = rating,
+            Participants = participants,
             Page = current,
             HasMore = votes.Count > size,
             ShowVoters = settings.ShowVoterNames,

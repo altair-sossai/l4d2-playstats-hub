@@ -7,8 +7,23 @@
         Description = L["See who voted for whom in the community ranking."]
     };
 
-    string PageUrl(int page) => $"{AppConsts.CommunityVotesPage}?{(Model.PlayerId == null ? "" : $"player={Model.PlayerId}&")}page={page}";
-    string PlayerFilter(long communityId) => $"{AppConsts.CommunityVotesPage}?player={communityId}";
+    string Url(long? voter, long? player, int page = 1)
+    {
+        var query = new List<string>();
+
+        if (voter != null)
+            query.Add($"voter={voter}");
+
+        if (player != null)
+            query.Add($"player={player}");
+
+        if (page > 1)
+            query.Add($"page={page}");
+
+        return query.Count == 0 ? AppConsts.CommunityVotesPage : $"{AppConsts.CommunityVotesPage}?{string.Join("&", query)}";
+    }
+
+    var rating = Model.PlayerRating;
 }
 
 @section Styles {
@@ -19,7 +34,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
             .vf-lead p {
@@ -28,167 +43,253 @@
                 opacity: .85;
             }
 
-        .vf-filter {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-            padding: 6px 8px 6px 6px;
-            border: 1px solid rgba(91, 192, 222, .5);
-            border-radius: 20px;
-            background: rgba(91, 192, 222, .12);
-        }
-
-            .vf-filter img {
-                width: 26px;
-                height: 26px;
-                border-radius: 50%;
-            }
-
-            .vf-filter a {
-                color: inherit;
-                opacity: .7;
-            }
-
-        .vf-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .vf-card {
-            padding: 12px 14px;
+        .vf-filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
             border: 1px solid rgba(255, 255, 255, .08);
             border-radius: 8px;
             background: rgba(255, 255, 255, .03);
         }
 
-        .vf-voter {
+            .vf-filters .form-group {
+                flex: 1 1 220px;
+                margin: 0;
+            }
+
+            .vf-filters label {
+                font-size: 12px;
+                opacity: .8;
+            }
+
+        .vf-chips {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 10px;
-            font-size: 12px;
-            opacity: .85;
+            margin-bottom: 12px;
         }
 
-            .vf-voter img {
-                width: 22px;
-                height: 22px;
+        .vf-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px 4px 4px;
+            border: 1px solid rgba(91, 192, 222, .5);
+            border-radius: 20px;
+            background: rgba(91, 192, 222, .12);
+        }
+
+            .vf-chip img {
+                width: 24px;
+                height: 24px;
                 border-radius: 50%;
             }
 
-            .vf-voter time {
-                margin-left: auto;
-                white-space: nowrap;
+            .vf-chip a {
+                color: inherit;
                 opacity: .7;
             }
 
-        .vf-duel {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        .vf-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
             align-items: center;
-            gap: 10px;
+            font-size: 13px;
+        }
+
+            .vf-summary b {
+                font-size: 15px;
+            }
+
+        .vf-list {
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .vf-row {
+            display: grid;
+            grid-template-columns: 96px minmax(0, 190px) minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            padding: 6px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+            .vf-row:nth-child(even) {
+                background: rgba(255, 255, 255, .025);
+            }
+
+            .vf-row:last-child {
+                border-bottom: 0;
+            }
+
+            .vf-row:hover {
+                background: rgba(255, 255, 255, .05);
+            }
+
+        .vf-when {
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: .65;
+        }
+
+        .vf-voter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            color: inherit;
+            font-size: 13px;
+        }
+
+            .vf-voter span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .vf-voter img {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+            }
+
+        a.vf-voter:hover {
+            color: #5bc0de;
+            text-decoration: none;
+        }
+
+        .vf-pair {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr);
+            align-items: center;
+            gap: 8px;
         }
 
         .vf-player {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 8px 6px;
-            border: 2px solid transparent;
-            border-radius: 8px;
+            gap: 8px;
+            min-width: 0;
+            padding: 3px 8px 3px 3px;
+            border: 1px solid transparent;
+            border-radius: 6px;
             color: inherit;
-            text-align: center;
-            transition: background .15s;
         }
 
             .vf-player:hover,
             .vf-player:focus {
                 color: inherit;
                 text-decoration: none;
-                background: rgba(255, 255, 255, .05);
+                background: rgba(255, 255, 255, .06);
             }
 
             .vf-player img {
-                width: 52px;
-                height: 52px;
-                border-radius: 8px;
+                flex: none;
+                width: 30px;
+                height: 30px;
+                border-radius: 6px;
             }
 
-        .vf-name {
-            max-width: 100%;
-            overflow: hidden;
-            font-weight: bold;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            .vf-player .vf-name {
+                overflow: hidden;
+                font-weight: bold;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .vf-player .glyphicon {
+                flex: none;
+                margin-left: auto;
+                font-size: 12px;
+            }
+
+        .vf-right {
+            flex-direction: row-reverse;
+            padding: 3px 3px 3px 8px;
+            text-align: right;
         }
 
-        .vf-badge {
-            padding: 1px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+            .vf-right .glyphicon {
+                margin-left: 0;
+                margin-right: auto;
+            }
 
         .vf-win {
-            border-color: rgba(92, 184, 92, .8);
-            background: rgba(92, 184, 92, .12);
+            border-color: rgba(92, 184, 92, .7);
+            background: rgba(92, 184, 92, .14);
         }
 
-            .vf-win .vf-badge {
-                background: #5cb85c;
-                color: #fff;
+            .vf-win .glyphicon {
+                color: #5cb85c;
             }
 
         .vf-lose {
-            opacity: .55;
+            opacity: .5;
         }
 
-            .vf-lose .vf-badge {
+            .vf-lose .glyphicon {
                 display: none;
             }
 
         .vf-same {
-            border-color: rgba(240, 173, 78, .8);
+            border-color: rgba(240, 173, 78, .7);
             background: rgba(240, 173, 78, .1);
         }
 
-            .vf-same .vf-badge {
-                background: #f0ad4e;
-                color: #fff;
+            .vf-same .glyphicon {
+                display: none;
             }
 
-        .vf-middle {
+        .vf-mid {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: rgba(255, 255, 255, .08);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
-        .vf-middle-same {
+        .vf-mid-same {
             background: #f0ad4e;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .vf-pages {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 18px;
+            margin-top: 14px;
         }
 
         @@media (max-width: 767px) {
-            .vf-list {
-                grid-template-columns: minmax(0, 1fr);
+            .vf-row {
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 6px 10px;
+                padding: 8px 10px;
+            }
+
+            .vf-when {
+                order: 2;
+                text-align: right;
+            }
+
+            .vf-voter {
+                order: 1;
+            }
+
+            .vf-pair {
+                order: 3;
+                grid-column: 1 / -1;
             }
         }
     </style>
@@ -208,12 +309,69 @@
     </div>
 </div>
 
-@if (Model.PlayerId != null)
+<form class="vf-filters" method="get" action="@AppConsts.CommunityVotesPage" id="vf-filters">
+    @if (Model.ShowVoters)
+    {
+        <div class="form-group">
+            <label for="vf-voter-name">@L["Votes made by"]</label>
+            <input class="form-control input-sm" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
+            <input type="hidden" name="voter" id="vf-voter" value="@Model.VoterId">
+            <datalist id="vf-voters">
+                @foreach (var participant in Model.Participants.Where(participant => participant.Voted))
+                {
+                    <option value="@participant.Name" data-id="@participant.CommunityId"></option>
+                }
+            </datalist>
+        </div>
+    }
+    <div class="form-group">
+        <label for="vf-player-name">@L["Votes about"]</label>
+        <input class="form-control input-sm" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
+        <input type="hidden" name="player" id="vf-player" value="@Model.PlayerId">
+        <datalist id="vf-players">
+            @foreach (var participant in Model.Participants.Where(participant => participant.Compared))
+            {
+                <option value="@participant.Name" data-id="@participant.CommunityId"></option>
+            }
+        </datalist>
+    </div>
+    <div>
+        <button class="btn btn-sm btn-primary" type="submit"><span class="glyphicon glyphicon-filter"></span> @L["Filter"]</button>
+        @if (Model.VoterId != null || Model.PlayerId != null)
+        {
+            <a class="btn btn-sm btn-default" href="@AppConsts.CommunityVotesPage"><span class="glyphicon glyphicon-remove"></span> @L["Clear"]</a>
+        }
+    </div>
+</form>
+
+@if (Model.VoterId != null || Model.PlayerId != null)
 {
-    <div class="vf-filter">
-        <img src="/avatar/@Model.PlayerId" alt="@Model.PlayerName" onerror="imgOnError(this)">
-        <span>@L["Comparisons of {0}", Model.PlayerName ?? ""]</span>
-        <a href="@AppConsts.CommunityVotesPage" title="@L["Show every vote"]" aria-label="@L["Show every vote"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+    <div class="vf-chips">
+        @if (Model.VoterId != null)
+        {
+            <span class="vf-chip">
+                <img src="/avatar/@Model.VoterId" alt="@Model.VoterName" onerror="imgOnError(this)">
+                <span>@L["Votes made by {0}", Model.VoterName ?? ""]</span>
+                <a href="@Url(null, Model.PlayerId)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+            </span>
+        }
+        @if (Model.PlayerId != null)
+        {
+            <span class="vf-chip">
+                <img src="/avatar/@Model.PlayerId" alt="@Model.PlayerName" onerror="imgOnError(this)">
+                <span>@L["Comparisons of {0}", Model.PlayerName ?? ""]</span>
+                <a href="@Url(Model.VoterId, null)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+            </span>
+            @if (rating != null)
+            {
+                <span class="vf-summary">
+                    <span>@L["Rating"]: <b>@Display.Number((decimal)Math.Round(rating.Rating))</b></span>
+                    <span style="color: #5cb85c">@L["Wins"]: <b>@rating.Wins</b></span>
+                    <span style="color: #f0ad4e">@L["Draws"]: <b>@rating.Draws</b></span>
+                    <span style="color: #d9534f">@L["Losses"]: <b>@rating.Losses</b></span>
+                </span>
+            }
+        }
     </div>
 }
 
@@ -234,33 +392,31 @@ else
             var same = vote.Outcome == CommunityVoteOutcome.SameLevel;
             var leftClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Left ? "vf-win" : "vf-lose";
             var rightClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Right ? "vf-win" : "vf-lose";
-            var badge = same ? L["Same level"] : L["Better"];
 
-            <div class="vf-card">
-                <div class="vf-voter">
-                    @if (Model.ShowVoters)
-                    {
-                        <img src="/avatar/@vote.VoterId" alt="@vote.VoterName" onerror="imgOnError(this)">
-                        <span>@L["{0} voted", vote.VoterName.TruncatePlayerName()]</span>
-                    }
-                    else
-                    {
-                        <span class="glyphicon glyphicon-user"></span>
-                        <span>@L["A player voted"]</span>
-                    }
-                    <time datetime="@vote.CreatedAtUtc.ToString("o")">@LiveDisplay.ShortDateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
-                </div>
-                <div class="vf-duel">
-                    <a class="vf-player @leftClass" href="@PlayerFilter(vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
-                        <img src="/avatar/@vote.LeftPlayerId" alt="@vote.LeftName" onerror="imgOnError(this)">
-                        <span class="vf-name">@vote.LeftName</span>
-                        <span class="vf-badge">@badge</span>
+            <div class="vf-row">
+                <time class="vf-when" datetime="@vote.CreatedAtUtc.ToString("o")">@LiveDisplay.ShortDateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
+                @if (Model.ShowVoters)
+                {
+                    <a class="vf-voter" href="@Url(vote.VoterId, Model.PlayerId)" title="@L["See the votes made by this player"]">
+                        <img src="/avatar/@vote.VoterId" alt="" onerror="imgOnError(this)">
+                        <span>@vote.VoterName</span>
                     </a>
-                    <span class="vf-middle@(same ? " vf-middle-same" : "")">@(same ? "=" : "VS")</span>
-                    <a class="vf-player @rightClass" href="@PlayerFilter(vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
-                        <img src="/avatar/@vote.RightPlayerId" alt="@vote.RightName" onerror="imgOnError(this)">
+                }
+                else
+                {
+                    <span class="vf-voter"><span class="glyphicon glyphicon-user"></span> <span>@L["A player voted"]</span></span>
+                }
+                <div class="vf-pair">
+                    <a class="vf-player @leftClass" href="@Url(Model.VoterId, vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
+                        <img src="/avatar/@vote.LeftPlayerId" alt="" onerror="imgOnError(this)">
+                        <span class="vf-name">@vote.LeftName</span>
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </a>
+                    <span class="vf-mid@(same ? " vf-mid-same" : "")" title="@(same ? L["Same level"] : L["Better"])">@(same ? "=" : "VS")</span>
+                    <a class="vf-player vf-right @rightClass" href="@Url(Model.VoterId, vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
+                        <img src="/avatar/@vote.RightPlayerId" alt="" onerror="imgOnError(this)">
                         <span class="vf-name">@vote.RightName</span>
-                        <span class="vf-badge">@badge</span>
+                        <span class="glyphicon glyphicon-ok"></span>
                     </a>
                 </div>
             </div>
@@ -270,15 +426,51 @@ else
     <div class="vf-pages">
         @if (Model.Page > 1)
         {
-            <a class="btn btn-default" href="@PageUrl(Model.Page - 1)">
+            <a class="btn btn-default" href="@Url(Model.VoterId, Model.PlayerId, Model.Page - 1)">
                 <span class="glyphicon glyphicon-chevron-left"></span> @L["Newer"]
             </a>
         }
         @if (Model.HasMore)
         {
-            <a class="btn btn-default" href="@PageUrl(Model.Page + 1)">
+            <a class="btn btn-default" href="@Url(Model.VoterId, Model.PlayerId, Model.Page + 1)">
                 @L["Older"] <span class="glyphicon glyphicon-chevron-right"></span>
             </a>
         }
     </div>
 }
+
+<script>
+    (function () {
+        var form = document.getElementById('vf-filters');
+
+        function resolve(nameId, listId, hiddenId) {
+            var input = document.getElementById(nameId);
+            var hidden = document.getElementById(hiddenId);
+
+            if (!input || !hidden)
+                return;
+
+            var text = input.value.trim().toLowerCase();
+            var match = Array.prototype.find.call(document.getElementById(listId).options, function (option) {
+                return option.value.toLowerCase() === text;
+            });
+
+            hidden.value = match ? match.getAttribute('data-id') : '';
+            hidden.disabled = !hidden.value;
+        }
+
+        form.addEventListener('submit', function () {
+            resolve('vf-voter-name', 'vf-voters', 'vf-voter');
+            resolve('vf-player-name', 'vf-players', 'vf-player');
+        });
+
+        ['vf-voter-name', 'vf-player-name'].forEach(function (id) {
+            var input = document.getElementById(id);
+
+            if (input)
+                input.addEventListener('change', function () {
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                });
+        });
+    })();
+</script>
