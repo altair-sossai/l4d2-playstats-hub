@@ -181,6 +181,7 @@ Quase tudo é alterado na área de administração do site. As poucas configura�
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` ou `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Como chegar ao banco de dados. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Outros proxies reversos cujos cabeçalhos `X-Forwarded-*` o site aceita: endereços IP ou redes como `10.0.0.0/8`, separados por vírgulas. Esta máquina (`127.0.0.1` e `::1`), onde o instalador coloca o Caddy, é sempre confiável. | vazio |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Opcional. A connection string de um recurso Azure Application Insights: o site passa a enviar o que as pessoas abrem, quanto tempo cada página e consulta leva e os erros. As consultas dos servidores de jogo, os avatares e os arquivos estáticos ficam de fora. | vazio (desligado) |
 
 Depois de editar o arquivo, reinicie: `playstats-hub restart`.
 

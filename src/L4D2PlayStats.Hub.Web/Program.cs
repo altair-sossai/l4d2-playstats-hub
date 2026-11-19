@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Web.Infrastructure.Telemetry;
 using System.Security.Claims;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.Json.Serialization;
@@ -34,6 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.Local.json", true, true);
 
+builder.Services.AddHubTelemetry(builder.Configuration);
 builder.Services.AddHubCore();
 builder.Services.AddHubDatabase(builder.Configuration, builder.Environment);
 
