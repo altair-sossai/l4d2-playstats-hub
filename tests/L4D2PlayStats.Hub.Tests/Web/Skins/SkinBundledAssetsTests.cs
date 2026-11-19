@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
@@ -82,7 +83,7 @@ public class SkinBundledAssetsTests
         Assert.HasCount(BundledSkins, skins);
         Assert.HasCount(BundledSkins, await factory.SkinsAsync());
         Assert.Contains($"src=\"{BundledThumbnail}\"", shop);
-        Assert.Contains($"<meta property=\"og:image\" content=\"http://localhost{BundledThumbnail}\">", shop);
+        Assert.MatchesRegex(new Regex("<meta property=\"og:image\" content=\"http://localhost/imgs/skins/[a-z0-9-]+\\.jpg\">"), shop);
         Assert.Contains($"class=\"sk-gallery\" data-shots=\"{CoreConsts.SkinDefaultAssetsUrl}/skin-shots/{Bundled}/\" data-version=\"3\"", shop);
         Assert.DoesNotContain($"{CoreConsts.SkinDefaultAssetsUrl}/skins/", shop);
     }
