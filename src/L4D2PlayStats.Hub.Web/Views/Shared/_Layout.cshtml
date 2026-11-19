@@ -298,6 +298,36 @@
         .nav-compact .nav-stars-label {
             display: none;
         }
+
+        .field-help {
+            margin-left: 4px;
+            color: #8a8f98;
+            cursor: help;
+            font-size: 13px;
+            font-weight: normal;
+            vertical-align: 1px;
+        }
+
+        .field-help:hover,
+        .field-help:focus {
+            color: #5bc0de;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .field-help-more {
+            color: #5bc0de;
+            cursor: pointer;
+        }
+
+        .field-help-more:hover,
+        .field-help-more:focus {
+            color: #8fd9ef;
+        }
+
+        #field-help-modal .modal-body p:last-child {
+            margin-bottom: 0;
+        }
     </style>
 
     @await RenderSectionAsync("Styles", false)
@@ -829,7 +859,36 @@
             lazyLoadCharts();
         });
 
+        function setUpFieldHelp() {
+            var more = $('#field-help-modal').data('more');
+
+            $('.field-help-more').each(function () {
+                var link = $(this);
+
+                link.attr('title', link.data('help-summary') + ' ' + more);
+            });
+
+            $(document).on('click', '.field-help-more', function (event) {
+                var link = $(this);
+                var body = $('#field-help-modal .modal-body').empty();
+
+                event.preventDefault();
+                link.tooltip('hide');
+
+                $('#field-help-modal .modal-title').text(link.data('help-title'));
+
+                String(link.data('help-details')).split('\n').forEach(function (paragraph) {
+                    if (paragraph.trim())
+                        $('<p>').text(paragraph.trim()).appendTo(body);
+                });
+
+                $('#field-help-modal').modal('show');
+            });
+        }
+
         $(document).ready(function () {
+            setUpFieldHelp();
+
             $('[data-toggle="tooltip"]').tooltip();
 
             $('.pulsate').each(function () {
@@ -854,5 +913,20 @@
         gtag('config', @Json.Serialize(site.GoogleAnalyticsId));
     </script>
 }
+
+<div class="modal fade" id="field-help-modal" tabindex="-1" role="dialog" data-more="@L["Click the icon for more details."]">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
