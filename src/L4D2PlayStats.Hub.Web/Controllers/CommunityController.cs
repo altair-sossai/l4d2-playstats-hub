@@ -42,6 +42,7 @@ public class CommunityController(
         {
             Players = [.. entries.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId))))],
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
+            MinimumMatches = settings.MinimumMatchesToBeCandidate,
             PlayerPages = playerPages
         };
 

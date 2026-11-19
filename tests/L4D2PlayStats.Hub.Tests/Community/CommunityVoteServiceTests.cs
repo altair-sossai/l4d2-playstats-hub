@@ -531,6 +531,53 @@ public class CommunityVoteServiceTests
     }
 
     [TestMethod]
+    public async Task PlayersWhoHaveNotPlayedForTooLongAreNotCandidates()
+    {
+        using var community = new CommunityTestHub();
+
+        var veterans = community.TeamB.Take(2).ToArray();
+
+        await community.PlayAsync(CommunityTestHub.Night.AddDays(-200));
+        await community.PlayAsync(CommunityTestHub.Night, veterans);
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, CandidatePlayedWithinDays = 90, VotesPerDay = EnoughVotes });
+
+        var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
+
+        Assert.HasCount(10, pairs);
+        Assert.IsFalse(pairs.Any(pair => veterans.Contains(pair.Left) || veterans.Contains(pair.Right)));
+    }
+
+    [TestMethod]
+    public async Task WithZeroDaysPlayersAreCandidatesHoweverLongAgoTheyPlayed()
+    {
+        using var community = new CommunityTestHub();
+
+        var veterans = community.TeamB.Take(2).ToArray();
+
+        await community.PlayAsync(CommunityTestHub.Night.AddDays(-200));
+        await community.PlayAsync(CommunityTestHub.Night, veterans);
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, CandidatePlayedWithinDays = 0, VotesPerDay = EnoughVotes });
+
+        var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
+
+        Assert.HasCount(21, pairs);
+        Assert.IsTrue(pairs.Any(pair => veterans.Contains(pair.Left) || veterans.Contains(pair.Right)));
+    }
+
+    [TestMethod]
+    public void TheDaysSinceTheLastMatchGiveTheOldestMatchThatCounts()
+    {
+        var now = new DateTime(2026, 11, 15, 12, 0, 0, DateTimeKind.Utc);
+        var settings = new CommunityRankingSettings { CandidatePlayedWithinDays = -5 };
+
+        settings.Normalize();
+
+        Assert.AreEqual(0, settings.CandidatePlayedWithinDays);
+        Assert.IsNull(settings.CandidatesPlayedSince(now));
+        Assert.AreEqual(now.AddDays(-90), new CommunityRankingSettings { CandidatePlayedWithinDays = 90 }.CandidatesPlayedSince(now));
+    }
+
+    [TestMethod]
     public async Task APlayerWhoStopsBeingACandidateLeavesThePairOnOffer()
     {
         using var community = new CommunityTestHub();

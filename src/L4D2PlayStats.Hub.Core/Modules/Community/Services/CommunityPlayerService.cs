@@ -14,10 +14,19 @@ public class CommunityPlayerService(HubDbContext dbContext) : ICommunityPlayerSe
         return Played().CountAsync(p => p.CommunityId == communityId, cancellationToken);
     }
 
-    public async Task<HashSet<long>> CandidatesAsync(int minimumMatches, CancellationToken cancellationToken = default)
+    public async Task<HashSet<long>> CandidatesAsync(int minimumMatches, DateTime? playedSince = null, CancellationToken cancellationToken = default)
     {
-        var candidates = await Played()
-            .Where(p => p.CommunityId > AppConsts.SteamCommunityIdBase)
+        var players = Played().Where(p => p.CommunityId > AppConsts.SteamCommunityIdBase);
+
+        if (playedSince != null)
+        {
+            var since = playedSince.Value;
+            var recent = Played().Where(p => p.Match!.LastFileDate >= since).Select(p => p.CommunityId);
+
+            players = players.Where(p => recent.Contains(p.CommunityId));
+        }
+
+        var candidates = await players
             .GroupBy(p => p.CommunityId)
             .Where(group => group.Count() >= minimumMatches)
             .Select(group => group.Key)

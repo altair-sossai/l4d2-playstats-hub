@@ -30,7 +30,7 @@ El ranking de la comunidad es un segundo ranking, construido a partir de lo que 
 | Comparaciones | Cuántas veces se juzgó al jugador frente a otro jugador. |
 | Victorias, Empates, Derrotas | Cuántas comparaciones ganó, empató y perdió el jugador. |
 
-Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El mínimo está escrito debajo de la tabla. **Votar** abre la página de votación.
+Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla. **Votar** abre la página de votación.
 
 ## Votar
 
@@ -55,6 +55,7 @@ Después de cada respuesta la página marca tu elección y entra la siguiente pa
 | Tienes que haber jugado un número mínimo de partidas, contadas en todas las temporadas, del ranking o no. | 10 |
 | Tienes un número de votos por día. El día sigue la zona horaria del sitio. Solo las respuestas que juzgan (mejor o mismo nivel) gastan un voto; "No lo conozco" no. | 20 |
 | Un jugador se ofrece para comparar solo después de un número mínimo de partidas. | 1 |
+| Un jugador se ofrece solo si su última partida fue dentro de un número de días. Con 0, sin importar cuánto hace. | 0 |
 | Nunca se te pregunta por ti mismo, ni dos veces por la misma pareja. | |
 
 Cuando no puedes votar, la página dice por qué: tienes que iniciar sesión, necesitas más partidas (con tu cantidad), usaste todos los votos del día o no queda nadie para que compares.
@@ -90,7 +91,8 @@ La puntuación es permanente. No vuelve a empezar con la temporada.
 |---|---|---|
 | Mínimo de partidas para votar | Partidas que un jugador tiene que haber jugado, en todas las temporadas, para votar. | 10 |
 | Votos por día | Respuestas que juzgan que cada votante puede dar por día. Como mínimo 1. | 20 |
-| Mínimo de partidas para ser comparado | Partidas que un jugador tiene que haber jugado para que se ofrezca para comparar. | 1 |
+| Mínimo de partidas para ser comparado y aparecer en la lista | Partidas que un jugador tiene que haber jugado, en todas las temporadas, para que se ofrezca para comparar y para aparecer en el ranking de la comunidad. | 1 |
+| Máximo de días desde la última partida para ser comparado | Un jugador cuya última partida es más antigua que esto deja de ofrecerse para comparar, pero sigue en el ranking de la comunidad. 0 es sin límite. | 0 |
 | Mínimo de comparaciones para aparecer en la lista | Comparaciones que un jugador necesita para aparecer en el ranking de la comunidad. | 5 |
 | Factor K de Elo | Cuánto mueve las puntuaciones un voto, de 1 a 200. | 32 |
 | Puntuación inicial | La puntuación de un jugador que nunca fue comparado. | 1500 |

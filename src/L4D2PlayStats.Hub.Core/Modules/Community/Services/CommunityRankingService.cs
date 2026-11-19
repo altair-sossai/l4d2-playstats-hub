@@ -17,14 +17,17 @@ public class CommunityRankingService(
     public async Task<IReadOnlyList<CommunityRankingEntry>> ListAsync(CancellationToken cancellationToken = default)
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+        var eligible = await playerService.CandidatesAsync(settings.MinimumMatchesToBeCandidate, cancellationToken: cancellationToken);
 
-        var ratings = await dbContext.Set<CommunityRating>()
+        var rated = await dbContext.Set<CommunityRating>()
             .AsNoTracking()
             .Where(r => r.Comparisons >= settings.MinimumComparisonsToBeListed)
             .OrderByDescending(r => r.Rating)
             .ThenByDescending(r => r.Comparisons)
             .ThenBy(r => r.CommunityId)
             .ToListAsync(cancellationToken);
+
+        var ratings = rated.Where(r => eligible.Contains(r.CommunityId)).ToList();
 
         var names = await playerService.NamesAsync([.. ratings.Select(r => r.CommunityId)], cancellationToken);
 

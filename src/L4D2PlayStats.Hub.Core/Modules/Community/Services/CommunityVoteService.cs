@@ -148,7 +148,7 @@ public class CommunityVoteService(
 
     private async Task<CommunitySelection> SelectionAsync(long voterId, CommunityRankingSettings settings, CancellationToken cancellationToken)
     {
-        var eligible = await playerService.CandidatesAsync(settings.MinimumMatchesToBeCandidate, cancellationToken);
+        var eligible = await playerService.CandidatesAsync(settings.MinimumMatchesToBeCandidate, settings.CandidatesPlayedSince(clock.UtcNow), cancellationToken);
         var familiar = await playerService.FamiliarAsync(voterId, cancellationToken);
         var ratings = await dbContext.Set<CommunityRating>().AsNoTracking().ToDictionaryAsync(r => r.CommunityId, cancellationToken);
 

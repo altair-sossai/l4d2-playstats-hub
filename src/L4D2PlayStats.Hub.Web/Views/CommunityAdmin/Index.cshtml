@@ -53,10 +53,14 @@
                         <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
                     </div>
                     <div class="form-group">
-                        <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared"]</label>
+                        <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"]</label>
                         <input class="form-control" id="MinimumMatchesToBeCandidate" name="MinimumMatchesToBeCandidate" type="number" min="0" value="@settings.MinimumMatchesToBeCandidate">
                     </div>
-                    <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
+                    <div class="form-group">
+                        <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"]</label>
+                        <input class="form-control" id="CandidatePlayedWithinDays" name="CandidatePlayedWithinDays" type="number" min="0" value="@settings.CandidatePlayedWithinDays">
+                    </div>
+                    <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
                 </div>
             </div>
         </div>

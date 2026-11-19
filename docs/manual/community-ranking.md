@@ -30,7 +30,7 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
-Only players with enough comparisons are listed: 5 by default. The minimum is written under the table. **Vote** opens the voting page.
+Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table. **Vote** opens the voting page.
 
 ## Voting
 
@@ -55,6 +55,7 @@ After each answer the page marks your choice and the next pair slides in. On a c
 | You must have played a minimum number of matches, counted over all seasons, ranked or not. | 10 |
 | You have a number of votes per day. A day follows the time zone of the site. Only answers that judge (better or same level) use a vote; "I don't know" does not. | 20 |
 | A player is offered for comparison only after a minimum number of matches. | 1 |
+| A player can be offered only if their last match was within a number of days. With 0, however long ago it was. | 0 |
 | You are never asked about yourself, and never asked about the same pair twice. | |
 
 When you cannot vote, the page says why: you need to sign in, you need more matches (with your count), you used all the votes of the day, or there is nobody left for you to compare.
@@ -90,7 +91,8 @@ The rating is permanent. It does not start again with the season.
 |---|---|---|
 | Minimum matches to vote | Matches a player must have played, over all seasons, to vote. | 10 |
 | Votes per day | Judging answers each voter can give per day. At least 1. | 20 |
-| Minimum matches to be compared | Matches a player must have played to be offered for comparison. | 1 |
+| Minimum matches to be compared and listed | Matches a player must have played, over all seasons, to be offered for comparison and to appear in the community ranking. | 1 |
+| Maximum days since the last match to be compared | A player whose last match is older than this is no longer offered for comparison, but stays in the community ranking. 0 means no limit. | 0 |
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |
 | Elo K factor | How much one vote moves the ratings, from 1 to 200. | 32 |
 | Initial rating | The rating of a player who was never compared. | 1500 |

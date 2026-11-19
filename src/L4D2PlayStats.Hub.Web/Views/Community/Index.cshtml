@@ -174,3 +174,8 @@ else
 {
     <small class="text-muted" style="display: block; margin-top: 6px; font-style: italic">@L["Minimum comparisons to be listed:"] @Model.MinimumComparisons</small>
 }
+
+@if (Model.MinimumMatches > 1)
+{
+    <small class="text-muted" style="display: block; margin-top: 6px; font-style: italic">@L["Minimum matches to be listed:"] @Model.MinimumMatches</small>
+}

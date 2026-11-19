@@ -430,6 +430,7 @@ public class CommunityWebTests
             ["MinimumMatchesToVote"] = "25",
             ["VotesPerDay"] = "0",
             ["MinimumMatchesToBeCandidate"] = "4",
+            ["CandidatePlayedWithinDays"] = "90",
             ["MinimumComparisonsToBeListed"] = "-3",
             ["KFactor"] = "999",
             ["InitialRating"] = "1200"
@@ -443,6 +444,8 @@ public class CommunityWebTests
         Assert.AreEqual(25, settings.MinimumMatchesToVote);
         Assert.AreEqual(1, settings.VotesPerDay);
         Assert.AreEqual(4, settings.MinimumMatchesToBeCandidate);
+        Assert.AreEqual(90, settings.CandidatePlayedWithinDays);
+        Assert.Contains("name=\"CandidatePlayedWithinDays\" type=\"number\" min=\"0\" value=\"90\"", page);
         Assert.AreEqual(0, settings.MinimumComparisonsToBeListed);
         Assert.AreEqual(200, settings.KFactor);
         Assert.AreEqual(1200, settings.InitialRating);
@@ -456,6 +459,7 @@ public class CommunityWebTests
         Assert.AreEqual(10, settings.MinimumMatchesToVote);
         Assert.AreEqual(20, settings.VotesPerDay);
         Assert.AreEqual(1, settings.MinimumMatchesToBeCandidate);
+        Assert.AreEqual(0, settings.CandidatePlayedWithinDays);
         Assert.AreEqual(5, settings.MinimumComparisonsToBeListed);
         Assert.AreEqual(32, settings.KFactor);
         Assert.AreEqual(1500, settings.InitialRating);
