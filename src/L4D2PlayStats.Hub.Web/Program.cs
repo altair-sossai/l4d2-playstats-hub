@@ -123,7 +123,12 @@ localization.RequestCultureProviders.Add(new SiteCultureProvider());
 app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
+{
     app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandlingPath = AppConsts.ErrorPath, SuppressDiagnosticsCallback = _ => true });
+    app.UseHsts();
+}
+
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecute(AppConsts.ErrorStatusPath));
 app.UseMiddleware<ErrorLoggingMiddleware>();

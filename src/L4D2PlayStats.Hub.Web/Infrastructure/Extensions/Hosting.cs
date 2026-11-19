@@ -52,6 +52,6 @@ public static class Hosting
         }
 
         await File.WriteAllTextAsync(paths.SetupCode, token);
-        app.Logger.LogWarning("Setup is pending. Open /setup and use this setup code: {SetupToken}", token);
+        app.Logger.LogInformation("Setup is pending. Open /setup and use this setup code: {SetupToken}", token);
     }
 }

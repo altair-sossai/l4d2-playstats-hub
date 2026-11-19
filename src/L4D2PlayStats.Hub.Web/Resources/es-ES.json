@@ -1012,6 +1012,8 @@
   "Security and diagnostic events": "Eventos de seguridad y de diagnóstico",
   "What it sends": "Qué envía",
   "Privacy": "Privacidad",
+  "Remove the saved key": "Quitar la clave guardada",
+  "A key is saved. Leave empty to keep it.": "Hay una clave guardada. Déjalo vacío para conservarla.",
   "When a player joins a game server, the site records the Steam account, the name and the IP address. These records feed Player connections and the related accounts.\nEvery day the site deletes the connections not seen for longer than this. A shorter period keeps less personal data, as data protection laws ask; a longer one finds more related accounts.\nThe default is 3 months. From 1 to 60.": "Cuando un jugador entra a un servidor de juego, el sitio registra la cuenta de Steam, el nombre y la dirección IP. Esos registros alimentan las Conexiones de jugadores y las cuentas relacionadas.\nTodos los días el sitio borra las conexiones que no aparecen hace más tiempo que esto. Un plazo menor guarda menos datos personales, como piden las leyes de protección de datos; uno mayor encuentra más cuentas relacionadas.\nEl valor predeterminado es 3 meses. De 1 a 60.",
   "Connections older than this, with the IP addresses of the players, are deleted every day.": "Las conexiones más antiguas que esto, con las direcciones IP de los jugadores, se borran todos los días.",
   "Months to keep the player connections": "Meses para guardar las conexiones de los jugadores",

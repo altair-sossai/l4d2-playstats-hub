@@ -107,7 +107,7 @@ public class SetupController(
         current.Site.TimeZone = model.Site.TimeZone;
         current.Site.DefaultCulture = model.Site.DefaultCulture;
         current.Site.PublicUrl = model.Site.PublicUrl;
-        current.Site.SteamApiKey = model.Site.SteamApiKey;
+        current.Site.SteamApiKey = string.IsNullOrWhiteSpace(model.Site.SteamApiKey) ? null : model.Site.SteamApiKey.Trim();
         current.Season.LengthInMonths = model.Season.LengthInMonths;
         current.Logo = model.Logo;
 

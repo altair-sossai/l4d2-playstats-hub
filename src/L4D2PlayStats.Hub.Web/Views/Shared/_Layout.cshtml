@@ -933,7 +933,7 @@
         });
     </script>
 
-@if (!string.IsNullOrWhiteSpace(site.GoogleAnalyticsId))
+@if (!string.IsNullOrWhiteSpace(site.GoogleAnalyticsId) && ViewData[AppConsts.AdministrationAreaViewData] == null)
 {
     <script async src="https://www.googletagmanager.com/gtag/js?id=@site.GoogleAnalyticsId"></script>
     <script>

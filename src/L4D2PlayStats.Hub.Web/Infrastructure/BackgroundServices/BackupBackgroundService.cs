@@ -18,7 +18,7 @@ public class BackupBackgroundService(IServiceProvider serviceProvider, ILogger<B
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {
-                logger.LogError("Could not check whether a backup is due: {Error}", exception.Message);
+                logger.LogError("Could not check whether a backup is due: {Error}", exception.GetType().Name);
             }
         }
     }

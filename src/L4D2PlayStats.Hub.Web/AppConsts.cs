@@ -113,6 +113,7 @@ public static partial class AppConsts
     public const string CommunityPlayersSearchUrl = "/api/community/players";
     public const string CommunityVoterRole = "voter";
     public const int VoteInviteHiddenDays = 7;
+    public const string AdministrationAreaViewData = "AdministrationArea";
     public const int CommunityRankingPageSize = 100;
     public const int CommunityVotersPageSize = 20;
     public const string CommunityVotersAnchor = "ca-voters";

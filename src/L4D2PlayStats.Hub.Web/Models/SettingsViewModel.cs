@@ -11,4 +11,5 @@ public class SettingsViewModel
     public IReadOnlyList<string> TimeZones { get; set; } = [];
     public IFormFile? Logo { get; set; }
     public bool RemoveLogo { get; set; }
+    public bool RemoveSteamApiKey { get; set; }
 }

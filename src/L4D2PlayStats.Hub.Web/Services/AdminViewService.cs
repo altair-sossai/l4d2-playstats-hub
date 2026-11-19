@@ -46,7 +46,10 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
 
         site.Name = string.IsNullOrWhiteSpace(model.Site.Name) ? site.Name : model.Site.Name.Trim();
         site.PublicUrl = string.IsNullOrWhiteSpace(model.Site.PublicUrl) ? null : model.Site.PublicUrl.Trim().TrimEnd('/');
-        site.SteamApiKey = string.IsNullOrWhiteSpace(model.Site.SteamApiKey) ? null : model.Site.SteamApiKey.Trim();
+        if (model.RemoveSteamApiKey)
+            site.SteamApiKey = null;
+        else if (!string.IsNullOrWhiteSpace(model.Site.SteamApiKey))
+            site.SteamApiKey = model.Site.SteamApiKey.Trim();
         site.FooterLinks = FooterLinks.Normalize(model.Site.FooterLinks);
         site.MetaKeywords = MetaKeywords(model.Site.MetaKeywords);
 

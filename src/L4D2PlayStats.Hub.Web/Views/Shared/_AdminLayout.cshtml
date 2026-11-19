@@ -1,6 +1,7 @@
 @inject ICurrentUser CurrentUser
 @{
     Layout = "_Layout";
+    ViewData[AppConsts.AdministrationAreaViewData] = true;
     var administrator = await CurrentUser.IsAdministratorAsync();
 }
 

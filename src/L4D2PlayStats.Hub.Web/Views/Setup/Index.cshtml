@@ -168,7 +168,7 @@
                     </div>
                     <div class="form-group">
                         <label for="Site_SteamApiKey">@L["Steam Web API key (optional)"] @FieldHelp.More(L["A key from Steam that makes the avatars and names of the players load faster. The site works without it."], L["Steam Web API key"], L["The site downloads the avatars and the names of the players from Steam. Without a key it reads the public profile of each player, one at a time, which works but is slower. With a key it asks the Steam Web API for many players at once.\nThe key is also used to show the name and the photo of a player when you type a Steam ID in the administration forms, and to check the names of the skin authors.\nGet a key at steamcommunity.com/dev/apikey, signed in with any Steam account, and paste it here. Keep it private: it is linked to that Steam account. Leave the field empty to stop using it."])</label>
-                        <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" value="@Model.Settings.Site.SteamApiKey" autocomplete="off">
+                        <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" type="password" value="" autocomplete="new-password" placeholder="@(string.IsNullOrWhiteSpace(Model.Settings.Site.SteamApiKey) ? "" : L["A key is saved. Leave empty to keep it."].Value)">
                         <span class="help-block">
                             @L["Optional. Player avatars load without it; with a key they load faster."]
                             <a href="https://steamcommunity.com/dev/apikey" rel="noopener" target="_blank"><u>steamcommunity.com/dev/apikey</u></a>
