@@ -94,7 +94,7 @@ public static partial class AppConsts
     public const string ServerPluginLoadFormat = "sm plugins load {0}.smx";
     public const string ServerReleasesUrl = "https://github.com/altair-sossai/l4d2-playstats-hub/releases";
     public const string ServerGuideUrl = "https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/docs/game-server.md";
-    public static readonly string[] ServerPlugins = ["l4d2_playstats_sync", "l4d2_gameinfo_sync", "l4d2_ranking", "l4d2_show_patent_icon", "l4d2_weapon_skins"];
+    public static readonly string[] ServerPlugins = ["optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins"];
 
     public const string NpgsqlLegacyTimestampSwitch = "Npgsql.EnableLegacyTimestampBehavior";
     public const string SqliteMemoryDataSource = ":memory:";

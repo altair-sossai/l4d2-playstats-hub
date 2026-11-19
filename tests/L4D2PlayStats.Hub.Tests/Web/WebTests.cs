@@ -416,8 +416,10 @@ public class WebTests
         Assert.Contains("cfg/sharedplugins.cfg", html);
         Assert.Contains("blob/main/docs/game-server.md", html);
         Assert.DoesNotContain("plugins/README.md", html);
+        Assert.Contains("addons/sourcemod/plugins/optional", html);
+        Assert.Contains("sm plugins load optional/l4d2_playstats_sync.smx at the end of cfg/server.cfg", html);
 
-        foreach (var plugin in new[] { "l4d2_playstats_sync", "l4d2_gameinfo_sync", "l4d2_ranking", "l4d2_show_patent_icon", "l4d2_weapon_skins" })
+        foreach (var plugin in new[] { "optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins" })
             Assert.Contains($"sm plugins load {plugin}.smx", html, plugin);
     }
 

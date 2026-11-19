@@ -54,6 +54,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 | [Instalando com Docker](../install-docker.pt.md) | Se você já usa contêineres. |
 | [Instalando no Azure](../install-azure.pt.md) | Uma máquina virtual ou um App Service. |
 | [Conectando um servidor de jogo](../game-server.pt.md) | Os plugins e suas configurações, do lado do servidor de jogo. |
+| [Trocando o site antigo](../switch-from-old-site.pt.md) | Substituir o site anterior por este, sem mudar os endereços dele. |
 | [Bancos de dados](../databases.pt.md) | SQL Server, PostgreSQL ou MySQL no lugar do SQLite. |
 
 ## Sobre as capturas de tela

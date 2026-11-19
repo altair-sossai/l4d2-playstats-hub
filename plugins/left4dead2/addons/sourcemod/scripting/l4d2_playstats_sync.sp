@@ -32,7 +32,7 @@ public Plugin myinfo =
     name        = "L4D2 - Player Statistics Sync",
     author      = "Altair Sossai",
     description = "Connects the game server to L4D2 PlayStats Hub and uploads the statistics files written by l4d2_playstats",
-    version     = "2.0.1",
+    version     = "2.0.2",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 

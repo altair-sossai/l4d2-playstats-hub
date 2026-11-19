@@ -68,13 +68,14 @@ Both have a folder named `left4dead2` laid out like the game folder of the serve
 
 | File | What it is |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | The five plugins. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` and `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` and `l4d2_show_patent_icon`, which the match modes load. |
 | `addons/sourcemod/scripting/` | Their sources, only for compiling. |
 | `addons/sourcemod/translations/` | The chat texts. |
 | `addons/sourcemod/configs/weapon_skins.cfg` | The weapons and skins of the skins plugin. |
 | `cfg/playstats.cfg` | Your settings. You edit it in the next step. |
 
-Keep the plugins in `addons/sourcemod/plugins/` itself, not in `optional/`, so they load when the server starts and the site sees the server even when no match is being played.
+The three plugins in `optional/` load only with a match mode (step 5), where Competitive Rework servers already keep them. So that the site sees the server while no match is being played, step 4 also loads `l4d2_playstats_sync` from `cfg/server.cfg`.
 
 `l4d2_playstats_sync.smx` is the only one every server needs. Delete the `.smx` of the plugins you do not want:
 
@@ -90,10 +91,11 @@ Keep the plugins in `addons/sourcemod/plugins/` itself, not in `optional/`, so t
 
 1. Open `cfg/playstats.cfg` on the server.
 2. Paste the two lines from step 1 where the file says `Paste the two lines here`.
-3. Open `cfg/server.cfg` and add this line at the end:
+3. Open `cfg/server.cfg` and add these lines at the end:
 
    ```text
    exec playstats.cfg
+   sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
 That is all you must change. The rest of `cfg/playstats.cfg` lists every other setting of the five plugins, turned off with `//` and with its default value; each one has an explanation above it.
@@ -107,10 +109,10 @@ Each setting belongs in one place: `cfg/playstats.cfg` for the ones that are the
 When a match mode of Competitive Rework loads, it unloads every plugin and loads only the ones in its lists. The list shared by every mode is `cfg/sharedplugins.cfg`. Add these lines to it, leaving out the plugins you deleted:
 
 ```text
-sm plugins load l4d2_playstats_sync.smx
+sm plugins load optional/l4d2_playstats_sync.smx
 sm plugins load l4d2_gameinfo_sync.smx
-sm plugins load l4d2_ranking.smx
-sm plugins load l4d2_show_patent_icon.smx
+sm plugins load optional/l4d2_ranking.smx
+sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
 ```
 
@@ -147,7 +149,8 @@ The patent icons and the weapon skins are files that are not part of the game, s
 2. Put `models/`, `materials/` and the contents of `fastdl/` on a web server players can reach (a FastDL), laid out like the game folder.
 3. In `cfg/server.cfg`, set `sm_cvar sv_allowdownload 1` and `sm_cvar sv_downloadurl "<address of that folder>"`.
 4. In `cfg/playstats.cfg`, turn the skins on: delete the `//` in front of `weapon_skins_enabled` and set it to `"1"`.
-5. Restart the server while it is empty.
+5. To show the patent icons too, do the same with `patent_icon_enabled`.
+6. Restart the server while it is empty.
 
 The details, and how to check that the files are found, are in [Weapon skin and patent files](../plugins/README.md#weapon-skin-and-patent-files).
 
@@ -192,6 +195,12 @@ playstats_ingame_url "http://203.0.113.10:5080"
 
 When `playstats_ingame_url` is empty, the plugin uses `playstats_url`. [Installing on a Linux VPS](install-linux.md#the-address-used-inside-the-game) explains which address to use.
 
+The address players read in chat, in the ranking hint and in the skin shop link, is `playstats_public_url`; when it is empty, the plugins show `playstats_url`. Set it when the plugins reach the site by an IP address but players know it by a name:
+
+```text
+playstats_public_url "https://stats.example.com"
+```
+
 ## What each status means
 
 | Status | Meaning | What to do |
@@ -215,8 +224,11 @@ If the game server used the earlier plugins, remove their settings, or they keep
 | `playstats_access_token` | `playstats_token` |
 | `l4d2_web_url`, `l4d2_web_secret` | The PlayStats plugins no longer read them: they use `playstats_url` and `playstats_token`. Only the anti-cheat plugin still does; see [Optional: the Anti-Cheat plugin](#optional-the-anti-cheat-plugin). |
 | `ranking_url` | `playstats_ingame_url`, only if the game needs a different address |
+| The site name in the ranking hint and the address in the skin shop link (`l4d2_web_url`) | `playstats_public_url`, only if players know the site by another address |
 
-Look for them in `cfg/server.cfg`, in your secrets file, and in the `shared_cvars.cfg` of each match mode. Old settings set with `confogl_addcvar playstats_url` must go too, so that `cfg/playstats.cfg` is the only place for the address and the token. Replace the old `.smx` files, including those in `addons/sourcemod/plugins/optional/`, with the new ones, so there is only one copy of each plugin.
+Look for them in `cfg/server.cfg`, in your secrets file, and in the `shared_cvars.cfg` of each match mode. Old settings set with `confogl_addcvar playstats_url` must go too, so that `cfg/playstats.cfg` is the only place for the address and the token. Copy the new `.smx` files over the old ones: the three in `addons/sourcemod/plugins/optional/` replace the earlier ones there, so the match modes keep loading them with the lines they already have. If an old copy of one of them is in `addons/sourcemod/plugins/` itself, delete it, so there is only one copy of each plugin.
+
+For the whole move from the earlier site to this one, with the order of the steps and how to go back, see [Switching from the old site](switch-from-old-site.md).
 
 ## If something goes wrong
 

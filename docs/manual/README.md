@@ -54,6 +54,7 @@ Pages for players and pages for administrators are marked in the list below. The
 | [Installing with Docker](../install-docker.md) | If you already use containers. |
 | [Installing on Azure](../install-azure.md) | A virtual machine or App Service. |
 | [Connecting a game server](../game-server.md) | The plugins and their settings, on the game server side. |
+| [Switching from the old site](../switch-from-old-site.md) | Replacing the earlier site with this one, without changing its addresses. |
 | [Databases](../databases.md) | SQL Server, PostgreSQL or MySQL instead of SQLite. |
 
 ## About the screenshots

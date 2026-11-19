@@ -73,6 +73,7 @@ Este comando descarga la última versión publicada. La aplicación también se 
 | [Instalación con Docker](docs/install-docker.es.md) | Si ya usas contenedores. |
 | [Instalación en Azure](docs/install-azure.es.md) | Una máquina virtual o App Service. |
 | [Conectar un servidor de juego](docs/game-server.es.md) | Los plugins y sus ajustes. |
+| [Cambiar desde el sitio antiguo](docs/switch-from-old-site.es.md) | Reemplazar una copia en funcionamiento del sitio anterior, paso a paso. |
 | [Manual de usuario](docs/manual/README.es.md) | Todas las funciones del sitio, para administradores y jugadores. |
 
 ## Cómo encaja todo
@@ -113,6 +114,7 @@ La migración se hace paso a paso. Los repositorios antiguos se archivan cuando 
 | [docs/install-docker.es.md](docs/install-docker.es.md) | Ejecutar la imagen publicada. |
 | [docs/install-azure.es.md](docs/install-azure.es.md) | Ejecutar en Azure. |
 | [docs/game-server.es.md](docs/game-server.es.md) | Conectar un servidor de juego, paso a paso. |
+| [docs/switch-from-old-site.es.md](docs/switch-from-old-site.es.md) | El cambio del sitio anterior a este, y cómo volver atrás. |
 | [docs/databases.es.md](docs/databases.es.md) | Usar SQL Server, PostgreSQL o MySQL. |
 | [plugins/README.es.md](plugins/README.es.md) | Todos los plugins, ajustes y comandos. |
 | [docs/roadmap.es.md](docs/roadmap.es.md) | Diseño, decisiones, qué está hecho y qué sigue abierto. |

@@ -49,4 +49,4 @@ Cuando la partida de ranking más reciente lleva a un jugador a otra patente, el
 
 ## Patentes dentro del juego
 
-Con el plugin `l4d2_show_patent_icon`, el servidor de juego le pide al sitio las patentes de los jugadores y muestra el ícono de cada jugador sobre su cabeza antes de que empiece una partida. El plugin necesita los sprites de las patentes en el servidor de juego. [La guía de los plugins](../../plugins/README.es.md) lista sus ajustes.
+Con el plugin `l4d2_show_patent_icon`, el servidor de juego le pide al sitio las patentes de los jugadores y muestra el ícono de cada jugador sobre su cabeza antes de que empiece una partida. El plugin necesita los sprites de las patentes en el servidor de juego. Los íconos están desactivados hasta que `patent_icon_enabled` sea `1`. [La guía de los plugins](../../plugins/README.es.md) lista sus ajustes.

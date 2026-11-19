@@ -27,7 +27,7 @@ public Plugin myinfo =
     name        = "L4D2 - Game Info Sync",
     author      = "Altair Sossai",
     description = "Sends the live match to L4D2 PlayStats Hub: scoreboard, players, events and chat",
-    version     = "2.0.1",
+    version     = "2.0.2",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 

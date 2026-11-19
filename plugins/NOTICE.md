@@ -6,7 +6,7 @@ The plugins in this folder are released under the GNU General Public License, ve
 
 | Files | Author |
 |---|---|
-| `l4d2_playstats_sync.sp`, `l4d2_gameinfo_sync.sp`, `l4d2_ranking.sp`, `l4d2_show_patent_icon.sp`, `l4d2_weapon_skins.sp` in `left4dead2/addons/sourcemod/scripting/`, and their compiled `.smx` files in `left4dead2/addons/sourcemod/plugins/` | Altair Sossai. Moved here from [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server). |
+| `l4d2_playstats_sync.sp`, `l4d2_gameinfo_sync.sp`, `l4d2_ranking.sp`, `l4d2_show_patent_icon.sp`, `l4d2_weapon_skins.sp` in `left4dead2/addons/sourcemod/scripting/`, and their compiled `.smx` files in `left4dead2/addons/sourcemod/plugins/` and its `optional/` folder | Altair Sossai. Moved here from [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server). |
 | `left4dead2/addons/sourcemod/scripting/include/l4d2_playstats_hub.inc` | Altair Sossai. |
 | `left4dead2/addons/sourcemod/translations/**`, `left4dead2/addons/sourcemod/configs/weapon_skins.cfg`, `left4dead2/cfg/playstats.cfg`, `build.ps1`, `build.sh` | Altair Sossai. |
 
