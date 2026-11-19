@@ -399,7 +399,7 @@ public class CommunityWebTests
     }
 
     [TestMethod]
-    public async Task WithoutTheStatisticsModuleTheRankingHasNoLinksToPlayerPages()
+    public async Task WithoutTheStatisticsModuleTheRankingStillLinksToThePlayerPages()
     {
         using var site = new CommunityWebSite();
 
@@ -414,7 +414,8 @@ public class CommunityWebTests
         var ranking = await voter.GetStringAsync("/community");
 
         Assert.Contains($"src=\"/avatar/{pair.Left}\"", ranking);
-        Assert.DoesNotContain("href=\"/player/", ranking);
+        Assert.Contains($"href=\"/player/{pair.Left}\"", ranking);
+        Assert.Contains($"data-profile=\"/player/{pair.Left}\"", ranking);
     }
 
     [TestMethod]

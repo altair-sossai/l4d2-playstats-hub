@@ -572,7 +572,7 @@
                 $modal.find('.ska-weapon').text([$item.data('weapon'), $item.data('skin')].filter(Boolean).join(' · '));
                 $modal.find('.ska-avatar').attr({ src: $item.data('avatar'), alt: $item.data('player-name') });
                 $modal.find('.ska-player-name').text($item.data('player-name'));
-                $modal.find('.ska-player-link').attr('href', '/player/' + encodeURIComponent(selected.player));
+                $modal.find('.ska-player-link').attr('href', @Json.Serialize(AppConsts.PlayerUrlPrefix) + encodeURIComponent(selected.player));
                 $modal.find('.ska-player-filter').attr('href', playerUrl(selected.player));
                 $modal.find('.ska-player-id').text(selected.player);
                 $modal.find('.ska-price').text($item.data('price'));

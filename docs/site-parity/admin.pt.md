@@ -182,7 +182,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 |---|---|---|---|
 | Título da página e cabeçalho "Administradores", menu de administração | `Views/Admin/Administrators.cshtml:3` | `done` |  |
 | Coluna da tabela "Nome" ("-" quando não há) | `Views/Admin/Administrators.cshtml:12` | `done` | Adicionado o avatar de cada administrador (oculto no celular); a sua própria linha é destacada como as linhas "sou eu" do resto do site. |
-| Coluna da tabela "SteamID64", link para o perfil da Steam | `Views/Admin/Administrators.cshtml:13` | `done` |  |
+| Coluna da tabela "SteamID64", link para o perfil da Steam | `Views/Admin/Administrators.cshtml:13` | `adapted` | O link vai para a página do jogador no site, que oferece o perfil Steam. |
 | Coluna da tabela "Desde" | `Views/Admin/Administrators.cshtml:14` | `done` |  |
 | Botão "Remover" (`POST /admin/administrators/{id}/delete`, pergunta "Remover este administrador?") | `Views/Admin/Administrators.cshtml:28` | `done` |  |
 | Badge "Você" na sua própria linha, no lugar do botão | `Views/Admin/Administrators.cshtml:34` | `done` | `label label-default`. |
@@ -226,7 +226,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Botão "Votar" | `Views/Community/Index.cshtml:10` | `done` |  |
 | Mensagem "Ninguém tem comparações suficientes para aparecer na lista ainda." | `Views/Community/Index.cshtml:15` | `done` | Jumbotron, como o ranking vazio da página inicial. |
 | Coluna da tabela "#" (posição; o primeiro lugar se destaca) | `Views/Community/Index.cshtml:23` | `done` | Como no ranking da página inicial: medalhas para os três primeiros lugares, `#N` para os demais. |
-| Coluna da tabela "Jogador": avatar e nome, com link para a página do jogador quando o módulo de ranking está ligado | `Views/Community/Index.cshtml:24` | `adapted` | As mesmas duas células do ranking da página inicial (avatar, nome). O nome é encurtado por `TruncatePlayerName`, como no ranking da página inicial; o nome completo fica no título do avatar. |
+| Coluna da tabela "Jogador": avatar e nome, com link para a página do jogador | `Views/Community/Index.cshtml:24` | `adapted` | As mesmas duas células do ranking da página inicial (avatar, nome). O nome é encurtado por `TruncatePlayerName`, como no ranking da página inicial; o nome completo fica no título do avatar. |
 | Coluna da tabela "Patente" | novo | `done` | Adicionada, como no ranking da página inicial: a patente do jogador na temporada atual. Só com o módulo de ranking ligado. |
 | Coluna da tabela "Pontuação" | `Views/Community/Index.cshtml:25` | `done` |  |
 | Coluna da tabela "Comparações" | `Views/Community/Index.cshtml:26` | `adapted` | Coluna no desktop. No celular, a coluna fica oculta (`hide-mobile`) e o número vira uma linha abaixo do nome; a página em Bootstrap 5, em vez disso, tinha rolagem lateral. |
@@ -277,7 +277,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Painel "Manutenção": explicação e botão "Reconstruir as pontuações" (pergunta "Reconstruir todas as pontuações agora?") | `Views/CommunityAdmin/Index.cshtml:73` | `done` |  |
 | Painel "Votantes": explicação e o formulário para remover os votos de um SteamID64 (pergunta "Remover todos os votos deste votante?") | `Views/CommunityAdmin/Index.cshtml:85` | `done` |  |
 | Painel "Votantes": mensagem "Ninguém votou ainda." | `Views/CommunityAdmin/Index.cshtml:94` | `done` |  |
-| Painel "Votantes": coluna da tabela "Jogador", avatar e nome com link para o perfil da Steam | `Views/CommunityAdmin/Index.cshtml:102` | `done` | O avatar fica oculto no celular, onde cada célula é uma linha com o seu rótulo. |
+| Painel "Votantes": coluna da tabela "Jogador", avatar e nome com link para o perfil da Steam | `Views/CommunityAdmin/Index.cshtml:102` | `adapted` | O nome leva à página do jogador no site, que oferece o perfil Steam. O avatar fica oculto no celular, onde cada célula é uma linha com o seu rótulo. |
 | Painel "Votantes": coluna da tabela "Votos" | `Views/CommunityAdmin/Index.cshtml:103` | `done` |  |
 | Painel "Votantes": coluna da tabela "Último voto" | `Views/CommunityAdmin/Index.cshtml:104` | `done` |  |
 | Painel "Votantes": botão "Remover votos" em cada linha (pede confirmação) | `Views/CommunityAdmin/Index.cshtml:122` | `done` |  |

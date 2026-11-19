@@ -2,7 +2,6 @@
 @using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Extensions
 @using L4D2PlayStats.Hub.Web.Models.AntiCheat
 @model AntiCheatAdminModel
-@inject ISettingsService Settings
 @{
     ViewData["PageMetadata"] = new PageMetadata
     {
@@ -12,8 +11,6 @@
     };
 
     var culture = CultureInfo.CurrentUICulture;
-    var modules = await Settings.GetAsync<ModuleSettings>();
-    var ranking = modules.IsEnabled(HubModule.Ranking);
     var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
     var pagination = PaginationModel.Of(Model.Players, number => $"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}&{query}page={number}");
     var whitelistShown = Model.ShownList == AntiCheatAccessList.Whitelist;
@@ -337,7 +334,7 @@
             var pageUrl = @Json.Serialize(AppConsts.AntiCheatAdminUrl);
             var apiUrl = @Json.Serialize(AppConsts.AntiCheatAccessApiUrl);
             var lookupUrl = @Json.Serialize(AppConsts.PlayerLookupUrl);
-            var playerUrl = @Json.Serialize(ranking ? AppConsts.PlayerUrlPrefix : null);
+            var playerUrl = @Json.Serialize(AppConsts.PlayerUrlPrefix);
             var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
             var texts = {
                 saved: @Json.Serialize(L["Player added."].Value),
@@ -407,7 +404,7 @@
                 selected = { communityId: $item.data('community-id').toString(), name: $item.data('name') };
 
                 $modal.find('.aca-avatar').attr({ src: $item.data('avatar'), alt: selected.name });
-                $modal.find('.aca-player-link').text(selected.name).attr('href', playerUrl ? playerUrl + encodeURIComponent(selected.communityId) : (profileUrl || '#'));
+                $modal.find('.aca-player-link').text(selected.name).attr('href', playerUrl + encodeURIComponent(selected.communityId));
                 $modal.find('.aca-ids').text(($item.data('steam-id') || '') + ' · ' + selected.communityId);
                 $modal.find('.aca-steam-link').attr('href', profileUrl || '#').toggle(!!profileUrl);
                 $modal.find('.aca-added-at').text($item.data('added-at'));

@@ -201,7 +201,7 @@
                             <img src="/avatar/@voter.CommunityId" alt="@voter.Name" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
                         </td>
                         <td class="vertical-align-middle" data-label="@L["Player"]">
-                            <a href="@SteamIds.ProfileUrl(voter.CommunityId)" rel="noopener" target="_blank">@voter.Name</a>
+                            <a href="@PlayerUrls.Details(voter.CommunityId)" target="_blank">@voter.Name</a>
                         </td>
                         <td class="text-center vertical-align-middle" data-label="@L["Votes"]">@voter.Votes</td>
                         <td class="text-center vertical-align-middle" data-label="@L["Last vote"]">@voter.LastVoteAtUtc.ToString("d")</td>

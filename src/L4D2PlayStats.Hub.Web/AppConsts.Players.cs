@@ -17,4 +17,5 @@ public static partial class AppConsts
     public const string PlayerSearchUrl = "/api/admin/players/search";
     public const int PlayerSearchDelayInMilliseconds = 300;
     public const string PlayerPickerModalItem = "PlayerPickerModal";
+    public const string PlayerNotFoundView = "PlayerNotFound";
 }

@@ -7,5 +7,4 @@ public class LiveFeedViewModel
     public string PublicId { get; init; } = null!;
     public IReadOnlyList<FeedItem> Items { get; init; } = [];
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
-    public bool RankingEnabled { get; init; }
 }

@@ -44,9 +44,9 @@ public class CommunityController(
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
 
-        var playerPages = modules.IsEnabled(HubModule.Ranking);
+        var patents = modules.IsEnabled(HubModule.Ranking);
         var entries = await communityRankingService.ListAsync(cancellationToken);
-        var experience = playerPages ? await ExperienceAsync(cancellationToken) : null;
+        var experience = patents ? await ExperienceAsync(cancellationToken) : null;
 
         var model = new CommunityRankingViewModel
         {
@@ -54,7 +54,7 @@ public class CommunityController(
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
             MinimumMatches = settings.MinimumMatchesToBeCandidate,
             Settings = settings,
-            PlayerPages = playerPages
+            Patents = patents
         };
 
         return View(model);
@@ -63,7 +63,6 @@ public class CommunityController(
     [HttpGet(AppConsts.CommunityVotesPage)]
     public async Task<IActionResult> Votes(long? voter, long? player, int page, CancellationToken cancellationToken)
     {
-        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
         var voterId = settings.ShowVoterNames ? voter : null;
         var current = Math.Max(1, page);
@@ -86,7 +85,6 @@ public class CommunityController(
             Page = current,
             HasMore = votes.Count > size,
             ShowVoters = settings.ShowVoterNames,
-            PlayerPages = modules.IsEnabled(HubModule.Ranking),
             TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
 

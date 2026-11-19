@@ -13,7 +13,6 @@ public class ServerCardViewModel
     public LiveSnapshot Snapshot { get; init; } = null!;
     public string? Campaign { get; init; }
     public required string CampaignImage { get; init; }
-    public bool RankingEnabled { get; init; }
     public bool AntiCheatPage { get; init; }
     public bool Online => Status.State == GameServerConnectionState.Online;
     public string? Map => Status.Signal?.Map;

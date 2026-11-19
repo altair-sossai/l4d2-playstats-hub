@@ -87,7 +87,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Barra de pontuação: dois segmentos dimensionados pela pontuação, verde e vermelho, "+diferença" em quem lidera, marcador tracejado no meio, tooltips | `Web/Views/Server/_Players.cshtml:55` | done |  |
 | Títulos dos painéis "Sobreviventes" e "Infectados" com o rótulo de pontuação enquanto uma equipe não tem pontos | `Web/Views/Server/_Players.cshtml:83` | done |  |
 | Sobrevivente: imagem do personagem com tooltip, cinza quando morto | `Web/Views/Server/_Players.cshtml:101` | done |  |
-| Sobrevivente: avatar com link para a página do jogador, cinza quando morto | `Web/Views/Server/_Players.cshtml:106` | done | Avatar de `/avatar/{id}`, com o avatar vazio como fallback. O link vai para o perfil da Steam quando o módulo de ranking está desligado. |
+| Sobrevivente: avatar com link para a página do jogador, cinza quando morto | `Web/Views/Server/_Players.cshtml:106` | done | Avatar de `/avatar/{id}`, com o avatar vazio como fallback. O link sempre vai para a página do jogador, que mostra a página básica com o perfil Steam quando o módulo de ranking está desligado. |
 | Sobrevivente: nome com link para a página do jogador | `Web/Views/Server/_Players.cshtml:114` | done |  |
 | Sobrevivente: rótulos Admin, Morto, Incapacitado, Preto e branco | `Web/Views/Server/_Players.cshtml:116` | done |  |
 | Sobrevivente: ícone de latência (baixa, média, alta) com tooltip | `Web/Views/Server/_Players.cshtml:145` | done |  |
@@ -118,7 +118,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Um `<p>` por item com `data-feed-when` e `data-feed-kind` | `Web/Views/Server/_Feed.cshtml:6` | done | Também leva `data-feed-sequence` (veja abaixo) e o horário do item como título ao passar o mouse. |
 | Novos itens acrescentados, duplicados removidos, no máximo 300 mantidos | `Web/Views/Server/Index.cshtml:264` | adapted | Mesmo comportamento. O cursor enviado em `after` é a sequência do feed da última resposta em vez dos ticks do último item na tela: as mensagens do jogo aparecem com 15 s de atraso, então, com ticks, uma mensagem do site poderia esconder uma mensagem do jogo que chegou logo antes dela. |
 | Mensagem: equipe entre colchetes no chat de equipe | `Web/Views/Server/_Message.cshtml:17` | done |  |
-| Mensagem: nome do jogador colorido conforme a equipe (sobrevivente, infectado, site, espectador) e com link para a página do jogador | `Web/Views/Server/_Message.cshtml:21` | done | O link vai para o perfil da Steam quando o módulo de ranking está desligado. |
+| Mensagem: nome do jogador colorido conforme a equipe (sobrevivente, infectado, site, espectador) e com link para a página do jogador | `Web/Views/Server/_Message.cshtml:21` | done | O link sempre vai para a página do jogador, que mostra a página básica com o perfil Steam quando o módulo de ranking está desligado. |
 | Mensagem: "(Admin)" depois do nome | `Web/Views/Server/_Message.cshtml:24` | done |  |
 | Texto da mensagem | `Web/Views/Server/_Message.cshtml:29` | done |  |
 | Visitante banido: "Você foi banido do chat." e o motivo, sem formulário | `Web/Views/Server/Index.cshtml:872` | done |  |
@@ -132,7 +132,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
-| O nome do jogador em um evento leva ao perfil da Steam, ou é texto simples quando não há perfil | `Web/Extensions/GameEventHtmlExtensions.cs:20` | done |  |
+| O nome do jogador em um evento leva ao perfil da Steam, ou é texto simples quando não há perfil | `Web/Extensions/GameEventHtmlExtensions.cs:20` | adapted | O nome leva à página do jogador no site, que oferece o perfil Steam. |
 | Partes coloridas: estrelas e destaque, jogador, ação, perigo | `Web/Views/Server/Index.cshtml:121` | done |  |
 | Estrelas antes dos eventos que as têm | `Core/GameInfo/Extensions/GameEventTypeExtensions.cs:7` | done |  |
 | Vômito do boomer acertou | `Web/Views/Server/GameEvents/_BoomerVomitLandedEvent.cshtml` | done |  |
@@ -238,7 +238,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Item da lista: data do ban e "por <administrador>" | `Web/Views/ChatBans/Index.cshtml:83` | done | As datas ficam no fuso horário das configurações do site em vez do fuso horário da máquina. |
 | Texto de lista vazia | `Web/Views/ChatBans/Index.cshtml:63` | done |  |
 | Paginação, 20 por página, mantendo a busca | `Web/Views/ChatBans/Index.cshtml:94`, `Web/Controllers/ChatBansController.cs:14` | done |  |
-| Modal de detalhes: avatar, nome com link para a página do jogador, IDs, link do perfil da Steam | `Web/Views/ChatBans/Index.cshtml:96` | done | O nome leva ao perfil da Steam quando o módulo de ranking está desligado. |
+| Modal de detalhes: avatar, nome com link para a página do jogador, IDs, link do perfil da Steam | `Web/Views/ChatBans/Index.cshtml:96` | done | O nome sempre leva à página do jogador, também com o módulo de ranking desligado. |
 | Modal de detalhes: data do ban, atualizado em, banido por | `Web/Views/ChatBans/Index.cshtml:115` | done |  |
 | Modal de detalhes: editar e salvar o motivo | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Modal de detalhes: remover com uma segunda confirmação | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |

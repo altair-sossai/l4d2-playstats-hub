@@ -537,7 +537,7 @@
                         </li>
                     }
                     <li>
-                        <a href="@(ranking ? $"/player/{CurrentUser.CommunityId}" : "#")">
+                        <a href="@(CurrentUser.CommunityId == null ? "#" : PlayerUrls.Details(CurrentUser.CommunityId.Value))">
                             <img src="/avatar/@CurrentUser.CommunityId" alt="@CurrentUser.Name" title="@CurrentUser.Name" class="img-responsive img-header-icon" data-toggle="tooltip" data-placement="bottom" onerror="imgOnError(this)">
                             <span class="show-mobile" style="margin-left: 5px">
                                 @CurrentUser.Name

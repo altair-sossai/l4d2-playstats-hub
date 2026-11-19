@@ -90,7 +90,7 @@ El núcleo siempre está activado: el registro de servidores de juego, la subida
 
 | Módulo | Qué contiene | Necesita | Predeterminado | Cuando está desactivado |
 |---|---|---|---|---|
-| Ranking y estadísticas | Ranking, partidas, jugadores, patentes, historia, castigos y las páginas dentro del juego. | | Activado | La primera página muestra un texto corto de bienvenida. Las partidas se siguen construyendo a partir de los archivos, sin que se vean. |
+| Ranking y estadísticas | Ranking, partidas, jugadores, patentes, historia, castigos y las páginas dentro del juego. | | Activado | La primera página muestra un texto corto de bienvenida. Las partidas se siguen construyendo a partir de los archivos, sin que se vean. Los enlaces de jugador siguen abriendo la [página básica del jugador](players.es.md#un-jugador-sin-estadísticas), con el perfil de Steam, pero sin estadísticas. |
 | Servidor en vivo | La partida en curso en cada servidor. | | Activado | No hay elemento **Servidor** en el menú. Los datos en vivo de los plugins se rechazan. Las cuentas relacionadas y las conexiones de jugadores no se muestran, elijas lo que elijas en [Privacidad](#privacidad). |
 | Chat del sitio | Escribir en el chat del juego desde la página en vivo, y los baneos del chat. | Servidor en vivo | Desactivado | No hay cuadro de chat en la página en vivo ni página **Baneos de chat**. |
 | Comandos remotos | Comandos que los administradores envían desde el sitio a un servidor de juego. | Servidor en vivo | Desactivado | No hay página **Comandos remotos** ni terminal en la página en vivo. |

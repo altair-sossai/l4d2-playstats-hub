@@ -110,11 +110,8 @@
 
         <p class="text-muted" style="margin-top: 10px">
             <a href="@details.Player.ProfileUrl" target="_blank" rel="noopener noreferrer">@L["Steam profile"]</a>
-            @if (Model.RankingEnabled)
-            {
-                <span> · </span>
-                <a href="@($"{AppConsts.PlayerUrlPrefix}{details.Player.CommunityId}")">@L["Player"]</a>
-            }
+            <span> · </span>
+            <a href="@PlayerUrls.Details(long.Parse(details.Player.CommunityId))">@L["Player"]</a>
         </p>
 
         if (details.RelatedPlayers.Count == 0)

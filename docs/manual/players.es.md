@@ -10,6 +10,7 @@ Cada jugador que jugó en tus servidores de juego tiene una página con sus resu
 
 - [La lista de jugadores](#la-lista-de-jugadores)
 - [La página del jugador](#la-página-del-jugador)
+- [Un jugador sin estadísticas](#un-jugador-sin-estadísticas)
 - [Pestaña General](#pestaña-general)
 - [Pestaña Campañas](#pestaña-campañas)
 - [Pestaña Skins](#pestaña-skins)
@@ -32,9 +33,21 @@ La lista tiene los mismos jugadores que el ranking del período, todos y no solo
 
 ## La página del jugador
 
-Haz clic en un jugador en cualquier parte del sitio para abrir su página. Tiene un selector de período, un botón **Comparar...** y hasta cuatro pestañas.
+Haz clic en un jugador en cualquier parte del sitio para abrir su página: el ranking, las partidas, el servidor en vivo, el ranking de la comunidad y las páginas de administración llevan todos a ella, nunca directo a Steam. Tiene un selector de período, un botón **Comparar...** y hasta cuatro pestañas.
 
 ![La página del jugador](../images/es/player.webp)
+
+## Un jugador sin estadísticas
+
+Un jugador que no tiene estadísticas en el período elegido, o que nunca jugó una partida rankeada, también tiene una página. Muestra:
+
+- **Jugador fuera del ranking**, con el selector de período, para elegir otra temporada o todo el período. Con el módulo de ranking desactivado dice **Aún sin estadísticas**.
+- El avatar y un botón **Abrir perfil de Steam**.
+- El mejor nombre que el sitio conoce: el último nombre visto en un servidor de juego, o el nombre del perfil de Steam.
+- El SteamID64 (Community ID), el Steam ID en las formas `STEAM_0` y `STEAM_1` y el Steam3 ID (`[U:1:n]`), cada uno con botón de copiar, y la dirección del perfil.
+- El último inicio de sesión y la cantidad de conexiones, y las [cuentas relacionadas](#cuentas-relacionadas), cuando el módulo del servidor en vivo está activado.
+
+Una dirección que no es un SteamID64 válido, como `/player/0` o `/player/abc`, responde como no encontrada.
 
 ## Pestaña General
 

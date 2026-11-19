@@ -87,7 +87,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Score bar: two segments sized by score, green and red, "+difference" on the leader, dashed middle marker, tooltips | `Web/Views/Server/_Players.cshtml:55` | done |  |
 | Panel headings "Survivors" and "Infecteds" with the score label while a team has no points | `Web/Views/Server/_Players.cshtml:83` | done |  |
 | Survivor: character picture with tooltip, grey when dead | `Web/Views/Server/_Players.cshtml:101` | done |  |
-| Survivor: avatar linked to the player page, grey when dead | `Web/Views/Server/_Players.cshtml:106` | done | Avatar from `/avatar/{id}` with the empty avatar as fallback. The link goes to the Steam profile when the ranking module is off. |
+| Survivor: avatar linked to the player page, grey when dead | `Web/Views/Server/_Players.cshtml:106` | done | Avatar from `/avatar/{id}` with the empty avatar as fallback. The link always goes to the player page, which shows the basic page with the Steam profile when the ranking module is off. |
 | Survivor: name linked to the player page | `Web/Views/Server/_Players.cshtml:114` | done |  |
 | Survivor: labels Admin, Dead, Incapacitated, Black and white | `Web/Views/Server/_Players.cshtml:116` | done |  |
 | Survivor: latency icon (low, medium, high) with tooltip | `Web/Views/Server/_Players.cshtml:145` | done |  |
@@ -118,7 +118,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | One `<p>` per item with `data-feed-when` and `data-feed-kind` | `Web/Views/Server/_Feed.cshtml:6` | done | Also carries `data-feed-sequence` (see below) and the time of the item as a hover title. |
 | New items appended, duplicates removed, at most 300 kept | `Web/Views/Server/Index.cshtml:264` | adapted | Same behaviour. The cursor sent in `after` is the feed sequence of the last answer instead of the ticks of the last item on screen: game messages appear 15 s late, so with ticks a site message could hide a game message that came just before it. |
 | Message: team in brackets for team chat | `Web/Views/Server/_Message.cshtml:17` | done |  |
-| Message: player name coloured by team (survivor, infected, site, spectator) and linked to the player page | `Web/Views/Server/_Message.cshtml:21` | done | The link goes to the Steam profile when the ranking module is off. |
+| Message: player name coloured by team (survivor, infected, site, spectator) and linked to the player page | `Web/Views/Server/_Message.cshtml:21` | done | The link always goes to the player page, which shows the basic page with the Steam profile when the ranking module is off. |
 | Message: "(Admin)" after the name | `Web/Views/Server/_Message.cshtml:24` | done |  |
 | Message text | `Web/Views/Server/_Message.cshtml:29` | done |  |
 | Banned visitor: "You have been banned from the chat." and the reason, no form | `Web/Views/Server/Index.cshtml:872` | done |  |
@@ -132,7 +132,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
-| Player name in an event links to the Steam profile, or is plain text without one | `Web/Extensions/GameEventHtmlExtensions.cs:20` | done |  |
+| Player name in an event links to the Steam profile, or is plain text without one | `Web/Extensions/GameEventHtmlExtensions.cs:20` | adapted | The name links to the player page of the site, which offers the Steam profile. |
 | Coloured parts: stars and highlight, player, action, danger | `Web/Views/Server/Index.cshtml:121` | done |  |
 | Stars before the events that have them | `Core/GameInfo/Extensions/GameEventTypeExtensions.cs:7` | done |  |
 | Boomer vomit landed | `Web/Views/Server/GameEvents/_BoomerVomitLandedEvent.cshtml` | done |  |
@@ -238,7 +238,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | List item: ban date and "by <administrator>" | `Web/Views/ChatBans/Index.cshtml:83` | done | Dates are in the time zone of the site settings instead of the time zone of the machine. |
 | Empty list text | `Web/Views/ChatBans/Index.cshtml:63` | done |  |
 | Pagination, 20 per page, keeping the search | `Web/Views/ChatBans/Index.cshtml:94`, `Web/Controllers/ChatBansController.cs:14` | done |  |
-| Details modal: avatar, name linked to the player page, IDs, Steam profile link | `Web/Views/ChatBans/Index.cshtml:96` | done | The name links to the Steam profile when the ranking module is off. |
+| Details modal: avatar, name linked to the player page, IDs, Steam profile link | `Web/Views/ChatBans/Index.cshtml:96` | done | The name always links to the player page, also when the ranking module is off. |
 | Details modal: ban date, updated at, banned by | `Web/Views/ChatBans/Index.cshtml:115` | done |  |
 | Details modal: edit and save the reason | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Details modal: remove with a second confirmation | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |

@@ -10,6 +10,7 @@ Every player who played on your game servers has a page with their results, thei
 
 - [The players list](#the-players-list)
 - [The player page](#the-player-page)
+- [A player without statistics](#a-player-without-statistics)
 - [General tab](#general-tab)
 - [Campaigns tab](#campaigns-tab)
 - [Skins tab](#skins-tab)
@@ -32,9 +33,21 @@ The list has the same players as the ranking of the period, all of them and not 
 
 ## The player page
 
-Click a player anywhere on the site to open their page. It has a period selector, a **Compare** button, and up to four tabs.
+Click a player anywhere on the site to open their page: the ranking, the matches, the live server, the community ranking and the administration pages all link to it, never straight to Steam. It has a period selector, a **Compare** button, and up to four tabs.
 
 ![The player page](../images/en/player.webp)
+
+## A player without statistics
+
+A player who has no statistics in the chosen period, or who never played a ranked match, still has a page. It shows:
+
+- **Player not ranked**, with the period selector, so another season or all time can be chosen. With the ranking module off it says **No statistics yet** instead.
+- The avatar and an **Open Steam profile** button.
+- The best name the site knows: the last name seen on a game server, or the name of the Steam profile.
+- The SteamID64 (Community ID), the Steam ID in the `STEAM_0` and `STEAM_1` forms and the Steam3 ID (`[U:1:n]`), each with a copy button, and the profile URL.
+- The last login and the number of connections, and the [related accounts](#related-accounts), when the live server module is on.
+
+An address that is not a valid SteamID64, such as `/player/0` or `/player/abc`, answers as not found.
 
 ## General tab
 
