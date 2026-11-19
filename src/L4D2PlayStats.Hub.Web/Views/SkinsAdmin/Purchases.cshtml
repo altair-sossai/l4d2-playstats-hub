@@ -296,6 +296,7 @@
 <form method="get" class="admin-filters">
     <input type="hidden" name="player" value="@Model.Player"/>
     <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by player, Steam ID or skin..."]"/>
+    <span style="align-self: center">@FieldHelp.Tip(L["Finds purchases by part of the player's name, the SteamID64, the skin id or the skin name. Filter by player shows the purchases of one player only."])</span>
     <button type="submit" class="btn btn-default">
         <span class="glyphicon glyphicon-search"></span> @L["Search"]
     </button>

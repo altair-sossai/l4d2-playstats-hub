@@ -56,15 +56,15 @@
             <div class="panel-body">
                 <form method="post" asp-antiforgery="true" action="/admin/servers">
                     <div class="form-group">
-                        <label for="Name">@L["Server name"]</label>
+                        <label for="Name">@L["Server name"] @FieldHelp.Tip(L["The name shown on the site, as players know the server. The identifier is made from the name when the server is created and does not change when you rename it."])</label>
                         <input class="form-control" id="Name" name="Name" required maxlength="100">
                     </div>
                     <div class="form-group">
-                        <label for="Address">@L["Address players connect to (optional)"]</label>
+                        <label for="Address">@L["Address players connect to (optional)"] @FieldHelp.Tip(L["Where players connect, such as play.example.com:27015 or an IP and port. The live server page shows it with a copy button and uses it for the connect button."])</label>
                         <input class="form-control" id="Address" name="Address" placeholder="@AppConsts.AdminServerAddressPlaceholder" maxlength="200">
                     </div>
                     <div class="form-group">
-                        <label for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"]</label>
+                        <label for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"] @FieldHelp.Tip(L["A second way to connect, such as a DNS name when the main address is an IP. Shown next to the address on the live server page."])</label>
                         <input class="form-control" id="AlternativeAddress" name="AlternativeAddress" maxlength="200">
                     </div>
                     <button class="btn btn-primary" type="submit">

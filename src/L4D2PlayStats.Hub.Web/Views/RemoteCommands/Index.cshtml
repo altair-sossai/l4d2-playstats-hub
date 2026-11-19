@@ -47,7 +47,7 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
-                            <label for="serverId">@L["Server"]</label>
+                            <label for="serverId">@L["Server"] @FieldHelp.Tip(L["The game server that runs the command. Only enabled game servers are listed."])</label>
                             <select class="form-control" id="serverId" name="serverId" required>
                                 @foreach (var server in Model.Servers)
                                 {
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-sm-8">
                         <div class="form-group">
-                            <label for="command">@L["Command"]</label>
+                            <label for="command">@L["Command"] @FieldHelp.More(L["A SourceMod command with its arguments, such as sm_forcestart. !command and /command also work."], L["Command"], L["Type the command as you would in the game: sm_command, !command or /command, with its arguments. !forcestart and /forcestart are sent as sm_forcestart.\nA command cannot contain ; and has at most 256 characters.\nThe command is queued: the game server asks the site for queued commands on its next check and runs it. If no game server picks it up within 5 minutes, it is dropped.\nEvery command is recorded in the audit log below, with who sent it and whether it was delivered."])</label>
                             <div class="input-group">
                                 <input class="form-control rc-command" id="command" name="command" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ServerCommandMaxLength" placeholder="sm_forcestart"/>
                                 <span class="input-group-btn">

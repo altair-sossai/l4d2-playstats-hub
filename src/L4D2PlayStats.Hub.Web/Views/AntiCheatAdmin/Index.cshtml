@@ -136,7 +136,7 @@
 
 <p class="text-muted">@L["Choose who must run the Anti-Cheat on the game server and keep one list of players for each mode. The server picks up every change within a minute."]</p>
 
-<h4>@L["Usage mode"]</h4>
+<h4>@L["Usage mode"] @FieldHelp.More(L["Who must run the Anti-Cheat to play on the game servers. Each mode has its own list of players."], L["Usage mode"], L["Everyone must use it: every player needs the Anti-Cheat running to play, except the players on the whitelist. On the game server this is anti_cheat_mode 0.\nNo one, except these players: only the players on the required list need the Anti-Cheat; everyone else plays without it. This is anti_cheat_mode 1.\nEach mode keeps its own list, so changing the mode loses neither of them. The mode and the lists are the same for every game server of the site.\nThe mode saved here wins over the anti_cheat_mode of the game server; until a mode is saved, each server uses its own value. After a change, the game servers pick it up within a minute.\nThese settings only decide who must use the program. Whether a game server enforces it at all is the anti_cheat_enabled setting of the plugin."])</h4>
 <div class="aca-modes">
     <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Everyone ? "aca-selected" : "")">
         <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Everyone.ToName()" @(Model.Mode == AntiCheatAccessMode.Everyone ? "checked" : "")/>
@@ -241,12 +241,12 @@
 
         <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
             <div class="form-group">
-                <label for="serviceUrl">@L["Anti-Cheat service address"]</label>
+                <label for="serviceUrl">@L["Anti-Cheat service address"] @FieldHelp.More(L["Optional. The service the Anti-Cheat page asks for the latest version of the program."], L["Anti-Cheat service address"], L["The Anti-Cheat is a separate program with its own service. When this address is set, the Anti-Cheat page asks that service for the latest version, its size, its date and its checksum, and shows them to the players with the download.\nIt must start with https://. Leave it empty to use only the download address.\nWhen the service does not answer, the page uses the download address instead."])</label>
                 <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.Settings.ServiceUrl" placeholder="https://">
                 <p class="help-block">@L["Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://."]</p>
             </div>
             <div class="form-group">
-                <label for="downloadUrl">@L["Download address"]</label>
+                <label for="downloadUrl">@L["Download address"] @FieldHelp.Tip(L["The direct link to the Anti-Cheat download, used when the service is not set or does not answer. Must start with https://."])</label>
                 <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.Settings.DownloadUrl" placeholder="https://">
                 <p class="help-block">@L["Used when the service does not answer or is not set. Must start with https://."]</p>
             </div>
@@ -306,7 +306,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="aca-add-player">@L["Steam ID or profile URL"]</label>
+                    <label for="aca-add-player">@L["Steam ID or profile URL"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
                     <div class="input-group">
                         <input type="text" id="aca-add-player" class="form-control" placeholder="76561198000000000" autocomplete="off"/>
                         <span class="input-group-btn">
