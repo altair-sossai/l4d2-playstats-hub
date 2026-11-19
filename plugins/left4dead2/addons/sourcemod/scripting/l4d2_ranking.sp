@@ -8,7 +8,9 @@
 #include <l4d2_playstats_hub>
 
 #define INGAME_URL_CVAR "playstats_ingame_url"
-#define INGAME_PATH "/ingame"
+#define INGAME_PATH_CVAR "ranking_motd_path"
+#define INGAME_DEFAULT_PATH "/"
+#define INGAME_PATH_LENGTH 128
 #define INGAME_URL_LENGTH 384
 #define SCHEME_SEPARATOR "://"
 #define STEAM_ID_LENGTH 32
@@ -21,13 +23,14 @@ public Plugin myinfo =
 {
     name        = "L4D2 - Ranking",
     author      = "Altair Sossai",
-    description = "Opens the in-game ranking page of L4D2 PlayStats Hub",
-    version     = "2.1.0",
+    description = "Opens the ranking of L4D2 PlayStats Hub in the game",
+    version     = "2.2.0",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
 ConVar
     hInGameUrl,
+    hInGamePath,
     hShowMOTDPanel;
 
 bool showRankingEnabled = true;
@@ -40,6 +43,7 @@ public void OnPluginStart()
     PlayStatsHub_CreateConVars();
 
     hInGameUrl = CreateConVar(INGAME_URL_CVAR, "", "Address the game opens for the in-game pages, without a trailing slash. When empty, playstats_url is used");
+    hInGamePath = CreateConVar(INGAME_PATH_CVAR, INGAME_DEFAULT_PATH, "Page the ranking window opens, from the root of the site. \"/\" opens the ranking of the home page, \"/ingame\" the compact in-game page");
     hShowMOTDPanel = CreateConVar("ranking_show_motd_panel", "1", "Show MOTD panel with the ranking site URL", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
     RegConsoleCmd("sm_ranking", ShowRankingCmd);
@@ -130,13 +134,25 @@ bool GetInGameUrl(int client, char[] url, int maxlength)
     if (!GetInGameBase(base, sizeof(base)))
         return false;
 
+    char path[INGAME_PATH_LENGTH];
+    GetInGamePath(path, sizeof(path));
+
     char steamId[STEAM_ID_LENGTH];
     if (GetClientAuthId(client, AuthId_SteamID64, steamId, sizeof(steamId)))
-        FormatEx(url, maxlength, "%s%s?steamid=%s", base, INGAME_PATH, steamId);
+        FormatEx(url, maxlength, "%s%s?steamid=%s", base, path, steamId);
     else
-        FormatEx(url, maxlength, "%s%s", base, INGAME_PATH);
+        FormatEx(url, maxlength, "%s%s", base, path);
 
     return true;
+}
+
+void GetInGamePath(char[] path, int maxlength)
+{
+    hInGamePath.GetString(path, maxlength);
+    TrimString(path);
+
+    if (path[0] != '/')
+        strcopy(path, maxlength, INGAME_DEFAULT_PATH);
 }
 
 bool GetInGameBase(char[] base, int maxlength)

@@ -187,13 +187,13 @@ A resposta traz o modo (`null` até que um seja salvo) e as duas listas. `401` q
 
 ## O ranking dentro do jogo
 
-O `!ranking` abre uma versão simples do ranking no navegador do próprio jogo. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
+O `!ranking` abre o ranking da página inicial do site no navegador do próprio jogo; com `ranking_motd_path "/ingame"` ele abre uma versão mais simples e compacta. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"
 ```
 
-Quando `playstats_ingame_url` está vazio, o plugin usa `playstats_url`. [Instalando em uma VPS Linux](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica qual endereço usar.
+Quando `playstats_ingame_url` está vazio, o plugin usa `playstats_url`. Não use um endereço HTTPS nem um que redirecione para HTTPS: o painel fica vazio. [Instalando em uma VPS Linux](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica qual endereço usar.
 
 O endereço que os jogadores leem no chat, na dica do ranking e no link da loja de skins, é o `playstats_public_url`; quando ele está vazio, os plugins mostram o `playstats_url`. Defina quando os plugins chegam ao site por um endereço IP mas os jogadores o conhecem por um nome:
 

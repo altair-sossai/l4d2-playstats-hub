@@ -187,13 +187,13 @@ The answer has the mode (`null` until one is saved) and the two lists. `401` mea
 
 ## The ranking inside the game
 
-`!ranking` opens a simple version of the ranking in the game's own browser. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
+`!ranking` opens the ranking of the home page of the site in the game's own browser; `ranking_motd_path "/ingame"` opens a simpler, compact version instead. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"
 ```
 
-When `playstats_ingame_url` is empty, the plugin uses `playstats_url`. [Installing on a Linux VPS](install-linux.md#the-address-used-inside-the-game) explains which address to use.
+When `playstats_ingame_url` is empty, the plugin uses `playstats_url`. Do not use an HTTPS address or one that redirects to HTTPS: the panel stays empty. [Installing on a Linux VPS](install-linux.md#the-address-used-inside-the-game) explains which address to use.
 
 The address players read in chat, in the ranking hint and in the skin shop link, is `playstats_public_url`; when it is empty, the plugins show `playstats_url`. Set it when the plugins reach the site by an IP address but players know it by a name:
 
