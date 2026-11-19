@@ -185,8 +185,8 @@ else
                     <small class="text-muted">@(run.Trigger == BackupTrigger.Manual ? L["manual"] : L["scheduled"])</small>
                 </td>
                 <td class="vertical-align-middle admin-mono" data-label="@L["File"]">@run.BlobName</td>
-                <td class="text-center vertical-align-middle" data-label="@L["Size"]">@(run.SizeInBytes > 0 ? (run.SizeInBytes / 1024d / 1024d).ToString("0.0") + " MB" : "-")</td>
-                <td class="text-center vertical-align-middle" data-label="@L["Duration"]">@((run.DurationInMilliseconds / 1000d).ToString("0.0")) s</td>
+                <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Size"]">@(run.Succeeded && run.SizeInBytes > 0 ? (run.SizeInBytes / 1024d / 1024d).ToString("0.0") + " MB" : "-")</td>
+                <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Duration"]">@((run.DurationInMilliseconds / 1000d).ToString("0.0")) s</td>
                 <td class="vertical-align-middle" data-label="@L["Result"]">
                     @if (run.Succeeded)
                     {

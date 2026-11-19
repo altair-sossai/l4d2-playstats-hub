@@ -9,6 +9,7 @@ Todo lo que guarda el sitio está en una sola carpeta, la carpeta de datos. Haz 
 ## Contenido
 
 - [Qué hay en la carpeta de datos](#qué-hay-en-la-carpeta-de-datos)
+- [Copia automática en Azure Storage](#copia-automática-en-azure-storage)
 - [Copia de seguridad en Linux](#copia-de-seguridad-en-linux)
 - [Copia de seguridad con Docker](#copia-de-seguridad-con-docker)
 - [Restaurar](#restaurar)
@@ -30,6 +31,93 @@ La carpeta es `/var/lib/l4d2-playstats-hub` con el instalador para Linux y el vo
 Con SQL Server, PostgreSQL o MySQL, los datos están en esa base de datos: haz la copia de seguridad con las herramientas de esa base de datos y guarda una copia de la carpeta de datos por las claves y el logo. Consulta [Bases de datos](../databases.es.md).
 
 Como se guarda cada archivo de estadísticas, la base de datos alcanza para reconstruir todas las partidas y los rankings.
+
+## Copia automática en Azure Storage
+
+El sitio puede hacer su propia copia de seguridad. En [Administración > Copia de seguridad](administration.es.md#copia-de-seguridad) le indicas un contenedor de Azure Storage y, cada pocas horas, 8 por defecto, sube allí un archivo zip. El sitio sigue en marcha: la base de datos se copia mientras funciona.
+
+### Qué contiene el zip
+
+| Archivo | Qué es |
+|---|---|
+| `hub.db` | Una copia de la base de datos SQLite, hecha con la función de copia de SQLite con el sitio en marcha, así que es coherente aunque lleguen estadísticas. |
+| `keys/` | Las claves que protegen las cookies de inicio de sesión. |
+| `branding/` | El logo. |
+| `manifest.json` | La versión del sitio, la hora de la copia en UTC, el proveedor de la base de datos y la lista de archivos. |
+
+- Los avatares quedan fuera: el sitio los descarga otra vez.
+- `hub.env` (Linux) o las variables de entorno (Docker) están fuera de la carpeta de datos y no van en el zip. Guarda una copia de ellos, o ejecuta `playstats-hub backup` de vez en cuando, que incluye `hub.env`.
+- Con SQL Server, PostgreSQL o MySQL el zip no tiene `hub.db`: haz la copia de esa base de datos con sus propias herramientas. El zip sigue guardando las claves y el logo.
+
+Los archivos se llaman `<prefijo>-yyyyMMdd-HHmmss.zip`, en UTC, como `hub-backup-20261119-160000.zip`. Después de cada subida se borran los archivos más antiguos con el mismo prefijo que pasen de la cantidad a conservar (30 por defecto). Los demás archivos del contenedor no se tocan nunca. Una copia que falla se intenta otra vez 30 minutos después, y la página muestra el error.
+
+### Crear el contenedor y su dirección SAS
+
+El destino más seguro es una dirección SAS de un contenedor: con ella el sitio solo puede usar ese contenedor.
+
+En el portal de Azure:
+
+1. Abre la cuenta de almacenamiento, **Almacenamiento de datos > Contenedores**, y crea un contenedor, como `hub-backups`, con acceso privado.
+2. Abre el contenedor y **Configuración > Tokens de acceso compartido**. Firma con una clave de la cuenta, marca los permisos **Read, Add, Create, Write, Delete y List**, elige una fecha de expiración lejana y haz clic en **Generar URL y token de SAS**.
+3. Copia la **URL de SAS de blob**. Tiene la forma `https://<cuenta>.blob.core.windows.net/hub-backups?sv=...&sig=...`.
+
+Con la CLI de Azure:
+
+```bash
+az storage container create --account-name <cuenta> --name hub-backups --auth-mode key
+```
+
+```bash
+az storage container generate-sas --account-name <cuenta> --name hub-backups --permissions racwdl --expiry 2028-12-31T23:59Z --https-only --auth-mode key -o tsv
+```
+
+El segundo comando muestra el token. La dirección es `https://<cuenta>.blob.core.windows.net/hub-backups?` seguida de él.
+
+Pega la dirección en **Administración > Copia de seguridad**, marca **Hacer copias automáticamente**, guarda y haz clic en **Probar la conexión**. El SAS deja de funcionar en su fecha de expiración: crea uno nuevo antes, o las copias empiezan a fallar, como muestra la página.
+
+Una cadena de conexión de la cuenta de almacenamiento también sirve, junto con el nombre de un contenedor; el sitio crea el contenedor si no existe. Da acceso a toda la cuenta, así que es mejor la dirección SAS.
+
+### Restaurar un zip
+
+Descarga el zip del contenedor: en el portal, abre el archivo y haz clic en **Descargar**; con la CLI, `az storage blob download`.
+
+En Linux, detén el sitio, pon los archivos del zip en la carpeta de datos e inícialo otra vez. `unzip` puede necesitar `sudo apt install unzip`.
+
+```bash
+sudo systemctl stop l4d2-playstats-hub
+```
+
+```bash
+sudo rm -f /var/lib/l4d2-playstats-hub/hub.db-wal /var/lib/l4d2-playstats-hub/hub.db-shm
+```
+
+```bash
+sudo unzip -o hub-backup-20261119-160000.zip -x manifest.json -d /var/lib/l4d2-playstats-hub
+```
+
+```bash
+sudo chown -R playstats:playstats /var/lib/l4d2-playstats-hub
+```
+
+```bash
+sudo systemctl start l4d2-playstats-hub
+```
+
+Borra los archivos `-wal` y `-shm` antes de extraer: son de la base de datos que se reemplaza. En una máquina nueva, ejecuta antes el instalador, después restaura, y vuelve a poner tu `hub.env` si lo cambiaste.
+
+Con Docker, detén el contenedor, extrae el zip en el volumen e inícialo otra vez. El contenedor entrega los archivos a su usuario al iniciar.
+
+```bash
+docker compose stop hub
+```
+
+```bash
+docker run --rm -v playstats_hub-data:/data -v "$PWD":/backup alpine sh -c "rm -f /data/hub.db-wal /data/hub.db-shm && unzip -o /backup/hub-backup-20261119-160000.zip -x manifest.json -d /data"
+```
+
+```bash
+docker compose start hub
+```
 
 ## Copia de seguridad en Linux
 

@@ -4,7 +4,7 @@
 
 A área de administração é onde o site é configurado. Ela só é acessível para administradores: **Admin > Administração** no menu, ou `/admin`. Todas as páginas da área têm o [menu da administração](#o-menu-da-administração) à esquerda.
 
-Esta página cobre a visão geral, os servidores de jogo, os módulos, as configurações e os administradores. As outras páginas da administração são explicadas junto com o recurso delas:
+Esta página cobre a visão geral, os servidores de jogo, os módulos, as configurações, os administradores e o backup. As outras páginas da administração são explicadas junto com o recurso delas:
 
 | Item do menu | Explicado em |
 |---|---|
@@ -26,6 +26,7 @@ Um item cujo módulo está desligado não aparece no menu.
 - [Módulos](#módulos)
 - [Configurações](#configurações)
 - [Administradores](#administradores)
+- [Backup](#backup)
 
 ## O menu da administração
 
@@ -33,7 +34,7 @@ Todas as páginas da administração têm o mesmo menu à esquerda, com a págin
 
 | Grupo | Páginas |
 |---|---|
-| Site | Visão geral, Configurações, Módulos, Administradores |
+| Site | Visão geral, Configurações, Módulos, Administradores, Backup |
 | Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Bans de chat |
 | Ranking | Modos de jogo, Campanhas, Ranking da comunidade |
 | Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
@@ -164,3 +165,27 @@ Se você perder o acesso a todas as contas de administrador, adicione uma pela m
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 O SteamID64 é o número longo no endereço de um perfil do Steam, como `76561198000000000`.
+
+## Backup
+
+![A página de backup](../images/pt/admin-backup.webp)
+
+O site envia um zip dos dados dele para um contêiner do Azure Storage a cada algumas horas. [Backups e atualizações > Backup automático no Azure Storage](backups-and-updates.pt.md#backup-automático-no-azure-storage) explica o que o zip contém, como criar o contêiner e como restaurar um zip.
+
+| Campo | O que faz |
+|---|---|
+| Fazer backup automaticamente | Liga o agendamento. **Fazer backup agora** funciona com ele desligado também. |
+| Destino | **Endereço do contêiner com um token SAS**, o recomendado, ou **String de conexão da conta de armazenamento e um contêiner**. |
+| Endereço do contêiner com um token SAS | `https://<conta>.blob.core.windows.net/<contêiner>?sv=...&sig=...`: um SAS desse contêiner com as permissões Read, Add, Create, Write, Delete e List. |
+| String de conexão | A string de conexão da conta de armazenamento, em **Chaves de acesso** no portal do Azure. |
+| Contêiner | Só com uma string de conexão. O contêiner é criado quando não existe. |
+| A cada, em horas | De 1 a 168. 8 por padrão. |
+| Backups a manter | De 1 a 1000. 30 por padrão. Depois de cada backup, os arquivos mais antigos além desse número são apagados. |
+| Prefixo do nome do arquivo | O começo do nome dos arquivos, `hub-backup` por padrão. Só os arquivos com esse prefixo são contados e apagados. |
+
+O endereço e a string de conexão são segredos. Depois de salvos, a página só os mostra mascarados, como `https://<conta>.blob.core.windows.net/<contêiner>?••••••••`; deixe o campo vazio para manter o que está salvo, ou digite um novo para trocar. Eles também nunca vão para o log.
+
+- **Status** mostra se o agendamento está ligado, o último backup que deu certo e quando roda o próximo.
+- **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup.
+- **Backups recentes** lista as últimas 20 execuções, agendadas ou manuais, com o arquivo, o tamanho, quanto tempo levou e, para um backup que falhou, o erro. Um backup que falhou é tentado de novo 30 minutos depois.
+- Num site que não usa SQLite, a página avisa que o banco não está no zip.

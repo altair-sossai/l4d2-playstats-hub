@@ -179,6 +179,7 @@ O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não
 ## Implantação
 
 - **VPS Linux.** Um comando instala uma build self-contained como serviço, com HTTPS opcional pelo Caddy, e imprime o código de configuração. Atualização, backup e restauração são comandos únicos.
+- **Backup agendado.** O site envia a cada algumas horas um zip com uma cópia do banco SQLite, as chaves e o logo para um contêiner do Azure Storage, configurado em Administração > Backup.
 - **Docker.** Uma imagem publicada a cada versão.
 - **Azure.** Uma máquina virtual com o instalador Linux, ou o App Service com a imagem.
 
@@ -201,7 +202,7 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 | 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, com o catálogo e as miniaturas do site atual; ainda não testada em um servidor de jogo |
 | 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |
 | 7. Ranking da comunidade | Página de votação, rating, limites e página administrativa. | Concluída |
-| 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada |
+| 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada; backup agendado no Azure Storage desde a v0.9.0 |
 | 9. Migração | Importação dos dados de produção, troca do site de produção, arquivamento dos repositórios antigos. | Dados de produção importados na VPS do l4d2.com.br, onde o site novo roda na porta 5090 ao lado do antigo ([Trocando o site antigo](switch-from-old-site.pt.md)); a troca está pendente |
 
 ## Perguntas em aberto

@@ -72,7 +72,8 @@ The `site` command expects a data folder, such as the fictional copy above, with
 
 - every module turned on in **Administration > Modules**;
 - two game servers, with their tokens;
-- some community votes, a chat ban, a remote command and a player connection, so those pages are not empty.
+- some community votes, a chat ban, a remote command and a player connection, so those pages are not empty;
+- a few backups in **Administration > Backup**, one of them failed, so the list of recent backups is not empty. Azurite, the Azure Storage emulator, can receive them on the machine: start it with `npx azurite-blob --skipApiVersionCheck`, save its connection string (`UseDevelopmentStorage=true` or the full one with `devstoreaccount1`) and a container name, and click **Back up now**. The `admin-backup` shot then fills the form with an example container address, which is never saved.
 
 ```bash
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
