@@ -53,6 +53,7 @@ With the remote commands module on, administrators can send SourceMod commands f
 
 1. Choose the server.
 2. Type the command: `sm_command`, `!command` or `/command`, with its arguments. `!forcestart` and `/forcestart` are sent as `sm_forcestart`. A command cannot contain `;` and has at most 256 characters.
+   Or click the terminal button next to the box: it lists the commands of the live page terminal with what each one does, and asks for each argument step by step (match mode, campaign, team, duration, reason; the player name is typed, since this page does not list who is connected). The built command fills the box, and you can still edit it before sending.
 3. Click **Send**.
 
 The command is queued. The game server asks the site for queued commands on its next check and runs the command. If no game server picks it up within 5 minutes, it is dropped.

@@ -53,6 +53,7 @@ Con el módulo de comandos remotos activado, los administradores pueden enviar c
 
 1. Elige el servidor.
 2. Escribe el comando: `sm_command`, `!command` o `/command`, con sus argumentos. `!forcestart` y `/forcestart` se envían como `sm_forcestart`. Un comando no puede contener `;` y tiene como máximo 256 caracteres.
+   O haz clic en el botón de la terminal junto a la caja: lista los comandos de la terminal de la página en vivo con lo que hace cada uno y pide cada argumento paso a paso (modo de juego, campaña, equipo, duración, motivo; el nombre del jugador se escribe, ya que esta página no lista quién está conectado). El comando armado llena la caja, y aún puedes editarlo antes de enviarlo.
 3. Haz clic en **Enviar**.
 
 El comando queda en cola. El servidor de juego le pide al sitio los comandos en cola en su próxima consulta y ejecuta el comando. Si ningún servidor de juego lo recoge en 5 minutos, se descarta.

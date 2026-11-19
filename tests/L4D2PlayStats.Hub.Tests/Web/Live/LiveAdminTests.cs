@@ -84,6 +84,31 @@ public class LiveAdminTests
     }
 
     [TestMethod]
+    public async Task TheRemoteCommandsPageAndTheLivePageShareTheCommandHelper()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await factory.CompleteSetupAsync();
+        await factory.EnableAsync();
+
+        var withoutServers = await client.GetStringAsync("/admin/remote-commands");
+
+        await factory.CreateServerAsync();
+
+        var page = await client.GetStringAsync("/admin/remote-commands");
+        var live = await client.GetStringAsync("/servers");
+
+        Assert.DoesNotContain("command-builder.js", withoutServers);
+        Assert.Contains("onclick=\"terminal.show()\"", page);
+        Assert.Contains("command-builder.js", page);
+        Assert.Contains("'!forcematch'", page);
+        Assert.Contains("id=\"command\" name=\"command\"", page);
+        Assert.Contains("command-builder.js", live);
+        Assert.Contains("'!forcematch'", live);
+    }
+
+    [TestMethod]
     public async Task AnInvalidCommandIsRefusedWithAnExplanation()
     {
         using var factory = new LiveWebFactory();

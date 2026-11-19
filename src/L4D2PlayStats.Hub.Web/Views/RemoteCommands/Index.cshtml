@@ -20,6 +20,25 @@
     </style>
 }
 
+@section Scripts {
+    @if (Model.Servers.Count > 0)
+    {
+        @await Html.PartialAsync("_CommandBuilder")
+
+        <script>
+            terminal.apply = function (command) {
+                $('#command').val(command);
+
+                $('#terminal').one('hidden.bs.modal', function () {
+                    $('#command').trigger('focus');
+                });
+
+                return true;
+            };
+        </script>
+    }
+}
+
 <div class="admin-header">
     <h3>@L["Remote commands"]</h3>
     <a class="btn btn-default" href="/admin">
@@ -62,13 +81,16 @@
                             <div class="input-group">
                                 <input class="form-control rc-command" id="command" name="command" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ServerCommandMaxLength" placeholder="sm_forcestart"/>
                                 <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button" onclick="terminal.show()" data-toggle="tooltip" data-placement="top" data-container="body" title="@L["Build the command step by step"]">
+                                        <img src="~/imgs/icons/terminal.png" alt="@L["Terminal"]" class="icon"/>
+                                    </button>
                                     <button class="btn btn-primary" type="submit">@L["Send"]</button>
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <p class="help-block" style="margin-bottom: 0">@L["SourceMod commands only: sm_command, !command or /command. Every command is recorded below."]</p>
+                <p class="help-block" style="margin-bottom: 0">@L["SourceMod commands only: sm_command, !command or /command. Every command is recorded below."] @L["The terminal button builds the command step by step, and you can still edit it before sending."]</p>
             </form>
         }
     </div>
