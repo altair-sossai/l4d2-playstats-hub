@@ -1,5 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
@@ -54,6 +56,21 @@ public class SkinCatalogService(
         var json = await DownloadAsync(url!, cancellationToken);
 
         return json == null ? SkinCatalogImportResult.Failed(SkinCatalogImportStatus.DownloadFailed) : await ImportAsync(json, cancellationToken);
+    }
+
+    public Task<SkinCatalogImportResult> ImportBundledAsync(CancellationToken cancellationToken = default)
+    {
+        return ImportAsync(SkinBundledCatalog.Json, cancellationToken);
+    }
+
+    public async Task<SkinCatalogImportResult?> SeedAsync(CancellationToken cancellationToken = default)
+    {
+        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
+
+        if (!modules.IsEnabled(HubModule.SkinShop) || await dbContext.Set<Skin>().AnyAsync(cancellationToken))
+            return null;
+
+        return await ImportBundledAsync(cancellationToken);
     }
 
     private async Task<string?> DownloadAsync(string url, CancellationToken cancellationToken)

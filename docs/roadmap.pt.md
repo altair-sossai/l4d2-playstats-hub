@@ -71,7 +71,7 @@ O [CONTRIBUTING.pt.md](../CONTRIBUTING.pt.md) descreve as pastas e as regras de 
 | Back-end | Uma única instância, seja qual for o número de servidores de jogo. |
 | Partida ao vivo | Somente em memória, separada por servidor de jogo. |
 | Reembolso de skins | Reembolsar as skins no fim de uma temporada é uma configuração, ligada por padrão. |
-| Catálogo de skins | O catálogo e as imagens ficam no repositório de assets, e a aplicação importa o catálogo. |
+| Catálogo de skins | O hub já vem com o catálogo e as miniaturas do site atual, e importa o catálogo na primeira vez que a loja é ligada. As fotos são lidas do endereço dos assets, por padrão o do site atual. |
 | Plugins | Voltados para servidores baseados no L4D2 Competitive Rework. Um endereço e um token para todos eles. |
 | Comandos remotos | Enviar comandos do site para um servidor de jogo é um módulo, desligado por padrão, com log de auditoria. |
 | Anti-cheat | Um módulo, desligado por padrão, que mostra a página do Anti-Cheat com o download e as instruções. O programa Anti-Cheat e o serviço dele são projetos separados. |
@@ -137,7 +137,7 @@ O arquivo de estatísticas traz o nome de exibição da configuração, como `Zo
 ## Loja de skins de armas
 
 - Os jogadores ganham uma estrela para cada MVP em partidas ranqueadas, ao longo de todo o histórico, e gastam estrelas em skins.
-- O catálogo é importado de um arquivo no repositório de assets. As imagens são carregadas de um endereço que o administrador define.
+- O catálogo e as miniaturas do site atual vêm com o hub, e o catálogo é importado sozinho na primeira vez que a loja é ligada. Um administrador pode importar outro catálogo de um arquivo ou de um endereço. As fotos são carregadas de um endereço que o administrador define, por padrão o do site atual.
 - No início de uma temporada, as skins compradas antes são reembolsadas e os presentes são mantidos. O administrador pode desligar o reembolso.
 - Modelos, materiais e fotos ficam no [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
@@ -198,7 +198,7 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 | 2. Estatísticas e ranking | Envio, montagem de partidas, pontuação, punições, temporadas e regras de modos de jogo. | Concluída |
 | 3. Site | Ranking, histórico, partidas, jogadores, patentes, página do Anti-Cheat, área administrativa e as páginas dentro do jogo, em três idiomas. | Concluída; cada tela do site antigo portada e conferida item por item |
 | 4. Servidor ao vivo | Estado ao vivo por servidor, seletor de servidor, chat do site, comandos remotos e banimentos do chat. | Concluída, ainda não vista com um servidor de jogo real |
-| 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, ainda não testada com os assets reais |
+| 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, com o catálogo e as miniaturas do site atual; ainda não testada em um servidor de jogo |
 | 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |
 | 7. Ranking da comunidade | Página de votação, rating, limites e página administrativa. | Concluída |
 | 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada |
@@ -208,6 +208,6 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 
 - **Plugins em um servidor real.** Eles compilam, e o site aceita o que enviam, mas ainda não rodaram em uma partida de verdade.
 - **HTTPS dentro do jogo.** Não medido. Veja [in-game-browser.pt.md](in-game-browser.pt.md#ainda-não-medido).
-- **Repositório de assets.** A loja espera miniaturas em `skins/{id}.jpg` e fotos em `skin-shots/{id}/`, sob um mesmo endereço. O repositório de assets ainda não tem as miniaturas.
+- **Repositório de assets.** Resolvido: o catálogo e as 196 miniaturas do site atual vêm com o hub, como no site antigo, e as fotos são lidas de `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` por padrão.
 - **Ícones de patente no jogo.** Os sprites usados pelo `l4d2_show_patent_icon` não estão neste repositório.
 - **Azure App Service.** O guia foi escrito a partir da documentação do Azure e não foi executado de ponta a ponta.

@@ -4,10 +4,7 @@ public static class SkinAssets
 {
     public static string? BaseUrl(string? assetsUrl)
     {
-        if (string.IsNullOrWhiteSpace(assetsUrl))
-            return null;
-
-        var trimmed = assetsUrl.Trim().TrimEnd('/');
+        var trimmed = (string.IsNullOrWhiteSpace(assetsUrl) ? AppConsts.SkinDefaultAssetsUrl : assetsUrl).Trim().TrimEnd('/');
 
         return IsHttpUrl(trimmed) ? trimmed : null;
     }

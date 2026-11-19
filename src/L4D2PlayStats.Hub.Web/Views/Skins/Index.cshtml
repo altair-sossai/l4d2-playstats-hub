@@ -2,6 +2,7 @@
 @model SkinsModel
 @inject ICurrentUser CurrentUser
 @inject ISettingsService SiteSettingsService
+@inject SkinThumbnailStore SkinThumbnails
 
 @{
     var culture = CultureInfo.CurrentUICulture;
@@ -13,7 +14,7 @@
     {
         Title = L["Skins"],
         Description = L["Weapon skins unlocked by patent level on the {0} server, with credits to the Steam Workshop creators.", site.Name],
-        Image = highlight == null ? null : SkinAssets.Thumbnail(Model.Settings.AssetsUrl, highlight.Id),
+        Image = highlight == null ? null : SkinThumbnails.Url(Model.Settings.AssetsUrl, highlight.Id),
         ImageAlt = highlight?.Title(culture)
     };
 

@@ -4,7 +4,7 @@
 
 Los jugadores ganan estrellas al ser MVP en partidas de ranking y las gastan en skins para sus armas. Una skin comprada se equipa en el servidor de juego a partir del siguiente cambio de mapa. Las skins las hace la comunidad en el Steam Workshop; la tienda da el crédito a cada autor.
 
-La tienda necesita el módulo de ranking, el plugin `l4d2_weapon_skins` en el servidor de juego y un catálogo importado por un administrador.
+La tienda necesita el módulo de ranking y el plugin `l4d2_weapon_skins` en el servidor de juego. El hub ya trae el catálogo y las miniaturas del servidor actual, e importa el catálogo solo la primera vez que se activa la tienda.
 
 [Volver al manual](README.es.md)
 
@@ -149,10 +149,25 @@ Haz clic en una compra para ver los detalles: el precio, el saldo antes y despu�
 
 ![El catálogo de skins](../images/es/admin-skins-catalog.webp)
 
-El catálogo es el archivo `skins.json` del [repositorio de recursos](https://github.com/altair-sossai/l4d2-zone-server-assets). Impórtalo desde un archivo, o descárgalo de la dirección definida en los ajustes de la tienda. Al importar de nuevo:
+El catálogo es un archivo `skins.json`. El hub ya trae el catálogo del servidor actual, 196 skins, y sus miniaturas. El catálogo se importa solo cuando se activa el módulo de la tienda de skins, en [Módulos](administration.es.md#módulos) o en el asistente de la primera ejecución, y cuando el sitio arranca con el módulo activado, siempre que todavía no se haya importado ningún catálogo. Después, solo cambia cuando un administrador importa uno:
+
+- **Importar el catálogo incluido** vuelve a importar el catálogo que viene con esta versión del hub;
+- **Importar desde un archivo** recibe un archivo `skins.json` con el mismo formato;
+- **Importar desde la dirección configurada** lo descarga de la dirección definida en los ajustes de la tienda.
+
+Al importar de nuevo:
 
 - se actualizan las skins que existen y se agregan las nuevas;
-- se retiran de la venta las skins que ya no están en el archivo; los jugadores conservan las que tienen.
+- se retiran de la venta las skins que ya no están en el archivo; los jugadores conservan las que tienen;
+- se mantienen los precios cambiados en la página de [precios](#precios) y los nombres de los autores leídos de Steam.
+
+De dónde viene cada parte de una skin:
+
+| Parte | De dónde viene |
+|---|---|
+| Catálogo | Viene con el hub. Se puede importar otro `skins.json` desde un archivo o desde una dirección. |
+| Miniaturas | Vienen con el hub y las sirve el sitio, en `/imgs/skins/<id>.jpg`. Una skin sin miniatura la lee de `skins/<id>.jpg` bajo la dirección de los recursos. |
+| Fotos | Se leen de `skin-shots/<id>/` bajo la dirección de los recursos, por defecto `https://l4d2playstats.blob.core.windows.net/assets`, donde el [repositorio de recursos](https://github.com/altair-sossai/l4d2-zone-server-assets) las publica. |
 
 La página muestra cuántas skins hay en el catálogo, a la venta y fuera de venta, y cuándo cambió por última vez. El panel **Nombres de los autores** muestra cuántos autores hay, cuántos se comprobaron en Steam, cuándo fue la última comprobación y cuándo un autor cambió su nombre por última vez. **Comprobar los nombres ahora** hace la comprobación al momento, sin esperar a la diaria.
 
@@ -169,8 +184,8 @@ El precio predeterminado de cada skin viene del catálogo. Haz clic en una skin 
 | Ajuste | Qué hace |
 |---|---|
 | Reembolsar las skins cuando termine una temporada | Activado por defecto. Consulta los [reembolsos](#reembolsos-al-final-de-una-temporada). |
-| Dirección de los recursos | Dónde se sirven las imágenes del repositorio de recursos. Las miniaturas se leen de `skins/<id>.jpg` y las fotos de `skin-shots/<id>/` bajo esta dirección. |
-| Dirección del catálogo | De dónde se descarga el archivo `skins.json` cuando importas desde la dirección configurada. |
+| Dirección de los recursos | Dónde se sirven las imágenes del repositorio de recursos. Las fotos se leen de `skin-shots/<id>/`, y las miniaturas de las skins que no vienen con el hub de `skins/<id>.jpg`, bajo esta dirección. Vacío usa `https://l4d2playstats.blob.core.windows.net/assets`, la dirección del servidor actual. |
+| Dirección del catálogo | Opcional. De dónde se descarga el archivo `skins.json` cuando importas desde la dirección configurada. |
 | Perfil de Steam para contacto | Lo abre **Escríbeme en Steam** en el aviso para los autores de skins. Vacío oculta el botón. |
 | Dirección para solicitudes de retirada | La abre **Abrir una solicitud en GitHub** en el mismo aviso, con la skin ya completada. Vacío oculta el botón. |
 

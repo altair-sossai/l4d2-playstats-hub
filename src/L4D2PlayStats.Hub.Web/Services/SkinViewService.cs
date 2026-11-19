@@ -11,6 +11,7 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Skins;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,8 @@ public class SkinViewService(
     ISeasonService seasonService,
     ISettingsService settingsService,
     ISkinAuthorService skinAuthorService,
-    ICurrentUser currentUser) : ISkinViewService
+    ICurrentUser currentUser,
+    SkinThumbnailStore skinThumbnailStore) : ISkinViewService
 {
     public async Task<SkinsModel> ShopAsync(CancellationToken cancellationToken = default)
     {
@@ -42,7 +44,7 @@ public class SkinViewService(
             playerSkins = await skinShopService.GetPlayerSkinsAsync(communityId.Value, cancellationToken);
         }
 
-        return new SkinsModel(skins, currentUser.IsAuthenticated, wallet, playerSkins, settings, season);
+        return new SkinsModel(skins, currentUser.IsAuthenticated, wallet, playerSkins, settings, season, skinThumbnailStore);
     }
 
     public async Task<SkinPurchasesAdminModel> PurchasesAsync(string? query, string? player, int page, CancellationToken cancellationToken = default)
@@ -143,6 +145,7 @@ public class SkinViewService(
             Total = total,
             Available = available,
             Unavailable = total - available,
+            Bundled = SkinBundledCatalog.Count,
             UpdatedAt = updatedAtUtc == null ? null : ToSiteTime(updatedAtUtc.Value, timeZone),
             Authors = authors,
             AuthorsSyncedAt = authors.LastSyncedAtUtc == null ? null : ToSiteTime(authors.LastSyncedAtUtc.Value, timeZone),

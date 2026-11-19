@@ -16,6 +16,7 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
+using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
@@ -35,7 +36,8 @@ public class PlayerViewService(
     ISkinService skinService,
     ISkinShopService skinShopService,
     ICurrentUser currentUser,
-    IStringLocalizer<SharedResource> localizer) : IPlayerViewService
+    IStringLocalizer<SharedResource> localizer,
+    SkinThumbnailStore skinThumbnailStore) : IPlayerViewService
 {
     public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default)
     {
@@ -167,7 +169,7 @@ public class PlayerViewService(
         var playerSkins = await skinShopService.GetPlayerSkinsAsync(communityId, cancellationToken);
         var wallet = await skinShopService.GetWalletAsync(communityId, cancellationToken);
 
-        return new PlayerSkinsModel(skins, playerSkins, wallet, assetsUrl);
+        return new PlayerSkinsModel(skins, playerSkins, wallet, assetsUrl, skinThumbnailStore);
     }
 
     private async Task<Dictionary<long, string>> KnownNamesAsync(IReadOnlyList<RankingPlayer> players, RankingPlayer firstPlayer, RankingPlayer? secondPlayer, CancellationToken cancellationToken)

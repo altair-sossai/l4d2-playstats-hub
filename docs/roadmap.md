@@ -71,7 +71,7 @@ One ASP.NET Core application that is the website, the API for the plugins, the a
 | Back end | A single instance, whatever the number of game servers. |
 | Live match | In memory only, separated by game server. |
 | Skin refund | Refunding skins at the end of a season is a setting, on by default. |
-| Skin catalog | The catalog and the pictures live in the assets repository, and the application imports the catalog. |
+| Skin catalog | The hub comes with the catalog and the thumbnails of the current site, and imports the catalog the first time the shop is turned on. The photos are read from the assets address, by default the one of the current site. |
 | Plugins | Target servers based on L4D2 Competitive Rework. One address and one token for all of them. |
 | Remote commands | Sending commands from the site to a game server is a module, off by default, with an audit log. |
 | Anti-cheat | A module, off by default, that shows the Anti-Cheat page with the download and the instructions. The Anti-Cheat program and its service are separate projects. |
@@ -137,7 +137,7 @@ The statistics file carries the display name of the configuration, such as `Zone
 ## Weapon skin shop
 
 - Players earn one star for each MVP in ranked matches, over their whole history, and spend stars on skins.
-- The catalog is imported from a file in the assets repository. The pictures are loaded from an address the administrator sets.
+- The catalog and the thumbnails of the current site come with the hub, and the catalog is imported by itself the first time the shop is turned on. An administrator can import another catalog from a file or an address. The photos are loaded from an address the administrator sets, by default the one of the current site.
 - At the start of a season, skins bought earlier are refunded and gifts are kept. The administrator can turn the refund off.
 - Models, materials and photos stay in [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
@@ -198,7 +198,7 @@ A separate console program, outside this repository, moves the production data o
 | 2. Statistics and ranking | Upload, match assembly, scoring, punishments, seasons and game mode rules. | Done |
 | 3. Website | Ranking, history, matches, players, patents, Anti-Cheat page, admin area and the in-game pages, in three languages. | Done; every screen of the old site ported and checked item by item |
 | 4. Live server | Live state per server, server picker, site chat, remote commands and chat bans. | Done, not yet seen with a real game server |
-| 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, not yet tried with the real assets |
+| 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, with the catalog and the thumbnails of the current site; not yet tried on a game server |
 | 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |
 | 7. Community ranking | Voting page, rating, limits and admin page. | Done |
 | 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; published since v0.1.1, installer and image tried from the published version |
@@ -208,6 +208,6 @@ A separate console program, outside this repository, moves the production data o
 
 - **Plugins on a live server.** They compile, and the site accepts what they send, but they have not been run in a real match.
 - **HTTPS inside the game.** Not measured. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
-- **Assets repository.** The shop expects thumbnails at `skins/{id}.jpg` and photos at `skin-shots/{id}/`, under one address. The assets repository does not have the thumbnails yet.
+- **Assets repository.** Resolved: the catalog and the 196 thumbnails of the current site come with the hub, as in the old site, and the photos are read from `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` by default.
 - **Patent icons in game.** The sprites used by `l4d2_show_patent_icon` are not in this repository.
 - **Azure App Service.** The guide was written from the Azure documentation and not run end to end.

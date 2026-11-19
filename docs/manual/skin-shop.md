@@ -4,7 +4,7 @@
 
 Players earn stars by being MVP in ranked matches and spend them on skins for their weapons. A bought skin is equipped on the game server from the next map change. The skins are made by the community on the Steam Workshop; the shop credits every author.
 
-The shop needs the ranking module, the `l4d2_weapon_skins` plugin on the game server, and a catalog imported by an administrator.
+The shop needs the ranking module and the `l4d2_weapon_skins` plugin on the game server. The hub comes with the catalog and the thumbnails of the current server, and imports the catalog by itself the first time the shop is turned on.
 
 [Back to the manual](README.md)
 
@@ -149,10 +149,25 @@ Click a purchase to see the details: the price, the balance before and after, wh
 
 ![The skin catalog](../images/en/admin-skins-catalog.webp)
 
-The catalog is the `skins.json` file of the [assets repository](https://github.com/altair-sossai/l4d2-zone-server-assets). Import it from a file, or download it from the address set in the shop settings. Importing again:
+The catalog is a `skins.json` file. The hub comes with the catalog of the current server, 196 skins, and their thumbnails. The catalog is imported by itself when the skin shop module is turned on, in [Modules](administration.md#modules) or in the first-run wizard, and when the site starts with the module on, as long as no catalog was imported yet. After that, it changes only when an administrator imports one:
+
+- **Import the bundled catalog** imports again the catalog that comes with this version of the hub;
+- **Import from a file** takes a `skins.json` file in the same format;
+- **Import from the configured address** downloads it from the address set in the shop settings.
+
+Importing again:
 
 - updates the skins that exist and adds the new ones;
-- takes off sale the skins that are no longer in the file; players keep the ones they own.
+- takes off sale the skins that are no longer in the file; players keep the ones they own;
+- keeps the prices changed on the [prices](#prices) page and the author names read from Steam.
+
+Where each part of a skin comes from:
+
+| Part | Where it comes from |
+|---|---|
+| Catalog | Comes with the hub. Another `skins.json` can be imported from a file or from an address. |
+| Thumbnails | Come with the hub and are served by the site, at `/imgs/skins/<id>.jpg`. A skin without one reads it from `skins/<id>.jpg` under the address of the assets. |
+| Photos | Read from `skin-shots/<id>/` under the address of the assets, by default `https://l4d2playstats.blob.core.windows.net/assets`, where the [assets repository](https://github.com/altair-sossai/l4d2-zone-server-assets) publishes them. |
 
 The page shows how many skins are in the catalog, for sale and off sale, and when it last changed. The **Author names** panel shows how many authors there are, how many were checked on Steam, when the last check ran and when an author last changed their name. **Check the names now** runs the check at once instead of waiting for the daily one.
 
@@ -169,8 +184,8 @@ The default price of each skin comes from the catalog. Click a skin to give it a
 | Setting | What it does |
 |---|---|
 | Refund the skins when a season ends | On by default. See [refunds](#refunds-at-the-end-of-a-season). |
-| Address of the assets | Where the pictures of the assets repository are served. Thumbnails are read from `skins/<id>.jpg` and photos from `skin-shots/<id>/` under this address. |
-| Address of the catalog | Where the `skins.json` file is downloaded from when you import from the configured address. |
+| Address of the assets | Where the pictures of the assets repository are served. Photos are read from `skin-shots/<id>/`, and the thumbnails of the skins that do not come with the hub from `skins/<id>.jpg`, under this address. Empty uses `https://l4d2playstats.blob.core.windows.net/assets`, the address of the current server. |
+| Address of the catalog | Optional. Where the `skins.json` file is downloaded from when you import from the configured address. |
 | Steam profile for contact | Opened by **Message me on Steam** in the notice for skin authors. Empty hides the button. |
 | Address for removal requests | Opened by **Open a request on GitHub** in the same notice, with the skin filled in. Empty hides the button. |
 

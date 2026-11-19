@@ -136,6 +136,8 @@ public static class AppConsts
     public const string SkinThumbnailExtension = ".jpg";
     public const string SkinShotsFolder = "skin-shots";
     public const string SkinShotExtension = ".webp";
+    public const string SkinDefaultAssetsUrl = "https://l4d2playstats.blob.core.windows.net/assets";
+    public const string SkinBundledCatalogResource = "Modules.Skins.Data.skins.json";
     public const string SkinWorkshopUrl = "https://steamcommunity.com/sharedfiles/filedetails/?id=";
     public const string SkinCatalogHttpClient = "SkinCatalog";
     public const int SkinCatalogTimeoutInSeconds = 30;

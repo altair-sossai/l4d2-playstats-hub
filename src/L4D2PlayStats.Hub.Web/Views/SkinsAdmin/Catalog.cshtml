@@ -18,7 +18,7 @@
     <div class="alert alert-success">@L["Catalog imported: {0} skins in the file, {1} added, {2} updated and {3} no longer for sale.", SkinDisplay.Arguments(imported)]</div>
 }
 
-<p class="text-muted">@L["The catalog is the skins.json file of the assets repository. Importing it again updates the skins that exist, adds the new ones, and takes off sale the skins that are no longer in the file. Players keep the skins they own."]</p>
+<p class="text-muted">@L["The catalog is a skins.json file. The hub comes with the catalog of the current server and imports it by itself the first time the shop is turned on. Importing a catalog again updates the skins that exist, adds the new ones, and takes off sale the skins that are no longer in the file. Players keep the skins they own and the prices you changed."]</p>
 
 <div class="admin-stats">
     <div>
@@ -70,6 +70,20 @@
         <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/authors" style="margin: 0">
             <button class="btn btn-default" type="submit" @(Model.Authors.Authors == 0 ? "disabled" : null)>
                 <span class="glyphicon glyphicon-refresh"></span> @L["Check the names now"]
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>@L["Import the bundled catalog"]</strong>
+    </div>
+    <div class="panel-body">
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/bundled">
+            <p>@L["The catalog that comes with this version of the hub, with {0} skins and their thumbnails.", Model.Bundled.ToString("N0", culture)]</p>
+            <button class="btn btn-primary" type="submit">
+                <span class="glyphicon glyphicon-import"></span> @L["Import the bundled catalog"]
             </button>
         </form>
     </div>

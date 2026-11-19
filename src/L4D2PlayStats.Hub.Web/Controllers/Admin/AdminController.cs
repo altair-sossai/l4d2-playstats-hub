@@ -10,6 +10,7 @@ using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
@@ -32,6 +33,7 @@ public class AdminController(
     IAdministratorService administratorService,
     ISettingsService settingsService,
     IMatchBuildService matchBuildService,
+    ISkinCatalogService skinCatalogService,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -185,6 +187,7 @@ public class AdminController(
     public async Task<IActionResult> SaveModules(ModuleSettings modules, CancellationToken cancellationToken)
     {
         await settingsService.SaveAsync(modules, cancellationToken);
+        await skinCatalogService.SeedAsync(cancellationToken);
         TempData["Saved"] = true;
 
         return RedirectToAction(nameof(Modules));

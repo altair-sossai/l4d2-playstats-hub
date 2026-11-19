@@ -1,10 +1,10 @@
 using L4D2PlayStats.Hub.Core.Modules.Skins;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
+using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 
 namespace L4D2PlayStats.Hub.Web.Models.Players;
 
-public class PlayerSkinsModel(IReadOnlyCollection<Skin> skins, PlayerSkins playerSkins, SkinWallet? wallet, string? assetsUrl)
+public class PlayerSkinsModel(IReadOnlyCollection<Skin> skins, PlayerSkins playerSkins, SkinWallet? wallet, string? assetsUrl, SkinThumbnailStore thumbnails)
 {
     public IReadOnlyCollection<Skin> OwnedSkins { get; } =
     [
@@ -24,6 +24,6 @@ public class PlayerSkinsModel(IReadOnlyCollection<Skin> skins, PlayerSkins playe
 
     public string? Image(Skin skin)
     {
-        return SkinAssets.Thumbnail(assetsUrl, skin.Id);
+        return thumbnails.Url(assetsUrl, skin.Id);
     }
 }

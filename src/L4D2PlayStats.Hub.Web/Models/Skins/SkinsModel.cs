@@ -5,10 +5,11 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
+using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 
 namespace L4D2PlayStats.Hub.Web.Models.Skins;
 
-public class SkinsModel(IReadOnlyCollection<Skin> catalog, bool loggedIn, SkinWallet? wallet, PlayerSkins? playerSkins, SkinShopSettings settings, SkinSeasonModel season)
+public class SkinsModel(IReadOnlyCollection<Skin> catalog, bool loggedIn, SkinWallet? wallet, PlayerSkins? playerSkins, SkinShopSettings settings, SkinSeasonModel season, SkinThumbnailStore thumbnails)
 {
     public IReadOnlyCollection<Skin> Skins { get; } = [.. catalog.Where(skin => skin.Available)];
     public bool LoggedIn { get; } = loggedIn;
@@ -78,7 +79,7 @@ public class SkinsModel(IReadOnlyCollection<Skin> catalog, bool loggedIn, SkinWa
 
     public string Image(Skin skin)
     {
-        return SkinDisplay.Image(Settings.AssetsUrl, skin);
+        return thumbnails.Image(Settings.AssetsUrl, skin);
     }
 
     public string? Shots(Skin skin)

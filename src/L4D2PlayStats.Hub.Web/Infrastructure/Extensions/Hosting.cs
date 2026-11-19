@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,7 @@ public static class Hosting
 
         await services.GetRequiredService<ICampaignService>().SeedAsync();
         await services.GetRequiredService<IGameModeService>().SeedAsync();
+        await services.GetRequiredService<ISkinCatalogService>().SeedAsync();
 
         var token = await services.GetRequiredService<ISetupService>().EnsureTokenAsync();
 

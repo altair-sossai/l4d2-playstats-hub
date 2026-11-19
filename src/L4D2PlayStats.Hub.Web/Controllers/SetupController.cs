@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Web.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models;
@@ -18,6 +19,7 @@ public class SetupController(
     IAdminViewService adminViewService,
     IGameServerService gameServerService,
     ISettingsService settingsService,
+    ISkinCatalogService skinCatalogService,
     ICurrentUser currentUser,
     IConfiguration configuration,
     IWebHostEnvironment environment) : Controller
@@ -126,6 +128,7 @@ public class SetupController(
             return Forbid();
 
         await settingsService.SaveAsync(modules, cancellationToken);
+        await skinCatalogService.SeedAsync(cancellationToken);
 
         return Redirect($"/setup?step={ServerStep}");
     }

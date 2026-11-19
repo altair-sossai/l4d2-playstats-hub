@@ -78,6 +78,12 @@ public class SkinsAdminController(
         return Imported(await skinCatalogService.ImportFromUrlAsync(cancellationToken));
     }
 
+    [HttpPost("catalog/bundled")]
+    public async Task<IActionResult> ImportBundledCatalog(CancellationToken cancellationToken)
+    {
+        return Imported(await skinCatalogService.ImportBundledAsync(cancellationToken));
+    }
+
     [HttpPost("catalog/authors")]
     public async Task<IActionResult> SyncAuthors(CancellationToken cancellationToken)
     {

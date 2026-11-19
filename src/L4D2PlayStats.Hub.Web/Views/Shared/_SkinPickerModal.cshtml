@@ -1,5 +1,6 @@
 @model IReadOnlyCollection<Skin>
 @inject ISettingsService ShopSettingsService
+@inject SkinThumbnailStore SkinThumbnails
 
 @{
     var culture = CultureInfo.CurrentUICulture;
@@ -146,7 +147,7 @@
                         var title = skin.Title(culture);
                         var weapon = L[SkinWeapons.Name(skin.Weapon)].Value;
                         var rarity = L[SkinDisplay.RarityKey(skin.Rarity)].Value;
-                        var image = SkinDisplay.Image(shop.AssetsUrl, skin);
+                        var image = SkinThumbnails.Image(shop.AssetsUrl, skin);
 
                         <div class="sp-tile @SkinDisplay.PickerCss(skin.Rarity)"
                              data-id="@skin.Id" data-title="@title" data-image="@image" data-weapon="@skin.Weapon" data-weapon-name="@weapon"

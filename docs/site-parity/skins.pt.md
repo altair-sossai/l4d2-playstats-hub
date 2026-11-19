@@ -13,7 +13,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | Rota `GET /skins`, item de menu "Skins" ativo (`ViewBag.Skins`) | Controllers/SkinsController.cs:11-14 | done |  |
-| Metadados da página: título "Skins", descrição, imagem e alt da skin mais cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | A descrição recebe o nome do site das configurações em vez de citar "L4D2 Competitive". A imagem é a miniatura no site de assets, como endereço absoluto; sem um endereço de assets, não há imagem. |
+| Metadados da página: título "Skins", descrição, imagem e alt da skin mais cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | A descrição recebe o nome do site das configurações em vez de citar "L4D2 Competitive". A imagem é a miniatura da skin, como endereço absoluto: o próprio `/imgs/skins/{id}.jpg` do site para as skins que vêm com o hub, como no site antigo, e senão a do endereço de assets. |
 | Estilos inline da página (`.sk-*`, 700 linhas) | Views/Skins/Index.cshtml:34-734 | done | Copiados sem alterações. |
 | Token antiforgery na página | Views/Skins/Index.cshtml:736 | done |  |
 | Hero: antetítulo "Loja de skins", título "Skins", texto de abertura | Views/Skins/Index.cshtml:738-742 | done |  |
@@ -41,7 +41,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Ordem dentro de uma raridade: preço decrescente, ordem das armas, título em inglês | Models/SkinsModel.cs:70-80 | done |  |
 | Cartão: `col-xs-6 col-sm-4 col-md-3`, atributos de dados `weapon`, `rarity`, `affordable` | Views/Skins/Index.cshtml:980-981 | done |  |
 | Cartão: âncora `id="skin-{id}"` (só na aba Loja), borda de comprada, brilho de lendária | Views/Skins/Index.cshtml:982 | done |  |
-| Cartão: miniatura, com carregamento tardio | Views/Skins/Index.cshtml:984-985 | adapted | Carregada do site de assets (`{assets}/skins/{id}.jpg`) em vez de `/imgs/skins`. Sem um endereço de assets, um placeholder transparente mantém o formato do cartão. |
+| Cartão: miniatura, com carregamento tardio | Views/Skins/Index.cshtml:984-985 | done | Servida pelo site em `/imgs/skins/{id}.jpg`, como no site antigo, para as 196 skins que vêm com o hub. Uma skin adicionada depois é carregada de `{assets}/skins/{id}.jpg`. |
 | Cartão: rótulo da arma sobre a miniatura | Views/Skins/Index.cshtml:986 | done |  |
 | Cartão: rótulo de status "Equipada" (com ícone de check) ou "Comprada" | Views/Skins/Index.cshtml:987-996 | done |  |
 | Cartão: etiqueta de preço com a estrela | Views/Skins/Index.cshtml:997 | done |  |
@@ -63,7 +63,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Aba Autores: uma caixa por autor com link do perfil, contagem de skins (singular e plural) e os títulos | Views/Skins/Index.cshtml:1124-1139, 25-30 | done | Autores sem Steam ID são agrupados por nome e aparecem sem o link. |
 | Modal de detalhes: abre com um clique em qualquer ponto do cartão, exceto nas ações e no link do autor | Views/Skins/Index.cshtml:1588-1598, 1622-1628 | done |  |
 | Modal de detalhes: abre sozinho para `/skins#skin-{id}` | Views/Skins/Index.cshtml:1773-1778 | done |  |
-| Detalhes: galeria com a foto principal e seis miniaturas quando a skin tem fotos | Views/Skins/Index.cshtml:884-903, 1476-1506 | done | Exibida quando a skin tem fotos e há um endereço de assets definido. |
+| Detalhes: galeria com a foto principal e seis miniaturas quando a skin tem fotos | Views/Skins/Index.cshtml:884-903, 1476-1506 | done | Exibida quando a skin tem fotos. As fotos vêm do endereço de assets, que por padrão é o do site antigo. |
 | Detalhes: imagem única quando a skin não tem fotos, abre no lightbox | Views/Skins/Index.cshtml:904-911 | done |  |
 | Detalhes: lightbox com zoom e pan (panzoom), clique para dar zoom, zoom pela roda do mouse | Views/Skins/Index.cshtml:1312, 1508-1542 | done |  |
 | Detalhes: botões de anterior e próximo do lightbox e teclas de seta | Views/Skins/Index.cshtml:1544-1586, 606-636 | done |  |
@@ -112,7 +112,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Modal grande "Escolher skin" | Views/Shared/_SkinPickerModal.cshtml:117-126 | done |  |
 | Campo de busca (nome, id ou arma), com foco quando o modal abre | Views/Shared/_SkinPickerModal.cshtml:128, 190-192, 222-224 | done |  |
 | Filtro de arma e filtro de raridade | Views/Shared/_SkinPickerModal.cshtml:129-141 | done |  |
-| Grade de blocos ordenados por raridade, preço e arma: miniatura, título, arma, raridade, preço | Views/Shared/_SkinPickerModal.cshtml:11-17, 143-162 | done | Miniaturas do site de assets. |
+| Grade de blocos ordenados por raridade, preço e arma: miniatura, título, arma, raridade, preço | Views/Shared/_SkinPickerModal.cshtml:11-17, 143-162 | done | Miniaturas servidas pelo site, como na página da loja. |
 | "Nenhuma skin com esses filtros." | Views/Shared/_SkinPickerModal.cshtml:163 | done |  |
 | `SkinPicker.open(callback)` e `SkinPicker.find(id)` | Views/Shared/_SkinPickerModal.cshtml:237-260 | done |  |
 | Celular: dois blocos por linha abaixo de 700 px | Views/Shared/_SkinPickerModal.cshtml:111-115 | done |  |
@@ -194,15 +194,15 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Voltar para a padrão remove o equipamento da arma | Core/Skins/Services/SkinShopService.cs:159-184 | done |  |
 | Reembolso: devolve as estrelas, remove a skin e o equipamento dela | Core/Skins/Services/SkinShopService.cs:230-311 | done |  |
 | Reembolso de temporada: a cada dez minutos, as compras feitas antes da temporada atual são reembolsadas; os presentes são mantidos | BackgroundServices/SkinSeasonRefundBackgroundService.cs:8-35, Core/Skins/Services/SkinShopService.cs:246-260, 313-316 | adapted | Segue as temporadas do hub, de qualquer duração, e é uma configuração da loja que começa ligada. |
-| Catálogo: id, arma, raridade, preço, id do Workshop, fotos, autor, títulos e descrições em três idiomas, título e descrição originais | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | adapted | Diferença proposital do hub: o catálogo não vem junto, o administrador importa o `skins.json` na página do catálogo. Todos os campos são mantidos. |
-| Miniaturas em `/imgs/skins/{id}.jpg`, fotos em `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | adapted | Diferença proposital do hub: `{assets}/skins/{id}.jpg` e `{assets}/skin-shots/{id}/`, com o endereço de assets das configurações da loja. |
+| Catálogo: id, arma, raridade, preço, id do Workshop, fotos, autor, títulos e descrições em três idiomas, título e descrição originais | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | done | O catálogo do site antigo vem com o hub (`Core/Modules/Skins/Data/skins.json`, sem alterações) e é importado sozinho na primeira vez que a loja é ligada. O administrador pode importá-lo de novo, ou outro `skins.json`, na página do catálogo. Todos os campos são mantidos. |
+| Miniaturas em `/imgs/skins/{id}.jpg`, fotos em `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | done | As mesmas 196 miniaturas estão em `wwwroot/imgs/skins`. Fotos em `{assets}/skin-shots/{id}/`, onde o endereço de assets começa como o `SkinShotsUrl` do site antigo sem a última pasta (`https://l4d2playstats.blob.core.windows.net/assets`). Uma skin sem miniatura incluída a lê de `{assets}/skins/{id}.jpg`. |
 
 ## Páginas só do hub
 
 | Item | Onde no hub | Situação | Observações |
 |---|---|---|---|
-| Página do catálogo de skins (`/admin/skins/catalog`): totais, última alteração, importação a partir de um arquivo, importação a partir do endereço configurado | Views/SkinsAdmin/Catalog.cshtml | done | Reestilizada com `_AdminStyles` (cabeçalho, estatísticas, painéis). A última alteração é exibida no fuso horário do site. |
-| Página de configurações da loja (`/admin/skins/settings`): reembolso no fim de uma temporada, endereço dos assets, endereço do catálogo | Views/SkinsAdmin/Settings.cshtml | done | Reestilizada com painéis do Bootstrap 3. Novo: os dois endereços do aviso para autores de skins. |
+| Página do catálogo de skins (`/admin/skins/catalog`): totais, última alteração, importação do catálogo incluído, importação a partir de um arquivo, importação a partir do endereço configurado | Views/SkinsAdmin/Catalog.cshtml | done | Reestilizada com `_AdminStyles` (cabeçalho, estatísticas, painéis). A última alteração é exibida no fuso horário do site. Novo: a importação do catálogo incluído. |
+| Página de configurações da loja (`/admin/skins/settings`): reembolso no fim de uma temporada, endereço dos assets, endereço do catálogo | Views/SkinsAdmin/Settings.cshtml | done | Reestilizada com painéis do Bootstrap 3. Novo: os dois endereços do aviso para autores de skins, e o endereço padrão dos assets, exibido quando o campo está em branco. |
 | Abas que ligam as quatro páginas de administrador | Views/Shared/_SkinsAdminNav.cshtml | adapted | As abas saíram: as quatro páginas estão no grupo Loja de skins do menu lateral da administração (`Views/Shared/_AdminMenu.cshtml`), que toda página de administrador mostra, então o caminho para o resto da administração não se perde nessas páginas. O conteúdo das páginas não mudou. |
 
 ## Textos

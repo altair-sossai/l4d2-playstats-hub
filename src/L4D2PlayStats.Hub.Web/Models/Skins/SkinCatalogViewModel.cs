@@ -9,6 +9,7 @@ public class SkinCatalogViewModel
     public int Total { get; init; }
     public int Available { get; init; }
     public int Unavailable { get; init; }
+    public int Bundled { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public SkinAuthorStatus Authors { get; init; } = new(0, 0, null, null);
     public DateTime? AuthorsSyncedAt { get; init; }
