@@ -45,7 +45,7 @@ The page shows two players with their avatars. Answer with one of:
 | I don't know this player (under one of them) | Nothing changes, and that player is not shown to you again. |
 | I don't know either of them | Nothing changes, and neither player is shown to you again. |
 
-After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player. **Votes left today** shows how many votes you still have.
+After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↑ says they are at the same level and ↓ that you know neither of them. **Votes left today** shows how many votes you still have.
 
 ## Who can vote, and how much
 

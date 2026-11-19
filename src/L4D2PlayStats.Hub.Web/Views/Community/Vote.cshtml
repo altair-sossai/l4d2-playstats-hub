@@ -512,7 +512,7 @@
                 UnknownRight: 'is-unknown-right',
                 UnknownBoth: 'is-unknown-both'
             };
-            var keys = { ArrowLeft: 'Left', ArrowRight: 'Right' };
+            var keys = { ArrowLeft: 'Left', ArrowRight: 'Right', ArrowUp: 'SameLevel', ArrowDown: 'UnknownBoth' };
 
             document.addEventListener('click', function (event) {
                 var button = event.target.closest('.ballot button[name="Outcome"]');

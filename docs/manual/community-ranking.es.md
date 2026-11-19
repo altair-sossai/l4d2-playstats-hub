@@ -45,7 +45,7 @@ La página muestra dos jugadores con sus avatares. Responde con una de estas opc
 | No conozco a este jugador (debajo de uno de ellos) | No cambia nada, y ese jugador no se te vuelve a mostrar. |
 | No conozco a ninguno de los dos | No cambia nada, y ninguno de los dos se te vuelve a mostrar. |
 
-Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha. **Votos restantes hoy** muestra cuántos votos te quedan.
+Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha, ↑ dice que están al mismo nivel y ↓ que no conoces a ninguno de los dos. **Votos restantes hoy** muestra cuántos votos te quedan.
 
 ## Quién puede votar, y cuánto
 

@@ -45,7 +45,7 @@ A página mostra dois jogadores com seus avatares. Responda com uma destas opç�
 | Não conheço este jogador (embaixo de um deles) | Nada muda, e esse jogador não aparece mais para você. |
 | Não conheço nenhum dos dois | Nada muda, e nenhum dos dois aparece mais para você. |
 
-Depois de cada resposta a página marca a sua escolha e a próxima dupla entra na tela. No computador, as setas ← e → escolhem o jogador da esquerda ou da direita. **Votos restantes hoje** mostra quantos votos você ainda tem.
+Depois de cada resposta a página marca a sua escolha e a próxima dupla entra na tela. No computador, as setas ← e → escolhem o jogador da esquerda ou da direita, ↑ diz que estão no mesmo nível e ↓ que você não conhece nenhum dos dois. **Votos restantes hoje** mostra quantos votos você ainda tem.
 
 ## Quem pode votar, e quanto
 
