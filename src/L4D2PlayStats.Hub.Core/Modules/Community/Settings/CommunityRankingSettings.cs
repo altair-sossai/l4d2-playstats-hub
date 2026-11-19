@@ -7,6 +7,7 @@ public class CommunityRankingSettings
     public int MinimumMatchesToBeCandidate { get; set; } = AppConsts.DefaultCommunityMinimumMatchesToBeCandidate;
     public int CandidatePlayedWithinDays { get; set; } = AppConsts.DefaultCommunityCandidatePlayedWithinDays;
     public int MinimumComparisonsToBeListed { get; set; } = AppConsts.DefaultCommunityMinimumComparisonsToBeListed;
+    public int MaximumPlayersListed { get; set; } = AppConsts.DefaultCommunityMaximumPlayersListed;
     public int KFactor { get; set; } = AppConsts.DefaultCommunityKFactor;
     public int InitialRating { get; set; } = AppConsts.DefaultCommunityInitialRating;
 
@@ -17,6 +18,7 @@ public class CommunityRankingSettings
         MinimumMatchesToBeCandidate = Math.Max(0, MinimumMatchesToBeCandidate);
         CandidatePlayedWithinDays = Math.Max(0, CandidatePlayedWithinDays);
         MinimumComparisonsToBeListed = Math.Max(0, MinimumComparisonsToBeListed);
+        MaximumPlayersListed = Math.Max(0, MaximumPlayersListed);
         KFactor = Math.Clamp(KFactor, AppConsts.CommunityMinKFactor, AppConsts.CommunityMaxKFactor);
         InitialRating = Math.Max(0, InitialRating);
     }

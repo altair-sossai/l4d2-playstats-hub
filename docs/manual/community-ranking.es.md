@@ -30,7 +30,7 @@ El ranking de la comunidad es un segundo ranking, construido a partir de lo que 
 | Comparaciones | Cuántas veces se juzgó al jugador frente a otro jugador. |
 | Victorias, Empates, Derrotas | Cuántas comparaciones ganó, empató y perdió el jugador. |
 
-Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla. **Votar** abre la página de votación.
+Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla, y la lista se detiene en los primeros 100 jugadores de forma predeterminada. **Votar ahora**, en el recuadro encima de la tabla, abre la página de votación. El mismo recuadro aparece encima del ranking de estadísticas en la página de inicio; allí el jugador puede cerrarlo, y vuelve después de 7 días.
 
 ## Votar
 
@@ -87,6 +87,8 @@ La puntuación es permanente. No vuelve a empezar con la temporada.
 
 ![Los ajustes del ranking de la comunidad](../images/es/admin-community.webp)
 
+Cada campo tiene un **?** junto a su nombre: al pasar el ratón muestra una explicación corta, y los campos que necesitan más muestran una ventana con los detalles al hacer clic.
+
 | Ajuste | Qué hace | Predeterminado |
 |---|---|---|
 | Mínimo de partidas para votar | Partidas que un jugador tiene que haber jugado, en todas las temporadas, para votar. | 10 |
@@ -94,6 +96,7 @@ La puntuación es permanente. No vuelve a empezar con la temporada.
 | Mínimo de partidas para ser comparado y aparecer en la lista | Partidas que un jugador tiene que haber jugado, en todas las temporadas, para que se ofrezca para comparar y para aparecer en el ranking de la comunidad. | 1 |
 | Máximo de días desde la última partida para ser comparado | Un jugador cuya última partida es más antigua que esto deja de ofrecerse para comparar, pero sigue en el ranking de la comunidad. 0 es sin límite. | 0 |
 | Mínimo de comparaciones para aparecer en la lista | Comparaciones que un jugador necesita para aparecer en el ranking de la comunidad. | 5 |
+| Máximo de jugadores en el ranking | El ranking de la comunidad muestra como máximo esta cantidad de jugadores, de la puntuación más alta hacia abajo. 0 muestra a todos. | 100 |
 | Factor K de Elo | Cuánto mueve las puntuaciones un voto, de 1 a 200. | 32 |
 | Puntuación inicial | La puntuación de un jugador que nunca fue comparado. | 1500 |
 

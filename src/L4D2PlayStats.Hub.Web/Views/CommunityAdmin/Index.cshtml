@@ -45,19 +45,19 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label for="MinimumMatchesToVote">@L["Minimum matches to vote"]</label>
+                        <label for="MinimumMatchesToVote">@L["Minimum matches to vote"] @FieldHelp.Tip(L["A player needs at least this many matches, counted over all seasons, ranked or not, to vote."])</label>
                         <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
                     </div>
                     <div class="form-group">
-                        <label for="VotesPerDay">@L["Votes per day"]</label>
+                        <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answers \"I don't know this player\" and \"I don't know either of them\" are free and have no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
                         <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
                     </div>
                     <div class="form-group">
-                        <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"]</label>
+                        <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"] @FieldHelp.More(L["Players with fewer matches are never offered in the voting and do not appear in the community ranking."], L["Minimum matches to be compared and listed"], L["Matches are counted over all seasons, ranked or not.\nUse it to leave out players who played only one or two matches: few voters know them, so the votes about them would be random.\nRaising it takes players out of the ranking right away. Their votes and ratings are kept, and they come back when they reach the minimum."])</label>
                         <input class="form-control" id="MinimumMatchesToBeCandidate" name="MinimumMatchesToBeCandidate" type="number" min="0" value="@settings.MinimumMatchesToBeCandidate">
                     </div>
                     <div class="form-group">
-                        <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"]</label>
+                        <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"] @FieldHelp.More(L["Players whose last match is older than this are no longer offered in the voting. 0 means no limit."], L["Maximum days since the last match to be compared"], L["It keeps the voting about the people who play now. With 90, for example, a player who has not played for three months stops appearing in the pairs.\nIt only affects the voting: the player keeps the rating and stays in the community ranking.\nWhen the player plays again, they are offered again."])</label>
                         <input class="form-control" id="CandidatePlayedWithinDays" name="CandidatePlayedWithinDays" type="number" min="0" value="@settings.CandidatePlayedWithinDays">
                     </div>
                     <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
@@ -71,15 +71,19 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label for="MinimumComparisonsToBeListed">@L["Minimum comparisons to be listed"]</label>
+                        <label for="MinimumComparisonsToBeListed">@L["Minimum comparisons to be listed"] @FieldHelp.Tip(L["A player appears in the community ranking only after being judged this many times, so a single vote does not put anyone at the top."])</label>
                         <input class="form-control" id="MinimumComparisonsToBeListed" name="MinimumComparisonsToBeListed" type="number" min="0" value="@settings.MinimumComparisonsToBeListed">
                     </div>
                     <div class="form-group">
-                        <label for="KFactor">@L["Elo K factor"]</label>
+                        <label for="MaximumPlayersListed">@L["Maximum players in the ranking"] @FieldHelp.Tip(L["The community ranking shows at most this many players, from the highest rating down. 0 shows everyone."])</label>
+                        <input class="form-control" id="MaximumPlayersListed" name="MaximumPlayersListed" type="number" min="0" value="@settings.MaximumPlayersListed">
+                    </div>
+                    <div class="form-group">
+                        <label for="KFactor">@L["Elo K factor"] @FieldHelp.More(L["How much one vote moves the ratings, from 1 to 200."], L["Elo K factor"], L["Each vote moves the two ratings by up to K points: the winner gains and the loser loses the same amount. The less expected the result, the bigger the change.\nA high K reacts fast to new votes but makes the ranking jumpy; a low K is stable but slow.\nThe default is 32. A change applies to new votes; use Rebuild the ratings to apply it to all of them."])</label>
                         <input class="form-control" id="KFactor" name="KFactor" type="number" min="@CoreConsts.CommunityMinKFactor" max="@CoreConsts.CommunityMaxKFactor" value="@settings.KFactor">
                     </div>
                     <div class="form-group">
-                        <label for="InitialRating">@L["Initial rating"]</label>
+                        <label for="InitialRating">@L["Initial rating"] @FieldHelp.Tip(L["The rating of a player who was never compared. Everybody starts here and moves up or down with the votes."])</label>
                         <input class="form-control" id="InitialRating" name="InitialRating" type="number" min="0" value="@settings.InitialRating">
                     </div>
                     <span class="help-block" style="margin-bottom: 0">@L["The K factor and the initial rating apply to new votes. Rebuild the ratings to apply them to every vote."]</span>

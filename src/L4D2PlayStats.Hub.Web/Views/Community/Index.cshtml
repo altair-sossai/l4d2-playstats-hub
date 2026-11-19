@@ -54,10 +54,9 @@
 
 <div class="community-lead">
     <small>@L["Built from the votes of the players. It does not reset with the season."]</small>
-    <a class="btn btn-sm btn-primary" href="@AppConsts.CommunityVotePage">
-        <span class="glyphicon glyphicon-thumbs-up"></span> @L["Vote"]
-    </a>
 </div>
+
+@await Html.PartialAsync("_VoteInvite", false)
 
 @if (Model.Players.Count == 0)
 {

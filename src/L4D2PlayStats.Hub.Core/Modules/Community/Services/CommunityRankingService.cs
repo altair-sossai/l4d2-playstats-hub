@@ -27,7 +27,8 @@ public class CommunityRankingService(
             .ThenBy(r => r.CommunityId)
             .ToListAsync(cancellationToken);
 
-        var ratings = rated.Where(r => eligible.Contains(r.CommunityId)).ToList();
+        var listed = rated.Where(r => eligible.Contains(r.CommunityId));
+        var ratings = (settings.MaximumPlayersListed > 0 ? listed.Take(settings.MaximumPlayersListed) : listed).ToList();
 
         var names = await playerService.NamesAsync([.. ratings.Select(r => r.CommunityId)], cancellationToken);
 

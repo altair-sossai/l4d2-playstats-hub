@@ -30,7 +30,7 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
-Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table. **Vote** opens the voting page.
+Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
 
 ## Voting
 
@@ -87,6 +87,8 @@ The rating is permanent. It does not start again with the season.
 
 ![The community ranking settings](../images/en/admin-community.webp)
 
+Each field has a **?** next to its name: hovering it shows a short explanation, and the fields that need more show a window with the details when clicked.
+
 | Setting | What it does | Default |
 |---|---|---|
 | Minimum matches to vote | Matches a player must have played, over all seasons, to vote. | 10 |
@@ -94,6 +96,7 @@ The rating is permanent. It does not start again with the season.
 | Minimum matches to be compared and listed | Matches a player must have played, over all seasons, to be offered for comparison and to appear in the community ranking. | 1 |
 | Maximum days since the last match to be compared | A player whose last match is older than this is no longer offered for comparison, but stays in the community ranking. 0 means no limit. | 0 |
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |
+| Maximum players in the ranking | The community ranking shows at most this many players, from the highest rating down. 0 shows everyone. | 100 |
 | Elo K factor | How much one vote moves the ratings, from 1 to 200. | 32 |
 | Initial rating | The rating of a player who was never compared. | 1500 |
 

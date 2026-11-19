@@ -199,6 +199,30 @@ public class CommunityRankingServiceTests
     }
 
     [TestMethod]
+    public async Task TheRankingShowsAtMostTheMaximumNumberOfPlayers()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, MinimumComparisonsToBeListed = 1, VotesPerDay = EnoughVotes });
+        await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.Left);
+
+        var everyone = await community.RankingAsync();
+
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, MinimumComparisonsToBeListed = 1, MaximumPlayersListed = 3 });
+
+        var limited = await community.RankingAsync();
+
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, MinimumComparisonsToBeListed = 1, MaximumPlayersListed = 0 });
+
+        var unlimited = await community.RankingAsync();
+
+        Assert.HasCount(7, everyone);
+        CollectionAssert.AreEqual(everyone.Take(3).Select(entry => entry.CommunityId).ToList(), limited.Select(entry => entry.CommunityId).ToList());
+        Assert.HasCount(7, unlimited);
+        Assert.AreEqual(100, new CommunityRankingSettings().MaximumPlayersListed);
+    }
+
+    [TestMethod]
     public async Task PlayersWithTooFewMatchesAreNotListed()
     {
         using var community = new CommunityTestHub();

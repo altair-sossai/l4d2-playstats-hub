@@ -2,8 +2,11 @@
 @using L4D2PlayStats.Hub.Web.Models.Ranking
 @model HomeModel
 @inject ICurrentUser CurrentUser
+@inject ISettingsService Settings
 
 @{
+    var modules = await Settings.GetAsync<ModuleSettings>();
+    var voteInvite = modules.IsEnabled(HubModule.CommunityRanking);
     var topPlayer = Model.Ranking.MinBy(ranking => ranking.Player.Position)?.Player;
     var periodQuery = Model.Period.Query;
 
@@ -56,6 +59,11 @@
             });
         });
     </script>
+}
+
+@if (voteInvite)
+{
+    @await Html.PartialAsync("_VoteInvite", true)
 }
 
 @if (Model.Ranking.Count == 0 && Model.LastHistory != null)
