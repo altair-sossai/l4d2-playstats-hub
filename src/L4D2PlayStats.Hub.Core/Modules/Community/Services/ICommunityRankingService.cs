@@ -9,4 +9,5 @@ public interface ICommunityRankingService
     Task<int> RebuildAsync(CancellationToken cancellationToken = default);
     Task<int> RemoveVoterAsync(long voterId, CancellationToken cancellationToken = default);
     Task<int> ResetAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? playerId, int skip, int take, CancellationToken cancellationToken = default);
 }

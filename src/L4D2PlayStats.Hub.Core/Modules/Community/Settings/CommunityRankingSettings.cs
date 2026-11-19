@@ -8,6 +8,7 @@ public class CommunityRankingSettings
     public int CandidatePlayedWithinDays { get; set; } = AppConsts.DefaultCommunityCandidatePlayedWithinDays;
     public int MinimumComparisonsToBeListed { get; set; } = AppConsts.DefaultCommunityMinimumComparisonsToBeListed;
     public int MaximumPlayersListed { get; set; } = AppConsts.DefaultCommunityMaximumPlayersListed;
+    public bool ShowVoterNames { get; set; } = true;
     public int KFactor { get; set; } = AppConsts.DefaultCommunityKFactor;
     public int InitialRating { get; set; } = AppConsts.DefaultCommunityInitialRating;
 

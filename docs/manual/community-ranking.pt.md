@@ -30,6 +30,8 @@ O ranking da comunidade é um segundo ranking, formado pelo que os jogadores ach
 | Comparações | Quantas vezes o jogador foi avaliado contra outro jogador. |
 | Vitórias, Empates, Derrotas | Quantas comparações o jogador ganhou, empatou e perdeu. |
 
+**Ver os últimos votos**, acima e abaixo da tabela, abre **Últimos votos**: um cartão por voto com quem votou, os dois jogadores lado a lado, o escolhido em verde (ou os dois em amarelo quando estão no mesmo nível) e quando. As respostas "Não conheço" não aparecem. Clicar em um jogador, ou no ícone de setas ao lado do nome na tabela, mostra só as comparações dele. Um administrador pode esconder quem votou.
+
 No celular a tabela mostra só a posição, o jogador e a pontuação. O **?** ao lado de **Pontuação** abre uma janela que explica cada coluna.
 
 Só aparecem na lista os jogadores com comparações suficientes: 5 por padrão. O jogador também precisa ter jogado o mínimo de partidas para ser comparado, 1 por padrão. Os dois mínimos aparecem embaixo da tabela, e a lista para nos 100 primeiros jogadores por padrão. Embaixo do quadro, **Como funciona o ranking da comunidade?** explica em quatro passos como os votos viram a lista, com os números das configurações atuais. A página de votação tem a mesma explicação, fechada embaixo de um link. **Votar agora**, no quadro acima da tabela, abre a página de votação. O mesmo quadro aparece acima do ranking de estatísticas na página inicial; lá o jogador pode fechá-lo, e ele volta depois de 7 dias.
@@ -98,6 +100,7 @@ Cada campo tem um **?** ao lado do nome: passar o mouse mostra uma explicação 
 | Mínimo de partidas para ser comparado e aparecer na lista | Partidas que um jogador precisa ter jogado, em todas as temporadas, para ser oferecido para comparação e para aparecer no ranking da comunidade. | 1 |
 | Máximo de dias desde a última partida para ser comparado | Um jogador cuja última partida é mais antiga que isso deixa de ser oferecido para comparação, mas continua no ranking da comunidade. 0 é sem limite. | 0 |
 | Mínimo de comparações para aparecer na lista | Comparações que um jogador precisa para aparecer no ranking da comunidade. | 5 |
+| Mostrar quem votou nos últimos votos | Mostra o nome e o avatar de cada votante na página Últimos votos. Desligado, cada voto mostra só "Um jogador votou". | Ligado |
 | Máximo de jogadores no ranking | O ranking da comunidade mostra no máximo esse número de jogadores, da maior pontuação para baixo. 0 mostra todos. | 100 |
 | Fator K do Elo | Quanto um voto mexe nas pontuações, de 1 a 200. | 32 |
 | Pontuação inicial | A pontuação de um jogador que nunca foi comparado. | 1500 |

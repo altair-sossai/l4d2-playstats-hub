@@ -43,6 +43,23 @@
                 font-style: italic;
             }
 
+        .community-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .community-votes-link {
+            margin-left: 6px;
+            font-size: 12px;
+            opacity: .55;
+        }
+
+            .community-votes-link:hover,
+            .community-votes-link:focus {
+                opacity: 1;
+                text-decoration: none;
+            }
     </style>
 }
 
@@ -60,10 +77,19 @@
 {
     <div class="jumbotron text-center" style="margin-top: 20px">
         <p>@L["Nobody has enough comparisons to be listed yet."]</p>
+        <a class="btn btn-info" href="@AppConsts.CommunityVotesPage">
+            <span class="glyphicon glyphicon-transfer"></span> @L["See the latest votes"]
+        </a>
     </div>
 }
 else
 {
+    <div class="community-toolbar">
+        <a class="btn btn-sm btn-info" href="@AppConsts.CommunityVotesPage">
+            <span class="glyphicon glyphicon-transfer"></span> @L["See the latest votes"]
+        </a>
+    </div>
+
     <table class="table table-striped table-hover table-bordered table-condensed" id="table-community-ranking">
         <thead>
         <tr>
@@ -130,6 +156,7 @@ else
                     {
                         @player.Name.TruncatePlayerName()
                     }
+                    <a class="community-votes-link" href="@AppConsts.CommunityVotesPage?player=@player.CommunityId" title="@L["See the comparisons of this player"]" aria-label="@L["See the comparisons of this player"]"><span class="glyphicon glyphicon-transfer"></span></a>
                 </td>
                 <td class="text-center vertical-align-middle">
                     <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating"]">
@@ -160,6 +187,12 @@ else
         }
         </tbody>
     </table>
+
+    <div class="text-center" style="margin-top: 12px">
+        <a class="btn btn-info" href="@AppConsts.CommunityVotesPage">
+            <span class="glyphicon glyphicon-transfer"></span> @L["See who voted for whom"]
+        </a>
+    </div>
 }
 
 @if (Model.MinimumComparisons > 0)

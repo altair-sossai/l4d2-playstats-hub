@@ -90,6 +90,14 @@
                         <label for="InitialRating">@L["Initial rating"] @FieldHelp.Tip(L["The rating of a player who was never compared. Everybody starts here and moves up or down with the votes."])</label>
                         <input class="form-control" id="InitialRating" name="InitialRating" type="number" min="0" value="@settings.InitialRating">
                     </div>
+                    <div class="checkbox">
+                        <label for="ShowVoterNames">
+                            <input id="ShowVoterNames" name="ShowVoterNames" type="checkbox" value="true" @(settings.ShowVoterNames ? "checked" : "")>
+                            @L["Show who voted in the latest votes"]
+                        </label>
+                        @FieldHelp.More(L["The public page of the latest votes shows the name and the avatar of each voter."], L["Show who voted in the latest votes"], L["The page Latest votes, open to everybody, lists the recent answers: the two players, which one was chosen and when.\nWith this option on, each vote also shows who gave it. It makes the voting transparent and lets players discuss the votes, but some may vote less freely when their choice is public.\nWith it off, every vote shows only \"A player voted\". The administrators still see the voters and their vote counts on this page."])
+                        <input name="ShowVoterNames" type="hidden" value="false">
+                    </div>
                     <span class="help-block" style="margin-bottom: 0">@L["The K factor and the initial rating apply to new votes. Rebuild the ratings to apply them to every vote."]</span>
                 </div>
             </div>

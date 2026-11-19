@@ -64,6 +64,7 @@ public static class AppConsts
     public const int DefaultCommunityMinimumComparisonsToBeListed = 5;
     public const int DefaultCommunityMaximumPlayersListed = 100;
     public const int CommunityBallotNames = 4;
+    public const int CommunityVotesPageSize = 30;
     public const int DefaultCommunityKFactor = 32;
     public const int DefaultCommunityInitialRating = 1500;
     public const int CommunityMinVotesPerDay = 1;

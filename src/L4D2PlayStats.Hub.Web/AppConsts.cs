@@ -110,6 +110,7 @@ public static partial class AppConsts
     public const string HtmxRequestHeader = "HX-Request";
     public const string CommunityBallotElement = "community-ballot";
     public const string CommunityVotePage = "/community/vote";
+    public const string CommunityVotesPage = "/community/votes";
     public const int VoteInviteHiddenDays = 7;
     public const int RemoteCommandLogSize = 100;
     public const int PlayerConnectionCleanupIntervalInHours = 24;

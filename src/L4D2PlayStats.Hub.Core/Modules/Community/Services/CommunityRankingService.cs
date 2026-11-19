@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
@@ -33,6 +34,22 @@ public class CommunityRankingService(
         var names = await playerService.NamesAsync([.. ratings.Select(r => r.CommunityId)], cancellationToken);
 
         return [.. ratings.Select((r, index) => new CommunityRankingEntry(index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Comparisons, r.Wins, r.Draws, r.Losses))];
+    }
+
+    public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? playerId, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        var votes = await dbContext.Set<CommunityVote>()
+            .AsNoTracking()
+            .Where(v => v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel)
+            .Where(v => playerId == null || v.LeftPlayerId == playerId || v.RightPlayerId == playerId)
+            .OrderByDescending(v => v.Id)
+            .Skip(Math.Max(0, skip))
+            .Take(Math.Max(0, take))
+            .ToListAsync(cancellationToken);
+
+        var names = await playerService.NamesAsync([.. votes.SelectMany(v => new[] { v.VoterId, v.LeftPlayerId, v.RightPlayerId })], cancellationToken);
+
+        return [.. votes.Select(v => new CommunityVoteFeedItem(v.Id, v.VoterId, names[v.VoterId], v.LeftPlayerId, names[v.LeftPlayerId], v.RightPlayerId, names[v.RightPlayerId], v.Outcome, v.CreatedAtUtc))];
     }
 
     public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(CancellationToken cancellationToken = default)

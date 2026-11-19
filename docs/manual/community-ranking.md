@@ -30,6 +30,8 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
+**See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. An administrator can hide who voted.
+
 On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
 
 Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. Under the box, **How does the community ranking work?** explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same explanation, closed under a link. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
@@ -98,6 +100,7 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 | Minimum matches to be compared and listed | Matches a player must have played, over all seasons, to be offered for comparison and to appear in the community ranking. | 1 |
 | Maximum days since the last match to be compared | A player whose last match is older than this is no longer offered for comparison, but stays in the community ranking. 0 means no limit. | 0 |
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |
+| Show who voted in the latest votes | Shows the name and the avatar of each voter on the Latest votes page. Off, each vote shows only "A player voted". | On |
 | Maximum players in the ranking | The community ranking shows at most this many players, from the highest rating down. 0 shows everyone. | 100 |
 | Elo K factor | How much one vote moves the ratings, from 1 to 200. | 32 |
 | Initial rating | The rating of a player who was never compared. | 1500 |

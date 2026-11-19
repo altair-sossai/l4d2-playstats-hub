@@ -1,0 +1,284 @@
+@model CommunityVotesViewModel
+
+@{
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Latest votes"],
+        Description = L["See who voted for whom in the community ranking."]
+    };
+
+    string PageUrl(int page) => $"{AppConsts.CommunityVotesPage}?{(Model.PlayerId == null ? "" : $"player={Model.PlayerId}&")}page={page}";
+    string PlayerFilter(long communityId) => $"{AppConsts.CommunityVotesPage}?player={communityId}";
+}
+
+@section Styles {
+    <style>
+        .vf-lead {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+            .vf-lead p {
+                margin: 0;
+                font-style: italic;
+                opacity: .85;
+            }
+
+        .vf-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding: 6px 8px 6px 6px;
+            border: 1px solid rgba(91, 192, 222, .5);
+            border-radius: 20px;
+            background: rgba(91, 192, 222, .12);
+        }
+
+            .vf-filter img {
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+            }
+
+            .vf-filter a {
+                color: inherit;
+                opacity: .7;
+            }
+
+        .vf-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .vf-card {
+            padding: 12px 14px;
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .03);
+        }
+
+        .vf-voter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            opacity: .85;
+        }
+
+            .vf-voter img {
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+            }
+
+            .vf-voter time {
+                margin-left: auto;
+                white-space: nowrap;
+                opacity: .7;
+            }
+
+        .vf-duel {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vf-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 6px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: inherit;
+            text-align: center;
+            transition: background .15s;
+        }
+
+            .vf-player:hover,
+            .vf-player:focus {
+                color: inherit;
+                text-decoration: none;
+                background: rgba(255, 255, 255, .05);
+            }
+
+            .vf-player img {
+                width: 52px;
+                height: 52px;
+                border-radius: 8px;
+            }
+
+        .vf-name {
+            max-width: 100%;
+            overflow: hidden;
+            font-weight: bold;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .vf-badge {
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .vf-win {
+            border-color: rgba(92, 184, 92, .8);
+            background: rgba(92, 184, 92, .12);
+        }
+
+            .vf-win .vf-badge {
+                background: #5cb85c;
+                color: #fff;
+            }
+
+        .vf-lose {
+            opacity: .55;
+        }
+
+            .vf-lose .vf-badge {
+                display: none;
+            }
+
+        .vf-same {
+            border-color: rgba(240, 173, 78, .8);
+            background: rgba(240, 173, 78, .1);
+        }
+
+            .vf-same .vf-badge {
+                background: #f0ad4e;
+                color: #fff;
+            }
+
+        .vf-middle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .08);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .vf-middle-same {
+            background: #f0ad4e;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .vf-pages {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        @@media (max-width: 767px) {
+            .vf-list {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+}
+
+<h4 class="text-center"><span class="glyphicon glyphicon-transfer"></span> @L["Latest votes"]</h4>
+
+<div class="vf-lead">
+    <p>@L["See who voted for whom. Click a player to see only their comparisons."]</p>
+    <div>
+        <a class="btn btn-sm btn-default" href="/community">
+            <span class="glyphicon glyphicon-list"></span> @L["Community ranking"]
+        </a>
+        <a class="btn btn-sm btn-success" href="@AppConsts.CommunityVotePage">
+            <span class="glyphicon glyphicon-thumbs-up"></span> @L["Vote now"]
+        </a>
+    </div>
+</div>
+
+@if (Model.PlayerId != null)
+{
+    <div class="vf-filter">
+        <img src="/avatar/@Model.PlayerId" alt="@Model.PlayerName" onerror="imgOnError(this)">
+        <span>@L["Comparisons of {0}", Model.PlayerName ?? ""]</span>
+        <a href="@AppConsts.CommunityVotesPage" title="@L["Show every vote"]" aria-label="@L["Show every vote"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+    </div>
+}
+
+@if (Model.Votes.Count == 0)
+{
+    <div class="jumbotron text-center">
+        <p>@L["There are no votes to show yet."]</p>
+        <a class="btn btn-success btn-lg" href="@AppConsts.CommunityVotePage">
+            <span class="glyphicon glyphicon-thumbs-up"></span> @L["Vote now"]
+        </a>
+    </div>
+}
+else
+{
+    <div class="vf-list">
+        @foreach (var vote in Model.Votes)
+        {
+            var same = vote.Outcome == CommunityVoteOutcome.SameLevel;
+            var leftClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Left ? "vf-win" : "vf-lose";
+            var rightClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Right ? "vf-win" : "vf-lose";
+            var badge = same ? L["Same level"] : L["Better"];
+
+            <div class="vf-card">
+                <div class="vf-voter">
+                    @if (Model.ShowVoters)
+                    {
+                        <img src="/avatar/@vote.VoterId" alt="@vote.VoterName" onerror="imgOnError(this)">
+                        <span>@L["{0} voted", vote.VoterName.TruncatePlayerName()]</span>
+                    }
+                    else
+                    {
+                        <span class="glyphicon glyphicon-user"></span>
+                        <span>@L["A player voted"]</span>
+                    }
+                    <time datetime="@vote.CreatedAtUtc.ToString("o")">@LiveDisplay.ShortDateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
+                </div>
+                <div class="vf-duel">
+                    <a class="vf-player @leftClass" href="@PlayerFilter(vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
+                        <img src="/avatar/@vote.LeftPlayerId" alt="@vote.LeftName" onerror="imgOnError(this)">
+                        <span class="vf-name">@vote.LeftName</span>
+                        <span class="vf-badge">@badge</span>
+                    </a>
+                    <span class="vf-middle@(same ? " vf-middle-same" : "")">@(same ? "=" : "VS")</span>
+                    <a class="vf-player @rightClass" href="@PlayerFilter(vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
+                        <img src="/avatar/@vote.RightPlayerId" alt="@vote.RightName" onerror="imgOnError(this)">
+                        <span class="vf-name">@vote.RightName</span>
+                        <span class="vf-badge">@badge</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="vf-pages">
+        @if (Model.Page > 1)
+        {
+            <a class="btn btn-default" href="@PageUrl(Model.Page - 1)">
+                <span class="glyphicon glyphicon-chevron-left"></span> @L["Newer"]
+            </a>
+        }
+        @if (Model.HasMore)
+        {
+            <a class="btn btn-default" href="@PageUrl(Model.Page + 1)">
+                @L["Older"] <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        }
+    </div>
+}

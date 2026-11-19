@@ -1,3 +1,4 @@
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
@@ -9,6 +10,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Community;
+using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -21,6 +23,8 @@ public class CommunityController(
     ICommunityRankingService communityRankingService,
     ICommunityVoteService communityVoteService,
     IRankingService rankingService,
+    ICommunityPlayerService communityPlayerService,
+    ILiveViewService liveViewService,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -45,6 +49,31 @@ public class CommunityController(
             MinimumMatches = settings.MinimumMatchesToBeCandidate,
             Settings = settings,
             PlayerPages = playerPages
+        };
+
+        return View(model);
+    }
+
+    [HttpGet(AppConsts.CommunityVotesPage)]
+    public async Task<IActionResult> Votes(long? player, int page, CancellationToken cancellationToken)
+    {
+        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
+        var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+        var current = Math.Max(1, page);
+        var size = CoreConsts.CommunityVotesPageSize;
+        var votes = await communityRankingService.LatestVotesAsync(player, (current - 1) * size, size + 1, cancellationToken);
+        var names = player == null ? null : await communityPlayerService.NamesAsync([player.Value], cancellationToken);
+
+        var model = new CommunityVotesViewModel
+        {
+            Votes = [.. votes.Take(size)],
+            PlayerId = player,
+            PlayerName = names?[player!.Value],
+            Page = current,
+            HasMore = votes.Count > size,
+            ShowVoters = settings.ShowVoterNames,
+            PlayerPages = modules.IsEnabled(HubModule.Ranking),
+            TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
 
         return View(model);

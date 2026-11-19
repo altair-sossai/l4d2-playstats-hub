@@ -505,6 +505,53 @@ public class CommunityWebTests
     }
 
     [TestMethod]
+    public async Task EverybodySeesWhoVotedForWhom()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var visitor = site.Factory.Client(null);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        var page = await visitor.GetStringAsync("/community/votes");
+        var ofPlayer = await visitor.GetStringAsync($"/community/votes?player={pair.Right}");
+        var ranking = await visitor.GetStringAsync("/community");
+
+        Assert.Contains($"/avatar/{site.Voter}", page);
+        Assert.Contains($"href=\"/community/votes?player={pair.Left}\"", page);
+        Assert.Contains("vf-player vf-win", page);
+        Assert.Contains("vf-player vf-lose", page);
+        Assert.Contains($"/avatar/{pair.Right}", ofPlayer);
+        Assert.Contains("href=\"/community/votes\"", ranking);
+    }
+
+    [TestMethod]
+    public async Task TheVotersCanBeHiddenFromTheLatestVotes()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, ShowVoterNames = false });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var visitor = site.Factory.Client(null);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.SameLevel));
+
+        var page = await visitor.GetStringAsync("/community/votes");
+
+        Assert.DoesNotContain($"/avatar/{site.Voter}\"", page);
+        Assert.Contains("A player voted", page);
+        Assert.Contains("vf-player vf-same", page);
+    }
+
+    [TestMethod]
     public async Task AnAdministratorResetsTheCommunityRanking()
     {
         using var site = new CommunityWebSite();
