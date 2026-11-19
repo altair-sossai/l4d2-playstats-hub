@@ -29,6 +29,7 @@ const hideDevelopmentSignIn = `(() => { const field = document.querySelector('#d
 const submit = selector => ({ eval: `document.querySelector(${json(selector)}).closest('form').querySelector('[type=submit]').click()`, navigates: true });
 const fill = values => Object.entries(values).map(([selector, value]) => `document.querySelector(${json(selector)}).value = ${json(String(value))}`).join('; ');
 const newRuleForm = `[...document.querySelectorAll('form[action="/admin/game-modes"]')].find(form => !form.querySelector('[name=Id]'))`;
+const hideKey = `document.querySelectorAll('pre.server-config').forEach(pre => pre.innerHTML = pre.innerHTML.replace(/(playstats_token "[^:"]+:)[^"]+/, '$1YOUR-KEY'))`;
 const showAddress = address => `document.querySelectorAll('pre.server-config').forEach(pre => pre.innerHTML = pre.innerHTML.split(location.origin).join(${json(address)}))`;
 const ruleField = (form, name) => `document.querySelector('[form="' + ${form}.id + '"][name=${name}]')`;
 
@@ -98,7 +99,7 @@ function shots(context) {
         {
             name: 'switch-server-token',
             user: null,
-            before: [submit('#Name'), { wait: 'pre.server-config' }, { run: readToken }, showAddress(context.siteAddress)],
+            before: [submit('#Name'), { wait: 'pre.server-config' }, { run: readToken }, showAddress(context.siteAddress), hideKey],
             settle: 0,
             full: true,
             always: true

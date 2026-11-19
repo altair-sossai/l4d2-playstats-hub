@@ -1,4 +1,5 @@
 const { Runner } = require('./runner');
+const hideKey = `document.querySelectorAll('pre.server-config').forEach(pre => pre.innerHTML = pre.innerHTML.replace(/(playstats_token "[^:"]+:)[^"]+/, '$1YOUR-KEY'))`;
 const live = require('./live');
 
 const hideDevelopmentSignIn = `(() => { const field = document.querySelector('#developmentCommunityId'); if (field) field.closest('.form-group').style.display = 'none'; })()`;
@@ -31,7 +32,7 @@ function shots(context) {
         {
             name: 'wizard-server-token',
             user: null,
-            before: [`document.querySelector('#Name').value = 'L4D2 Competitive #1'; document.querySelector('#Address').value = '203.0.113.10:27015'`, submit('#Name'), { wait: 'pre.server-config' }, { run: readToken }],
+            before: [`document.querySelector('#Name').value = 'L4D2 Competitive #1'; document.querySelector('#Address').value = '203.0.113.10:27015'`, submit('#Name'), { wait: 'pre.server-config' }, { run: readToken }, hideKey],
             settle: 0,
             full: true,
             always: true
