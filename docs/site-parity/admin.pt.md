@@ -26,7 +26,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Passo 1: formulário `POST /setup/start` com o token antiforgery | `Views/Setup/Index.cshtml:39` | `done` |  |
 | Passo 1: campo "Código de configuração" (obrigatório, sem autocomplete, mantém o valor digitado, preenchido a partir de `?token=`) | `Views/Setup/Index.cshtml:42` | `done` |  |
 | Passo 1: campo "Apenas desenvolvimento: entrar como este SteamID64" (só com o login de desenvolvimento ligado) | `Views/Setup/Index.cshtml:47` | `done` |  |
-| Passo 1: botão "Continuar com o Steam" com o ícone da Steam | `Views/Setup/Index.cshtml:51` | `done` |  |
+| Passo 1: botão "Continuar com a Steam" com o ícone da Steam | `Views/Setup/Index.cshtml:51` | `done` |  |
 | Passo 1: o código é guardado em um cookie, o visitante entra com a Steam e `GET /setup/claim` torna essa conta o primeiro administrador | `Controllers/SetupController.cs:67` | `done` |  |
 | Passo de login: cabeçalho "A configuração inicial está em andamento", explicação e botão "Entrar com a Steam" (`/login?returnUrl=/setup`) | `Views/Setup/Index.cshtml:60` | `done` |  |
 | Passo 2: formulário `POST /setup/site` com o token antiforgery, cabeçalho "Sobre o site" | `Views/Setup/Index.cshtml:68` | `done` |  |
@@ -124,7 +124,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Item | Onde hoje | Situação | Observações |
 |---|---|---|---|
 | Título da página e cabeçalho "Servidores de jogo", menu de administração | `Views/Admin/Servers.cshtml:3` | `done` |  |
-| Coluna da tabela "Servidor": nome (link para a página do servidor) e o badge "Desabilitado" | `Views/Admin/Servers.cshtml:14` | `done` | Tabela com as classes do site antigo; no celular, cada célula é uma linha com o seu `data-label`. |
+| Coluna da tabela "Servidor": nome (link para a página do servidor) e o badge "Desativado" | `Views/Admin/Servers.cshtml:14` | `done` | Tabela com as classes do site antigo; no celular, cada célula é uma linha com o seu `data-label`. |
 | Coluna da tabela "Identificador" | `Views/Admin/Servers.cshtml:15` | `done` |  |
 | Coluna da tabela "Status": ponto e estado | `Views/Admin/Servers.cshtml:16` | `done` |  |
 | Coluna da tabela "Arquivos de estatísticas" | `Views/Admin/Servers.cshtml:17` | `done` |  |
@@ -244,7 +244,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Texto "Suas respostas fazem os jogadores subir e descer no ranking da comunidade." | `Views/Community/Vote.cshtml:8` | `done` |  |
 | Botão "Ranking da comunidade" (volta para o ranking) | `Views/Community/Vote.cshtml:10` | `done` |  |
 | Aviso quando a resposta foi recusada ("Essa dupla não é a que está aguardando...", "Escolha uma das respostas.") | `Views/Community/_Ballot.cshtml:6` | `done` |  |
-| Sem login: "Entre com o Steam para votar." com o botão da Steam, que volta para esta página | `Views/Community/_Ballot.cshtml:14` | `done` | Jumbotron com o botão da Steam. |
+| Sem login: "Entre com a Steam para votar." com o botão da Steam, que volta para esta página | `Views/Community/_Ballot.cshtml:14` | `done` | Jumbotron com o botão da Steam. |
 | Poucas partidas: mensagem com "Partidas jogadas: N / mínimo" | `Views/Community/_Ballot.cshtml:23` | `done` | Jumbotron. |
 | Limite diário: mensagem com "Votos por dia: N" | `Views/Community/_Ballot.cshtml:30` | `done` | Jumbotron. |
 | Não sobrou ninguém: mensagem | `Views/Community/_Ballot.cshtml:36` | `done` | Jumbotron. |

@@ -47,7 +47,7 @@ Limites daquela estrutura, que este projeto elimina:
 Uma única aplicação ASP.NET Core que é o site, a API para os plugins, a área administrativa e o agendador.
 
 - **O arquivo bruto de estatísticas continua armazenado** como a fonte da verdade. Partidas, mapas e resultados por jogador são tabelas construídas a partir dele, e um comando de reprocessamento as reconstrói quando as regras mudam.
-- **As configurações ficam no banco de dados** e são editadas na área administrativa. Só o provedor de banco de dados, a connection string e a pasta de dados são definidos fora dele.
+- **As configurações ficam no banco de dados** e são editadas na área administrativa. Só o provedor de banco de dados, a connection string e a pasta de dados são definidos fora dela.
 - **Uma única instância do back-end** atende todos os servidores de jogo. Rodar várias instâncias está fora do escopo.
 - **A partida ao vivo fica em memória**, nunca no banco de dados, e é mantida separadamente para cada servidor de jogo.
 - **Cada funcionalidade é um módulo** no código e, onde faz sentido, algo que o administrador pode desligar.
@@ -160,7 +160,7 @@ Para cada servidor de jogo, o site mostra as duas linhas que devem ser coladas n
 | Offline | Mostra quando foi visto pela última vez. |
 | Chave inválida | O identificador chegou com a chave errada nos últimos 10 minutos. |
 
-Uma checklist mostra o que foi encontrado: conexão, plugin de envio, gravação de estatísticas, primeiro arquivo recebido, dados ao vivo e o plugin de skins. O comando `sm_playstats_test` roda a mesma verificação pelo console do servidor de jogo.
+Um checklist mostra o que foi encontrado: conexão, plugin de envio, gravação de estatísticas, primeiro arquivo recebido, dados ao vivo e o plugin de skins. O comando `sm_playstats_test` roda a mesma verificação pelo console do servidor de jogo.
 
 ## Front-end
 

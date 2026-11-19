@@ -22,7 +22,7 @@ Cómo se comprobó: la página de detalles y la página de estadísticas de una 
 | La dirección de una partida sigue funcionando con el tiempo | Sdk/Matches/Results/MatchResult.cs:16-17 | done | La dirección antigua estaba hecha de claves de archivo, que nunca cambian. En el hub una partida recibía un id nuevo cada vez que se reconstruían las partidas de su noche (un mapa nuevo, una corrección de marcador, una reconstrucción completa); ahora la reconstrucción conserva el id de una partida que sigue existiendo. |
 | 404 cuando la partida no existe | Controllers/LastMatchesController.cs:36, :52 | done | |
 | 404 cuando el archivo de estadísticas no forma parte de la partida | Controllers/LastMatchesController.cs:57 | done | |
-| Elemento del menú "Últimos partidos" activo solo en la lista | Controllers/LastMatchesController.cs:23 | done | `ViewBag.LastMatches = "active"` en la lista, no en las páginas de detalles, como antes. |
+| Elemento del menú "Últimas partidas" activo solo en la lista | Controllers/LastMatchesController.cs:23 | done | `ViewBag.LastMatches = "active"` en la lista, no en las páginas de detalles, como antes. |
 | Lista limitada a las últimas 50 partidas, de cualquier modo de juego | Core/Matches/MatchesServiceCached.cs:19, api FunctionApp/Functions/MatchesFunction.cs:21 | adapted | 50 partidas por página, las más recientes primero, de cualquier modo de juego, con paginación y todas las temporadas; la página antigua se detenía en 50 y solo mostraba la temporada actual. |
 | Lista en caché durante una hora | Core/Matches/MatchesServiceCached.cs:15 | not ported | El hub lee las partidas de su propia base de datos, así que no hay ninguna llamada a una API remota que guardar en caché; la lista está siempre al día. |
 | Avatares cargados antes de renderizar | Controllers/LastMatchesController.cs:68-87 | adapted | Los avatares los sirve `/avatar/{communityId}` y se descargan bajo demanda; no hace falta ninguna llamada de precarga. |
@@ -58,15 +58,15 @@ Cómo se comprobó: la página de detalles y la página de estadísticas de una 
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Título de página "Últimos partidos" | PageMetadata/LastMatchesPageMetadata.cs:17 | done | |
-| Meta description "Consulta los últimos partidos de {site}, sus marcadores, campañas y jugadores." | PageMetadata/LastMatchesPageMetadata.cs:18 | adapted | El texto nombraba "L4D2 Competitive"; ahora toma el nombre del sitio (texto nuevo en `pt-BR.matches.json` y `es-ES.matches.json`). |
+| Título de página "Últimas partidas" | PageMetadata/LastMatchesPageMetadata.cs:17 | done | |
+| Meta description "Consulta las últimas partidas de {site}, sus marcadores, campañas y jugadores." | PageMetadata/LastMatchesPageMetadata.cs:18 | adapted | El texto nombraba "L4D2 Competitive"; ahora toma el nombre del sitio (texto nuevo en `pt-BR.matches.json` y `es-ES.matches.json`). |
 | Imagen social: miniatura de la campaña de la última partida, texto alternativo con su nombre | PageMetadata/LastMatchesPageMetadata.cs:19-20 | done | |
-| Título `h4.text-center` "Últimos partidos" | Views/LastMatches/Index.cshtml:13 | done | |
+| Título `h4.text-center` "Últimas partidas" | Views/LastMatches/Index.cshtml:13 | done | |
 | `div.match` con una tarjeta por partida | Views/LastMatches/Index.cshtml:15-20 | done | |
 | Filtro de temporada | (nuevo) | adapted | Añadido del hub, con el aspecto antiguo: un select pequeño a la derecha, encima de la lista ("Todas las temporadas" de forma predeterminada, después las temporadas del año actual y un elemento por año), para que las temporadas pasadas se puedan seguir consultando. Las temporadas se nombran como en los selectores de período del sitio antiguo, "De MM/AAAA a MM/AAAA". Se oculta mientras hay una sola temporada y un solo servidor. |
 | Filtro de servidor | (nuevo) | adapted | Añadido del hub: un segundo select, que solo se muestra cuando hay más de un servidor de juego. |
 | Paginación | (nuevo) | adapted | Añadido del hub, con el parcial compartido `_Pagination`, que se muestra cuando hay más de una página. |
-| Lista vacía | Views/LastMatches/Index.cshtml:15-20 | adapted | La página antigua no mostraba nada; el hub muestra "No se encontró ningún partido" con el mismo estilo de título. |
+| Lista vacía | Views/LastMatches/Index.cshtml:15-20 | adapted | La página antigua no mostraba nada; el hub muestra "No se encontró ninguna partida" con el mismo estilo de título. |
 
 ## Tarjeta de partida (`Views/LastMatches/_Match.cshtml`)
 
@@ -107,13 +107,13 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
-| Título de página "Detalles del partido - {campaign}" | PageMetadata/MatchDetailsPageMetadata.cs:18 | done | |
-| Meta description "Consulta los detalles del partido en {campaign}, jugado el {date}, con marcador {A}–{B}." | PageMetadata/MatchDetailsPageMetadata.cs:19 | done | |
+| Título de página "Detalles de la partida - {campaign}" | PageMetadata/MatchDetailsPageMetadata.cs:18 | done | |
+| Meta description "Consulta los detalles de la partida en {campaign}, jugada el {date}, con marcador {A}–{B}." | PageMetadata/MatchDetailsPageMetadata.cs:19 | done | |
 | Imagen social: miniatura de la campaña, texto alternativo con la campaña | PageMetadata/MatchDetailsPageMetadata.cs:20-21 | done | |
 | Estilo `.maps .label { margin: 0 3px; }` | Details.cshtml:17-23 | done | |
-| "No se encontró ningún partido" cuando la partida no tiene archivos de estadísticas | Details.cshtml:62-72 | done | |
-| Título "Detalles del partido" | Details.cshtml:74 | done | |
-| Migas de pan: "Últimos partidos" (enlace a la lista) / campaña | Details.cshtml:76-83 | done | |
+| "No se encontró ninguna partida" cuando la partida no tiene archivos de estadísticas | Details.cshtml:62-72 | done | |
+| Título "Detalles de la partida" | Details.cshtml:74 | done | |
+| Migas de pan: "Últimas partidas" (enlace a la lista) / campaña | Details.cshtml:76-83 | done | |
 | Tarjeta de partida sin el botón "Detalles" | Details.cshtml:85-87 | done | |
 | Panel "Mapas" con el texto "Resultados del mapa" | Details.cshtml:90-96 | done | |
 | Columnas de la tabla de mapas: #, Mapa, Inicio, Fin, Tiempo transcurrido, Marcador (tres celdas) | Details.cshtml:97-105 | done | |
@@ -159,15 +159,15 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | Título de página "{map} - {campaign}" | PageMetadata/MatchStatisticsPageMetadata.cs:19 | done | |
-| Meta description "Consulta las estadísticas del mapa {map}, del partido en {campaign}, con marcador {A}–{B}." | PageMetadata/MatchStatisticsPageMetadata.cs:20 | done | |
+| Meta description "Consulta las estadísticas del mapa {map}, de la partida en {campaign}, con marcador {A}–{B}." | PageMetadata/MatchStatisticsPageMetadata.cs:20 | done | |
 | Imagen social: miniatura de la campaña, texto alternativo con la campaña | PageMetadata/MatchStatisticsPageMetadata.cs:21-22 | done | |
 | Estilos: paddings laterales de `.round-details` a partir de 992px, ajuste de línea de `.player-name` | Statistics.cshtml:21-38 | done | |
-| "No se encontró ningún partido" cuando la partida no tiene archivos de estadísticas | Statistics.cshtml:183-193 | done | |
-| Título "Detalles del partido" | Statistics.cshtml:202 | done | |
-| Migas de pan: "Últimos partidos" / campaña (enlace a la partida) / nombre del mapa | Statistics.cshtml:204-214 | done | |
+| "No se encontró ninguna partida" cuando la partida no tiene archivos de estadísticas | Statistics.cshtml:183-193 | done | |
+| Título "Detalles de la partida" | Statistics.cshtml:202 | done | |
+| Migas de pan: "Últimas partidas" / campaña (enlace a la partida) / nombre del mapa | Statistics.cshtml:204-214 | done | |
 | Tabla de mapas (#, Mapa, Inicio, Fin, Tiempo transcurrido, Marcador) con el mapa actual resaltado (`tr.info`) y enlaces a cada mapa | Statistics.cshtml:216-271 | done | |
 | Etiquetas de puntuación del equipo A / diferencia / equipo B con tooltips | Statistics.cshtml:251-265 | done | Aquí no hay botón "Editar", como antes. |
-| Pestañas "1º ronda" y "2º ronda", una por mitad, la primera activa | Statistics.cshtml:273-282 | done | |
+| Pestañas "1.ª ronda" y "2.ª ronda", una por mitad, la primera activa | Statistics.cshtml:273-282 | done | |
 | Panel de pestaña `fade`, el primero `in active` | Statistics.cshtml:309 | done | |
 | Panel "Supervivientes": verde cuando ese equipo ganó el mapa, rojo en caso contrario | Statistics.cshtml:292, :314-317 | done | |
 | Lista de supervivientes: avatar, nombre truncado que enlaza al jugador, resaltado `it-is-me` | Statistics.cshtml:321-331 | done | |

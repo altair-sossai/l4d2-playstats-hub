@@ -24,10 +24,10 @@ La tienda necesita el módulo de ranking y el plugin `l4d2_weapon_skins` en el s
 
 - Cada premio de **MVP de SI** y cada premio de **MVP de CI** en una partida de ranking vale una estrella. Consulta [Ranking > MVP](ranking.es.md#mvp).
 - Cuentan todas las partidas de ranking desde el principio. Las estrellas no se reinician con la temporada y nunca vencen.
-- El saldo es las estrellas ganadas menos el precio de las skins que el jugador tiene ahora. Cuando una compra se reembolsa, su precio vuelve al saldo.
+- El saldo son las estrellas ganadas menos el precio de las skins que el jugador tiene ahora. Cuando una compra se reembolsa, su precio vuelve al saldo.
 - Los regalos no cuestan nada.
 
-Un jugador conectado ve el saldo en la barra del menú (**N estrellas disponibles**) y arriba en la tienda, con cuántas estrellas vinieron de cada tipo de MVP.
+Un jugador con la sesión iniciada ve el saldo en la barra del menú (**N estrellas disponibles**) y arriba en la tienda, con cuántas estrellas vinieron de cada tipo de MVP.
 
 ## La página de la tienda
 

@@ -29,7 +29,7 @@ A página e as configurações são um módulo, desligado por padrão.
 - **Sobre o -insecure (sem VAC)**: o programa abre o jogo sem o VAC, então não traz risco de ban VAC, e enquanto ele está aberto só dá para entrar em servidores sem VAC.
 - **Privacidade**: o que o programa envia e o que ele não faz.
 
-Um jogador que entrou com a Steam também lê, abaixo do título, se a conta Steam dele precisa estar com o Anti-Cheat aberto para jogar nos servidores de jogo ou se pode jogar sem ele. A resposta segue o modo de uso e as listas abaixo. Visitantes que não entraram não veem esse aviso, e nenhum jogador vê o modo nem quem mais está numa lista.
+Um jogador logado também lê, abaixo do título, se a conta Steam dele precisa estar com o Anti-Cheat aberto para jogar nos servidores de jogo ou se pode jogar sem ele. A resposta segue o modo de uso e as listas abaixo. Visitantes que não estão logados não veem esse aviso, e nenhum jogador vê o modo nem quem mais está numa lista.
 
 Os textos da página fazem parte do site e são traduzidos junto com ele.
 

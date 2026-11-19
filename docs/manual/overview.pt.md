@@ -29,14 +29,14 @@ O menu no topo de cada página leva aos recursos. Um recurso que o administrador
 | Últimos jogos | Todas as partidas, das mais recentes para as mais antigas. | [Partidas](matches.pt.md) |
 | Servidor | A partida em andamento nos seus servidores de jogo. | [Servidor ao vivo](live-server.pt.md) |
 | Skins | A loja de skins de armas. | [Loja de skins de armas](skin-shop.pt.md) |
-| Anti-Cheat | A página que oferece o programa Anti-Cheat e diz a um jogador que entrou se ele precisa usá-lo. | [Anti-Cheat](anti-cheat.pt.md) |
+| Anti-Cheat | A página que oferece o programa Anti-Cheat e diz a um jogador logado se ele precisa usá-lo. | [Anti-Cheat](anti-cheat.pt.md) |
 | Mais > Jogadores | Todos os jogadores do período, com os totais de qualquer estatística. | [Jogadores](players.pt.md) |
 | Mais > Patentes | Os níveis de patente. | [Patentes](patents.pt.md) |
 | Mais > Histórico | O ranking final de temporadas e anos passados. | [Temporadas e histórico](seasons-and-history.pt.md) |
 | Admin | A área de administração, só para administradores. | [Administração](administration.pt.md) |
 | Estrelas | Quantas estrelas o jogador logado pode gastar na loja. | [Loja de skins de armas](skin-shop.pt.md) |
 | Avatar | A página do jogador logado. | [Jogadores](players.pt.md) |
-| Configurações (engrenagem) | Tema, idioma, login e logout. | [Idiomas, temas e celular](languages-and-themes.pt.md) |
+| Configurações (engrenagem) | Tema, idioma, login e logout. | [Idiomas, temas e celulares](languages-and-themes.pt.md) |
 
 O login é feito com a Steam. Os visitantes não precisam fazer login para ver o ranking, as partidas ou o servidor ao vivo. O login é necessário para comprar skins, votar no ranking da comunidade, usar o chat do site e administrar o site.
 

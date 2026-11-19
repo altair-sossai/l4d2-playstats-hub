@@ -124,7 +124,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Elemento | Dónde hoy | Estado | Notas |
 |---|---|---|---|
 | Título de página y encabezado "Servidores de juego", menú de administración | `Views/Admin/Servers.cshtml:3` | `done` |  |
-| Columna de la tabla "Servidor": nombre (enlace a la página del servidor) y la insignia "Deshabilitado" | `Views/Admin/Servers.cshtml:14` | `done` | Tabla con las clases del sitio antiguo; en teléfonos cada celda es una línea con su `data-label`. |
+| Columna de la tabla "Servidor": nombre (enlace a la página del servidor) y la insignia "Desactivado" | `Views/Admin/Servers.cshtml:14` | `done` | Tabla con las clases del sitio antiguo; en teléfonos cada celda es una línea con su `data-label`. |
 | Columna de la tabla "Identificador" | `Views/Admin/Servers.cshtml:15` | `done` |  |
 | Columna de la tabla "Estado": punto y estado | `Views/Admin/Servers.cshtml:16` | `done` |  |
 | Columna de la tabla "Archivos de estadísticas" | `Views/Admin/Servers.cshtml:17` | `done` |  |
@@ -162,7 +162,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Panel "Apariencia": palabras clave para buscadores | nuevo | `done` | Añadido (`SiteSettings.MetaKeywords`): se guardan sin espacios sobrantes, separadas por comas, con 500 caracteres como máximo. El `<meta name="keywords">` que las muestra está en el layout de la rama base. |
 | Panel "Temporadas": "Duración de la temporada, en meses" (de 1 a 24) con su texto de ayuda | `Views/Admin/Settings.cshtml:55` | `done` |  |
 | Panel "Puntos del ranking": "Victoria" | `Views/Admin/Settings.cshtml:64` | `done` |  |
-| Panel "Puntos del ranking": "Derrota" | `Views/Admin/Settings.cshtml:65` | `done` |  |
+| Panel "Puntos del ranking": "Derrotas" | `Views/Admin/Settings.cshtml:65` | `done` |  |
 | Panel "Puntos del ranking": "Rage quit" | `Views/Admin/Settings.cshtml:66` | `done` |  |
 | Panel "Puntos del ranking": "MVP en daño a infectados especiales, por ronda" | `Views/Admin/Settings.cshtml:67` | `done` |  |
 | Panel "Puntos del ranking": "MVP en infectados comunes, por ronda" | `Views/Admin/Settings.cshtml:68` | `done` |  |

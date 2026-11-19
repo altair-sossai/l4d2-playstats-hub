@@ -99,7 +99,7 @@ Cada campo tem um **?** ao lado do nome: passar o mouse mostra uma explicação 
 | Votos por dia | Respostas que avaliam que cada votante pode dar por dia. No mínimo 1. | 20 |
 | Mínimo de partidas para ser comparado e aparecer na lista | Partidas que um jogador precisa ter jogado, em todas as temporadas, para ser oferecido para comparação e para aparecer no ranking da comunidade. | 1 |
 | Máximo de dias desde a última partida para ser comparado | Um jogador cuja última partida é mais antiga que isso deixa de ser oferecido para comparação, mas continua no ranking da comunidade. 0 é sem limite. | 0 |
-| Mínimo de comparações para aparecer na lista | Comparações que um jogador precisa para aparecer no ranking da comunidade. | 5 |
+| Mínimo de comparações para aparecer na lista | Comparações de que um jogador precisa para aparecer no ranking da comunidade. | 5 |
 | Mostrar quem votou nos últimos votos | Mostra o nome e o avatar de cada votante na página Últimos votos. Desligado, cada voto mostra só "Um jogador votou". | Ligado |
 | Máximo de jogadores no ranking | O ranking da comunidade mostra no máximo esse número de jogadores, da maior pontuação para baixo. 0 mostra todos. | 100 |
 | Fator K do Elo | Quanto um voto mexe nas pontuações, de 1 a 200. | 32 |

@@ -137,7 +137,7 @@ El archivo de estadísticas trae el nombre visible de la configuración, como `Z
 ## Tienda de skins de armas
 
 - Los jugadores ganan una estrella por cada MVP en partidas clasificatorias, a lo largo de todo su historial, y gastan las estrellas en skins.
-- El catálogo y las miniaturas del sitio actual vienen con el hub, y el catálogo se importa solo la primera vez que se activa la tienda. Un administrador puede importar otro catálogo desde un archivo o una dirección. Las imágenes se cargan desde una dirección que define el administrador, por defecto la del sitio actual.
+- El catálogo y las miniaturas del sitio actual vienen con el hub, y el catálogo se importa solo la primera vez que se activa la tienda. Un administrador puede importar otro catálogo desde un archivo o una dirección. Las fotos se cargan desde una dirección que define el administrador, por defecto la del sitio actual.
 - Al inicio de una temporada, las skins compradas antes se reembolsan y los regalos se conservan. El administrador puede desactivar el reembolso.
 - Los modelos, los materiales y las fotos se quedan en [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 

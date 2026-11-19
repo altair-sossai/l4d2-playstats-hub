@@ -30,7 +30,7 @@ No l4d2.com.br esta parte foi feita em 19 de novembro de 2026. O site novo roda 
 
 ### Rode o instalador
 
-1. Conecte na VPS por SSH como `root`, ou com um usuário que possa usar `sudo`.
+1. Conecte-se à VPS por SSH como `root`, ou com um usuário que possa usar `sudo`.
 2. Rode o instalador sem domínio. Sem `HUB_DOMAIN` ele não instala o Caddy, então o nginx e as portas 80 e 443 ficam como estão. `HUB_PORT=5090` não é a `5080` padrão do instalador porque, nesta VPS, essa porta já é usada pela API do anti-cheat (`127.0.0.1:5080`):
 
    ```bash

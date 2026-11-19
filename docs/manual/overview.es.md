@@ -24,15 +24,15 @@ El menú de arriba de cada página lleva a las funciones. Una función que el ad
 
 | Elemento del menú | Qué abre | Página del manual |
 |---|---|---|
-| Clasificación | Los 100 mejores jugadores de la temporada actual. | [Ranking](ranking.es.md) |
+| Ranking | Los 100 mejores jugadores de la temporada actual. | [Ranking](ranking.es.md) |
 | Comunidad | El ranking votado por los jugadores. | [Ranking de la comunidad](community-ranking.es.md) |
-| Últimos partidos | Todas las partidas, de la más reciente a la más antigua. | [Partidas](matches.es.md) |
+| Últimas partidas | Todas las partidas, de la más reciente a la más antigua. | [Partidas](matches.es.md) |
 | Servidor | La partida en curso en tus servidores de juego. | [Servidor en vivo](live-server.es.md) |
 | Skins | La tienda de skins de armas. | [Tienda de skins de armas](skin-shop.es.md) |
 | Anti-Cheat | La página que ofrece el programa Anti-Cheat y le dice a un jugador que inició sesión si debe usarlo. | [Anti-Cheat](anti-cheat.es.md) |
 | Más > Jugadores | Todos los jugadores del período, con los totales de cualquier estadística. | [Jugadores](players.es.md) |
 | Más > Patentes | Los niveles de patente. | [Patentes](patents.es.md) |
-| Más > Historia | El ranking final de temporadas y años pasados. | [Temporadas e historia](seasons-and-history.es.md) |
+| Más > Historial | El ranking final de temporadas y años pasados. | [Temporadas e historia](seasons-and-history.es.md) |
 | Admin | El área de administración, solo para administradores. | [Administración](administration.es.md) |
 | Estrellas | Cuántas estrellas puede gastar en la tienda el jugador conectado. | [Tienda de skins de armas](skin-shop.es.md) |
 | Avatar | La página del jugador conectado. | [Jugadores](players.es.md) |

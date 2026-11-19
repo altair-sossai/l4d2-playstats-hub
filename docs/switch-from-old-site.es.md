@@ -114,7 +114,7 @@ dotnet run -c Release -- dump ./dump --settings local.settings.json
 dotnet run -c Release -- upload ./dump http://124.198.128.43:5090 "<token del servidor de juego>"
 ```
 
-`dump` toma la cadena de conexión del almacenamiento de `Values:AzureWebJobsStorage` en el `local.settings.json` de `l4d2-playstats-api`. El 19 de noviembre de 2026 escribió 6.648 archivos, hasta las partidas del 17 de noviembre, y todos se aceptaron: 1.835 partidas, 1.769 de ellas clasificatorias, 859 jugadores y 15 temporadas. El ranking de la temporada actual mostró los mismos jugadores, en el mismo orden, que el sitio antiguo.
+`dump` toma la cadena de conexión del almacenamiento de `Values:AzureWebJobsStorage` en el `local.settings.json` de `l4d2-playstats-api`. El 19 de noviembre de 2026 escribió 6.648 archivos, hasta las partidas del 17 de noviembre, y todos se aceptaron: 1.835 partidas, 1.769 de ellas en el ranking, 859 jugadores y 15 temporadas. El ranking de la temporada actual mostró los mismos jugadores, en el mismo orden, que el sitio antiguo.
 
 ![La vista general después de la importación](images/es/switch-overview.webp)
 
@@ -220,7 +220,7 @@ Hazlo cuando no esté jugando nadie. Después de esto los dos sitios escuchan en
 
 9. Cierra el puerto `5090`, que ya no se usa: `sudo ufw delete allow 5090/tcp` con UFW activo, y en el firewall del proveedor si lo abriste ahí.
 
-Los plugins también podrían usar `https://l4d2.com.br`; la dirección simple los mantiene funcionando pase lo que pase con el certificado. nginx no necesita cambios: sigue pasando `https://l4d2.com.br` al puerto `5000`, y el sitio nuevo cree en las cabeceras `X-Forwarded-*` de un proxy en la misma máquina. Si el inicio de sesión con Steam vuelve a una dirección `http://` o a la dirección IP, el `location` de nginx debe pasar estas cabeceras:
+Los plugins también podrían usar `https://l4d2.com.br`; la dirección simple los mantiene funcionando pase lo que pase con el certificado. nginx no necesita cambios: sigue pasando `https://l4d2.com.br` al puerto `5000`, y el sitio nuevo confía en las cabeceras `X-Forwarded-*` de un proxy en la misma máquina. Si el inicio de sesión con Steam vuelve a una dirección `http://` o a la dirección IP, el `location` de nginx debe pasar estas cabeceras:
 
 ```nginx
 proxy_set_header Host $host;

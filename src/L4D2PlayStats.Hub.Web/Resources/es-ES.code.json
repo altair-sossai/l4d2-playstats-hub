@@ -4,5 +4,5 @@
   "Paste these lines into {0} on the game server and add {1} at the end of cfg/server.cfg:": "Pega estas líneas en {0} en el servidor de juego y añade {1} al final de cfg/server.cfg:",
   "Pasting the two lines straight into cfg/server.cfg also works.": "Pegar las dos líneas directamente en cfg/server.cfg también funciona.",
   "On L4D2 Competitive Rework a match mode unloads every plugin when it loads. Add these lines to cfg/sharedplugins.cfg, leaving out the plugins you do not use:": "En L4D2 Competitive Rework, un modo de partida descarga todos los plugins al cargarse. Añade estas líneas a cfg/sharedplugins.cfg, dejando fuera los plugins que no uses:",
-  "Players banned from the chat cannot send messages from the site to the game servers. Click a ban to see its details, edit the reason or remove it.": "Los jugadores baneados del chat no pueden enviar mensajes desde el sitio a los servidores de juego. Haz clic en un ban para ver los detalles, editar el motivo o eliminarlo."
+  "Players banned from the chat cannot send messages from the site to the game servers. Click a ban to see its details, edit the reason or remove it.": "Los jugadores baneados del chat no pueden enviar mensajes desde el sitio a los servidores de juego. Haz clic en un baneo para ver los detalles, editar el motivo o eliminarlo."
 }

@@ -2,7 +2,7 @@
 
 🌐 [English](first-run.md) | [Português](first-run.pt.md) | **Español**
 
-Después de la instalación, el sitio abre un asistente de instalación. Se ejecuta una sola vez. Hace de tu cuenta de Steam el primer administrador, pide la configuración básica y registra tu primer servidor de juego. Todo lo que elijas aquí se puede cambiar después en el [área de administración](administration.es.md).
+Después de la instalación, el sitio abre un asistente de configuración. Se ejecuta una sola vez. Hace de tu cuenta de Steam el primer administrador, pide la configuración básica y registra tu primer servidor de juego. Todo lo que elijas aquí se puede cambiar después en el [área de administración](administration.es.md).
 
 [Volver al manual](README.es.md)
 

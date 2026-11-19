@@ -42,7 +42,7 @@ De arriba abajo:
 - **Tank** y **Bruja**: en qué parte del mapa aparecen, y si el Tank está vivo o muerto.
 - **La barra del marcador**: los dos equipos lado a lado.
 - **Supervivientes**: el personaje, el jugador, la salud (con la salud temporal en un color más claro), las armas, el progreso y la calidad de la conexión. Los jugadores incapacitados, en blanco y negro y muertos aparecen marcados.
-- **Infectado**: la clase, el jugador, la salud y el daño hecho en esta ronda. Los jugadores que todavía están por aparecer aparecen marcados.
+- **Infectado**: la clase, el jugador, la salud y el daño hecho en esta ronda. Los jugadores que todavía están por aparecer se muestran marcados.
 - **Espectadores**.
 - **Mensajes de chat**: los eventos y el chat de la partida.
 - **Un botón `connect`** abajo de todo, que copia el comando para entrar al servidor.
@@ -61,7 +61,7 @@ El botón **Todo / Eventos / Mensajes** filtra la lista. Los mensajes cortos de 
 
 ## Escribir en el chat desde el sitio
 
-Con el módulo de chat del sitio activado, un jugador conectado puede escribir en el cuadro debajo del chat. El mensaje aparece en el chat del juego de ese servidor y en el panel.
+Con el módulo de chat del sitio activado, un jugador con la sesión iniciada puede escribir en el cuadro debajo del chat. El mensaje aparece en el chat del juego de ese servidor y en el panel.
 
 - Un mensaje tiene como máximo 200 caracteres.
 - Después de un mensaje, el mismo jugador espera 30 segundos antes de enviar otro. Después de cualquier mensaje, todos esperan 15 segundos.

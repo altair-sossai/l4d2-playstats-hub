@@ -123,7 +123,7 @@ O cartão é `Views/Matches/_Match.cshtml` com o modelo `MatchCardModel`; `IMatc
 | Rótulo da diferença de pontos com o tooltip "Diferença de pontos" | Details.cshtml:143-147 | done | |
 | Rótulo da pontuação da equipe B com o tooltip "Pontuação da equipe B" | Details.cshtml:114, :148-151 | done | |
 | Administrador: botão de link "Editar" (tooltip "Editar") ao lado da pontuação de cada equipe | Details.cshtml:134-141, :152-159 | done | |
-| `editScore`: prompt "Score da equipe X" com o valor atual, ignora entrada vazia ou não numérica, alerta "Intervalo de score inválido" fora de 0–10.000, `PUT /api/statistics/{id}/update-score`, depois mostra a página de novo | Details.cshtml:25-60 | adapted | Mesmo fluxo. O script só é enviado a administradores e a requisição leva o token antiforgery. Depois de salvar, a página abre o endereço da partida indicada na resposta (a mesma página, já que a partida mantém o id; a lista, quando a correção não deixa nenhuma partida). |
+| `editScore`: prompt "Pontuação da equipe X" com o valor atual, ignora entrada vazia ou não numérica, alerta "Intervalo de pontuação inválido" fora de 0–10.000, `PUT /api/statistics/{id}/update-score`, depois mostra a página de novo | Details.cshtml:25-60 | adapted | Mesmo fluxo. O script só é enviado a administradores e a requisição leva o token antiforgery. Depois de salvar, a página abre o endereço da partida indicada na resposta (a mesma página, já que a partida mantém o id; a lista, quando a correção não deixa nenhuma partida). |
 | Celular: a tabela vira linhas com rótulo (`table-responsive`, `data-label` em todas as células) | Details.cshtml:97, :117-148 | done | |
 | Por equipe, painel "Equipe X - Sobrevivente" com o texto "Estatísticas da equipe X jogando como sobreviventes" | Details.cshtml:168-174 | done | |
 | Cabeçalho da tabela de sobreviventes: um par de colunas por jogador (nome truncado com link para o jogador), "Total" | Details.cshtml:177-188 | done | |
@@ -167,7 +167,7 @@ O cartão é `Views/Matches/_Match.cshtml` com o modelo `MatchCardModel`; `IMatc
 | Breadcrumb: "Últimos jogos" / campanha (link para a partida) / nome do mapa | Statistics.cshtml:204-214 | done | |
 | Tabela de mapas (#, Mapa, Início, Fim, Decorrido, Placar) com o mapa atual destacado (`tr.info`) e links para cada mapa | Statistics.cshtml:216-271 | done | |
 | Rótulos de pontuação da equipe A / diferença / equipe B com tooltips | Statistics.cshtml:251-265 | done | Sem o botão "Editar" aqui, como antes. |
-| Abas "1º round" e "2º round", uma por metade, a primeira ativa | Statistics.cshtml:273-282 | done | |
+| Abas "1ª rodada" e "2ª rodada", uma por metade, a primeira ativa | Statistics.cshtml:273-282 | done | |
 | Painel de aba `fade`, o primeiro `in active` | Statistics.cshtml:309 | done | |
 | Painel "Sobreviventes": verde quando essa equipe venceu o mapa, vermelho caso contrário | Statistics.cshtml:292, :314-317 | done | |
 | Lista de sobreviventes: avatar, nome truncado com link para o jogador, destaque `it-is-me` | Statistics.cshtml:321-331 | done | |
@@ -176,7 +176,7 @@ O cartão é `Views/Matches/_Match.cshtml` com o modelo `MatchCardModel`; `IMatc
 | Painel "Infectados": verde quando essa equipe venceu o mapa, vermelho caso contrário | Statistics.cshtml:293, :355-358 | done | |
 | Lista de infectados ordenada por dano: avatar, nome, dano (`N0`) com o tooltip "Dano de SI (sem Tank)", destaque `it-is-me` | Statistics.cshtml:305-307, :362-379 | done | |
 | Painel "Detalhes", tabela da esquerda: todos os contadores do round diferentes de zero (reinícios, pílulas, kits, desfibriladores, commons, SI mortos, dano em SI, SI spawnados, witches, tanks, incaps, mortes, FF) | Statistics.cshtml:388-407 | done | |
-| Painel "Detalhes", tabela da direita: início, fim e duração do round; início, fim e duração do pause; início, fim e duração do tank (cada um só quando existe) | Statistics.cshtml:409-476 | done | |
+| Painel "Detalhes", tabela da direita: início, fim e duração da rodada; início, fim e duração da pausa; início, fim e duração do tank (cada um só quando existe) | Statistics.cshtml:409-476 | done | |
 | Painel "Sobreviventes" (tabela de estatísticas): cabeçalho com o nome truncado de cada jogador com link para o jogador | Statistics.cshtml:488-507 | done | |
 | Linhas exibidas só quando algum jogador tem valor; linhas separadoras em branco entre os grupos | Statistics.cshtml:61-128 | done | |
 | Grupo: mortes, incaps, dano recebido de SI (com tooltip de informação), dano por queda | Statistics.cshtml:510-517 | done | |
@@ -186,7 +186,7 @@ O cartão é `Views/Matches/_Match.cshtml` com o modelo `MatchCardModel`; `IMatc
 | Grupo de skeets até self clears, depois clears e tempo médio de clear (segundos, duas casas decimais) | Statistics.cshtml:89-92, :639-640 | done | |
 | Fogo amigo causado (por tipo, a si mesmo, total) e recebido (por tipo, total) | Statistics.cshtml:643-671 | done | |
 | Painel "Infectados" (tabela de estatísticas): cabeçalho com o nome de cada jogador; grupos de dano, tank, arranhões/ácido/boom (com tooltips de informação), de pounces até pendurados, commons, spawns por classe | Statistics.cshtml:677-727 | done | |
-| Painel "Jogadores Conectados": #, ID da Steam, Community ID, Nome | Statistics.cshtml:735-748 | done | |
+| Painel "Jogadores conectados": #, ID da Steam, Community ID, Nome | Statistics.cshtml:735-748 | done | |
 | Botão de copiar ao lado do ID da Steam e do Community ID | Statistics.cshtml:755-768 | done | |
 | Nome do jogador com link para a página do jogador | Statistics.cshtml:769-773 | done | |
 | Números como `N0`, percentuais como `P0` | Statistics.cshtml:95, :557 | done | |

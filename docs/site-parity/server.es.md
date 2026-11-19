@@ -37,7 +37,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | `/connect` redirige a `steam://connect/<ip>` | `Web/Controllers/ConnectController.cs:8` | done | Ya está en `SiteController`: va al servidor con más jugadores, o a `/servers` cuando ningún servidor tiene dirección. |
 | Página de administrador `/chat-bans` | `Web/Controllers/ChatBansController.cs:17` | adapted | Ahora `/admin/chat-bans`, como todas las páginas de administrador del hub. `/chat-bans` redirige allí de forma permanente, conservando la query string. |
 | Elemento del menú "Servidor" activo (`ViewBag.Server`) | `Web/Controllers/ServerController.cs:19` | done |  |
-| Elementos del menú "Admin" y "Baneos del Chat" activos | `Web/Controllers/ChatBansController.cs:20` | done |  |
+| Elementos del menú "Admin" y "Baneos del chat" activos | `Web/Controllers/ChatBansController.cs:20` | done |  |
 
 ## Página del servidor
 
@@ -65,17 +65,17 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Etiqueta del anti-cheat (activado, desactivado, API no disponible) con icono de candado, color y tooltip | `Web/Views/Server/_Header.cshtml:37` | done |  |
 | La etiqueta del anti-cheat enlaza a la página del anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | La etiqueta es la misma. El enlace solo se escribe mientras el módulo anti-cheat está activado, porque el hub todavía no tiene página de anti-cheat (el módulo está reservado). |
 | Etiqueta "IP del Servidor" con el botón de signo de interrogación que abre el modal de información del servidor | `Web/Views/Server/_Header.cshtml:58` | done |  |
-| Valor de la IP del servidor con el icono de copiar (copia `connect <ip>`, popover "Texto copiado!", icono según el tema) | `Web/Views/Server/_Header.cshtml:65` | done | La dirección es la del servidor en pantalla. El icono de copiar se omite cuando el servidor no tiene dirección. |
+| Valor de la IP del servidor con el icono de copiar (copia `connect <ip>`, popover "¡Texto copiado!", icono según el tema) | `Web/Views/Server/_Header.cshtml:65` | done | La dirección es la del servidor en pantalla. El icono de copiar se omite cuando el servidor no tiene dirección. |
 | Jugadores: conectados / máximo | `Web/Views/Server/_Header.cshtml:73` | adapted | Conectados es el número de jugadores en el estado en vivo (supervivientes, infectados y espectadores) en lugar de la consulta a Steam. Máximo son los slots que el servidor de juego envía en su heartbeat (`maxPlayers`, añadido al plugin); con un plugin más antiguo es el doble del tamaño del equipo. |
-| Mapa: campaña, nombre del mapa y ronda ("1º ronda" / "2º ronda") | `Web/Views/Server/_Header.cshtml:78` | adapted | El mapa viene del heartbeat del servidor de juego (cada 30 s) en lugar de la consulta a Steam. Los nombres de las campañas vienen del catálogo del hub. |
+| Mapa: campaña, nombre del mapa y ronda ("1.ª ronda" / "2.ª ronda") | `Web/Views/Server/_Header.cshtml:78` | adapted | El mapa viene del heartbeat del servidor de juego (cada 30 s) en lugar de la consulta a Steam. Los nombres de las campañas vienen del catálogo del hub. |
 | Mapa: etiqueta Pausado, Iniciando... o Iniciado con tooltip | `Web/Views/Server/_Header.cshtml:96` | done |  |
 | Marcador: etiquetas de supervivientes e infectados, verde para el que va ganando, rojo para el otro, gris en caso de empate, con tooltips | `Web/Views/Server/_Header.cshtml:117` | done |  |
 | Marcador: etiqueta de diferencia cuando no es cero | `Web/Views/Server/_Header.cshtml:131` | done |  |
 | Puntos de progreso: actual / máximo y etiqueta de porcentaje | `Web/Views/Server/_Header.cshtml:139` | done |  |
 | Bonificación: actual / máximo y etiqueta de porcentaje | `Web/Views/Server/_Header.cshtml:154` | done |  |
 | Porcentaje de progreso | `Web/Views/Server/_Header.cshtml:165` | done |  |
-| Tank: porcentaje, "Deshabilitado", y las etiquetas Vivo / Muerto | `Web/Views/Server/_Header.cshtml:170` | done |  |
-| Bruja: porcentaje o "Deshabilitado" | `Web/Views/Server/_Header.cshtml:196` | done |  |
+| Tank: porcentaje, "Desactivado", y las etiquetas Vivo / Muerto | `Web/Views/Server/_Header.cshtml:170` | done |  |
+| Bruja: porcentaje o "Desactivado" | `Web/Views/Server/_Header.cshtml:196` | done |  |
 | Diseño para teléfonos: `table-responsive` con `data-label` en cada celda | `Web/Views/Server/_Header.cshtml:55` | done |  |
 
 ## Jugadores
@@ -105,7 +105,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Infectado: barra de salud y "salud / máximo" | `Web/Views/Server/_Players.cshtml:342` | done |  |
 | Infectados ordenados por daño, separados por una línea | `Core/GameInfo/GameInfo.cs:188`, `Web/Views/Server/_Players.cshtml:366` | done |  |
 | Espectadores: número y nombres como etiquetas enlazadas a la página del jugador, ordenados por nombre | `Web/Views/Server/_Players.cshtml:383`, `Core/GameInfo/GameInfo.cs:195` | done |  |
-| Ids de fila estables (`tr0-survivor-0`...) para que diffDOM parchee en el sitio | `Web/Views/Server/_Players.cshtml:100` | done |  |
+| Ids de fila estables (`tr0-survivor-0`...) para que diffDOM parchee en su lugar | `Web/Views/Server/_Players.cshtml:100` | done |  |
 | Dos columnas en escritorio, apiladas en teléfonos (`col-xs-12 col-sm-6`) | `Web/Views/Server/_Players.cshtml:80` | done |  |
 
 ## Feed y chat
@@ -230,7 +230,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | Solo administradores | `Web/Controllers/ChatBansController.cs:10` | done | También necesita el módulo de chat del sitio. |
-| Encabezado "Baneos del Chat" con el botón "Agregar baneo" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
+| Encabezado "Baneos del chat" con el botón "Añadir baneo" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
 | Texto introductorio | `Web/Views/ChatBans/Index.cshtml:42` | done |  |
 | Contador de jugadores baneados | `Web/Views/ChatBans/Index.cshtml:44` | done |  |
 | Búsqueda por nombre, Steam ID o motivo, con "Limpiar filtros" | `Web/Views/ChatBans/Index.cshtml:51`, `Web/Controllers/ChatBansController.cs:25` | done |  |

@@ -27,7 +27,7 @@ Las victorias y las derrotas van para los jugadores que estaban en el primer map
 Un empate no da victoria ni derrota, solo los puntos de MVP.
 
 **¿Por qué se reinició mi experiencia?**
-Empezó una temporada nueva. La temporada pasada está en **Más > Historia** y en el selector de período.
+Empezó una temporada nueva. La temporada pasada está en **Más > Historial** y en el selector de período.
 
 **Mi nombre es viejo o está mal.**
 El sitio muestra el nombre que más usaste en el período. Tus otros nombres están en **Nombres anteriores**, en tu página.

@@ -27,7 +27,7 @@ O ranking é a primeira página do site. Ele lista os 100 melhores jogadores da 
 | # | Posição. Os três primeiros têm uma medalha. |
 | Patente | A patente correspondente à experiência do jogador. Veja [Patentes](patents.pt.md). |
 | Jogador | Avatar e nome. Clique para abrir a [página do jogador](players.pt.md). |
-| Subiu de Nível! / Caiu de Nível! | A última partida da temporada levou este jogador para uma patente mais alta ou mais baixa. |
+| Subiu de nível! / Caiu de nível! | A última partida da temporada levou este jogador para uma patente mais alta ou mais baixa. |
 | XP | Uma barra com o progresso até a próxima patente. Passe o mouse sobre ela para ver a experiência, o próximo nível e quanto a última partida mudou. Verde quer dizer que a última partida somou experiência; vermelho, que ela tirou experiência. |
 | Vitórias, Derrotas | Partidas ranqueadas ganhas e perdidas. Um rage quit conta como derrota. |
 | MVP de SI (vezes), MVP de CI (vezes) | Quantas vezes o jogador foi MVP. Veja [MVPs](#mvps). |
@@ -119,7 +119,7 @@ Os jogadores são ordenados por experiência. Quando dois jogadores têm a mesma
 | Pontos por vitória, derrota e rage quit | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 85, −80, −150 |
 | Pontos por cada MVP de SI e cada MVP de CI | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 8, 6 |
 | Mínimo de partidas para aparecer no ranking | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 0 |
-| Quais modos de jogo contam, e quantos mapas uma partida precisa | [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo) | 4v4 com pelo menos 2 mapas |
+| Quais modos de jogo contam, e de quantos mapas uma partida precisa | [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo) | 4v4 com pelo menos 2 mapas |
 | Duração da temporada | [Configurações > Temporadas](administration.pt.md#temporadas) | 2 meses |
 
 O módulo inteiro do ranking pode ser desligado em [Módulos](administration.pt.md#módulos). A primeira página passa a mostrar um texto curto de boas-vindas no lugar.

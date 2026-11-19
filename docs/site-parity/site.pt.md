@@ -78,7 +78,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Imagem da patente com o tooltip "Nível NN - Nome" | Index.cshtml:127-129 | done | |
 | Avatar com link para a página do jogador, com imagem de fallback | Index.cshtml:130-134 | done | Os avatares são baixados sob demanda, mesmo sem uma chave da API da Steam. |
 | Nome do jogador, encurtado quando é longo demais, com link para a página do jogador | Index.cshtml:136 | done | |
-| Rótulos pulsantes "Subiu de Nível!" / "Caiu de Nível!" com tooltip | Index.cshtml:137-148 | done | |
+| Rótulos pulsantes "Subiu de nível!" / "Caiu de nível!" com tooltip | Index.cshtml:137-148 | done | |
 | Barra de progresso de XP: tipo e pulso conforme a situação, listrada no nível máximo, segundo segmento para o ganho ou a perda do último jogo | Index.cshtml:150-157, Models/RankingModel.cs | done | |
 | Tooltip do progresso: mudança de nível, patente máxima, XP do último jogo, próximo nível, XP do total, percentual | Models/RankingModel.cs:44-71 | done | |
 | Vitórias com o tooltip "Vitórias - N% Taxa de vitória" | Index.cshtml:158-162 | done | |
@@ -137,7 +137,7 @@ A página pertence ao módulo Anti-Cheat, que vem desligado por padrão. Quando 
 | "Problemas comuns": cinco perguntas que abrem e fecham | Index.cshtml:430-447 | done | |
 | "Sobre o -insecure (sem VAC)" | Index.cshtml:449-458 | adapted | Usa o nome do site em vez do endereço fixo. |
 | Privacidade: o que é enviado e o que nunca é enviado | Index.cshtml:459-484 | done | |
-| Jogador que entrou: se a conta Steam dele precisa usar o Anti-Cheat | Index.cshtml:319-325, Controllers/AntiCheatController.cs:45-55 | done | Oculto para visitantes que não entraram. |
+| Jogador logado: se a conta Steam dele precisa usar o Anti-Cheat | Index.cshtml:319-325, Controllers/AntiCheatController.cs:45-55 | done | Oculto para visitantes que não estão logados. |
 | Endereços do serviço e do download | Core/AppConsts.cs:15-16 | adapted | Configurações em `/admin/anti-cheat` em vez de endereços fixos. |
 
 ## Configurações do Anti-Cheat (`/admin/anti-cheat`)
@@ -176,7 +176,7 @@ O site antigo ganhou esta página com os modos de uso do plugin de anti-cheat 1.
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | `GET /api/anti-cheat-access` (administrador) | Controllers/Api/AntiCheatAccessController.cs:20 | adapted | Os mesmos dados; o modo é escrito `everyone` ou `listed`. |
-| `PUT /api/anti-cheat-access/mode` (administrador) | Controllers/Api/AntiCheatAccessController.cs:28 | adapted | Mesmo caminho e mesmo JSON. Precisa do token antifalsificação da página no cabeçalho `RequestVerificationToken`. Os textos de erro são traduzidos. |
+| `PUT /api/anti-cheat-access/mode` (administrador) | Controllers/Api/AntiCheatAccessController.cs:28 | adapted | Mesmo caminho e mesmo JSON. Precisa do token antiforgery da página no cabeçalho `RequestVerificationToken`. Os textos de erro são traduzidos. |
 | `POST /api/anti-cheat-access/{whitelist ou required}` (administrador) | Controllers/Api/AntiCheatAccessController.cs:41 | adapted | Mesmo caminho e mesmo JSON, com o mesmo cabeçalho de token. O jogador é informado como SteamID64, Steam ID, Steam3 ou URL do perfil. |
 | `DELETE /api/anti-cheat-access/{list}/{communityId}` (administrador) | Controllers/Api/AntiCheatAccessController.cs:61 | adapted | Mesmo caminho, com o mesmo cabeçalho de token. |
 | `GET /api/admin/players/lookup?id=` (administrador) | Controllers/Api/AdminPlayersController.cs:48, Core/Players/Services/PlayerLookupService.cs | adapted | O nome vem do ranking, depois dos perfis dos jogadores e das conexões dos servidores de jogo, senão da Steam com a chave do site ou o perfil público, guardado por 4 horas. A foto é a cópia do site, ou a foto da Steam até o site ter uma. |

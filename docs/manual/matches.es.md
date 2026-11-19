@@ -18,7 +18,7 @@ Cada partida jugada en tus servidores de juego tiene una página con los equipos
 
 ## La lista de partidas
 
-**Últimos partidos** lista las partidas, de la más reciente a la más antigua.
+**Últimas partidas** lista las partidas, de la más reciente a la más antigua.
 
 ![La lista de partidas](../images/es/matches.webp)
 
