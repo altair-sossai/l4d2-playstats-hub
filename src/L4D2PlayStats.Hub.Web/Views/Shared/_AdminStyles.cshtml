@@ -3,6 +3,7 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        column-gap: 6px;
         margin: 10px 0 16px;
     }
 
@@ -14,10 +15,6 @@
 
         .admin-header .btn {
             margin-bottom: 8px;
-        }
-
-        .admin-header .btn + .btn {
-            margin-left: 6px;
         }
 
     .admin-stats {
@@ -208,6 +205,15 @@
             flex: 1 1 100%;
             margin: 8px 0 0;
             order: 3;
+        }
+
+        .admin-side {
+            flex: 0 1 auto;
+            max-width: 45%;
+        }
+
+        .admin-filters select {
+            flex: 1 1 140px;
         }
     }
 </style>
