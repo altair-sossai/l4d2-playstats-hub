@@ -72,7 +72,8 @@ O comando `site` espera uma pasta de dados, como a cópia fictícia acima, com:
 
 - todos os módulos ligados em **Administração > Módulos**;
 - dois servidores de jogo, com os tokens deles;
-- alguns votos da comunidade, um banimento do chat, um comando remoto e uma conexão de jogador, para que essas páginas não fiquem vazias.
+- alguns votos da comunidade, um banimento do chat, um comando remoto e uma conexão de jogador, para que essas páginas não fiquem vazias;
+- alguns backups em **Administração > Backup**, um deles com falha, para que a lista de backups recentes não fique vazia. O Azurite, o emulador do Azure Storage, pode recebê-los na própria máquina: inicie-o com `npx azurite-blob --skipApiVersionCheck`, salve a string de conexão dele (`UseDevelopmentStorage=true` ou a completa, com `devstoreaccount1`) e um nome de contêiner, e clique em **Fazer backup agora**. O print `admin-backup` então preenche o formulário com um endereço de contêiner de exemplo, que nunca é salvo.
 
 ```bash
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>

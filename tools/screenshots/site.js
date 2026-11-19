@@ -87,6 +87,7 @@ function shots(vars) {
     const tab = name => `$('#player-tabs a[href="#${name}"]').tab('show'); window.scrollTo(0, 0)`;
     const markPanelWithTable = index => `Array.from(document.querySelectorAll('.panel')).filter(panel => panel.querySelector('table') && !panel.parentElement.closest('.panel'))[${index}].id = 'shot-target'`;
     const hideFloating = `$('#connect-icon').remove()`;
+    const fillBackup = `$('#Enabled').prop('checked', true); $('#Destination_ContainerUrl').prop('checked', true); $('#ContainerUrl').val('https://example.blob.core.windows.net/hub-backups?sv=2025-01-05&sp=racwdl&sig=example'); $('#ConnectionString').attr('placeholder', 'DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...')`;
     const firstLiveServer = `location.href = document.querySelector('a[href^="/servers/"]').getAttribute('href')`;
 
     return [
@@ -154,6 +155,7 @@ function shots(vars) {
         { name: 'admin-remote-commands', path: '/admin/remote-commands', full: true },
         { name: 'admin-player-connections', path: `/admin/player-connections?communityId=${player}`, full: true },
         { name: 'admin-anti-cheat', path: '/admin/anti-cheat', before: [{ run: fillAntiCheat }, { go: '/admin/anti-cheat' }, hideFloating], full: true },
+        { name: 'admin-backup', path: '/admin/backup', before: [hideFloating, fillBackup], full: true },
         { name: 'admin-phone-menu', width: phone, path: '/admin/servers', before: [`$('.admin-menu-toggle').click()`, { sleep: 800 }], full: true, maxHeight: 1100 }
     ];
 }

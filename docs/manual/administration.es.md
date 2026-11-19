@@ -4,7 +4,7 @@
 
 El área de administración es donde se configura el sitio. Solo está abierta para los administradores: **Admin > Administración** en el menú, o `/admin`. Todas las páginas del área tienen el [menú de administración](#el-menú-de-administración) a la izquierda.
 
-Esta página cubre la vista general, los servidores de juego, los módulos, la configuración y los administradores. Las demás páginas de administración se explican junto con su función:
+Esta página cubre la vista general, los servidores de juego, los módulos, la configuración, los administradores y la copia de seguridad. Las demás páginas de administración se explican junto con su función:
 
 | Elemento del menú | Se explica en |
 |---|---|
@@ -26,6 +26,7 @@ Un elemento cuyo módulo está desactivado no aparece en el menú.
 - [Módulos](#módulos)
 - [Configuración](#configuración)
 - [Administradores](#administradores)
+- [Copia de seguridad](#copia-de-seguridad)
 
 ## El menú de administración
 
@@ -33,7 +34,7 @@ Todas las páginas de administración tienen el mismo menú a la izquierda, con 
 
 | Grupo | Páginas |
 |---|---|
-| Sitio | Vista general, Configuración, Módulos, Administradores |
+| Sitio | Vista general, Configuración, Módulos, Administradores, Copia de seguridad |
 | Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos de chat |
 | Clasificación | Modos de juego, Campañas, Ranking de la comunidad |
 | Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
@@ -164,3 +165,27 @@ Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la m
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 El SteamID64 es el número largo de la dirección de un perfil de Steam, como `76561198000000000`.
+
+## Copia de seguridad
+
+![La página de copia de seguridad](../images/es/admin-backup.webp)
+
+El sitio sube un zip de sus datos a un contenedor de Azure Storage cada pocas horas. [Copias de seguridad y actualizaciones > Copia automática en Azure Storage](backups-and-updates.es.md#copia-automática-en-azure-storage) explica qué contiene el zip, cómo crear el contenedor y cómo restaurar un zip.
+
+| Campo | Qué hace |
+|---|---|
+| Hacer copias automáticamente | Activa la programación. **Hacer una copia ahora** funciona también con ella desactivada. |
+| Destino | **Dirección del contenedor con un token SAS**, la recomendada, o **Cadena de conexión de la cuenta de almacenamiento y un contenedor**. |
+| Dirección del contenedor con un token SAS | `https://<cuenta>.blob.core.windows.net/<contenedor>?sv=...&sig=...`: un SAS de ese contenedor con los permisos Read, Add, Create, Write, Delete y List. |
+| Cadena de conexión | La cadena de conexión de la cuenta de almacenamiento, en **Claves de acceso** del portal de Azure. |
+| Contenedor | Solo con una cadena de conexión. El contenedor se crea si no existe. |
+| Cada, en horas | De 1 a 168. 8 por defecto. |
+| Copias a conservar | De 1 a 1000. 30 por defecto. Después de cada copia se borran los archivos más antiguos que pasen de este número. |
+| Prefijo del nombre del archivo | El comienzo del nombre de los archivos, `hub-backup` por defecto. Solo se cuentan y se borran los archivos con este prefijo. |
+
+La dirección y la cadena de conexión son secretos. Una vez guardadas, la página solo las muestra enmascaradas, como `https://<cuenta>.blob.core.windows.net/<contenedor>?••••••••`; deja el campo vacío para conservar la guardada, o escribe una nueva para reemplazarla. Tampoco se escriben nunca en el registro.
+
+- **Estado** muestra si la programación está activada, la última copia que salió bien y cuándo se hace la próxima.
+- **Hacer una copia ahora** hace una copia en el momento. **Probar la conexión** sube un archivo pequeño de prueba, comprueba que el contenedor lo lista y lo borra, sin hacer una copia.
+- **Copias recientes** lista las últimas 20 ejecuciones, programadas o manuales, con el archivo, su tamaño, cuánto tardó y, para una copia que falló, el error. Una copia que falló se intenta otra vez 30 minutos después.
+- En un sitio que no usa SQLite, la página avisa que la base de datos no está en el zip.

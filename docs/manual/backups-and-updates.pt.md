@@ -9,6 +9,7 @@ Tudo o que o site guarda fica em uma pasta só, a pasta de dados. Faça backup d
 ## Conteúdo
 
 - [O que fica na pasta de dados](#o-que-fica-na-pasta-de-dados)
+- [Backup automático no Azure Storage](#backup-automático-no-azure-storage)
 - [Fazendo backup no Linux](#fazendo-backup-no-linux)
 - [Fazendo backup com Docker](#fazendo-backup-com-docker)
 - [Restaurando](#restaurando)
@@ -30,6 +31,93 @@ A pasta é `/var/lib/l4d2-playstats-hub` com o instalador para Linux e o volume 
 Com SQL Server, PostgreSQL ou MySQL, os dados ficam nesse banco: faça backup dele com as ferramentas desse banco, e guarde uma cópia da pasta de dados por causa das chaves e da logo. Veja [Bancos de dados](../databases.pt.md).
 
 Como todo arquivo de estatísticas é guardado, o banco basta para montar de novo todas as partidas e rankings.
+
+## Backup automático no Azure Storage
+
+O site pode fazer o próprio backup. Em [Administração > Backup](administration.pt.md#backup) você informa um contêiner do Azure Storage e, a cada algumas horas, 8 por padrão, ele envia um arquivo zip para lá. O site continua no ar: o banco é copiado enquanto ele funciona.
+
+### O que o zip contém
+
+| Arquivo | O que é |
+|---|---|
+| `hub.db` | Uma cópia do banco SQLite, feita com a função de backup do SQLite com o site rodando, então ela é consistente mesmo enquanto chegam estatísticas. |
+| `keys/` | As chaves que protegem os cookies de login. |
+| `branding/` | O logo. |
+| `manifest.json` | A versão do site, a hora do backup em UTC, o provedor do banco e a lista de arquivos. |
+
+- Os avatares ficam de fora: o site os baixa de novo.
+- O `hub.env` (Linux) ou as variáveis de ambiente (Docker) ficam fora da pasta de dados e não entram no zip. Guarde uma cópia deles, ou rode `playstats-hub backup` de vez em quando, que inclui o `hub.env`.
+- Com SQL Server, PostgreSQL ou MySQL o zip não tem o `hub.db`: faça o backup desse banco com as ferramentas dele. O zip continua guardando as chaves e o logo.
+
+Os arquivos se chamam `<prefixo>-yyyyMMdd-HHmmss.zip`, em UTC, como `hub-backup-20261119-160000.zip`. Depois de cada envio, os arquivos mais antigos com o mesmo prefixo além da quantidade a manter (30 por padrão) são apagados. Os outros arquivos do contêiner nunca são tocados. Um backup que falha é tentado de novo 30 minutos depois, e a página mostra o erro.
+
+### Criando o contêiner e o endereço SAS dele
+
+O destino mais seguro é um endereço SAS de um contêiner: com ele o site só consegue usar esse contêiner.
+
+No portal do Azure:
+
+1. Abra a conta de armazenamento, **Armazenamento de dados > Contêineres**, e crie um contêiner, como `hub-backups`, com acesso privado.
+2. Abra o contêiner e **Configurações > Tokens de acesso compartilhado**. Assine com uma chave da conta, marque as permissões **Read, Add, Create, Write, Delete e List**, escolha uma data de expiração distante e clique em **Gerar token SAS e URL**.
+3. Copie a **URL SAS do blob**. Ela tem a forma `https://<conta>.blob.core.windows.net/hub-backups?sv=...&sig=...`.
+
+Com a Azure CLI:
+
+```bash
+az storage container create --account-name <conta> --name hub-backups --auth-mode key
+```
+
+```bash
+az storage container generate-sas --account-name <conta> --name hub-backups --permissions racwdl --expiry 2028-12-31T23:59Z --https-only --auth-mode key -o tsv
+```
+
+O segundo comando imprime o token. O endereço é `https://<conta>.blob.core.windows.net/hub-backups?` seguido dele.
+
+Cole o endereço em **Administração > Backup**, marque **Fazer backup automaticamente**, salve e clique em **Testar conexão**. O SAS para de funcionar na data de expiração: crie um novo antes disso, senão os backups começam a falhar, como a página mostra.
+
+Uma string de conexão da conta de armazenamento também funciona, junto com o nome de um contêiner; o site cria o contêiner quando ele não existe. Ela dá acesso à conta inteira, então prefira o endereço SAS.
+
+### Restaurando um zip
+
+Baixe o zip do contêiner: no portal, abra o arquivo e clique em **Baixar**; com a CLI, `az storage blob download`.
+
+No Linux, pare o site, coloque os arquivos do zip na pasta de dados e inicie o site de novo. O `unzip` pode precisar de `sudo apt install unzip`.
+
+```bash
+sudo systemctl stop l4d2-playstats-hub
+```
+
+```bash
+sudo rm -f /var/lib/l4d2-playstats-hub/hub.db-wal /var/lib/l4d2-playstats-hub/hub.db-shm
+```
+
+```bash
+sudo unzip -o hub-backup-20261119-160000.zip -x manifest.json -d /var/lib/l4d2-playstats-hub
+```
+
+```bash
+sudo chown -R playstats:playstats /var/lib/l4d2-playstats-hub
+```
+
+```bash
+sudo systemctl start l4d2-playstats-hub
+```
+
+Apague os arquivos `-wal` e `-shm` antes de extrair: eles são do banco que está sendo substituído. Numa máquina nova, rode o instalador antes, depois restaure, e coloque o seu `hub.env` de volta se você o alterou.
+
+Com Docker, pare o contêiner, extraia o zip no volume e inicie de novo. O contêiner entrega os arquivos ao usuário dele quando inicia.
+
+```bash
+docker compose stop hub
+```
+
+```bash
+docker run --rm -v playstats_hub-data:/data -v "$PWD":/backup alpine sh -c "rm -f /data/hub.db-wal /data/hub.db-shm && unzip -o /backup/hub-backup-20261119-160000.zip -x manifest.json -d /data"
+```
+
+```bash
+docker compose start hub
+```
 
 ## Fazendo backup no Linux
 

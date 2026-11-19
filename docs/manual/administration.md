@@ -4,7 +4,7 @@
 
 The administration area is where the site is configured. It is open only to administrators: **Admin > Administration** in the menu, or `/admin`. Every page of the area has the [administration menu](#the-administration-menu) on the left.
 
-This page covers the overview, the game servers, the modules, the settings and the administrators. Other administration pages are explained with their feature:
+This page covers the overview, the game servers, the modules, the settings, the administrators and the backup. Other administration pages are explained with their feature:
 
 | Menu item | Explained in |
 |---|---|
@@ -26,6 +26,7 @@ An item whose module is off is not in the menu.
 - [Modules](#modules)
 - [Settings](#settings)
 - [Administrators](#administrators)
+- [Backup](#backup)
 
 ## The administration menu
 
@@ -33,7 +34,7 @@ Every administration page has the same menu on the left, with the page you are o
 
 | Group | Pages |
 |---|---|
-| Site | Overview, Settings, Modules, Administrators |
+| Site | Overview, Settings, Modules, Administrators, Backup |
 | Game servers | Game servers, Remote commands, Player connections, Chat bans |
 | Ranking | Game modes, Campaigns, Community ranking |
 | Skin shop | Purchases, Prices, Catalog, Shop settings |
@@ -164,3 +165,27 @@ If you lose access to every administrator account, add one from the machine that
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 The SteamID64 is the long number in the address of a Steam profile, such as `76561198000000000`.
+
+## Backup
+
+![The backup page](../images/en/admin-backup.webp)
+
+The site uploads a zip of its data to an Azure Storage container every few hours. [Backups and updates > Automatic backup to Azure Storage](backups-and-updates.md#automatic-backup-to-azure-storage) explains what the zip contains, how to create the container and how to restore a zip.
+
+| Field | What it does |
+|---|---|
+| Back up automatically | Turns the schedule on. **Back up now** works with it off too. |
+| Destination | **Container address with a SAS token**, the recommended one, or **Connection string of the storage account and a container**. |
+| Container address with a SAS token | `https://<account>.blob.core.windows.net/<container>?sv=...&sig=...`: a SAS of that container with the Read, Add, Create, Write, Delete and List permissions. |
+| Connection string | The connection string of the storage account, from **Access keys** in the Azure portal. |
+| Container | Only with a connection string. The container is created when it does not exist. |
+| Every, in hours | From 1 to 168. 8 by default. |
+| Backups to keep | From 1 to 1000. 30 by default. After each backup the oldest files beyond this number are deleted. |
+| File name prefix | The start of the file names, `hub-backup` by default. Only files with this prefix are counted and deleted. |
+
+The address and the connection string are secrets. After they are saved the page shows them only masked, such as `https://<account>.blob.core.windows.net/<container>?••••••••`; leave the field empty to keep the saved one, or type a new one to replace it. They are never written to the log either.
+
+- **Status** shows whether the schedule is on, the last backup that worked and when the next one runs.
+- **Back up now** makes a backup at once. **Test connection** uploads a small test file, checks that the container lists it and deletes it, without making a backup.
+- **Recent backups** lists the last 20 runs, scheduled or manual, with the file, its size, how long it took and, for a backup that failed, the error. A failed backup is tried again 30 minutes later.
+- On a site that does not use SQLite, the page warns that the database is not in the zip.
