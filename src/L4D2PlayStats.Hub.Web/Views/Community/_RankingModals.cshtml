@@ -239,7 +239,11 @@
         var positionText = @Json.Serialize(L["#{0} in the community ranking"].Value);
 
         function percent(value, total) {
-            return total > 0 ? (value * 100 / total).toFixed(1) + '%' : '0%';
+            return total > 0 ? (value * 100 / total).toFixed(2) + '%' : '0%';
+        }
+
+        function share(value, total) {
+            return (total > 0 ? Math.round(value * 100 / total) : 0) + '%';
         }
 
         document.addEventListener('click', function (event) {
@@ -261,9 +265,9 @@
             modal.find('.crm-patent').text(data.patent || '');
             modal.find('.crm-rating').text(data.rating);
             modal.find('.crm-comparisons').text(data.comparisons);
-            modal.find('.crm-wins').text(wins + ' (' + percent(wins, total) + ')');
-            modal.find('.crm-draws').text(draws + ' (' + percent(draws, total) + ')');
-            modal.find('.crm-losses').text(losses + ' (' + percent(losses, total) + ')');
+            modal.find('.crm-wins').text(wins + ' (' + share(wins, total) + ')');
+            modal.find('.crm-draws').text(draws + ' (' + share(draws, total) + ')');
+            modal.find('.crm-losses').text(losses + ' (' + share(losses, total) + ')');
             modal.find('.crm-bar-win').css('width', percent(wins, total));
             modal.find('.crm-bar-draw').css('width', percent(draws, total));
             modal.find('.crm-bar-loss').css('width', percent(losses, total));
