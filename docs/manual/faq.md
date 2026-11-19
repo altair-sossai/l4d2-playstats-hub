@@ -94,7 +94,7 @@ Everyone, by default, as on the old site. [Settings > Privacy](administration.md
 | `!ranking` opens an empty panel | The game cannot open the HTTPS address. Set `playstats_ingame_url` to a plain HTTP address of the site. See [Pages inside the game](in-game-pages.md#the-address-used-by-the-game). |
 | Avatars do not load | They are downloaded in the background. Wait a few minutes, or set a Steam Web API key in [Settings](administration.md#site). |
 | Players were signed out after moving the site | The `keys` folder was not copied. They only need to sign in again. |
-| Skin pictures do not load | Check **Address of the assets** in the [shop settings](skin-shop.md#shop-settings). |
+| Skin pictures do not load | The thumbnails of the skins that come with the hub are served by the site. For the photos, and for the thumbnails of skins added later, check **Address of the assets** in the [shop settings](skin-shop.md#shop-settings); empty uses the address of the current server. |
 | A page shows **Page not found** | The address is wrong, or its module is off. See [Modules](administration.md#modules). |
 | A page shows **Something went wrong** | The site hit an unexpected error. The details are in the log: `playstats-hub logs`, or `docker compose logs hub`. |
 | Behind a reverse proxy, the site sees `http` instead of `https`, or the address of the proxy instead of the visitor | The proxy is not on the same machine, so the site ignores its forwarded headers. Add its address or network to `Hub__TrustedProxies`. See [Installing with Docker > Configuration](../install-docker.md#configuration). |

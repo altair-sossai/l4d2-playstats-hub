@@ -94,7 +94,7 @@ Todo mundo, por padrão, como no site antigo. [Configurações > Privacidade](ad
 | O `!ranking` abre um painel vazio | O jogo não consegue abrir o endereço HTTPS. Defina `playstats_ingame_url` com um endereço HTTP simples do site. Veja [Páginas dentro do jogo](in-game-pages.pt.md#o-endereço-usado-pelo-jogo). |
 | Os avatares não carregam | Eles são baixados em segundo plano. Espere alguns minutos, ou defina uma chave da Steam Web API em [Configurações](administration.pt.md#site). |
 | Os jogadores foram deslogados depois de mudar o site de lugar | A pasta `keys` não foi copiada. Eles só precisam fazer login de novo. |
-| As imagens das skins não carregam | Confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja). |
+| As imagens das skins não carregam | As miniaturas das skins que vêm com o hub são servidas pelo site. Para as fotos, e para as miniaturas de skins adicionadas depois, confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja); em branco, usa o endereço do servidor atual. |
 | Uma página mostra **Página não encontrada** | O endereço está errado, ou o módulo dela está desligado. Veja [Módulos](administration.pt.md#módulos). |
 | Uma página mostra **Algo deu errado** | O site encontrou um erro inesperado. Os detalhes estão no log: `playstats-hub logs`, ou `docker compose logs hub`. |
 | Atrás de um proxy reverso, o site vê `http` em vez de `https`, ou o endereço do proxy em vez do visitante | O proxy não está na mesma máquina, então o site ignora os cabeçalhos que ele repassa. Adicione o endereço ou a rede dele em `Hub__TrustedProxies`. Veja [Instalando com Docker > Configuração](../install-docker.pt.md#configuração). |

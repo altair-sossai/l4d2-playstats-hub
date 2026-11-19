@@ -13,7 +13,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
 | Route `GET /skins`, menu item "Skins" active (`ViewBag.Skins`) | Controllers/SkinsController.cs:11-14 | done |  |
-| Page metadata: title "Skins", description, image and alt of the most expensive skin | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | The description takes the site name from the settings instead of naming "L4D2 Competitive". The image is the thumbnail on the assets site, as an absolute address; without an assets address there is no image. |
+| Page metadata: title "Skins", description, image and alt of the most expensive skin | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | The description takes the site name from the settings instead of naming "L4D2 Competitive". The image is the thumbnail of the skin, as an absolute address: the site's own `/imgs/skins/{id}.jpg` for the skins that come with the hub, as in the old site, otherwise the one under the assets address. |
 | Inline styles of the page (`.sk-*`, 700 lines) | Views/Skins/Index.cshtml:34-734 | done | Copied unchanged. |
 | Antiforgery token on the page | Views/Skins/Index.cshtml:736 | done |  |
 | Hero: kicker "Skin shop", title "Skins", lead text | Views/Skins/Index.cshtml:738-742 | done |  |
@@ -41,7 +41,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Order inside a rarity: price descending, weapon order, English title | Models/SkinsModel.cs:70-80 | done |  |
 | Card: `col-xs-6 col-sm-4 col-md-3`, data attributes `weapon`, `rarity`, `affordable` | Views/Skins/Index.cshtml:980-981 | done |  |
 | Card: anchor `id="skin-{id}"` (shop tab only), owned border, legendary glow | Views/Skins/Index.cshtml:982 | done |  |
-| Card: thumbnail, lazy loaded | Views/Skins/Index.cshtml:984-985 | adapted | Loaded from the assets site (`{assets}/skins/{id}.jpg`) instead of `/imgs/skins`. Without an assets address a transparent placeholder keeps the card shape. |
+| Card: thumbnail, lazy loaded | Views/Skins/Index.cshtml:984-985 | done | Served by the site from `/imgs/skins/{id}.jpg`, as in the old site, for the 196 skins that come with the hub. A skin added later is loaded from `{assets}/skins/{id}.jpg`. |
 | Card: weapon label over the thumbnail | Views/Skins/Index.cshtml:986 | done |  |
 | Card: status label "Equipped" (with check icon) or "Owned" | Views/Skins/Index.cshtml:987-996 | done |  |
 | Card: price tag with the star | Views/Skins/Index.cshtml:997 | done |  |
@@ -63,7 +63,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Authors tab: one box per author with profile link, count of skins (singular and plural) and the titles | Views/Skins/Index.cshtml:1124-1139, 25-30 | done | Authors without a Steam ID are grouped by name and shown without the link. |
 | Details modal: opens on a click anywhere on the card except actions and the author link | Views/Skins/Index.cshtml:1588-1598, 1622-1628 | done |  |
 | Details modal: opens by itself for `/skins#skin-{id}` | Views/Skins/Index.cshtml:1773-1778 | done |  |
-| Details: gallery with the main photo and six thumbnails when the skin has photos | Views/Skins/Index.cshtml:884-903, 1476-1506 | done | Shown when the skin has photos and an assets address is set. |
+| Details: gallery with the main photo and six thumbnails when the skin has photos | Views/Skins/Index.cshtml:884-903, 1476-1506 | done | Shown when the skin has photos. The photos come from the assets address, which by default is the one of the old site. |
 | Details: single picture when the skin has no photos, opens in the lightbox | Views/Skins/Index.cshtml:904-911 | done |  |
 | Details: lightbox with zoom and pan (panzoom), click to zoom, wheel zoom | Views/Skins/Index.cshtml:1312, 1508-1542 | done |  |
 | Details: lightbox previous and next buttons and arrow keys | Views/Skins/Index.cshtml:1544-1586, 606-636 | done |  |
@@ -112,7 +112,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Large modal "Choose a skin" | Views/Shared/_SkinPickerModal.cshtml:117-126 | done |  |
 | Search field (name, id or weapon), focused when the modal opens | Views/Shared/_SkinPickerModal.cshtml:128, 190-192, 222-224 | done |  |
 | Weapon filter and rarity filter | Views/Shared/_SkinPickerModal.cshtml:129-141 | done |  |
-| Grid of tiles ordered by rarity, price and weapon: thumbnail, title, weapon, rarity, price | Views/Shared/_SkinPickerModal.cshtml:11-17, 143-162 | done | Thumbnails from the assets site. |
+| Grid of tiles ordered by rarity, price and weapon: thumbnail, title, weapon, rarity, price | Views/Shared/_SkinPickerModal.cshtml:11-17, 143-162 | done | Thumbnails served by the site, as on the shop page. |
 | "No skins match these filters." | Views/Shared/_SkinPickerModal.cshtml:163 | done |  |
 | `SkinPicker.open(callback)` and `SkinPicker.find(id)` | Views/Shared/_SkinPickerModal.cshtml:237-260 | done |  |
 | Mobile: two tiles per row under 700 px | Views/Shared/_SkinPickerModal.cshtml:111-115 | done |  |
@@ -194,15 +194,15 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Back to default removes the equipment of the weapon | Core/Skins/Services/SkinShopService.cs:159-184 | done |  |
 | Refund: returns the stars, removes the skin and its equipment | Core/Skins/Services/SkinShopService.cs:230-311 | done |  |
 | Season refund: every ten minutes, purchases made before the current season are refunded; gifts are kept | BackgroundServices/SkinSeasonRefundBackgroundService.cs:8-35, Core/Skins/Services/SkinShopService.cs:246-260, 313-316 | adapted | Follows the seasons of the hub, of any length, and is a shop setting that starts on. |
-| Catalog: id, weapon, rarity, price, Workshop id, photos, author, titles and descriptions in three languages, original title and description | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | adapted | Deliberate difference of the hub: the catalog is not bundled, the administrator imports `skins.json` on the catalog page. Every field is kept. |
-| Thumbnails at `/imgs/skins/{id}.jpg`, photos at `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | adapted | Deliberate difference of the hub: `{assets}/skins/{id}.jpg` and `{assets}/skin-shots/{id}/`, with the assets address of the shop settings. |
+| Catalog: id, weapon, rarity, price, Workshop id, photos, author, titles and descriptions in three languages, original title and description | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | done | The catalog of the old site comes with the hub (`Core/Modules/Skins/Data/skins.json`, unchanged) and is imported by itself the first time the shop is turned on. The administrator can import it again, or another `skins.json`, on the catalog page. Every field is kept. |
+| Thumbnails at `/imgs/skins/{id}.jpg`, photos at `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | done | The same 196 thumbnails are in `wwwroot/imgs/skins`. Photos at `{assets}/skin-shots/{id}/`, where the assets address starts as the `SkinShotsUrl` of the old site without its last folder (`https://l4d2playstats.blob.core.windows.net/assets`). A skin without a bundled thumbnail reads it from `{assets}/skins/{id}.jpg`. |
 
 ## Hub-only pages
 
 | Item | Where in the hub | Status | Notes |
 |---|---|---|---|
-| Skin catalog page (`/admin/skins/catalog`): totals, last change, import from a file, import from the configured address | Views/SkinsAdmin/Catalog.cshtml | done | Restyled with `_AdminStyles` (header, stats, panels). The last change is shown in the site time zone. |
-| Shop settings page (`/admin/skins/settings`): refund at the end of a season, address of the assets, address of the catalog | Views/SkinsAdmin/Settings.cshtml | done | Restyled with Bootstrap 3 panels. New: the two addresses of the notice for skin authors. |
+| Skin catalog page (`/admin/skins/catalog`): totals, last change, import of the bundled catalog, import from a file, import from the configured address | Views/SkinsAdmin/Catalog.cshtml | done | Restyled with `_AdminStyles` (header, stats, panels). The last change is shown in the site time zone. New: the import of the bundled catalog. |
+| Shop settings page (`/admin/skins/settings`): refund at the end of a season, address of the assets, address of the catalog | Views/SkinsAdmin/Settings.cshtml | done | Restyled with Bootstrap 3 panels. New: the two addresses of the notice for skin authors, and the default address of the assets, shown when the field is empty. |
 | Tabs that link the four administrator pages | Views/Shared/_SkinsAdminNav.cshtml | adapted | The tabs are gone: the four pages are in the Skin shop group of the administration side menu (`Views/Shared/_AdminMenu.cshtml`), which every administrator page shows, so the way to the rest of the administration is not lost on these pages. The content of the pages is unchanged. |
 
 ## Wording

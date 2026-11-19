@@ -4,7 +4,7 @@
 
 Os jogadores ganham estrelas sendo MVP em partidas ranqueadas e as gastam em skins para as suas armas. Uma skin comprada é equipada no servidor de jogo a partir da próxima troca de mapa. As skins são feitas pela comunidade no Steam Workshop; a loja dá o crédito a cada autor.
 
-A loja precisa do módulo do ranking, do plugin `l4d2_weapon_skins` no servidor de jogo e de um catálogo importado por um administrador.
+A loja precisa do módulo do ranking e do plugin `l4d2_weapon_skins` no servidor de jogo. O hub já vem com o catálogo e as miniaturas do servidor atual, e importa o catálogo sozinho na primeira vez que a loja é ligada.
 
 [Voltar ao manual](README.pt.md)
 
@@ -149,10 +149,25 @@ Clique em uma compra para ver os detalhes: o preço, o saldo antes e depois, que
 
 ![O catálogo de skins](../images/pt/admin-skins-catalog.webp)
 
-O catálogo é o arquivo `skins.json` do [repositório de assets](https://github.com/altair-sossai/l4d2-zone-server-assets). Importe-o de um arquivo ou baixe-o do endereço definido nas configurações da loja. Importar de novo:
+O catálogo é um arquivo `skins.json`. O hub já vem com o catálogo do servidor atual, 196 skins, e as miniaturas delas. O catálogo é importado sozinho quando o módulo da loja de skins é ligado, em [Módulos](administration.pt.md#módulos) ou no assistente da primeira execução, e quando o site inicia com o módulo ligado, desde que nenhum catálogo tenha sido importado ainda. Depois disso, ele só muda quando um administrador importa um:
+
+- **Importar o catálogo incluído** importa de novo o catálogo que vem com esta versão do hub;
+- **Importar de um arquivo** recebe um arquivo `skins.json` no mesmo formato;
+- **Importar do endereço configurado** baixa o arquivo do endereço definido nas configurações da loja.
+
+Importar de novo:
 
 - atualiza as skins que já existem e adiciona as novas;
-- tira de venda as skins que não estão mais no arquivo; os jogadores ficam com as que já têm.
+- tira de venda as skins que não estão mais no arquivo; os jogadores ficam com as que já têm;
+- mantém os preços alterados na página de [preços](#preços) e os nomes dos autores lidos da Steam.
+
+De onde vem cada parte de uma skin:
+
+| Parte | De onde vem |
+|---|---|
+| Catálogo | Vem com o hub. Outro `skins.json` pode ser importado de um arquivo ou de um endereço. |
+| Miniaturas | Vêm com o hub e são servidas pelo site, em `/imgs/skins/<id>.jpg`. Uma skin sem miniatura a lê de `skins/<id>.jpg` sob o endereço dos assets. |
+| Fotos | Lidas de `skin-shots/<id>/` sob o endereço dos assets, por padrão `https://l4d2playstats.blob.core.windows.net/assets`, onde o [repositório de assets](https://github.com/altair-sossai/l4d2-zone-server-assets) as publica. |
 
 A página mostra quantas skins estão no catálogo, à venda e fora de venda, e quando ele mudou pela última vez. O painel **Nomes dos autores** mostra quantos autores existem, quantos foram conferidos na Steam, quando foi a última conferência e quando um autor mudou de nome pela última vez. **Conferir os nomes agora** roda a conferência na hora, sem esperar a diária.
 
@@ -169,8 +184,8 @@ O preço padrão de cada skin vem do catálogo. Clique em uma skin para dar outr
 | Configuração | O que faz |
 |---|---|
 | Reembolsar as skins quando uma temporada terminar | Ligada por padrão. Veja [reembolsos](#reembolsos-no-fim-de-uma-temporada). |
-| Endereço dos assets | Onde as imagens do repositório de assets são servidas. As miniaturas são lidas de `skins/<id>.jpg` e as fotos de `skin-shots/<id>/` sob esse endereço. |
-| Endereço do catálogo | De onde o arquivo `skins.json` é baixado quando você importa do endereço configurado. |
+| Endereço dos assets | Onde as imagens do repositório de assets são servidas. As fotos são lidas de `skin-shots/<id>/`, e as miniaturas das skins que não vêm com o hub de `skins/<id>.jpg`, sob esse endereço. Em branco, usa `https://l4d2playstats.blob.core.windows.net/assets`, o endereço do servidor atual. |
+| Endereço do catálogo | Opcional. De onde o arquivo `skins.json` é baixado quando você importa do endereço configurado. |
 | Perfil da Steam para contato | Aberto por **Falar comigo na Steam** no aviso para autores de skins. Em branco, o botão fica escondido. |
 | Endereço para pedidos de remoção | Aberto por **Abrir um pedido no GitHub** no mesmo aviso, com a skin preenchida. Em branco, o botão fica escondido. |
 
