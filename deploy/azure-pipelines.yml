@@ -32,7 +32,12 @@ stages:
               failOnStdErr: false
               inline: |
                 set -euo pipefail
-                tag="$(Build.SourceBranchName)"
+                ref="$(Build.SourceBranch)"
+                case "${ref}" in
+                  refs/tags/v*) tag="${ref#refs/tags/}" ;;
+                  *) tag="$(curl -fsSLI -o /dev/null -w '%{url_effective}' "https://github.com/$(hubRepository)/releases/latest")"; tag="${tag##*/}" ;;
+                esac
+                echo "Installing ${tag}"
                 package="https://github.com/$(hubRepository)/releases/download/${tag}/l4d2-playstats-hub-linux-x64.tar.gz"
                 for attempt in $(seq 1 60); do
                   if curl -fsIL "${package}" >/dev/null 2>&1; then
