@@ -1,4 +1,4 @@
-@model bool
+@model VoteInviteModel
 
 <style>
     .vote-invite {
@@ -37,8 +37,26 @@
             font-size: 17px;
         }
 
-        .vote-invite-text span {
+        .vote-invite-text > span {
+            display: block;
             opacity: .85;
+        }
+
+    .vote-invite-more {
+        display: inline-block;
+        margin-top: 4px;
+        font-weight: bold;
+        color: #8fd98f !important;
+    }
+
+        .vote-invite-more:hover,
+        .vote-invite-more:focus {
+            color: #fff !important;
+            text-decoration: none;
+        }
+
+        .vote-invite-more .glyphicon-chevron-right {
+            font-size: 10px;
         }
 
     .vote-invite-button {
@@ -89,7 +107,24 @@
     }
 
     @@media (prefers-reduced-motion: reduce) {
-        .vote-invite-button {
+        .vote-invite-more {
+        display: inline-block;
+        margin-top: 4px;
+        font-weight: bold;
+        color: #8fd98f !important;
+    }
+
+        .vote-invite-more:hover,
+        .vote-invite-more:focus {
+            color: #fff !important;
+            text-decoration: none;
+        }
+
+        .vote-invite-more .glyphicon-chevron-right {
+            font-size: 10px;
+        }
+
+    .vote-invite-button {
             animation: none;
         }
     }
@@ -99,30 +134,51 @@
             flex-wrap: wrap;
         }
 
-        .vote-invite-button {
+        .vote-invite-more {
+        display: inline-block;
+        margin-top: 4px;
+        font-weight: bold;
+        color: #8fd98f !important;
+    }
+
+        .vote-invite-more:hover,
+        .vote-invite-more:focus {
+            color: #fff !important;
+            text-decoration: none;
+        }
+
+        .vote-invite-more .glyphicon-chevron-right {
+            font-size: 10px;
+        }
+
+    .vote-invite-button {
             width: 100%;
         }
     }
 </style>
 
-<div class="vote-invite@(Model ? " vote-invite-compact hidden" : "")" id="@(Model ? "vote-invite" : null)">
+<div class="vote-invite@(Model.Compact ? " vote-invite-compact hidden" : "")" id="@(Model.Compact ? "vote-invite" : null)">
     <div class="vote-invite-icon">
         <span class="glyphicon glyphicon-thumbs-up"></span>
     </div>
     <div class="vote-invite-text">
         <strong>@L["Who plays better?"]</strong>
         <span>@L["Pick the better of two players you know and help build the community ranking. It takes a few seconds."]</span>
+        @if (Model.HowItWorks)
+        {
+            <a class="vote-invite-more" href="#how-it-works-modal" data-toggle="modal"><span class="glyphicon glyphicon-info-sign"></span> @L["How does it work?"] <span class="glyphicon glyphicon-chevron-right"></span></a>
+        }
     </div>
-    <a class="btn btn-success @(Model ? "" : "btn-lg ")vote-invite-button" href="@AppConsts.CommunityVotePage">
+    <a class="btn btn-success @(Model.Compact ? "" : "btn-lg ")vote-invite-button" href="@AppConsts.CommunityVotePage">
         <span class="glyphicon glyphicon-hand-right"></span> @L["Vote now"]
     </a>
-    @if (Model)
+    @if (Model.Compact)
     {
         <button type="button" class="vote-invite-close" aria-label="@L["Close"]" title="@L["Close"]">&times;</button>
     }
 </div>
 
-@if (Model)
+@if (Model.Compact)
 {
     <script>
         (function () {

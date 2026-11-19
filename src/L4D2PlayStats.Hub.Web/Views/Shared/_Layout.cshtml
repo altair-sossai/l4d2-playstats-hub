@@ -325,6 +325,20 @@
             color: #8fd9ef;
         }
 
+        #field-help-modal .modal-title .glyphicon,
+        #field-help-modal .modal-body strong {
+            color: #5bc0de;
+        }
+
+        .field-help-summary {
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border-left: 4px solid #5bc0de;
+            border-radius: 4px;
+            background: rgba(91, 192, 222, .1);
+            font-weight: bold;
+        }
+
         #field-help-modal .modal-body p:last-child {
             margin-bottom: 0;
         }
@@ -875,11 +889,23 @@
                 event.preventDefault();
                 link.tooltip('hide');
 
-                $('#field-help-modal .modal-title').text(link.data('help-title'));
+                $('#field-help-modal .modal-title').empty().append('<span class="glyphicon glyphicon-question-sign"></span> ').append(document.createTextNode(link.data('help-title')));
+                $('<div class="field-help-summary">').text(link.data('help-summary')).appendTo(body);
 
                 String(link.data('help-details')).split('\n').forEach(function (paragraph) {
-                    if (paragraph.trim())
-                        $('<p>').text(paragraph.trim()).appendTo(body);
+                    var text = paragraph.trim();
+                    var term = /^([^:.]{2,40}):\s+(.+)$/.exec(text);
+                    var item = $('<p>');
+
+                    if (!text)
+                        return;
+
+                    if (term)
+                        item.append($('<strong>').text(term[1])).append(document.createTextNode(' ' + term[2]));
+                    else
+                        item.text(text);
+
+                    item.appendTo(body);
                 });
 
                 $('#field-help-modal').modal('show');

@@ -63,7 +63,7 @@
 
 @if (voteInvite)
 {
-    @await Html.PartialAsync("_VoteInvite", true)
+    @await Html.PartialAsync("_VoteInvite", new VoteInviteModel(true, false))
 }
 
 @if (Model.Ranking.Count == 0 && Model.LastHistory != null)

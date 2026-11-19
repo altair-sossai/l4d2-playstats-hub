@@ -69,9 +69,11 @@
     <small>@L["Built from the votes of the players. It does not reset with the season."]</small>
 </div>
 
-@await Html.PartialAsync("_VoteInvite", false)
+@await Html.PartialAsync("_VoteInvite", new VoteInviteModel(false, true))
 
-@await Html.PartialAsync("_HowItWorks", new CommunityHowItWorksModel(Model.Settings, false))
+@await Html.PartialAsync("_HowItWorks", Model.Settings)
+
+@await Html.PartialAsync("_RankingModals", Model)
 
 @if (Model.Players.Count == 0)
 {
@@ -99,7 +101,7 @@ else
                 <th class="text-center hide-mobile">@L["Patent"]</th>
             }
             <th colspan="2">@L["Player"]</th>
-            <th class="text-center">@L["Rating"] @FieldHelp.More(L["What the rating and the other columns mean."], L["Community ranking"], L["Rating: the points built from the votes. Everybody starts with the same rating; it goes up when voters say the player is better and down when they say the other one is. Beating someone with a higher rating is worth more.\nComparisons: how many times the player was judged against another player. The more comparisons, the more reliable the rating.\nWins: comparisons in which voters said this player is better.\nDraws: comparisons in which voters said the two are at the same level.\nLosses: comparisons in which voters said the other player is better.\nAnswers of the kind \"I don't know\" do not count as comparisons."])</th>
+            <th class="text-center">@L["Rating"] <a href="#community-columns-modal" class="field-help" style="color: #5bc0de; cursor: pointer" data-toggle="modal" title="@L["What the columns mean"]" aria-label="@L["What the columns mean"]"><span class="glyphicon glyphicon-question-sign"></span></a></th>
             <th class="text-center hide-mobile">@L["Comparisons"]</th>
             <th class="text-center hide-mobile">@L["Wins"]</th>
             <th class="text-center hide-mobile">@L["Draws"]</th>
@@ -111,7 +113,7 @@ else
         {
             var player = row.Entry;
 
-            <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+            <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)" data-player="@player.CommunityId" data-name="@player.Name" data-position="@player.Position" data-rating="@Display.Number((decimal)Math.Round(player.Rating))" data-comparisons="@player.Comparisons" data-wins="@player.Wins" data-draws="@player.Draws" data-losses="@player.Losses" data-patent="@row.Patent?.FullName" data-profile="@(Model.PlayerPages ? $"/player/{player.CommunityId}" : "")">
                 <td class="text-center vertical-align-middle">
                     @switch (player.Position)
                     {
