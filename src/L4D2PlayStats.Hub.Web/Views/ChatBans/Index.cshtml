@@ -1,4 +1,5 @@
 @model ChatBansModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
 @inject ISettingsService Settings
 
 @{
@@ -46,6 +47,41 @@
         <small>@L["players banned from the chat"]</small>
     </div>
 </div>
+
+@if (TempData["LimitsSaved"] != null)
+{
+    <div class="alert alert-success">@L["Saved."]</div>
+}
+
+<form method="post" action="/admin/chat-bans/limits" class="panel panel-default">
+    @Html.AntiForgeryToken()
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="GlobalCooldownInSeconds">@L["Seconds between any two messages"] @FieldHelp.More(L["After any message from the site, nobody can send another one to the same game server for this many seconds."], L["Seconds between any two messages"], L["It is a pause shared by everyone on the same game server, so the game chat is not flooded when many people write at once. Each game server has its own pause.\nAdministrators are not held by it.\n0 turns it off."])</label>
+                    <input class="form-control" id="GlobalCooldownInSeconds" name="GlobalCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.GlobalCooldownInSeconds">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="UserCooldownInSeconds">@L["Seconds between two messages of the same player"] @FieldHelp.More(L["After sending a message, the same player waits this many seconds before sending another one to that game server."], L["Seconds between two messages of the same player"], L["It stops one player from sending a message after another. It works together with the pause between any two messages: a message goes out only when both pauses are over.\nAdministrators are not held by it.\n0 turns it off."])</label>
+                    <input class="form-control" id="UserCooldownInSeconds" name="UserCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.UserCooldownInSeconds">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="MaxMessageLength">@L["Maximum characters per message"] @FieldHelp.Tip(L["Longer messages are refused. The game chat does not take more than 200 characters."])</label>
+                    <input class="form-control" id="MaxMessageLength" name="MaxMessageLength" type="number" min="@CoreConsts.SiteChatMinMessageLength" max="@CoreConsts.SiteChatMaxMessageLength" value="@Model.Limits.MaxMessageLength">
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]</button>
+    </div>
+</form>
 
 <form method="get" class="admin-filters">
     <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name, Steam ID or reason..."]"/>

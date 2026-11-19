@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
@@ -27,7 +28,8 @@ public class SiteChatService(
 
         var administrator = await administratorService.IsAdministratorAsync(user.CommunityId, cancellationToken);
         var state = store.For(server.Id);
-        var result = state.AddSiteMessage(user, message, administrator);
+        var limits = await settingsService.GetAsync<SiteChatSettings>(cancellationToken);
+        var result = state.AddSiteMessage(user, message, administrator, limits);
 
         if (result.Success && administrator)
             await remoteCommandService.QueueAsync(server, user.CommunityId, user.Name, message, cancellationToken);

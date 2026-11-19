@@ -65,6 +65,7 @@ Con el módulo de chat del sitio activado, un jugador con la sesión iniciada pu
 
 - Un mensaje tiene como máximo 200 caracteres.
 - Después de un mensaje, el mismo jugador espera 30 segundos antes de enviar otro. Después de cualquier mensaje, todos esperan 15 segundos.
+- Esos son los valores predeterminados; un administrador cambia los tres límites en la [página de baneos del chat](moderation.es.md#baneos-del-chat).
 - Un jugador [baneado del chat](moderation.es.md#baneos-del-chat) ve el motivo y no puede escribir.
 - Los administradores no tienen tiempo de espera. Con el módulo de comandos remotos activado, un administrador que escribe un comando de SourceMod como `!forcestart` o `sm_kick name` lo envía al servidor de juego como un [comando remoto](moderation.es.md#comandos-remotos), y el botón **Terminal** junto al cuadro ayuda a armar uno.
 

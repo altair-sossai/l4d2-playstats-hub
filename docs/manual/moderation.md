@@ -30,7 +30,7 @@ Punishments need the ranking module.
 
 ## Chat bans
 
-With the site chat module on, signed-in players can write in the chat of a game server from the [live server page](live-server.md#writing-in-the-chat-from-the-site). **Administration > Chat bans** stops a player from doing that.
+With the site chat module on, signed-in players can write in the chat of a game server from the [live server page](live-server.md#writing-in-the-chat-from-the-site). **Administration > Chat bans** stops a player from doing that. Its panel **Limits of the messages sent from the site** sets the seconds between any two messages on a game server (15 by default), the seconds between two messages of the same player (30) and the maximum characters per message (200, which is also the most the game chat takes). 0 turns a pause off, and administrators are not held by the pauses.
 
 ![The chat bans](../images/en/admin-chat-bans.webp)
 

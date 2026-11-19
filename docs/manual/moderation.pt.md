@@ -30,7 +30,7 @@ As punições precisam do módulo de ranking.
 
 ## Banimentos do chat
 
-Com o módulo de chat do site ligado, os jogadores logados podem escrever no chat de um servidor de jogo pela [página do servidor ao vivo](live-server.pt.md#escrevendo-no-chat-pelo-site). **Administração > Bans de chat** impede um jogador de fazer isso.
+Com o módulo de chat do site ligado, os jogadores logados podem escrever no chat de um servidor de jogo pela [página do servidor ao vivo](live-server.pt.md#escrevendo-no-chat-pelo-site). **Administração > Bans de chat** impede um jogador de fazer isso. O painel **Limites das mensagens enviadas pelo site** define os segundos entre duas mensagens quaisquer num servidor de jogo (15 por padrão), os segundos entre duas mensagens do mesmo jogador (30) e o máximo de caracteres por mensagem (200, que também é o máximo que o chat do jogo aceita). 0 desliga uma pausa, e os administradores não ficam presos às pausas.
 
 ![Os banimentos do chat](../images/pt/admin-chat-bans.webp)
 

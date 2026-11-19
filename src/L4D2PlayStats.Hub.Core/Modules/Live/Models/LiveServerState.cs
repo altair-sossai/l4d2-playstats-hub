@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
@@ -11,8 +12,6 @@ public class LiveServerState(IClock clock)
     private static readonly TimeSpan Delay = TimeSpan.FromSeconds(AppConsts.LiveDelayInSeconds);
     private static readonly TimeSpan PlayersExpiration = TimeSpan.FromMinutes(AppConsts.LivePlayersExpirationInMinutes);
     private static readonly TimeSpan SiteChatRetention = TimeSpan.FromMinutes(AppConsts.SiteChatRetentionInMinutes);
-    private static readonly TimeSpan GlobalCooldown = TimeSpan.FromSeconds(AppConsts.SiteChatGlobalCooldownInSeconds);
-    private static readonly TimeSpan UserCooldown = TimeSpan.FromSeconds(AppConsts.SiteChatUserCooldownInSeconds);
     private static readonly TimeSpan CommandExpiration = TimeSpan.FromMinutes(AppConsts.RemoteCommandExpirationInMinutes);
 
     private readonly Lock _chatLock = new();
@@ -120,14 +119,15 @@ public class LiveServerState(IClock clock)
         _feed.Add(gameEvent, true);
     }
 
-    public SiteChatResult AddSiteMessage(SiteChatUser user, string? text, bool skipCooldown)
+    public SiteChatResult AddSiteMessage(SiteChatUser user, string? text, bool skipCooldown, SiteChatSettings? settings = null)
     {
+        var limits = settings ?? new SiteChatSettings();
         var message = text?.Trim();
 
         if (string.IsNullOrEmpty(message))
             return SiteChatResult.Failed(SiteChatError.EmptyMessage);
 
-        if (message.Length > AppConsts.SiteChatMaxMessageLength)
+        if (message.Length > limits.MaxMessageLength)
             return SiteChatResult.Failed(SiteChatError.MessageTooLong);
 
         lock (_chatLock)
@@ -136,7 +136,7 @@ public class LiveServerState(IClock clock)
 
             RemoveOldSiteMessages();
 
-            if (!skipCooldown && OnCooldown(user.CommunityId, now))
+            if (!skipCooldown && OnCooldown(user.CommunityId, now, limits))
                 return SiteChatResult.Failed(SiteChatError.RateLimited);
 
             var siteMessage = new SiteChatMessage(user, message, now);
@@ -201,15 +201,15 @@ public class LiveServerState(IClock clock)
         _internalCommands.RemoveAll(command => now - command.QueuedAtUtc >= CommandExpiration);
     }
 
-    private bool OnCooldown(long communityId, DateTime now)
+    private bool OnCooldown(long communityId, DateTime now, SiteChatSettings limits)
     {
         var last = _siteMessages.LastOrDefault();
-        if (last != null && now - last.When < GlobalCooldown)
+        if (last != null && now - last.When < TimeSpan.FromSeconds(limits.GlobalCooldownInSeconds))
             return true;
 
         var lastFromUser = _siteMessages.LastOrDefault(message => message.UserId == communityId);
 
-        return lastFromUser != null && now - lastFromUser.When < UserCooldown;
+        return lastFromUser != null && now - lastFromUser.When < TimeSpan.FromSeconds(limits.UserCooldownInSeconds);
     }
 
     private void RemoveOldSiteMessages()

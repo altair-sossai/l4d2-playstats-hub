@@ -1,5 +1,6 @@
 @model LiveServerViewModel
 @inject ICurrentUser CurrentUser
+@inject ISettingsService ChatSettings
 
 @{
     var card = Model.Card;
@@ -452,7 +453,7 @@
                     <form id="chatForm" class="form-inline" onsubmit="return false;">
                         @Html.AntiForgeryToken()
                         <div class="input-group" style="width: 100%">
-                            <input type="text" id="message" name="message" class="form-control" maxlength="@CoreConsts.SiteChatMaxMessageLength" placeholder="@L["Type your message"]"/>
+                            <input type="text" id="message" name="message" class="form-control" maxlength="@((await ChatSettings.GetAsync<SiteChatSettings>()).MaxMessageLength)" placeholder="@L["Type your message"]"/>
                             @if (Model.Administrator && Model.RemoteCommandsEnabled)
                             {
                                 <div class="input-group-btn">

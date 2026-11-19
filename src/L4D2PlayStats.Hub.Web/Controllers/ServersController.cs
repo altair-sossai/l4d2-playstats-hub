@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
@@ -20,6 +22,7 @@ public class ServersController(
     ILiveViewService liveViewService,
     ISiteChatService siteChatService,
     IPlayerNameService playerNameService,
+    ISettingsService settingsService,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
@@ -100,7 +103,8 @@ public class ServersController(
         var name = string.IsNullOrWhiteSpace(currentUser.Name) ? await playerNameService.KnownNameAsync(communityId.Value, cancellationToken) : currentUser.Name;
         var user = new SiteChatUser(communityId.Value, name);
         var result = await siteChatService.SendAsync(server, user, message, cancellationToken);
-        var answer = new SiteChatCommandResult { Success = result.Success, ErrorMessage = ErrorMessage(result) };
+        var limits = await settingsService.GetAsync<SiteChatSettings>(cancellationToken);
+        var answer = new SiteChatCommandResult { Success = result.Success, ErrorMessage = ErrorMessage(result, limits) };
 
         return result.Error == SiteChatError.Banned ? StatusCode(StatusCodes.Status403Forbidden, answer) : Ok(answer);
     }
@@ -121,13 +125,13 @@ public class ServersController(
         return Redirect($"{AppConsts.ServersUrl}/{server.Server.PublicId}/{partial}{Request.QueryString}");
     }
 
-    private string? ErrorMessage(SiteChatResult result)
+    private string? ErrorMessage(SiteChatResult result, SiteChatSettings limits)
     {
         return result.Error switch
         {
             null => null,
             SiteChatError.EmptyMessage => localizer["Write a message first."].Value,
-            SiteChatError.MessageTooLong => localizer["The message cannot be longer than {0} characters.", CoreConsts.SiteChatMaxMessageLength].Value,
+            SiteChatError.MessageTooLong => localizer["The message cannot be longer than {0} characters.", limits.MaxMessageLength].Value,
             SiteChatError.RateLimited => localizer["Too many messages. Please wait a moment."].Value,
             SiteChatError.Banned when !string.IsNullOrWhiteSpace(result.Reason) => $"{localizer["You have been banned from the chat."].Value} {localizer["Reason"].Value}: {result.Reason}",
             SiteChatError.Banned => localizer["You have been banned from the chat."].Value,

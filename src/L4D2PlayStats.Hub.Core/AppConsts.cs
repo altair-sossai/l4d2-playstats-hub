@@ -100,6 +100,8 @@ public static class AppConsts
     public const int SiteChatGlobalCooldownInSeconds = 15;
     public const int SiteChatUserCooldownInSeconds = 30;
     public const int SiteChatMaxMessageLength = 200;
+    public const int SiteChatMinMessageLength = 10;
+    public const int SiteChatMaxCooldownInSeconds = 3600;
     public const int SiteChatRecentSenders = 30;
     public const int ChatBanReasonMaxLength = 300;
 

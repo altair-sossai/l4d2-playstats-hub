@@ -65,6 +65,7 @@ With the site chat module on, a signed-in player can write in the box under the 
 
 - A message has at most 200 characters.
 - After a message, the same player waits 30 seconds before sending another. After any message, everybody waits 15 seconds.
+- These are the defaults; an administrator changes the three limits on [the chat bans page](moderation.md#chat-bans).
 - A player [banned from the chat](moderation.md#chat-bans) sees the reason and cannot write.
 - Administrators have no waiting time. With the remote commands module on, an administrator who writes a SourceMod command such as `!forcestart` or `sm_kick name` sends it to the game server as a [remote command](moderation.md#remote-commands), and the **Terminal** button next to the box helps to build one.
 

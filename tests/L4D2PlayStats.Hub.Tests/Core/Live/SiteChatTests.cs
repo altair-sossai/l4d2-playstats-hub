@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
@@ -98,6 +99,43 @@ public class SiteChatTests
 
         Assert.AreEqual(SiteChatError.RateLimited, tooSoon.Error);
         Assert.IsTrue(allowed.Success);
+    }
+
+    [TestMethod]
+    public async Task TheAdministratorSetsThePausesAndTheLength()
+    {
+        using var hub = await HubAsync();
+
+        var credentials = await hub.CreateServerAsync();
+
+        await hub.RunAsync(services => services.GetRequiredService<ISettingsService>().SaveAsync(new SiteChatSettings { GlobalCooldownInSeconds = 0, UserCooldownInSeconds = 5, MaxMessageLength = 10 }));
+
+        var first = await SendAsync(hub, credentials.Server, Alice, "one");
+        var other = await SendAsync(hub, credentials.Server, Bob, "two");
+        var tooSoon = await SendAsync(hub, credentials.Server, Alice, "three");
+        var tooLong = await SendAsync(hub, credentials.Server, Bob, "a message longer than ten");
+
+        hub.Clock.Advance(TimeSpan.FromSeconds(5));
+
+        var allowed = await SendAsync(hub, credentials.Server, Alice, "three");
+
+        Assert.IsTrue(first.Success);
+        Assert.IsTrue(other.Success);
+        Assert.AreEqual(SiteChatError.RateLimited, tooSoon.Error);
+        Assert.AreEqual(SiteChatError.MessageTooLong, tooLong.Error);
+        Assert.IsTrue(allowed.Success);
+    }
+
+    [TestMethod]
+    public void TheLimitsStayWithinTheirRanges()
+    {
+        var settings = new SiteChatSettings { GlobalCooldownInSeconds = -1, UserCooldownInSeconds = 999999, MaxMessageLength = 5000 };
+
+        settings.Normalize();
+
+        Assert.AreEqual(0, settings.GlobalCooldownInSeconds);
+        Assert.AreEqual(CoreConsts.SiteChatMaxCooldownInSeconds, settings.UserCooldownInSeconds);
+        Assert.AreEqual(CoreConsts.SiteChatMaxMessageLength, settings.MaxMessageLength);
     }
 
     [TestMethod]

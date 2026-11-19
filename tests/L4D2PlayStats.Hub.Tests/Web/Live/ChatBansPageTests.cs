@@ -3,6 +3,8 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,48 @@ public class ChatBansPageTests
     private const long Alice = 76561198000000001;
     private const string Page = "/admin/chat-bans";
     private const string Api = "/api/chat-bans";
+
+    [TestMethod]
+    public async Task AnAdministratorSetsTheLimitsOfTheSiteMessages()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await factory.CompleteSetupAsync();
+        await factory.EnableAsync();
+
+        var response = await HubWebFactory.PostFormAsync(client, Page, "/admin/chat-bans/limits", new Dictionary<string, string>
+        {
+            ["GlobalCooldownInSeconds"] = "5",
+            ["UserCooldownInSeconds"] = "-3",
+            ["MaxMessageLength"] = "999"
+        });
+
+        var page = await client.GetStringAsync(Page);
+        var limits = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<SiteChatSettings>());
+
+        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.AreEqual(5, limits.GlobalCooldownInSeconds);
+        Assert.AreEqual(0, limits.UserCooldownInSeconds);
+        Assert.AreEqual(200, limits.MaxMessageLength);
+        Assert.Contains("name=\"GlobalCooldownInSeconds\" type=\"number\" min=\"0\" max=\"3600\" value=\"5\"", page);
+    }
+
+    [TestMethod]
+    public async Task OnlyAnAdministratorSetsTheLimitsOfTheSiteMessages()
+    {
+        using var factory = new LiveWebFactory();
+        using var player = factory.Client(HubWebFactory.Player);
+
+        await factory.CompleteSetupAsync();
+        await factory.EnableAsync();
+
+        var response = await player.PostAsync("/admin/chat-bans/limits", new FormUrlEncodedContent(new Dictionary<string, string> { ["GlobalCooldownInSeconds"] = "0" }));
+        var limits = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<SiteChatSettings>());
+
+        Assert.AreNotEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.AreEqual(15, limits.GlobalCooldownInSeconds);
+    }
 
     [TestMethod]
     public async Task ThePageListsTheBansWithEverythingTheDetailsNeed()

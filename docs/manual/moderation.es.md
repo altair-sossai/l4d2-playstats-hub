@@ -30,7 +30,7 @@ Los castigos necesitan el módulo del ranking.
 
 ## Baneos del chat
 
-Con el módulo del chat del sitio activado, los jugadores que iniciaron sesión pueden escribir en el chat de un servidor de juego desde la [página del servidor en vivo](live-server.es.md#escribir-en-el-chat-desde-el-sitio). **Administración > Baneos de chat** impide que un jugador lo haga.
+Con el módulo del chat del sitio activado, los jugadores que iniciaron sesión pueden escribir en el chat de un servidor de juego desde la [página del servidor en vivo](live-server.es.md#escribir-en-el-chat-desde-el-sitio). **Administración > Baneos de chat** impide que un jugador lo haga. Su panel **Límites de los mensajes enviados desde el sitio** define los segundos entre dos mensajes cualesquiera en un servidor de juego (15 de forma predeterminada), los segundos entre dos mensajes del mismo jugador (30) y el máximo de caracteres por mensaje (200, que también es lo máximo que acepta el chat del juego). 0 desactiva una pausa, y los administradores no quedan sujetos a las pausas.
 
 ![Los baneos del chat](../images/es/admin-chat-bans.webp)
 
