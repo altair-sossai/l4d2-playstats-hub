@@ -58,15 +58,29 @@ public class CommunityRankingService(
 
     public async Task<IReadOnlyList<CommunityVoteParticipant>> VoteParticipantsAsync(CancellationToken cancellationToken = default)
     {
-        var voters = await JudgingVotes().Select(v => v.VoterId).Distinct().ToListAsync(cancellationToken);
-        var lefts = await JudgingVotes().Select(v => v.LeftPlayerId).Distinct().ToListAsync(cancellationToken);
-        var rights = await JudgingVotes().Select(v => v.RightPlayerId).Distinct().ToListAsync(cancellationToken);
-        var voterIds = voters.ToHashSet();
-        var playerIds = lefts.Concat(rights).ToHashSet();
-        var names = await playerService.NamesAsync([.. voterIds.Concat(playerIds)], cancellationToken);
+        var voters = await JudgingVotes()
+            .GroupBy(v => v.VoterId)
+            .Select(group => new { CommunityId = group.Key, Last = group.Max(v => v.CreatedAtUtc) })
+            .ToDictionaryAsync(entry => entry.CommunityId, entry => entry.Last, cancellationToken);
+
+        var lefts = await JudgingVotes()
+            .GroupBy(v => v.LeftPlayerId)
+            .Select(group => new { CommunityId = group.Key, Last = group.Max(v => v.CreatedAtUtc) })
+            .ToListAsync(cancellationToken);
+
+        var rights = await JudgingVotes()
+            .GroupBy(v => v.RightPlayerId)
+            .Select(group => new { CommunityId = group.Key, Last = group.Max(v => v.CreatedAtUtc) })
+            .ToListAsync(cancellationToken);
+
+        var compared = lefts.Concat(rights)
+            .GroupBy(entry => entry.CommunityId)
+            .ToDictionary(group => group.Key, group => group.Max(entry => entry.Last));
+
+        var names = await playerService.NamesAsync([.. voters.Keys.Concat(compared.Keys)], cancellationToken);
 
         return [.. names
-            .Select(pair => new CommunityVoteParticipant(pair.Key, pair.Value, voterIds.Contains(pair.Key), playerIds.Contains(pair.Key)))
+            .Select(pair => new CommunityVoteParticipant(pair.Key, pair.Value, voters.TryGetValue(pair.Key, out var voted) ? voted : null, compared.TryGetValue(pair.Key, out var judged) ? judged : null))
             .OrderBy(participant => participant.Name, StringComparer.CurrentCultureIgnoreCase)];
     }
 

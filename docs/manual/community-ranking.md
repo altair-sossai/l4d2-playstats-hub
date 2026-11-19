@@ -30,7 +30,7 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
-**See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. An administrator can hide who voted.
+**See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. The filters **Votes made by** and **Votes about** take a name, or the search button next to each opens a window with the players of the voting, the most recent first. An administrator can hide who voted.
 
 On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
 

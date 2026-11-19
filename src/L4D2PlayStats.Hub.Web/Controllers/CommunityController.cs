@@ -1,18 +1,23 @@
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -25,6 +30,7 @@ public class CommunityController(
     IRankingService rankingService,
     ICommunityPlayerService communityPlayerService,
     ILiveViewService liveViewService,
+    IStringLocalizer<SharedResource> localizer,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -85,6 +91,41 @@ public class CommunityController(
         };
 
         return View(model);
+    }
+
+    [HttpGet(AppConsts.CommunityPlayersSearchUrl)]
+    public async Task<IActionResult> Players(string? role, string? q, int page = 1, CancellationToken cancellationToken = default)
+    {
+        var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+        var voters = string.Equals(role, AppConsts.CommunityVoterRole, StringComparison.OrdinalIgnoreCase);
+        IReadOnlyList<CommunityVoteParticipant> participants = voters && !settings.ShowVoterNames ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
+        var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
+        var term = q?.Trim();
+        var steamId = SteamIdParser.Parse(term);
+        var size = CoreConsts.PlayerDirectoryPageSize;
+
+        var matches = participants
+            .Select(participant => new { Participant = participant, Last = voters ? participant.LastVotedAtUtc : participant.LastComparedAtUtc })
+            .Where(entry => entry.Last != null)
+            .Where(entry => string.IsNullOrEmpty(term)
+                            || entry.Participant.CommunityId == steamId
+                            || entry.Participant.Name.Contains(term, StringComparison.CurrentCultureIgnoreCase)
+                            || entry.Participant.CommunityId.ToString().Contains(term, StringComparison.Ordinal))
+            .OrderByDescending(entry => entry.Last)
+            .ToList();
+
+        var current = Math.Max(1, page);
+        var players = matches.Skip((current - 1) * size).Take(size).Select(entry => new
+        {
+            communityId = entry.Participant.CommunityId.ToString(),
+            name = entry.Participant.Name,
+            steamId = SteamIds.SteamId(entry.Participant.CommunityId),
+            avatarUrl = $"{AppConsts.AvatarUrl}{entry.Participant.CommunityId}",
+            lastSeen = LiveDisplay.ShortDateTime(entry.Last!.Value, timeZone),
+            lastSeenLabel = voters ? localizer["Last vote"].Value : localizer["Last compared"].Value
+        });
+
+        return Ok(new { page = current, total = matches.Count, hasMore = matches.Count > current * size, players });
     }
 
     [HttpGet(AppConsts.CommunityVotePage)]

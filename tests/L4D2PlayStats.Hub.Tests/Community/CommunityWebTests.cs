@@ -1,3 +1,4 @@
+using System.Text.Json;
 using L4D2PlayStats.Hub.Tests.Community.Support;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -533,6 +534,56 @@ public class CommunityWebTests
         Assert.Contains("class=\"vf-row\"", ofVoter);
         Assert.DoesNotContain("class=\"vf-row\"", ofOther);
         Assert.Contains("href=\"/community/votes\"", ranking);
+    }
+
+    [TestMethod]
+    public async Task TheFiltersOfTheLatestVotesSearchThePlayersOfTheVoting()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var visitor = site.Factory.Client(null);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        var page = await visitor.GetStringAsync("/community/votes");
+        var voters = JsonDocument.Parse(await visitor.GetStringAsync("/api/community/players?role=voter")).RootElement;
+        var compared = JsonDocument.Parse(await visitor.GetStringAsync("/api/community/players")).RootElement;
+        var filtered = JsonDocument.Parse(await visitor.GetStringAsync($"/api/community/players?q={pair.Left}")).RootElement;
+
+        Assert.Contains("data-player-picker=\"#vf-voter\"", page);
+        Assert.Contains("data-player-picker=\"#vf-player\"", page);
+        Assert.Contains("id=\"pp-modal\"", page);
+        Assert.AreEqual(1, voters.GetProperty("total").GetInt32());
+        Assert.AreEqual(site.Voter.ToString(), voters.GetProperty("players")[0].GetProperty("communityId").GetString());
+        Assert.AreEqual(2, compared.GetProperty("total").GetInt32());
+        Assert.AreEqual(1, filtered.GetProperty("total").GetInt32());
+        Assert.AreEqual(pair.Left.ToString(), filtered.GetProperty("players")[0].GetProperty("communityId").GetString());
+    }
+
+    [TestMethod]
+    public async Task TheSearchOfVotersIsEmptyWhenTheVotersAreHidden()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, ShowVoterNames = false });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var visitor = site.Factory.Client(null);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        var voters = JsonDocument.Parse(await visitor.GetStringAsync("/api/community/players?role=voter")).RootElement;
+        var page = await visitor.GetStringAsync("/community/votes");
+
+        Assert.AreEqual(0, voters.GetProperty("total").GetInt32());
+        Assert.DoesNotContain("data-player-picker=\"#vf-voter\"", page);
     }
 
     [TestMethod]

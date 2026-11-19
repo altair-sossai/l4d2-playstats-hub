@@ -314,7 +314,12 @@
     {
         <div class="form-group">
             <label for="vf-voter-name">@L["Votes made by"]</label>
-            <input class="form-control input-sm" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
+            <div class="input-group input-group-sm">
+                <input class="form-control" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-player-picker="#vf-voter" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-role="@AppConsts.CommunityVoterRole" data-player-picker-hint="@L["The players who voted, the most recent vote first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
             <input type="hidden" name="voter" id="vf-voter" value="@Model.VoterId">
             <datalist id="vf-voters">
                 @foreach (var participant in Model.Participants.Where(participant => participant.Voted))
@@ -326,7 +331,12 @@
     }
     <div class="form-group">
         <label for="vf-player-name">@L["Votes about"]</label>
-        <input class="form-control input-sm" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
+        <div class="input-group input-group-sm">
+            <input class="form-control" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" data-player-picker="#vf-player" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-hint="@L["The players who were compared in the voting, the most recent comparison first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
         <input type="hidden" name="player" id="vf-player" value="@Model.PlayerId">
         <datalist id="vf-players">
             @foreach (var participant in Model.Participants.Where(participant => participant.Compared))
@@ -450,6 +460,11 @@ else
             if (!input || !hidden)
                 return;
 
+            if (hidden.dataset.picked) {
+                hidden.disabled = !hidden.value;
+                return;
+            }
+
             var text = input.value.trim().toLowerCase();
             var match = Array.prototype.find.call(document.getElementById(listId).options, function (option) {
                 return option.value.toLowerCase() === text;
@@ -464,6 +479,12 @@ else
             resolve('vf-player-name', 'vf-players', 'vf-player');
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#vf-voter, #vf-player').on('change', function () {
+                this.dataset.picked = '1';
+            });
+        });
+
         ['vf-voter-name', 'vf-player-name'].forEach(function (id) {
             var input = document.getElementById(id);
 
@@ -474,3 +495,5 @@ else
         });
     })();
 </script>
+
+@await Html.PartialAsync("_PlayerPickerModal")

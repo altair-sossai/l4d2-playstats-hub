@@ -30,7 +30,7 @@ El ranking de la comunidad es un segundo ranking, construido a partir de lo que 
 | Comparaciones | Cuántas veces se juzgó al jugador frente a otro jugador. |
 | Victorias, Empates, Derrotas | Cuántas comparaciones ganó, empató y perdió el jugador. |
 
-**Ver los últimos votos**, encima y debajo de la tabla, abre **Últimos votos**: una tarjeta por voto con quién votó, los dos jugadores lado a lado, el elegido en verde (o los dos en amarillo si están al mismo nivel) y cuándo. Las respuestas "No lo conozco" no aparecen. Hacer clic en un jugador, o en el icono de flechas junto a un nombre en la tabla, muestra solo sus comparaciones. Un administrador puede ocultar quién votó.
+**Ver los últimos votos**, encima y debajo de la tabla, abre **Últimos votos**: una tarjeta por voto con quién votó, los dos jugadores lado a lado, el elegido en verde (o los dos en amarillo si están al mismo nivel) y cuándo. Las respuestas "No lo conozco" no aparecen. Hacer clic en un jugador, o en el icono de flechas junto a un nombre en la tabla, muestra solo sus comparaciones. Los filtros **Votos hechos por** y **Votos sobre** aceptan un nombre, o el botón de búsqueda junto a cada uno abre una ventana con los jugadores de la votación, de los más recientes a los más antiguos. Un administrador puede ocultar quién votó.
 
 En el teléfono la tabla muestra solo la posición, el jugador y la puntuación. El **?** junto a **Puntuación** abre una ventana que explica cada columna.
 

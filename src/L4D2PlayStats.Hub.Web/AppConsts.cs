@@ -111,6 +111,8 @@ public static partial class AppConsts
     public const string CommunityBallotElement = "community-ballot";
     public const string CommunityVotePage = "/community/vote";
     public const string CommunityVotesPage = "/community/votes";
+    public const string CommunityPlayersSearchUrl = "/api/community/players";
+    public const string CommunityVoterRole = "voter";
     public const int VoteInviteHiddenDays = 7;
     public const int RemoteCommandLogSize = 100;
     public const int PlayerConnectionCleanupIntervalInHours = 24;
