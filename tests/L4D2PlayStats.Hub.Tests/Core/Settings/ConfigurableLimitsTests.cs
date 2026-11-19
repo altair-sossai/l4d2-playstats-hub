@@ -12,7 +12,7 @@ public class ConfigurableLimitsTests
     public void TheRankingSettingsStartWithTheOldValuesAndStayInRange()
     {
         var defaults = new RankingSettings();
-        var settings = new RankingSettings { MatchGapInHours = 0, DefaultPunishment = -5, HomeListedPlayers = 9999, HomeVisiblePlayers = 9999, MinimumMatches = -1 };
+        var settings = new RankingSettings { MatchGapInHours = 0, DefaultPunishment = -5, HomeListedPlayers = 9999, HomeVisiblePlayers = 9999, MinimumMatches = -1, MatchesPerPage = 1, PlayerRecentMatches = 5000 };
 
         settings.Normalize();
 
@@ -25,6 +25,10 @@ public class ConfigurableLimitsTests
         Assert.AreEqual(CoreConsts.RankingMaxListedPlayers, settings.HomeListedPlayers);
         Assert.AreEqual(settings.HomeListedPlayers, settings.HomeVisiblePlayers);
         Assert.AreEqual(0, settings.MinimumMatches);
+        Assert.AreEqual(50, defaults.MatchesPerPage);
+        Assert.AreEqual(50, defaults.PlayerRecentMatches);
+        Assert.AreEqual(CoreConsts.MatchListMinSize, settings.MatchesPerPage);
+        Assert.AreEqual(CoreConsts.MatchListMaxSize, settings.PlayerRecentMatches);
     }
 
     [TestMethod]

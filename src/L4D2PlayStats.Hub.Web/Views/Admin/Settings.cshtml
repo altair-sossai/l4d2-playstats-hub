@@ -193,6 +193,20 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="Ranking_MatchesPerPage">@L["Matches per page in Last matches"] @FieldHelp.Tip(L["How many matches each page of Last matches shows."])</label>
+                                <input class="form-control" id="Ranking_MatchesPerPage" name="Ranking.MatchesPerPage" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.MatchesPerPage">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="Ranking_PlayerRecentMatches">@L["Recent matches on the player page"] @FieldHelp.Tip(L["How many of the most recent matches the player page lists, in the season or period shown."])</label>
+                                <input class="form-control" id="Ranking_PlayerRecentMatches" name="Ranking.PlayerRecentMatches" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.PlayerRecentMatches">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label for="Ranking_DefaultPunishment">@L["Default punishment, in points"] @FieldHelp.Tip(L["The value already filled in when an administrator punishes a player from the player page. It can still be changed for each punishment."])</label>
                                 <input class="form-control" id="Ranking_DefaultPunishment" name="Ranking.DefaultPunishment" type="number" min="1" max="@CoreConsts.MaxScore" value="@Model.Ranking.DefaultPunishment">
                             </div>

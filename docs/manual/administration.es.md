@@ -143,6 +143,8 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Mínimo de partidas para aparecer en el ranking | 0 | Partidas (victorias más derrotas) que un jugador necesita para aparecer en la lista. |
 | Jugadores en el ranking de la página de inicio | 100 | Cuántos jugadores, como máximo, lista el ranking de la página de inicio y de las temporadas anteriores, hasta 500. |
 | Jugadores mostrados antes de Mostrar más | 50 | Cuántos de ellos aparecen antes de **Mostrar más**. |
+| Partidas por página en Últimas partidas | 50 | De 10 a 200. |
+| Partidas recientes en la página del jugador | 50 | De 10 a 200. |
 | Castigo predeterminado, en puntos | 150 | El valor que ya viene rellenado al castigar a un jugador desde la página del jugador. |
 | Horas sin archivos que separan dos partidas | 6 | Los archivos de un servidor de juego más separados que esto pertenecen a partidas distintas. Vale para las partidas nuevas, o para todas después de **Reprocesar todas las partidas**. |
 | Conservar las partidas jugadas en mapas que no están en la lista de campañas | Activado | Consulta [Partidas > Cómo los archivos se convierten en partidas](matches.es.md#cómo-los-archivos-se-convierten-en-partidas). |

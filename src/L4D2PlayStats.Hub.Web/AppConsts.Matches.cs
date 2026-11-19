@@ -2,7 +2,6 @@ namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
 {
-    public const int LastMatchesPageSize = 50;
     public const string MatchesUrl = "/matches";
     public const int MatchChartMapNameLength = 16;
     public const string MatchElapsedFormat = @"hh\:mm\:ss";

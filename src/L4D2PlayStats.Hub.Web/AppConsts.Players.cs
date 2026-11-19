@@ -3,7 +3,6 @@ namespace L4D2PlayStats.Hub.Web;
 public static partial class AppConsts
 {
     public const int PlayerRelationsVisible = 12;
-    public const int PlayerRecentMatches = 50;
     public const int PlayerPreviousNamesVisible = 5;
     public const int PlayerDropdownNameLength = 10;
     public const string PlayerOpenGraphType = "profile";

@@ -35,6 +35,10 @@ public static class AppConsts
     public const int RankingVisiblePlayers = 50;
     public const int RankingListedPlayers = 100;
     public const int RankingMaxListedPlayers = 500;
+    public const int LastMatchesPageSize = 50;
+    public const int PlayerRecentMatches = 50;
+    public const int MatchListMinSize = 10;
+    public const int MatchListMaxSize = 200;
     public const int UnknownCampaignMapGapInHours = 2;
     public const int MaxScore = 10000;
 

@@ -25,7 +25,8 @@ public class MatchViewService(
         if (seasonId != null)
             year = null;
 
-        var filter = new MatchFilter { SeasonId = seasonId, Year = year, GameServerId = serverId, Page = page, PageSize = AppConsts.LastMatchesPageSize };
+        var ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken);
+        var filter = new MatchFilter { SeasonId = seasonId, Year = year, GameServerId = serverId, Page = page, PageSize = ranking.MatchesPerPage };
         var seasons = await seasonService.ListAsync(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
         var servers = await gameServerService.ListAsync(cancellationToken);

@@ -68,7 +68,8 @@ public class PlayerViewService(
 
     private async Task<IReadOnlyList<MatchCardModel>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
     {
-        var ids = await playerMatchService.RecentMatchIdsAsync(period.Season?.Id, period.Year, communityIds, AppConsts.PlayerRecentMatches, cancellationToken);
+        var ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken);
+        var ids = await playerMatchService.RecentMatchIdsAsync(period.Season?.Id, period.Year, communityIds, ranking.PlayerRecentMatches, cancellationToken);
 
         if (ids.Count == 0)
             return [];

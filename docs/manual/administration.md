@@ -143,6 +143,8 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Minimum matches to appear in the ranking | 0 | Games (wins plus losses) a player needs to be listed. |
 | Players in the ranking of the home page | 100 | How many players the ranking of the home page and of previous seasons lists at most, up to 500. |
 | Players shown before Show more | 50 | How many of them appear before **Show more**. |
+| Matches per page in Last matches | 50 | From 10 to 200. |
+| Recent matches on the player page | 50 | From 10 to 200. |
 | Default punishment, in points | 150 | The value already filled in when punishing a player from the player page. |
 | Hours without files that split two matches | 6 | Files of a game server further apart than this belong to different matches. Applies to new matches, or to all of them after **Reprocess all matches**. |
 | Keep matches played on maps that are not in the campaign list | On | See [Matches > How files become matches](matches.md#how-files-become-matches). |
