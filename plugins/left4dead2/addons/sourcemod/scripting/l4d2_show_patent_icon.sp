@@ -26,11 +26,12 @@ public Plugin myinfo =
     name        = "L4D2 - Show Patent Icon",
     author      = "Altair Sossai",
     description = "Show the patent icon of the players",
-    version     = "2.0.1",
+    version     = "2.1.0",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
 ConVar
+    hEnabled,
     hIconVersion,
     hMaxLevel;
 
@@ -38,6 +39,7 @@ int iconRef[MAXPLAYERS + 1] = { -1, ... };
 int playersLevel[MAXPLAYERS + 1] = { 0, ... };
 
 bool patentIconEnabled = true;
+bool patentFilesPrecached = false;
 
 StringMap PlayersPatent;
 
@@ -45,8 +47,11 @@ public void OnPluginStart()
 {
     PlayStatsHub_CreateConVars();
 
+    hEnabled = CreateConVar("patent_icon_enabled", "0", "Show the patent icons: 1 = on, 0 = off (the sprites are not downloaded either)", _, true, 0.0, true, 1.0);
     hIconVersion = CreateConVar("patent_icon_version", "2", "Version in the file names of the patent sprites, materials/sprites/patent_<level>_v<version>.vmt, both with two digits", _, true, 1.0);
     hMaxLevel = CreateConVar("patent_icon_max_level", "15", "Highest patent level that has a sprite", _, true, 1.0);
+
+    hEnabled.AddChangeHook(OnEnabledChanged);
 
     PlayersPatent = new StringMap();
 
@@ -64,23 +69,54 @@ public void OnRoundIsLive()
 
 public void OnMapStart()
 {
+    patentFilesPrecached = false;
+
+    if (!hEnabled.BoolValue)
+        return;
+
     PrecacheAllPatentFiles();
+    patentFilesPrecached = true;
 }
 
 public void OnConfigsExecuted()
 {
-    RefreshPlayersPatent();
+    if (hEnabled.BoolValue && !patentFilesPrecached)
+    {
+        PrecacheAllPatentFiles();
+        patentFilesPrecached = true;
+    }
+
+    if (IsActive())
+        RefreshPlayersPatent();
+}
+
+void OnEnabledChanged(ConVar convar, const char[] oldValue, const char[] newValue)
+{
+    if (convar.BoolValue)
+        return;
+
+    RemoveAllPatentIcons();
+}
+
+bool IsActive()
+{
+    return hEnabled.BoolValue && patentFilesPrecached;
+}
+
+bool ShouldShowIcons()
+{
+    return patentIconEnabled && IsActive();
 }
 
 public void OnClientPutInServer(int client)
 {
-    if (patentIconEnabled && !IsFakeClient(client))
+    if (ShouldShowIcons() && !IsFakeClient(client))
         RefreshPlayersLevel();
 }
 
 public void OnClientDisconnect(int client)
 {
-    if (!patentIconEnabled)
+    if (!ShouldShowIcons())
         return;
 
     RemovePatentIcon(client);
@@ -89,7 +125,7 @@ public void OnClientDisconnect(int client)
 
 void PlayerTeam_Event(Event event, const char[] name, bool dontBroadcast)
 {
-    if (!patentIconEnabled)
+    if (!ShouldShowIcons())
         return;
 
     RemovePatentIcon(GetClientOfUserId(GetEventInt(event, "userid")));
@@ -97,6 +133,9 @@ void PlayerTeam_Event(Event event, const char[] name, bool dontBroadcast)
 
 void RoundStart_Event(Event hEvent, const char[] eName, bool dontBroadcast)
 {
+    if (!IsActive())
+        return;
+
     CreateTimer(10.0, NewGameTick);
 }
 
@@ -104,7 +143,7 @@ Action NewGameTick(Handle timer)
 {
     patentIconEnabled = IsNewGame();
 
-    if (patentIconEnabled)
+    if (ShouldShowIcons())
         RefreshPlayersPatent();
 
     return Plugin_Stop;
@@ -112,7 +151,7 @@ Action NewGameTick(Handle timer)
 
 Action PatentIconTick(Handle timer)
 {
-    if (!patentIconEnabled)
+    if (!ShouldShowIcons())
         return Plugin_Continue;
 
     int entity;
@@ -184,7 +223,7 @@ void SetPatentIcon(int client)
 
 Action OnSetIconTransmit(int entity, int client)
 {
-    if (!patentIconEnabled)
+    if (!ShouldShowIcons())
         return Plugin_Handled;
 
     if (GetClientTeam(client) == L4D2_TEAM_SURVIVOR)

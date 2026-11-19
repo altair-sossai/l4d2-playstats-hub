@@ -8,10 +8,18 @@ build_time='__TIME__="build"'
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scripting="$root/left4dead2/addons/sourcemod/scripting"
 plugins="$root/left4dead2/addons/sourcemod/plugins"
+optional_plugins=" l4d2_playstats_sync l4d2_ranking l4d2_show_patent_icon "
+
+folder_of() {
+    case "$optional_plugins" in
+        *" $1 "*) echo "optional/" ;;
+        *) echo "" ;;
+    esac
+}
 
 usage() {
     echo "Usage: $0 [--check]" >&2
-    echo "  (no option)  compiles every plugin into left4dead2/addons/sourcemod/plugins" >&2
+    echo "  (no option)  compiles every plugin into left4dead2/addons/sourcemod/plugins (or its optional folder)" >&2
     echo "  --check      compiles into a temporary folder and fails if a committed .smx differs" >&2
 }
 
@@ -99,22 +107,27 @@ if [ "$check" -eq 1 ]; then
 
     for compiled in out/*.smx; do
         name="$(basename "$compiled")"
+        target="$(folder_of "${name%.smx}")$name"
 
-        if [ ! -f "$plugins/$name" ]; then
-            echo "MISSING: left4dead2/addons/sourcemod/plugins/$name is not committed." >&2
+        if [ ! -f "$plugins/$target" ]; then
+            echo "MISSING: left4dead2/addons/sourcemod/plugins/$target is not committed." >&2
             different=$((different + 1))
-        elif ! cmp -s "$compiled" "$plugins/$name"; then
-            echo "OUTDATED: left4dead2/addons/sourcemod/plugins/$name is not the result of compiling the committed source." >&2
+        elif ! cmp -s "$compiled" "$plugins/$target"; then
+            echo "OUTDATED: left4dead2/addons/sourcemod/plugins/$target is not the result of compiling the committed source." >&2
             different=$((different + 1))
         fi
     done
 
-    for committed in "$plugins"/*.smx; do
+    for committed in "$plugins"/*.smx "$plugins"/optional/*.smx; do
         [ -e "$committed" ] || continue
         name="$(basename "$committed" .smx)"
+        relative="${committed#"$plugins/"}"
 
         if [ ! -f "$scripting/$name.sp" ]; then
-            echo "ORPHAN: left4dead2/addons/sourcemod/plugins/$name.smx has no source in scripting/." >&2
+            echo "ORPHAN: left4dead2/addons/sourcemod/plugins/$relative has no source in scripting/." >&2
+            different=$((different + 1))
+        elif [ "$relative" != "$(folder_of "$name")$name.smx" ]; then
+            echo "MISPLACED: left4dead2/addons/sourcemod/plugins/$relative belongs in left4dead2/addons/sourcemod/plugins/$(folder_of "$name")$name.smx." >&2
             different=$((different + 1))
         fi
     done
@@ -128,7 +141,11 @@ if [ "$check" -eq 1 ]; then
     exit 0
 fi
 
-mkdir -p "$plugins"
-cp out/*.smx "$plugins/"
+mkdir -p "$plugins/optional"
 
-echo "All $total plugins compiled into left4dead2/addons/sourcemod/plugins"
+for compiled in out/*.smx; do
+    name="$(basename "$compiled")"
+    cp "$compiled" "$plugins/$(folder_of "${name%.smx}")$name"
+done
+
+echo "All $total plugins compiled into left4dead2/addons/sourcemod/plugins and its optional folder"

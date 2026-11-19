@@ -15,6 +15,17 @@ $buildTime = '__TIME__=\"build\"'
 $root = $PSScriptRoot
 $scripting = Join-Path $root "left4dead2\addons\sourcemod\scripting"
 $plugins = Join-Path $root "left4dead2\addons\sourcemod\plugins"
+$optionalPlugins = @("l4d2_playstats_sync", "l4d2_ranking", "l4d2_show_patent_icon")
+
+function Get-PluginPath {
+    param([string]$Name)
+
+    if ($optionalPlugins -contains $Name) {
+        return "optional/$Name.smx"
+    }
+
+    return "$Name.smx"
+}
 
 function Invoke-Spcomp {
     param([string]$Compiler, [string]$Directory, [string]$Arguments)
@@ -117,21 +128,31 @@ try {
         $different = 0
 
         foreach ($file in $compiled) {
-            $committed = Join-Path $plugins $file.Name
+            $target = Get-PluginPath $file.BaseName
+            $committed = Join-Path $plugins $target
 
             if (-not (Test-Path $committed)) {
-                Write-Host "MISSING: left4dead2/addons/sourcemod/plugins/$($file.Name) is not committed." -ForegroundColor Red
+                Write-Host "MISSING: left4dead2/addons/sourcemod/plugins/$target is not committed." -ForegroundColor Red
                 $different++
             }
             elseif ((Get-FileHash $file.FullName -Algorithm SHA256).Hash -ne (Get-FileHash $committed -Algorithm SHA256).Hash) {
-                Write-Host "OUTDATED: left4dead2/addons/sourcemod/plugins/$($file.Name) is not the result of compiling the committed source." -ForegroundColor Red
+                Write-Host "OUTDATED: left4dead2/addons/sourcemod/plugins/$target is not the result of compiling the committed source." -ForegroundColor Red
                 $different++
             }
         }
 
-        foreach ($file in @(Get-ChildItem -Path $plugins -Filter "*.smx" -ErrorAction SilentlyContinue)) {
-            if (-not (Test-Path (Join-Path $scripting ($file.BaseName + ".sp")))) {
-                Write-Host "ORPHAN: left4dead2/addons/sourcemod/plugins/$($file.Name) has no source in scripting/." -ForegroundColor Red
+        $committedFiles = @(Get-ChildItem -Path $plugins -Filter "*.smx" -ErrorAction SilentlyContinue | ForEach-Object { @{ File = $_; Path = $_.Name } })
+        $committedFiles += @(Get-ChildItem -Path (Join-Path $plugins "optional") -Filter "*.smx" -ErrorAction SilentlyContinue | ForEach-Object { @{ File = $_; Path = "optional/$($_.Name)" } })
+
+        foreach ($entry in $committedFiles) {
+            $name = $entry.File.BaseName
+
+            if (-not (Test-Path (Join-Path $scripting ($name + ".sp")))) {
+                Write-Host "ORPHAN: left4dead2/addons/sourcemod/plugins/$($entry.Path) has no source in scripting/." -ForegroundColor Red
+                $different++
+            }
+            elseif ($entry.Path -ne (Get-PluginPath $name)) {
+                Write-Host "MISPLACED: left4dead2/addons/sourcemod/plugins/$($entry.Path) belongs in left4dead2/addons/sourcemod/plugins/$(Get-PluginPath $name)." -ForegroundColor Red
                 $different++
             }
         }
@@ -144,10 +165,13 @@ try {
         return
     }
 
-    New-Item -ItemType Directory -Force -Path $plugins | Out-Null
-    $compiled | Copy-Item -Destination $plugins -Force
+    New-Item -ItemType Directory -Force -Path (Join-Path $plugins "optional") | Out-Null
 
-    Write-Host "All $($sources.Count) plugins compiled into left4dead2/addons/sourcemod/plugins" -ForegroundColor Green
+    foreach ($file in $compiled) {
+        Copy-Item -Path $file.FullName -Destination (Join-Path $plugins (Get-PluginPath $file.BaseName)) -Force
+    }
+
+    Write-Host "All $($sources.Count) plugins compiled into left4dead2/addons/sourcemod/plugins and its optional folder" -ForegroundColor Green
 }
 finally {
     Remove-Item -Recurse -Force -Path $stage -ErrorAction SilentlyContinue

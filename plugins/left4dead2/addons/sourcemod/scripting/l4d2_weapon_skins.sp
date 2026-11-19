@@ -63,7 +63,7 @@ public Plugin myinfo =
 	name = "L4D2 Weapon Skins",
 	author = "Altair Sossai",
 	description = "Lets players use the custom weapon skins they bought in the skin shop, downloaded through FastDL",
-	version = "4.0.1",
+	version = "4.1.0",
 	url = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -896,7 +896,7 @@ void GetWeaponDisplayName(const char[] weapon, char[] name, int maxlength)
 
 void GetSiteUrl(char[] url, int maxlength)
 {
-	PlayStatsHub_GetUrl(url, maxlength);
+	PlayStatsHub_GetPublicUrl(url, maxlength);
 	StrCat(url, maxlength, SHOP_PATH);
 }
 

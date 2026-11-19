@@ -8,6 +8,7 @@
 
 #define PLAYSTATS_HUB_URL_CVAR "playstats_url"
 #define PLAYSTATS_HUB_TOKEN_CVAR "playstats_token"
+#define PLAYSTATS_HUB_PUBLIC_URL_CVAR "playstats_public_url"
 #define PLAYSTATS_HUB_AUTHORIZATION_HEADER "Authorization"
 #define PLAYSTATS_HUB_CONTENT_TYPE_HEADER "Content-Type"
 #define PLAYSTATS_HUB_CONTENT_TYPE_LOWERCASE_HEADER "content-type"
@@ -53,11 +54,13 @@ static const char g_sPlayStatsHubPlugins[][] =
 
 static ConVar g_hPlayStatsHubUrl;
 static ConVar g_hPlayStatsHubToken;
+static ConVar g_hPlayStatsHubPublicUrl;
 
 stock void PlayStatsHub_CreateConVars()
 {
     g_hPlayStatsHubUrl = CreateConVar(PLAYSTATS_HUB_URL_CVAR, "", "Address of the L4D2 PlayStats Hub site, without a trailing slash");
     g_hPlayStatsHubToken = CreateConVar(PLAYSTATS_HUB_TOKEN_CVAR, "", "Token of this game server on the L4D2 PlayStats Hub site, in the form <identifier>:<key>", FCVAR_PROTECTED);
+    g_hPlayStatsHubPublicUrl = CreateConVar(PLAYSTATS_HUB_PUBLIC_URL_CVAR, "", "Address of the site shown to players in chat, without a trailing slash. When empty, playstats_url is used");
 }
 
 stock void PlayStatsHub_HookChange(ConVarChanged callback)
@@ -66,9 +69,8 @@ stock void PlayStatsHub_HookChange(ConVarChanged callback)
     g_hPlayStatsHubToken.AddChangeHook(callback);
 }
 
-stock bool PlayStatsHub_GetUrl(char[] url, int maxlength)
+stock bool PlayStatsHub_TrimAddress(char[] url)
 {
-    g_hPlayStatsHubUrl.GetString(url, maxlength);
     TrimString(url);
 
     int length = strlen(url);
@@ -79,6 +81,23 @@ stock bool PlayStatsHub_GetUrl(char[] url, int maxlength)
     }
 
     return length > 0;
+}
+
+stock bool PlayStatsHub_GetUrl(char[] url, int maxlength)
+{
+    g_hPlayStatsHubUrl.GetString(url, maxlength);
+
+    return PlayStatsHub_TrimAddress(url);
+}
+
+stock bool PlayStatsHub_GetPublicUrl(char[] url, int maxlength)
+{
+    g_hPlayStatsHubPublicUrl.GetString(url, maxlength);
+
+    if (PlayStatsHub_TrimAddress(url))
+        return true;
+
+    return PlayStatsHub_GetUrl(url, maxlength);
 }
 
 stock bool PlayStatsHub_GetToken(char[] token, int maxlength)

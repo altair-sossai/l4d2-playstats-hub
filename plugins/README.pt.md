@@ -30,12 +30,13 @@ A pasta `left4dead2` tem a mesma estrutura da pasta do jogo de um servidor, ent�
 plugins/
 ├── left4dead2/                      copie o que está dentro para a pasta left4dead2 do servidor
 │   ├── addons/sourcemod/
-│   │   ├── plugins/                 os cinco plugins compilados (.smx)
+│   │   ├── plugins/                 l4d2_gameinfo_sync e l4d2_weapon_skins (.smx)
+│   │   │   └── optional/            os outros três (.smx), carregados pelos modos de partida
 │   │   ├── scripting/               os fontes (.sp) e os arquivos include para compilá-los
 │   │   ├── translations/            textos do chat: inglês, pt, es, chi e zho
 │   │   └── configs/weapon_skins.cfg as armas e skins que o plugin de skins conhece
 │   └── cfg/playstats.cfg            suas configurações: o único arquivo que você edita
-├── build.ps1, build.sh              compilam os plugins em left4dead2/addons/sourcemod/plugins
+├── build.ps1, build.sh              compilam os plugins em left4dead2/addons/sourcemod/plugins e na pasta optional dela
 ├── README.md, LICENSE, NOTICE.md    este guia e a licença (não vão para o servidor)
 ```
 
@@ -84,7 +85,7 @@ Para instalar o REST in Pawn, baixe `sm-ripext-<version>-linux.zip` ou `-windows
 7. Reinicie o servidor de jogo.
 8. Rode `sm_playstats_test` no console do servidor (veja [Verificando a instalação](#verificando-a-instalação)).
 
-Os plugins ficam na própria `addons/sourcemod/plugins/`, não em `optional/`. Assim o SourceMod os carrega quando o servidor inicia, as configurações deles existem quando o `server.cfg` roda, e o site vê o servidor mesmo quando nenhum modo de partida está carregado.
+Copie a pasta como está: `l4d2_gameinfo_sync` e `l4d2_weapon_skins` ficam em `addons/sourcemod/plugins/`, que o SourceMod carrega quando o servidor inicia, e os outros três em `addons/sourcemod/plugins/optional/`, que só um modo de partida carrega (veja [Modos de partida do L4D2 Competitive Rework](#modos-de-partida-do-l4d2-competitive-rework)). É onde os servidores com o L4D2 Competitive Rework já os guardam, então um servidor que rodava as versões anteriores continua carregando os plugins com as linhas que já tem. Enquanto nenhum modo de partida está carregado, o `l4d2_playstats_sync` não roda e o site mostra o servidor como offline; para mantê-lo conectado, adicione `sm plugins load optional/l4d2_playstats_sync.smx` no fim do `cfg/server.cfg`.
 
 ## Configurações
 
@@ -102,8 +103,10 @@ Você pode mudar (cada linha está desligada no arquivo, e o plugin usa o padrã
 
 | Cvar | Plugin | Padrão | Valores | Significado |
 |---|---|---|---|---|
+| `playstats_public_url` | `l4d2_ranking`, `l4d2_weapon_skins` | vazio | Um endereço, sem barra no fim | Endereço do site que os jogadores leem no chat: a dica do ranking e o link da loja de skins. Vazio significa `playstats_url`. Defina quando os plugins chegam ao site por um endereço IP mas os jogadores o conhecem por um nome, por exemplo `https://stats.example.com`. |
 | `playstats_ingame_url` | `l4d2_ranking` | vazio | Um endereço, sem barra no fim | Endereço que o navegador do jogo abre. Vazio significa `playstats_url`. Use um endereço `http://` simples quando o painel fica em branco (veja abaixo). |
 | `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` ou `1` | `0` impede o plugin de abrir a página do ranking, mesmo com `!ranking`. |
+| `patent_icon_enabled` | `l4d2_show_patent_icon` | `0` | `0` ou `1` | Liga os ícones das patentes. Com `0` o plugin não pede as patentes ao site e os jogadores não baixam os sprites. Ligue só depois que os sprites estiverem no FastDL. |
 | `patent_icon_version` | `l4d2_show_patent_icon` | `2` | `1` ou mais | Versão nos nomes dos arquivos de sprite, `patent_<level>_v<version>`, os dois com dois dígitos. Os arquivos do repositório de assets são da versão `2`. |
 | `patent_icon_max_level` | `l4d2_show_patent_icon` | `15` | `1` ou mais | Maior nível de patente que tem arquivo de sprite. |
 | `gameinfo_related_accounts_chat` | `l4d2_gameinfo_sync` | `1` | `0` ou `1` | Avisa no chat quando um jogador se conecta do mesmo endereço IP de outra conta já vista. `0` mostra só no console. O site tem uma configuração própria para quem vê essas contas na página do jogador ([Configurações > Privacidade](../docs/manual/administration.pt.md#privacidade)). |
@@ -133,14 +136,14 @@ Quando um modo de partida carrega, o gerenciador de plugins do Confogl descarreg
 Adicione estas linhas a `cfg/sharedplugins.cfg`, deixando de fora os plugins que você não usa:
 
 ```text
-sm plugins load l4d2_playstats_sync.smx
+sm plugins load optional/l4d2_playstats_sync.smx
 sm plugins load l4d2_gameinfo_sync.smx
-sm plugins load l4d2_ranking.smx
-sm plugins load l4d2_show_patent_icon.smx
+sm plugins load optional/l4d2_ranking.smx
+sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
 ```
 
-Sem essas linhas os plugins rodam enquanto nenhum modo de partida está carregado, e param quando um carrega.
+Sem essas linhas os três plugins de `optional/` nunca carregam, e os dois de `addons/sourcemod/plugins/` param quando um modo de partida carrega.
 
 Os modos de partida do L4D2 Competitive Rework já carregam `optional/l4d2_playstats.smx` (em `confogl_plugins.cfg`) e os plugins opcionais que o `l4d2_gameinfo_sync` usa. Os modos ZoneMod não definem `sm_stats_writestats`, e é por isso que o `cfg/playstats.cfg` o define como `1`. Se os modos do seu servidor o definem com `confogl_addcvar`, apague essa linha de `cfg/playstats.cfg`.
 
@@ -152,7 +155,7 @@ Copie a nova pasta `left4dead2` por cima da antiga de novo, exceto `cfg/playstat
 
 | Arquivo | Pode ser substituído em uma atualização |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | Sim. |
+| `addons/sourcemod/plugins/*.smx` e `addons/sourcemod/plugins/optional/*.smx` | Sim. |
 | `addons/sourcemod/translations/**` | Sim, a não ser que você tenha editado os textos. |
 | `addons/sourcemod/configs/weapon_skins.cfg` | Sim, a não ser que você tenha adicionado armas ou skins próprias. |
 | `addons/sourcemod/scripting/**` | Sim para o servidor: só é usado para compilar. Substitui arquivos include com o mesmo nome, como `left4dhooks.inc` ou `readyup.inc`; se você compila outros plugins no servidor, não copie esta pasta. |
@@ -229,7 +232,7 @@ Os plugins gravam um problema uma vez no log de erros do SourceMod (`addons/sour
 
 | O que você vê | Causa e solução |
 |---|---|
-| `sm_playstats_test` é um comando desconhecido | O `l4d2_playstats_sync.smx` não está carregado. Confira se ele está em `addons/sourcemod/plugins/`, e veja o erro dele em `sm plugins list`. Com o L4D2 Competitive Rework, confira `cfg/sharedplugins.cfg`. |
+| `sm_playstats_test` é um comando desconhecido | O `l4d2_playstats_sync.smx` não está carregado. Confira se ele está em `addons/sourcemod/plugins/optional/`, e veja o erro dele em `sm plugins list`. Com o L4D2 Competitive Rework, confira `cfg/sharedplugins.cfg`. |
 | `sm plugins list` diz que um plugin precisa da extensão REST in Pawn (`rip.ext`) | O REST in Pawn está faltando, ou é a versão de outro sistema. Instale o zip certo e reinicie o servidor. |
 | `sm plugins list` diz que um plugin precisa do plugin `left4dhooks` | O `left4dhooks.smx` não está carregado. Instale o Left 4 DHooks Direct com os arquivos de gamedata dele. |
 | `URL not set` ou `Token not set` | As linhas não rodaram. Confira se o `cfg/server.cfg` termina com `exec playstats.cfg`, se as duas linhas em `cfg/playstats.cfg` não começam com `//`, e reinicie o servidor. |
@@ -242,7 +245,8 @@ Os plugins gravam um problema uma vez no log de erros do SourceMod (`addons/sour
 | Os plugins funcionam fora das partidas mas param quando um modo de partida carrega | Eles não estão em `cfg/sharedplugins.cfg` (veja [Modos de partida do L4D2 Competitive Rework](#modos-de-partida-do-l4d2-competitive-rework)). |
 | O Confogl mostra "Tracked Server CVar ... changed" a cada mapa | A mesma configuração está em `cfg/playstats.cfg` e com `confogl_addcvar`. Deixe em um lugar só. |
 | `!ranking` abre um painel vazio | Defina `playstats_ingame_url` com um endereço HTTP simples do site. |
-| Os ícones das patentes não aparecem | Os jogadores não têm os sprites. Confira o `sv_downloadurl` e se o `patent_icon_version` bate com os nomes dos arquivos. |
+| O chat mostra o endereço IP do site em vez do nome | Defina `playstats_public_url` com o endereço que os jogadores conhecem, por exemplo `https://stats.example.com`. |
+| Os ícones das patentes não aparecem | Confira `patent_icon_enabled 1`. Depois, os jogadores podem não ter os sprites: confira o `sv_downloadurl` e se o `patent_icon_version` bate com os nomes dos arquivos. |
 | As skins nunca aparecem | Confira `weapon_skins_enabled 1`, se o módulo está ligado em **Administração → Módulos**, se os arquivos estão no servidor (procure `not found on the server` no log de erros) e no FastDL, e se a skin foi comprada no site. |
 
 ## O que os plugins chamam
@@ -284,11 +288,11 @@ Linux e macOS:
 SPCOMP=~/sourcemod/addons/sourcemod/scripting/spcomp64 ./build.sh
 ```
 
-Os dois compilam todo arquivo `.sp` de `left4dead2/addons/sourcemod/scripting/` direto em `left4dead2/addons/sourcemod/plugins/`. Faça commit dos arquivos `.smx` junto com os fontes. Os arquivos include padrão do SourceMod são lidos da pasta `include` ao lado do compilador; defina `SOURCEMOD_INCLUDE` se eles estiverem em outro lugar.
+Os dois compilam todo arquivo `.sp` de `left4dead2/addons/sourcemod/scripting/` direto em `left4dead2/addons/sourcemod/plugins/`, e o `l4d2_playstats_sync`, o `l4d2_ranking` e o `l4d2_show_patent_icon` na pasta `optional/` dela. Faça commit dos arquivos `.smx` junto com os fontes. Os arquivos include padrão do SourceMod são lidos da pasta `include` ao lado do compilador; defina `SOURCEMOD_INCLUDE` se eles estiverem em outro lugar.
 
 A compilação é reproduzível: os mesmos fontes e o mesmo compilador geram os mesmos bytes no Windows e no Linux. Para isso, os scripts compilam em uma pasta temporária com caminhos de include relativos, fixam a data e a hora de compilação que o SourceMod embute (`__DATE__` e `__TIME__`), gravam os plugins sem compressão (`-z0`, porque o zlib não comprime do mesmo jeito em todo sistema) e cada plugin define o tamanho da sua pilha com `#pragma dynamic` (senão a estimativa do compilador muda de uma execução para outra). Cada plugin também é compilado uma vez com `-E`, então qualquer aviso faz a compilação falhar.
 
-`./build.sh --check` (ou `./build.ps1 -Check`) compila na pasta temporária e falha se um `.smx` do repositório está faltando, é diferente do resultado, ou não tem fonte. O workflow `Plugins` roda essa verificação em todo push e pull request que mexe em `plugins/`, com o SourceMod 1.12.0.7260 conferido pelo SHA-256, e guarda a pasta `left4dead2` como artefato da execução. O workflow de release roda a mesma verificação e empacota a pasta `left4dead2` do repositório, este guia, a licença e o aviso em `l4d2-playstats-hub-plugins.zip`.
+`./build.sh --check` (ou `./build.ps1 -Check`) compila na pasta temporária e falha se um `.smx` do repositório está faltando, é diferente do resultado, não tem fonte, ou não está na sua pasta. O workflow `Plugins` roda essa verificação em todo push e pull request que mexe em `plugins/`, com o SourceMod 1.12.0.7260 conferido pelo SHA-256, e guarda a pasta `left4dead2` como artefato da execução. O workflow de release roda a mesma verificação e empacota a pasta `left4dead2` do repositório, este guia, a licença e o aviso em `l4d2-playstats-hub-plugins.zip`.
 
 Regras de código: sem comentários, constantes como `#define` no topo do arquivo, e os arquivos include de terceiros ficam exatamente como vieram.
 
@@ -296,7 +300,7 @@ Regras de código: sem comentários, constantes como `#define` no topo do arquiv
 
 Os plugins compilam sem avisos e a compilação foi verificada no Windows e no Linux, mas esta versão ainda não rodou em um servidor de jogo de verdade. Até isso acontecer, trate estes pontos como comportamento esperado, não como fatos testados:
 
-- os plugins carregam de `addons/sourcemod/plugins/` como arquivos `.smx` sem compressão (o SourceMod aceita esses arquivos, mas esta versão ainda não foi carregada por um servidor);
+- os plugins carregam de `addons/sourcemod/plugins/` e de `addons/sourcemod/plugins/optional/` como arquivos `.smx` sem compressão (o SourceMod aceita esses arquivos, mas esta versão ainda não foi carregada por um servidor);
 - o fluxo `server.cfg` → `exec playstats.cfg` → `cfg/sharedplugins.cfg` em um servidor com o L4D2 Competitive Rework;
 - as mudanças desta versão: a porcentagem do tank e da witch sem o `l4d_boss_percent`, a atualização das patentes depois que as configurações rodam, e as linhas do log de erros gravadas uma vez só;
 - o texto exato das mensagens do próprio SourceMod, que este guia descreve em vez de citar.

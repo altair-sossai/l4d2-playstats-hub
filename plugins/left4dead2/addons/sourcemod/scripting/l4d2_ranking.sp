@@ -22,7 +22,7 @@ public Plugin myinfo =
     name        = "L4D2 - Ranking",
     author      = "Altair Sossai",
     description = "Opens the in-game ranking page of L4D2 PlayStats Hub",
-    version     = "2.0.0",
+    version     = "2.1.0",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
@@ -142,16 +142,8 @@ bool GetInGameUrl(int client, char[] url, int maxlength)
 bool GetInGameBase(char[] base, int maxlength)
 {
     hInGameUrl.GetString(base, maxlength);
-    TrimString(base);
 
-    int length = strlen(base);
-    while (length > 0 && base[length - 1] == '/')
-    {
-        length--;
-        base[length] = '\0';
-    }
-
-    if (length > 0)
+    if (PlayStatsHub_TrimAddress(base))
         return true;
 
     return PlayStatsHub_GetUrl(base, maxlength);
@@ -160,7 +152,7 @@ bool GetInGameBase(char[] base, int maxlength)
 bool GetSiteAddress(char[] site, int maxlength)
 {
     char url[PLAYSTATS_HUB_URL_LENGTH];
-    if (!PlayStatsHub_GetUrl(url, sizeof(url)))
+    if (!PlayStatsHub_GetPublicUrl(url, sizeof(url)))
         return false;
 
     int scheme = StrContains(url, SCHEME_SEPARATOR);
