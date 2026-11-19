@@ -505,6 +505,57 @@ public class CommunityWebTests
     }
 
     [TestMethod]
+    public async Task AnAdministratorResetsTheCommunityRanking()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var administrator = site.Factory.Client(HubWebFactory.Administrator);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        var before = await administrator.GetStringAsync("/admin/community");
+        var response = await HubWebFactory.PostFormAsync(administrator, "/admin/community", "/admin/community/reset", new Dictionary<string, string>());
+        var page = await administrator.GetStringAsync("/admin/community");
+        var left = await site.Factory.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+
+            return (await dbContext.Set<CommunityVote>().CountAsync(), await dbContext.Set<CommunityOffer>().CountAsync(), await dbContext.Set<CommunityRating>().CountAsync());
+        });
+
+        Assert.Contains("id=\"community-reset-modal\"", before);
+        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Contains("The community ranking was reset. Votes deleted: 1", page);
+        Assert.AreEqual((0, 0, 0), left);
+        Assert.IsNotNull(CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage)));
+    }
+
+    [TestMethod]
+    public async Task OnlyAnAdministratorCanResetTheCommunityRanking()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        await HubWebFactory.PostFormAsync(voter, CommunityWebSite.VotePage, "/admin/community/reset", new Dictionary<string, string>());
+
+        var votes = await site.Factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Set<CommunityVote>().CountAsync());
+
+        Assert.AreEqual(1, votes);
+    }
+
+    [TestMethod]
     public async Task AnAdministratorRemovesTheVotesOfAVoter()
     {
         using var site = new CommunityWebSite();

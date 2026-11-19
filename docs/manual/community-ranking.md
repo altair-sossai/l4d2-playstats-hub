@@ -30,7 +30,9 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
-Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
+On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
+
+Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. Under the box, **How does the community ranking work?** explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same explanation, closed under a link. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
 
 ## Voting
 
@@ -45,7 +47,7 @@ The page shows two players with their avatars. Answer with one of:
 | I don't know this player (under one of them) | Nothing changes, and that player is not shown to you again. |
 | I don't know either of them | Nothing changes, and neither player is shown to you again. |
 
-After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↑ says they are at the same level and ↓ that you know neither of them. **Votes left today** shows how many votes you still have.
+Under each name the card shows up to 4 other names the player has used in matches, the most used first, so you recognize someone who changed names. After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↑ says they are at the same level and ↓ that you know neither of them. **Votes left today** shows how many votes you still have.
 
 ## Who can vote, and how much
 
@@ -101,6 +103,8 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 | Initial rating | The rating of a player who was never compared. | 1500 |
 
 The K factor and the initial rating apply to new votes. **Rebuild the ratings** replays every stored vote in order with the current settings, so that they apply to all votes.
+
+**Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
 
 **Voters** lists everybody who voted, with their number of votes and their last vote. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith.
 

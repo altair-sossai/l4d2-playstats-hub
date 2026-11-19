@@ -71,6 +71,27 @@ public class CommunityRankingService(
         return votes;
     }
 
+    public async Task<int> ResetAsync(CancellationToken cancellationToken = default)
+    {
+        int removed;
+
+        await hubState.WriteLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            removed = await dbContext.Set<CommunityVote>().ExecuteDeleteAsync(cancellationToken);
+
+            await dbContext.Set<CommunityOffer>().ExecuteDeleteAsync(cancellationToken);
+            await dbContext.Set<CommunityRating>().ExecuteDeleteAsync(cancellationToken);
+        }
+        finally
+        {
+            hubState.WriteLock.Release();
+        }
+
+        return removed;
+    }
+
     public async Task<int> RemoveVoterAsync(long voterId, CancellationToken cancellationToken = default)
     {
         int removed;

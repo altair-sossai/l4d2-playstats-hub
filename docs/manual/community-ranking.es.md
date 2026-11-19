@@ -30,7 +30,9 @@ El ranking de la comunidad es un segundo ranking, construido a partir de lo que 
 | Comparaciones | Cuántas veces se juzgó al jugador frente a otro jugador. |
 | Victorias, Empates, Derrotas | Cuántas comparaciones ganó, empató y perdió el jugador. |
 
-Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla, y la lista se detiene en los primeros 100 jugadores de forma predeterminada. **Votar ahora**, en el recuadro encima de la tabla, abre la página de votación. El mismo recuadro aparece encima del ranking de estadísticas en la página de inicio; allí el jugador puede cerrarlo, y vuelve después de 7 días.
+En el teléfono la tabla muestra solo la posición, el jugador y la puntuación. El **?** junto a **Puntuación** abre una ventana que explica cada columna.
+
+Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla, y la lista se detiene en los primeros 100 jugadores de forma predeterminada. Debajo del recuadro, **¿Cómo funciona el ranking de la comunidad?** explica en cuatro pasos cómo los votos se convierten en la lista, con los números de los ajustes actuales. La página de votación tiene la misma explicación, cerrada debajo de un enlace. **Votar ahora**, en el recuadro encima de la tabla, abre la página de votación. El mismo recuadro aparece encima del ranking de estadísticas en la página de inicio; allí el jugador puede cerrarlo, y vuelve después de 7 días.
 
 ## Votar
 
@@ -45,7 +47,7 @@ La página muestra dos jugadores con sus avatares. Responde con una de estas opc
 | No conozco a este jugador (debajo de uno de ellos) | No cambia nada, y ese jugador no se te vuelve a mostrar. |
 | No conozco a ninguno de los dos | No cambia nada, y ninguno de los dos se te vuelve a mostrar. |
 
-Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha, ↑ dice que están al mismo nivel y ↓ que no conoces a ninguno de los dos. **Votos restantes hoy** muestra cuántos votos te quedan.
+Debajo de cada nombre la tarjeta muestra hasta 4 nombres más que el jugador usó en las partidas, del más usado al menos usado, para que reconozcas a quien cambió de nombre. Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha, ↑ dice que están al mismo nivel y ↓ que no conoces a ninguno de los dos. **Votos restantes hoy** muestra cuántos votos te quedan.
 
 ## Quién puede votar, y cuánto
 
@@ -101,6 +103,8 @@ Cada campo tiene un **?** junto a su nombre: al pasar el ratón muestra una expl
 | Puntuación inicial | La puntuación de un jugador que nunca fue comparado. | 1500 |
 
 El factor K y la puntuación inicial se aplican a los votos nuevos. **Reconstruir las puntuaciones** vuelve a aplicar en orden todos los votos guardados con los ajustes actuales, para que se apliquen a todos los votos.
+
+**Reiniciar el ranking de la comunidad**, en un panel rojo, borra todos los votos y todas las puntuaciones, y el ranking de la comunidad vuelve a empezar desde cero; los ajustes se conservan. Una ventana muestra cuántos votos y jugadores se borrarán y pide confirmación, ya que no se puede deshacer.
 
 **Votantes** lista a todos los que votaron, con su cantidad de votos y su último voto. **Quitar votos** elimina todos los votos de un votante y reconstruye las puntuaciones sin ellos, por ejemplo cuando alguien votó de mala fe.
 

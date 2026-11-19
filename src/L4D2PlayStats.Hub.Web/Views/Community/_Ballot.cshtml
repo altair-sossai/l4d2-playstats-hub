@@ -31,16 +31,23 @@
     else if (ballot.Status == CommunityBallotStatus.LimitReached)
     {
         <div class="jumbotron text-center">
-            <p>@L["You have used all your votes for today. Come back tomorrow."]</p>
+            <p><span class="glyphicon glyphicon-ok-circle text-success"></span> @L["You have used all your votes for today. Come back tomorrow."]</p>
             <p>
                 <small>@L["Votes per day:"] @ballot.VotesPerDay</small>
             </p>
+            <p>@L["Thank you for voting! See how the community ranking looks so far."]</p>
+            <a class="btn btn-success btn-lg" href="/community">
+                <span class="glyphicon glyphicon-list"></span> @L["See the community ranking"]
+            </a>
         </div>
     }
     else if (ballot.Status == CommunityBallotStatus.NobodyLeft)
     {
         <div class="jumbotron text-center">
             <p>@L["There is nobody left for you to compare right now."]</p>
+            <a class="btn btn-success btn-lg" href="/community">
+                <span class="glyphicon glyphicon-list"></span> @L["See the community ranking"]
+            </a>
         </div>
     }
     else
@@ -60,6 +67,10 @@
                         <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
                     </div>
                     <h4 class="ballot-name">@left.Name</h4>
+                    @if (left.OtherNames.Count > 0)
+                    {
+                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]"><span>@L["Also known as"]</span> @string.Join(" · ", left.OtherNames)</p>
+                    }
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Left">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&larr;</kbd>
                     </button>
@@ -78,6 +89,10 @@
                         <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
                     </div>
                     <h4 class="ballot-name">@right.Name</h4>
+                    @if (right.OtherNames.Count > 0)
+                    {
+                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]"><span>@L["Also known as"]</span> @string.Join(" · ", right.OtherNames)</p>
+                    }
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Right">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&rarr;</kbd>
                     </button>
@@ -103,7 +118,7 @@
             <div class="progress">
                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@ballot.VotesLeft" aria-valuemin="0" aria-valuemax="@ballot.VotesPerDay" style="width: @(remaining)%"></div>
             </div>
-            <small class="text-muted hidden-xs">@L["You can also vote with the ← and → keys."]</small>
+            <small class="text-muted hidden-xs">@L["You can vote with the arrow keys too: ← and → pick a player, ↑ same level, ↓ you know neither."]</small>
         </div>
     }
 </div>

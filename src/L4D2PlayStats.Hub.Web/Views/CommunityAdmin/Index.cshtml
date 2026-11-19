@@ -24,6 +24,10 @@
 {
     <div class="alert alert-success">@L["Ratings rebuilt without that voter. Votes removed:"] @TempData["Removed"]</div>
 }
+@if (TempData["Reset"] != null)
+{
+    <div class="alert alert-success">@L["The community ranking was reset. Votes deleted:"] @TempData["Reset"]</div>
+}
 
 <div class="admin-stats">
     <div>
@@ -107,6 +111,41 @@
             <button class="btn btn-warning" type="submit">
                 <span class="glyphicon glyphicon-refresh"></span> @L["Rebuild the ratings"]
             </button>
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">@L["Reset the community ranking"]</h3>
+    </div>
+    <div class="panel-body">
+        <p>@L["Deletes every vote of every player and every rating, and the community ranking starts again from zero. The settings are kept. This cannot be undone."]</p>
+        <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#community-reset-modal">
+            <span class="glyphicon glyphicon-trash"></span> @L["Delete all votes and start again"]
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" id="community-reset-modal" tabindex="-1" role="dialog" aria-labelledby="community-reset-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/community/reset">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title text-danger" id="community-reset-title">
+                    <span class="glyphicon glyphicon-warning-sign"></span> @L["Reset the community ranking?"]
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>@L["All {0} votes and the ratings of all {1} players will be deleted for good. Every player starts again with the initial rating, and the votes of the day start again too.", Display.Number(Model.Votes), Display.Number(Model.RatedPlayers)]</p>
+                <p class="text-danger"><strong>@L["This cannot be undone. Are you sure?"]</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Yes, delete everything"]
+                </button>
+            </div>
         </form>
     </div>
 </div>

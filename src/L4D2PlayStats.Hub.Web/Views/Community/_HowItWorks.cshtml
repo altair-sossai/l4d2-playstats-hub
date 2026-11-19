@@ -1,0 +1,137 @@
+@model CommunityHowItWorksModel
+
+@{
+    var settings = Model.Settings;
+}
+
+<style>
+    .how-it-works {
+        margin: 6px 0 16px;
+    }
+
+    .how-it-works-toggle {
+        display: inline-block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .how-it-works-steps {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .how-it-works-steps.collapse:not(.in) {
+        display: none;
+    }
+
+    .how-it-works-step {
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, .03);
+    }
+
+        .how-it-works-step h5 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 8px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .how-it-works-step p {
+            margin: 0 0 6px;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+            .how-it-works-step p:last-child {
+                margin-bottom: 0;
+            }
+
+    .how-it-works-number {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #5cb85c;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 991px) {
+        .how-it-works-steps {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (min-width: 768px) {
+        .how-it-works-steps.how-it-works-desktop.collapse:not(.in) {
+            display: grid;
+        }
+    }
+
+    @@media (max-width: 560px) {
+        .how-it-works-steps {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+</style>
+
+<div class="how-it-works">
+    <a class="how-it-works-toggle@(Model.Collapsed ? "" : " visible-xs-inline-block")" role="button" data-toggle="collapse" href="#how-it-works-steps" aria-expanded="false" aria-controls="how-it-works-steps">
+        <span class="glyphicon glyphicon-info-sign"></span> @L["How does the community ranking work?"]
+    </a>
+
+    @if (!Model.Collapsed)
+    {
+        <h4 class="hidden-xs"><span class="glyphicon glyphicon-info-sign"></span> @L["How does the community ranking work?"]</h4>
+        <p class="hidden-xs">@L["The statistics ranking measures what the game records: kills, damage, wins. The community ranking measures what the players think: it is built only from the votes of the players themselves, who know best who plays well. It does not reset with the season."]</p>
+    }
+
+    <div class="how-it-works-steps collapse@(Model.Collapsed ? "" : " how-it-works-desktop")" id="how-it-works-steps">
+        <div class="how-it-works-step">
+            <h5><span class="how-it-works-number">1</span> @L["You compare two players"]</h5>
+            <p>@L["The site shows two players, preferably people you have played with or against. Say which one is better, that they are at the same level, or that you do not know them."]</p>
+            <p>@L["You are never asked about yourself, nor about the same pair twice."]</p>
+        </div>
+        <div class="how-it-works-step">
+            <h5><span class="how-it-works-number">2</span> @L["The votes become a rating"]</h5>
+            <p>@L["Everybody starts with {0} points. Each answer moves the two ratings, as in chess: beating someone with a higher rating is worth more than beating someone with a lower one.", settings.InitialRating]</p>
+            <p>@L["After thousands of votes, the order reflects what the whole community thinks, not the opinion of one person."]</p>
+        </div>
+        <div class="how-it-works-step">
+            <h5><span class="how-it-works-number">3</span> @L["Who appears"]</h5>
+            <p>
+                @if (settings.CandidatePlayedWithinDays > 0)
+                {
+                    @L["The voting offers players with at least {0} matches who played in the last {1} days.", settings.MinimumMatchesToBeCandidate, settings.CandidatePlayedWithinDays]
+                }
+                else
+                {
+                    @L["The voting offers players with at least {0} matches.", settings.MinimumMatchesToBeCandidate]
+                }
+            </p>
+            <p>
+                @if (settings.MaximumPlayersListed > 0)
+                {
+                    @L["The list shows the top {0} players who were judged at least {1} times.", settings.MaximumPlayersListed, settings.MinimumComparisonsToBeListed]
+                }
+                else
+                {
+                    @L["The list shows every player who was judged at least {0} times.", settings.MinimumComparisonsToBeListed]
+                }
+            </p>
+        </div>
+        <div class="how-it-works-step">
+            <h5><span class="how-it-works-number">4</span> @L["Who can vote"]</h5>
+            <p>@L["Anyone signed in with Steam who has played at least {0} matches on the server.", settings.MinimumMatchesToVote]</p>
+            <p>@L["Each player has {0} votes per day. \"I don't know\" answers are free, so only vote on who you really know.", settings.VotesPerDay]</p>
+        </div>
+    </div>
+</div>

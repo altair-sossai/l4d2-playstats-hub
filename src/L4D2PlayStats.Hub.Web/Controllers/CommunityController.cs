@@ -43,6 +43,7 @@ public class CommunityController(
             Players = [.. entries.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId))))],
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
             MinimumMatches = settings.MinimumMatchesToBeCandidate,
+            Settings = settings,
             PlayerPages = playerPages
         };
 
@@ -80,7 +81,8 @@ public class CommunityController(
         return new CommunityVoteViewModel
         {
             Ballot = voterId == null ? null : await communityVoteService.BallotAsync(voterId.Value, cancellationToken),
-            Refusal = refusal
+            Refusal = refusal,
+            Settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken)
         };
     }
 

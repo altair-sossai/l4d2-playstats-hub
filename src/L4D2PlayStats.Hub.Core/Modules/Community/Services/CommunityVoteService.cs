@@ -39,8 +39,9 @@ public class CommunityVoteService(
             return Ballot(CommunityBallotStatus.NobodyLeft, settings, matches, votesLeft);
 
         var names = await playerService.NamesAsync([pair.Left, pair.Right], cancellationToken);
-        var left = new CommunityBallotPlayer(pair.Left, names[pair.Left]);
-        var right = new CommunityBallotPlayer(pair.Right, names[pair.Right]);
+        var used = await playerService.MostUsedNamesAsync([pair.Left, pair.Right], AppConsts.CommunityBallotNames + 1, cancellationToken);
+        var left = BallotPlayer(pair.Left, names, used);
+        var right = BallotPlayer(pair.Right, names, used);
 
         return Ballot(CommunityBallotStatus.Ready, settings, matches, votesLeft, left, right);
     }
@@ -190,6 +191,18 @@ public class CommunityVoteService(
         var now = await seasonService.SiteNowAsync(cancellationToken);
 
         return now.Date;
+    }
+
+    private static CommunityBallotPlayer BallotPlayer(long communityId, Dictionary<long, string> names, Dictionary<long, List<string>> used)
+    {
+        var name = names[communityId];
+
+        var others = used[communityId]
+            .Where(other => !string.Equals(other, name, StringComparison.CurrentCultureIgnoreCase))
+            .Take(AppConsts.CommunityBallotNames)
+            .ToList();
+
+        return new CommunityBallotPlayer(communityId, name, others);
     }
 
     private static CommunityCandidate Candidate(long communityId, CommunityRating? rating, CommunityRankingSettings settings, HashSet<long> familiar)

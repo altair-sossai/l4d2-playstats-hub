@@ -60,6 +60,27 @@ public class CommunityPlayerService(HubDbContext dbContext) : ICommunityPlayerSe
         return ids.ToDictionary(id => id, id => names.GetValueOrDefault(id) ?? id.ToString());
     }
 
+    public async Task<Dictionary<long, List<string>>> MostUsedNamesAsync(IReadOnlyCollection<long> communityIds, int count, CancellationToken cancellationToken = default)
+    {
+        var ids = communityIds.Distinct().ToList();
+
+        var used = await Played()
+            .Where(p => ids.Contains(p.CommunityId) && p.Name != null && p.Name != string.Empty)
+            .GroupBy(p => new { p.CommunityId, p.Name })
+            .Select(group => new { group.Key.CommunityId, Name = group.Key.Name!, Times = group.Count() })
+            .ToListAsync(cancellationToken);
+
+        return ids.ToDictionary(id => id, id => used
+            .Where(name => name.CommunityId == id)
+            .GroupBy(name => name.Name.Trim(), StringComparer.CurrentCultureIgnoreCase)
+            .Select(group => new { Name = group.OrderByDescending(name => name.Times).First().Name.Trim(), Times = group.Sum(name => name.Times) })
+            .OrderByDescending(name => name.Times)
+            .ThenBy(name => name.Name, StringComparer.CurrentCultureIgnoreCase)
+            .Take(count)
+            .Select(name => name.Name)
+            .ToList());
+    }
+
     private IQueryable<MatchPlayer> Played()
     {
         return dbContext.MatchPlayers.AsNoTracking().Where(TookPart);

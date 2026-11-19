@@ -43,10 +43,6 @@
                 font-style: italic;
             }
 
-        .community-detail {
-            display: block;
-            white-space: nowrap;
-        }
     </style>
 }
 
@@ -57,6 +53,8 @@
 </div>
 
 @await Html.PartialAsync("_VoteInvite", false)
+
+@await Html.PartialAsync("_HowItWorks", new CommunityHowItWorksModel(Model.Settings, false))
 
 @if (Model.Players.Count == 0)
 {
@@ -72,12 +70,12 @@ else
             <th class="text-center">#</th>
             @if (Model.PlayerPages)
             {
-                <th class="text-center">@L["Patent"]</th>
+                <th class="text-center hide-mobile">@L["Patent"]</th>
             }
             <th colspan="2">@L["Player"]</th>
-            <th class="text-center">@L["Rating"]</th>
+            <th class="text-center">@L["Rating"] @FieldHelp.More(L["What the rating and the other columns mean."], L["Community ranking"], L["Rating: the points built from the votes. Everybody starts with the same rating; it goes up when voters say the player is better and down when they say the other one is. Beating someone with a higher rating is worth more.\nComparisons: how many times the player was judged against another player. The more comparisons, the more reliable the rating.\nWins: comparisons in which voters said this player is better.\nDraws: comparisons in which voters said the two are at the same level.\nLosses: comparisons in which voters said the other player is better.\nAnswers of the kind \"I don't know\" do not count as comparisons."])</th>
             <th class="text-center hide-mobile">@L["Comparisons"]</th>
-            <th class="text-center">@L["Wins"]</th>
+            <th class="text-center hide-mobile">@L["Wins"]</th>
             <th class="text-center hide-mobile">@L["Draws"]</th>
             <th class="text-center hide-mobile">@L["Losses"]</th>
         </tr>
@@ -107,7 +105,7 @@ else
                 </td>
                 @if (row.Patent != null)
                 {
-                    <td class="text-center vertical-align-middle slim">
+                    <td class="text-center vertical-align-middle slim hide-mobile">
                         <img src="@row.Patent.Image" alt="@row.Patent.FullName" data-toggle="tooltip" data-placement="top" title="@row.Patent.FullName" style="width: 32px"/>
                     </td>
                 }
@@ -132,11 +130,6 @@ else
                     {
                         @player.Name.TruncatePlayerName()
                     }
-                    <span class="show-mobile">
-                        <small class="text-muted community-detail">@L["Comparisons"]: @player.Comparisons</small>
-                        <small class="text-muted community-detail">@L["Draws"]: @player.Draws</small>
-                        <small class="text-muted community-detail">@L["Losses"]: @player.Losses</small>
-                    </span>
                 </td>
                 <td class="text-center vertical-align-middle">
                     <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating"]">
@@ -148,7 +141,7 @@ else
                         @player.Comparisons.ToString("N0")
                     </p>
                 </td>
-                <td class="text-center vertical-align-middle">
+                <td class="text-center vertical-align-middle hide-mobile">
                     <p data-toggle="tooltip" data-placement="top" title="@L["Wins"]">
                         @player.Wins.ToString("N0")
                     </p>

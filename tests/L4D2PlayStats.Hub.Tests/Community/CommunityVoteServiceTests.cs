@@ -565,6 +565,35 @@ public class CommunityVoteServiceTests
     }
 
     [TestMethod]
+    public async Task TheNamesOfAPlayerComeFromTheMostUsedToTheLeastUsed()
+    {
+        using var community = new CommunityTestHub();
+
+        var player = community.TeamB[0];
+        string[] names = ["Gamma", "Alpha", "Beta", "alpha ", "Alpha", "Beta"];
+
+        for (var day = 0; day < names.Length; day++)
+            await community.PlayAsync(CommunityTestHub.Night.AddDays(-day));
+
+        await community.Hub.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+            var played = await dbContext.MatchPlayers.Where(p => p.CommunityId == player).OrderBy(p => p.MatchId).ToListAsync();
+
+            for (var index = 0; index < played.Count; index++)
+                played[index].Name = names[index];
+
+            await dbContext.SaveChangesAsync();
+        });
+
+        var used = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityPlayerService>().MostUsedNamesAsync([player], 2));
+        var all = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityPlayerService>().MostUsedNamesAsync([player], 10));
+
+        CollectionAssert.AreEqual(new List<string> { "Alpha", "Beta" }, used[player]);
+        CollectionAssert.AreEqual(new List<string> { "Alpha", "Beta", "Gamma" }, all[player]);
+    }
+
+    [TestMethod]
     public void TheDaysSinceTheLastMatchGiveTheOldestMatchThatCounts()
     {
         var now = new DateTime(2026, 11, 15, 12, 0, 0, DateTimeKind.Utc);

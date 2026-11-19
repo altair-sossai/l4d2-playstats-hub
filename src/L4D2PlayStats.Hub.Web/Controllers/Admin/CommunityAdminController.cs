@@ -62,6 +62,14 @@ public class CommunityAdminController(
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost("reset")]
+    public async Task<IActionResult> Reset(CancellationToken cancellationToken)
+    {
+        TempData["Reset"] = await communityRankingService.ResetAsync(cancellationToken);
+
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpPost("voters/delete")]
     public async Task<IActionResult> RemoveVoter(long communityId, CancellationToken cancellationToken)
     {
