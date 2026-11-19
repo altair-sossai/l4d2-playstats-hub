@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
@@ -18,6 +19,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class ServersController(
     ILiveViewService liveViewService,
     ISiteChatService siteChatService,
+    IPlayerNameService playerNameService,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
@@ -95,7 +97,8 @@ public class ServersController(
         if (communityId == null)
             return Unauthorized();
 
-        var user = new SiteChatUser(communityId.Value, currentUser.Name);
+        var name = string.IsNullOrWhiteSpace(currentUser.Name) ? await playerNameService.KnownNameAsync(communityId.Value, cancellationToken) : currentUser.Name;
+        var user = new SiteChatUser(communityId.Value, name);
         var result = await siteChatService.SendAsync(server, user, message, cancellationToken);
         var answer = new SiteChatCommandResult { Success = result.Success, ErrorMessage = ErrorMessage(result) };
 

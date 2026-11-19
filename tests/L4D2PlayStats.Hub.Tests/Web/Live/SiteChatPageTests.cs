@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.RegularExpressions;
+using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +34,34 @@ public class SiteChatPageTests
         Assert.AreEqual("hello from the site", messages[0].Text);
         Assert.AreEqual(HubWebFactory.Player.ToString(), messages[0].CommunityId);
         Assert.Contains("hello from the site", page);
+    }
+
+    [TestMethod]
+    public async Task APlayerSignedInWithoutANameWritesWithTheirKnownName()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client(HubWebFactory.Player);
+
+        client.DefaultRequestHeaders.Add(HubWebFactory.NamelessHeader, "1");
+
+        await factory.CompleteSetupAsync();
+        await factory.EnableAsync();
+        await factory.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+
+            dbContext.PlayerProfiles.Add(new PlayerProfile { CommunityId = HubWebFactory.Player, Name = "Altair" });
+
+            await dbContext.SaveChangesAsync();
+        });
+
+        var credentials = await factory.CreateServerAsync();
+        var response = await HubWebFactory.PostFormAsync(client, LivePage, ChatAction, new Dictionary<string, string> { ["message"] = "hello" });
+        var messages = factory.Services.GetRequiredService<ILiveServerStore>().For(credentials.Server.Id).SiteMessages;
+
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.HasCount(1, messages);
+        Assert.AreEqual("Altair", messages[0].Name);
     }
 
     [TestMethod]

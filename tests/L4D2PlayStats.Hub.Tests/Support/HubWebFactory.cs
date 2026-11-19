@@ -22,6 +22,7 @@ public class HubWebFactory : WebApplicationFactory<Program>
     public const long Administrator = 76561198000000100;
     public const long Player = 76561198000000200;
     public const string UserHeader = "X-Test-User";
+    public const string NamelessHeader = "X-Test-Nameless";
 
     private readonly TestDatabase _database = new();
     private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));

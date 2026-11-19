@@ -18,7 +18,9 @@ public class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptio
         if (string.IsNullOrEmpty(user))
             return Task.FromResult(AuthenticateResult.NoResult());
 
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user), new Claim(ClaimTypes.Name, $"Player {user}") };
+        var claims = Request.Headers.ContainsKey(HubWebFactory.NamelessHeader)
+            ? new[] { new Claim(ClaimTypes.NameIdentifier, user) }
+            : new[] { new Claim(ClaimTypes.NameIdentifier, user), new Claim(ClaimTypes.Name, $"Player {user}") };
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName));
 
         return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, SchemeName)));
