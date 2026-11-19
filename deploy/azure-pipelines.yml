@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    exclude:
+      - "*"
+  tags:
+    include:
+      - v*
+
+pr: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  sshServiceConnection: "L4D2 - Resources"
+  hubRepository: "altair-sossai/l4d2-playstats-hub"
+
+stages:
+  - stage: Deploy
+    jobs:
+      - job: UpdateSite
+        timeoutInMinutes: 60
+        steps:
+          - checkout: none
+
+          - task: SSH@0
+            displayName: "Install the release on the VPS"
+            inputs:
+              sshEndpoint: $(sshServiceConnection)
+              runOptions: "inline"
+              readyTimeout: "20000"
+              failOnStdErr: false
+              inline: |
+                set -euo pipefail
+                tag="$(Build.SourceBranchName)"
+                package="https://github.com/$(hubRepository)/releases/download/${tag}/l4d2-playstats-hub-linux-x64.tar.gz"
+                for attempt in $(seq 1 60); do
+                  if curl -fsIL "${package}" >/dev/null 2>&1; then
+                    break
+                  fi
+                  if [ "${attempt}" -eq 60 ]; then
+                    echo "The release ${tag} has no Linux package after 30 minutes."
+                    exit 1
+                  fi
+                  sleep 30
+                done
+                curl -fsSL "https://raw.githubusercontent.com/$(hubRepository)/${tag}/deploy/install.sh" | HUB_VERSION="${tag}" bash
+                playstats-hub status | head -n 5
