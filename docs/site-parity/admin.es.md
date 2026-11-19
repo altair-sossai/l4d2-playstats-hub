@@ -182,7 +182,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 |---|---|---|---|
 | Título de página y encabezado "Administradores", menú de administración | `Views/Admin/Administrators.cshtml:3` | `done` |  |
 | Columna de la tabla "Nombre" ("-" cuando no hay ninguno) | `Views/Admin/Administrators.cshtml:12` | `done` | Se añadió el avatar de cada administrador (oculto en teléfonos); tu propia línea se resalta como las líneas "soy yo" de otros lugares. |
-| Columna de la tabla "SteamID64", enlace al perfil de Steam | `Views/Admin/Administrators.cshtml:13` | `done` |  |
+| Columna de la tabla "SteamID64", enlace al perfil de Steam | `Views/Admin/Administrators.cshtml:13` | `adapted` | El enlace va a la página del jugador en el sitio, que ofrece el perfil de Steam. |
 | Columna de la tabla "Desde" | `Views/Admin/Administrators.cshtml:14` | `done` |  |
 | Botón "Quitar" (`POST /admin/administrators/{id}/delete`, pregunta "¿Quitar este administrador?") | `Views/Admin/Administrators.cshtml:28` | `done` |  |
 | Insignia "Tú" en tu propia línea, en lugar del botón | `Views/Admin/Administrators.cshtml:34` | `done` | `label label-default`. |
@@ -226,7 +226,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Botón "Votar" | `Views/Community/Index.cshtml:10` | `done` |  |
 | Mensaje "Aún nadie tiene suficientes comparaciones para aparecer en la lista." | `Views/Community/Index.cshtml:15` | `done` | Jumbotron, como el ranking vacío de la página de inicio. |
 | Columna de la tabla "#" (posición; el primer puesto destaca) | `Views/Community/Index.cshtml:23` | `done` | Como en el ranking de inicio: medallas para los tres primeros puestos, `#N` para los demás. |
-| Columna de la tabla "Jugador": avatar y nombre, enlazados a la página del jugador cuando el módulo de ranking está activado | `Views/Community/Index.cshtml:24` | `adapted` | Las mismas dos celdas que en el ranking de inicio (avatar, nombre). El nombre se acorta con `TruncatePlayerName`, como en el ranking de inicio; el nombre completo está en el título del avatar. |
+| Columna de la tabla "Jugador": avatar y nombre, enlazados a la página del jugador | `Views/Community/Index.cshtml:24` | `adapted` | Las mismas dos celdas que en el ranking de inicio (avatar, nombre). El nombre se acorta con `TruncatePlayerName`, como en el ranking de inicio; el nombre completo está en el título del avatar. |
 | Columna de la tabla "Patente" | nuevo | `done` | Añadida, como en el ranking de inicio: la patente del jugador en la temporada actual. Solo con el módulo de ranking activado. |
 | Columna de la tabla "Puntuación" | `Views/Community/Index.cshtml:25` | `done` |  |
 | Columna de la tabla "Comparaciones" | `Views/Community/Index.cshtml:26` | `adapted` | Columna en escritorio. En teléfonos la columna se oculta (`hide-mobile`) y el número es una línea debajo del nombre; la página con Bootstrap 5, en cambio, se desplazaba hacia los lados. |
@@ -277,7 +277,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Panel "Mantenimiento": explicación y botón "Reconstruir las puntuaciones" (pregunta "¿Reconstruir todas las puntuaciones ahora?") | `Views/CommunityAdmin/Index.cshtml:73` | `done` |  |
 | Panel "Votantes": explicación y el formulario para quitar los votos de un SteamID64 (pregunta "¿Quitar todos los votos de este votante?") | `Views/CommunityAdmin/Index.cshtml:85` | `done` |  |
 | Panel "Votantes": mensaje "Aún no ha votado nadie." | `Views/CommunityAdmin/Index.cshtml:94` | `done` |  |
-| Panel "Votantes": columna de la tabla "Jugador", avatar y nombre enlazados al perfil de Steam | `Views/CommunityAdmin/Index.cshtml:102` | `done` | El avatar se oculta en teléfonos, donde cada celda es una línea con su etiqueta. |
+| Panel "Votantes": columna de la tabla "Jugador", avatar y nombre enlazados al perfil de Steam | `Views/CommunityAdmin/Index.cshtml:102` | `adapted` | El nombre enlaza a la página del jugador en el sitio, que ofrece el perfil de Steam. El avatar se oculta en teléfonos, donde cada celda es una línea con su etiqueta. |
 | Panel "Votantes": columna de la tabla "Votos" | `Views/CommunityAdmin/Index.cshtml:103` | `done` |  |
 | Panel "Votantes": columna de la tabla "Último voto" | `Views/CommunityAdmin/Index.cshtml:104` | `done` |  |
 | Panel "Votantes": botón "Quitar votos" en cada línea (pide confirmación) | `Views/CommunityAdmin/Index.cshtml:122` | `done` |  |

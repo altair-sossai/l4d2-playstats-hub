@@ -1,12 +1,9 @@
 @model ChatBansModel
 @using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
-@inject ISettingsService Settings
 
 @{
     ViewData["Title"] = L["Chat Bans"].Value;
     var culture = CultureInfo.CurrentUICulture;
-    var modules = await Settings.GetAsync<ModuleSettings>();
-    var ranking = modules.IsEnabled(HubModule.Ranking);
     var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
     var pagination = PaginationModel.Of(Model.Bans, number => $"{AppConsts.ChatBansUrl}?{query}page={number}");
 }
@@ -228,7 +225,7 @@
             };
 
             var selected = null;
-            var playerUrl = @Json.Serialize(ranking ? AppConsts.PlayerUrlPrefix : null);
+            var playerUrl = @Json.Serialize(AppConsts.PlayerUrlPrefix);
             var lookupUrl = @Json.Serialize(AppConsts.PlayerLookupUrl);
             var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
 
@@ -264,7 +261,7 @@
                 selected = { communityId: $item.data('community-id').toString(), name: $item.data('name') };
 
                 $modal.find('.cb-avatar').attr({ src: $item.data('avatar'), alt: selected.name });
-                $modal.find('.cb-player-link').text(selected.name).attr('href', playerUrl ? playerUrl + encodeURIComponent(selected.communityId) : (profileUrl || '#'));
+                $modal.find('.cb-player-link').text(selected.name).attr('href', playerUrl + encodeURIComponent(selected.communityId));
                 $modal.find('.cb-ids').text(($item.data('steam-id') || '') + ' · ' + selected.communityId);
                 $modal.find('.cb-steam-link').attr('href', profileUrl || '#').toggle(!!profileUrl);
                 $modal.find('.cb-banned-at').text($item.data('banned-at'));

@@ -182,7 +182,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 |---|---|---|---|
 | Page title and heading "Administrators", administration menu | `Views/Admin/Administrators.cshtml:3` | `done` |  |
 | Table column "Name" ("-" when there is none) | `Views/Admin/Administrators.cshtml:12` | `done` | Added the avatar of each administrator (hidden on phones); your own line is highlighted like "it is me" lines elsewhere. |
-| Table column "SteamID64", link to the Steam profile | `Views/Admin/Administrators.cshtml:13` | `done` |  |
+| Table column "SteamID64", link to the Steam profile | `Views/Admin/Administrators.cshtml:13` | `adapted` | The link goes to the player page of the site, which offers the Steam profile. |
 | Table column "Since" | `Views/Admin/Administrators.cshtml:14` | `done` |  |
 | Button "Remove" (`POST /admin/administrators/{id}/delete`, asks "Remove this administrator?") | `Views/Admin/Administrators.cshtml:28` | `done` |  |
 | Badge "You" on your own line, in place of the button | `Views/Admin/Administrators.cshtml:34` | `done` | `label label-default`. |
@@ -226,7 +226,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Button "Vote" | `Views/Community/Index.cshtml:10` | `done` |  |
 | Message "Nobody has enough comparisons to be listed yet." | `Views/Community/Index.cshtml:15` | `done` | Jumbotron, as the empty ranking of the home page. |
 | Table column "#" (position; the first place stands out) | `Views/Community/Index.cshtml:23` | `done` | As on the home ranking: medals for the first three places, `#N` for the others. |
-| Table column "Player": avatar and name, linked to the player page when the ranking module is on | `Views/Community/Index.cshtml:24` | `adapted` | Same two cells as the home ranking (avatar, name). The name is shortened by `TruncatePlayerName`, as on the home ranking; the full name is in the title of the avatar. |
+| Table column "Player": avatar and name, linked to the player page | `Views/Community/Index.cshtml:24` | `adapted` | Same two cells as the home ranking (avatar, name). The name is shortened by `TruncatePlayerName`, as on the home ranking; the full name is in the title of the avatar. |
 | Table column "Patent" | new | `done` | Added, as on the home ranking: the patent of the player in the current season. Only with the ranking module on. |
 | Table column "Rating" | `Views/Community/Index.cshtml:25` | `done` |  |
 | Table column "Comparisons" | `Views/Community/Index.cshtml:26` | `adapted` | Column on desktop. On phones the column is hidden (`hide-mobile`) and the number is a line under the name; the Bootstrap 5 page scrolled sideways instead. |
@@ -277,7 +277,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Panel "Maintenance": explanation and button "Rebuild the ratings" (asks "Rebuild every rating now?") | `Views/CommunityAdmin/Index.cshtml:73` | `done` |  |
 | Panel "Voters": explanation and the form to remove the votes of a SteamID64 (asks "Remove all votes of this voter?") | `Views/CommunityAdmin/Index.cshtml:85` | `done` |  |
 | Panel "Voters": message "Nobody has voted yet." | `Views/CommunityAdmin/Index.cshtml:94` | `done` |  |
-| Panel "Voters": table column "Player", avatar and name linked to the Steam profile | `Views/CommunityAdmin/Index.cshtml:102` | `done` | The avatar is hidden on phones, where each cell is a line with its label. |
+| Panel "Voters": table column "Player", avatar and name linked to the Steam profile | `Views/CommunityAdmin/Index.cshtml:102` | `adapted` | The name links to the player page of the site, which offers the Steam profile. The avatar is hidden on phones, where each cell is a line with its label. |
 | Panel "Voters": table column "Votes" | `Views/CommunityAdmin/Index.cshtml:103` | `done` |  |
 | Panel "Voters": table column "Last vote" | `Views/CommunityAdmin/Index.cshtml:104` | `done` |  |
 | Panel "Voters": button "Remove votes" on each line (asks for confirmation) | `Views/CommunityAdmin/Index.cshtml:122` | `done` |  |

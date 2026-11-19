@@ -1,8 +1,6 @@
 @model LiveChatMessage
 
 @{
-    var ranking = ViewData[AppConsts.RankingEnabledViewData] as bool? == true;
-
     var cssClass = Model.Team switch
     {
         LiveTeam.Survivor => "text-info",
@@ -25,7 +23,7 @@
     <small>@($"({team.Value})")</small>
 }
 <span class="@cssClass" style="font-weight: bold">
-    <a href="@LiveDisplay.PlayerUrl(Model.Player, ranking)" target="_blank">@Model.Player.Name</a>
+    <a href="@LiveDisplay.PlayerUrl(Model.Player)" target="_blank">@Model.Player.Name</a>
 </span>
 @if (Model.IsAdmin)
 {

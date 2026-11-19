@@ -30,7 +30,7 @@
             </td>
             <td class="vertical-align-middle" data-label="@L["Name"]">@(administrator.Name ?? "-")</td>
             <td class="vertical-align-middle" data-label="SteamID64">
-                <a href="@SteamIds.ProfileUrl(administrator.CommunityId)" rel="noopener" target="_blank"><u>@administrator.CommunityId</u></a>
+                <a href="@PlayerUrls.Details(administrator.CommunityId)" target="_blank"><u>@administrator.CommunityId</u></a>
             </td>
             <td class="text-center vertical-align-middle" data-label="@L["Since"]">@administrator.AddedAtUtc.ToString("d")</td>
             <td class="text-center vertical-align-middle slim admin-actions">

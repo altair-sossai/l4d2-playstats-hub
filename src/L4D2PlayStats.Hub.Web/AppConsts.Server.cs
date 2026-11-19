@@ -19,11 +19,9 @@ public static partial class AppConsts
     public const string FeedKindEvent = "event";
     public const string FeedMessagePartial = "_Message";
     public const string FeedEventPartialFormat = "GameEvents/_{0}";
-    public const string RankingEnabledViewData = "RankingEnabled";
     public const string EventPlaceholderPattern = @"\{(\d+)\}";
     public const string EventPlayerClass = "game-event-player";
     public const string EventHighlightClass = "game-event-highlight";
     public const string LinkTargetBlank = "_blank";
-    public const string LinkRelExternal = "noopener noreferrer";
     public const char EventStar = '★';
 }

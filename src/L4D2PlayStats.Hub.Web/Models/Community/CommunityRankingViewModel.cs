@@ -8,5 +8,5 @@ public class CommunityRankingViewModel
     public int MinimumComparisons { get; init; }
     public int MinimumMatches { get; init; }
     public CommunityRankingSettings Settings { get; init; } = new();
-    public bool PlayerPages { get; init; }
+    public bool Patents { get; init; }
 }

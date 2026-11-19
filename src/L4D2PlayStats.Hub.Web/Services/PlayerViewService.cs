@@ -34,6 +34,7 @@ public class PlayerViewService(
     IPlayerMatchService playerMatchService,
     IMatchViewService matchViewService,
     IPlayerConnectionService playerConnectionService,
+    IPlayerNameService playerNameService,
     ISkinService skinService,
     ISkinShopService skinShopService,
     ICurrentUser currentUser,
@@ -135,11 +136,8 @@ public class PlayerViewService(
         };
     }
 
-    public async Task<PlayerNotFoundModel> NotFoundAsync(PlayerPeriodModel period, long communityId, CancellationToken cancellationToken = default)
+    public async Task<PlayerNotFoundModel> NotFoundAsync(PlayerPeriodModel? period, long communityId, CancellationToken cancellationToken = default)
     {
-        if (communityId <= 0)
-            return new PlayerNotFoundModel(communityId, null, []) { Period = period };
-
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
@@ -147,12 +145,7 @@ public class PlayerViewService(
             ? await playerConnectionService.DetailsAsync(communityId, cancellationToken)
             : new PlayerConnectionDetails(null, []);
         var relatedPlayers = await RelatedAccountsVisibleAsync(cancellationToken) ? connectionInfo.RelatedPlayers : [];
-
-        var knownName = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(profile => profile.CommunityId == communityId)
-            .Select(profile => profile.Name)
-            .FirstOrDefaultAsync(cancellationToken);
+        var knownName = await playerNameService.KnownNameAsync(communityId, cancellationToken);
 
         return new PlayerNotFoundModel(communityId, connectionInfo.Player, relatedPlayers, knownName)
         {

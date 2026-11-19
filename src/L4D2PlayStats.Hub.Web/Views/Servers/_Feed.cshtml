@@ -1,9 +1,5 @@
 @model LiveFeedViewModel
 
-@{
-    ViewData[AppConsts.RankingEnabledViewData] = Model.RankingEnabled;
-}
-
 @foreach (var item in Model.Items)
 {
     <p data-feed-when="@item.Ticks" data-feed-sequence="@item.Sequence" data-feed-kind="@(item is LiveChatMessage ? AppConsts.FeedKindMessage : AppConsts.FeedKindEvent)" title="@LiveDisplay.Time(item.When, Model.TimeZone)">

@@ -6,12 +6,9 @@ namespace L4D2PlayStats.Hub.Web.Helpers;
 
 public static class LiveDisplay
 {
-    public static string? PlayerUrl(LivePlayer? player, bool ranking)
+    public static string? PlayerUrl(LivePlayer? player)
     {
-        if (player?.Id == null)
-            return null;
-
-        return ranking ? PlayerUrls.Details(player.Id.Value) : player.ProfileUrl;
+        return player?.Id == null ? null : PlayerUrls.Details(player.Id.Value);
     }
 
     public static string Avatar(LivePlayer player)

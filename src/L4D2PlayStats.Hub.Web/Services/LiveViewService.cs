@@ -71,7 +71,6 @@ public class LiveViewService(
             Snapshot = liveDataService.Snapshot(server),
             Campaign = campaign,
             CampaignImage = campaignImageService.Url(campaign),
-            RankingEnabled = modules.IsEnabled(HubModule.Ranking),
             AntiCheatPage = modules.IsEnabled(HubModule.AntiCheat)
         };
     }
@@ -98,14 +97,11 @@ public class LiveViewService(
 
     public async Task<LiveFeedViewModel> FeedAsync(GameServer server, long after, CancellationToken cancellationToken = default)
     {
-        var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
-
         return new LiveFeedViewModel
         {
             PublicId = server.PublicId,
             Items = liveDataService.FeedAfter(server, after),
-            TimeZone = await TimeZoneAsync(cancellationToken),
-            RankingEnabled = modules.IsEnabled(HubModule.Ranking)
+            TimeZone = await TimeZoneAsync(cancellationToken)
         };
     }
 

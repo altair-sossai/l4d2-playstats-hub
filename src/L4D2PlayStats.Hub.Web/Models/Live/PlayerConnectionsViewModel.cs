@@ -8,5 +8,4 @@ public class PlayerConnectionsViewModel
     public long? CommunityId { get; init; }
     public PlayerConnectionDetails? Details { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
-    public bool RankingEnabled { get; init; }
 }

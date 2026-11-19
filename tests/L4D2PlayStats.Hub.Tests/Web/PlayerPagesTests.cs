@@ -156,19 +156,54 @@ public partial class PlayerPagesTests
 
         var response = await client.GetAsync($"/player/{Stranger}");
         var html = await response.Content.ReadAsStringAsync();
-        var invalid = await client.GetAsync("/player/0");
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.AreEqual(HttpStatusCode.OK, invalid.StatusCode);
         Assert.Contains("Player not ranked", html);
         Assert.Contains("Available information", html);
         Assert.Contains("Community ID:", html);
         Assert.Contains("Steam ID:", html);
-        Assert.Contains($"https://steamcommunity.com/profiles/{Stranger}", html);
+        Assert.Contains("STEAM_0:1:19867635", html);
+        Assert.Contains("STEAM_1:1:19867635", html);
+        Assert.Contains("[U:1:39735271]", html);
+        Assert.Contains($"href=\"https://steamcommunity.com/profiles/{Stranger}\" class=\"btn btn-primary btn-block player-steam-profile\"", html);
+        Assert.Contains("Open Steam profile", html);
         Assert.Contains("Return to ranking page", html);
         Assert.Contains("noindex", html);
         Assert.DoesNotContain("Related accounts", html);
-        Assert.Contains("Player not ranked", await invalid.Content.ReadAsStringAsync());
+        Assert.DoesNotContain("No statistics yet", html);
+    }
+
+    [TestMethod]
+    public async Task APlayerWithoutStatisticsShowsTheBestKnownName()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await StartAsync(factory);
+        await ConnectAsync(factory, Stranger, "StrangerOnTheServer");
+
+        var html = await client.GetStringAsync($"/player/{Stranger}");
+
+        Assert.Contains("StrangerOnTheServer - Player details", TitleOf(html));
+        Assert.Contains("<td data-label=\"Name:\">StrangerOnTheServer</td>", html);
+        Assert.Contains("Open Steam profile", html);
+    }
+
+    [TestMethod]
+    public async Task AnInvalidPlayerAddressIsNotFound()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await StartAsync(factory);
+
+        foreach (var page in new[] { "/player/null", "/player/undefined", "/player/abc", "/player/0", "/player/-1", "/player/5", "/player/76561197960265728", "/player/99999999999999999999", $"/player/{StatisticsBuilder.PlayerA1}/null", $"/player/{StatisticsBuilder.PlayerA1}/0", $"/player/{StatisticsBuilder.PlayerA1}/5" })
+        {
+            var response = await client.GetAsync(page);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, page);
+            Assert.DoesNotContain("Available information", await response.Content.ReadAsStringAsync(), page);
+        }
     }
 
     [TestMethod]
@@ -399,7 +434,7 @@ public partial class PlayerPagesTests
     }
 
     [TestMethod]
-    public async Task ThePlayerPagesStopAnsweringWithoutTheRanking()
+    public async Task WithoutTheRankingThePlayerPageShowsOnlyTheBasicPage()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
@@ -407,8 +442,24 @@ public partial class PlayerPagesTests
         await StartAsync(factory);
         await factory.SaveAsync(new ModuleSettings { Ranking = false });
 
-        foreach (var page in new[] { "/players", $"/player/{StatisticsBuilder.PlayerA1}", $"/player/{StatisticsBuilder.PlayerA1}/{Stranger}" })
-            Assert.AreEqual(HttpStatusCode.NotFound, (await client.GetAsync(page)).StatusCode, page);
+        Assert.AreEqual(HttpStatusCode.NotFound, (await client.GetAsync("/players")).StatusCode);
+
+        foreach (var page in new[] { $"/player/{StatisticsBuilder.PlayerA1}", $"/player/{StatisticsBuilder.PlayerA1}/{Stranger}", $"/player/{Stranger}" })
+        {
+            var response = await client.GetAsync(page);
+            var html = await response.Content.ReadAsStringAsync();
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, page);
+            Assert.Contains("No statistics yet", html, page);
+            Assert.Contains("Open Steam profile", html, page);
+            Assert.Contains("https://steamcommunity.com/profiles/", html, page);
+            Assert.Contains("Back to the home page", html, page);
+            Assert.DoesNotContain("Player not ranked", html, page);
+            Assert.DoesNotContain("Return to ranking page", html, page);
+            Assert.DoesNotContain("General statistics", html, page);
+        }
+
+        Assert.AreEqual(HttpStatusCode.NotFound, (await client.GetAsync("/player/null")).StatusCode);
     }
 
     private static async Task StartAsync(HubWebFactory factory)

@@ -10,6 +10,7 @@ Todo jogador que jogou nos seus servidores de jogo tem uma página com os result
 
 - [A lista de jogadores](#a-lista-de-jogadores)
 - [A página do jogador](#a-página-do-jogador)
+- [Um jogador sem estatísticas](#um-jogador-sem-estatísticas)
 - [Aba Geral](#aba-geral)
 - [Aba Campanhas](#aba-campanhas)
 - [Aba Skins](#aba-skins)
@@ -32,9 +33,21 @@ A lista tem os mesmos jogadores do ranking do período, todos eles e não só os
 
 ## A página do jogador
 
-Clique em um jogador em qualquer lugar do site para abrir a página dele. Ela tem um seletor de período, um botão **Comparar...** e até quatro abas.
+Clique em um jogador em qualquer lugar do site para abrir a página dele: o ranking, as partidas, o servidor ao vivo, o ranking da comunidade e as páginas da administração levam todos a ela, nunca direto para a Steam. Ela tem um seletor de período, um botão **Comparar...** e até quatro abas.
 
 ![A página do jogador](../images/pt/player.webp)
+
+## Um jogador sem estatísticas
+
+Um jogador que não tem estatísticas no período escolhido, ou que nunca jogou uma partida ranqueada, também tem uma página. Ela mostra:
+
+- **Jogador fora do ranking**, com o seletor de período, para escolher outra temporada ou todo o período. Com o módulo de ranking desligado, ela diz **Ainda sem estatísticas**.
+- O avatar e um botão **Abrir perfil na Steam**.
+- O melhor nome que o site conhece: o último nome visto em um servidor de jogo, ou o nome do perfil Steam.
+- O SteamID64 (Community ID), o Steam ID nas formas `STEAM_0` e `STEAM_1` e o Steam3 ID (`[U:1:n]`), cada um com botão de copiar, e o endereço do perfil.
+- O último login e o número de conexões, e as [contas relacionadas](#contas-relacionadas), quando o módulo do servidor ao vivo está ligado.
+
+Um endereço que não é um SteamID64 válido, como `/player/0` ou `/player/abc`, responde como não encontrado.
 
 ## Aba Geral
 

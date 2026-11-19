@@ -25,6 +25,11 @@
             width: 100%;
         }
 
+        .player-steam-profile {
+            max-width: 184px;
+            margin: 10px auto 0 auto;
+        }
+
         th {
             width: 1%;
             white-space: nowrap;
@@ -51,14 +56,25 @@
 }
 
 <div class="alert alert-warning text-center" role="alert">
-    <h4>@L["Player not ranked"]</h4>
-    <p>@L["This player is not currently present in the ranking."]</p>
-    <p>@L["Therefore, complete statistics are unavailable. The known account information is shown below."]</p>
+    @if (Model.Ranking)
+    {
+        <h4>@L["Player not ranked"]</h4>
+        <p>@L["This player is not currently present in the ranking."]</p>
+        <p>@L["Therefore, complete statistics are unavailable. The known account information is shown below."]</p>
+    }
+    else
+    {
+        <h4>@L["No statistics yet"]</h4>
+        <p>@L["This site has no statistics for this player yet. The known account information is shown below."]</p>
+    }
 </div>
 
 <div class="row">
     <div class="col-sm-3 text-center player-summary-avatar-container">
         <img src="/avatar/@(Model.CommunityId).jpg" alt="@playerName" title="@playerName" class="img-responsive img-thumbnail center-block player-summary-avatar" onerror="imgOnError(this)" data-lity/>
+        <a href="@Model.ProfileUrl" class="btn btn-primary btn-block player-steam-profile" target="_blank" rel="noopener noreferrer">
+            <span class="glyphicon glyphicon-new-window"></span> @L["Open Steam profile"]
+        </a>
     </div>
     <div class="col-sm-9">
         <div class="panel panel-default">
@@ -82,16 +98,27 @@
                         @await Html.PartialAsync("_CopyButton", Model.CommunityId.ToString())
                     </td>
                 </tr>
-                @if (!string.IsNullOrWhiteSpace(Model.SteamId))
-                {
-                    <tr>
-                        <th>@L["Steam ID"]:</th>
-                        <td data-label="@L["Steam ID"]:">
-                            @Model.SteamId
-                            @await Html.PartialAsync("_CopyButton", Model.SteamId)
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <th>@L["Steam ID"]:</th>
+                    <td data-label="@L["Steam ID"]:">
+                        @Model.SteamId
+                        @await Html.PartialAsync("_CopyButton", Model.SteamId)
+                    </td>
+                </tr>
+                <tr>
+                    <th>@L["Steam ID"] (STEAM_1):</th>
+                    <td data-label="@L["Steam ID"] (STEAM_1):">
+                        @Model.GameSteamId
+                        @await Html.PartialAsync("_CopyButton", Model.GameSteamId)
+                    </td>
+                </tr>
+                <tr>
+                    <th>@L["Steam3 ID"]:</th>
+                    <td data-label="@L["Steam3 ID"]:">
+                        @Model.Steam3
+                        @await Html.PartialAsync("_CopyButton", Model.Steam3)
+                    </td>
+                </tr>
                 @if (Model.LastConnectedAtUtc.HasValue)
                 {
                     <tr>
@@ -106,18 +133,15 @@
                         <td data-label="@L["Connections"]:">@Model.ConnectionCount.Value.ToString("N0")</td>
                     </tr>
                 }
-                @if (!string.IsNullOrWhiteSpace(Model.ProfileUrl))
-                {
-                    <tr>
-                        <th>@L["Profile URL"]:</th>
-                        <td data-label="@L["Profile URL"]:">
-                            <a href="@Model.ProfileUrl" target="_blank" rel="noopener noreferrer">
-                                @Model.ProfileUrl
-                            </a>
-                            @await Html.PartialAsync("_CopyButton", Model.ProfileUrl)
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <th>@L["Profile URL"]:</th>
+                    <td data-label="@L["Profile URL"]:">
+                        <a href="@Model.ProfileUrl" target="_blank" rel="noopener noreferrer">
+                            @Model.ProfileUrl
+                        </a>
+                        @await Html.PartialAsync("_CopyButton", Model.ProfileUrl)
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -175,5 +199,5 @@
 }
 
 <div class="text-center">
-    <a href="/" class="btn btn-primary">@L["Return to ranking page"]</a>
+    <a href="/" class="btn btn-primary">@(Model.Ranking ? L["Return to ranking page"] : L["Back to the home page"])</a>
 </div>

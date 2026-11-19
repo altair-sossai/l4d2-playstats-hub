@@ -92,7 +92,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 
 | Module | What it contains | Needs | Default | When it is off |
 |---|---|---|---|---|
-| Ranking and statistics | Ranking, matches, players, patents, history, punishments and the pages inside the game. | | On | The first page shows a short welcome text. Matches are still built from the files, out of sight. |
+| Ranking and statistics | Ranking, matches, players, patents, history, punishments and the pages inside the game. | | On | The first page shows a short welcome text. Matches are still built from the files, out of sight. The player links still open the [basic player page](players.md#a-player-without-statistics), with the Steam profile, but without statistics. |
 | Live server | The match in progress on each server. | | On | No **Server** menu item. The plugins' live data is refused. The related accounts and player connections are not shown, whatever [Privacy](#privacy) says. |
 | Site chat | Writing in the game chat from the live page, and chat bans. | Live server | Off | No chat box on the live page and no **Chat bans** page. |
 | Remote commands | Commands sent by administrators from the site to a game server. | Live server | Off | No **Remote commands** page and no terminal on the live page. |

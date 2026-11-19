@@ -96,14 +96,14 @@
                                          class="img-responsive img-character @(survivor.Dead ? "img-gray" : string.Empty)"/>
                                 </td>
                                 <td style="width: 40px" rowspan="2">
-                                    <a href="@LiveDisplay.PlayerUrl(survivor, Model.RankingEnabled)" target="_blank">
+                                    <a href="@LiveDisplay.PlayerUrl(survivor)" target="_blank">
                                         <img src="@LiveDisplay.Avatar(survivor)" alt="@survivor.Name" onerror="imgOnError(this)"
                                              data-toggle="tooltip" data-placement="top" title="@survivor.Name"
                                              class="img-responsive img-avatar @(survivor.Dead ? "img-gray" : string.Empty)"/>
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="@LiveDisplay.PlayerUrl(survivor, Model.RankingEnabled)" target="_blank">@survivor.Name</a>
+                                    <a href="@LiveDisplay.PlayerUrl(survivor)" target="_blank">@survivor.Name</a>
 
                                     @if (survivor.IsAdmin)
                                     {
@@ -280,14 +280,14 @@
                                          class="img-responsive img-infected"/>
                                 </td>
                                 <td style="width: 40px">
-                                    <a href="@LiveDisplay.PlayerUrl(infected, Model.RankingEnabled)" target="_blank">
+                                    <a href="@LiveDisplay.PlayerUrl(infected)" target="_blank">
                                         <img src="@LiveDisplay.Avatar(infected)" alt="@infected.Name" onerror="imgOnError(this)"
                                              data-toggle="tooltip" data-placement="top" title="@infected.Name"
                                              class="img-responsive img-avatar"/>
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="@LiveDisplay.PlayerUrl(infected, Model.RankingEnabled)" target="_blank">
+                                    <a href="@LiveDisplay.PlayerUrl(infected)" target="_blank">
                                         @infected.Name
                                     </a>
 
@@ -379,7 +379,7 @@
             <span style="font-weight: bold">@L["Spectators"] (@spectators.Count): </span>
             @foreach (var spectator in spectators)
             {
-                <a href="@LiveDisplay.PlayerUrl(spectator, Model.RankingEnabled)" target="_blank" class="label label-default" id="spectator-@spectator.CommunityId">
+                <a href="@LiveDisplay.PlayerUrl(spectator)" target="_blank" class="label label-default" id="spectator-@spectator.CommunityId">
                     @spectator.Name
                 </a>
             }

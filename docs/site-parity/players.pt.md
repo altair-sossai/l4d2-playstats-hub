@@ -19,7 +19,7 @@ Conferido com as páginas renderizadas a partir de uma cópia dos dados de produ
 | Query `asc` (padrão `false`) | Controllers/PlayersController.cs:27 | done | |
 | Item de menu "Jogadores" (dentro de "Mais") ativo na lista | Controllers/PlayersController.cs:29 | done | `ViewBag.Players = "active"`; não é definido na página do jogador, como antes. |
 | `GET /player/{communityId}/{compareWith?}` (jogador e comparação) | Controllers/PlayersController.cs:41-97 | done | Mesmo endereço. |
-| `communityId <= 0` mostra a página "fora do ranking" | Controllers/PlayersController.cs:48-49 | done | |
+| `communityId <= 0` mostra a página "fora do ranking" | Controllers/PlayersController.cs:48-49 | adapted | Um endereço que não é um SteamID64 válido (`/player/0`, `/player/null`, `/player/5`) responde 404. Todo SteamID64 válido recebe a página "fora do ranking", também com o módulo de ranking desligado. |
 | Um jogador fora do ranking mostra a página "fora do ranking" com as informações de conexão (HTTP 200) | Controllers/PlayersController.cs:55-64 | done | A primeira versão do hub respondia 404 aqui. |
 | `compareWith` que não está no ranking é ignorado | Controllers/PlayersController.cs:53 | done | |
 | Ranking da temporada atual como fonte das duas páginas | Controllers/PlayersController.cs:31, :51, Core/Ranking/Services/RankingServiceCached.cs:11-19 | adapted | A chamada da API antiga devolvia só os 100 primeiros jogadores do ranking, então a lista parava em 100 e o jogador 101 caía na página "fora do ranking". O hub usa o ranking inteiro da temporada. |
@@ -226,7 +226,9 @@ O cartão é o antigo `Views/LastMatches/_Match.cshtml`. A página do jogador us
 | Conexões, quando conhecidas | Views/Players/PlayerNotFound.cshtml:87-93 | done | |
 | URL do perfil (nova aba) com o botão de copiar | Views/Players/PlayerNotFound.cshtml:94-105 | done | |
 | Painel "Contas relacionadas" com as mesmas cinco colunas da página do jogador | Views/Players/PlayerNotFound.cshtml:112-160 | adapted | Com o módulo de servidor ao vivo, e seguindo a mesma configuração de privacidade da página do jogador. |
-| Botão "Retornar à página de ranking" | Views/Players/PlayerNotFound.cshtml:162-164 | done | |
+| Botão "Retornar à página de ranking" | Views/Players/PlayerNotFound.cshtml:162-164 | done | "Voltar para a página inicial" com o módulo de ranking desligado. |
+| Botão "Abrir perfil na Steam" abaixo do avatar, ID da Steam na forma `STEAM_1`, Steam3 ID (novo) | - | adapted | Adição do hub: todo link de jogador do site abre esta página em vez do perfil Steam, então a página oferece o caminho para a Steam. |
+| Aviso "Ainda sem estatísticas" com o módulo de ranking desligado (novo) | - | adapted | Adição do hub. |
 | Estilos (tamanho do avatar, células de cabeçalho, margem no celular) | Views/Players/PlayerNotFound.cshtml:15-34 | done | |
 | Metadados da página: título "{name or id} - Detalhes do jogador" | PageMetadata/PlayerNotFoundPageMetadata.cs:14 | done | |
 | Metadados da página: descrição "Veja as informações disponíveis sobre o jogador {name} no ..." | PageMetadata/PlayerNotFoundPageMetadata.cs:15 | adapted | O texto citava "L4D2 Competitive"; agora recebe o nome do site. |
