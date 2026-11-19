@@ -17,7 +17,7 @@ Como substituir uma cópia em funcionamento do site anterior (`l4d2-playstats-we
 
 | Parte | O que muda | O que os jogadores percebem |
 |---|---|---|
-| 1 | O site novo roda na porta `5080`, ao lado do antigo. O nginx e o site antigo não são mexidos. | Nada. |
+| 1 | O site novo roda na porta `5090`, ao lado do antigo. O nginx e o site antigo não são mexidos. | Nada. |
 | 2 | Um servidor de jogo envia as partidas dele para o site novo. | As partidas desse servidor deixam de chegar ao site antigo. |
 | 3 | O site antigo para e o novo assume a porta dele, a `5000`. O nginx continua repassando `https://l4d2.com.br` para ela. | As páginas novas, nos mesmos endereços. |
 | 4 | Só se algo der errado: o site antigo volta. | As páginas antigas de novo. |
@@ -30,11 +30,11 @@ Mantenha `/home/l4d2-playstats-web`, a pasta do site antigo, como está até ter
 2. Rode o instalador sem domínio. Sem `HUB_DOMAIN` ele não instala o Caddy, então o nginx e as portas 80 e 443 ficam como estão:
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo HUB_PORT=5080 bash
+   curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo HUB_PORT=5090 bash
    ```
 
-3. Abra a porta `5080`. Com o UFW ativo, o instalador já fez isso; senão rode `sudo ufw allow 5080/tcp`. Se o seu provedor de hospedagem tem um firewall próprio, abra a porta nele também.
-4. Abra `http://124.198.128.43:5080`, cole o código de configuração que o instalador mostrou e entre com a Steam. Essa conta vira o primeiro administrador.
+3. Abra a porta `5090`. Ela não é a `5080` padrão do instalador porque, nesta VPS, essa porta já é usada pela API do anti-cheat (`127.0.0.1:5080`). Com o UFW ativo, o instalador já fez isso; senão rode `sudo ufw allow 5090/tcp`. Se o seu provedor de hospedagem tem um firewall próprio, abra a porta nele também.
+4. Abra `http://124.198.128.43:5090`, cole o código de configuração que o instalador mostrou e entre com a Steam. Essa conta vira o primeiro administrador.
 5. Siga o assistente ([Configuração inicial](manual/first-run.pt.md)). Na página **Módulos**, ligue o que o site antigo tinha: ranking, servidor ao vivo, chat do site, comandos remotos, loja de skins e página do Anti-Cheat. Na página **Servidor de jogo**, crie o servidor de jogo e copie as duas linhas que ela mostra, `playstats_url` e `playstats_token`: a chave aparece só uma vez.
 6. Passe pelo resto da administração ([Administração](manual/administration.pt.md)): **Configurações → Privacidade** (quem vê as contas relacionadas), **Administração → Modos de jogo** (quais configurações contam para o ranking), as temporadas, a chave da Steam Web API, os outros administradores e o catálogo de skins da loja. Deixe o **Endereço público do site** vazio por enquanto.
 
@@ -82,7 +82,7 @@ Precisa existir só uma cópia de cada plugin. Nenhum dos cinco pode ficar em ou
 As linhas para o `cfg/server_secrets.cfg`, com o seu token no lugar do exemplo:
 
 ```text
-playstats_url "http://124.198.128.43:5080"
+playstats_url "http://124.198.128.43:5090"
 playstats_token "my-server:3f9c…"
 l4d2_web_secret "my-server:3f9c…"
 ```
@@ -90,7 +90,7 @@ l4d2_web_secret "my-server:3f9c…"
 E a linha para o `cfg/server.cfg`:
 
 ```text
-sm_cvar l4d2_web_url "http://124.198.128.43:5080"
+sm_cvar l4d2_web_url "http://124.198.128.43:5090"
 ```
 
 - `playstats_url` é um endereço HTTP simples, então o navegador dentro do jogo também o abre e o `playstats_ingame_url` pode ficar vazio.
@@ -114,7 +114,7 @@ Faça enquanto ninguém está jogando. Depois disso os dois sites escutam na por
 1. Pare o site antigo, mantendo os arquivos dele: `screen -S l4d2-playstats-web -X quit`, com o usuário que o iniciou. Se o `screen -ls` não o mostrar, rode os dois comandos com `sudo`.
 2. Impeça que ele inicie no boot: rode `crontab -e` como `devops` e apague a linha `@reboot` do `l4d2-playstats-web`, ou coloque `#` na frente dela.
 3. Desligue a publicação automática do site antigo, o pipeline do Azure Pipelines do `l4d2-playstats-web`. Senão um push o inicia de novo na porta `5000`.
-4. Passe o site novo para a porta `5000`: no `/etc/l4d2-playstats-hub/hub.env`, troque `ASPNETCORE_URLS=http://0.0.0.0:5080` por `ASPNETCORE_URLS=http://0.0.0.0:5000`, depois rode `sudo playstats-hub restart` e `playstats-hub status`.
+4. Passe o site novo para a porta `5000`: no `/etc/l4d2-playstats-hub/hub.env`, troque `ASPNETCORE_URLS=http://0.0.0.0:5090` por `ASPNETCORE_URLS=http://0.0.0.0:5000`, depois rode `sudo playstats-hub restart` e `playstats-hub status`.
 5. Confira: `curl -s http://127.0.0.1:5000/api/ping` responde, `https://l4d2.com.br` e `http://124.198.128.43:5000` mostram o site novo, e o login com a Steam funciona em `https://l4d2.com.br`.
 6. Em **Administração → Configurações → Site**, defina o **Endereço público do site** como `https://l4d2.com.br`.
 7. No servidor de jogo, aponte tudo para a porta `5000` e defina o endereço que os jogadores leem no chat: as duas primeiras linhas no `cfg/server_secrets.cfg`, a última no `cfg/server.cfg`. Depois troque o mapa ou reinicie o servidor, e rode o `sm_playstats_test` de novo:
@@ -125,7 +125,7 @@ Faça enquanto ninguém está jogando. Depois disso os dois sites escutam na por
    sm_cvar l4d2_web_url "http://124.198.128.43:5000"
    ```
 
-8. Feche a porta `5080`, que não é mais usada: `sudo ufw delete allow 5080/tcp`, e no firewall do provedor se você a abriu lá.
+8. Feche a porta `5090`, que não é mais usada: `sudo ufw delete allow 5090/tcp`, e no firewall do provedor se você a abriu lá.
 
 Os plugins também poderiam usar `https://l4d2.com.br`; o endereço simples os mantém funcionando aconteça o que acontecer com o certificado. O nginx não precisa de mudança: ele continua repassando `https://l4d2.com.br` para a porta `5000`, e o site novo acredita nos cabeçalhos `X-Forwarded-*` de um proxy na mesma máquina. Se o login com a Steam voltar para um endereço `http://` ou para o endereço IP, o `location` do nginx precisa repassar estes cabeçalhos:
 
@@ -143,7 +143,7 @@ Se algo não funcionar e não der para corrigir na hora:
 2. Inicie o site antigo como antes: `cd /home/l4d2-playstats-web && screen -d -m -S l4d2-playstats-web sh -c './L4D2PlayStats.Web'`. Coloque a linha `@reboot` dele de volta e ligue o pipeline dele de novo.
 3. No servidor de jogo, extraia o backup na pasta `left4dead2` (`tar -xzf ~/playstats-plugins-backup.tar.gz`) e reinicie o servidor. Isso traz de volta os plugins antigos e todas as configurações em `cfg`.
 
-As partidas jogadas enquanto o servidor de jogo apontava para o site novo ficam só nele; o site antigo não as recebe. Para tentar de novo depois, volte o `ASPNETCORE_URLS` para a porta `5080` no `/etc/l4d2-playstats-hub/hub.env` e rode `sudo systemctl enable --now l4d2-playstats-hub`.
+As partidas jogadas enquanto o servidor de jogo apontava para o site novo ficam só nele; o site antigo não as recebe. Para tentar de novo depois, volte o `ASPNETCORE_URLS` para a porta `5090` no `/etc/l4d2-playstats-hub/hub.env` e rode `sudo systemctl enable --now l4d2-playstats-hub`.
 
 ## Os dados antigos
 
