@@ -4,6 +4,7 @@ const { launch } = require('./cdp');
 const { captureTerminals } = require('./terminal');
 const { captureSite } = require('./site');
 const { captureWizard } = require('./wizard');
+const { captureSwitch } = require('./switch');
 
 const cultures = { en: 'en-US', pt: 'pt-BR', es: 'es-ES' };
 
@@ -33,6 +34,8 @@ function usage() {
   node capture.js terminal [--langs en,pt,es] [--out docs/images] [--only name,...]
   node capture.js site     --base http://localhost:5103 --lang en --admin <SteamID64> --token <id:key> [--token <id:key>] [--player <SteamID64>] [--out docs/images] [--only name,...]
   node capture.js wizard   --base http://localhost:5103 --lang en --admin <SteamID64> --setup-code <code> [--out docs/images] [--only name,...]
+  node capture.js switch   --base http://localhost:5103 --lang pt --admin <SteamID64> --setup-code <code> --logo <file> [--site-address http://124.198.128.43:5090] [--admins <SteamID64>,...] [--steam-key-file <file>] [--token-file <file>] [--out docs/images]
+  node capture.js switch   --base http://localhost:5103 --lang pt --admin <SteamID64> --step overview [--out docs/images]
 
 Common options: --browser <path to Edge or Chrome>.`);
 }
@@ -40,7 +43,7 @@ Common options: --browser <path to Edge or Chrome>.`);
 async function main() {
     const options = parse(process.argv.slice(2));
 
-    if (!['terminal', 'site', 'wizard'].includes(options.command)) {
+    if (!['terminal', 'site', 'wizard', 'switch'].includes(options.command)) {
         usage();
         process.exit(1);
     }
@@ -71,6 +74,8 @@ async function main() {
 
         if (options.command === 'site')
             await captureSite(page, context);
+        else if (options.command === 'switch')
+            await captureSwitch(page, context);
         else
             await captureWizard(page, context);
     } finally {

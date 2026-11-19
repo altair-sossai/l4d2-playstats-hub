@@ -8,6 +8,7 @@ Toma las capturas de pantalla que usa la documentación y las guarda en `docs/im
 |---|---|---|
 | `terminal` | El instalador y los comandos de Docker, dibujados como ventanas de terminal a partir de la salida grabada en [terminal/](terminal/). Las mismas imágenes van a la carpeta de cada idioma. | Nada más. |
 | `wizard` | Cada paso del asistente de instalación, desde el código de configuración hasta el sitio terminado. | Un sitio iniciado sobre una carpeta de datos vacía, y su código de configuración. |
+| `switch` | La instalación de l4d2.com.br para [Cambiar desde el sitio antiguo](../../docs/switch-from-old-site.es.md): el asistente y las páginas de administración con los valores de ese sitio, y la vista general después de la importación. | Un sitio iniciado sobre una carpeta de datos vacía, su código de configuración y el logo del sitio. Para la vista general, la carpeta de datos después de la importación. |
 | `site` | Todas las páginas públicas, la tienda de skins, el ranking de la comunidad, las páginas dentro del juego, el diseño para teléfono, los dos temas y todas las páginas de administración. | Un sitio con datos, con la sesión iniciada mediante el inicio de sesión de desarrollo. |
 
 Las listas de capturas están en [site.js](site.js), [wizard.js](wizard.js) y [terminal-shots.json](terminal-shots.json). Cada captura tiene un nombre, una página, un ancho (1280 para escritorio, 390 para teléfono, 900x450 para las páginas dentro del juego), las acciones que se hacen antes de la captura y lo que se conserva: la página completa, la parte visible o un elemento. Las imágenes son WebP con calidad 80.
@@ -36,6 +37,16 @@ node tools/screenshots/capture.js wizard --base http://localhost:5103 --lang en 
 ```
 
 El asistente se ejecuta una sola vez por carpeta de datos. Para cada idioma, detén el sitio, vacía la carpeta, vuelve a iniciarlo y usa el código nuevo. La herramienta oculta el campo del inicio de sesión de desarrollo antes de cada captura, porque un sitio de producción no lo muestra. Después del último paso abre la página del servidor nuevo en el área de administración y envía una señal como lo haría un servidor de juego, para que el estado de la conexión se ponga en verde.
+
+## La guía del cambio
+
+El comando `switch` rellena el asistente y las páginas de administración con los valores de l4d2.com.br, listados al principio de [switch.js](switch.js), y captura cada paso como `switch-*.webp`. Inicia el sitio sobre una carpeta de datos vacía, como para el asistente, y luego:
+
+```bash
+node tools/screenshots/capture.js switch --base http://localhost:5103 --lang es --admin 76561198000000000 --setup-code <código> --logo logo.png --site-address http://124.198.128.43:5090
+```
+
+`--site-address` reemplaza la dirección local en las líneas que se muestran para el servidor de juego. El mismo comando configura un sitio real: `--admins` agrega más administradores, `--steam-key-file` lee la clave de la Steam Web API de un archivo y `--token-file` guarda el token del servidor de juego en un archivo, para que ninguno de los dos aparezca en pantalla. Con `--step overview` solo captura la vista general del área de administración, después de importar las estadísticas.
 
 ## Datos ficticios
 

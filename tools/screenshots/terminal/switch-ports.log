@@ -1,0 +1,5 @@
+LISTEN 0      512        127.0.0.1:5080      0.0.0.0:*    users:(("L4D2AntiCheat.A",pid=2739986,fd=242))
+LISTEN 0      512          0.0.0.0:5090      0.0.0.0:*    users:(("L4D2PlayStats.H",pid=2860871,fd=329))
+LISTEN 0      511          0.0.0.0:443       0.0.0.0:*    users:(("nginx",pid=2845149,fd=6),("nginx",pid=2845148,fd=6),("nginx",pid=2699817,fd=6))
+LISTEN 0      511          0.0.0.0:80        0.0.0.0:*    users:(("nginx",pid=2845149,fd=7),("nginx",pid=2845148,fd=7),("nginx",pid=2699817,fd=7))
+LISTEN 0      512                *:5000            *:*    users:(("L4D2PlayStats.W",pid=2830680,fd=329))

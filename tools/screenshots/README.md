@@ -8,6 +8,7 @@ Takes the screenshots used by the documentation and saves them in `docs/images/<
 |---|---|---|
 | `terminal` | The installer and the Docker commands, rendered as terminal windows from the recorded output in [terminal/](terminal/). The same images go to every language folder. | Nothing else. |
 | `wizard` | Every step of the first-run wizard, from the setup code to the finished site. | A site started on an empty data folder, and its setup code. |
+| `switch` | The installation of l4d2.com.br for [Switching from the old site](../../docs/switch-from-old-site.md): the wizard and the administration pages with the values of that site, and the overview after the import. | A site started on an empty data folder, its setup code and the logo of the site. For the overview, the data folder after the import. |
 | `site` | Every public page, the skin shop, the community ranking, the in-game pages, the phone layout, both themes and every administration page. | A site with data, signed in through the development sign-in. |
 
 The lists of shots are in [site.js](site.js), [wizard.js](wizard.js) and [terminal-shots.json](terminal-shots.json). Each shot has a name, a page, a width (1280 for desktop, 390 for phone, 900x450 for the in-game pages), the actions done before the capture, and what to keep: the full page, the visible part, or one element. Images are WebP at quality 80.
@@ -36,6 +37,16 @@ node tools/screenshots/capture.js wizard --base http://localhost:5103 --lang en 
 ```
 
 The wizard runs only once per data folder. For each language, stop the site, empty the folder, start it again and use the new code. The tool hides the development sign-in field before each capture, since a production site does not show it. After the last step it opens the page of the new server in the administration area and sends a heartbeat as a game server would, so the connection status turns green.
+
+## The switch guide
+
+The `switch` command fills the wizard and the administration pages with the values of l4d2.com.br, listed at the top of [switch.js](switch.js), and captures each step as `switch-*.webp`. Start the site on an empty data folder, as for the wizard, then:
+
+```bash
+node tools/screenshots/capture.js switch --base http://localhost:5103 --lang en --admin 76561198000000000 --setup-code <code> --logo logo.png --site-address http://124.198.128.43:5090
+```
+
+`--site-address` replaces the local address in the lines shown for the game server. The same command configures a real site: `--admins` adds more administrators, `--steam-key-file` reads the Steam Web API key from a file and `--token-file` saves the token of the game server to a file, so neither is printed. With `--step overview` it only captures the overview of the administration area, after the statistics are imported.
 
 ## Fictional data
 

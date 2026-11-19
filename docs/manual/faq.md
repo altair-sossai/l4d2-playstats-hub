@@ -71,7 +71,7 @@ Yes. The current season keeps its dates; the new length applies from the next on
 No. A match comes from the statistics files. To fix a wrong result, [edit the score of the map](matches.md#editing-the-score-of-a-map).
 
 **How do I import the data of my old site?**
-The data migration is a separate program, outside this repository, that uploads the old statistics files through the same path the plugins use. See [the roadmap](../roadmap.md#data-migration).
+The data migration is a separate program, outside this repository, that uploads the old statistics files through the same path the plugins use. See [the roadmap](../roadmap.md#data-migration), and [Bring the data of the old site](../switch-from-old-site.md#bring-the-data-of-the-old-site) for the commands used on l4d2.com.br.
 
 **Can I run two copies of the site behind a load balancer?**
 No. The live match is kept in the memory of one process. Run one copy.

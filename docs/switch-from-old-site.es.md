@@ -11,7 +11,6 @@ Cómo reemplazar una copia en funcionamiento del sitio anterior (`l4d2-playstats
 - [Parte 2: prueba con un servidor de juego](#parte-2-prueba-con-un-servidor-de-juego)
 - [Parte 3: el cambio](#parte-3-el-cambio)
 - [Parte 4: volver atrás](#parte-4-volver-atrás)
-- [Los datos antiguos](#los-datos-antiguos)
 
 ## El plan
 
@@ -26,19 +25,109 @@ Deja `/home/l4d2-playstats-web`, la carpeta del sitio antiguo, tal como está ha
 
 ## Parte 1: instala el sitio nuevo junto al antiguo
 
-1. Conéctate al VPS por SSH, con un usuario que pueda usar `sudo`.
-2. Ejecuta el instalador sin dominio. Sin `HUB_DOMAIN` no instala Caddy, así que nginx y los puertos 80 y 443 quedan como están:
+En l4d2.com.br esta parte se hizo el 19 de noviembre de 2026. El sitio nuevo funciona en `http://124.198.128.43:5090` con el ranking del sitio antiguo, y nada de lo que usan los jugadores cambió.
+
+### Ejecuta el instalador
+
+1. Conéctate al VPS por SSH como `root`, o con un usuario que pueda usar `sudo`.
+2. Ejecuta el instalador sin dominio. Sin `HUB_DOMAIN` no instala Caddy, así que nginx y los puertos 80 y 443 quedan como están. `HUB_PORT=5090` no es el `5080` por defecto del instalador porque, en este VPS, ese puerto ya lo usa la API del anti-cheat (`127.0.0.1:5080`):
 
    ```bash
    curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo HUB_PORT=5090 bash
    ```
 
-3. Abre el puerto `5090`. No es el `5080` por defecto del instalador porque, en este VPS, ese puerto ya lo usa la API del anti-cheat (`127.0.0.1:5080`). Con UFW activo, el instalador ya lo hizo; si no, ejecuta `sudo ufw allow 5090/tcp`. Si tu proveedor de hosting tiene su propio firewall, abre el puerto ahí también.
-4. Abre `http://124.198.128.43:5090`, pega el código de configuración que mostró el instalador e inicia sesión con Steam. Esa cuenta pasa a ser el primer administrador.
-5. Sigue el asistente ([Configuración inicial](manual/first-run.es.md)). En la página **Módulos**, activa lo que tenía el sitio antiguo: ranking, servidor en vivo, chat del sitio, comandos remotos, tienda de skins y página del Anti-Cheat. En la página **Servidor de juego**, crea el servidor de juego y copia las dos líneas que muestra, `playstats_url` y `playstats_token`: la clave se muestra una sola vez.
-6. Recorre el resto de la administración ([Administración](manual/administration.es.md)): **Configuración → Privacidad** (quién ve las cuentas relacionadas), **Administración → Modos de juego** (qué configuraciones cuentan para el ranking), las temporadas, la clave de la Steam Web API, los demás administradores y el catálogo de skins de la tienda. Deja la **Dirección pública del sitio** vacía por ahora.
+   ![El instalador en el VPS de l4d2.com.br](images/es/switch-installer.webp)
 
-[Instalar en un VPS Linux](install-linux.es.md) explica cada paso del instalador y los comandos `playstats-hub`.
+3. Abre el puerto `5090`. Con UFW activo, el instalador ya lo hizo; si no, ejecuta `sudo ufw allow 5090/tcp`. En este VPS UFW está desactivado. Si tu proveedor de hosting tiene su propio firewall, abre el puerto ahí también.
+
+El instalador solo agrega la aplicación: `/opt/l4d2-playstats-hub`, los datos en `/var/lib/l4d2-playstats-hub`, la configuración en `/etc/l4d2-playstats-hub/hub.env`, el servicio `l4d2-playstats-hub` y el comando `playstats-hub`. El sitio antiguo, la API del anti-cheat y nginx siguen en sus puertos:
+
+![El sitio antiguo en el 5000, la API del anti-cheat en el 5080, nginx en el 80 y el 443, y el sitio nuevo en el 5090](images/es/switch-ports.webp)
+
+[Instalación en un VPS Linux](install-linux.es.md) explica cada paso del instalador y los comandos `playstats-hub`.
+
+### El asistente de configuración
+
+Abre `http://124.198.128.43:5090`. El asistente se explica en [Configuración inicial](manual/first-run.es.md); estos son los valores usados en l4d2.com.br.
+
+1. Pega el código de configuración que mostró el instalador e inicia sesión con Steam. Esa cuenta pasa a ser el primer administrador.
+
+   ![El código de configuración](images/es/switch-setup-code.webp)
+
+2. El sitio:
+
+   | Campo | Valor | De dónde viene |
+   |---|---|---|
+   | Nombre del sitio | `L4D2 Competitive` | El nombre en el título de las páginas antiguas. |
+   | Logo del sitio | `logo.png` | El logo del sitio antiguo, `wwwroot/imgs/logo.png` en `l4d2-playstats-web`. |
+   | Idioma predeterminado | Português | |
+   | Zona horaria | `America/Sao_Paulo` | |
+   | Duración de la temporada, en meses | `2` | El sitio antiguo empezaba un ranking nuevo cada dos meses. |
+   | Clave de la Steam Web API | La primera clave de `SteamApiKey` | `/home/l4d2-playstats-web/appsettings.json`. El sitio antiguo guarda dos claves separadas por `;`; el sitio nuevo usa una. |
+
+   ![El paso del sitio](images/es/switch-site.webp)
+
+3. Los módulos: todo lo que tenía el sitio antiguo. El ranking de la comunidad queda desactivado, porque el sitio antiguo no lo tenía.
+
+   ![El paso de los módulos](images/es/switch-modules.webp)
+
+4. El servidor de juego: el nombre `l4d2.com.br | Competitive`, el mismo del sitio antiguo, y la dirección `124.198.128.93:27015`, la IP de `server.l4d2.com.br` y el puerto del servidor de juego.
+
+   ![El paso del servidor de juego](images/es/switch-server.webp)
+
+5. **Crear** muestra las dos líneas para el servidor de juego. Copia el token ahora: se muestra una sola vez. En l4d2.com.br se guardó en el VPS en `/root/l4d2-playstats-hub-server-token.txt`, que solo `root` puede leer. Se usa para traer los datos antiguos, más abajo, y en la [Parte 2](#parte-2-prueba-con-un-servidor-de-juego).
+
+   ![Las líneas para el servidor de juego](images/es/switch-server-token.webp)
+
+6. **Continuar** y **Finalizar**. El sitio abre el área de administración.
+
+   ![El área de administración justo después del asistente](images/es/switch-done.webp)
+
+### El resto de la administración
+
+| Página | Qué se configuró | De dónde viene |
+|---|---|---|
+| **Configuración → Apariencia** | Los tres enlaces del pie del sitio antiguo (Server repository, GitHub, Steam), las palabras clave para buscadores y el ID de Google Analytics `G-4QMNBJLQST`. | El `_Layout.cshtml` antiguo. Con el mismo ID de Google Analytics, las visitas siguen en el mismo informe. |
+| **Configuración → Sitio** | La **Dirección pública del sitio** queda vacía hasta la [Parte 3](#parte-3-el-cambio). | |
+| **Configuración → Privacidad** | Cuentas relacionadas visibles para todos, el valor por defecto. | El sitio antiguo las mostraba a todos. |
+| **Administradores** | Las tres cuentas de `ServerAdmins`. | `/home/l4d2-playstats-web/appsettings.json`. |
+| **Servidores de juego → l4d2.com.br \| Competitive** | Dirección alternativa `server.l4d2.com.br`. | El `ServerDns` del sitio antiguo. La página del servidor en vivo muestra las dos direcciones, como la antigua. |
+| **Modos de juego** | Una regla para cada uno de `ZoneMod v*`, `NeoMod Tourney *` y `VanillaMod *`: 4 jugadores por equipo, al menos 2 mapas, cuenta para el ranking. La regla `*` de un sitio nuevo queda como **Otras configuraciones**, sin contar. | El `ConfigurationName` del servidor antiguo, `^(NeoMod Tourney\|ZoneMod\|VanillaMod) v?\d+\.\d+(?:\.\d+)?[a-z]?$`: solo esas tres configuraciones entraban en el ranking. |
+| **Ajustes del Anti-Cheat** | Servicio `https://aac.l4d2.com.br` y descarga `https://l4d2playstats.blob.core.windows.net/anti-cheat/L4D2AntiCheat.exe`. | Las direcciones que usaba el sitio antiguo. |
+| **Catálogo** de la tienda de skins | Nada que hacer: las 196 skins del sitio antiguo se importaron al activar la tienda. | |
+
+![Configuración](images/es/switch-settings.webp)
+
+![La página del servidor de juego, con las dos direcciones](images/es/switch-server-page.webp)
+
+![Las reglas de modo de juego](images/es/switch-game-modes.webp)
+
+![Los ajustes del Anti-Cheat](images/es/switch-anti-cheat-settings.webp)
+
+### Trae los datos del sitio antiguo
+
+El ranking, las partidas y el historial se arman a partir de los archivos de estadísticas que la API antigua guardaba en la tabla `Statistics` de su almacenamiento de Azure. Un programa aparte, `l4d2-playstats-importer` (fuera de este repositorio), lee esa tabla sin cambiarla y envía cada archivo a `POST /api/statistics` con el token del servidor de juego, el mismo camino que usan los plugins:
+
+```bash
+dotnet run -c Release -- dump ./dump --settings local.settings.json
+dotnet run -c Release -- upload ./dump http://124.198.128.43:5090 "<token del servidor de juego>"
+```
+
+`dump` toma la cadena de conexión del almacenamiento de `Values:AzureWebJobsStorage` en el `local.settings.json` de `l4d2-playstats-api`. El 19 de noviembre de 2026 escribió 6.648 archivos, hasta las partidas del 17 de noviembre, y todos se aceptaron: 1.835 partidas, 1.769 de ellas clasificatorias, 859 jugadores y 15 temporadas. El ranking de la temporada actual mostró los mismos jugadores, en el mismo orden, que el sitio antiguo.
+
+![La vista general después de la importación](images/es/switch-overview.webp)
+
+Ejecuta los dos comandos otra vez justo antes de la [Parte 3](#parte-3-el-cambio). Un archivo que el sitio ya tiene se reemplaza, no entra dos veces, así que solo son nuevas las partidas jugadas desde el último envío.
+
+Nada más del sitio antiguo se copia: las compras de skins, los regalos y las skins equipadas, los baneos de chat y las listas del Anti-Cheat empiezan vacíos. Vuelve a cargar los baneos de chat y los jugadores del Anti-Cheat en el sitio nuevo.
+
+### Comprueba
+
+```bash
+playstats-hub status
+```
+
+![El servicio funcionando](images/es/switch-status.webp)
 
 ## Parte 2: prueba con un servidor de juego
 
@@ -79,12 +168,12 @@ Debe haber una sola copia de cada plugin. Ninguno de los cinco puede quedar en o
 | `cfg/server.cfg` | Pon en `l4d2_web_url` la dirección del sitio nuevo. Si quieres, agrega `sm plugins load optional/l4d2_playstats_sync.smx` al final, para que el sitio vea el servidor mientras no haya un modo de partida cargado. |
 | `cfg/sharedplugins.cfg` | Opcional: las líneas `sm plugins load` del [Paso 5](game-server.es.md#paso-5-carga-los-plugins-en-tus-modos-de-partida), para los modos de partida que todavía no cargan estos plugins (en `l4d2-zone-server`, todos los modos menos ZoneMod y NeoMod). |
 
-Las líneas para `cfg/server_secrets.cfg`, con tu token en lugar del ejemplo:
+Las líneas para `cfg/server_secrets.cfg`, con el token del servidor de juego (en l4d2.com.br, en `/root/l4d2-playstats-hub-server-token.txt` en el VPS) en lugar del ejemplo:
 
 ```text
 playstats_url "http://124.198.128.43:5090"
-playstats_token "my-server:3f9c…"
-l4d2_web_secret "my-server:3f9c…"
+playstats_token "l4d2-com-br-competitive:3f9c…"
+l4d2_web_secret "l4d2-com-br-competitive:3f9c…"
 ```
 
 Y la línea para `cfg/server.cfg`:
@@ -111,13 +200,14 @@ sm_cvar l4d2_web_url "http://124.198.128.43:5090"
 
 Hazlo cuando no esté jugando nadie. Después de esto los dos sitios escuchan en el puerto `5000`, así que el antiguo se detiene primero.
 
-1. Detén el sitio antiguo, conservando sus archivos: `screen -S l4d2-playstats-web -X quit`, con el usuario que lo inició. Si `screen -ls` no lo muestra, ejecuta los dos comandos con `sudo`.
-2. Evita que arranque con el sistema: ejecuta `crontab -e` como `devops` y borra la línea `@reboot` de `l4d2-playstats-web`, o pon `#` delante de ella.
-3. Desactiva la publicación automática del sitio antiguo, el pipeline de Azure Pipelines de `l4d2-playstats-web`. Si no, un push lo vuelve a iniciar en el puerto `5000`.
-4. Pasa el sitio nuevo al puerto `5000`: en `/etc/l4d2-playstats-hub/hub.env`, cambia `ASPNETCORE_URLS=http://0.0.0.0:5090` por `ASPNETCORE_URLS=http://0.0.0.0:5000`, y luego ejecuta `sudo playstats-hub restart` y `playstats-hub status`.
-5. Compruébalo: `curl -s http://127.0.0.1:5000/api/ping` responde, `https://l4d2.com.br` y `http://124.198.128.43:5000` muestran el sitio nuevo, y el inicio de sesión con Steam funciona en `https://l4d2.com.br`.
-6. En **Administración → Configuración → Sitio**, pon la **Dirección pública del sitio** en `https://l4d2.com.br`.
-7. En el servidor de juego, apunta todo al puerto `5000` y define la dirección que los jugadores leen en el chat: las dos primeras líneas en `cfg/server_secrets.cfg`, la última en `cfg/server.cfg`. Luego cambia el mapa o reinicia el servidor, y ejecuta `sm_playstats_test` otra vez:
+1. Trae las partidas jugadas desde la importación: ejecuta otra vez los dos comandos de [Trae los datos del sitio antiguo](#trae-los-datos-del-sitio-antiguo).
+2. Detén el sitio antiguo, conservando sus archivos: `sudo screen -S l4d2-playstats-web -X quit`. Funciona en un `screen` de `root`, así que `sudo screen -ls` lo muestra junto a `l4d2-anticheat-api`, que sigue.
+3. Evita que arranque con el sistema: ejecuta `sudo crontab -e` y pon `#` delante de `@reboot /home/l4d2-playstats-web/bash/bootstrap.sh`. Conserva la línea de `l4d2-anticheat-api`.
+4. Desactiva la publicación automática del sitio antiguo, el pipeline de Azure Pipelines de `l4d2-playstats-web`. Si no, un push lo vuelve a iniciar en el puerto `5000`.
+5. Pasa el sitio nuevo al puerto `5000`: en `/etc/l4d2-playstats-hub/hub.env`, cambia `ASPNETCORE_URLS=http://0.0.0.0:5090` por `ASPNETCORE_URLS=http://0.0.0.0:5000`, y luego ejecuta `sudo playstats-hub restart` y `playstats-hub status`.
+6. Compruébalo: `curl -s http://127.0.0.1:5000/api/ping` responde, `https://l4d2.com.br` y `http://124.198.128.43:5000` muestran el sitio nuevo, y el inicio de sesión con Steam funciona en `https://l4d2.com.br`.
+7. En **Administración → Configuración → Sitio**, pon la **Dirección pública del sitio** en `https://l4d2.com.br`.
+8. En el servidor de juego, apunta todo al puerto `5000` y define la dirección que los jugadores leen en el chat: las dos primeras líneas en `cfg/server_secrets.cfg`, la última en `cfg/server.cfg`. Luego cambia el mapa o reinicia el servidor, y ejecuta `sm_playstats_test` otra vez:
 
    ```text
    playstats_url "http://124.198.128.43:5000"
@@ -125,7 +215,7 @@ Hazlo cuando no esté jugando nadie. Después de esto los dos sitios escuchan en
    sm_cvar l4d2_web_url "http://124.198.128.43:5000"
    ```
 
-8. Cierra el puerto `5090`, que ya no se usa: `sudo ufw delete allow 5090/tcp`, y en el firewall del proveedor si lo abriste ahí.
+9. Cierra el puerto `5090`, que ya no se usa: `sudo ufw delete allow 5090/tcp` con UFW activo, y en el firewall del proveedor si lo abriste ahí.
 
 Los plugins también podrían usar `https://l4d2.com.br`; la dirección simple los mantiene funcionando pase lo que pase con el certificado. nginx no necesita cambios: sigue pasando `https://l4d2.com.br` al puerto `5000`, y el sitio nuevo cree en las cabeceras `X-Forwarded-*` de un proxy en la misma máquina. Si el inicio de sesión con Steam vuelve a una dirección `http://` o a la dirección IP, el `location` de nginx debe pasar estas cabeceras:
 
@@ -140,11 +230,7 @@ proxy_set_header X-Forwarded-Proto $scheme;
 Si algo no funciona y no se puede arreglar en el momento:
 
 1. Detén el sitio nuevo y evita que arranque con el sistema: `sudo systemctl disable --now l4d2-playstats-hub`. Sus datos quedan en `/var/lib/l4d2-playstats-hub`.
-2. Inicia el sitio antiguo como antes: `cd /home/l4d2-playstats-web && screen -d -m -S l4d2-playstats-web sh -c './L4D2PlayStats.Web'`. Vuelve a poner su línea `@reboot` y activa otra vez su pipeline.
+2. Inicia el sitio antiguo como antes: `sudo /home/l4d2-playstats-web/bash/bootstrap.sh`. Quita el `#` de su línea `@reboot` y activa otra vez su pipeline.
 3. En el servidor de juego, extrae la copia en la carpeta `left4dead2` (`tar -xzf ~/playstats-plugins-backup.tar.gz`) y reinicia el servidor. Eso trae de vuelta los plugins antiguos y todos los ajustes de `cfg`.
 
 Las partidas jugadas mientras el servidor de juego apuntaba al sitio nuevo quedan solo ahí; el sitio antiguo no las recibe. Para intentarlo de nuevo más tarde, vuelve a poner el puerto `5090` en `ASPNETCORE_URLS` de `/etc/l4d2-playstats-hub/hub.env` y ejecuta `sudo systemctl enable --now l4d2-playstats-hub`.
-
-## Los datos antiguos
-
-El sitio nuevo empieza vacío. Traer las estadísticas antiguas es opcional: un programa aparte sube los archivos de estadísticas antiguos por el mismo camino que usan los plugins, y el sitio arma con ellos las partidas, el ranking y el historial ([Migración de datos](roadmap.es.md#migración-de-datos)). Puede ejecutarse antes o después del cambio, y las partidas que el sitio nuevo ya tiene se quedan. Nada más del sitio antiguo se copia: las compras de skins, los regalos y las skins equipadas, los baneos del chat y las listas del Anti-Cheat empiezan vacíos, así que vuelve a registrar en el sitio nuevo los baneos del chat y los jugadores del Anti-Cheat.

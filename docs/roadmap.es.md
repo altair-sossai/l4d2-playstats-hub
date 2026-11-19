@@ -202,7 +202,7 @@ Un programa de consola aparte, fuera de este repositorio, mueve los datos de pro
 | 6. Plugins | Los cinco plugins con una sola dirección y un solo token, heartbeat y prueba de conexión. | Compilados, todavía no se han ejecutado en un servidor de juego |
 | 7. Ranking de la comunidad | Página de votación, puntuación, límites y página de administración. | Hecho |
 | 8. Despliegue | Instalador para Linux, imagen de Docker, workflow de publicación y guías. | Hecho; publicado desde la v0.1.1, instalador e imagen probados a partir de la versión publicada |
-| 9. Migración | Importación de los datos de producción, cambio del sitio de producción y archivado de los repositorios antiguos. | Importación probada localmente; el cambio está pendiente |
+| 9. Migración | Importación de los datos de producción, cambio del sitio de producción y archivado de los repositorios antiguos. | Datos de producción importados en el VPS de l4d2.com.br, donde el sitio nuevo funciona en el puerto 5090 junto al antiguo ([Cambiar desde el sitio antiguo](switch-from-old-site.es.md)); el cambio está pendiente |
 
 ## Preguntas abiertas
 

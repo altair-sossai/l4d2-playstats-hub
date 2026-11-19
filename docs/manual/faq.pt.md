@@ -71,7 +71,7 @@ Sim. A temporada atual mantém as datas dela; a nova duração vale a partir da 
 Não. Uma partida vem dos arquivos de estatísticas. Para corrigir um resultado errado, [edite o placar do mapa](matches.pt.md#editando-o-placar-de-um-mapa).
 
 **Como eu importo os dados do meu site antigo?**
-A migração de dados é um programa separado, fora deste repositório, que envia os arquivos de estatísticas antigos pelo mesmo caminho que os plugins usam. Veja [o roadmap](../roadmap.pt.md#migração-de-dados).
+A migração de dados é um programa separado, fora deste repositório, que envia os arquivos de estatísticas antigos pelo mesmo caminho que os plugins usam. Veja [o roadmap](../roadmap.pt.md#migração-de-dados) e, para os comandos usados no l4d2.com.br, [Traga os dados do site antigo](../switch-from-old-site.pt.md#traga-os-dados-do-site-antigo).
 
 **Posso rodar duas cópias do site atrás de um balanceador de carga?**
 Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.

@@ -70,5 +70,23 @@
       { "command": "docker compose start hub", "output": "docker-start.log" },
       { "command": "ls -lh hub-backup.tar.gz", "output": "docker-ls.log" }
     ]
+  },
+  {
+    "name": "switch-installer",
+    "blocks": [
+      { "command": "curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | HUB_PORT=5090 HUB_VERSION=v0.8.0 bash", "output": "switch-install.log" }
+    ]
+  },
+  {
+    "name": "switch-ports",
+    "blocks": [
+      { "command": "ss -tlnp | grep -E ':(80|443|5000|5080|5090) '", "output": "switch-ports.log" }
+    ]
+  },
+  {
+    "name": "switch-status",
+    "blocks": [
+      { "command": "playstats-hub status", "output": "switch-status.log" }
+    ]
   }
 ]

@@ -1,0 +1,35 @@
+
+[1;34m==>[0m Installing the packages the application needs
+
+[1;34m==>[0m Downloading https://github.com/altair-sossai/l4d2-playstats-hub/releases/download/v0.8.0/l4d2-playstats-hub-linux-x64.tar.gz
+
+[1;34m==>[0m Installing the application in /opt/l4d2-playstats-hub
+
+[1;34m==>[0m Writing the configuration to /etc/l4d2-playstats-hub/hub.env
+
+[1;34m==>[0m Registering the l4d2-playstats-hub service
+
+[1;34m==>[0m Waiting for the application to answer
+
+[1;32mL4D2 PlayStats Hub is running.[0m
+
+  Site address:            http://124.198.128.43:5090
+
+  Next step: open the site address. It asks for this setup code:
+
+      [1;33m399678b80c5fde68db8bf575da0fe70d[0m
+
+  Then sign in with Steam. That account becomes the administrator,
+  and the site guides you through the rest, including your game server.
+
+  Useful commands:
+      playstats-hub status       is it running?
+      playstats-hub logs         latest log lines
+      playstats-hub setup-code   show the setup code again
+      playstats-hub backup       save the database and configuration
+      playstats-hub update       install the latest version
+
+  Files:
+      /opt/l4d2-playstats-hub   application
+      /var/lib/l4d2-playstats-hub   database, avatars and keys
+      /etc/l4d2-playstats-hub/hub.env   configuration

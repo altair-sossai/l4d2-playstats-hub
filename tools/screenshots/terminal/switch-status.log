@@ -1,0 +1,9 @@
+● l4d2-playstats-hub.service - L4D2 PlayStats Hub
+     Loaded: loaded (/etc/systemd/system/l4d2-playstats-hub.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-11-19 14:10:34 -03; 3min 7s ago
+   Main PID: 2860871 (L4D2PlayStats.H)
+      Tasks: 18 (limit: 4653)
+     Memory: 141.7M (peak: 142.2M)
+        CPU: 7.371s
+     CGroup: /system.slice/l4d2-playstats-hub.service
+             └─2860871 /opt/l4d2-playstats-hub/L4D2PlayStats.Hub.Web
