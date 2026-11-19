@@ -73,6 +73,7 @@ This command downloads the latest published version. The application can also be
 | [Installing with Docker](docs/install-docker.md) | If you already use containers. |
 | [Installing on Azure](docs/install-azure.md) | A virtual machine or App Service. |
 | [Connecting a game server](docs/game-server.md) | The plugins and their settings. |
+| [Switching from the old site](docs/switch-from-old-site.md) | Replacing a running copy of the earlier site, step by step. |
 | [User manual](docs/manual/README.md) | Every feature of the site, for administrators and players. |
 
 ## How it fits together
@@ -113,6 +114,7 @@ The migration happens step by step. The old repositories are archived when it is
 | [docs/install-docker.md](docs/install-docker.md) | Running the published image. |
 | [docs/install-azure.md](docs/install-azure.md) | Running on Azure. |
 | [docs/game-server.md](docs/game-server.md) | Connecting a game server, step by step. |
+| [docs/switch-from-old-site.md](docs/switch-from-old-site.md) | Moving from the earlier site to this one, and going back. |
 | [docs/databases.md](docs/databases.md) | Using SQL Server, PostgreSQL or MySQL. |
 | [plugins/README.md](plugins/README.md) | Every plugin, setting and command. |
 | [docs/roadmap.md](docs/roadmap.md) | Design, decisions, what is done and what is open. |

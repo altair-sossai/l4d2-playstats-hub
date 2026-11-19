@@ -49,4 +49,4 @@ When the most recent ranked match moves a player to another patent, the ranking 
 
 ## Patents inside the game
 
-With the `l4d2_show_patent_icon` plugin, the game server asks the site for the patents of the players and shows each player's icon above the head before a match starts. The plugin needs the patent sprites on the game server. [The plugins guide](../../plugins/README.md) lists its settings.
+With the `l4d2_show_patent_icon` plugin, the game server asks the site for the patents of the players and shows each player's icon above the head before a match starts. The plugin needs the patent sprites on the game server. The icons are off until `patent_icon_enabled` is `1`. [The plugins guide](../../plugins/README.md) lists its settings.

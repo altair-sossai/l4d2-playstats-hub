@@ -68,13 +68,14 @@ Os dois têm uma pasta chamada `left4dead2` com a mesma estrutura da pasta do jo
 
 | Arquivo | O que é |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | Os cinco plugins. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` e `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` e `l4d2_show_patent_icon`, que os modos de partida carregam. |
 | `addons/sourcemod/scripting/` | Os fontes deles, só para compilar. |
 | `addons/sourcemod/translations/` | Os textos do chat. |
 | `addons/sourcemod/configs/weapon_skins.cfg` | As armas e skins do plugin de skins. |
 | `cfg/playstats.cfg` | Suas configurações. Você o edita no próximo passo. |
 
-Mantenha os plugins na própria `addons/sourcemod/plugins/`, não em `optional/`, para que eles carreguem quando o servidor inicia e o site veja o servidor mesmo quando nenhuma partida está sendo jogada.
+Os três plugins de `optional/` só carregam com um modo de partida (passo 5), que é onde os servidores com o Competitive Rework já os guardam. Para que o site veja o servidor enquanto nenhuma partida está sendo jogada, o passo 4 também carrega o `l4d2_playstats_sync` pelo `cfg/server.cfg`.
 
 O `l4d2_playstats_sync.smx` é o único de que todo servidor precisa. Apague o `.smx` dos plugins que você não quer:
 
@@ -90,10 +91,11 @@ O `l4d2_playstats_sync.smx` é o único de que todo servidor precisa. Apague o `
 
 1. Abra o `cfg/playstats.cfg` no servidor.
 2. Cole as duas linhas do passo 1 onde o arquivo diz `Paste the two lines here`.
-3. Abra o `cfg/server.cfg` e adicione esta linha no fim:
+3. Abra o `cfg/server.cfg` e adicione estas linhas no fim:
 
    ```text
    exec playstats.cfg
+   sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
 Isso é tudo o que você precisa mudar. O resto do `cfg/playstats.cfg` lista todas as outras configurações dos cinco plugins, desligadas com `//` e com o valor padrão; cada uma tem uma explicação acima.
@@ -107,10 +109,10 @@ Cada configuração fica em um lugar só: no `cfg/playstats.cfg` as que são igu
 Quando um modo de partida do Competitive Rework carrega, ele descarrega todos os plugins e carrega só os que estão nas listas dele. A lista compartilhada por todos os modos é o `cfg/sharedplugins.cfg`. Adicione estas linhas a ele, deixando de fora os plugins que você apagou:
 
 ```text
-sm plugins load l4d2_playstats_sync.smx
+sm plugins load optional/l4d2_playstats_sync.smx
 sm plugins load l4d2_gameinfo_sync.smx
-sm plugins load l4d2_ranking.smx
-sm plugins load l4d2_show_patent_icon.smx
+sm plugins load optional/l4d2_ranking.smx
+sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
 ```
 
@@ -147,7 +149,8 @@ Os ícones de patente e as skins de armas são arquivos que não fazem parte do 
 2. Coloque `models/`, `materials/` e o conteúdo de `fastdl/` em um servidor web que os jogadores consigam acessar (um FastDL), com a mesma estrutura da pasta do jogo.
 3. No `cfg/server.cfg`, defina `sm_cvar sv_allowdownload 1` e `sm_cvar sv_downloadurl "<address of that folder>"`.
 4. No `cfg/playstats.cfg`, ligue as skins: apague o `//` na frente de `weapon_skins_enabled` e mude para `"1"`.
-5. Reinicie o servidor enquanto ele está vazio.
+5. Para mostrar também os ícones das patentes, faça o mesmo com `patent_icon_enabled`.
+6. Reinicie o servidor enquanto ele está vazio.
 
 Os detalhes, e como verificar se os arquivos foram encontrados, estão em [Arquivos de skins de armas e de patentes](../plugins/README.pt.md#arquivos-de-skins-de-armas-e-de-patentes).
 
@@ -192,6 +195,12 @@ playstats_ingame_url "http://203.0.113.10:5080"
 
 Quando `playstats_ingame_url` está vazio, o plugin usa `playstats_url`. [Instalando em uma VPS Linux](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica qual endereço usar.
 
+O endereço que os jogadores leem no chat, na dica do ranking e no link da loja de skins, é o `playstats_public_url`; quando ele está vazio, os plugins mostram o `playstats_url`. Defina quando os plugins chegam ao site por um endereço IP mas os jogadores o conhecem por um nome:
+
+```text
+playstats_public_url "https://stats.example.com"
+```
+
 ## O que cada status significa
 
 | Status | Significado | O que fazer |
@@ -215,8 +224,11 @@ Se o servidor de jogo usava os plugins anteriores, remova as configurações del
 | `playstats_access_token` | `playstats_token` |
 | `l4d2_web_url`, `l4d2_web_secret` | Os plugins do PlayStats não as leem mais: eles usam `playstats_url` e `playstats_token`. Só o plugin de anti-cheat ainda as lê; veja [Opcional: o plugin do Anti-Cheat](#opcional-o-plugin-do-anti-cheat). |
 | `ranking_url` | `playstats_ingame_url`, só se o jogo precisar de outro endereço |
+| O nome do site na dica do ranking e o endereço no link da loja de skins (`l4d2_web_url`) | `playstats_public_url`, só se os jogadores conhecem o site por outro endereço |
 
-Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Substitua os arquivos `.smx` antigos, inclusive os de `addons/sourcemod/plugins/optional/`, pelos novos, para que exista só uma cópia de cada plugin.
+Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Copie os novos arquivos `.smx` por cima dos antigos: os três de `addons/sourcemod/plugins/optional/` substituem os anteriores ali, então os modos de partida continuam carregando os plugins com as linhas que já têm. Se uma cópia antiga de algum deles estiver na própria `addons/sourcemod/plugins/`, apague-a, para que exista só uma cópia de cada plugin.
+
+Para a mudança completa do site anterior para este, com a ordem dos passos e como voltar atrás, veja [Trocando o site antigo](switch-from-old-site.pt.md).
 
 ## Se algo der errado
 

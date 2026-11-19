@@ -54,6 +54,7 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 | [Instalar con Docker](../install-docker.es.md) | Si ya usas contenedores. |
 | [Instalar en Azure](../install-azure.es.md) | Una máquina virtual o App Service. |
 | [Conectar un servidor de juego](../game-server.es.md) | Los plugins y sus ajustes, del lado del servidor de juego. |
+| [Cambiar desde el sitio antiguo](../switch-from-old-site.es.md) | Reemplazar el sitio anterior por este, sin cambiar sus direcciones. |
 | [Bases de datos](../databases.es.md) | SQL Server, PostgreSQL o MySQL en lugar de SQLite. |
 
 ## Sobre las capturas de pantalla

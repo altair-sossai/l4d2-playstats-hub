@@ -68,13 +68,14 @@ Ambos tienen una carpeta llamada `left4dead2` con la misma estructura que la car
 
 | Archivo | Qué es |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | Los cinco plugins. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` y `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` y `l4d2_show_patent_icon`, que cargan los modos de partida. |
 | `addons/sourcemod/scripting/` | Sus fuentes, solo para compilar. |
 | `addons/sourcemod/translations/` | Los textos del chat. |
 | `addons/sourcemod/configs/weapon_skins.cfg` | Las armas y skins del plugin de skins. |
 | `cfg/playstats.cfg` | Tus ajustes. Lo editas en el siguiente paso. |
 
-Deja los plugins en `addons/sourcemod/plugins/` mismo, no en `optional/`, para que carguen cuando arranca el servidor y el sitio vea el servidor aunque no se esté jugando ninguna partida.
+Los tres plugins de `optional/` solo se cargan con un modo de partida (paso 5), que es donde los servidores con Competitive Rework ya los guardan. Para que el sitio vea el servidor mientras no se juega ninguna partida, el paso 4 también carga `l4d2_playstats_sync` desde `cfg/server.cfg`.
 
 `l4d2_playstats_sync.smx` es el único que todo servidor necesita. Borra el `.smx` de los plugins que no quieras:
 
@@ -90,10 +91,11 @@ Deja los plugins en `addons/sourcemod/plugins/` mismo, no en `optional/`, para q
 
 1. Abre `cfg/playstats.cfg` en el servidor.
 2. Pega las dos líneas del paso 1 donde el archivo dice `Paste the two lines here`.
-3. Abre `cfg/server.cfg` y agrega esta línea al final:
+3. Abre `cfg/server.cfg` y agrega estas líneas al final:
 
    ```text
    exec playstats.cfg
+   sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
 Es todo lo que debes cambiar. El resto de `cfg/playstats.cfg` lista todos los demás ajustes de los cinco plugins, desactivados con `//` y con su valor por defecto; cada uno tiene una explicación encima.
@@ -107,10 +109,10 @@ Cada ajuste va en un solo lugar: `cfg/playstats.cfg` para los que son iguales en
 Cuando carga un modo de partida de Competitive Rework, descarga todos los plugins y carga solo los de sus listas. La lista compartida por todos los modos es `cfg/sharedplugins.cfg`. Agrégale estas líneas, dejando fuera los plugins que borraste:
 
 ```text
-sm plugins load l4d2_playstats_sync.smx
+sm plugins load optional/l4d2_playstats_sync.smx
 sm plugins load l4d2_gameinfo_sync.smx
-sm plugins load l4d2_ranking.smx
-sm plugins load l4d2_show_patent_icon.smx
+sm plugins load optional/l4d2_ranking.smx
+sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
 ```
 
@@ -147,7 +149,8 @@ Los íconos de patente y las skins de armas son archivos que no forman parte del
 2. Pon `models/`, `materials/` y el contenido de `fastdl/` en un servidor web al que lleguen los jugadores (un FastDL), con la misma estructura que la carpeta del juego.
 3. En `cfg/server.cfg`, define `sm_cvar sv_allowdownload 1` y `sm_cvar sv_downloadurl "<address of that folder>"`.
 4. En `cfg/playstats.cfg`, activa las skins: borra el `//` delante de `weapon_skins_enabled` y ponlo en `"1"`.
-5. Reinicia el servidor mientras está vacío.
+5. Para mostrar también los íconos de patente, haz lo mismo con `patent_icon_enabled`.
+6. Reinicia el servidor mientras está vacío.
 
 Los detalles, y cómo verificar que los archivos se encuentran, están en [Archivos de skins de armas y de patentes](../plugins/README.es.md#archivos-de-skins-de-armas-y-de-patentes).
 
@@ -192,6 +195,12 @@ playstats_ingame_url "http://203.0.113.10:5080"
 
 Cuando `playstats_ingame_url` está vacío, el plugin usa `playstats_url`. [Instalar en un VPS Linux](install-linux.es.md#la-dirección-usada-dentro-del-juego) explica qué dirección usar.
 
+La dirección que los jugadores leen en el chat, en el aviso del ranking y en el enlace de la tienda de skins, es `playstats_public_url`; cuando está vacío, los plugins muestran `playstats_url`. Ponla cuando los plugins llegan al sitio por una dirección IP pero los jugadores lo conocen por un nombre:
+
+```text
+playstats_public_url "https://stats.example.com"
+```
+
 ## Qué significa cada estado
 
 | Estado | Significado | Qué hacer |
@@ -215,8 +224,11 @@ Si el servidor de juego usaba los plugins anteriores, quita sus ajustes, o segui
 | `playstats_access_token` | `playstats_token` |
 | `l4d2_web_url`, `l4d2_web_secret` | Los plugins de PlayStats ya no los leen: usan `playstats_url` y `playstats_token`. Solo el plugin de anti-cheat todavía los lee; consulta [Opcional: el plugin del Anti-Cheat](#opcional-el-plugin-del-anti-cheat). |
 | `ranking_url` | `playstats_ingame_url`, solo si el juego necesita otra dirección |
+| El nombre del sitio en el aviso del ranking y la dirección del enlace de la tienda de skins (`l4d2_web_url`) | `playstats_public_url`, solo si los jugadores conocen el sitio por otra dirección |
 
-Búscalos en `cfg/server.cfg`, en tu archivo de secretos, y en el `shared_cvars.cfg` de cada modo de partida. Los ajustes antiguos definidos con `confogl_addcvar playstats_url` también deben irse, para que `cfg/playstats.cfg` sea el único lugar de la dirección y el token. Reemplaza los archivos `.smx` antiguos, incluidos los de `addons/sourcemod/plugins/optional/`, por los nuevos, para que haya una sola copia de cada plugin.
+Búscalos en `cfg/server.cfg`, en tu archivo de secretos, y en el `shared_cvars.cfg` de cada modo de partida. Los ajustes antiguos definidos con `confogl_addcvar playstats_url` también deben irse, para que `cfg/playstats.cfg` sea el único lugar de la dirección y el token. Copia los nuevos archivos `.smx` encima de los antiguos: los tres de `addons/sourcemod/plugins/optional/` reemplazan a los anteriores ahí, así que los modos de partida siguen cargándolos con las líneas que ya tienen. Si hay una copia antigua de alguno de ellos en `addons/sourcemod/plugins/` mismo, bórrala, para que haya una sola copia de cada plugin.
+
+Para el cambio completo del sitio anterior a este, con el orden de los pasos y cómo volver atrás, consulta [Cambiar desde el sitio antiguo](switch-from-old-site.es.md).
 
 ## Si algo sale mal
 
