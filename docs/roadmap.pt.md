@@ -202,7 +202,7 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 | 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |
 | 7. Ranking da comunidade | Página de votação, rating, limites e página administrativa. | Concluída |
 | 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada |
-| 9. Migração | Importação dos dados de produção, troca do site de produção, arquivamento dos repositórios antigos. | Dados de produção importados na VPS do l4d2.com.br, onde o site novo roda na porta 5090 ao lado do antigo ([Trocando o site antigo](switch-from-old-site.pt.md)); a troca está pendente |
+| 9. Migração | Importação dos dados de produção, troca do site de produção, arquivamento dos repositórios antigos. | Dados de produção importados e l4d2.com.br trocado para o site novo em 19 de novembro de 2026 ([Trocando o site antigo](switch-from-old-site.pt.md)); os repositórios antigos ainda não foram arquivados |
 
 ## Perguntas em aberto
 

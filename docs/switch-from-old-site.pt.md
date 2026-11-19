@@ -10,6 +10,7 @@ Como substituir uma cópia em funcionamento do site anterior (`l4d2-playstats-we
 - [Parte 1: instale o site novo ao lado do antigo](#parte-1-instale-o-site-novo-ao-lado-do-antigo)
 - [Parte 2: teste com um servidor de jogo](#parte-2-teste-com-um-servidor-de-jogo)
 - [Parte 3: a troca](#parte-3-a-troca)
+- [Deploy automático](#deploy-automático)
 - [Parte 4: voltando atrás](#parte-4-voltando-atrás)
 
 ## O plano
@@ -198,6 +199,8 @@ sm_cvar l4d2_web_url "http://124.198.128.43:5090"
 
 ## Parte 3: a troca
 
+No l4d2.com.br a troca foi feita em 19 de novembro de 2026. Os pipelines `l4d2-playstats-web` e `l4d2-playstats-api` e a release `l4d2-playstats-api` foram apagados do Azure DevOps, então nada publica de novo o site antigo ou a API antiga.
+
 Faça enquanto ninguém está jogando. Depois disso os dois sites escutam na porta `5000`, então o antigo para primeiro.
 
 1. Traga as partidas jogadas desde a importação: rode de novo os dois comandos de [Traga os dados do site antigo](#traga-os-dados-do-site-antigo).
@@ -223,6 +226,23 @@ Os plugins também poderiam usar `https://l4d2.com.br`; o endereço simples os m
 proxy_set_header Host $host;
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
+```
+
+## Deploy automático
+
+No l4d2.com.br uma release deste repositório atualiza o site e os plugins do servidor de jogo:
+
+| O quê | Como |
+|---|---|
+| O site | O pipeline `l4d2-playstats-hub` do Azure Pipelines, do [deploy/azure-pipelines.yml](../deploy/azure-pipelines.yml), roda a cada tag `v*`. Pela conexão SSH da VPS, ele espera o pacote Linux da release e roda o instalador com essa versão. Os dados e o `/etc/l4d2-playstats-hub/hub.env` são mantidos, então o site continua na porta `5000`. |
+| Os plugins | O pipeline do `l4d2-zone-server` roda depois dele, e a cada push no `master` dele. Ele baixa o `l4d2-playstats-hub-plugins.zip` da mesma release (a mais recente, num push), copia as pastas `plugins`, `translations` e `configs` por cima do `addons` do repositório, grava o `cfg/playstats_token.cfg` a partir da variável secreta `PLAYSTATS_TOKEN` do pipeline e publica. Os cinco plugins não ficam mais no `l4d2-zone-server`. |
+
+O servidor de jogo lê o token no `cfg/playstats_token.cfg`, que o `cfg/server.cfg` roda logo depois do `server_secrets.cfg`, e os endereços no `cfg/server.cfg`:
+
+```text
+playstats_url "http://124.198.128.43:5000"
+playstats_public_url "https://l4d2.com.br"
+sm_cvar l4d2_web_url "https://l4d2.com.br"
 ```
 
 ## Parte 4: voltando atrás
