@@ -54,6 +54,7 @@ Checked against the rendered pages of a copy of the production data and against 
 | Column with the chosen statistic, linking to the inverted order, with the arrow (↑ ascending, ↓ descending) | Views/Players/Index.cshtml:91-97 | done | |
 | Column "Per game", hidden when the statistic is "Games" | Views/Players/Index.cshtml:44, :98-101, :131-139 | done | |
 | Position: 1, 2, 3... descending; counted down from the number of players when ascending | Views/Players/Index.cshtml:105-107, :142 | done | |
+| Pages of 100 players (new) | - | adapted | Hub addition: the list shows 100 players per page with the page links under the table, which keep `orderBy`, `asc` and the period. The position goes on from the previous page, in both orders. With up to 100 players there are no page links and the page is as before. |
 | Row highlighted (`it-is-me`) for the signed-in player | Views/Players/Index.cshtml:112 | done | |
 | Avatar 40 px, rounded, with link, title and the fallback image on error | Views/Players/Index.cshtml:114-118 | done | |
 | Name truncated (`TruncatePlayerName`) with link to the player page | Views/Players/Index.cshtml:119-121 | done | The link keeps the displayed season. |

@@ -4,13 +4,14 @@
 
 @{
     var site = await Settings.GetAsync<SiteSettings>();
-    var topPlayer = Model.Players.FirstOrDefault();
+    var topPlayer = Model.Players.Items.FirstOrDefault();
     var seasonId = Model.Period.Query;
+    var pagination = PaginationModel.Of(Model.Players, number => PlayerUrls.List(Model.OrderBy, Model.Asc, seasonId, number));
 
     ViewData["PageMetadata"] = new PageMetadata
     {
         Title = L["Players"],
-        Description = L["Browse statistics for {0} players from the {1} server.", Model.Players.Count, site.Name],
+        Description = L["Browse statistics for {0} players from the {1} server.", Model.Players.TotalItems, site.Name],
         Image = topPlayer == null ? null : $"/avatar/{topPlayer.CommunityId}",
         ImageAlt = topPlayer?.Name
     };
@@ -32,6 +33,7 @@
             vertical-align: middle !important;
         }
     </style>
+    @await Html.PartialAsync("_PaginationStyles")
 }
 
 <h4 class="text-center">@L["Players"]</h4>
@@ -78,9 +80,9 @@
     </thead>
     <tbody>
     @{
-        var position = Model.Asc ? Model.Players.Count : 1;
+        var position = Model.Asc ? Model.Players.TotalItems - Model.Players.FirstItem + 1 : Model.Players.FirstItem;
     }
-    @foreach (var player in Model.Players)
+    @foreach (var player in Model.Players.Items)
     {
         var help = PlayerProperties.Help(Model.OrderBy);
 
@@ -118,3 +120,8 @@
     }
     </tbody>
 </table>
+
+@if (pagination.TotalPages > 1)
+{
+    @await Html.PartialAsync("_Pagination", pagination)
+}

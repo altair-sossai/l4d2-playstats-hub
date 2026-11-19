@@ -10,7 +10,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class PlayersController(IPlayerViewService playerViewService) : Controller
 {
     [HttpGet("/players")]
-    public async Task<IActionResult> Index(PlayerResultProperty orderBy = PlayerResultProperty.Experience, bool asc = false, int? season = null, int? year = null, string? period = null, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(PlayerResultProperty orderBy = PlayerResultProperty.Experience, bool asc = false, int? season = null, int? year = null, string? period = null, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Players = "active";
 
@@ -21,7 +21,7 @@ public class PlayersController(IPlayerViewService playerViewService) : Controlle
         if (!Enum.IsDefined(orderBy))
             orderBy = PlayerResultProperty.Experience;
 
-        return View(await playerViewService.ListAsync(selected, orderBy, asc, cancellationToken));
+        return View(await playerViewService.ListAsync(selected, orderBy, asc, page, cancellationToken));
     }
 
     [HttpGet("/player/{communityId:long}/{compareWith:long?}")]

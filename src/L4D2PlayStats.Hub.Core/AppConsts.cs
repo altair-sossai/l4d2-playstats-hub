@@ -85,7 +85,6 @@ public static class AppConsts
     public const int CommunityAnchorPoolSize = 5;
     public const int CommunityOpponentPoolSize = 5;
     public const int CommunityPairSides = 2;
-    public const int CommunityVoterListSize = 100;
 
     public const int LiveDelayInSeconds = 15;
     public const int LiveMaxDelayInSeconds = 600;

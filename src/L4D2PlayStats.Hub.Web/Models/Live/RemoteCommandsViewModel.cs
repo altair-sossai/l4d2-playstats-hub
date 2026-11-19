@@ -6,6 +6,7 @@ namespace L4D2PlayStats.Hub.Web.Models.Live;
 public class RemoteCommandsViewModel
 {
     public IReadOnlyList<GameServer> Servers { get; init; } = [];
-    public IReadOnlyList<RemoteCommandLog> Logs { get; init; } = [];
+    public required PagedListModel<RemoteCommandLog> Logs { get; init; }
+    public int Delivered { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 }

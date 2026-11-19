@@ -299,7 +299,7 @@ public class CommunityRankingServiceTests
         await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Left);
         await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownBoth);
 
-        var voters = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().VotersAsync());
+        var voters = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().VotersAsync(0, 10));
 
         Assert.HasCount(2, voters);
         Assert.AreEqual(community.Voter, voters[0].CommunityId);

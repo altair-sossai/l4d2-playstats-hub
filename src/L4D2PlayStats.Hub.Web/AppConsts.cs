@@ -107,12 +107,16 @@ public static partial class AppConsts
 
     public const string HtmxRequestHeader = "HX-Request";
     public const string CommunityBallotElement = "community-ballot";
+    public const string CommunityUrl = "/community";
     public const string CommunityVotePage = "/community/vote";
     public const string CommunityVotesPage = "/community/votes";
     public const string CommunityPlayersSearchUrl = "/api/community/players";
     public const string CommunityVoterRole = "voter";
     public const int VoteInviteHiddenDays = 7;
-    public const int RemoteCommandLogSize = 100;
+    public const int CommunityRankingPageSize = 100;
+    public const int CommunityVotersPageSize = 20;
+    public const string CommunityVotersAnchor = "ca-voters";
+    public const int RemoteCommandsPageSize = 50;
     public const int PlayerConnectionCleanupIntervalInHours = 24;
     public const string SteamConnectUrl = "steam://connect/";
     public const string EmptyAvatarUrl = "/imgs/avatar-empty.png";

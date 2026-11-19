@@ -84,7 +84,7 @@ public class CommunityRankingService(
             .OrderBy(participant => participant.Name, StringComparer.CurrentCultureIgnoreCase)];
     }
 
-    public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(int skip, int take, CancellationToken cancellationToken = default)
     {
         var voters = await dbContext.Set<CommunityVote>()
             .AsNoTracking()
@@ -92,12 +92,22 @@ public class CommunityRankingService(
             .Select(group => new { VoterId = group.Key, Votes = group.Count(), LastVoteAtUtc = group.Max(v => v.CreatedAtUtc) })
             .OrderByDescending(voter => voter.Votes)
             .ThenBy(voter => voter.VoterId)
-            .Take(AppConsts.CommunityVoterListSize)
+            .Skip(Math.Max(0, skip))
+            .Take(Math.Max(0, take))
             .ToListAsync(cancellationToken);
 
         var names = await playerService.NamesAsync([.. voters.Select(voter => voter.VoterId)], cancellationToken);
 
         return [.. voters.Select(voter => new CommunityVoter(voter.VoterId, names[voter.VoterId], voter.Votes, voter.LastVoteAtUtc))];
+    }
+
+    public Task<int> VoterCountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.Set<CommunityVote>()
+            .AsNoTracking()
+            .Select(v => v.VoterId)
+            .Distinct()
+            .CountAsync(cancellationToken);
     }
 
     public async Task<int> RebuildAsync(CancellationToken cancellationToken = default)

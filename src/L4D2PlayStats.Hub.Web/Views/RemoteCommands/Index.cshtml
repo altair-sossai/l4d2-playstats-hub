@@ -4,7 +4,7 @@
     ViewData["Title"] = L["Remote commands"].Value;
 
     var culture = CultureInfo.CurrentUICulture;
-    var delivered = Model.Logs.Count(log => log.DeliveredAtUtc != null);
+    var pagination = PaginationModel.Of(Model.Logs, number => $"{AppConsts.RemoteCommandsUrl}?page={number}");
 }
 
 @section Styles {
@@ -102,21 +102,21 @@
 
 <div class="admin-stats">
     <div>
-        <strong>@Model.Logs.Count.ToString("N0", culture)</strong>
+        <strong>@Model.Logs.TotalItems.ToString("N0", culture)</strong>
         <small>@L["commands sent"]</small>
     </div>
     <div>
-        <strong>@delivered.ToString("N0", culture)</strong>
+        <strong>@Model.Delivered.ToString("N0", culture)</strong>
         <small>@L["commands delivered to the game server"]</small>
     </div>
 </div>
 
 <div class="admin-list">
-    @if (Model.Logs.Count == 0)
+    @if (Model.Logs.TotalItems == 0)
     {
         <div class="admin-empty">@L["No command was sent yet."]</div>
     }
-    @foreach (var log in Model.Logs)
+    @foreach (var log in Model.Logs.Items)
     {
         var administrator = log.AdministratorName ?? log.AdministratorCommunityId.ToString();
 
@@ -144,3 +144,5 @@
         </div>
     }
 </div>
+
+@await Html.PartialAsync("_Pagination", pagination)

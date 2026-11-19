@@ -1,9 +1,12 @@
+using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Live;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,15 +25,21 @@ public class RemoteCommandsController(
     ICurrentUser currentUser) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
         ViewBag.Administration = "active";
 
+        var size = AppConsts.RemoteCommandsPageSize;
+        var total = await remoteCommandService.CountAsync(cancellationToken: cancellationToken);
+        var current = Paging.Page(page, total, size);
+        var logs = await remoteCommandService.ListAsync(Paging.Skip(current, size), size, cancellationToken);
+
         var model = new RemoteCommandsViewModel
         {
             Servers = await liveViewService.EnabledServersAsync(cancellationToken),
-            Logs = await remoteCommandService.ListAsync(AppConsts.RemoteCommandLogSize, cancellationToken),
+            Logs = new PagedListModel<RemoteCommandLog>(logs, current, size, total),
+            Delivered = await remoteCommandService.CountAsync(true, cancellationToken),
             TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
 

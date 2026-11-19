@@ -1,11 +1,14 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
+using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,12 +33,17 @@ public class CommunityAdminController(
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
+        var size = AppConsts.CommunityVotersPageSize;
+        var total = await communityRankingService.VoterCountAsync(cancellationToken);
+        var current = Paging.Page(page, total, size);
+        var voters = await communityRankingService.VotersAsync(Paging.Skip(current, size), size, cancellationToken);
+
         var model = new CommunityAdminViewModel
         {
             Settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken),
-            Voters = await communityRankingService.VotersAsync(cancellationToken),
+            Voters = new PagedListModel<CommunityVoter>(voters, current, size, total),
             Votes = await dbContext.Set<CommunityVote>().CountAsync(cancellationToken),
             RatedPlayers = await dbContext.Set<CommunityRating>().CountAsync(cancellationToken)
         };

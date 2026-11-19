@@ -24,19 +24,8 @@
             display: inline-block;
             width: auto;
         }
-
-        .admin-pagination {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin: 12px 0;
-        }
-
-        .admin-pagination .pagination {
-            margin: 0;
-        }
     </style>
+    @await Html.PartialAsync("_PaginationStyles")
 }
 
 <h4 class="text-center">@L["Last matches"]</h4>

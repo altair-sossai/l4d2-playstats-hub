@@ -58,7 +58,7 @@ Con el módulo de comandos remotos activado, los administradores pueden enviar c
 
 El comando queda en cola. El servidor de juego le pide al sitio los comandos en cola en su próxima consulta y ejecuta el comando. Si ningún servidor de juego lo recoge en 5 minutos, se descarta.
 
-Cada comando queda en el **Registro de auditoría**: el comando, el administrador, el servidor, cuándo se envió, y si se entregó al servidor de juego y cuándo. Los contadores muestran cuántos comandos se enviaron y cuántos se entregaron. El registro también lista el `sm_aac sync` que el sitio envía a cada servidor de juego después de un cambio en los [Ajustes del Anti-Cheat](anti-cheat.es.md#para-administradores); ese se envía incluso con este módulo desactivado.
+Cada comando queda en el **Registro de auditoría**: el comando, el administrador, el servidor, cuándo se envió, y si se entregó al servidor de juego y cuándo. El registro muestra 50 comandos por página, los más recientes primero, y los contadores muestran cuántos comandos se enviaron y cuántos se entregaron en total. El registro también lista el `sm_aac sync` que el sitio envía a cada servidor de juego después de un cambio en los [Ajustes del Anti-Cheat](anti-cheat.es.md#para-administradores); ese se envía incluso con este módulo desactivado.
 
 Los administradores también pueden enviar un comando desde el cuadro de chat de la página del servidor en vivo, y el botón **Terminal** de esa página ayuda a armarlo.
 

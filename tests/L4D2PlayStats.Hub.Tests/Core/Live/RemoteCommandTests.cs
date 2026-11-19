@@ -228,7 +228,7 @@ public class RemoteCommandTests
 
     private static Task<List<L4D2PlayStats.Hub.Core.Modules.Live.RemoteCommandLog>> LogsAsync(TestHub hub)
     {
-        return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(100));
+        return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(0, 100));
     }
 
     private static Task<SiteChatResult> SendAsync(TestHub hub, GameServer server, long communityId, string message)
