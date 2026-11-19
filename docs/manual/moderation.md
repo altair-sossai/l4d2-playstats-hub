@@ -68,10 +68,10 @@ With the live server module on, the game servers report the address each player 
 
 ![The accounts that share an address with a player](../images/en/admin-player-connections.webp)
 
-Type the Steam ID or the profile link of the player and click **Search**. The page shows:
+Type the Steam ID or the profile link of the player and click **Search**, or click the player button next to the field and choose in the [player search](administration.md#the-player-search); the search runs as soon as you choose. The page shows:
 
 - how many connections the player has and how many other accounts used the same address;
-- each account, with its Steam IDs, when it was first and last seen, and how many connections it has.
+- each account, with its Steam ID (the SteamID64 shows when you point at it), when it was first and last seen, and how many connections it has.
 
 The address itself is never shown. Connections older than three months are deleted.
 

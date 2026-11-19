@@ -220,7 +220,7 @@
             <img class="admin-avatar" src="@player.AvatarUrl" alt="@player.Name" onerror="imgOnError(this)"/>
             <div class="admin-main">
                 <div class="admin-title">@player.Name</div>
-                <small>@player.SteamId · @player.CommunityId</small>
+                <small title="SteamID64: @player.CommunityId">@player.SteamId</small>
             </div>
             <div class="admin-side">
                 <strong>@addedAt</strong>
@@ -528,7 +528,7 @@
                                 steamId: player.steamId,
                                 name: player.name,
                                 avatarUrl: player.avatarUrl,
-                                knownOnSite: true
+                                knownOnSite: player.knownOnSite !== false
                             });
                         }
 

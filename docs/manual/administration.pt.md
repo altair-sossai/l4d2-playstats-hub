@@ -157,7 +157,7 @@ Esta configuração vale só para o site. O plugin `l4d2_gameinfo_sync` continua
 
 ![Os administradores](../images/pt/admin-administrators.webp)
 
-A lista mostra todos os administradores e desde quando. Para adicionar um, informe o SteamID64 da conta e, se quiser, um nome. **Remover** tira os direitos. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
+A lista mostra todos os administradores e desde quando. Para adicionar um, informe a conta como SteamID64, como Steam ID no formato `STEAM_1:0:123` ou `[U:1:123]`, ou pelo link do perfil, e, se quiser, um nome. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Remover** tira os direitos. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
 
 Se você perder o acesso a todas as contas de administrador, adicione uma pela máquina que roda o site:
 
@@ -165,6 +165,10 @@ Se você perder o acesso a todas as contas de administrador, adicione uma pela m
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 O SteamID64 é o número longo no endereço de um perfil do Steam, como `76561198000000000`.
+
+### A busca de jogadores
+
+Todo campo da administração que recebe um jogador tem ao lado um botão que abre a mesma janela de busca: administradores, votantes do ranking da comunidade, conexões de jogadores, banimentos do chat, as listas do Anti-Cheat e os presentes de skins. Ela lista os jogadores que jogaram uma partida ou entraram num servidor de jogo, dos mais recentes para os mais antigos, com foto, nome, Steam ID, quando foram vistos por último e a posição no ranking atual. Digite parte de um nome ou um Steam ID em qualquer formato para filtrar, e **Carregar mais** mostra os próximos jogadores. Clicar num jogador preenche o campo. Um Steam ID que nunca jogou aqui também pode ser escolhido.
 
 ## Backup
 

@@ -18,6 +18,9 @@ public class SteamIdParserTests
     [DataRow("U:1:39734273")]
     [DataRow("https://steamcommunity.com/profiles/76561198000000001")]
     [DataRow("http://steamcommunity.com/profiles/76561198000000001/")]
+    [DataRow("https://www.steamcommunity.com/profiles/76561198000000001")]
+    [DataRow("steamcommunity.com/profiles/76561198000000001")]
+    [DataRow(" [U:1:39734273] ")]
     public void EveryWayOfWritingASteamIdGivesTheSameAccount(string value)
     {
         Assert.AreEqual(Alice, SteamIdParser.Parse(value));
@@ -32,6 +35,8 @@ public class SteamIdParserTests
     [DataRow("1234567890123456")]
     [DataRow("https://steamcommunity.com/id/alice")]
     [DataRow("https://example.com/profiles/76561198000000001")]
+    [DataRow("https://notsteamcommunity.com/profiles/76561198000000001")]
+    [DataRow("steamcommunity.com/id/alice")]
     [DataRow("76561198000000001; drop")]
     public void WhatIsNotASteamIdIsRefused(string? value)
     {

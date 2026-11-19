@@ -157,7 +157,7 @@ Este ajuste solo afecta al sitio. El plugin `l4d2_gameinfo_sync` sigue anunciand
 
 ![Los administradores](../images/es/admin-administrators.webp)
 
-La lista muestra a cada administrador y desde cuándo lo es. Para agregar uno, indica el SteamID64 de la cuenta y, si quieres, un nombre. **Quitar** le retira los permisos. No puedes quitarte a ti mismo, y el último administrador no se puede quitar.
+La lista muestra a cada administrador y desde cuándo lo es. Para agregar uno, indica la cuenta como SteamID64, como Steam ID con el formato `STEAM_1:0:123` o `[U:1:123]`, o como enlace del perfil, y, si quieres, un nombre. El botón de búsqueda junto al campo abre la [búsqueda de jugadores](#la-búsqueda-de-jugadores); el jugador elegido también completa el nombre cuando está vacío. **Quitar** le retira los permisos. No puedes quitarte a ti mismo, y el último administrador no se puede quitar.
 
 Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la máquina donde se ejecuta el sitio:
 
@@ -165,6 +165,10 @@ Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la m
 - Docker: `docker compose exec -u app hub dotnet L4D2PlayStats.Hub.Web.dll admin add <SteamID64>`
 
 El SteamID64 es el número largo de la dirección de un perfil de Steam, como `76561198000000000`.
+
+### La búsqueda de jugadores
+
+Cada campo de la administración que recibe un jugador tiene al lado un botón que abre la misma ventana de búsqueda: administradores, votantes de la clasificación de la comunidad, conexiones de jugadores, baneos del chat, las listas del Anti-Cheat y los regalos de skins. Lista los jugadores que jugaron una partida o se conectaron a un servidor de juego, de los más recientes a los más antiguos, con su foto, nombre, Steam ID, cuándo se vieron por última vez y su posición en la clasificación actual. Escribe parte de un nombre o un Steam ID en cualquier formato para filtrar, y **Cargar más** muestra los siguientes jugadores. Al hacer clic en un jugador se completa el campo. Un Steam ID que nunca jugó aquí también se puede elegir.
 
 ## Copia de seguridad
 

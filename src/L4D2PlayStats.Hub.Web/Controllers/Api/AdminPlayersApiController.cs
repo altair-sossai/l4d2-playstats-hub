@@ -1,6 +1,11 @@
 using System.Globalization;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +15,21 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 [Route("api/admin/players")]
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
 [ApiController]
-public class AdminPlayersApiController(IRankingService rankingService, IPlayerLookupService playerLookupService) : ControllerBase
+public class AdminPlayersApiController(
+    IRankingService rankingService,
+    IPlayerLookupService playerLookupService,
+    IPlayerDirectoryService playerDirectoryService,
+    ISettingsService settingsService) : ControllerBase
 {
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchAsync([FromQuery] string? q, [FromQuery] int page, CancellationToken cancellationToken)
+    {
+        var result = await playerDirectoryService.SearchAsync(q, page, cancellationToken);
+        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
+
+        return Ok(new PlayerSearchPageResult(result, SiteTime.Zone(site.TimeZone)));
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
     {

@@ -71,10 +71,12 @@ public class CommunityAdminController(
     }
 
     [HttpPost("voters/delete")]
-    public async Task<IActionResult> RemoveVoter(long communityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveVoter(string? communityId, CancellationToken cancellationToken)
     {
-        if (SteamIds.IsValid(communityId))
-            TempData["Removed"] = await communityRankingService.RemoveVoterAsync(communityId, cancellationToken);
+        var parsed = SteamIdParser.Parse(communityId);
+
+        if (parsed != null)
+            TempData["Removed"] = await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken);
         else
             TempData["Error"] = "That is not a valid SteamID64.";
 

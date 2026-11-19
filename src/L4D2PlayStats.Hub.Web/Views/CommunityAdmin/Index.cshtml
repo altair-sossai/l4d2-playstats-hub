@@ -165,7 +165,14 @@
     <div class="panel-body">
         <p>@L["Removing a voter deletes all of their votes and rebuilds the ratings without them."]</p>
         <form class="admin-filters" method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
-            <input class="form-control admin-search" name="communityId" type="number" required placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="SteamID64">
+            <div class="input-group admin-search">
+                <input class="form-control" id="ca-voter-id" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="@L["Steam ID or profile URL"]">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-player-picker="#ca-voter-id" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
             <button class="btn btn-danger" type="submit">
                 <span class="glyphicon glyphicon-trash"></span> @L["Remove votes"]
             </button>
@@ -213,3 +220,5 @@
         }
     </div>
 </div>
+
+@await Html.PartialAsync("_PlayerPickerModal")

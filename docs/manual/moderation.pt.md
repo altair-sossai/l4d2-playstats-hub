@@ -68,10 +68,10 @@ Com o módulo do servidor ao vivo ligado, os servidores de jogo informam o ender
 
 ![As contas que compartilham um endereço com um jogador](../images/pt/admin-player-connections.webp)
 
-Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**. A página mostra:
+Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**, ou clique no botão de jogador ao lado do campo e escolha na [busca de jogadores](administration.pt.md#a-busca-de-jogadores); a busca roda assim que você escolhe. A página mostra:
 
 - quantas conexões o jogador tem e quantas outras contas usaram o mesmo endereço;
-- cada conta, com os Steam IDs dela, quando foi vista pela primeira e pela última vez, e quantas conexões ela tem.
+- cada conta, com o Steam ID dela (o SteamID64 aparece ao passar o mouse), quando foi vista pela primeira e pela última vez, e quantas conexões ela tem.
 
 O endereço em si nunca aparece. Conexões com mais de três meses são excluídas.
 

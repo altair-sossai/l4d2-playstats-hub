@@ -14,4 +14,7 @@ public static partial class AppConsts
     public const string PlayerSeasonParameter = "season";
     public const string PlayerYearParameter = "year";
     public const string PlayerPeriodParameter = "period";
+    public const string PlayerSearchUrl = "/api/admin/players/search";
+    public const int PlayerSearchDelayInMilliseconds = 300;
+    public const string PlayerPickerModalItem = "PlayerPickerModal";
 }

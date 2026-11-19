@@ -76,7 +76,7 @@
             <img class="admin-avatar" src="@ban.AvatarUrl" alt="@name" onerror="imgOnError(this)"/>
             <div class="admin-main">
                 <div class="admin-title">@name</div>
-                <small>@ban.SteamId · @ban.CommunityId</small>
+                <small title="SteamID64: @ban.CommunityId">@ban.SteamId</small>
                 <small class="cb-reason">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</small>
             </div>
             <div class="admin-side">
