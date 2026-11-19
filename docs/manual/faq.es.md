@@ -45,7 +45,7 @@ Aparece a partir del próximo cambio de mapa. En el juego, `!skin status` muestr
 El ranking de la comunidad pide un número mínimo de partidas, contadas en todas las temporadas: 10 de forma predeterminada.
 
 **La página del servidor en vivo va atrasada respecto al juego.**
-Va unos 15 segundos atrasada, a propósito.
+Va unos 15 segundos atrasada, a propósito. Un administrador cambia el retraso en **Administración > Servidores de juego > Página del servidor en vivo**.
 
 ## Para administradores
 

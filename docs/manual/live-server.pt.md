@@ -81,7 +81,7 @@ Em uma tela estreita, as equipes ficam uma embaixo da outra.
 
 ## Bom saber
 
-- A página ao vivo fica uns 15 segundos atrás do jogo, de propósito, como no site que este projeto substitui.
+- A página ao vivo fica uns 15 segundos atrás do jogo, de propósito, como no site que este projeto substitui. O atraso é definido em **Administração > Servidores de jogo > Página do servidor ao vivo**, de 0 a 600 segundos, e vale na hora; as mensagens enviadas pelo site não sofrem atraso.
 - A partida em andamento fica só na memória. Se o site reiniciar, a página fica vazia até o servidor de jogo enviar a próxima atualização.
 - Cada servidor de jogo tem o seu próprio estado ao vivo, chat e fila de comandos.
 - O módulo do servidor ao vivo pode ser desligado em [Módulos](administration.pt.md#módulos). O item **Servidor** do menu some, e somem também o chat do site e os comandos remotos, que dependem dele.

@@ -14,6 +14,7 @@ public static class CoreInjection
         services.AddSingleton<HubState>();
         services.AddSingleton<IClock, SystemClock>();
         services.AddSingleton<IGameServerPresence, GameServerPresence>();
+        services.AddSingleton<Modules.Live.Services.ILiveDelay, Modules.Live.Services.LiveDelay>();
         services.AddSingleton<Modules.Live.Services.ILiveServerStore, Modules.Live.Services.LiveServerStore>();
 
         services.Scan(scan => scan

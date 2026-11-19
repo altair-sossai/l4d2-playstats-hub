@@ -2,8 +2,12 @@ using L4D2PlayStats.Hub.Core.Infrastructure;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 
-public class TimedValue<T>(IClock clock, TimeSpan delay, TimeSpan expireIn, T initialValue)
+public class TimedValue<T>(IClock clock, Func<TimeSpan> delay, TimeSpan expireIn, T initialValue)
 {
+    public TimedValue(IClock clock, TimeSpan delay, TimeSpan expireIn, T initialValue) : this(clock, () => delay, expireIn, initialValue)
+    {
+    }
+
     private readonly Lock _lock = new();
     private readonly Queue<(DateTime PublishAt, T Value)> _pending = new();
     private DateTime? _publishedAt;
@@ -26,7 +30,7 @@ public class TimedValue<T>(IClock clock, TimeSpan delay, TimeSpan expireIn, T in
     {
         lock (_lock)
         {
-            _pending.Enqueue((clock.UtcNow + delay, value));
+            _pending.Enqueue((clock.UtcNow + delay(), value));
 
             Publish();
         }

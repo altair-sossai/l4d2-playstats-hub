@@ -7,26 +7,29 @@ using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
-public class LiveServerState(IClock clock)
+public class LiveServerState(IClock clock, Func<TimeSpan> delay)
 {
-    private static readonly TimeSpan Delay = TimeSpan.FromSeconds(AppConsts.LiveDelayInSeconds);
+    public LiveServerState(IClock clock) : this(clock, () => TimeSpan.FromSeconds(AppConsts.LiveDelayInSeconds))
+    {
+    }
+
     private static readonly TimeSpan PlayersExpiration = TimeSpan.FromMinutes(AppConsts.LivePlayersExpirationInMinutes);
     private static readonly TimeSpan SiteChatRetention = TimeSpan.FromMinutes(AppConsts.SiteChatRetentionInMinutes);
     private static readonly TimeSpan CommandExpiration = TimeSpan.FromMinutes(AppConsts.RemoteCommandExpirationInMinutes);
 
     private readonly Lock _chatLock = new();
     private readonly ConcurrentQueue<QueuedCommand> _commands = new();
-    private readonly TimedValue<LiveConfiguration?> _configuration = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveConfigurationExpirationInMinutes), null);
-    private readonly TimedFeed _feed = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveFeedRetentionInMinutes), AppConsts.LiveFeedMaxItems);
-    private readonly TimedValue<IReadOnlyList<LiveInfected>> _infecteds = new(clock, Delay, PlayersExpiration, []);
+    private readonly TimedValue<LiveConfiguration?> _configuration = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveConfigurationExpirationInMinutes), null);
+    private readonly TimedFeed _feed = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveFeedRetentionInMinutes), AppConsts.LiveFeedMaxItems);
+    private readonly TimedValue<IReadOnlyList<LiveInfected>> _infecteds = new(clock, delay, PlayersExpiration, []);
     private readonly List<QueuedCommand> _internalCommands = [];
     private readonly Lock _internalCommandsLock = new();
     private readonly ConcurrentDictionary<string, string> _lastMessage = new();
-    private readonly TimedValue<LiveRound?> _round = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveRoundExpirationInMinutes), null);
-    private readonly TimedValue<LiveScoreboard?> _scoreboard = new(clock, Delay, TimeSpan.FromMinutes(AppConsts.LiveScoreboardExpirationInMinutes), null);
+    private readonly TimedValue<LiveRound?> _round = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveRoundExpirationInMinutes), null);
+    private readonly TimedValue<LiveScoreboard?> _scoreboard = new(clock, delay, TimeSpan.FromMinutes(AppConsts.LiveScoreboardExpirationInMinutes), null);
     private readonly List<SiteChatMessage> _siteMessages = [];
-    private readonly TimedValue<IReadOnlyList<LivePlayer>> _spectators = new(clock, Delay, PlayersExpiration, []);
-    private readonly TimedValue<IReadOnlyList<LiveSurvivor>> _survivors = new(clock, Delay, PlayersExpiration, []);
+    private readonly TimedValue<IReadOnlyList<LivePlayer>> _spectators = new(clock, delay, PlayersExpiration, []);
+    private readonly TimedValue<IReadOnlyList<LiveSurvivor>> _survivors = new(clock, delay, PlayersExpiration, []);
 
     public IReadOnlyList<FeedItem> Feed => _feed.Items;
 

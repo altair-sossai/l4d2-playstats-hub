@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Web.Services;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
@@ -34,6 +36,7 @@ public class AdminController(
     ISettingsService settingsService,
     IMatchBuildService matchBuildService,
     ISkinCatalogService skinCatalogService,
+    ILiveDelay liveDelay,
     ICurrentUser currentUser) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -76,6 +79,18 @@ public class AdminController(
             servers.Add(await adminViewService.StatusAsync(server, cancellationToken));
 
         return View(servers);
+    }
+
+    [HttpPost("servers/live")]
+    public async Task<IActionResult> LiveSettings(LiveServerSettings settings, CancellationToken cancellationToken)
+    {
+        settings.Normalize();
+
+        await settingsService.SaveAsync(settings, cancellationToken);
+        liveDelay.Set(settings.DelayInSeconds);
+        TempData["LiveSaved"] = true;
+
+        return RedirectToAction(nameof(Servers));
     }
 
     [HttpPost("servers")]

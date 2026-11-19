@@ -81,7 +81,7 @@ On a narrow screen the teams stack one under the other.
 
 ## Good to know
 
-- The live page is about 15 seconds behind the game, on purpose, as on the site this project replaces.
+- The live page is about 15 seconds behind the game, on purpose, as on the site this project replaces. The delay is set in **Administration > Game servers > Live server page**, from 0 to 600 seconds, and applies at once; messages sent from the site are not delayed.
 - The match in progress is kept in memory only. If the site restarts, the page is empty until the game server sends the next update.
 - Each game server has its own live state, chat and command queue.
 - The live server module can be turned off in [Modules](administration.md#modules). The **Server** menu item disappears, and so do the site chat and remote commands, which need it.

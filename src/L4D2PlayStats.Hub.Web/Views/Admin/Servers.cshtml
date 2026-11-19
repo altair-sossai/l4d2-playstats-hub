@@ -1,5 +1,8 @@
 @model List<ServerStatusViewModel>
+@inject ISettingsService Settings
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
 @{
+    var live = await Settings.GetAsync<LiveServerSettings>();
     ViewData["Title"] = L["Game servers"].Value;
 }
 
@@ -69,6 +72,28 @@
                     </div>
                     <button class="btn btn-primary" type="submit">
                         <span class="glyphicon glyphicon-plus"></span> @L["Create"]
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Live server page"]</h3>
+            </div>
+            <div class="panel-body">
+                @if (TempData["LiveSaved"] != null)
+                {
+                    <div class="alert alert-success">@L["Saved."]</div>
+                }
+                <form method="post" asp-antiforgery="true" action="/admin/servers/live">
+                    <div class="form-group">
+                        <label for="DelayInSeconds">@L["Delay of the live page, in seconds"] @FieldHelp.More(L["How far behind the game the live page shows the score, the players and the events."], L["Delay of the live page, in seconds"], L["The live page waits this many seconds before showing what the game server sends: the score, the players, their health, the game chat and the events of the feed. It stops someone who is watching the site from telling a team where the other team is.\nMessages sent from the site appear at once.\nThe change applies to what the game server sends from then on, without a restart. 0 shows everything right away."])</label>
+                        <input class="form-control" id="DelayInSeconds" name="DelayInSeconds" type="number" min="0" max="@CoreConsts.LiveMaxDelayInSeconds" value="@live.DelayInSeconds">
+                    </div>
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                     </button>
                 </form>
             </div>

@@ -81,7 +81,7 @@ En una pantalla angosta los equipos se apilan uno debajo del otro.
 
 ## Para tener en cuenta
 
-- La página en vivo va unos 15 segundos detrás del juego, a propósito, como en el sitio que este proyecto reemplaza.
+- La página en vivo va unos 15 segundos detrás del juego, a propósito, como en el sitio que este proyecto reemplaza. El retraso se define en **Administración > Servidores de juego > Página del servidor en vivo**, de 0 a 600 segundos, y vale de inmediato; los mensajes enviados desde el sitio no se retrasan.
 - La partida en curso se guarda solo en memoria. Si el sitio se reinicia, la página queda vacía hasta que el servidor de juego envíe la siguiente actualización.
 - Cada servidor de juego tiene su propio estado en vivo, su chat y su cola de comandos.
 - El módulo de servidor en vivo se puede desactivar en [Módulos](administration.es.md#módulos). El elemento **Servidor** desaparece del menú, y también el chat del sitio y los comandos remotos, que lo necesitan.

@@ -3,8 +3,12 @@ using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 
-public class TimedFeed(IClock clock, TimeSpan delay, TimeSpan expireIn, int maxItems)
+public class TimedFeed(IClock clock, Func<TimeSpan> delay, TimeSpan expireIn, int maxItems)
 {
+    public TimedFeed(IClock clock, TimeSpan delay, TimeSpan expireIn, int maxItems) : this(clock, () => delay, expireIn, maxItems)
+    {
+    }
+
     private readonly List<(DateTime PublishedAt, FeedItem Item)> _items = [];
     private readonly Lock _lock = new();
     private readonly Queue<(DateTime PublishAt, FeedItem Item)> _pending = new();
@@ -40,8 +44,10 @@ public class TimedFeed(IClock clock, TimeSpan delay, TimeSpan expireIn, int maxI
         {
             var now = clock.UtcNow;
 
-            if (delayed && delay > TimeSpan.Zero)
-                _pending.Enqueue((now + delay, item));
+            var wait = delay();
+
+            if (delayed && wait > TimeSpan.Zero)
+                _pending.Enqueue((now + wait, item));
             else
                 Insert(now, item);
 

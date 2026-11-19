@@ -45,7 +45,7 @@ It appears from the next map change. In the game, `!skin status` shows what you 
 The community ranking asks for a minimum number of matches, counted over all seasons: 10 by default.
 
 **The live server page is behind the game.**
-It is about 15 seconds behind, on purpose.
+It is about 15 seconds behind, on purpose. An administrator changes the delay in **Administration > Game servers > Live server page**.
 
 ## For administrators
 

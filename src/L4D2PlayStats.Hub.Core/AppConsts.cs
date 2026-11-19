@@ -81,6 +81,7 @@ public static class AppConsts
     public const int CommunityVoterListSize = 100;
 
     public const int LiveDelayInSeconds = 15;
+    public const int LiveMaxDelayInSeconds = 600;
     public const int LiveConfigurationExpirationInMinutes = 120;
     public const int LiveRoundExpirationInMinutes = 120;
     public const int LiveScoreboardExpirationInMinutes = 10;
