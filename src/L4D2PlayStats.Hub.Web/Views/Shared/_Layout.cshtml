@@ -21,7 +21,7 @@
     var siteUrl = string.IsNullOrWhiteSpace(site.PublicUrl) ? $"{Context.Request.Scheme}://{Context.Request.Host}" : site.PublicUrl.TrimEnd('/');
     var canonical = $"{siteUrl}{ErrorPages.OriginalPath(Context)}";
     var pageImage = !string.IsNullOrWhiteSpace(metadata?.Image) ? metadata.Image : Branding.HasLogo ? AppConsts.LogoUrl : null;
-    var image = pageImage == null ? null : Uri.TryCreate(pageImage, UriKind.Absolute, out _) ? pageImage : $"{siteUrl}/{pageImage.TrimStart('/')}";
+    var image = pageImage == null ? null : Uri.TryCreate(pageImage, UriKind.Absolute, out var imageUri) && (imageUri.Scheme == Uri.UriSchemeHttp || imageUri.Scheme == Uri.UriSchemeHttps) ? pageImage : $"{siteUrl}/{pageImage.TrimStart('/')}";
     var imageAlt = metadata?.ImageAlt ?? pageTitle ?? site.Name;
     var footerLinks = FooterLinks.Parse(site.FooterLinks);
     var languages = new[] { ("en-US", "us", "English", "lang-en"), ("pt-BR", "br", "Português", "lang-pt"), ("es-ES", "es", "Español", "lang-es") };
