@@ -168,13 +168,13 @@ else
                     <a href="@PlayerUrls.Details(player.CommunityId, null, periodQuery)">@player.MainName.TruncatePlayerName()</a>
                     @if (Model.ShowPatent && patentProgress.LevelUp)
                     {
-                        <span class="label label-success pulsate" style="float: right" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
+                        <span class="label label-success pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
                             @L["Level Up!"]
                         </span>
                     }
                     @if (Model.ShowPatent && patentProgress.LevelDrop)
                     {
-                        <span class="label label-danger pulsate" style="float: right" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
+                        <span class="label label-danger pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
                             @L["Level Drop!"]
                         </span>
                     }

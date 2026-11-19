@@ -27,6 +27,18 @@
             height: 96px !important;
             border-radius: 50% !important;
         }
+
+        @@media (min-width: 768px) {
+            .cb-limits {
+                display: flex;
+            }
+
+                .cb-limits > div {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                }
+        }
     </style>
 }
 
@@ -59,7 +71,7 @@
         <h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]</h3>
     </div>
     <div class="panel-body">
-        <div class="row">
+        <div class="row cb-limits">
             <div class="col-sm-4">
                 <div class="form-group">
                     <label for="GlobalCooldownInSeconds">@L["Seconds between any two messages"] @FieldHelp.More(L["After any message from the site, nobody can send another one to the same game server for this many seconds."], L["Seconds between any two messages"], L["It is a pause shared by everyone on the same game server, so the game chat is not flooded when many people write at once. Each game server has its own pause.\nAdministrators are not held by it.\n0 turns it off."])</label>
