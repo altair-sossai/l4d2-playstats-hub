@@ -158,4 +158,26 @@ public static class AppConsts
     public const string Steam3Pattern = @"^\[?U:\d:(\d+)]?$";
     public const string SteamCommunityIdPattern = @"^(\d{16,})$";
     public const string SteamProfileUrlPattern = @"^https?:\/\/steamcommunity\.com\/profiles\/(\d{16,})\/?$";
+
+    public const int BackupDefaultIntervalInHours = 8;
+    public const int BackupMinIntervalInHours = 1;
+    public const int BackupMaxIntervalInHours = 168;
+    public const int BackupDefaultKeep = 30;
+    public const int BackupMinKeep = 1;
+    public const int BackupMaxKeep = 1000;
+    public const string BackupDefaultPrefix = "hub-backup";
+    public const int BackupPrefixMaxLength = 60;
+    public const string BackupPrefixPattern = "^[A-Za-z0-9][A-Za-z0-9._-]*$";
+    public const string BackupFileTimeFormat = "yyyyMMdd-HHmmss";
+    public const string BackupFileExtension = ".zip";
+    public const string BackupFileNameFormat = "{0}-{1}{2}";
+    public const int BackupHistorySize = 20;
+    public const int BackupRetryInMinutes = 30;
+    public const string BackupSecretMask = "••••••••";
+    public const string BackupConnectionKeyPrefix = "AccountKey=";
+    public const string BackupConnectionSignaturePrefix = "SharedAccessSignature=";
+    public const char BackupConnectionSeparator = ';';
+    public const string BackupContainerNamePattern = "^(?!.*--)[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$";
+    public const string BackupSignatureParameter = "sig=";
+    public const string BackupNamePatternFormat = @"^{0}-\d{{8}}-\d{{6}}\.zip$";
 }

@@ -3,6 +3,8 @@ using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Tests.Support.Backups;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -24,6 +26,10 @@ public class HubWebFactory : WebApplicationFactory<Program>
     private readonly TestDatabase _database = new();
     private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));
 
+    public FakeBackupStorageFactory Backups { get; } = new();
+
+    public string DataDirectory => _dataDirectory;
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -35,6 +41,8 @@ public class HubWebFactory : WebApplicationFactory<Program>
             services.RemoveAll<DbContextOptions<HubDbContext>>();
             services.RemoveAll<IDbContextOptionsConfiguration<HubDbContext>>();
             services.AddDbContext<HubDbContext>(_database.Configure);
+            services.RemoveAll<IBackupStorageFactory>();
+            services.AddSingleton<IBackupStorageFactory>(Backups);
 
             services
                 .AddAuthentication(TestAuthenticationHandler.SchemeName)
