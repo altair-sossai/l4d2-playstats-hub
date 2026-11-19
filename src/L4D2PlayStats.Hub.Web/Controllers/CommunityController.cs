@@ -13,6 +13,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ public class CommunityController(
     }
 
     [HttpGet("/community")]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
@@ -47,10 +48,12 @@ public class CommunityController(
         var playerPages = modules.IsEnabled(HubModule.Ranking);
         var entries = await communityRankingService.ListAsync(cancellationToken);
         var experience = playerPages ? await ExperienceAsync(cancellationToken) : null;
+        var listed = new PagedListModel<CommunityRankingEntry>(entries, page, AppConsts.CommunityRankingPageSize);
+        var rows = listed.Items.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId)))).ToList();
 
         var model = new CommunityRankingViewModel
         {
-            Players = [.. entries.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId))))],
+            Players = new PagedListModel<CommunityRankingRow>(rows, listed.Page, listed.PageSize, listed.TotalItems),
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
             MinimumMatches = settings.MinimumMatchesToBeCandidate,
             Settings = settings,

@@ -113,14 +113,23 @@ public class RemoteCommandService(
         return queued.Command;
     }
 
-    public Task<List<RemoteCommandLog>> ListAsync(int count, CancellationToken cancellationToken = default)
+    public Task<List<RemoteCommandLog>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
     {
         return dbContext.Set<RemoteCommandLog>()
             .AsNoTracking()
             .OrderByDescending(entry => entry.CreatedAtUtc)
             .ThenByDescending(entry => entry.Id)
-            .Take(count)
+            .Skip(Math.Max(0, skip))
+            .Take(Math.Max(0, take))
             .ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountAsync(bool deliveredOnly = false, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Set<RemoteCommandLog>()
+            .AsNoTracking()
+            .Where(entry => !deliveredOnly || entry.DeliveredAtUtc != null)
+            .CountAsync(cancellationToken);
     }
 
     private async Task<bool> EnabledAsync(CancellationToken cancellationToken)

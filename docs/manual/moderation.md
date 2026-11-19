@@ -58,7 +58,7 @@ With the remote commands module on, administrators can send SourceMod commands f
 
 The command is queued. The game server asks the site for queued commands on its next check and runs the command. If no game server picks it up within 5 minutes, it is dropped.
 
-Every command is recorded in the **Audit log**: the command, the administrator, the server, when it was sent, and whether it was delivered to the game server and when. The counters show how many commands were sent and how many were delivered. The log also lists the `sm_aac sync` the site sends to every game server after a change on the [Anti-Cheat settings](anti-cheat.md#for-administrators); that one is sent even when this module is off.
+Every command is recorded in the **Audit log**: the command, the administrator, the server, when it was sent, and whether it was delivered to the game server and when. The log shows 50 commands per page, the most recent first, and the counters show how many commands were sent and how many were delivered in total. The log also lists the `sm_aac sync` the site sends to every game server after a change on the [Anti-Cheat settings](anti-cheat.md#for-administrators); that one is sent even when this module is off.
 
 Administrators can also send a command from the chat box of the live server page, and the **Terminal** button there helps to build one.
 

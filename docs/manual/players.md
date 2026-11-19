@@ -28,7 +28,7 @@ Every player who played on your game servers has a page with their results, thei
 - The column of the chosen statistic shows each player's total, and **Per game** shows the average per game. Hover the ⓘ icon to see the number of games. Click the column header to reverse the order.
 - The [period selector](seasons-and-history.md#the-period-selector) chooses a season, a year or all time.
 
-The list has the same players as the ranking of the period, all of them and not only the top 100.
+The list has the same players as the ranking of the period, all of them and not only the top 100. It shows 100 players per page, and the page links under the table keep the order and the period you chose.
 
 ## The player page
 

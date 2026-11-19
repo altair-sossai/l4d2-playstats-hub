@@ -34,7 +34,7 @@ The community ranking is a second ranking, built from what the players think of 
 
 On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
 
-Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. **How does it work?**, in the box, opens a window that explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same link, also when the votes of the day are used up. Clicking a player's row opens a window with their rating, comparisons and a bar of wins, draws and losses, with links to their comparisons and profile. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
+Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. When more players are listed, the table shows 100 per page, with page links under it. **How does it work?**, in the box, opens a window that explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same link, also when the votes of the day are used up. Clicking a player's row opens a window with their rating, comparisons and a bar of wins, draws and losses, with links to their comparisons and profile. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days.
 
 ## Voting
 
@@ -109,6 +109,6 @@ The K factor and the initial rating apply to new votes. **Rebuild the ratings** 
 
 **Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
 
-**Voters** lists everybody who voted, with their number of votes and their last vote. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
+**Voters** lists everybody who voted, with their number of votes and their last vote, 20 per page, the most votes first. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
 
 Turning off the community ranking module in [Modules](administration.md#modules) removes **Community** from the menu. The votes are kept.

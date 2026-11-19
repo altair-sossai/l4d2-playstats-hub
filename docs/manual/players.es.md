@@ -28,7 +28,7 @@ Cada jugador que jugó en tus servidores de juego tiene una página con sus resu
 - La columna de la estadística elegida muestra el total de cada jugador, y **Por juego** muestra el promedio por juego. Pasa el mouse sobre el ícono ⓘ para ver la cantidad de juegos. Haz clic en el encabezado de la columna para invertir el orden.
 - El [selector de período](seasons-and-history.es.md#el-selector-de-período) elige una temporada, un año o todo el tiempo.
 
-La lista tiene los mismos jugadores que el ranking del período, todos y no solo el top 100.
+La lista tiene los mismos jugadores que el ranking del período, todos y no solo el top 100. Muestra 100 jugadores por página, y los enlaces de las páginas debajo de la tabla mantienen el orden y el período elegidos.
 
 ## La página del jugador
 

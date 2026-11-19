@@ -21,6 +21,11 @@ public static class PlayerUrls
         return $"{AppConsts.PlayersUrl}?orderBy={orderBy}&asc={asc}" + Period(period, '&');
     }
 
+    public static string List(PlayerResultProperty orderBy, bool asc, string? period, int page)
+    {
+        return $"{List(orderBy, asc, period)}&page={page}";
+    }
+
     public static string SeasonQuery(int seasonId)
     {
         return $"{AppConsts.PlayerSeasonParameter}={seasonId}";

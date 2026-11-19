@@ -17,6 +17,7 @@ using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
@@ -85,11 +86,13 @@ public class PlayerViewService(
             : rankingService.SeasonAsync(period.Season!.Id, cancellationToken);
     }
 
-    public async Task<PlayersModel> ListAsync(PlayerPeriodModel period, PlayerResultProperty orderBy, bool asc, CancellationToken cancellationToken = default)
+    public async Task<PlayersModel> ListAsync(PlayerPeriodModel period, PlayerResultProperty orderBy, bool asc, int page, CancellationToken cancellationToken = default)
     {
         var players = await RankingAsync(period, cancellationToken);
 
-        return new PlayersModel(PlayerProperties.Sort(players, orderBy, asc), orderBy, asc, period);
+        var sorted = PlayerProperties.Sort(players, orderBy, asc);
+
+        return new PlayersModel(new PagedListModel<PlayerListRow>(sorted, page, AppConsts.PlayersPageSize), orderBy, asc, period);
     }
 
     public async Task<PlayerDetailsModel?> DetailsAsync(PlayerPeriodModel period, long communityId, long? compareWith, CancellationToken cancellationToken = default)

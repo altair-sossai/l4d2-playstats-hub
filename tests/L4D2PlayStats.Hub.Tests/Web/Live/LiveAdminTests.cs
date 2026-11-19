@@ -72,7 +72,7 @@ public class LiveAdminTests
         var queue = await HubWebFactory.PostFormAsync(client, "/admin/remote-commands", "/admin/remote-commands", fields);
         var command = await server.GetStringAsync("/api/game-info/server-command/dequeue");
         var page = await client.GetStringAsync("/admin/remote-commands");
-        var logs = await factory.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(10));
+        var logs = await factory.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(0, 10));
 
         Assert.AreEqual(HttpStatusCode.Redirect, queue.StatusCode);
         Assert.Contains("\"fullCommand\":\"sm_forcestart\"", command);

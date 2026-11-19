@@ -54,6 +54,7 @@ Comprobado frente a las páginas renderizadas con una copia de los datos de prod
 | Columna con la estadística elegida, que enlaza al orden invertido, con la flecha (↑ ascendente, ↓ descendente) | Views/Players/Index.cshtml:91-97 | done | |
 | Columna "Por juego", oculta cuando la estadística es "Juegos" | Views/Players/Index.cshtml:44, :98-101, :131-139 | done | |
 | Posición: 1, 2, 3... en orden descendente; cuenta hacia atrás desde el número de jugadores en orden ascendente | Views/Players/Index.cshtml:105-107, :142 | done | |
+| Páginas de 100 jugadores (nuevo) | - | adapted | Añadido del hub: la lista muestra 100 jugadores por página con los enlaces de las páginas debajo de la tabla, que mantienen `orderBy`, `asc` y el período. La posición sigue la de la página anterior, en los dos órdenes. Con hasta 100 jugadores no hay enlaces de página y la página queda como antes. |
 | Fila resaltada (`it-is-me`) para el jugador con sesión iniciada | Views/Players/Index.cshtml:112 | done | |
 | Avatar de 40 px, redondeado, con enlace, título y la imagen de reserva en caso de error | Views/Players/Index.cshtml:114-118 | done | |
 | Nombre truncado (`TruncatePlayerName`) con enlace a la página del jugador | Views/Players/Index.cshtml:119-121 | done | El enlace conserva la temporada mostrada. |
