@@ -4,10 +4,17 @@ public static partial class AppConsts
 {
     public const string ApplicationInsightsConnectionStringKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
     public const float TelemetrySamplingRatio = 1.0f;
+    public const LogLevel TelemetryMinimumLogLevel = LogLevel.Warning;
+    public const string TelemetryLivePrefix = "/servers/";
+
+    public static readonly string[] TelemetryIgnoredPaths = ["/api/server"];
+
+    public static readonly string[] TelemetryLivePollingSuffixes = ["/header", "/players", "/feed"];
 
     public static readonly string[] TelemetryIgnoredPrefixes =
     [
         "/api/game-info",
+        "/server/",
         "/api/external-chat",
         "/api/servers/heartbeat",
         "/api/skins",

@@ -1,5 +1,6 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Logs;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Telemetry;
 
@@ -21,6 +22,7 @@ public static class HubTelemetry
             options.SamplingRatio = AppConsts.TelemetrySamplingRatio;
         });
 
+        services.Configure<LoggerFilterOptions>(options => options.AddFilter<OpenTelemetryLoggerProvider>(null, AppConsts.TelemetryMinimumLogLevel));
         services.Configure<AspNetCoreTraceInstrumentationOptions>(options => options.Filter = context => IsTracked(context.Request.Path));
 
         return services;
@@ -29,6 +31,12 @@ public static class HubTelemetry
     public static bool IsTracked(PathString path)
     {
         var value = path.Value ?? string.Empty;
+
+        if (AppConsts.TelemetryIgnoredPaths.Any(ignored => string.Equals(value, ignored, StringComparison.OrdinalIgnoreCase)))
+            return false;
+
+        if (value.StartsWith(AppConsts.TelemetryLivePrefix, StringComparison.OrdinalIgnoreCase) && AppConsts.TelemetryLivePollingSuffixes.Any(suffix => value.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)))
+            return false;
 
         if (AppConsts.TelemetryIgnoredPrefixes.Any(prefix => value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
             return false;

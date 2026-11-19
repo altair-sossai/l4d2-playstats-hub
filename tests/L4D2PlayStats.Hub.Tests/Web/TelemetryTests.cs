@@ -15,6 +15,10 @@ public class TelemetryTests
     [DataRow("/player/76561198000000000")]
     [DataRow("/admin/backup")]
     [DataRow("/api/statistics")]
+    [DataRow("/players")]
+    [DataRow("/servers")]
+    [DataRow("/servers/l4d2-competitive-1")]
+    [DataRow("/api/servers")]
     public void ThePagesPeopleOpenAreTracked(string path)
     {
         Assert.IsTrue(HubTelemetry.IsTracked(new PathString(path)));
@@ -29,6 +33,11 @@ public class TelemetryTests
     [DataRow("/css/bootstrap.min.css")]
     [DataRow("/js/command-builder.js")]
     [DataRow("/imgs/logo.png")]
+    [DataRow("/api/server")]
+    [DataRow("/server/feed")]
+    [DataRow("/servers/l4d2-competitive-1/feed")]
+    [DataRow("/servers/l4d2-competitive-1/players")]
+    [DataRow("/servers/l4d2-competitive-1/header")]
     public void ThePollingOfTheGameServersAndTheFilesAreNotTracked(string path)
     {
         Assert.IsFalse(HubTelemetry.IsTracked(new PathString(path)));
