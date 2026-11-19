@@ -96,7 +96,7 @@
     <div class="panel-body">
         <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/upload" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="file">@L["Catalog file"]</label>
+                <label for="file">@L["Catalog file"] @FieldHelp.More(L["A skins.json file in the same format as the catalog that comes with the hub."], L["Catalog file"], L["Importing updates the skins that already exist and adds the new ones.\nSkins that are not in the file are taken off sale; players keep the ones they own.\nThe prices changed on the Prices page and the author names read from Steam are kept."])</label>
                 <input id="file" name="file" type="file" accept=".json,application/json" required/>
             </div>
             <button class="btn btn-primary" type="submit">

@@ -36,8 +36,10 @@
     <form class="panel panel-success admin-card" method="post" asp-antiforgery="true" action="/admin/campaigns">
         <div class="panel-body">
             <div class="form-group">
+                <label class="small">@L["Name"] @FieldHelp.Tip(L["The name of the campaign as players know it. It is what the match list and the player pages show."])</label>
                 <input class="form-control input-sm" name="Name" placeholder="@L["New campaign"]" required aria-label="@L["Name"]">
             </div>
+            <label class="small">@L["Maps"] @FieldHelp.More(L["The map names the game server uses, one per line, in play order."], L["Maps of the campaign"], L["Write the maps as the game server names them, such as c1m1_hotel, one per line, in the order they are played. Commas and semicolons also separate maps.\nMaps of the same campaign played one after the other, in this order, make one match. If the next map is from another campaign, or out of order, a new match starts.\nA map that is in no campaign is an unknown map: the option about unknown maps in the settings decides whether it still makes matches.\nA change applies to the files that arrive from now on. To rebuild the matches that already exist, use Reprocess all matches in the overview of the administration area."])</label>
             <textarea class="form-control input-sm admin-mono" name="Maps" rows="5" placeholder="map_1&#10;map_2" required aria-label="@L["Maps"]"></textarea>
         </div>
         <div class="panel-footer">

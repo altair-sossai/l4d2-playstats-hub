@@ -884,6 +884,10 @@
 
                 $('#field-help-modal').modal('show');
             });
+
+            $(document).on('click', 'label .field-help', function (event) {
+                event.preventDefault();
+            });
         }
 
         $(document).ready(function () {

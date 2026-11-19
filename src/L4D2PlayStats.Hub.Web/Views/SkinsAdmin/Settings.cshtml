@@ -23,7 +23,7 @@
                 <label for="RefundAtSeasonEnd">
                     <input type="checkbox" id="RefundAtSeasonEnd" name="RefundAtSeasonEnd" value="true" checked="@Model.RefundAtSeasonEnd"/>
                     <input type="hidden" name="RefundAtSeasonEnd" value="false"/>
-                    @L["Refund the skins when a season ends"]
+                    @L["Refund the skins when a season ends"] @FieldHelp.More(L["Bought skins last for one season: when a new season starts, they are taken back and their stars return to the players."], L["Refund the skins when a season ends"], L["On, the default: when a new ranking season starts, every skin bought before it is taken back and its price returns to the balance of its owner. Players can buy again right away, the same skins or others. The site checks every 10 minutes whether a new season has started.\nGifts given by administrators are never taken back.\nOff: bought skins are kept forever, like gifts.\nThe length of the seasons is set in the settings of the site."])
                 </label>
             </div>
             <p class="help-block" style="margin-bottom: 0">@L["When a new ranking season starts, the skins bought before it are taken back and their stars return to the players. Gifts are kept."]</p>
@@ -36,7 +36,7 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="AssetsUrl">@L["Address of the assets"]</label>
+                <label for="AssetsUrl">@L["Address of the assets"] @FieldHelp.More(L["Where the photos of the skins, and the thumbnails that do not come with the hub, are read from."], L["Address of the assets"], L["The photos of each skin are read from skin-shots/<id>/ under this address, and the thumbnail of a skin that does not come with the hub from skins/<id>.jpg.\nLeave it empty to use the default address, where the assets repository publishes the photos of the skins of the bundled catalog.\nChange it only if you publish your own pictures, for example for a catalog of your own. The skins of the bundled catalog keep their thumbnails from the site itself."])</label>
                 <input class="form-control" id="AssetsUrl" name="AssetsUrl" value="@Model.AssetsUrl" placeholder="@CoreConsts.SkinDefaultAssetsUrl"/>
                 <p class="help-block">
                     @L["Where the pictures published from the assets repository are served."]
@@ -47,7 +47,7 @@
                 <p class="help-block">@L["The skins of the bundled catalog have their thumbnails in the site itself. Only a skin without one reads its thumbnail from this address."]</p>
             </div>
             <div class="form-group" style="margin-bottom: 0">
-                <label for="CatalogUrl">@L["Address of the catalog"]</label>
+                <label for="CatalogUrl">@L["Address of the catalog"] @FieldHelp.Tip(L["The address of a skins.json file, downloaded by Import from the configured address on the Catalog page. Optional: the hub already comes with a catalog."])</label>
                 <input class="form-control" id="CatalogUrl" name="CatalogUrl" value="@Model.CatalogUrl" placeholder="https://assets.example.com/skins/skins.json"/>
                 <p class="help-block" style="margin-bottom: 0">@L["A skins.json file, downloaded when you import the catalog from the configured address. Optional: the hub already comes with a catalog."]</p>
             </div>
@@ -60,12 +60,12 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="AuthorContactUrl">@L["Steam profile for contact"]</label>
+                <label for="AuthorContactUrl">@L["Steam profile for contact"] @FieldHelp.Tip(L["Your Steam profile link, opened by the Message me on Steam button that skin authors see in the shop. Empty hides the button."])</label>
                 <input class="form-control" id="AuthorContactUrl" name="AuthorContactUrl" value="@Model.AuthorContactUrl" placeholder="https://steamcommunity.com/profiles/7656119..."/>
                 <p class="help-block">@L["Opened by the Message me on Steam button of the notice for skin authors in the shop. Leave it empty to hide the button."]</p>
             </div>
             <div class="form-group" style="margin-bottom: 0">
-                <label for="AuthorRequestUrl">@L["Address for removal requests"]</label>
+                <label for="AuthorRequestUrl">@L["Address for removal requests"] @FieldHelp.Tip(L["Where skin authors ask for their skin to be removed from the shop. The Open a request on GitHub button opens it with the skin already filled in. Empty hides the button."])</label>
                 <input class="form-control" id="AuthorRequestUrl" name="AuthorRequestUrl" value="@Model.AuthorRequestUrl" placeholder="@CoreConsts.SkinAuthorRequestUrl"/>
                 <p class="help-block" style="margin-bottom: 0">@L["Opened by the Open a request on GitHub button of the same notice, with the skin already filled in. Leave it empty to hide the button."]</p>
             </div>

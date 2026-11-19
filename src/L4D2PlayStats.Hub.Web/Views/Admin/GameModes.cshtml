@@ -22,12 +22,12 @@
 <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
     <thead>
     <tr>
-        <th>@L["Name"]</th>
-        <th>@L["Configuration pattern"]</th>
-        <th class="text-center">@L["Team size"]</th>
-        <th class="text-center">@L["Minimum maps"]</th>
-        <th class="text-center">@L["Priority"]</th>
-        <th class="text-center">@L["Counts for the ranking"]</th>
+        <th>@L["Name"] @FieldHelp.Tip(L["A label for you, such as 4v4 or 1v1 practice. It shows in the list of configurations seen on your servers."])</th>
+        <th>@L["Configuration pattern"] @FieldHelp.More(L["The configuration names the rule covers. * stands for any text and ? for one character."], L["Configuration pattern"], L["Every statistics file carries the name of the configuration the server was running, such as ZoneMod v2.9.2b. The rule covers a configuration when its name fits this pattern.\n* stands for any text and ? for exactly one character. Upper and lower case do not matter. * alone covers every configuration.\nExamples: ZoneMod* covers every version of ZoneMod; *Practice* covers any name that contains Practice; ZoneMod v2.9.2b covers only that exact name.\nThe list Configurations seen on your servers, below, shows which rule applies to each configuration."])</th>
+        <th class="text-center">@L["Team size"] @FieldHelp.Tip(L["Players per team the rule covers, from 1 to 8. Empty means any team size."])</th>
+        <th class="text-center">@L["Minimum maps"] @FieldHelp.Tip(L["How many maps a match needs to be ranked under this rule. A shorter match is casual. At least 1."])</th>
+        <th class="text-center">@L["Priority"] @FieldHelp.More(L["The order in which the rules are checked, lowest number first. The first rule that fits is the one used."], L["Priority"], L["For each match, the site checks the rules from the lowest priority number to the highest and uses only the first one that fits its configuration and team size. The other rules are ignored for that match.\nGive specific rules a low number and general ones a high number. For example: a rule Practice, pattern *Practice*, priority 10, that does not count, and then the rule 4v4, pattern *, priority 100, that counts. Practice matches stay casual and every other 4v4 match is ranked.\nThe default rule 4v4 has priority 100."])</th>
+        <th class="text-center">@L["Counts for the ranking"] @FieldHelp.Tip(L["Yes: the matches the rule covers that have enough maps are ranked and give experience, wins, losses and stars. No: they are casual."])</th>
         <th></th>
     </tr>
     </thead>

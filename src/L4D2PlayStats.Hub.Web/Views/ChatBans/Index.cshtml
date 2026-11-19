@@ -120,7 +120,7 @@
                     </dl>
                 </div>
                 <div class="form-group">
-                    <label for="cb-details-reason">@L["Reason"]</label>
+                    <label for="cb-details-reason">@L["Reason"] @FieldHelp.Tip(L["Optional, up to 300 characters. The banned player sees it on the live page, in place of the chat box."])</label>
                     <textarea id="cb-details-reason" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="alert alert-warning admin-confirm cb-remove-confirm">@L["Are you sure you want to remove this chat ban?"]</div>
@@ -150,7 +150,7 @@
             <div class="modal-body">
                 <input type="hidden" id="cb-add-name"/>
                 <div class="form-group">
-                    <label for="cb-add-player">@L["Steam ID or profile URL"]</label>
+                    <label for="cb-add-player">@L["Steam ID or profile URL"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
                     <div class="input-group">
                         <input type="text" id="cb-add-player" class="form-control" placeholder="76561198000000000"/>
                         <span class="input-group-btn">
@@ -162,10 +162,10 @@
                     <div class="cb-picked text-muted" style="margin-top: 6px"></div>
                 </div>
                 <div class="form-group">
-                    <label for="cb-add-reason">@L["Reason"]</label>
+                    <label for="cb-add-reason">@L["Reason"] @FieldHelp.Tip(L["Optional, up to 300 characters. The banned player sees it on the live page, in place of the chat box."])</label>
                     <textarea id="cb-add-reason" class="form-control" rows="2"></textarea>
                 </div>
-                <label>@L["Recent chat senders"]</label>
+                <label>@L["Recent chat senders"] @FieldHelp.Tip(L["Who wrote in the site chat in the last hour, with their message. Click one to fill in the player; a player who is already banned cannot be chosen."])</label>
                 <div class="list-group cb-recent" style="max-height: 240px; overflow-y: auto"></div>
                 <div class="cb-add-message"></div>
             </div>

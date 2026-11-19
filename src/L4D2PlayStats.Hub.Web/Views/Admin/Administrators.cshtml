@@ -61,11 +61,11 @@
             <div class="panel-body">
                 <form method="post" asp-antiforgery="true" action="/admin/administrators">
                     <div class="form-group">
-                        <label for="communityId">SteamID64</label>
+                        <label for="communityId">SteamID64 @FieldHelp.More(L["The 17-digit number of the Steam account that becomes an administrator."], "SteamID64", L["The SteamID64 is the long number in the address of a Steam profile, such as 76561198000000000 in steamcommunity.com/profiles/76561198000000000. Only this format is accepted here.\nThat account gets full access to the administration area as soon as it signs in with Steam: settings, game servers, bans, commands and everything else. Add only people you trust.\nYou cannot remove yourself, and the last administrator cannot be removed."])</label>
                         <input class="form-control" id="communityId" name="communityId" type="number" required placeholder="@AppConsts.AdminSteamIdPlaceholder">
                     </div>
                     <div class="form-group">
-                        <label for="name">@L["Name"]</label>
+                        <label for="name">@L["Name"] @FieldHelp.Tip(L["Optional. A name to recognize the administrator in this list. It does not change the Steam name."])</label>
                         <input class="form-control" id="name" name="name" maxlength="100">
                     </div>
                     <button class="btn btn-primary" type="submit">
