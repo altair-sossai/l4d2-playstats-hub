@@ -122,6 +122,7 @@ The migration happens step by step. The old repositories are archived when it is
 | [docs/site-parity](docs/site-parity/README.md) | Every screen of the site being replaced, item by item, and its status here. |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How the code is organised and the rules for changes. |
 | [tools/screenshots](tools/screenshots/README.md) | The tool that takes the screenshots of the documentation. |
+| [tools/e2e](tools/e2e/README.md) | The browser tests of the main pages, run on every push. |
 
 English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.
 

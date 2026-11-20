@@ -1,0 +1,39 @@
+name: Browser tests
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**', 'plugins/**']
+  pull_request:
+    paths-ignore: ['**.md', 'docs/**', 'plugins/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 11.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+      - run: dotnet publish src/L4D2PlayStats.Hub.Web --configuration Release --output "$RUNNER_TEMP/site"
+      - run: node tools/e2e/run.js --site "$RUNNER_TEMP/site" --browser "$(which google-chrome)" --out e2e-output
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-failures
+          path: e2e-output
+          if-no-files-found: ignore
+          retention-days: 14

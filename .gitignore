@@ -495,3 +495,6 @@ appsettings.Local.json
 secrets.key
 
 !tools/screenshots/terminal/*.log
+
+e2e-output/
+e2e-site/
