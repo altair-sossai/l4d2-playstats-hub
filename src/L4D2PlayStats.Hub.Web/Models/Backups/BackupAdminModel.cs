@@ -16,6 +16,8 @@ public class BackupAdminModel(BackupSettings settings, BackupHistory history, bo
     public string? MaskedConnectionString { get; } = BackupSecrets.MaskConnectionString(settings.ConnectionString);
     public BackupRun? LastSuccess { get; } = history.Runs.Where(run => run.Succeeded).MaxBy(run => run.StartedAtUtc);
     public DateTime? NextAtUtc { get; } = BackupSchedule.NextAtUtc(settings, history);
+    public BackupVerification? LastVerification { get; } = history.Runs.Select(run => run.Verification).Where(verification => verification != null).MaxBy(verification => verification!.VerifiedAtUtc);
+    public bool CanVerify => IsConfigured && IncludesDatabase && !IsRunning;
 
     public DateTime Local(DateTime utc)
     {

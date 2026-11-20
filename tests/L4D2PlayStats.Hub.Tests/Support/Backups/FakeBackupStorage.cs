@@ -13,6 +13,9 @@ public class FakeBackupStorage : IBackupStorage
     public bool HideFromList { get; set; }
     public int Prepared { get; private set; }
     public Func<Task>? DuringUpload { get; set; }
+    public string? FailDownloadWith { get; set; }
+    public Func<byte[], byte[]>? ChangeDownload { get; set; }
+    public List<string> DownloadedTo { get; } = [];
 
     public Task PrepareAsync(CancellationToken cancellationToken)
     {
@@ -45,6 +48,20 @@ public class FakeBackupStorage : IBackupStorage
         var names = HideFromList ? [] : Blobs.Keys.Where(name => name.StartsWith(prefix, StringComparison.Ordinal)).ToList();
 
         return Task.FromResult(names);
+    }
+
+    public async Task DownloadAsync(string name, Stream destination, CancellationToken cancellationToken)
+    {
+        if (FailDownloadWith != null)
+            throw new InvalidOperationException(FailDownloadWith);
+
+        if (destination is FileStream file)
+            DownloadedTo.Add(file.Name);
+
+        var content = Blobs[name];
+        var served = ChangeDownload == null ? content : ChangeDownload(content);
+
+        await destination.WriteAsync(served, cancellationToken);
     }
 
     public Task DeleteAsync(string name, CancellationToken cancellationToken)

@@ -43,13 +43,25 @@ The site can back itself up. In [Administration > Backup](administration.md#back
 | `hub.db` | A copy of the SQLite database, made with the backup function of SQLite while the site runs, so it is consistent even while statistics arrive. |
 | `keys/` | The keys that protect the sign-in cookies. |
 | `branding/` | The logo. |
-| `manifest.json` | The version of the site, the time of the backup in UTC, the database provider and the list of files. |
+| `manifest.json` | The version of the site, the time of the backup in UTC, the database provider, the list of files and how many matches, statistics files, players and settings the site had at that moment. |
 
 - The avatars are left out: the site downloads them again.
 - `hub.env` (Linux) or the environment variables (Docker) are outside the data folder and are not in the zip. Keep a copy of them, or run `playstats-hub backup` now and then, which includes `hub.env`.
 - With SQL Server, PostgreSQL or MySQL the zip has no `hub.db`: back that database up with its own tools. The zip still keeps the keys and the logo.
 
 The files are named `<prefix>-yyyyMMdd-HHmmss.zip`, in UTC, such as `hub-backup-20261119-160000.zip`. After each upload, the oldest files with the same prefix beyond the number to keep (30 by default) are deleted. Other files in the container are never touched. A backup that fails is tried again 30 minutes later, and the page shows the error.
+
+### Checking that each backup restores
+
+Right after each upload the site downloads the zip again from the container, the same file a restore would use, and checks it in a temporary folder:
+
+- the size is the same as what was uploaded, the zip opens and every file listed in `manifest.json` is there and can be read;
+- `hub.db` opens read-only and passes `PRAGMA integrity_check`, the full consistency check of SQLite;
+- `hub.db` has the same number of matches, statistics files, players and settings as the site had when the copy was made, as recorded in the manifest.
+
+The temporary folder is deleted afterwards, whatever the result. The result goes in the **Verified** column of **Recent backups**: a failure shows the reason, and it is written to the log without secrets. When the check of the new zip fails, the older files are not deleted, so the last good copies stay in the container. **Verify now**, on the same page, runs the check again on the newest zip of the container.
+
+The check needs SQLite: with SQL Server, PostgreSQL or MySQL the page shows **Not available**. Each backup takes a few seconds more, and the temporary folder needs, for a moment, free space for the zip plus the database.
 
 ### Creating the container and its SAS address
 

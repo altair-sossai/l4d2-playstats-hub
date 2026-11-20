@@ -23,4 +23,19 @@ public class BackupHistoryService(ISettingsService settingsService) : IBackupHis
 
         await settingsService.SaveAsync(history, cancellationToken);
     }
+
+    public async Task<bool> RecordVerificationAsync(string blobName, BackupVerification verification, CancellationToken cancellationToken = default)
+    {
+        var history = await settingsService.GetAsync<BackupHistory>(cancellationToken);
+        var run = history.Runs.FirstOrDefault(item => item.BlobName == blobName && item.Succeeded);
+
+        if (run == null)
+            return false;
+
+        run.Verification = verification;
+
+        await settingsService.SaveAsync(history, cancellationToken);
+
+        return true;
+    }
 }

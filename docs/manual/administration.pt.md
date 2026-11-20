@@ -198,7 +198,7 @@ O site envia um zip dos dados dele para um contêiner do Azure Storage a cada al
 
 O endereço e a string de conexão são segredos. Depois de salvos, a página só os mostra mascarados, como `https://<conta>.blob.core.windows.net/<contêiner>?••••••••`; deixe o campo vazio para manter o que está salvo, ou digite um novo para trocar. Eles também nunca vão para o log.
 
-- **Status** mostra se o agendamento está ligado, o último backup que deu certo e quando roda o próximo.
-- **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup.
-- **Backups recentes** lista as últimas 20 execuções, agendadas ou manuais, com o arquivo, o tamanho, quanto tempo levou e, para um backup que falhou, o erro. Um backup que falhou é tentado de novo 30 minutos depois.
+- **Status** mostra se o agendamento está ligado, o último backup que deu certo, quando roda o próximo e o resultado da última verificação.
+- **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup. **Verificar agora** baixa o zip mais recente do contêiner e confere que ele restaura: o zip e o manifesto, a verificação de integridade do SQLite no `hub.db` e o número de partidas, arquivos de estatísticas, jogadores e configurações. A mesma conferência roda depois de cada backup. Ela precisa do SQLite; com outros bancos o botão fica desligado.
+- **Backups recentes** lista as últimas 20 execuções, agendadas ou manuais, com o arquivo, o tamanho, quanto tempo levou e, para um backup que falhou, o erro. Um backup que falhou é tentado de novo 30 minutos depois. A coluna **Verificado** mostra a conferência de cada zip: **Verificado** (passe o mouse no ícone de ajuda para ver as contagens), **Verificação falhou** com o motivo, ou **Não disponível** sem SQLite. [Conferindo que cada backup restaura](backups-and-updates.pt.md#conferindo-que-cada-backup-restaura) explica.
 - Num site que não usa SQLite, a página avisa que o banco não está no zip.

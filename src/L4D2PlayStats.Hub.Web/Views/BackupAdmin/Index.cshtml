@@ -4,6 +4,28 @@
     var settings = Model.Settings;
     var detail = TempData[AppConsts.BackupDetailTempData] as string;
     var usesContainerUrl = settings.Destination == BackupDestination.ContainerUrl;
+
+    void VerificationBadge(BackupVerification? verification)
+    {
+        if (verification == null)
+        {
+            <span class="text-muted backup-not-verified">-</span>
+        }
+        else if (verification.Status == BackupVerificationStatus.Passed)
+        {
+            <span class="label label-success backup-verified">@L["Verified"]</span>
+            @FieldHelp.Tip(L[verification.Message, verification.Arguments.Cast<object>().ToArray()])
+        }
+        else if (verification.Status == BackupVerificationStatus.NotAvailable)
+        {
+            <span class="label label-default backup-verify-not-available">@L["Not available"]</span>
+        }
+        else
+        {
+            <span class="label label-danger backup-verify-failed">@L["Verification failed"]</span>
+            <small>@L[verification.Message, verification.Arguments.Cast<object>().ToArray()]</small>
+        }
+    }
 }
 
 @section Styles {
@@ -33,6 +55,24 @@
     <div class="alert alert-danger backup-error">@L[error] @(detail == null ? string.Empty : L[detail].Value)</div>
 }
 
+@if (TempData[AppConsts.BackupVerifyMessageTempData] is string verifyMessage)
+{
+    var verifyStatus = TempData[AppConsts.BackupVerifyStatusTempData] as string;
+    var verifyArguments = TempData[AppConsts.BackupVerifyArgumentsTempData] as string[] ?? [];
+    var verifyBlob = TempData[AppConsts.BackupVerifyBlobTempData] as string;
+    var verifyPassed = verifyStatus == nameof(BackupVerificationStatus.Passed);
+    var verifyNotAvailable = verifyStatus == nameof(BackupVerificationStatus.NotAvailable);
+
+    <div class="alert @(verifyPassed ? "alert-success" : verifyNotAvailable ? "alert-warning" : "alert-danger") backup-verify-result">
+        <strong>@(verifyPassed ? L[AppConsts.BackupVerifyPassedHeadline, verifyBlob ?? string.Empty] : verifyNotAvailable ? L[AppConsts.BackupVerifyNotAvailableHeadline] : L[AppConsts.BackupVerifyFailedHeadline])</strong>
+        @if (!verifyPassed && verifyBlob != null)
+        {
+            <code>@verifyBlob</code>
+        }
+        @L[verifyMessage, verifyArguments]
+    </div>
+}
+
 @if (!Model.IncludesDatabase)
 {
     <div class="alert alert-warning backup-no-database">@L["This site does not use SQLite, so the backup does not include the database: back it up with the tools of your database server. The backup still saves the keys and the logo."]</div>
@@ -52,6 +92,14 @@
                     <dd>@(Model.LastSuccess == null ? L["None yet"].Value : Model.Local(Model.LastSuccess.StartedAtUtc).ToString("g"))</dd>
                     <dt>@L["Next backup"]</dt>
                     <dd>@(Model.NextAtUtc == null ? "-" : Model.NextAtUtc.Value == DateTime.MinValue ? L["Within a minute"].Value : Model.Local(Model.NextAtUtc.Value).ToString("g"))</dd>
+                    <dt>@L["Last verification"]</dt>
+                    <dd class="backup-last-verification">
+                        @{ VerificationBadge(Model.LastVerification); }
+                        @if (Model.LastVerification != null)
+                        {
+                            <small class="text-muted">@Model.Local(Model.LastVerification.VerifiedAtUtc).ToString("g")</small>
+                        }
+                    </dd>
                 </dl>
 
                 <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupRunUrl" style="display: inline-block">
@@ -64,9 +112,19 @@
                         <span class="glyphicon glyphicon-transfer"></span> @L["Test connection"]
                     </button>
                 </form>
+                <form class="backup-action backup-verify" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupVerifyUrl" style="display: inline-block">
+                    <button class="btn btn-default" type="submit" disabled="@(!Model.CanVerify)">
+                        <span class="glyphicon glyphicon-check"></span> @L["Verify now"]
+                    </button>
+                </form>
+                @FieldHelp.Tip(L["Downloads the newest backup from the destination, opens the zip in a temporary folder, checks the manifest, runs the SQLite integrity check on the database copy and compares the number of matches, statistics files, players and settings with the site at backup time. The temporary files are deleted afterwards. The same check runs after every backup."])
                 @if (Model.IsRunning)
                 {
                     <p class="help-block">@L["A backup is running now."]</p>
+                }
+                @if (!Model.IncludesDatabase)
+                {
+                    <p class="help-block backup-verify-unavailable">@L["The verification is not available: it needs SQLite."]</p>
                 }
             </div>
         </div>
@@ -174,6 +232,7 @@ else
             <th class="text-center">@L["Size"]</th>
             <th class="text-center">@L["Duration"]</th>
             <th>@L["Result"]</th>
+            <th>@L["Verified"]</th>
         </tr>
         </thead>
         <tbody>
@@ -200,6 +259,9 @@ else
                             <small>@L[run.Error]</small>
                         }
                     }
+                </td>
+                <td class="vertical-align-middle backup-verification" data-label="@L["Verified"]">
+                    @{ VerificationBadge(run.Verification); }
                 </td>
             </tr>
         }

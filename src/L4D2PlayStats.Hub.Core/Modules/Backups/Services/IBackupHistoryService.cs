@@ -7,4 +7,5 @@ public interface IBackupHistoryService
 {
     Task<BackupHistory> GetAsync(CancellationToken cancellationToken = default);
     Task AddAsync(BackupRun run, CancellationToken cancellationToken = default);
+    Task<bool> RecordVerificationAsync(string blobName, BackupVerification verification, CancellationToken cancellationToken = default);
 }

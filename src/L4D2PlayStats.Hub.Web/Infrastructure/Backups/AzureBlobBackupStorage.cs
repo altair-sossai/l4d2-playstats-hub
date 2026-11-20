@@ -28,6 +28,11 @@ public class AzureBlobBackupStorage(BlobContainerClient container, bool createCo
         return names;
     }
 
+    public async Task DownloadAsync(string name, Stream destination, CancellationToken cancellationToken)
+    {
+        await container.GetBlobClient(name).DownloadToAsync(destination, cancellationToken);
+    }
+
     public async Task DeleteAsync(string name, CancellationToken cancellationToken)
     {
         await container.GetBlobClient(name).DeleteIfExistsAsync(cancellationToken: cancellationToken);

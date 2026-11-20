@@ -298,9 +298,10 @@ public class BackupAdminPageTests
         await factory.SaveAsync(new BackupSettings { ContainerUrl = ContainerUrl });
 
         var after = await PageAsync(client);
+        var isSqlite = await factory.RunAsync(services => Task.FromResult(services.GetRequiredService<HubDbContext>().Database.IsSqlite()));
 
-        Assert.AreEqual(2, CountDisabledButtons(before));
-        Assert.AreEqual(0, CountDisabledButtons(after));
+        Assert.AreEqual(3, CountDisabledButtons(before));
+        Assert.AreEqual(isSqlite ? 0 : 1, CountDisabledButtons(after));
     }
 
     [TestMethod]

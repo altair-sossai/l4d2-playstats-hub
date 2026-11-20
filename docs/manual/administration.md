@@ -198,7 +198,7 @@ The site uploads a zip of its data to an Azure Storage container every few hours
 
 The address and the connection string are secrets. After they are saved the page shows them only masked, such as `https://<account>.blob.core.windows.net/<container>?••••••••`; leave the field empty to keep the saved one, or type a new one to replace it. They are never written to the log either.
 
-- **Status** shows whether the schedule is on, the last backup that worked and when the next one runs.
-- **Back up now** makes a backup at once. **Test connection** uploads a small test file, checks that the container lists it and deletes it, without making a backup.
-- **Recent backups** lists the last 20 runs, scheduled or manual, with the file, its size, how long it took and, for a backup that failed, the error. A failed backup is tried again 30 minutes later.
+- **Status** shows whether the schedule is on, the last backup that worked, when the next one runs and the result of the last verification.
+- **Back up now** makes a backup at once. **Test connection** uploads a small test file, checks that the container lists it and deletes it, without making a backup. **Verify now** downloads the newest zip of the container and checks that it restores: the zip and its manifest, the SQLite integrity check of `hub.db` and the number of matches, statistics files, players and settings. The same check runs after every backup. It needs SQLite; on other databases the button is off.
+- **Recent backups** lists the last 20 runs, scheduled or manual, with the file, its size, how long it took and, for a backup that failed, the error. A failed backup is tried again 30 minutes later. The **Verified** column shows the check of each zip: **Verified** (hover the help icon for the counts), **Verification failed** with the reason, or **Not available** without SQLite. [Checking that each backup restores](backups-and-updates.md#checking-that-each-backup-restores) explains it.
 - On a site that does not use SQLite, the page warns that the database is not in the zip.
