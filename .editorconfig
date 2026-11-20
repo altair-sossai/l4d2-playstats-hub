@@ -1,0 +1,11 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.{inc,sp,log}]
+insert_final_newline = unset
+
+[**/wwwroot/lib/**]
+insert_final_newline = unset
