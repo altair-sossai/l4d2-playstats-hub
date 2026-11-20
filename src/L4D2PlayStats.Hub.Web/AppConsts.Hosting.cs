@@ -11,7 +11,7 @@ public static partial class AppConsts
     public const string InGamePath = "/ingame";
     public const string HtmlContentType = "text/html";
     public const string PlainTextContentType = "text/plain";
-    public static readonly string[] ErrorPageExcludedPaths = ["/api", InGamePath];
+    public static readonly string[] ErrorPageExcludedPaths = ["/api", InGamePath, LiveHubUrl];
 
     public const string HealthCommand = "health";
     public const string HealthPath = "/api/ping";

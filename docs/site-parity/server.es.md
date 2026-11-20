@@ -52,9 +52,9 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Fila `#game-info-chat`, oculta mientras no hay nadie conectado | `Web/Views/Server/Index.cshtml:845` | adapted | La misma fila. Solo tiene este id cuando hay un único servidor habilitado, porque el layout la muestra y la oculta según el servidor con más jugadores; con varios servidores la propia página la alterna desde el parcial de jugadores. |
 | Botón "connect <ip>", centrado, oculto en teléfonos (`hide-mobile`) | `Web/Views/Server/Index.cshtml:915` | adapted | El mismo botón. Enlaza directamente a `steam://connect/<address>` del servidor en pantalla (el antiguo `/connect` solo hacía esa redirección) y se omite cuando el servidor no tiene dirección. |
 | Estilos de página (tablas, barras de progreso, latencia, feed, colores de los eventos, terminal) | `Web/Views/Server/Index.cshtml:21` | done |  |
-| Encabezado actualizado cada 2,6 s y parcheado con diffDOM | `Web/Views/Server/Index.cshtml:195` | done |  |
-| Jugadores actualizados cada 2,6 s y parcheados con diffDOM | `Web/Views/Server/Index.cshtml:211` | done |  |
-| Feed actualizado cada 1,3 s, con una sola solicitud a la vez | `Web/Views/Server/Index.cshtml:244` | done |  |
+| Encabezado actualizado cada 2,6 s y parcheado con diffDOM | `Web/Views/Server/Index.cshtml:195` | adapted | Siguen las mismas solicitudes y diffDOM. Con el canal SignalR en `/hubs/live` abierto, la página solo pregunta cuando el sitio avisa que los datos cambiaron (nunca más seguido que esto, nunca antes del retraso) y cada 30 s por seguridad; sin él, como antes. |
+| Jugadores actualizados cada 2,6 s y parcheados con diffDOM | `Web/Views/Server/Index.cshtml:211` | adapted | Siguen las mismas solicitudes y diffDOM. Con el canal SignalR en `/hubs/live` abierto, la página solo pregunta cuando el sitio avisa que los datos cambiaron (nunca más seguido que esto, nunca antes del retraso) y cada 30 s por seguridad; sin él, como antes. |
+| Feed actualizado cada 1,3 s, con una sola solicitud a la vez | `Web/Views/Server/Index.cshtml:244` | adapted | Siguen las mismas solicitudes y diffDOM. Con el canal SignalR en `/hubs/live` abierto, la página solo pregunta cuando el sitio avisa que los datos cambiaron (nunca más seguido que esto, nunca antes del retraso) y cada 30 s por seguridad; sin él, como antes. |
 | Las solicitudes expiran a los 2 s y la siguiente se programa al terminar | `Web/Views/Server/Index.cshtml:199` | done |  |
 
 ## Encabezado del marcador
@@ -279,7 +279,7 @@ Estas no existían en el sitio antiguo. Se listan para que en el port no se pier
 
 ## Notas
 
-- Totales: 154 `done`, 25 `adapted`, 1 `not ported`.
+- Totales: 151 `done`, 28 `adapted`, 1 `not ported`.
 - Las tablas de jugadores antiguas no muestran ningún icono de patente: ni `Views/Server/_Players.cshtml` ni la página en producción lo tienen, así que ahí no hay nada que portar.
 - Los estados se comprobaron frente a las páginas renderizadas: lado a lado con `https://l4d2.com.br/server` (escritorio, ancho de teléfono y tema claro), con una partida simulada que envía todos los eventos del juego, y manejando las páginas en un navegador headless (filtro del feed, envío de un mensaje, la terminal, el modal de información del servidor, todos los modales de la página de baneos de chat).
 - El plugin del servidor de juego envía los slots del servidor en su heartbeat (`maxPlayers`) a partir de este cambio. Un servidor de juego que todavía ejecute el plugin anterior muestra como máximo el doble del tamaño del equipo.

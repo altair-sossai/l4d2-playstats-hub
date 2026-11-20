@@ -58,6 +58,12 @@ Keep the site on a single instance. The live match is kept in memory, and two in
 az appservice plan update --resource-group playstats --name playstats-plan --number-of-workers 1
 ```
 
+Turn on WebSockets, which the [live server page](manual/live-server.md) uses for its updates. Without them the page still works, through Server-Sent Events or long polling:
+
+```bash
+az webapp config set --resource-group playstats --name my-playstats --web-sockets-enabled true
+```
+
 Read the setup code from the log:
 
 ```bash

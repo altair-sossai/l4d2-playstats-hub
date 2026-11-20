@@ -58,6 +58,12 @@ Mantén el sitio en una sola instancia. La partida en vivo se guarda en memoria,
 az appservice plan update --resource-group playstats --name playstats-plan --number-of-workers 1
 ```
 
+Activa los WebSockets, que la [página del servidor en vivo](manual/live-server.es.md) usa para sus actualizaciones. Sin ellos la página sigue funcionando, por Server-Sent Events o long polling:
+
+```bash
+az webapp config set --resource-group playstats --name my-playstats --web-sockets-enabled true
+```
+
 Lee el código de configuración en el registro:
 
 ```bash

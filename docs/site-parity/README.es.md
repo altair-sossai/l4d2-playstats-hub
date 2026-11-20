@@ -21,7 +21,7 @@ Cada lista de verificación enumera todos los elementos de las pantallas antigua
 | [site.es.md](site.es.md) | Layout, ranking, historial, patentes, Anti-Cheat, ajustes del Anti-Cheat | 104 | 37 | 1 |
 | [players.es.md](players.es.md) | Lista de jugadores, página del jugador, comparación, jugador fuera del ranking | 150 | 23 | 0 |
 | [matches.es.md](matches.es.md) | Últimas partidas, detalles de la partida, estadísticas del mapa | 128 | 18 | 1 |
-| [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 154 | 25 | 1 |
+| [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 151 | 28 | 1 |
 | [skins.es.md](skins.es.md) | Tienda de skins, regalos, precios, compras | 146 | 11 | 0 |
 | [admin.es.md](admin.es.md) | Páginas que solo existen aquí: asistente, administración, ranking de la comunidad | 183 | 11 | 1 |
 

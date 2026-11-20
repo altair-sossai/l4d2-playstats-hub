@@ -154,15 +154,18 @@
 @section Scripts {
     @await Html.PartialAsync("_CommandBuilder")
 
+    <script src="~/lib/signalr/signalr.min.js" asp-append-version="true"></script>
     <script>
         var serverUrl = '@AppConsts.ServersUrl/@publicId';
+        var serverPublicId = @Json.Serialize(publicId);
         var refreshInterval = @((await ChatSettings.GetAsync<LiveServerSettings>()).RefreshInMilliseconds);
+        var safetyRefreshInterval = @AppConsts.LivePageSafetyRefreshInMilliseconds;
+        var liveHubUrl = '@AppConsts.LiveHubUrl';
+        var liveHubRetry = @AppConsts.LiveHubRetryInMilliseconds;
         var requestTimeout = @AppConsts.LivePageRequestTimeoutInMilliseconds;
         var maxFeedItems = @AppConsts.LivePageMaxFeedItems;
         var feedAfter = 0;
-        var feedRefreshTimer = null;
-        var feedRefreshRequest = null;
-        var feedRefreshPending = false;
+        var pushConnected = false;
         var dd = new diffDOM.DiffDOM();
 
         function sync(current, html) {
@@ -174,7 +177,31 @@
             dd.apply(current, diffs);
         }
 
-        function refreshHeader() {
+        function createRefresher(load, interval) {
+            var refresher = { timer: null, busy: false, pending: false };
+
+            refresher.run = function () {
+                clearTimeout(refresher.timer);
+                refresher.timer = null;
+
+                if (refresher.busy) {
+                    refresher.pending = true;
+                    return;
+                }
+
+                refresher.busy = true;
+                refresher.pending = false;
+
+                load(function () {
+                    refresher.busy = false;
+                    refresher.timer = setTimeout(refresher.run, refresher.pending ? 0 : pushConnected ? safetyRefreshInterval : interval);
+                });
+            };
+
+            return refresher;
+        }
+
+        function loadHeader(done) {
             $.ajax({
                 url: serverUrl + '/header',
                 type: 'GET',
@@ -184,13 +211,11 @@
                     sync(target, html);
 
                 },
-                complete: function () {
-                    setTimeout(refreshHeader, refreshInterval);
-                }
+                complete: done
             });
         }
 
-        function refreshPlayers() {
+        function loadPlayers(done) {
             $.ajax({
                 url: serverUrl + '/players',
                 type: 'GET',
@@ -201,9 +226,7 @@
 
                     $('.game-info-chat-own').toggle(!$(target).children('div').first().hasClass('hidden'));
                 },
-                complete: function () {
-                    setTimeout(refreshPlayers, refreshInterval);
-                }
+                complete: done
             });
         }
 
@@ -235,19 +258,10 @@
             return last;
         }
 
-        function refreshFeed() {
-            clearTimeout(feedRefreshTimer);
-            feedRefreshTimer = null;
-
-            if (feedRefreshRequest) {
-                feedRefreshPending = true;
-                return;
-            }
-
-            feedRefreshPending = false;
+        function loadFeed(done) {
             var after = feedAfter;
 
-            feedRefreshRequest = $.ajax({
+            $.ajax({
                 url: serverUrl + '/feed?after=' + after,
                 type: 'GET',
                 timeout: requestTimeout,
@@ -279,11 +293,100 @@
                     if (scrollDown)
                         feed.scrollTop(feed[0].scrollHeight);
                 },
-                complete: function () {
-                    feedRefreshRequest = null;
-                    feedRefreshTimer = setTimeout(refreshFeed, feedRefreshPending ? 0 : refreshInterval / 2);
-                }
+                complete: done
             });
+        }
+
+        var refreshers = {
+            '@AppConsts.LiveChangeHeader': createRefresher(loadHeader, refreshInterval),
+            '@AppConsts.LiveChangePlayers': createRefresher(loadPlayers, refreshInterval),
+            '@AppConsts.LiveChangeFeed': createRefresher(loadFeed, refreshInterval / 2)
+        };
+
+        function refreshAll() {
+            $.each(refreshers, function (name, refresher) {
+                refresher.run();
+            });
+        }
+
+        function refreshFeed() {
+            refreshers['@AppConsts.LiveChangeFeed'].run();
+        }
+
+        function setPushConnected(connected) {
+            if (pushConnected === connected)
+                return;
+
+            pushConnected = connected;
+            refreshAll();
+        }
+
+        function startPush() {
+            if (typeof signalR === 'undefined' || !window.Promise)
+                return;
+
+            var connection;
+
+            try {
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl(liveHubUrl)
+                    .withAutomaticReconnect()
+                    .configureLogging(signalR.LogLevel.None)
+                    .build();
+            } catch (err) {
+                return;
+            }
+
+            function watch() {
+                return connection.invoke('@nameof(LiveHub.Watch)', serverPublicId)
+                    .then(function (watching) {
+                        setPushConnected(watching === true);
+                    })
+                    .catch(function () {
+                        setPushConnected(false);
+                    });
+            }
+
+            var retryTimer = null;
+
+            function retry() {
+                if (retryTimer)
+                    return;
+
+                retryTimer = setTimeout(function () {
+                    retryTimer = null;
+                    connect();
+                }, liveHubRetry);
+            }
+
+            function connect() {
+                if (connection.state !== signalR.HubConnectionState.Disconnected)
+                    return;
+
+                connection.start().then(watch, retry);
+            }
+
+            connection.on('@AppConsts.LiveHubChangedMethod', function (changes) {
+                $.each(changes || [], function (index, change) {
+                    var refresher = refreshers[change];
+
+                    if (refresher)
+                        refresher.run();
+                });
+            });
+
+            connection.onreconnecting(function () {
+                setPushConnected(false);
+            });
+
+            connection.onreconnected(watch);
+
+            connection.onclose(function () {
+                setPushConnected(false);
+                retry();
+            });
+
+            connect();
         }
 
         function sendMessage() {
@@ -330,9 +433,8 @@
         $(document).ready(function () {
             feedAfter = lastFeedSequence($('#feed p[data-feed-sequence]'));
 
-            refreshHeader();
-            refreshPlayers();
-            refreshFeed();
+            refreshAll();
+            startPush();
 
             var savedFilter = 'all';
 

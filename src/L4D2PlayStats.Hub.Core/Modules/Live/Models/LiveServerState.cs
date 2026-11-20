@@ -32,6 +32,8 @@ public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
 
     public IReadOnlyList<FeedItem> Feed => _feed.Items;
 
+    public long FeedSequence => _feed.Sequence;
+
     public IReadOnlyList<SiteChatMessage> SiteMessages
     {
         get

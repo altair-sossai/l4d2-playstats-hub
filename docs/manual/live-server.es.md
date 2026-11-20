@@ -47,7 +47,7 @@ De arriba abajo:
 - **Mensajes de chat**: los eventos y el chat de la partida.
 - **Un botón `connect`** abajo de todo, que copia el comando para entrar al servidor.
 
-La página se actualiza sola.
+La página se actualiza sola. El sitio le avisa en cuanto algo cambia, y ella vuelve a preguntar por su cuenta cuando ese canal no se puede abrir.
 
 ## Eventos y chat
 
@@ -82,6 +82,7 @@ En una pantalla angosta los equipos se apilan uno debajo del otro.
 ## Para tener en cuenta
 
 - La página en vivo va unos 15 segundos detrás del juego, a propósito, como en el sitio que este proyecto reemplaza. El retraso se define en **Administración > Servidores de juego > Página del servidor en vivo**, de 0 a 600 segundos, y vale de inmediato; los mensajes enviados desde el sitio no se retrasan.
+- El sitio avisa a cada página en vivo abierta cuando la partida cambió, nunca antes del retraso y como máximo una vez por intervalo de actualización de la **Página del servidor en vivo**. Esto usa un WebSocket en `/hubs/live`; cuando no se puede abrir, como detrás de un proxy sin soporte de WebSocket, pasa a Server-Sent Events o long polling, y si eso también falla la página pregunta en cada intervalo de actualización, como antes. Con el canal abierto, la página igual revisa cada 30 segundos.
 - La partida en curso se guarda solo en memoria. Si el sitio se reinicia, la página queda vacía hasta que el servidor de juego envíe la siguiente actualización.
 - Cada servidor de juego tiene su propio estado en vivo, su chat y su cola de comandos.
 - El módulo de servidor en vivo se puede desactivar en [Módulos](administration.es.md#módulos). El elemento **Servidor** desaparece del menú, y también el chat del sitio y los comandos remotos, que lo necesitan.
