@@ -61,7 +61,7 @@
             <input type="hidden" name="Right" value="@right.CommunityId">
             <div class="ballot-arena">
                 <div class="panel panel-default ballot-card ballot-left">
-                    <div class="ballot-photo">
+                    <div class="ballot-photo" title="@L["This one is better"]">
                         <img class="ballot-avatar" src="/avatar/@left.CommunityId" alt="@left.Name" onerror="imgOnError(this)">
                         <span class="ballot-mark ballot-mark-win"><span class="glyphicon glyphicon-ok"></span></span>
                         <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
@@ -74,16 +74,13 @@
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Left">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&larr;</kbd>
                     </button>
-                    <button class="btn btn-link btn-sm btn-block ballot-skip" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownLeft">
-                        <span class="glyphicon glyphicon-eye-close"></span> @L["I don't know this player"]
-                    </button>
                 </div>
                 <div class="ballot-versus">
                     <span class="ballot-versus-text">VS</span>
                     <span class="ballot-versus-equal">=</span>
                 </div>
                 <div class="panel panel-default ballot-card ballot-right">
-                    <div class="ballot-photo">
+                    <div class="ballot-photo" title="@L["This one is better"]">
                         <img class="ballot-avatar" src="/avatar/@right.CommunityId" alt="@right.Name" onerror="imgOnError(this)">
                         <span class="ballot-mark ballot-mark-win"><span class="glyphicon glyphicon-ok"></span></span>
                         <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
@@ -96,17 +93,14 @@
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Right">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&rarr;</kbd>
                     </button>
-                    <button class="btn btn-link btn-sm btn-block ballot-skip" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownRight">
-                        <span class="glyphicon glyphicon-eye-close"></span> @L["I don't know this player"]
-                    </button>
                 </div>
             </div>
             <div class="ballot-both">
                 <button class="btn btn-warning ballot-same" type="submit" name="Outcome" value="@CommunityVoteOutcome.SameLevel">
-                    <span class="glyphicon glyphicon-transfer"></span> @L["They are at the same level"] <kbd class="ballot-key hidden-xs">&uarr;</kbd>
+                    <span class="glyphicon glyphicon-transfer"></span> @L["They are at the same level"] <kbd class="ballot-key hidden-xs">&darr;</kbd>
                 </button>
-                <button class="btn btn-default ballot-neither" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownBoth">
-                    <span class="glyphicon glyphicon-eye-close"></span> @L["I don't know either of them"] <kbd class="ballot-key hidden-xs">&darr;</kbd>
+                <button class="btn btn-default ballot-neither" type="submit" name="Outcome" value="@CommunityVoteOutcome.UnknownOne">
+                    <span class="glyphicon glyphicon-eye-close"></span> @L["I don't know one of them"] <kbd class="ballot-key hidden-xs">&uarr;</kbd>
                 </button>
             </div>
         </form>
@@ -118,7 +112,7 @@
             <div class="progress">
                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@ballot.VotesLeft" aria-valuemin="0" aria-valuemax="@ballot.VotesPerDay" style="width: @(remaining)%"></div>
             </div>
-            <small class="text-muted hidden-xs">@L["You can vote with the arrow keys too: ← and → pick a player, ↑ same level, ↓ you know neither."]</small>
+            <small class="text-muted hidden-xs">@L["You can vote with the arrow keys too: ← and → pick a player, ↓ same level, ↑ you don't know one of them. Clicking a photo picks that player."]</small>
         </div>
     }
 </div>

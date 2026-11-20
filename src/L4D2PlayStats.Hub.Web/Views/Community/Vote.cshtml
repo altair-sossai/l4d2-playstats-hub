@@ -70,19 +70,18 @@
                 box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
             }
 
-            .ballot-card:has(.ballot-pick:hover) {
+            .ballot-card:has(.ballot-pick:hover),
+            .ballot-card:has(.ballot-photo:hover) {
                 border-color: rgba(92, 184, 92, .8);
                 box-shadow: 0 0 0 3px rgba(92, 184, 92, .2), 0 8px 24px rgba(0, 0, 0, .25);
             }
 
-            .ballot-card:has(.ballot-skip:hover) {
-                border-color: rgba(150, 150, 150, .7);
-            }
 
         .ballot-photo {
             position: relative;
             display: inline-block;
             max-width: 100%;
+            cursor: pointer;
         }
 
         .ballot-avatar {
@@ -173,17 +172,6 @@
             font-size: 12px;
         }
 
-        .ballot-skip {
-            margin-top: 6px;
-            opacity: .75;
-        }
-
-            .ballot-skip:hover,
-            .ballot-skip:focus {
-                opacity: 1;
-                text-decoration: none;
-            }
-
         .ballot-versus {
             position: absolute;
             top: 84px;
@@ -271,13 +259,15 @@
 
         .ballot.is-left .ballot-right,
         .ballot.is-unknown-right .ballot-right,
-        .ballot.is-unknown-both .ballot-right {
+        .ballot.is-unknown-both .ballot-right,
+        .ballot.is-unknown-one .ballot-right {
             animation: ballot-out-right .55s ease forwards;
         }
 
         .ballot.is-right .ballot-left,
         .ballot.is-unknown-left .ballot-left,
-        .ballot.is-unknown-both .ballot-left {
+        .ballot.is-unknown-both .ballot-left,
+        .ballot.is-unknown-one .ballot-left {
             animation: ballot-out-left .55s ease forwards;
         }
 
@@ -285,7 +275,8 @@
         .ballot.is-right .ballot-left .ballot-avatar,
         .ballot.is-unknown-left .ballot-left .ballot-avatar,
         .ballot.is-unknown-right .ballot-right .ballot-avatar,
-        .ballot.is-unknown-both .ballot-avatar {
+        .ballot.is-unknown-both .ballot-avatar,
+        .ballot.is-unknown-one .ballot-avatar {
             filter: grayscale(1) brightness(.6);
         }
 
@@ -299,7 +290,8 @@
         .ballot.is-right .ballot-versus,
         .ballot.is-unknown-left .ballot-versus,
         .ballot.is-unknown-right .ballot-versus,
-        .ballot.is-unknown-both .ballot-versus {
+        .ballot.is-unknown-both .ballot-versus,
+        .ballot.is-unknown-one .ballot-versus {
             animation: ballot-versus-out .4s ease forwards;
         }
 
@@ -527,11 +519,19 @@
                 SameLevel: 'is-same',
                 UnknownLeft: 'is-unknown-left',
                 UnknownRight: 'is-unknown-right',
-                UnknownBoth: 'is-unknown-both'
+                UnknownBoth: 'is-unknown-both',
+                UnknownOne: 'is-unknown-one'
             };
-            var keys = { ArrowLeft: 'Left', ArrowRight: 'Right', ArrowUp: 'SameLevel', ArrowDown: 'UnknownBoth' };
+            var keys = { ArrowLeft: 'Left', ArrowRight: 'Right', ArrowDown: 'SameLevel', ArrowUp: 'UnknownOne' };
 
             document.addEventListener('click', function (event) {
+                var photo = event.target.closest('.ballot:not(.ballot-busy) .ballot-photo');
+
+                if (photo) {
+                    photo.closest('.ballot-card').querySelector('.ballot-pick').click();
+                    return;
+                }
+
                 var button = event.target.closest('.ballot button[name="Outcome"]');
 
                 if (!button)

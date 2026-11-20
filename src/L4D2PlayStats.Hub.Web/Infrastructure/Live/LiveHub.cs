@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Live;
 
-public class LiveHub(IGameServerService gameServerService, ISettingsService settingsService, LiveWatchers watchers) : Microsoft.AspNetCore.SignalR.Hub
+public class LiveHub(IGameServerService gameServerService, ISettingsService settingsService, LiveWatchers watchers, LiveNotifier notifier) : Microsoft.AspNetCore.SignalR.Hub
 {
     public async Task<bool> Watch(string? publicId)
     {
@@ -29,6 +29,7 @@ public class LiveHub(IGameServerService gameServerService, ISettingsService sett
         await Groups.AddToGroupAsync(Context.ConnectionId, LiveWatchers.Group(server.PublicId), Context.ConnectionAborted);
 
         watchers.Add(Context.ConnectionId, server);
+        notifier.Track(server);
 
         return true;
     }

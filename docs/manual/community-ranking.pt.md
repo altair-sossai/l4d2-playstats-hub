@@ -44,12 +44,11 @@ A página mostra dois jogadores com seus avatares. Responda com uma destas opç�
 
 | Resposta | O que faz |
 |---|---|
-| Este é melhor (à esquerda ou à direita) | O jogador escolhido ganha a comparação, o outro perde. |
+| Este é melhor (à esquerda ou à direita), ou um clique na foto | O jogador escolhido ganha a comparação, o outro perde. |
 | Estão no mesmo nível | Um empate. |
-| Não conheço este jogador (embaixo de um deles) | Nada muda, e esse jogador não aparece mais para você. |
-| Não conheço nenhum dos dois | Nada muda, e nenhum dos dois aparece mais para você. |
+| Não conheço um deles | Nada muda, e essa dupla não aparece mais para você. Os dois jogadores ainda podem aparecer em outras duplas. |
 
-Embaixo de cada nome o cartão mostra até 4 outros nomes que o jogador já usou nas partidas, do mais usado para o menos usado, para você reconhecer quem trocou de nome. Depois de cada resposta a página marca a sua escolha e a próxima dupla entra na tela. No computador, as setas ← e → escolhem o jogador da esquerda ou da direita, ↑ diz que estão no mesmo nível e ↓ que você não conhece nenhum dos dois. **Votos restantes hoje** mostra quantos votos você ainda tem.
+Embaixo de cada nome o cartão mostra até 4 outros nomes que o jogador já usou nas partidas, do mais usado para o menos usado, para você reconhecer quem trocou de nome. Depois de cada resposta a página marca a sua escolha e a próxima dupla entra na tela. No computador, as setas ← e → escolhem o jogador da esquerda ou da direita, ↓ diz que estão no mesmo nível e ↑ que você não conhece um deles. **Votos restantes hoje** mostra quantos votos você ainda tem.
 
 ## Quem pode votar, e quanto
 

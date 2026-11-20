@@ -35,6 +35,7 @@ async function start(options) {
             ASPNETCORE_ENVIRONMENT: 'Development',
             Development__AllowTestSignIn: 'true',
             Hub__DataDirectory: data,
+            Hub__SecretsKeyFile: path.join(data, 'secrets.key'),
             DOTNET_NOLOGO: '1'
         },
         stdio: ['ignore', 'pipe', 'pipe']

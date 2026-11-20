@@ -4,8 +4,8 @@ const { sleep } = require('./browser');
 const phone = 390;
 const desktop = 1280;
 const liveTimeout = 20000;
-const outcomes = { ArrowLeft: 'is-left', ArrowRight: 'is-right', ArrowUp: 'is-same', ArrowDown: 'is-unknown-both' };
-const votesLeftAfter = { ArrowDown: 3, ArrowLeft: 2, ArrowRight: 1 };
+const outcomes = { ArrowLeft: 'is-left', ArrowRight: 'is-right', ArrowDown: 'is-same', ArrowUp: 'is-unknown-one', PhotoRight: 'is-right' };
+const votesLeftAfter = { ArrowUp: 3, ArrowLeft: 2, PhotoRight: 1 };
 const languages = [
     { culture: 'pt-BR', matches: 'Últimos jogos' },
     { culture: 'es-ES', matches: 'Últimas partidas' },
@@ -251,12 +251,17 @@ function checks(context) {
                 expect(current, 'The voting page shows no ballot');
                 expect(current.votesLeft === fixtures.community.VotesPerDay, `The ballot shows ${current.votesLeft} votes left, expected ${fixtures.community.VotesPerDay}`);
 
-                for (const key of ['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp']) {
+                expect(await browser.eval('document.querySelectorAll(".ballot button[name=Outcome]").length') === 4, 'The ballot does not have exactly four answers');
+
+                for (const key of ['ArrowUp', 'ArrowLeft', 'PhotoRight', 'ArrowDown']) {
                     checkAliases(current.left);
                     checkAliases(current.right);
 
                     await browser.eval(`document.getElementById('community-ballot').dataset.old = '1'`);
-                    await browser.press(key);
+                    if (key === 'PhotoRight')
+                        await browser.click('.ballot-right .ballot-photo', { settle: 0 });
+                    else
+                        await browser.press(key);
                     expect(await browser.eval(`document.querySelector('.ballot').classList.contains(${quote(outcomes[key])})`), `The ${key} key did not mark the ballot as ${outcomes[key]}`);
                     await browser.until(`document.getElementById('community-ballot') && !document.getElementById('community-ballot').dataset.old`, `the ballot after the ${key} key`);
                     await sleep(300);

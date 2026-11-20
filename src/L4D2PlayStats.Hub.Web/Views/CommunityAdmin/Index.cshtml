@@ -54,7 +54,7 @@
                         <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
                     </div>
                     <div class="form-group">
-                        <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answers \"I don't know this player\" and \"I don't know either of them\" are free and have no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
+                        <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answer \"I don't know one of them\" is free and has no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
                         <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
                     </div>
                     <div class="form-group">

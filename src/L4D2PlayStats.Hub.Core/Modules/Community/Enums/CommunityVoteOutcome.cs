@@ -7,5 +7,6 @@ public enum CommunityVoteOutcome
     SameLevel = 3,
     UnknownLeft = 4,
     UnknownRight = 5,
-    UnknownBoth = 6
+    UnknownBoth = 6,
+    UnknownOne = 7
 }

@@ -44,12 +44,11 @@ La página muestra dos jugadores con sus avatares. Responde con una de estas opc
 
 | Respuesta | Qué hace |
 |---|---|
-| Este es mejor (izquierda o derecha) | El jugador elegido gana la comparación y el otro la pierde. |
+| Este es mejor (izquierda o derecha), o un clic en la foto | El jugador elegido gana la comparación y el otro la pierde. |
 | Están al mismo nivel | Un empate. |
-| No conozco a este jugador (debajo de uno de ellos) | No cambia nada, y ese jugador no se te vuelve a mostrar. |
-| No conozco a ninguno de los dos | No cambia nada, y ninguno de los dos se te vuelve a mostrar. |
+| No conozco a uno de ellos | No cambia nada, y esa pareja no se te vuelve a mostrar. Los dos jugadores todavía pueden aparecer en otras parejas. |
 
-Debajo de cada nombre la tarjeta muestra hasta 4 nombres más que el jugador usó en las partidas, del más usado al menos usado, para que reconozcas a quien cambió de nombre. Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha, ↑ dice que están al mismo nivel y ↓ que no conoces a ninguno de los dos. **Votos restantes hoy** muestra cuántos votos te quedan.
+Debajo de cada nombre la tarjeta muestra hasta 4 nombres más que el jugador usó en las partidas, del más usado al menos usado, para que reconozcas a quien cambió de nombre. Después de cada respuesta la página marca tu elección y entra la siguiente pareja. En el ordenador, las flechas ← y → eligen al jugador de la izquierda o de la derecha, ↓ dice que están al mismo nivel y ↑ que no conoces a uno de ellos. **Votos restantes hoy** muestra cuántos votos te quedan.
 
 ## Quién puede votar, y cuánto
 

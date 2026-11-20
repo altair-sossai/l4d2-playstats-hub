@@ -106,6 +106,35 @@ public class LiveHubTests
     }
 
     [TestMethod]
+    public async Task AChangeRightAfterThePageStartsWatchingIsNotLost()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        var credentials = await factory.CreateServerAsync();
+
+        await using var connection = await ConnectAsync(factory);
+        var changes = Listen(connection);
+
+        Assert.IsTrue(await connection.InvokeAsync<bool>(nameof(LiveHub.Watch), "test-server"));
+
+        await factory.RunAsync(services =>
+        {
+            services.GetRequiredService<ILiveDataService>().AddMessage(credentials.Server, new ChatMessageCommand { CommunityId = Alice, Name = "Alice", Message = "right away" });
+
+            return Task.CompletedTask;
+        });
+
+        factory.Clock.Advance(TimeSpan.FromSeconds(CoreConsts.LiveDelayInSeconds));
+
+        await NotifyAsync(factory);
+
+        CollectionAssert.Contains(await ReadAsync(changes), WebConsts.LiveChangeFeed);
+    }
+
+    [TestMethod]
     public async Task OnlyThePagesOfTheChangedServerAreNotified()
     {
         using var factory = new LiveWebFactory();

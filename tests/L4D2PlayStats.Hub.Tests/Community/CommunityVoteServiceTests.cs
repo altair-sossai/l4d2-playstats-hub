@@ -319,6 +319,7 @@ public class CommunityVoteServiceTests
     [DataRow(CommunityVoteOutcome.UnknownLeft)]
     [DataRow(CommunityVoteOutcome.UnknownRight)]
     [DataRow(CommunityVoteOutcome.UnknownBoth)]
+    [DataRow(CommunityVoteOutcome.UnknownOne)]
     public async Task NotKnowingAPlayerChangesNoRating(CommunityVoteOutcome outcome)
     {
         using var community = new CommunityTestHub();
@@ -380,6 +381,22 @@ public class CommunityVoteServiceTests
 
         Assert.HasCount(10, pairs);
         Assert.IsFalse(pairs.Any(pair => pair.Contains(unknown.Left) || pair.Contains(unknown.Right)));
+    }
+
+    [TestMethod]
+    public async Task NotKnowingOneOfThemSkipsOnlyThatPair()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+
+        var skipped = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownOne))!;
+        var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
+
+        Assert.HasCount(20, pairs);
+        Assert.IsFalse(pairs.Any(pair => pair.Contains(skipped.Left) && pair.Contains(skipped.Right)));
+        Assert.IsTrue(pairs.Any(pair => pair.Contains(skipped.Left)));
+        Assert.IsTrue(pairs.Any(pair => pair.Contains(skipped.Right)));
     }
 
     [TestMethod]

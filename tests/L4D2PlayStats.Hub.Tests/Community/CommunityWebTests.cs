@@ -44,6 +44,23 @@ public class CommunityWebTests
     }
 
     [TestMethod]
+    public async Task TheBallotHasOnlyTheFourAnswers()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+
+        var page = await voter.GetStringAsync(CommunityWebSite.VotePage);
+        var answers = Regex.Matches(page, @"name=""Outcome"" value=""(\w+)""").Select(match => match.Groups[1].Value).ToList();
+
+        CollectionAssert.AreEqual(new[] { nameof(CommunityVoteOutcome.Left), nameof(CommunityVoteOutcome.Right), nameof(CommunityVoteOutcome.SameLevel), nameof(CommunityVoteOutcome.UnknownOne) }, answers);
+        Assert.Contains("ArrowDown: 'SameLevel', ArrowUp: 'UnknownOne'", page);
+        Assert.Contains("class=\"ballot-photo\"", page);
+    }
+
+    [TestMethod]
     public async Task ThePostsAreNotFoundWhileTheModuleIsOff()
     {
         using var site = new CommunityWebSite();
@@ -139,7 +156,7 @@ public class CommunityWebTests
     }
 
     [TestMethod]
-    public async Task TheVotePageShowsThePairAndEveryKindOfAnswer()
+    public async Task TheVotePageShowsThePair()
     {
         using var site = new CommunityWebSite();
 
@@ -160,9 +177,6 @@ public class CommunityWebTests
         Assert.Contains("<strong>7</strong> / 7", page);
         Assert.Contains("hx-post=\"/community/vote\"", page);
         Assert.Contains("action=\"/community/vote\"", page);
-
-        foreach (var outcome in Enum.GetNames<CommunityVoteOutcome>())
-            Assert.Contains($"name=\"Outcome\" value=\"{outcome}\"", page);
     }
 
     [TestMethod]

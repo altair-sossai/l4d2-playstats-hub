@@ -44,12 +44,11 @@ The page shows two players with their avatars. Answer with one of:
 
 | Answer | What it does |
 |---|---|
-| This one is better (left or right) | The chosen player wins the comparison, the other loses. |
+| This one is better (left or right), or a click on the photo | The chosen player wins the comparison, the other loses. |
 | They are at the same level | A draw. |
-| I don't know this player (under one of them) | Nothing changes, and that player is not shown to you again. |
-| I don't know either of them | Nothing changes, and neither player is shown to you again. |
+| I don't know one of them | Nothing changes, and this pair is not shown to you again. Both players can still come up in other pairs. |
 
-Under each name the card shows up to 4 other names the player has used in matches, the most used first, so you recognize someone who changed names. After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↑ says they are at the same level and ↓ that you know neither of them. **Votes left today** shows how many votes you still have.
+Under each name the card shows up to 4 other names the player has used in matches, the most used first, so you recognize someone who changed names. After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↓ says they are at the same level and ↑ that you don't know one of them. **Votes left today** shows how many votes you still have.
 
 ## Who can vote, and how much
 

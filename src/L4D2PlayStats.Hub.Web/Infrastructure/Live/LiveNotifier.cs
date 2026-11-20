@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -50,6 +51,21 @@ public class LiveNotifier(
         {
             _semaphore.Release();
         }
+    }
+
+    public void Track(GameServer server)
+    {
+        _trackers.GetOrAdd(server.Id, _ => Baseline(server));
+    }
+
+    private LiveChangeTracker Baseline(GameServer server)
+    {
+        var tracker = new LiveChangeTracker();
+        var interval = TimeSpan.FromMilliseconds(liveSettings.Current.RefreshInMilliseconds);
+
+        tracker.Detect(store.For(server.Id), presence.GetStatus(server).Signal, clock.UtcNow, interval, interval / 2);
+
+        return tracker;
     }
 
     private static string[] Names(LiveChange change)
