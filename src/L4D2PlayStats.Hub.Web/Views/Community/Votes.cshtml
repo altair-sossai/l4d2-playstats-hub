@@ -29,35 +29,36 @@
 @section Styles {
     <style>
         .vf-lead {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
             margin-bottom: 12px;
         }
 
+            .vf-lead:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
             .vf-lead p {
-                margin: 0;
+                float: left;
+                margin: 5px 10px 5px 0;
                 font-style: italic;
                 opacity: .85;
             }
 
+            .vf-lead .vf-lead-actions {
+                float: right;
+            }
+
         .vf-filters {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-end;
-            gap: 10px;
-            margin-bottom: 12px;
-            padding: 10px 12px;
+            margin: 0 0 12px;
+            padding: 10px 15px 0;
             border: 1px solid rgba(255, 255, 255, .08);
             border-radius: 8px;
             background: rgba(255, 255, 255, .03);
         }
 
             .vf-filters .form-group {
-                flex: 1 1 220px;
-                margin: 0;
+                margin-bottom: 10px;
             }
 
             .vf-filters label {
@@ -65,41 +66,49 @@
                 opacity: .8;
             }
 
+            .vf-filters .vf-actions {
+                margin-bottom: 10px;
+                padding-top: 23px;
+            }
+
         .vf-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
             margin-bottom: 12px;
         }
 
         .vf-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-block;
+            margin: 0 8px 6px 0;
             padding: 4px 10px 4px 4px;
             border: 1px solid rgba(91, 192, 222, .5);
             border-radius: 20px;
             background: rgba(91, 192, 222, .12);
+            vertical-align: middle;
         }
 
             .vf-chip img {
                 width: 24px;
                 height: 24px;
+                margin-right: 6px;
                 border-radius: 50%;
+                vertical-align: middle;
             }
 
             .vf-chip a {
+                margin-left: 6px;
                 color: inherit;
                 opacity: .7;
             }
 
         .vf-summary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            align-items: center;
+            display: inline-block;
+            margin-bottom: 6px;
             font-size: 13px;
+            vertical-align: middle;
         }
+
+            .vf-summary > span {
+                margin-right: 14px;
+            }
 
             .vf-summary b {
                 font-size: 15px;
@@ -112,11 +121,9 @@
         }
 
         .vf-row {
-            display: grid;
-            grid-template-columns: 96px minmax(0, 190px) minmax(0, 1fr);
-            align-items: center;
-            gap: 12px;
-            padding: 6px 12px;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
             border-bottom: 1px solid rgba(255, 255, 255, .06);
         }
 
@@ -132,31 +139,43 @@
                 background: rgba(255, 255, 255, .05);
             }
 
+            .vf-row > .vf-when,
+            .vf-row > .vf-voter,
+            .vf-row > .vf-pair {
+                display: table-cell;
+                padding: 6px 0;
+                vertical-align: middle;
+            }
+
         .vf-when {
+            width: 150px;
+            padding-left: 12px !important;
+            overflow: hidden;
             font-size: 12px;
             white-space: nowrap;
             opacity: .65;
         }
 
         .vf-voter {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-width: 0;
+            width: 202px;
+            padding-right: 12px !important;
+            overflow: hidden;
             color: inherit;
             font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-
-            .vf-voter span {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
 
             .vf-voter img {
                 width: 24px;
                 height: 24px;
+                margin-right: 6px;
                 border-radius: 50%;
+                vertical-align: middle;
+            }
+
+            .vf-voter .glyphicon {
+                margin-right: 6px;
             }
 
         a.vf-voter:hover {
@@ -165,21 +184,35 @@
         }
 
         .vf-pair {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr);
-            align-items: center;
-            gap: 8px;
+            padding-right: 12px !important;
         }
 
+        .vf-pair-cells {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+            .vf-pair-cells > .vf-side,
+            .vf-pair-cells > .vf-center {
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            .vf-pair-cells > .vf-center {
+                width: 42px;
+                text-align: center;
+            }
+
         .vf-player {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 0;
+            display: block;
             padding: 3px 8px 3px 3px;
+            overflow: hidden;
             border: 1px solid transparent;
             border-radius: 6px;
             color: inherit;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
             .vf-player:hover,
@@ -190,34 +223,41 @@
             }
 
             .vf-player img {
-                flex: none;
                 width: 30px;
                 height: 30px;
+                margin-right: 8px;
                 border-radius: 6px;
+                vertical-align: middle;
             }
 
             .vf-player .vf-name {
-                overflow: hidden;
                 font-weight: bold;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                vertical-align: middle;
             }
 
             .vf-player .glyphicon {
-                flex: none;
-                margin-left: auto;
+                margin-left: 6px;
                 font-size: 12px;
+                vertical-align: middle;
             }
 
         .vf-right {
-            flex-direction: row-reverse;
             padding: 3px 3px 3px 8px;
             text-align: right;
         }
 
+            .vf-right img {
+                float: right;
+                margin: 0 0 0 8px;
+            }
+
+            .vf-right .vf-name,
             .vf-right .glyphicon {
-                margin-left: 0;
-                margin-right: auto;
+                line-height: 30px;
+            }
+
+            .vf-right .glyphicon {
+                margin: 0 6px 0 0;
             }
 
         .vf-win {
@@ -247,15 +287,15 @@
             }
 
         .vf-mid {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
             width: 30px;
             height: 30px;
             border-radius: 50%;
             background: rgba(255, 255, 255, .08);
             font-size: 11px;
             font-weight: bold;
+            line-height: 30px;
+            text-align: center;
         }
 
         .vf-mid-same {
@@ -265,32 +305,46 @@
         }
 
         .vf-pages {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
             margin-top: 14px;
+            text-align: center;
         }
 
+            .vf-pages .btn {
+                margin: 0 5px;
+            }
+
         @@media (max-width: 767px) {
+            .vf-lead p,
+            .vf-lead .vf-lead-actions {
+                float: none;
+            }
+
+            .vf-filters .vf-actions {
+                padding-top: 0;
+            }
+
             .vf-row {
-                grid-template-columns: minmax(0, 1fr) auto;
-                gap: 6px 10px;
+                display: block;
                 padding: 8px 10px;
             }
 
-            .vf-when {
-                order: 2;
-                text-align: right;
-            }
+                .vf-row > .vf-when,
+                .vf-row > .vf-voter,
+                .vf-row > .vf-pair {
+                    display: block;
+                    width: auto;
+                    padding: 0 !important;
+                }
 
-            .vf-voter {
-                order: 1;
-            }
+                .vf-row > .vf-when {
+                    float: right;
+                    margin-left: 10px;
+                }
 
-            .vf-pair {
-                order: 3;
-                grid-column: 1 / -1;
-            }
+                .vf-row > .vf-pair {
+                    clear: both;
+                    padding-top: 6px !important;
+                }
         }
     </style>
 }
@@ -299,7 +353,7 @@
 
 <div class="vf-lead">
     <p>@L["See who voted for whom. Click a player to see only their comparisons."]</p>
-    <div>
+    <div class="vf-lead-actions">
         <a class="btn btn-sm btn-default" href="/community">
             <span class="glyphicon glyphicon-list"></span> @L["Community ranking"]
         </a>
@@ -310,47 +364,49 @@
 </div>
 
 <form class="vf-filters" method="get" action="@AppConsts.CommunityVotesPage" id="vf-filters">
-    @if (Model.ShowVoters)
-    {
-        <div class="form-group">
-            <label for="vf-voter-name">@L["Votes made by"]</label>
+    <div class="row">
+        @if (Model.ShowVoters)
+        {
+            <div class="form-group col-sm-5">
+                <label for="vf-voter-name">@L["Votes made by"]</label>
+                <div class="input-group input-group-sm">
+                    <input class="form-control" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-player-picker="#vf-voter" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-role="@AppConsts.CommunityVoterRole" data-player-picker-hint="@L["The players who voted, the most recent vote first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+                <input type="hidden" name="voter" id="vf-voter" value="@Model.VoterId">
+                <datalist id="vf-voters">
+                    @foreach (var participant in Model.Participants.Where(participant => participant.Voted))
+                    {
+                        <option value="@participant.Name" data-id="@participant.CommunityId"></option>
+                    }
+                </datalist>
+            </div>
+        }
+        <div class="form-group @(Model.ShowVoters ? "col-sm-5" : "col-sm-10")">
+            <label for="vf-player-name">@L["Votes about"]</label>
             <div class="input-group input-group-sm">
-                <input class="form-control" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
+                <input class="form-control" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-player-picker="#vf-voter" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-role="@AppConsts.CommunityVoterRole" data-player-picker-hint="@L["The players who voted, the most recent vote first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="btn btn-default" data-player-picker="#vf-player" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-hint="@L["The players who were compared in the voting, the most recent comparison first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
                 </span>
             </div>
-            <input type="hidden" name="voter" id="vf-voter" value="@Model.VoterId">
-            <datalist id="vf-voters">
-                @foreach (var participant in Model.Participants.Where(participant => participant.Voted))
+            <input type="hidden" name="player" id="vf-player" value="@Model.PlayerId">
+            <datalist id="vf-players">
+                @foreach (var participant in Model.Participants.Where(participant => participant.Compared))
                 {
                     <option value="@participant.Name" data-id="@participant.CommunityId"></option>
                 }
             </datalist>
         </div>
-    }
-    <div class="form-group">
-        <label for="vf-player-name">@L["Votes about"]</label>
-        <div class="input-group input-group-sm">
-            <input class="form-control" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-default" data-player-picker="#vf-player" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-hint="@L["The players who were compared in the voting, the most recent comparison first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
-            </span>
-        </div>
-        <input type="hidden" name="player" id="vf-player" value="@Model.PlayerId">
-        <datalist id="vf-players">
-            @foreach (var participant in Model.Participants.Where(participant => participant.Compared))
+        <div class="vf-actions col-sm-2">
+            <button class="btn btn-sm btn-primary" type="submit"><span class="glyphicon glyphicon-filter"></span> @L["Filter"]</button>
+            @if (Model.VoterId != null || Model.PlayerId != null)
             {
-                <option value="@participant.Name" data-id="@participant.CommunityId"></option>
+                <a class="btn btn-sm btn-default" href="@AppConsts.CommunityVotesPage"><span class="glyphicon glyphicon-remove"></span> @L["Clear"]</a>
             }
-        </datalist>
-    </div>
-    <div>
-        <button class="btn btn-sm btn-primary" type="submit"><span class="glyphicon glyphicon-filter"></span> @L["Filter"]</button>
-        @if (Model.VoterId != null || Model.PlayerId != null)
-        {
-            <a class="btn btn-sm btn-default" href="@AppConsts.CommunityVotesPage"><span class="glyphicon glyphicon-remove"></span> @L["Clear"]</a>
-        }
+        </div>
     </div>
 </form>
 
@@ -417,17 +473,25 @@ else
                     <span class="vf-voter"><span class="glyphicon glyphicon-user"></span> <span>@L["A player voted"]</span></span>
                 }
                 <div class="vf-pair">
-                    <a class="vf-player @leftClass" href="@Url(Model.VoterId, vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
-                        <img src="/avatar/@vote.LeftPlayerId" alt="" onerror="imgOnError(this)">
-                        <span class="vf-name">@vote.LeftName</span>
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </a>
-                    <span class="vf-mid@(same ? " vf-mid-same" : "")" title="@(same ? L["Same level"] : L["Better"])">@(same ? "=" : "VS")</span>
-                    <a class="vf-player vf-right @rightClass" href="@Url(Model.VoterId, vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
-                        <img src="/avatar/@vote.RightPlayerId" alt="" onerror="imgOnError(this)">
-                        <span class="vf-name">@vote.RightName</span>
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </a>
+                    <div class="vf-pair-cells">
+                        <div class="vf-side">
+                            <a class="vf-player @leftClass" href="@Url(Model.VoterId, vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
+                                <img src="/avatar/@vote.LeftPlayerId" alt="" onerror="imgOnError(this)">
+                                <span class="vf-name">@vote.LeftName</span>
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </a>
+                        </div>
+                        <div class="vf-center">
+                            <span class="vf-mid@(same ? " vf-mid-same" : "")" title="@(same ? L["Same level"] : L["Better"])">@(same ? "=" : "VS")</span>
+                        </div>
+                        <div class="vf-side">
+                            <a class="vf-player vf-right @rightClass" href="@Url(Model.VoterId, vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
+                                <img src="/avatar/@vote.RightPlayerId" alt="" onerror="imgOnError(this)">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <span class="vf-name">@vote.RightName</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
