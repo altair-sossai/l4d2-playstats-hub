@@ -5,7 +5,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Campaigns.Models;
 
 public class CampaignCatalog(IReadOnlyList<CampaignDefinition> campaigns)
 {
-    private readonly HashSet<string> _maps = campaigns.SelectMany(c => c.Maps).ToHashSet();
+    private readonly HashSet<string> _maps = [.. campaigns.SelectMany(c => c.Maps)];
 
     public IReadOnlyList<CampaignDefinition> Campaigns => campaigns;
 

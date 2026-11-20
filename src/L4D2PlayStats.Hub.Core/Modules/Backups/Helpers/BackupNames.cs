@@ -17,10 +17,9 @@ public static class BackupNames
 
     public static List<string> Expired(string prefix, IEnumerable<string> names, int keep)
     {
-        return names
+        return [.. names
             .Where(name => IsBackup(prefix, name))
             .OrderByDescending(name => name, StringComparer.Ordinal)
-            .Skip(BackupRules.Keep(keep))
-            .ToList();
+            .Skip(BackupRules.Keep(keep))];
     }
 }

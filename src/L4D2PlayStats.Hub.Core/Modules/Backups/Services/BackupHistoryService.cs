@@ -16,11 +16,10 @@ public class BackupHistoryService(ISettingsService settingsService) : IBackupHis
     {
         var history = await settingsService.GetAsync<BackupHistory>(cancellationToken);
 
-        history.Runs = history.Runs
+        history.Runs = [.. history.Runs
             .Append(run)
             .OrderByDescending(item => item.StartedAtUtc)
-            .Take(AppConsts.BackupHistorySize)
-            .ToList();
+            .Take(AppConsts.BackupHistorySize)];
 
         await settingsService.SaveAsync(history, cancellationToken);
     }

@@ -74,7 +74,7 @@ public class CommunityWebTests
         var form = new Dictionary<string, string> { ["Left"] = pair.Left.ToString(), ["Right"] = pair.Right.ToString(), ["Outcome"] = nameof(CommunityVoteOutcome.Left) };
 
         var vote = await PostWhileOffAsync(site, voter, CommunityWebSite.VotePage, CommunityWebSite.VotePage, form);
-        var rebuild = await PostWhileOffAsync(site, administrator, "/admin/community", "/admin/community/rebuild", new Dictionary<string, string>());
+        var rebuild = await PostWhileOffAsync(site, administrator, "/admin/community", "/admin/community/rebuild", []);
 
         Assert.AreEqual(HttpStatusCode.NotFound, vote.StatusCode);
         Assert.AreEqual(HttpStatusCode.NotFound, rebuild.StatusCode);
@@ -511,7 +511,7 @@ public class CommunityWebTests
             await dbContext.SaveChangesAsync();
         });
 
-        var response = await HubWebFactory.PostFormAsync(administrator, "/admin/community", "/admin/community/rebuild", new Dictionary<string, string>());
+        var response = await HubWebFactory.PostFormAsync(administrator, "/admin/community", "/admin/community/rebuild", []);
         var page = await administrator.GetStringAsync("/admin/community");
         var rebuilt = CommunityTestHub.Snapshot(await site.RatingsAsync());
 
@@ -637,7 +637,7 @@ public class CommunityWebTests
         await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
 
         var before = await administrator.GetStringAsync("/admin/community");
-        var response = await HubWebFactory.PostFormAsync(administrator, "/admin/community", "/admin/community/reset", new Dictionary<string, string>());
+        var response = await HubWebFactory.PostFormAsync(administrator, "/admin/community", "/admin/community/reset", []);
         var page = await administrator.GetStringAsync("/admin/community");
         var left = await site.Factory.RunAsync(async services =>
         {
@@ -666,7 +666,7 @@ public class CommunityWebTests
 
         await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
 
-        await HubWebFactory.PostFormAsync(voter, CommunityWebSite.VotePage, "/admin/community/reset", new Dictionary<string, string>());
+        await HubWebFactory.PostFormAsync(voter, CommunityWebSite.VotePage, "/admin/community/reset", []);
 
         var votes = await site.Factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Set<CommunityVote>().CountAsync());
 

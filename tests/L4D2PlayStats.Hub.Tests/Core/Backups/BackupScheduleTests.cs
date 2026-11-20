@@ -157,7 +157,7 @@ public class BackupScheduleTests
 
     private static BackupHistory History(params BackupRun[] runs)
     {
-        return new BackupHistory { Runs = runs.ToList() };
+        return new BackupHistory { Runs = [.. runs] };
     }
 
     private static BackupRun Run(DateTime startedAtUtc, bool succeeded)

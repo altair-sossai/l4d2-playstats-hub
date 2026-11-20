@@ -50,7 +50,7 @@ public class AntiCheatAdminApiTests
         Assert.AreEqual(HttpStatusCode.OK, add.StatusCode);
         Assert.HasCount(2, logs);
         Assert.IsTrue(logs.All(log => log.Command == "sm_aac sync" && log.AdministratorCommunityId == HubWebFactory.Administrator && log.AdministratorName == AdminName));
-        Assert.AreSequenceEqual(["First Server", "Second Server"], logs.Select(log => log.GameServerName).Order().ToArray());
+        Assert.AreSequenceEqual(["First Server", "Second Server"], [.. logs.Select(log => log.GameServerName).Order()]);
         Assert.Contains("\"fullCommand\":\"sm_aac sync\"", firstCommand);
         Assert.AreEqual(HttpStatusCode.NoContent, firstAgain.StatusCode);
         Assert.Contains("\"fullCommand\":\"sm_aac sync\"", secondCommand);

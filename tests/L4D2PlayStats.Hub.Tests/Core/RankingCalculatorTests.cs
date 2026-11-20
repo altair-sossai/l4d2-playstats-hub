@@ -15,7 +15,7 @@ public class RankingCalculatorTests
     private const long Davi = 76561198000000004;
 
     private static readonly RankingSettings Settings = new();
-    private static readonly ImmutableDictionary<long, int> NoPunishments = ImmutableDictionary<long, int>.Empty;
+    private static readonly ImmutableDictionary<long, int> NoPunishments = [];
 
     [TestMethod]
     public void AWinAndALossGiveTheConfiguredPoints()
