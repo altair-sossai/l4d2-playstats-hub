@@ -129,6 +129,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
+app.UseMiddleware<InGameBrowserMiddleware>();
 
 app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecute(AppConsts.ErrorStatusPath));
 app.UseMiddleware<ErrorLoggingMiddleware>();

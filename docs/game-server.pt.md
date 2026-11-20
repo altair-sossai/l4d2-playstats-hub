@@ -187,7 +187,7 @@ A resposta traz o modo (`null` até que um seja salvo) e as duas listas. `401` q
 
 ## O ranking dentro do jogo
 
-O `!ranking` abre o ranking da página inicial do site no navegador do próprio jogo; com `ranking_motd_path "/ingame"` ele abre uma versão mais simples e compacta. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
+O `!ranking` abre o ranking da página inicial do site no navegador do próprio jogo; com `ranking_motd_path "/ingame"` ele abre uma versão mais simples e compacta. As páginas abertas pelo jogo não mostram o convite para votar no ranking da comunidade. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"

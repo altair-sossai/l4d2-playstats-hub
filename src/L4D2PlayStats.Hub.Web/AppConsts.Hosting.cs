@@ -9,6 +9,9 @@ public static partial class AppConsts
     public const string ErrorStatusPath = "/error/{0}";
     public const int ErrorStatusCodeLimit = 600;
     public const string InGamePath = "/ingame";
+    public const string InGameQueryKey = "steamid";
+    public const string InGameCookie = "hub-in-game";
+    public const string InGameCookieValue = "1";
     public const string HtmlContentType = "text/html";
     public const string PlainTextContentType = "text/plain";
     public static readonly string[] ErrorPageExcludedPaths = ["/api", InGamePath];

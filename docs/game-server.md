@@ -187,7 +187,7 @@ The answer has the mode (`null` until one is saved) and the two lists. `401` mea
 
 ## The ranking inside the game
 
-`!ranking` opens the ranking of the home page of the site in the game's own browser; `ranking_motd_path "/ingame"` opens a simpler, compact version instead. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
+`!ranking` opens the ranking of the home page of the site in the game's own browser; `ranking_motd_path "/ingame"` opens a simpler, compact version instead. Pages opened from the game do not show the invitation to vote in the community ranking. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"

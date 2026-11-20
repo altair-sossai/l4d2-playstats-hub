@@ -1,4 +1,9 @@
 @model VoteInviteModel
+@using L4D2PlayStats.Hub.Web.Infrastructure.InGame
+@{
+    if (InGameBrowser.IsInGame(Context))
+        return;
+}
 
 <style>
     .vote-invite {
