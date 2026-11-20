@@ -1,13 +1,13 @@
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
-using L4D2PlayStats.Hub.Web.Services;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 

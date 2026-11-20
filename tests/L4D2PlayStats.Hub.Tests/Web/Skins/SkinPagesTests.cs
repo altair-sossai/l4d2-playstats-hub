@@ -1,11 +1,11 @@
 using System.Net;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Skins;

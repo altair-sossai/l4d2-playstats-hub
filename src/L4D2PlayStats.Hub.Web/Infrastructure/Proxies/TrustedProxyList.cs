@@ -1,6 +1,5 @@
 using System.Net;
 using IPNetwork = System.Net.IPNetwork;
-using Microsoft.AspNetCore.HttpOverrides;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
 

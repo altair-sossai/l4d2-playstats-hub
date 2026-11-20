@@ -1,14 +1,13 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Web.Live;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.AntiCheat;
 

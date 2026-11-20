@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 

@@ -1,6 +1,6 @@
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 

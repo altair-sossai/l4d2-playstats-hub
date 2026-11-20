@@ -1,10 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Tests.Support.Backups;
-using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -14,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text.RegularExpressions;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Support;
 

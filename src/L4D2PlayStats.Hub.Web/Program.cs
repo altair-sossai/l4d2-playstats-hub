@@ -4,7 +4,6 @@ using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
@@ -22,13 +21,15 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
 using L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
 using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
-using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 
 if (HealthCheck.IsCommand(args))
     return await HealthCheck.RunAsync(args);

@@ -2,12 +2,12 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 

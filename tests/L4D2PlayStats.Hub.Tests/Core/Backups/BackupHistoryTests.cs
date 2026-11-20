@@ -1,8 +1,8 @@
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
-using L4D2PlayStats.Hub.Core.Modules.Backups.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Core.Backups;
 

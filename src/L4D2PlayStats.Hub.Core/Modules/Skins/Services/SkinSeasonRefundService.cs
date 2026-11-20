@@ -1,10 +1,11 @@
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 

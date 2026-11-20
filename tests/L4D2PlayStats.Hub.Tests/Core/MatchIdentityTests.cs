@@ -1,10 +1,10 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 

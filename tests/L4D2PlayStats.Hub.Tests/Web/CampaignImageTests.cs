@@ -1,6 +1,6 @@
 using L4D2PlayStats.Hub.Tests.Support;
-using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 

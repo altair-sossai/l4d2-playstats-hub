@@ -1,7 +1,8 @@
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 

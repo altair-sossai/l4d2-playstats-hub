@@ -1,5 +1,5 @@
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
-using L4D2PlayStats.Hub.Core.Modules.Community.Services;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 

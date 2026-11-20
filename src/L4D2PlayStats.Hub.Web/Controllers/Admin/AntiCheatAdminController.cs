@@ -1,15 +1,15 @@
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.AntiCheat;
-using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 

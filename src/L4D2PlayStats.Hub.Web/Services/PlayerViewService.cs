@@ -1,20 +1,13 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
-using L4D2PlayStats.Hub.Core.Modules.Live.Services;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 using L4D2PlayStats.Hub.Web.Models;
@@ -23,6 +16,14 @@ using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 

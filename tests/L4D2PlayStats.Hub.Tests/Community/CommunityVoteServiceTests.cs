@@ -7,6 +7,7 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Community;
 

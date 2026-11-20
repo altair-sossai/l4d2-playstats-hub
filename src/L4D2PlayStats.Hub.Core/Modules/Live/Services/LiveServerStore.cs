@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
-using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 

@@ -1,5 +1,5 @@
-using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 

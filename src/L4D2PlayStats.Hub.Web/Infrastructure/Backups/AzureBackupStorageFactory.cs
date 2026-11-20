@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 

@@ -1,4 +1,4 @@
-using L4D2PlayStats.Hub.Web.Services;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 

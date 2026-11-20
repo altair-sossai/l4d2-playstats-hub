@@ -1,5 +1,6 @@
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 using System.Security.Claims;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 

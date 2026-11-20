@@ -1,12 +1,12 @@
 using System.Net;
 using System.Threading.Channels;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
-using L4D2PlayStats.Hub.Core.Modules.Live.Services;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Live;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using WebConsts = L4D2PlayStats.Hub.Web.AppConsts;
 

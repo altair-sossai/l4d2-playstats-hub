@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
 

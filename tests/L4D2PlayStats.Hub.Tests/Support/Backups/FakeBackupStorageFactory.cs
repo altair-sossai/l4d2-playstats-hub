@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Support.Backups;
 

@@ -1,5 +1,4 @@
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 
 namespace L4D2PlayStats.Hub.Tests.Core.Live;
 

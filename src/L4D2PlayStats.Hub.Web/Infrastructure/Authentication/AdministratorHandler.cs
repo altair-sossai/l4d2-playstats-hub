@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 

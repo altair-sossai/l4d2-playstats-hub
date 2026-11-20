@@ -4,8 +4,9 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using Microsoft.EntityFrameworkCore;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
 

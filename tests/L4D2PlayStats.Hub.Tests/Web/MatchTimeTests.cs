@@ -1,11 +1,11 @@
 using System.Globalization;
 using System.Text.Encodings.Web;
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 

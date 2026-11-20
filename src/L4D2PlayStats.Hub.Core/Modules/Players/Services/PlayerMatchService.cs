@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
 using Microsoft.EntityFrameworkCore;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 

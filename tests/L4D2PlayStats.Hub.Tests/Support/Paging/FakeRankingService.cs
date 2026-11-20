@@ -1,5 +1,5 @@
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Support.Paging;
 
