@@ -149,6 +149,8 @@ Vuelve a ejecutar el instalador: instala la versión más reciente y conserva tu
 
 Si la configuración inicial todavía no está terminada, el resumen del final vuelve a mostrar el código de configuración; si no, dice que tus datos y tu configuración se conservaron.
 
+El sitio sigue accesible durante una actualización y durante `playstats-hub restart`. El puerto pertenece a un socket de systemd, `l4d2-playstats-hub.socket`, que sigue aceptando conexiones mientras la aplicación se reinicia: los visitantes y los servidores de juego esperan unos segundos en lugar de recibir un error. La primera actualización a una versión con este socket todavía queda unos segundos sin servicio, mientras el socket toma el puerto. `playstats-hub stop`, `backup` y `restore` también detienen el socket, para que nada inicie la aplicación mientras trabajan.
+
 La primera actualización a una versión que cifra los secretos crea la clave de secretos en `/etc/l4d2-playstats-hub/secrets.key` y agrega `Hub__SecretsKeyFile` a `hub.env`. Cuando el sitio arranca, cifra los secretos guardados por la versión anterior. Haz una copia de la clave justo después de esa actualización, como explica [La clave de secretos](#la-clave-de-secretos).
 
 ## Copia de seguridad y restauración
@@ -217,8 +219,8 @@ El uso de otra base de datos se describe en [Bases de datos](databases.es.md).
 ## Desinstalar
 
 ```bash
-sudo systemctl disable --now l4d2-playstats-hub
-sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /usr/local/bin/playstats-hub
+sudo systemctl disable --now l4d2-playstats-hub.socket l4d2-playstats-hub
+sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /etc/systemd/system/l4d2-playstats-hub.socket /usr/local/bin/playstats-hub
 ```
 
 Tus datos quedan en `/var/lib/l4d2-playstats-hub`. Borra también esa carpeta si ya no los quieres. El segundo comando también borra la clave de secretos: si conservas los datos, conserva también una copia de `/etc/l4d2-playstats-hub/secrets.key`.

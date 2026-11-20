@@ -149,6 +149,8 @@ It runs the installer again: it installs the latest version and keeps your datab
 
 If the setup is not finished yet, the summary at the end shows the setup code again; otherwise it says that your data and configuration were kept.
 
+The site stays reachable during an update and during `playstats-hub restart`. The port belongs to a systemd socket, `l4d2-playstats-hub.socket`, which keeps accepting connections while the application restarts: visitors and game servers wait a few seconds instead of getting an error. The first update to a version with this socket still has a few seconds offline, while the socket takes the port over. `playstats-hub stop`, `backup` and `restore` stop the socket too, so nothing starts the application while they work.
+
 The first update to a version that encrypts the secrets creates the secrets key in `/etc/l4d2-playstats-hub/secrets.key` and adds `Hub__SecretsKeyFile` to `hub.env`. When the site starts, it encrypts the secrets saved by the older version. Make a copy of the key right after this update, as [The secrets key](#the-secrets-key) explains.
 
 ## Backup and restore
@@ -217,8 +219,8 @@ Using another database is described in [Databases](databases.md).
 ## Removing it
 
 ```bash
-sudo systemctl disable --now l4d2-playstats-hub
-sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /usr/local/bin/playstats-hub
+sudo systemctl disable --now l4d2-playstats-hub.socket l4d2-playstats-hub
+sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /etc/systemd/system/l4d2-playstats-hub.socket /usr/local/bin/playstats-hub
 ```
 
 Your data stays in `/var/lib/l4d2-playstats-hub`. Delete that folder too if you do not want it any more. The second command also deletes the secrets key: if you keep the data, keep a copy of `/etc/l4d2-playstats-hub/secrets.key` too.
