@@ -202,3 +202,4 @@ O endereço e a string de conexão são segredos. Depois de salvos, a página s�
 - **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup.
 - **Backups recentes** lista as últimas 20 execuções, agendadas ou manuais, com o arquivo, o tamanho, quanto tempo levou e, para um backup que falhou, o erro. Um backup que falhou é tentado de novo 30 minutos depois.
 - Num site que não usa SQLite, a página avisa que o banco não está no zip.
+- A página mostra onde está a [chave de segredos](backups-and-updates.pt.md#a-chave-de-segredos), a chave que criptografa esses segredos e a chave da API da Steam no banco de dados, e avisa que ela não está no zip: guarde uma cópia dela à parte. Quando a chave não pode ser carregada, a página avisa em vermelho, e o log diz o motivo.

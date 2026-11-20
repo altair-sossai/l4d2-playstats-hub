@@ -10,9 +10,17 @@ public class HubPaths
         DataDirectory = Path.IsPathRooted(directory) ? directory : Path.Combine(environment.ContentRootPath, directory);
 
         Directory.CreateDirectory(DataDirectory);
+
+        var keyFile = configuration[AppConsts.SecretsKeyFileSetting];
+
+        SecretsKeyFile = string.IsNullOrWhiteSpace(keyFile)
+            ? Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(DataDirectory))) ?? environment.ContentRootPath, AppConsts.DefaultSecretsKeyFile)
+            : Path.GetFullPath(keyFile.Trim(), environment.ContentRootPath);
     }
 
     public string DataDirectory { get; }
+
+    public string SecretsKeyFile { get; }
 
     public string Avatars => Path.Combine(DataDirectory, AppConsts.AvatarFolder);
     public string Branding => Path.Combine(DataDirectory, AppConsts.BrandingFolder);

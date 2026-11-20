@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Models.Backups;
@@ -22,7 +23,8 @@ public class BackupAdminController(
     IBackupService backupService,
     IBackupArchiveService archiveService,
     IBackupStorageFactory storageFactory,
-    ILiveViewService liveViewService) : Controller
+    ILiveViewService liveViewService,
+    SecretsKey secretsKey) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -37,7 +39,7 @@ public class BackupAdminController(
         var history = await historyService.GetAsync(cancellationToken);
         var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
 
-        return View(new BackupAdminModel(settings, history, archiveService.IncludesDatabase, backupService.IsRunning, timeZone));
+        return View(new BackupAdminModel(settings, history, archiveService.IncludesDatabase, backupService.IsRunning, timeZone, secretsKey));
     }
 
     [HttpPost("")]

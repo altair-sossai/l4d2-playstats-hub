@@ -202,3 +202,4 @@ The address and the connection string are secrets. After they are saved the page
 - **Back up now** makes a backup at once. **Test connection** uploads a small test file, checks that the container lists it and deletes it, without making a backup.
 - **Recent backups** lists the last 20 runs, scheduled or manual, with the file, its size, how long it took and, for a backup that failed, the error. A failed backup is tried again 30 minutes later.
 - On a site that does not use SQLite, the page warns that the database is not in the zip.
+- The page says where the [secrets key](backups-and-updates.md#the-secrets-key) is, the key that encrypts these secrets and the Steam API key in the database, and warns that it is not in the zip: keep a copy of it apart. When the key cannot be loaded, the page says so in red, and the log says why.

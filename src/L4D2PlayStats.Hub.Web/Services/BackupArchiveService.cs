@@ -2,6 +2,7 @@ using System.Data;
 using System.Reflection;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Web.Infrastructure;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Models.Backups;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 
-public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, IClock clock) : IBackupArchiveService
+public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, SecretsKey secretsKey, IClock clock) : IBackupArchiveService
 {
     public bool IncludesDatabase => dbContext.Database.IsSqlite();
 
@@ -37,7 +38,7 @@ public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, IClock
                 Provider = dbContext.Database.ProviderName ?? string.Empty
             };
 
-            return BackupArchiveWriter.Write(zipPath, snapshot, paths.DataDirectory, manifest);
+            return BackupArchiveWriter.Write(zipPath, snapshot, paths.DataDirectory, manifest, secretsKey);
         }
         finally
         {

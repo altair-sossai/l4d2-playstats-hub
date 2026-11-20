@@ -2,13 +2,14 @@
 
 🌐 **English** | [Português](backups-and-updates.pt.md) | [Español](backups-and-updates.es.md)
 
-Everything the site keeps is in one folder, the data folder. Back it up, and you can rebuild the site on any machine.
+Everything the site keeps is in one folder, the data folder. Back it up, keep a copy of the [secrets key](#the-secrets-key), which lives outside it, and you can rebuild the site on any machine.
 
 [Back to the manual](README.md)
 
 ## Contents
 
 - [What is in the data folder](#what-is-in-the-data-folder)
+- [The secrets key](#the-secrets-key)
 - [Automatic backup to Azure Storage](#automatic-backup-to-azure-storage)
 - [Backing up on Linux](#backing-up-on-linux)
 - [Backing up with Docker](#backing-up-with-docker)
@@ -32,6 +33,22 @@ With SQL Server, PostgreSQL or MySQL, the data is in that database: back it up w
 
 Because every statistics file is kept, the database is enough to rebuild all the matches and rankings.
 
+## The secrets key
+
+The Steam API key, the address or connection string of the backup destination and the setup code are saved in the database encrypted, with AES-256-GCM. The key that decrypts them is a file kept outside the data folder:
+
+| Installation | Secrets key |
+|---|---|
+| Linux installer | `/etc/l4d2-playstats-hub/secrets.key` |
+| Docker | `/secrets/secrets.key`, in the `hub-secrets` volume |
+| Azure App Service | `/home/secrets/secrets.key`, or the `Hub__SecretsKey` app setting |
+| Anything else | `secrets.key` next to the data folder, or the file named in `Hub__SecretsKeyFile` |
+
+- When there is no key, the site creates one the first time it starts (the Linux installer creates it itself) and writes in the log where it is, never its value.
+- Older versions saved these secrets in plain text. The first start of a version that encrypts them encrypts what was saved before, and a secret still in plain text is read as it is.
+- The backup zip does not contain the key, and neither does the data folder: whoever gets a backup cannot read the secrets. The **Backup** page of the administration says where the key is. `playstats-hub backup` on Linux does include it.
+- Keep a copy of the key in a safe place, apart from the backups. To restore on another machine, put the key back before starting the site. Without it the site starts and all the data is there, but these secrets are empty: the log says so, and you type them again in the administration area.
+
 ## Automatic backup to Azure Storage
 
 The site can back itself up. In [Administration > Backup](administration.md#backup) you give it an Azure Storage container, and every few hours, 8 by default, it uploads one zip file there. The site keeps running: the database is copied while it works.
@@ -48,6 +65,7 @@ The site can back itself up. In [Administration > Backup](administration.md#back
 - The avatars are left out: the site downloads them again.
 - `hub.env` (Linux) or the environment variables (Docker) are outside the data folder and are not in the zip. Keep a copy of them, or run `playstats-hub backup` now and then, which includes `hub.env`.
 - With SQL Server, PostgreSQL or MySQL the zip has no `hub.db`: back that database up with its own tools. The zip still keeps the keys and the logo.
+- The secrets key is not in the zip, on purpose. Keep a copy of it apart: see [The secrets key](#the-secrets-key).
 
 The files are named `<prefix>-yyyyMMdd-HHmmss.zip`, in UTC, such as `hub-backup-20261119-160000.zip`. After each upload, the oldest files with the same prefix beyond the number to keep (30 by default) are deleted. Other files in the container are never touched. A backup that fails is tried again 30 minutes later, and the page shows the error.
 
@@ -103,9 +121,9 @@ sudo chown -R playstats:playstats /var/lib/l4d2-playstats-hub
 sudo systemctl start l4d2-playstats-hub
 ```
 
-Delete the `-wal` and `-shm` files before extracting: they belong to the database being replaced. On a new machine, run the installer first, then restore, and put your `hub.env` back if you changed it.
+Delete the `-wal` and `-shm` files before extracting: they belong to the database being replaced. On a new machine, run the installer first, put your secrets key in `/etc/l4d2-playstats-hub/secrets.key` (see [The secrets key](#the-secrets-key)), then restore, and put your `hub.env` back if you changed it.
 
-With Docker, stop the container, extract the zip into the volume and start it again. The container gives the files to its user when it starts.
+With Docker, stop the container, extract the zip into the volume and start it again. The container gives the files to its user when it starts. On a new machine, put the secrets key in the `hub-secrets` volume as well, as [Installing with Docker](../install-docker.md#the-secrets-key) shows.
 
 ```bash
 docker compose stop hub
@@ -127,7 +145,7 @@ playstats-hub backup
 
 ![A backup on Linux](../images/en/install-linux-backup.webp)
 
-The site stops for a few seconds while the copy is made. The file goes to `/root` with the date in its name, and contains the data folder and `hub.env`. Give another path to save it elsewhere: `playstats-hub backup /backups/hub.tar.gz`. Copy the file to another machine.
+The site stops for a few seconds while the copy is made. The file goes to `/root` with the date in its name, and contains the data folder, `hub.env` and the secrets key, so keep it private. Give another path to save it elsewhere: `playstats-hub backup /backups/hub.tar.gz`. Copy the file to another machine.
 
 To make one every night, add a line to the root crontab (`sudo crontab -e`):
 
@@ -143,7 +161,7 @@ Stop the container, copy the volume into a file, start it again:
 
 ![A backup with Docker](../images/en/install-docker-backup.webp)
 
-The volume name has the name of your folder in front of it, such as `playstats_hub-data`. `docker volume ls` shows it. [Installing with Docker](../install-docker.md#backup) has the commands.
+The volume name has the name of your folder in front of it, such as `playstats_hub-data`. `docker volume ls` shows it. [Installing with Docker](../install-docker.md#backup) has the commands. Copy the `hub-secrets` volume too: it holds the secrets key.
 
 ## Restoring
 
@@ -153,7 +171,7 @@ On Linux, on the same machine or on a new one where you ran the installer:
 playstats-hub restore /root/l4d2-playstats-hub-backup-20270115-030000.tar.gz
 ```
 
-It replaces the current data and `hub.env` with the ones in the file and starts the site again.
+It replaces the current data, `hub.env` and the secrets key with the ones in the file and starts the site again. A backup made before the secrets were encrypted has no key, and the current one is kept.
 
 With Docker, stop the container, extract the file into the volume, and start it again:
 

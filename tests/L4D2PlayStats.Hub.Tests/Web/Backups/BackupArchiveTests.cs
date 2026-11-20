@@ -1,6 +1,8 @@
 using System.IO.Compression;
+using System.Text;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Models.Backups;
@@ -96,6 +98,54 @@ public sealed class BackupArchiveTests : IDisposable
     }
 
     [TestMethod]
+    public async Task TheZipHasNeitherTheSecretsKeyNorAnyPlainSecret()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+        await factory.SaveAsync(new SiteSettings { SteamApiKey = "STEAMKEY0123456789ABCDEF" });
+
+        Write(factory.DataDirectory, "keys/key-0f7a.xml", "<key/>");
+
+        var zipPath = Path.Combine(_work, "backup.zip");
+
+        await factory.RunAsync(services => services.GetRequiredService<IBackupArchiveService>().CreateAsync(zipPath));
+
+        var keyText = File.ReadAllText(factory.SecretsKeyFile);
+
+        using var zip = ZipFile.OpenRead(zipPath);
+
+        Assert.IsFalse(zip.Entries.Any(entry => entry.Name == "secrets.key"));
+
+        foreach (var entry in zip.Entries)
+        {
+            var content = Bytes(entry);
+
+            Assert.IsFalse(Contains(content, Encoding.ASCII.GetBytes(keyText)), entry.FullName);
+            Assert.IsFalse(Contains(content, Convert.FromBase64String(keyText)), entry.FullName);
+            Assert.IsFalse(Contains(content, Encoding.UTF8.GetBytes("STEAMKEY0123456789ABCDEF")), entry.FullName);
+        }
+    }
+
+    [TestMethod]
+    public void AKeyFileKeptInsideTheDataFolderIsLeftOut()
+    {
+        var data = Path.Combine(_work, "data");
+
+        Write(data, "keys/key-1.xml", "<key/>");
+        Write(data, "keys/secrets.key", "secret");
+
+        var key = new SecretsKey(new byte[32], Path.Combine(data, "keys", "secrets.key"), Path.Combine(data, "keys", "secrets.key"), false, null);
+        var zipPath = Path.Combine(_work, "backup.zip");
+        var manifest = BackupArchiveWriter.Write(zipPath, null, data, new BackupManifest(), key);
+
+        using var zip = ZipFile.OpenRead(zipPath);
+
+        CollectionAssert.AreEqual(new[] { "keys/key-1.xml", "manifest.json" }, zip.Entries.Select(entry => entry.FullName).Order().ToList());
+        CollectionAssert.AreEqual(new[] { "keys/key-1.xml" }, manifest.Files);
+    }
+
+    [TestMethod]
     public async Task TheManifestListsTheVersionTheTimeTheProviderAndTheFiles()
     {
         using var factory = new HubWebFactory();
@@ -188,6 +238,21 @@ public sealed class BackupArchiveTests : IDisposable
         using var reader = new StreamReader(zip.GetEntry(name)!.Open());
 
         return reader.ReadToEnd();
+    }
+
+    private static byte[] Bytes(ZipArchiveEntry entry)
+    {
+        using var stream = entry.Open();
+        using var memory = new MemoryStream();
+
+        stream.CopyTo(memory);
+
+        return memory.ToArray();
+    }
+
+    private static bool Contains(byte[] content, byte[] value)
+    {
+        return content.AsSpan().IndexOf(value) >= 0;
     }
 
     private static object? Scalar(SqliteConnection connection, string sql)

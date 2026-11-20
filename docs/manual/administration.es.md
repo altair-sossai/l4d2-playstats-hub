@@ -202,3 +202,4 @@ La dirección y la cadena de conexión son secretos. Una vez guardadas, la pági
 - **Hacer una copia ahora** hace una copia en el momento. **Probar la conexión** sube un archivo pequeño de prueba, comprueba que el contenedor lo lista y lo borra, sin hacer una copia.
 - **Copias recientes** lista las últimas 20 ejecuciones, programadas o manuales, con el archivo, su tamaño, cuánto tardó y, para una copia que falló, el error. Una copia que falló se intenta otra vez 30 minutos después.
 - En un sitio que no usa SQLite, la página avisa que la base de datos no está en el zip.
+- La página muestra dónde está la [clave de secretos](backups-and-updates.es.md#la-clave-de-secretos), la clave que cifra estos secretos y la clave de la API de Steam en la base de datos, y avisa que no está en el zip: guarda una copia de ella aparte. Cuando la clave no se puede cargar, la página lo avisa en rojo, y el registro dice por qué.

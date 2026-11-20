@@ -12,6 +12,7 @@ APP_DIR="/opt/${NAME}"
 DATA_DIR="/var/lib/${NAME}"
 CONFIG_DIR="/etc/${NAME}"
 ENV_FILE="${CONFIG_DIR}/hub.env"
+SECRETS_KEY_FILE="${CONFIG_DIR}/secrets.key"
 SERVICE_FILE="/etc/systemd/system/${NAME}.service"
 COMMAND_FILE="/usr/local/bin/playstats-hub"
 SERVICE_USER="playstats"
@@ -129,6 +130,7 @@ write_configuration() {
       PORT="${kept}"
     fi
 
+    add_secrets_key_setting
     return
   fi
 
@@ -138,12 +140,45 @@ write_configuration() {
 ASPNETCORE_ENVIRONMENT=Production
 ASPNETCORE_URLS=http://0.0.0.0:${PORT}
 Hub__DataDirectory=${DATA_DIR}
+Hub__SecretsKeyFile=${SECRETS_KEY_FILE}
 Database__Provider=Sqlite
 Database__ConnectionString="Data Source=hub.db"
 EOF
 
   chmod 640 "${ENV_FILE}"
   chown root:"${SERVICE_USER}" "${ENV_FILE}"
+}
+
+add_secrets_key_setting() {
+  if grep -q '^Hub__SecretsKey\(File\)\?=' "${ENV_FILE}"; then
+    return
+  fi
+
+  printf '  Adding Hub__SecretsKeyFile=%s to %s\n' "${SECRETS_KEY_FILE}" "${ENV_FILE}"
+  printf '\nHub__SecretsKeyFile=%s\n' "${SECRETS_KEY_FILE}" >>"${ENV_FILE}"
+}
+
+write_secrets_key() {
+  if grep -q '^Hub__SecretsKey=' "${ENV_FILE}"; then
+    step "Using the secrets key set in ${ENV_FILE}"
+    return
+  fi
+
+  local configured
+  configured="$(sed -n 's/^Hub__SecretsKeyFile=//p' "${ENV_FILE}" | tail -n 1 | tr -d '"')"
+  SECRETS_KEY_FILE="${configured:-${SECRETS_KEY_FILE}}"
+  mkdir -p "$(dirname "${SECRETS_KEY_FILE}")"
+
+  if [ -s "${SECRETS_KEY_FILE}" ]; then
+    step "Keeping the secrets key in ${SECRETS_KEY_FILE}"
+  else
+    step "Creating the secrets key in ${SECRETS_KEY_FILE}"
+
+    (umask 077; head -c 32 /dev/urandom | base64 | tr -d '\n' >"${SECRETS_KEY_FILE}")
+  fi
+
+  chown "${SERVICE_USER}:${SERVICE_USER}" "${SECRETS_KEY_FILE}"
+  chmod 600 "${SECRETS_KEY_FILE}"
 }
 
 write_service() {
@@ -206,8 +241,17 @@ case "\${1:-help}" in
     target="\${2:-/root/${NAME}-backup-\$(date +%Y%m%d-%H%M%S).tar.gz}"
     systemctl stop ${NAME}
     trap 'systemctl start ${NAME}' EXIT
-    tar -czf "\${target}" -C "${DATA_DIR}" . -C "${CONFIG_DIR}" hub.env
+    key=()
+    if [ -f "${SECRETS_KEY_FILE}" ]; then
+      key=(-C "$(dirname "${SECRETS_KEY_FILE}")" "$(basename "${SECRETS_KEY_FILE}")")
+    fi
+    (umask 077; tar -czf "\${target}" -C "${DATA_DIR}" . -C "${CONFIG_DIR}" hub.env \${key[@]+"\${key[@]}"})
     echo "Backup written to \${target}"
+    if [ \${#key[@]} -gt 0 ]; then
+      echo "It also holds the secrets key, which decrypts the secrets saved in the settings: keep this file private."
+    else
+      echo "Warning: the secrets key is not in this file, because it is set in ${ENV_FILE}. Keep a copy of it: without it the secrets saved in the settings cannot be read."
+    fi
     ;;
   restore)
     source="\${2:?Usage: playstats-hub restore <backup file>}"
@@ -217,8 +261,19 @@ case "\${1:-help}" in
     fi
     systemctl stop ${NAME}
     find "${DATA_DIR}" -mindepth 1 -delete
-    tar -xzf "\${source}" -C "${DATA_DIR}" --exclude=hub.env
+    tar -xzf "\${source}" -C "${DATA_DIR}" --exclude=hub.env --exclude="$(basename "${SECRETS_KEY_FILE}")"
     tar -xzf "\${source}" -C "${CONFIG_DIR}" hub.env
+    if tar -tzf "\${source}" | grep -x "$(basename "${SECRETS_KEY_FILE}")" >/dev/null; then
+      mkdir -p "$(dirname "${SECRETS_KEY_FILE}")"
+      (umask 077; tar -xzf "\${source}" -O "$(basename "${SECRETS_KEY_FILE}")" >"${SECRETS_KEY_FILE}")
+      chown ${SERVICE_USER}:${SERVICE_USER} "${SECRETS_KEY_FILE}"
+      chmod 600 "${SECRETS_KEY_FILE}"
+    else
+      echo "This backup has no secrets key, so the current one in ${SECRETS_KEY_FILE} was kept. If the backup comes from another machine, copy the secrets key of that machine there, or the secrets saved in the settings stay empty."
+    fi
+    if ! grep -q '^Hub__SecretsKey\(File\)\?=' "${ENV_FILE}"; then
+      printf '\nHub__SecretsKeyFile=%s\n' "${SECRETS_KEY_FILE}" >>"${ENV_FILE}"
+    fi
     chown -R ${SERVICE_USER}:${SERVICE_USER} "${DATA_DIR}"
     chown root:${SERVICE_USER} "${ENV_FILE}"
     systemctl start ${NAME}
@@ -236,7 +291,7 @@ case "\${1:-help}" in
     echo "  stop | start  Stop or start the application"
     echo "  setup-code    Show the code asked by the first-run setup page"
     echo "  add-admin <id> Make a SteamID64 an administrator of the site"
-    echo "  backup [file] Save the database, avatars and configuration in one file"
+    echo "  backup [file] Save the database, avatars, configuration and secrets key in one file"
     echo "  restore <file> Replace the current data with a backup file"
     echo "  update [tag]  Install the latest version, or the given one, keeping the data"
     ;;
@@ -333,12 +388,16 @@ print_summary() {
   printf '      playstats-hub status       is it running?\n'
   printf '      playstats-hub logs         latest log lines\n'
   printf '      playstats-hub setup-code   show the setup code again\n'
-  printf '      playstats-hub backup       save the database and configuration\n'
+  printf '      playstats-hub backup       save the database, configuration and secrets key\n'
   printf '      playstats-hub update       install the latest version\n'
   printf '\n  Files:\n'
   printf '      %s   application\n' "${APP_DIR}"
   printf '      %s   database, avatars and keys\n' "${DATA_DIR}"
-  printf '      %s   configuration\n\n' "${ENV_FILE}"
+  printf '      %s   configuration\n' "${ENV_FILE}"
+  if [ -f "${SECRETS_KEY_FILE}" ]; then
+    printf '      %s   secrets key: keep a copy, the backup zip of the site does not have it\n' "${SECRETS_KEY_FILE}"
+  fi
+  printf '\n'
 }
 
 require_root
@@ -347,6 +406,7 @@ install_packages
 download_package
 install_application
 write_configuration
+write_secrets_key
 write_service
 write_command
 wait_for_application

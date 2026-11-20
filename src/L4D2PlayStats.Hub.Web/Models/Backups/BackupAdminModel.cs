@@ -2,10 +2,11 @@ using L4D2PlayStats.Hub.Core.Modules.Backups.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 
 namespace L4D2PlayStats.Hub.Web.Models.Backups;
 
-public class BackupAdminModel(BackupSettings settings, BackupHistory history, bool includesDatabase, bool isRunning, TimeZoneInfo timeZone)
+public class BackupAdminModel(BackupSettings settings, BackupHistory history, bool includesDatabase, bool isRunning, TimeZoneInfo timeZone, SecretsKey secretsKey)
 {
     public BackupSettings Settings { get; } = settings;
     public IReadOnlyList<BackupRun> Runs { get; } = history.Runs.OrderByDescending(run => run.StartedAtUtc).ToList();
@@ -16,6 +17,8 @@ public class BackupAdminModel(BackupSettings settings, BackupHistory history, bo
     public string? MaskedConnectionString { get; } = BackupSecrets.MaskConnectionString(settings.ConnectionString);
     public BackupRun? LastSuccess { get; } = history.Runs.Where(run => run.Succeeded).MaxBy(run => run.StartedAtUtc);
     public DateTime? NextAtUtc { get; } = BackupSchedule.NextAtUtc(settings, history);
+    public string SecretsKeyLocation { get; } = secretsKey.Location;
+    public bool SecretsKeyAvailable { get; } = secretsKey.IsAvailable;
 
     public DateTime Local(DateTime utc)
     {

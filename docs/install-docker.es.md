@@ -14,6 +14,7 @@ Las capturas de pantalla de esta página son la salida real de los comandos, gra
 - [Comprobación de estado](#comprobación-de-estado)
 - [Actualizar](#actualizar)
 - [Copia de seguridad](#copia-de-seguridad)
+- [La clave de secretos](#la-clave-de-secretos)
 - [Agregar un administrador](#agregar-un-administrador)
 - [Configuración](#configuración)
 - [Construir la imagen tú mismo](#construir-la-imagen-tú-mismo)
@@ -35,9 +36,11 @@ services:
       - "5080:8080"
     volumes:
       - hub-data:/data
+      - hub-secrets:/secrets
 
 volumes:
   hub-data:
+  hub-secrets:
 ```
 
 Luego inícialo:
@@ -51,6 +54,8 @@ La primera vez, Docker descarga la imagen y luego crea la red, el volumen y el c
 ![docker compose up -d, la primera vez](images/es/install-docker-up.webp)
 
 El sitio queda en `http://YOUR-SERVER-ADDRESS:5080`. La base de datos, los avatares y las claves están en el volumen `hub-data`, así que se conservan entre actualizaciones.
+
+La clave de secretos, que cifra los secretos guardados en la configuración, está en el volumen `hub-secrets`, montado en `/secrets`. Está separada de los datos a propósito: consulta [La clave de secretos](#la-clave-de-secretos).
 
 Ejecuta un solo contenedor de la aplicación. La partida en vivo se guarda en memoria, y dos contenedores tendrían cada uno la suya.
 
@@ -98,6 +103,8 @@ Para quedarte en una versión específica, reemplaza `latest` en el archivo de C
 
 Las imágenes hasta la v0.3.0 ejecutaban la aplicación como root, así que los archivos de un volumen existente pertenecen a root. Un contenedor más nuevo cambia su propietario a `app` al iniciar, así que la actualización no necesita nada más. Si inicias el contenedor con un `user:` fijo en el archivo de Compose, no puede cambiar el propietario; corrígelo una vez con `docker run --rm -v hub-data:/data alpine chown -R 1654:1654 /data` (1654 es el usuario `app` de la imagen).
 
+Si tu archivo de Compose se escribió antes de que existiera la clave de secretos, agrégale el volumen `hub-secrets`, como en [Cómo iniciarlo](#cómo-iniciarlo), antes de actualizar. El primer arranque de la nueva imagen crea la clave allí y cifra los secretos guardados por la versión anterior. Sin ese volumen la clave va a un volumen anónimo, que `docker compose up` conserva cuando recrea el contenedor, pero que es fácil de perder, por ejemplo con `docker compose down -v`.
+
 ## Copia de seguridad
 
 Detén el contenedor, copia el volumen a un archivo y vuelve a iniciarlo:
@@ -108,6 +115,12 @@ docker compose stop hub
 
 ```bash
 docker run --rm -v hub-data:/data -v "$PWD":/backup alpine tar -czf /backup/hub-backup.tar.gz -C /data .
+```
+
+Copia la clave de secretos en un segundo archivo. Mantenlo privado y separado de las copias de los datos:
+
+```bash
+docker run --rm -v hub-secrets:/secrets -v "$PWD":/backup alpine tar -czf /backup/hub-secrets.tar.gz -C /secrets .
 ```
 
 ```bash
@@ -128,9 +141,29 @@ docker compose stop hub
 docker run --rm -v hub-data:/data -v "$PWD":/backup alpine sh -c "rm -rf /data/* && tar -xzf /backup/hub-backup.tar.gz -C /data"
 ```
 
+Vuelve a poner también la clave de secretos, desde el segundo archivo:
+
+```bash
+docker run --rm -v hub-secrets:/secrets -v "$PWD":/backup alpine sh -c "rm -rf /secrets/* && tar -xzf /backup/hub-secrets.tar.gz -C /secrets"
+```
+
 ```bash
 docker compose start hub
 ```
+
+## La clave de secretos
+
+La clave de la API de Steam, la dirección o la cadena de conexión del destino de la copia de seguridad y el código de configuración se guardan cifrados en la base de datos, con la clave de `/secrets/secrets.key`. El sitio crea ese archivo la primera vez que arranca, con 32 bytes aleatorios, legible solo por el usuario `app`. Está en un volumen propio para que el volumen de datos, sus copias y el zip de copia de seguridad del sitio no revelen esos secretos.
+
+La copia automática a Azure Storage no incluye la clave. Guarda una copia de ella en un lugar seguro:
+
+```bash
+docker compose exec hub cat /secrets/secrets.key
+```
+
+Para llevar el sitio a otra máquina con un zip de la copia automática, pon la clave en el volumen `hub-secrets` de la nueva máquina antes de arrancarla: restaura el segundo archivo como se muestra en [Copia de seguridad](#copia-de-seguridad), o escribe la clave que copiaste en `/secrets/secrets.key`. Sin la clave original el sitio arranca y todos los datos están, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración.
+
+En lugar del volumen puedes dar la clave en la variable `Hub__SecretsKey`, 32 bytes aleatorios en base64 (`openssl rand -base64 32`), o apuntar `Hub__SecretsKeyFile` a un secret de Docker, como `/run/secrets/hub_secrets_key`.
 
 ## Agregar un administrador
 
@@ -149,6 +182,8 @@ Los ajustes son variables de entorno. Agrégalas bajo `environment:` en el archi
 | Variable | Significado | Valor predeterminado |
 |---|---|---|
 | `Hub__DataDirectory` | Carpeta con la base de datos, los avatares y las claves. | `/data` |
+| `Hub__SecretsKeyFile` | El archivo de la clave de secretos. Consulta [La clave de secretos](#la-clave-de-secretos). | `/secrets/secrets.key` |
+| `Hub__SecretsKey` | Opcional. La propia clave de secretos, 32 bytes aleatorios en base64, en lugar del archivo. | vacío |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` o `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Cómo conectarse a la base de datos. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Proxies inversos cuyas cabeceras `X-Forwarded-For`, `X-Forwarded-Proto` y `X-Forwarded-Host` acepta el sitio: direcciones IP o redes como `172.16.0.0/12`, separadas por comas. El propio contenedor (`127.0.0.1` y `::1`) siempre es de confianza. | vacío |

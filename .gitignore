@@ -492,5 +492,6 @@ src/L4D2PlayStats.Hub.Web/data/
 *.db-shm
 *.db-wal
 appsettings.Local.json
+secrets.key
 
 !tools/screenshots/terminal/*.log
