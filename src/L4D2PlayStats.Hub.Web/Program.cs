@@ -34,6 +34,7 @@ if (HealthCheck.IsCommand(args))
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.Local.json", true, true);
+builder.WebHost.ConfigureKestrel(options => options.UseSystemd());
 
 builder.Services.AddHubTelemetry(builder.Configuration);
 builder.Services.AddHubCore();
