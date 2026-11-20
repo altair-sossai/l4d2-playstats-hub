@@ -14,6 +14,7 @@ CONFIG_DIR="/etc/${NAME}"
 ENV_FILE="${CONFIG_DIR}/hub.env"
 SECRETS_KEY_FILE="${CONFIG_DIR}/secrets.key"
 SERVICE_FILE="/etc/systemd/system/${NAME}.service"
+SOCKET_FILE="/etc/systemd/system/${NAME}.socket"
 COMMAND_FILE="/usr/local/bin/playstats-hub"
 SERVICE_USER="playstats"
 EXECUTABLE="L4D2PlayStats.Hub.Web"
@@ -104,8 +105,12 @@ install_application() {
     useradd --system --home-dir "${DATA_DIR}" --shell /usr/sbin/nologin "${SERVICE_USER}"
   fi
 
-  rm -rf "${APP_DIR}"
+  rm -rf "${APP_DIR}.old"
+  if [ -d "${APP_DIR}" ]; then
+    mv "${APP_DIR}" "${APP_DIR}.old"
+  fi
   mv "${staging}" "${APP_DIR}"
+  rm -rf "${APP_DIR}.old"
   mkdir -p "${DATA_DIR}" "${CONFIG_DIR}"
   chown -R "${SERVICE_USER}:${SERVICE_USER}" "${DATA_DIR}"
   chmod 750 "${DATA_DIR}"
@@ -113,6 +118,65 @@ install_application() {
 
 configured_port() {
   sed -n 's/^ASPNETCORE_URLS=.*:\([0-9][0-9]*\).*$/\1/p' "${ENV_FILE}" | head -n 1
+}
+
+listen_address() {
+  local url host
+
+  url="$(sed -n 's/^ASPNETCORE_URLS=//p' "${ENV_FILE}" | head -n 1 | tr -d "\"' ")"
+
+  case "${url}" in
+    *";"* | "") return ;;
+    http://*:[0-9]*) ;;
+    *) return ;;
+  esac
+
+  host="${url#http://}"
+  host="${host%%/*}"
+  host="${host%:*}"
+
+  case "${host}" in
+    "+" | "*" | "[::]") echo "${PORT}" ;;
+    localhost) echo "127.0.0.1:${PORT}" ;;
+    *) echo "${host}:${PORT}" ;;
+  esac
+}
+
+write_socket() {
+  local listen
+  listen="$(listen_address)"
+
+  if [ -z "${listen}" ]; then
+    if [ -f "${SOCKET_FILE}" ]; then
+      systemctl disable --quiet --now "${NAME}.socket" || true
+      rm -f "${SOCKET_FILE}"
+    fi
+    SOCKET_UNIT=""
+    return
+  fi
+
+  local previous=""
+  if [ -f "${SOCKET_FILE}" ]; then
+    previous="$(cat "${SOCKET_FILE}")"
+  fi
+
+  cat >"${SOCKET_FILE}" <<EOF
+[Unit]
+Description=L4D2 PlayStats Hub port
+
+[Socket]
+ListenStream=${listen}
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target
+EOF
+
+  SOCKET_UNIT="${NAME}.socket"
+
+  if [ -n "${previous}" ] && [ "${previous}" != "$(cat "${SOCKET_FILE}")" ]; then
+    SOCKET_CHANGED=1
+  fi
 }
 
 write_configuration() {
@@ -184,11 +248,14 @@ write_secrets_key() {
 write_service() {
   step "Registering the ${NAME} service"
 
+  write_socket
+
   cat >"${SERVICE_FILE}" <<EOF
 [Unit]
 Description=L4D2 PlayStats Hub
-After=network-online.target
+After=network-online.target ${SOCKET_UNIT}
 Wants=network-online.target
+Requires=${SOCKET_UNIT}
 
 [Service]
 Type=simple
@@ -209,12 +276,30 @@ ReadWritePaths=${DATA_DIR}
 WantedBy=multi-user.target
 EOF
 
+  if [ -z "${SOCKET_UNIT}" ]; then
+    sed -i '/^Requires=$/d' "${SERVICE_FILE}"
+  fi
+
   systemctl daemon-reload
+
+  if [ -n "${SOCKET_UNIT}" ]; then
+    if [ "${SOCKET_CHANGED:-0}" = "1" ]; then
+      systemctl stop "${NAME}" "${SOCKET_UNIT}"
+    fi
+    systemctl enable --quiet --now "${SOCKET_UNIT}"
+  fi
+
   systemctl enable --quiet "${NAME}"
   systemctl restart "${NAME}"
 }
 
 write_command() {
+  local units="${NAME}"
+
+  if [ -n "${SOCKET_UNIT:-}" ]; then
+    units="${SOCKET_UNIT} ${NAME}"
+  fi
+
   cat >"${COMMAND_FILE}" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
@@ -224,8 +309,8 @@ case "\${1:-help}" in
   logs) journalctl -u ${NAME} -n "\${2:-100}" --no-pager ;;
   follow) journalctl -u ${NAME} -f ;;
   restart) systemctl restart ${NAME} ;;
-  stop) systemctl stop ${NAME} ;;
-  start) systemctl start ${NAME} ;;
+  stop) systemctl stop ${units} ;;
+  start) systemctl start ${units} ;;
   setup-code)
     if [ -f "${DATA_DIR}/setup-code.txt" ]; then
       cat "${DATA_DIR}/setup-code.txt"; echo
@@ -239,8 +324,8 @@ case "\${1:-help}" in
     ;;
   backup)
     target="\${2:-/root/${NAME}-backup-\$(date +%Y%m%d-%H%M%S).tar.gz}"
-    systemctl stop ${NAME}
-    trap 'systemctl start ${NAME}' EXIT
+    systemctl stop ${units}
+    trap 'systemctl start ${units}' EXIT
     key=()
     if [ -f "${SECRETS_KEY_FILE}" ]; then
       key=(-C "$(dirname "${SECRETS_KEY_FILE}")" "$(basename "${SECRETS_KEY_FILE}")")
@@ -259,7 +344,7 @@ case "\${1:-help}" in
       echo "\${source} is not a backup made by playstats-hub backup. Nothing was changed." >&2
       exit 1
     fi
-    systemctl stop ${NAME}
+    systemctl stop ${units}
     find "${DATA_DIR}" -mindepth 1 -delete
     tar -xzf "\${source}" -C "${DATA_DIR}" --exclude=hub.env --exclude="$(basename "${SECRETS_KEY_FILE}")"
     tar -xzf "\${source}" -C "${CONFIG_DIR}" hub.env
@@ -276,7 +361,7 @@ case "\${1:-help}" in
     fi
     chown -R ${SERVICE_USER}:${SERVICE_USER} "${DATA_DIR}"
     chown root:${SERVICE_USER} "${ENV_FILE}"
-    systemctl start ${NAME}
+    systemctl start ${units}
     echo "Restored from \${source}"
     ;;
   update)
