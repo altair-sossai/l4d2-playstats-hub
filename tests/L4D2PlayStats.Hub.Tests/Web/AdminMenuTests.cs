@@ -145,6 +145,32 @@ public partial class AdminMenuTests
     }
 
     [TestMethod]
+    public async Task TheTopMenuHasASingleAdminLink()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+        await factory.SaveAsync(AllModules());
+
+        using var player = factory.Client(HubWebFactory.Player);
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+
+        var home = await administrator.GetStringAsync("/");
+
+        Assert.IsTrue(AdminLink("<li>").IsMatch(home));
+        Assert.DoesNotContain("href=\"/admin/chat-bans\"", home);
+        Assert.DoesNotContain("href=\"/admin\"", await player.GetStringAsync("/"));
+
+        foreach (var page in new[] { "/admin", "/admin/chat-bans", "/admin/anti-cheat", "/admin/skins/prices" })
+            Assert.IsTrue(AdminLink("<li class=\"active\">").IsMatch(await administrator.GetStringAsync(page)), page);
+    }
+
+    private static Regex AdminLink(string item)
+    {
+        return new Regex(Regex.Escape(item) + @"\s*<a href=""/admin"">\s*<span class=""glyphicon glyphicon-cog""></span> Admin\s*</a>\s*</li>");
+    }
+
+    [TestMethod]
     public async Task TheWizardHasNoAdministrationMenu()
     {
         using var factory = new HubWebFactory();

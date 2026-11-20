@@ -13,7 +13,6 @@
     var skinShop = modules.IsEnabled(HubModule.SkinShop);
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
     var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
-    var siteChat = modules.IsEnabled(HubModule.SiteChat);
     var metadata = ViewData["PageMetadata"] as PageMetadata;
     var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
     var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
@@ -480,54 +479,10 @@
                 </li>
                 @if (administrator)
                 {
-                    <li class="dropdown @ViewBag.Admin">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <span class="glyphicon glyphicon-cog"></span> @L["Admin"] <span class="caret"></span>
+                    <li class="@ViewBag.Admin">
+                        <a href="/admin">
+                            <span class="glyphicon glyphicon-cog"></span> @L["Admin"]
                         </a>
-                        <ul class="dropdown-menu">
-                            <li class="@ViewBag.Administration">
-                                <a href="/admin">
-                                    <span class="glyphicon glyphicon-wrench" style="margin-right: 5px"></span>
-                                    @L["Administration"]
-                                </a>
-                            </li>
-                            @if (siteChat)
-                            {
-                                <li role="separator" class="divider"></li>
-                                <li class="@ViewBag.ChatBans">
-                                    <a href="/admin/chat-bans">
-                                        <img src="~/imgs/menu/chat-bans.svg" alt="" class="img-responsive img-header-icon">
-                                        @L["Chat Bans"]
-                                    </a>
-                                </li>
-                            }
-                            @if (antiCheat)
-                            {
-                                <li role="separator" class="divider"></li>
-                                <li class="@ViewBag.AntiCheatAdmin">
-                                    <a href="@AppConsts.AntiCheatAdminUrl">
-                                        <span class="glyphicon glyphicon-lock" style="margin-right: 5px"></span>
-                                        @L["Anti-Cheat"]
-                                    </a>
-                                </li>
-                            }
-                            @if (skinShop)
-                            {
-                                <li role="separator" class="divider"></li>
-                                <li class="@ViewBag.SkinPurchases">
-                                    <a href="@AppConsts.SkinAdminUrl">
-                                        <img src="~/imgs/menu/skin-purchases.svg" alt="" class="img-responsive img-header-icon">
-                                        @L["Skin purchases"]
-                                    </a>
-                                </li>
-                                <li class="@ViewBag.SkinPrices">
-                                    <a href="@AppConsts.SkinPricesUrl">
-                                        <img src="~/imgs/menu/skin-prices.svg" alt="" class="img-responsive img-header-icon">
-                                        @L["Skin prices"]
-                                    </a>
-                                </li>
-                            }
-                        </ul>
                     </li>
                 }
             </ul>

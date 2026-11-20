@@ -2,7 +2,7 @@
 
 🌐 **English** | [Português](administration.pt.md) | [Español](administration.es.md)
 
-The administration area is where the site is configured. It is open only to administrators: **Admin > Administration** in the menu, or `/admin`. Every page of the area has the [administration menu](#the-administration-menu) on the left.
+The administration area is where the site is configured. It is open only to administrators: **Admin** in the menu at the top, or `/admin`. Every page of the area has the [administration menu](#the-administration-menu) on the left.
 
 This page covers the overview, the game servers, the modules, the settings, the administrators and the backup. Other administration pages are explained with their feature:
 

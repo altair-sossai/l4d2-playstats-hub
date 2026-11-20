@@ -23,7 +23,6 @@ public class AntiCheatAdminController(ISettingsService settingsService, IAntiChe
     public async Task<IActionResult> Index(string? list, string? q, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
-        ViewBag.AntiCheatAdmin = "active";
 
         var settings = await settingsService.GetAsync<AntiCheatSettings>(cancellationToken);
         var access = await accessService.GetAsync(cancellationToken);

@@ -20,7 +20,7 @@ Lo instalas una sola vez, en una máquina que controlas. Es un solo programa y u
 
 El menú de arriba de cada página lleva a las funciones. Una función que el administrador desactivó no aparece en el menú.
 
-![El menú del sitio, con el menú de administración abierto](../images/es/admin-menu.webp)
+![El menú del sitio, con Admin para un administrador](../images/es/admin-menu.webp)
 
 | Elemento del menú | Qué abre | Página del manual |
 |---|---|---|

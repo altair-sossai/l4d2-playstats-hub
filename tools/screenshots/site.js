@@ -131,7 +131,7 @@ function shots(vars) {
         { name: 'phone-player', width: phone, path: `/player/${player}`, full: true, maxHeight: 1400 },
         { name: 'phone-server-live', width: phone, path: '/servers', before: [{ run: feedLive }, { go: '/servers' }, { eval: firstLiveServer, navigates: true, settle: 2500 }], full: true, maxHeight: 1400 },
         { name: 'phone-skins', width: phone, user: player, path: '/skins' },
-        { name: 'admin-menu', path: '/admin', before: [openDropdown('.navbar .glyphicon-cog')], clip: '.navbar, .navbar .dropdown.open .dropdown-menu', padding: 0 },
+        { name: 'admin-menu', path: '/admin', before: [hideFloating], clip: '.navbar', padding: 0 },
         { name: 'admin-overview', path: '/admin', full: true },
         { name: 'admin-servers', path: '/admin/servers', full: true },
         { name: 'admin-server', path: vars.servers[0], full: true },

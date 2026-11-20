@@ -19,7 +19,6 @@ public class ChatBansController(IChatBanService chatBanService, ILiveViewService
     public async Task<IActionResult> Index(string? q, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
-        ViewBag.ChatBans = "active";
 
         var bans = await chatBanService.ListAsync(cancellationToken);
         var term = q?.Trim();

@@ -20,7 +20,7 @@ Você instala uma vez, em uma máquina que você controla. É um programa e um a
 
 O menu no topo de cada página leva aos recursos. Um recurso que o administrador desligou não aparece no menu.
 
-![O menu do site, com o menu de administração aberto](../images/pt/admin-menu.webp)
+![O menu do site, com Admin para um administrador](../images/pt/admin-menu.webp)
 
 | Item do menu | O que abre | Página do manual |
 |---|---|---|

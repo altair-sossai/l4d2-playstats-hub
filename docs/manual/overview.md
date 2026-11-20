@@ -20,7 +20,7 @@ You install it once, on a machine you control. It is one program and one databas
 
 The menu at the top of every page leads to the features. A feature the administrator turned off is not in the menu.
 
-![The menu of the site, with the administration menu open](../images/en/admin-menu.webp)
+![The menu of the site, with Admin for an administrator](../images/en/admin-menu.webp)
 
 | Menu item | What it opens | Manual page |
 |---|---|---|

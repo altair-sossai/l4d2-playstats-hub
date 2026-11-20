@@ -2,7 +2,7 @@
 
 🌐 [English](administration.md) | [Português](administration.pt.md) | **Español**
 
-El área de administración es donde se configura el sitio. Solo está abierta para los administradores: **Admin > Administración** en el menú, o `/admin`. Todas las páginas del área tienen el [menú de administración](#el-menú-de-administración) a la izquierda.
+El área de administración es donde se configura el sitio. Solo está abierta para los administradores: **Admin** en el menú de arriba, o `/admin`. Todas las páginas del área tienen el [menú de administración](#el-menú-de-administración) a la izquierda.
 
 Esta página cubre la vista general, los servidores de juego, los módulos, la configuración, los administradores y la copia de seguridad. Las demás páginas de administración se explican junto con su función:
 

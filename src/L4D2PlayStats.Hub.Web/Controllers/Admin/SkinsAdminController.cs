@@ -28,7 +28,6 @@ public class SkinsAdminController(
     public async Task<IActionResult> Purchases(string? q, string? player, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
-        ViewBag.SkinPurchases = "active";
 
         return View(await skinViewService.PurchasesAsync(q, player, page, cancellationToken));
     }
@@ -43,7 +42,6 @@ public class SkinsAdminController(
     public async Task<IActionResult> Prices(string? q, SkinRarity? rarity, string? weapon, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
-        ViewBag.SkinPrices = "active";
 
         return View(await skinViewService.PricesAsync(q, rarity, weapon, page, cancellationToken));
     }

@@ -184,7 +184,6 @@ public partial class AdminPagesTests
             var html = await client.GetStringAsync(page);
 
             Assert.IsTrue(AdminMenuActive().IsMatch(html), page);
-            Assert.IsTrue(AdministrationItemActive().IsMatch(html), page);
             Assert.IsFalse(CommunityMenuActive().IsMatch(html), page);
         }
 
@@ -279,11 +278,8 @@ public partial class AdminPagesTests
         return await winner.GetStringAsync("/community");
     }
 
-    [GeneratedRegex("""<li class="dropdown active">\s*<a href="#"[^>]*>\s*<span class="glyphicon glyphicon-cog">""")]
+    [GeneratedRegex("""<li class="active">\s*<a href="/admin">\s*<span class="glyphicon glyphicon-cog">""")]
     private static partial Regex AdminMenuActive();
-
-    [GeneratedRegex("""<li class="active">\s*<a href="/admin">""")]
-    private static partial Regex AdministrationItemActive();
 
     [GeneratedRegex("""<li class="nav-fit active">\s*<a href="/community">""")]
     private static partial Regex CommunityMenuActive();

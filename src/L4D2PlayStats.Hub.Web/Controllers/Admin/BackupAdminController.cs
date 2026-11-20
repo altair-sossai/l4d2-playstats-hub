@@ -29,7 +29,6 @@ public class BackupAdminController(
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         ViewBag.Admin = "active";
-        ViewBag.Administration = "active";
     }
 
     [HttpGet("")]

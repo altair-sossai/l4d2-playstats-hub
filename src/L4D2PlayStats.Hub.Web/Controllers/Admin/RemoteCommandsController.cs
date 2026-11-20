@@ -28,7 +28,6 @@ public class RemoteCommandsController(
     public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Admin = "active";
-        ViewBag.Administration = "active";
 
         var size = AppConsts.RemoteCommandsPageSize;
         var total = await remoteCommandService.CountAsync(cancellationToken: cancellationToken);

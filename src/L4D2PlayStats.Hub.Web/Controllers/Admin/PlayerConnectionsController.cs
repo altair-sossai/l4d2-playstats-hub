@@ -18,7 +18,6 @@ public class PlayerConnectionsController(IPlayerConnectionService playerConnecti
     public async Task<IActionResult> Index(string? communityId, CancellationToken cancellationToken)
     {
         ViewBag.Admin = "active";
-        ViewBag.Administration = "active";
 
         var parsed = SteamIdParser.Parse(communityId);
 
