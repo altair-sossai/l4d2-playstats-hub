@@ -23,18 +23,20 @@ public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, IClock
         try
         {
             string? snapshot = null;
+            BackupCounts? counts = null;
 
             if (IncludesDatabase)
             {
                 snapshot = Path.Combine(work, AppConsts.BackupDatabaseEntry);
-                await SnapshotAsync(snapshot, cancellationToken);
+                counts = await SnapshotAsync(snapshot, cancellationToken);
             }
 
             var manifest = new BackupManifest
             {
                 HubVersion = Version(),
                 CreatedAtUtc = clock.UtcNow,
-                Provider = dbContext.Database.ProviderName ?? string.Empty
+                Provider = dbContext.Database.ProviderName ?? string.Empty,
+                Counts = counts
             };
 
             return BackupArchiveWriter.Write(zipPath, snapshot, paths.DataDirectory, manifest);
@@ -45,7 +47,7 @@ public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, IClock
         }
     }
 
-    private async Task SnapshotAsync(string target, CancellationToken cancellationToken)
+    private async Task<BackupCounts> SnapshotAsync(string target, CancellationToken cancellationToken)
     {
         var source = (SqliteConnection)dbContext.Database.GetDbConnection();
         var opened = source.State != ConnectionState.Open;
@@ -59,8 +61,14 @@ public class BackupArchiveService(HubDbContext dbContext, HubPaths paths, IClock
 
             await using var destination = new SqliteConnection(builder.ConnectionString);
 
+            await using var transaction = source.BeginTransaction(true);
+
+            var counts = await BackupCounter.CountAsync(source, transaction, BackupTables.From(dbContext.Model), cancellationToken);
+
             await destination.OpenAsync(cancellationToken);
             source.BackupDatabase(destination);
+
+            return counts;
         }
         finally
         {

@@ -43,13 +43,25 @@ El sitio puede hacer su propia copia de seguridad. En [Administración > Copia d
 | `hub.db` | Una copia de la base de datos SQLite, hecha con la función de copia de SQLite con el sitio en marcha, así que es coherente aunque lleguen estadísticas. |
 | `keys/` | Las claves que protegen las cookies de inicio de sesión. |
 | `branding/` | El logo. |
-| `manifest.json` | La versión del sitio, la hora de la copia en UTC, el proveedor de la base de datos y la lista de archivos. |
+| `manifest.json` | La versión del sitio, la hora de la copia en UTC, el proveedor de la base de datos, la lista de archivos y cuántas partidas, archivos de estadísticas, jugadores y ajustes tenía el sitio en ese momento. |
 
 - Los avatares quedan fuera: el sitio los descarga otra vez.
 - `hub.env` (Linux) o las variables de entorno (Docker) están fuera de la carpeta de datos y no van en el zip. Guarda una copia de ellos, o ejecuta `playstats-hub backup` de vez en cuando, que incluye `hub.env`.
 - Con SQL Server, PostgreSQL o MySQL el zip no tiene `hub.db`: haz la copia de esa base de datos con sus propias herramientas. El zip sigue guardando las claves y el logo.
 
 Los archivos se llaman `<prefijo>-yyyyMMdd-HHmmss.zip`, en UTC, como `hub-backup-20261119-160000.zip`. Después de cada subida se borran los archivos más antiguos con el mismo prefijo que pasen de la cantidad a conservar (30 por defecto). Los demás archivos del contenedor no se tocan nunca. Una copia que falla se intenta otra vez 30 minutos después, y la página muestra el error.
+
+### Comprobar que cada copia se restaura
+
+Justo después de cada subida, el sitio descarga otra vez el zip del contenedor, el mismo archivo que usaría una restauración, y lo comprueba en una carpeta temporal:
+
+- el tamaño es el mismo que se subió, el zip se abre y cada archivo de la lista de `manifest.json` está y se puede leer;
+- `hub.db` se abre en solo lectura y pasa `PRAGMA integrity_check`, la comprobación completa de consistencia de SQLite;
+- `hub.db` tiene el mismo número de partidas, archivos de estadísticas, jugadores y ajustes que tenía el sitio cuando se hizo la copia, según el manifiesto.
+
+La carpeta temporal se borra después, sea cual sea el resultado. El resultado va a la columna **Verificada** de **Copias recientes**: un fallo muestra el motivo, y se escribe en el registro sin secretos. Cuando la comprobación del zip nuevo falla, los archivos antiguos no se borran, así que las últimas copias buenas siguen en el contenedor. **Verificar ahora**, en la misma página, vuelve a comprobar el zip más reciente del contenedor.
+
+La comprobación necesita SQLite: con SQL Server, PostgreSQL o MySQL la página muestra **No disponible**. Cada copia tarda unos segundos más, y la carpeta temporal necesita, por un momento, espacio libre para el zip más la base de datos.
 
 ### Crear el contenedor y su dirección SAS
 

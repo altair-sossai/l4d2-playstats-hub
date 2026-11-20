@@ -18,6 +18,7 @@ public class BackupService(
     ISettingsService settingsService,
     IBackupHistoryService historyService,
     IBackupArchiveService archiveService,
+    IBackupVerificationService verificationService,
     IBackupStorageFactory storageFactory,
     BackupLock backupLock,
     IClock clock,
@@ -53,6 +54,23 @@ public class BackupService(
         }
     }
 
+    public async Task<BackupVerifyResult?> VerifyLatestAsync(CancellationToken cancellationToken = default)
+    {
+        if (!backupLock.TryEnter())
+            return null;
+
+        try
+        {
+            var settings = await settingsService.GetAsync<BackupSettings>(cancellationToken);
+
+            return await VerifyNewestAsync(settings, cancellationToken);
+        }
+        finally
+        {
+            backupLock.Exit();
+        }
+    }
+
     public async Task<BackupCheck> TestAsync(CancellationToken cancellationToken = default)
     {
         var settings = await settingsService.GetAsync<BackupSettings>(cancellationToken);
@@ -80,7 +98,7 @@ public class BackupService(
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            var error = Describe(exception, settings);
+            var error = BackupErrors.Describe(exception, settings);
 
             logger.LogWarning("The backup destination test failed: {Error}", error);
 
@@ -116,13 +134,18 @@ public class BackupService(
 
             run.Succeeded = true;
 
-            await DeleteExpiredAsync(storage, settings, cancellationToken);
+            File.Delete(zipPath);
+
+            run.Verification = await verificationService.VerifyAsync(storage, settings, name, run.SizeInBytes, cancellationToken);
+
+            if (run.Verification.Status != BackupVerificationStatus.Failed)
+                await DeleteExpiredAsync(storage, settings, cancellationToken);
 
             logger.LogInformation("Backup {Name} uploaded, {Size} bytes", name, run.SizeInBytes);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            run.Error = Describe(exception, settings);
+            run.Error = BackupErrors.Describe(exception, settings);
             logger.LogError("Backup {Name} failed: {Error}", name, run.Error);
         }
         finally
@@ -134,6 +157,40 @@ public class BackupService(
         run.DurationInMilliseconds = stopwatch.ElapsedMilliseconds;
 
         return run;
+    }
+
+    private async Task<BackupVerifyResult> VerifyNewestAsync(BackupSettings settings, CancellationToken cancellationToken)
+    {
+        if (!BackupRules.IsConfigured(settings))
+            return new BackupVerifyResult(null, BackupVerification.Of(BackupVerificationStatus.Failed, AppConsts.BackupNotConfiguredMessage));
+
+        if (!verificationService.IsAvailable)
+            return new BackupVerifyResult(null, verificationService.NotAvailable());
+
+        try
+        {
+            var storage = storageFactory.Create(settings);
+            var name = await NewestAsync(storage, settings, cancellationToken);
+
+            if (name == null)
+                return new BackupVerifyResult(null, BackupVerification.Of(BackupVerificationStatus.Failed, AppConsts.BackupVerifyNoBackupMessage));
+
+            var history = await historyService.GetAsync(cancellationToken);
+            var size = history.Runs.FirstOrDefault(run => run.BlobName == name && run.Succeeded)?.SizeInBytes;
+            var verification = await verificationService.VerifyAsync(storage, settings, name, size, cancellationToken);
+
+            await historyService.RecordVerificationAsync(name, verification, cancellationToken);
+
+            return new BackupVerifyResult(name, verification);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            var error = BackupErrors.Describe(exception, settings);
+
+            logger.LogError("The backup verification failed: {Error}", error);
+
+            return new BackupVerifyResult(null, BackupVerification.Of(BackupVerificationStatus.Failed, AppConsts.BackupVerifyUnreadableMessage, error));
+        }
     }
 
     private async Task DeleteExpiredAsync(IBackupStorage storage, BackupSettings settings, CancellationToken cancellationToken)
@@ -148,7 +205,7 @@ public class BackupService(
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            logger.LogWarning("Could not delete old backups: {Error}", Describe(exception, settings));
+            logger.LogWarning("Could not delete old backups: {Error}", BackupErrors.Describe(exception, settings));
         }
     }
 
@@ -157,11 +214,13 @@ public class BackupService(
         return BackupRules.IsValidPrefix(settings.Prefix) ? settings.Prefix : CoreConsts.BackupDefaultPrefix;
     }
 
-    private static string Describe(Exception exception, BackupSettings settings)
+    private static async Task<string?> NewestAsync(IBackupStorage storage, BackupSettings settings, CancellationToken cancellationToken)
     {
-        var firstLine = exception.Message.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? exception.GetType().Name;
-        var redacted = BackupSecrets.Redact(firstLine, settings);
+        var prefix = Prefix(settings);
 
-        return redacted.Length <= AppConsts.BackupErrorMaxLength ? redacted : redacted[..AppConsts.BackupErrorMaxLength];
+        return (await storage.ListAsync(prefix, cancellationToken))
+            .Where(name => BackupNames.IsBackup(prefix, name))
+            .OrderByDescending(name => name, StringComparer.Ordinal)
+            .FirstOrDefault();
     }
 }

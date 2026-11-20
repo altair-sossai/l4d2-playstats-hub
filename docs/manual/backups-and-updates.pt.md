@@ -43,13 +43,25 @@ O site pode fazer o próprio backup. Em [Administração > Backup](administratio
 | `hub.db` | Uma cópia do banco SQLite, feita com a função de backup do SQLite com o site rodando, então ela é consistente mesmo enquanto chegam estatísticas. |
 | `keys/` | As chaves que protegem os cookies de login. |
 | `branding/` | A logo. |
-| `manifest.json` | A versão do site, a hora do backup em UTC, o provedor do banco e a lista de arquivos. |
+| `manifest.json` | A versão do site, a hora do backup em UTC, o provedor do banco, a lista de arquivos e quantas partidas, arquivos de estatísticas, jogadores e configurações o site tinha naquele momento. |
 
 - Os avatares ficam de fora: o site os baixa de novo.
 - O `hub.env` (Linux) ou as variáveis de ambiente (Docker) ficam fora da pasta de dados e não entram no zip. Guarde uma cópia deles, ou rode `playstats-hub backup` de vez em quando, que inclui o `hub.env`.
 - Com SQL Server, PostgreSQL ou MySQL o zip não tem o `hub.db`: faça o backup desse banco com as ferramentas dele. O zip continua guardando as chaves e a logo.
 
 Os arquivos se chamam `<prefixo>-yyyyMMdd-HHmmss.zip`, em UTC, como `hub-backup-20261119-160000.zip`. Depois de cada envio, os arquivos mais antigos com o mesmo prefixo além da quantidade a manter (30 por padrão) são apagados. Os outros arquivos do contêiner nunca são tocados. Um backup que falha é tentado de novo 30 minutos depois, e a página mostra o erro.
+
+### Conferindo que cada backup restaura
+
+Logo depois de cada envio, o site baixa o zip de novo do contêiner, o mesmo arquivo que uma restauração usaria, e o confere numa pasta temporária:
+
+- o tamanho é o mesmo que foi enviado, o zip abre e todo arquivo listado no `manifest.json` está lá e pode ser lido;
+- o `hub.db` abre somente leitura e passa no `PRAGMA integrity_check`, a verificação completa de consistência do SQLite;
+- o `hub.db` tem o mesmo número de partidas, arquivos de estatísticas, jogadores e configurações que o site tinha quando a cópia foi feita, como o manifesto registra.
+
+A pasta temporária é apagada depois, qualquer que seja o resultado. O resultado vai para a coluna **Verificado** de **Backups recentes**: uma falha mostra o motivo, e vai para o log sem segredos. Quando a conferência do zip novo falha, os arquivos antigos não são apagados, então as últimas cópias boas continuam no contêiner. **Verificar agora**, na mesma página, roda a conferência de novo no zip mais recente do contêiner.
+
+A conferência precisa do SQLite: com SQL Server, PostgreSQL ou MySQL a página mostra **Não disponível**. Cada backup leva alguns segundos a mais, e a pasta temporária precisa, por um instante, de espaço livre para o zip mais o banco.
 
 ### Criando o contêiner e o endereço SAS dele
 

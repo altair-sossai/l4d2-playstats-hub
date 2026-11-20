@@ -10,4 +10,5 @@ public interface IBackupService
     Task<BackupRun?> RunAsync(BackupTrigger trigger, CancellationToken cancellationToken = default);
     Task<BackupRun?> RunIfDueAsync(CancellationToken cancellationToken = default);
     Task<BackupCheck> TestAsync(CancellationToken cancellationToken = default);
+    Task<BackupVerifyResult?> VerifyLatestAsync(CancellationToken cancellationToken = default);
 }

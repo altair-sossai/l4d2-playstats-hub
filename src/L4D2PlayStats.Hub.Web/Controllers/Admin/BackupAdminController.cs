@@ -94,6 +94,26 @@ public class BackupAdminController(
         return Redirect(AppConsts.AdminBackupUrl);
     }
 
+    [HttpPost("verify")]
+    public async Task<IActionResult> Verify(CancellationToken cancellationToken)
+    {
+        var result = await backupService.VerifyLatestAsync(cancellationToken);
+
+        if (result == null)
+        {
+            Report(AppConsts.BackupErrorTempData, AppConsts.BackupBusyMessage, null);
+
+            return Redirect(AppConsts.AdminBackupUrl);
+        }
+
+        TempData[AppConsts.BackupVerifyStatusTempData] = result.Verification.Status.ToString();
+        TempData[AppConsts.BackupVerifyMessageTempData] = result.Verification.Message;
+        TempData[AppConsts.BackupVerifyArgumentsTempData] = result.Verification.Arguments.ToArray();
+        TempData[AppConsts.BackupVerifyBlobTempData] = result.BlobName;
+
+        return Redirect(AppConsts.AdminBackupUrl);
+    }
+
     private void Report(string kind, string message, string? detail)
     {
         TempData[kind] = message;

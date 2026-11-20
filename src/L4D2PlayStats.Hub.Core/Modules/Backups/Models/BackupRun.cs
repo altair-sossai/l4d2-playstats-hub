@@ -11,4 +11,5 @@ public class BackupRun
     public bool Succeeded { get; set; }
     public string? Error { get; set; }
     public BackupTrigger Trigger { get; set; }
+    public BackupVerification? Verification { get; set; }
 }

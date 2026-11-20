@@ -7,4 +7,5 @@ public class BackupManifest
     public string Provider { get; set; } = string.Empty;
     public bool IncludesDatabase { get; set; }
     public List<string> Files { get; set; } = [];
+    public BackupCounts? Counts { get; set; }
 }
