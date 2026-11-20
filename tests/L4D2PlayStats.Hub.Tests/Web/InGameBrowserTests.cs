@@ -32,4 +32,23 @@ public class InGameBrowserTests
         Assert.DoesNotContain(Invite, await client.GetStringAsync("/?steamid=76561198000000001"));
         Assert.DoesNotContain(Invite, await client.GetStringAsync("/community"));
     }
+
+    [TestMethod]
+    public async Task TheGameBrowserNeverGetsTheCachedPageOfTheSite()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var visitor = site.Factory.Client();
+        using var game = site.Factory.Client();
+
+        Assert.Contains(Invite, await visitor.GetStringAsync("/community"));
+        Assert.Contains(Invite, await visitor.GetStringAsync("/community"));
+
+        await game.GetStringAsync("/?steamid=76561198000000001");
+
+        Assert.DoesNotContain(Invite, await game.GetStringAsync("/community"));
+        Assert.Contains(Invite, await visitor.GetStringAsync("/community"));
+    }
 }

@@ -9,6 +9,7 @@ public static partial class AppConsts
     public const string PageCacheAllQueryKeys = "*";
     public const string PageCacheCultureKey = "culture";
     public const string PageCacheThemeKey = "theme";
+    public const string PageCacheInGameKey = "ingame";
     public const string PageCacheDataKey = "data";
     public static readonly string[] PageCacheRefusedCacheControls = ["no-store", "no-cache", "private"];
 }

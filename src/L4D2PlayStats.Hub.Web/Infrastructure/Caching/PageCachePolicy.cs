@@ -1,5 +1,6 @@
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Web.Infrastructure.InGame;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -23,6 +24,7 @@ public class PageCachePolicy : IOutputCachePolicy
         context.CacheVaryByRules.QueryKeys = AppConsts.PageCacheAllQueryKeys;
         context.CacheVaryByRules.VaryByValues[AppConsts.PageCacheCultureKey] = CultureInfo.CurrentUICulture.Name;
         context.CacheVaryByRules.VaryByValues[AppConsts.PageCacheThemeKey] = Theme(httpContext.Request);
+        context.CacheVaryByRules.VaryByValues[AppConsts.PageCacheInGameKey] = InGameBrowser.IsInGame(httpContext).ToString(CultureInfo.InvariantCulture);
         context.CacheVaryByRules.VaryByValues[AppConsts.PageCacheDataKey] = httpContext.RequestServices.GetRequiredService<HubState>().DataVersion.ToString(CultureInfo.InvariantCulture);
 
         return ValueTask.CompletedTask;
