@@ -2,13 +2,14 @@
 
 🌐 [English](backups-and-updates.md) | [Português](backups-and-updates.pt.md) | **Español**
 
-Todo lo que guarda el sitio está en una sola carpeta, la carpeta de datos. Haz una copia de seguridad de ella y podrás reconstruir el sitio en cualquier máquina.
+Todo lo que guarda el sitio está en una sola carpeta, la carpeta de datos. Haz una copia de seguridad de ella, guarda una copia de la [clave de secretos](#la-clave-de-secretos), que está fuera de ella, y podrás reconstruir el sitio en cualquier máquina.
 
 [Volver al manual](README.es.md)
 
 ## Contenido
 
 - [Qué hay en la carpeta de datos](#qué-hay-en-la-carpeta-de-datos)
+- [La clave de secretos](#la-clave-de-secretos)
 - [Copia automática en Azure Storage](#copia-automática-en-azure-storage)
 - [Copia de seguridad en Linux](#copia-de-seguridad-en-linux)
 - [Copia de seguridad con Docker](#copia-de-seguridad-con-docker)
@@ -32,6 +33,22 @@ Con SQL Server, PostgreSQL o MySQL, los datos están en esa base de datos: haz l
 
 Como se guarda cada archivo de estadísticas, la base de datos alcanza para reconstruir todas las partidas y los rankings.
 
+## La clave de secretos
+
+La clave de la API de Steam, la dirección o la cadena de conexión del destino de la copia de seguridad y el código de configuración se guardan cifrados en la base de datos, con AES-256-GCM. La clave que los descifra es un archivo guardado fuera de la carpeta de datos:
+
+| Instalación | Clave de secretos |
+|---|---|
+| Instalador para Linux | `/etc/l4d2-playstats-hub/secrets.key` |
+| Docker | `/secrets/secrets.key`, en el volumen `hub-secrets` |
+| Azure App Service | `/home/secrets/secrets.key`, o la configuración de la aplicación `Hub__SecretsKey` |
+| Cualquier otra | `secrets.key` junto a la carpeta de datos, o el archivo indicado en `Hub__SecretsKeyFile` |
+
+- Cuando no hay clave, el sitio crea una la primera vez que arranca (el instalador para Linux la crea él mismo) y escribe en el registro dónde está, nunca su valor.
+- Las versiones antiguas guardaban estos secretos en texto plano. El primer arranque de una versión que los cifra cifra lo que se guardó antes, y un secreto todavía en texto plano se lee tal cual.
+- El zip de copia de seguridad no contiene la clave, y la carpeta de datos tampoco: quien consiga una copia no puede leer los secretos. La página **Copia de seguridad** de la administración muestra dónde está la clave. `playstats-hub backup` en Linux sí la incluye.
+- Guarda una copia de la clave en un lugar seguro, separada de las copias de seguridad. Para restaurar en otra máquina, vuelve a poner la clave antes de arrancar el sitio. Sin ella el sitio arranca y todos los datos están, pero estos secretos quedan vacíos: el registro lo avisa, y vuelves a escribirlos en el área de administración.
+
 ## Copia automática en Azure Storage
 
 El sitio puede hacer su propia copia de seguridad. En [Administración > Copia de seguridad](administration.es.md#copia-de-seguridad) le indicas un contenedor de Azure Storage y, cada pocas horas, 8 por defecto, sube allí un archivo zip. El sitio sigue en marcha: la base de datos se copia mientras funciona.
@@ -48,6 +65,7 @@ El sitio puede hacer su propia copia de seguridad. En [Administración > Copia d
 - Los avatares quedan fuera: el sitio los descarga otra vez.
 - `hub.env` (Linux) o las variables de entorno (Docker) están fuera de la carpeta de datos y no van en el zip. Guarda una copia de ellos, o ejecuta `playstats-hub backup` de vez en cuando, que incluye `hub.env`.
 - Con SQL Server, PostgreSQL o MySQL el zip no tiene `hub.db`: haz la copia de esa base de datos con sus propias herramientas. El zip sigue guardando las claves y el logo.
+- La clave de secretos no está en el zip, a propósito. Guarda una copia de ella aparte: consulta [La clave de secretos](#la-clave-de-secretos).
 
 Los archivos se llaman `<prefijo>-yyyyMMdd-HHmmss.zip`, en UTC, como `hub-backup-20261119-160000.zip`. Después de cada subida se borran los archivos más antiguos con el mismo prefijo que pasen de la cantidad a conservar (30 por defecto). Los demás archivos del contenedor no se tocan nunca. Una copia que falla se intenta otra vez 30 minutos después, y la página muestra el error.
 
@@ -115,9 +133,9 @@ sudo chown -R playstats:playstats /var/lib/l4d2-playstats-hub
 sudo systemctl start l4d2-playstats-hub
 ```
 
-Borra los archivos `-wal` y `-shm` antes de extraer: son de la base de datos que se reemplaza. En una máquina nueva, ejecuta antes el instalador, después restaura, y vuelve a poner tu `hub.env` si lo cambiaste.
+Borra los archivos `-wal` y `-shm` antes de extraer: son de la base de datos que se reemplaza. En una máquina nueva, ejecuta antes el instalador, pon tu clave de secretos en `/etc/l4d2-playstats-hub/secrets.key` (consulta [La clave de secretos](#la-clave-de-secretos)), después restaura, y vuelve a poner tu `hub.env` si lo cambiaste.
 
-Con Docker, detén el contenedor, extrae el zip en el volumen e inícialo otra vez. El contenedor entrega los archivos a su usuario al iniciar.
+Con Docker, detén el contenedor, extrae el zip en el volumen e inícialo otra vez. El contenedor entrega los archivos a su usuario al iniciar. En una máquina nueva, pon también la clave de secretos en el volumen `hub-secrets`, como muestra [Instalar con Docker](../install-docker.es.md#la-clave-de-secretos).
 
 ```bash
 docker compose stop hub
@@ -139,7 +157,7 @@ playstats-hub backup
 
 ![Una copia de seguridad en Linux](../images/es/install-linux-backup.webp)
 
-El sitio se detiene unos segundos mientras se hace la copia. El archivo queda en `/root` con la fecha en el nombre, y contiene la carpeta de datos y `hub.env`. Indica otra ruta para guardarlo en otro lugar: `playstats-hub backup /backups/hub.tar.gz`. Copia el archivo a otra máquina.
+El sitio se detiene unos segundos mientras se hace la copia. El archivo queda en `/root` con la fecha en el nombre, y contiene la carpeta de datos, `hub.env` y la clave de secretos, así que mantenlo privado. Indica otra ruta para guardarlo en otro lugar: `playstats-hub backup /backups/hub.tar.gz`. Copia el archivo a otra máquina.
 
 Para hacer una cada noche, agrega una línea al crontab de root (`sudo crontab -e`):
 
@@ -155,7 +173,7 @@ Detén el contenedor, copia el volumen a un archivo y vuelve a iniciarlo:
 
 ![Una copia de seguridad con Docker](../images/es/install-docker-backup.webp)
 
-El nombre del volumen lleva delante el nombre de tu carpeta, como `playstats_hub-data`. `docker volume ls` lo muestra. [Instalar con Docker](../install-docker.es.md#copia-de-seguridad) tiene los comandos.
+El nombre del volumen lleva delante el nombre de tu carpeta, como `playstats_hub-data`. `docker volume ls` lo muestra. [Instalar con Docker](../install-docker.es.md#copia-de-seguridad) tiene los comandos. Copia también el volumen `hub-secrets`: guarda la clave de secretos.
 
 ## Restaurar
 
@@ -165,7 +183,7 @@ En Linux, en la misma máquina o en una nueva donde hayas ejecutado el instalado
 playstats-hub restore /root/l4d2-playstats-hub-backup-20270115-030000.tar.gz
 ```
 
-Reemplaza los datos actuales y `hub.env` por los del archivo y vuelve a iniciar el sitio.
+Reemplaza los datos actuales, `hub.env` y la clave de secretos por los del archivo y vuelve a iniciar el sitio. Una copia hecha antes de que los secretos se cifraran no tiene clave, y se conserva la actual.
 
 Con Docker, detén el contenedor, extrae el archivo en el volumen y vuelve a iniciarlo:
 

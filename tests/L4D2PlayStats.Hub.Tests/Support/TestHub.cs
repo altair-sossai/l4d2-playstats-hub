@@ -8,8 +8,11 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Models;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Support;
 
@@ -25,6 +28,7 @@ public sealed class TestHub : IDisposable
         services.AddLogging();
         services.AddHubCore();
         services.AddSingleton<IClock>(Clock);
+        services.AddSingleton(new SecretsKey(RandomNumberGenerator.GetBytes(CoreConsts.SecretKeyBytes), "test", null, false, null));
         services.AddDbContext<HubDbContext>(_database.Configure);
 
         _services = services.BuildServiceProvider();

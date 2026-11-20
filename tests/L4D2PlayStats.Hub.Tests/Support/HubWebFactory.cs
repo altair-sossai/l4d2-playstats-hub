@@ -25,16 +25,19 @@ public class HubWebFactory : WebApplicationFactory<Program>
     public const string NamelessHeader = "X-Test-Nameless";
 
     private readonly TestDatabase _database = new();
-    private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));
+    private readonly string _root = Path.Combine(Path.GetTempPath(), "l4d2-playstats-hub-tests", Guid.NewGuid().ToString("N"));
 
     public FakeBackupStorageFactory Backups { get; } = new();
 
-    public string DataDirectory => _dataDirectory;
+    public string DataDirectory => Path.Combine(_root, "data");
+
+    public string SecretsKeyFile => Path.Combine(_root, "secrets.key");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
-        builder.UseSetting("Hub:DataDirectory", _dataDirectory);
+        builder.UseSetting("Hub:DataDirectory", DataDirectory);
+        builder.UseSetting("Hub:SecretsKeyFile", SecretsKeyFile);
 
         builder.ConfigureServices(services =>
         {
@@ -68,8 +71,8 @@ public class HubWebFactory : WebApplicationFactory<Program>
 
         _database.Dispose();
 
-        if (Directory.Exists(_dataDirectory))
-            Directory.Delete(_dataDirectory, true);
+        if (Directory.Exists(_root))
+            Directory.Delete(_root, true);
     }
 
     public HttpClient Client(long? user = null)

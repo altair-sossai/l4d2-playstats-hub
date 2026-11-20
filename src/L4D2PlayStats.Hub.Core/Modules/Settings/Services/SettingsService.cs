@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 
-public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, HubState hubState) : ISettingsService
+public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, HubState hubState, ISecretProtector secretProtector) : ISettingsService
 {
     public async Task<T> GetAsync<T>(CancellationToken cancellationToken = default) where T : class, new()
     {
@@ -18,7 +18,7 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
 
             var setting = await dbContext.Settings.AsNoTracking().FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
 
-            return setting?.Value ?? string.Empty;
+            return setting == null ? string.Empty : secretProtector.Open(typeof(T), setting.Value);
         });
 
         return string.IsNullOrEmpty(json) ? new T() : JsonSerializer.Deserialize<T>(json) ?? new T();
@@ -29,6 +29,7 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
         var key = typeof(T).Name;
         var json = JsonSerializer.Serialize(settings);
         var setting = await dbContext.Settings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
+        var stored = setting?.Value;
 
         if (setting == null)
         {
@@ -36,7 +37,7 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
             dbContext.Settings.Add(setting);
         }
 
-        setting.Value = json;
+        setting.Value = secretProtector.Seal(typeof(T), json, stored);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -46,6 +47,6 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
 
     private static string CacheKey(string key)
     {
-        return $"settings_{key}";
+        return string.Format(AppConsts.SettingsCacheKeyFormat, key);
     }
 }

@@ -52,6 +52,14 @@ Informe ao App Service em qual porta a aplicação escuta e mantenha os dados no
 az webapp config appsettings set --resource-group playstats --name my-playstats --settings WEBSITES_PORT=8080 WEBSITES_ENABLE_APP_SERVICE_STORAGE=true Hub__DataDirectory=/home/data
 ```
 
+A chave da API da Steam, o destino do backup e o código de configuração são salvos criptografados no banco de dados, com uma chave de segredos guardada fora da pasta de dados, para que o zip de backup do site não os revele. No App Service a imagem guarda essa chave em `/home/secrets/secrets.key`, no disco persistente, e a cria na primeira vez que inicia. Para ficar você mesmo com a chave, o que facilita guardar uma cópia, passe-a como configuração do aplicativo antes da primeira inicialização, 32 bytes aleatórios em base64:
+
+```bash
+az webapp config appsettings set --resource-group playstats --name my-playstats --settings Hub__SecretsKey="$(openssl rand -base64 32)"
+```
+
+Guarde uma cópia desse valor em um lugar seguro, ou use uma referência do Key Vault para ele. Se o site já criou `/home/secrets/secrets.key`, deixe essa configuração de fora ou use o conteúdo desse arquivo como valor: uma chave diferente não consegue ler os segredos salvos antes. Um backup restaurado sem a chave original fica com a chave da API da Steam e o destino do backup vazios, e você os digita de novo na área de administração.
+
 Mantenha o site em uma única instância. A partida ao vivo fica guardada na memória, e duas instâncias teriam cada uma a sua:
 
 ```bash

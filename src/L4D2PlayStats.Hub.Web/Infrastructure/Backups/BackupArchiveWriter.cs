@@ -1,5 +1,7 @@
 using System.IO.Compression;
 using System.Text.Json;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Web.Infrastructure.Secrets;
 using L4D2PlayStats.Hub.Web.Models.Backups;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Backups;
@@ -8,7 +10,7 @@ public static class BackupArchiveWriter
 {
     private static readonly JsonSerializerOptions ManifestOptions = new() { WriteIndented = true };
 
-    public static BackupManifest Write(string zipPath, string? databaseSnapshot, string dataDirectory, BackupManifest manifest)
+    public static BackupManifest Write(string zipPath, string? databaseSnapshot, string dataDirectory, BackupManifest manifest, SecretsKey? secretsKey = null)
     {
         using var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create);
 
@@ -16,7 +18,7 @@ public static class BackupArchiveWriter
             Add(zip, databaseSnapshot, AppConsts.BackupDatabaseEntry, manifest);
 
         foreach (var folder in new[] { AppConsts.KeysFolder, AppConsts.BrandingFolder })
-            AddFolder(zip, dataDirectory, folder, manifest);
+            AddFolder(zip, dataDirectory, folder, manifest, secretsKey);
 
         manifest.IncludesDatabase = databaseSnapshot != null;
 
@@ -28,7 +30,7 @@ public static class BackupArchiveWriter
         return manifest;
     }
 
-    private static void AddFolder(ZipArchive zip, string dataDirectory, string folder, BackupManifest manifest)
+    private static void AddFolder(ZipArchive zip, string dataDirectory, string folder, BackupManifest manifest, SecretsKey? secretsKey)
     {
         var root = Path.Combine(dataDirectory, folder);
 
@@ -37,6 +39,9 @@ public static class BackupArchiveWriter
 
         foreach (var file in Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
+            if (secretsKey != null && SecretsKeyLoader.IsKeyFile(file, secretsKey))
+                continue;
+
             var relative = Path.GetRelativePath(dataDirectory, file).Replace(Path.DirectorySeparatorChar, AppConsts.BackupEntrySeparator);
 
             Add(zip, file, relative, manifest);

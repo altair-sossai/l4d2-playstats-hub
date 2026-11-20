@@ -62,6 +62,12 @@ public static class AppConsts
     public const int PatentMaxExperience = 2500;
 
     public const int SettingsCacheInMinutes = 60;
+    public const string SettingsCacheKeyFormat = "settings_{0}";
+
+    public const string SecretPrefix = "enc:v1:";
+    public const int SecretKeyBytes = 32;
+    public const int SecretNonceBytes = 12;
+    public const int SecretTagBytes = 16;
     public const int RankingCacheInMinutes = 60;
 
     public const long SteamCommunityIdBase = 76561197960265728;

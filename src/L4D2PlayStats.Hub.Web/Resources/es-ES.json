@@ -1389,5 +1389,7 @@
   "No backup file was found in the destination.": "No se encontró ningún archivo de copia de seguridad en el destino.",
   "The backup was verified: {0}.": "La copia de seguridad se verificó: {0}.",
   "The verification failed.": "La verificación falló.",
-  "The verification is not available.": "La verificación no está disponible."
+  "The verification is not available.": "La verificación no está disponible.",
+  "The secrets saved in the settings, such as the Steam API key and the backup destination, are encrypted with the secrets key from {0}. That key is not in the backup zip: keep a copy of it in a safe place, because a backup restored without it has these secrets empty.": "Los secretos guardados en la configuración, como la clave de la API de Steam y el destino de la copia de seguridad, se cifran con la clave de secretos de {0}. Esa clave no está en el zip de la copia de seguridad: guarda una copia de ella en un lugar seguro, porque una copia restaurada sin ella deja estos secretos vacíos.",
+  "The secrets key from {0} could not be loaded, so the Steam API key and the backup destination can be neither read nor saved. The log of the site says why.": "No se pudo cargar la clave de secretos de {0}, así que la clave de la API de Steam y el destino de la copia de seguridad no se pueden leer ni guardar. El registro del sitio dice por qué."
 }

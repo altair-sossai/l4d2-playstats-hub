@@ -52,6 +52,14 @@ Tell App Service which port the application listens on, and keep the data on the
 az webapp config appsettings set --resource-group playstats --name my-playstats --settings WEBSITES_PORT=8080 WEBSITES_ENABLE_APP_SERVICE_STORAGE=true Hub__DataDirectory=/home/data
 ```
 
+The Steam API key, the backup destination and the setup code are saved in the database encrypted, with a secrets key kept outside the data folder, so that the backup zip of the site does not reveal them. On App Service the image keeps that key in `/home/secrets/secrets.key`, on the persistent disk, and creates it the first time it starts. To hold the key yourself, which makes it easy to keep a copy, give it as an app setting before the first start instead, 32 random bytes in base64:
+
+```bash
+az webapp config appsettings set --resource-group playstats --name my-playstats --settings Hub__SecretsKey="$(openssl rand -base64 32)"
+```
+
+Keep a copy of that value in a safe place, or use a Key Vault reference for it. If the site already created `/home/secrets/secrets.key`, either leave the setting out or use the content of that file as its value: a different key cannot read the secrets saved before. A backup restored without the original key has the Steam API key and the backup destination empty, and you type them again in the administration area.
+
 Keep the site on a single instance. The live match is kept in memory, and two instances would each have their own:
 
 ```bash

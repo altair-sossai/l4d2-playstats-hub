@@ -18,6 +18,7 @@ The screenshots on this page are the real output of the installer, recorded on a
 - [Day-to-day commands](#day-to-day-commands)
 - [Updating](#updating)
 - [Backup and restore](#backup-and-restore)
+- [The secrets key](#the-secrets-key)
 - [Changing the configuration](#changing-the-configuration)
 - [Removing it](#removing-it)
 - [If something goes wrong](#if-something-goes-wrong)
@@ -148,6 +149,8 @@ It runs the installer again: it installs the latest version and keeps your datab
 
 If the setup is not finished yet, the summary at the end shows the setup code again; otherwise it says that your data and configuration were kept.
 
+The first update to a version that encrypts the secrets creates the secrets key in `/etc/l4d2-playstats-hub/secrets.key` and adds `Hub__SecretsKeyFile` to `hub.env`. When the site starts, it encrypts the secrets saved by the older version. Make a copy of the key right after this update, as [The secrets key](#the-secrets-key) explains.
+
 ## Backup and restore
 
 Everything that matters is in one folder. This command saves it in one file:
@@ -160,7 +163,7 @@ The site stops for a few seconds while the copy is made. The file goes to `/root
 
 ![A backup](images/en/install-linux-backup.webp)
 
-The file has the data folder (the database, the avatars, the logo and the keys) and `hub.env`. [Backups and updates](manual/backups-and-updates.md) explains what each part is.
+The file has the data folder (the database, the avatars, the logo and the keys), `hub.env` and the secrets key. [Backups and updates](manual/backups-and-updates.md) explains what each part is. Because it holds the secrets key, anyone with this file can read the secrets saved in the settings: keep it private, as you would keep the server itself.
 
 To bring a backup back, on the same VPS or on a new one where you ran the installer:
 
@@ -168,7 +171,27 @@ To bring a backup back, on the same VPS or on a new one where you ran the instal
 playstats-hub restore /root/l4d2-playstats-hub-backup-20270115-030000.tar.gz
 ```
 
-This replaces the current data with the data in the file.
+This replaces the current data, `hub.env` and the secrets key with the ones in the file. A backup made before the secrets were encrypted has no secrets key: the command then keeps the current key.
+
+## The secrets key
+
+The Steam API key, the address or connection string of the backup destination and the setup code are saved in the database encrypted. The key that decrypts them is the file `/etc/l4d2-playstats-hub/secrets.key`, outside the data folder on purpose: the backup zip of the site and a copy of the data folder do not have it, so they do not reveal those secrets.
+
+- The installer creates it once, with 32 random bytes, readable only by the `playstats` user (permissions `600`). Updates keep it.
+- `playstats-hub backup` includes it and `playstats-hub restore` puts it back.
+- The automatic backup to Azure Storage does not include it. Keep a copy of it in a safe place, away from the backups:
+
+```bash
+sudo cat /etc/l4d2-playstats-hub/secrets.key
+```
+
+To move the site to another machine with a zip of the automatic backup, run the installer there, copy your `secrets.key` over the one it created, then restore the zip:
+
+```bash
+sudo install -o playstats -g playstats -m 600 secrets.key /etc/l4d2-playstats-hub/secrets.key
+```
+
+Without the original key the site still starts and all the data is there, but the secrets saved in the settings are empty: the log says so, and you type the Steam API key and the backup destination again in the administration area. If the key cannot be read at all, the site starts too, writes the reason in the log and shows it in **Administration > Backup**, and keeps the secrets it cannot decrypt until the key is back.
 
 ## Changing the configuration
 
@@ -178,6 +201,8 @@ Almost everything is changed in the administration area of the site. The few set
 |---|---|---|
 | `ASPNETCORE_URLS` | Address and port the application listens on. | `http://0.0.0.0:5080` |
 | `Hub__DataDirectory` | Folder with the database, avatars and keys. | `/var/lib/l4d2-playstats-hub` |
+| `Hub__SecretsKeyFile` | The secrets key file. See [The secrets key](#the-secrets-key). | `/etc/l4d2-playstats-hub/secrets.key` |
+| `Hub__SecretsKey` | Optional. The secrets key itself, 32 random bytes in base64 (`openssl rand -base64 32`), in place of the file. | empty |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` or `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | How to reach the database. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Other reverse proxies whose `X-Forwarded-*` headers the site believes: IP addresses or networks such as `10.0.0.0/8`, separated by commas. This machine (`127.0.0.1` and `::1`), where the installer puts Caddy, is always trusted. | empty |
@@ -196,7 +221,7 @@ sudo systemctl disable --now l4d2-playstats-hub
 sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /usr/local/bin/playstats-hub
 ```
 
-Your data stays in `/var/lib/l4d2-playstats-hub`. Delete that folder too if you do not want it any more.
+Your data stays in `/var/lib/l4d2-playstats-hub`. Delete that folder too if you do not want it any more. The second command also deletes the secrets key: if you keep the data, keep a copy of `/etc/l4d2-playstats-hub/secrets.key` too.
 
 ## If something goes wrong
 

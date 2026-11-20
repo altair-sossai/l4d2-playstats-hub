@@ -18,6 +18,7 @@ Las capturas de pantalla de esta página son la salida real del instalador, grab
 - [Comandos del día a día](#comandos-del-día-a-día)
 - [Actualizar](#actualizar)
 - [Copia de seguridad y restauración](#copia-de-seguridad-y-restauración)
+- [La clave de secretos](#la-clave-de-secretos)
 - [Cambiar la configuración](#cambiar-la-configuración)
 - [Desinstalar](#desinstalar)
 - [Si algo sale mal](#si-algo-sale-mal)
@@ -148,6 +149,8 @@ Vuelve a ejecutar el instalador: instala la versión más reciente y conserva tu
 
 Si la configuración inicial todavía no está terminada, el resumen del final vuelve a mostrar el código de configuración; si no, dice que tus datos y tu configuración se conservaron.
 
+La primera actualización a una versión que cifra los secretos crea la clave de secretos en `/etc/l4d2-playstats-hub/secrets.key` y agrega `Hub__SecretsKeyFile` a `hub.env`. Cuando el sitio arranca, cifra los secretos guardados por la versión anterior. Haz una copia de la clave justo después de esa actualización, como explica [La clave de secretos](#la-clave-de-secretos).
+
 ## Copia de seguridad y restauración
 
 Todo lo importante está en una sola carpeta. Este comando lo guarda en un solo archivo:
@@ -160,7 +163,7 @@ El sitio se detiene unos segundos mientras se hace la copia. El archivo queda en
 
 ![Una copia de seguridad](images/es/install-linux-backup.webp)
 
-El archivo contiene la carpeta de datos (la base de datos, los avatares, el logo y las claves) y `hub.env`. [Copias de seguridad y actualizaciones](manual/backups-and-updates.es.md) explica qué es cada parte.
+El archivo contiene la carpeta de datos (la base de datos, los avatares, el logo y las claves), `hub.env` y la clave de secretos. [Copias de seguridad y actualizaciones](manual/backups-and-updates.es.md) explica qué es cada parte. Como contiene la clave de secretos, cualquiera con este archivo puede leer los secretos guardados en la configuración: mantenlo privado, como mantienes el propio servidor.
 
 Para restaurar una copia de seguridad, en el mismo VPS o en uno nuevo donde hayas ejecutado el instalador:
 
@@ -168,7 +171,27 @@ Para restaurar una copia de seguridad, en el mismo VPS o en uno nuevo donde haya
 playstats-hub restore /root/l4d2-playstats-hub-backup-20270115-030000.tar.gz
 ```
 
-Esto reemplaza los datos actuales por los datos del archivo.
+Esto reemplaza los datos actuales, `hub.env` y la clave de secretos por los del archivo. Una copia hecha antes de que los secretos se cifraran no tiene clave de secretos: en ese caso el comando conserva la clave actual.
+
+## La clave de secretos
+
+La clave de la API de Steam, la dirección o la cadena de conexión del destino de la copia de seguridad y el código de configuración se guardan cifrados en la base de datos. La clave que los descifra es el archivo `/etc/l4d2-playstats-hub/secrets.key`, a propósito fuera de la carpeta de datos: el zip de copia de seguridad del sitio y una copia de la carpeta de datos no la tienen, así que no revelan esos secretos.
+
+- El instalador la crea una vez, con 32 bytes aleatorios, legible solo por el usuario `playstats` (permisos `600`). Las actualizaciones la conservan.
+- `playstats-hub backup` la incluye y `playstats-hub restore` la vuelve a poner.
+- La copia automática a Azure Storage no la incluye. Guarda una copia de ella en un lugar seguro, lejos de las copias de seguridad:
+
+```bash
+sudo cat /etc/l4d2-playstats-hub/secrets.key
+```
+
+Para llevar el sitio a otra máquina con un zip de la copia automática, ejecuta allí el instalador, copia tu `secrets.key` encima del que creó y después restaura el zip:
+
+```bash
+sudo install -o playstats -g playstats -m 600 secrets.key /etc/l4d2-playstats-hub/secrets.key
+```
+
+Sin la clave original el sitio arranca y todos los datos están, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración. Si la clave no se puede leer, el sitio también arranca, escribe el motivo en el registro y lo muestra en **Administración > Copia de seguridad**, y conserva los secretos que no puede descifrar hasta que la clave vuelva.
 
 ## Cambiar la configuración
 
@@ -178,6 +201,8 @@ Casi todo se cambia en el área de administración del sitio. Los pocos ajustes 
 |---|---|---|
 | `ASPNETCORE_URLS` | Dirección y puerto en los que escucha la aplicación. | `http://0.0.0.0:5080` |
 | `Hub__DataDirectory` | Carpeta con la base de datos, los avatares y las claves. | `/var/lib/l4d2-playstats-hub` |
+| `Hub__SecretsKeyFile` | El archivo de la clave de secretos. Consulta [La clave de secretos](#la-clave-de-secretos). | `/etc/l4d2-playstats-hub/secrets.key` |
+| `Hub__SecretsKey` | Opcional. La propia clave de secretos, 32 bytes aleatorios en base64 (`openssl rand -base64 32`), en lugar del archivo. | vacío |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` o `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Cómo conectarse a la base de datos. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Otros proxies inversos cuyas cabeceras `X-Forwarded-*` acepta el sitio: direcciones IP o redes como `10.0.0.0/8`, separadas por comas. Esta máquina (`127.0.0.1` y `::1`), donde el instalador pone Caddy, siempre es de confianza. | vacío |
@@ -196,7 +221,7 @@ sudo systemctl disable --now l4d2-playstats-hub
 sudo rm -rf /opt/l4d2-playstats-hub /etc/l4d2-playstats-hub /etc/systemd/system/l4d2-playstats-hub.service /usr/local/bin/playstats-hub
 ```
 
-Tus datos quedan en `/var/lib/l4d2-playstats-hub`. Borra también esa carpeta si ya no los quieres.
+Tus datos quedan en `/var/lib/l4d2-playstats-hub`. Borra también esa carpeta si ya no los quieres. El segundo comando también borra la clave de secretos: si conservas los datos, conserva también una copia de `/etc/l4d2-playstats-hub/secrets.key`.
 
 ## Si algo sale mal
 

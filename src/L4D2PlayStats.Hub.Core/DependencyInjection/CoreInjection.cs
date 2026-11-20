@@ -16,6 +16,7 @@ public static class CoreInjection
         services.AddSingleton<IGameServerPresence, GameServerPresence>();
         services.AddSingleton<Modules.Live.Services.ILiveSettings, Modules.Live.Services.LiveSettings>();
         services.AddSingleton<Modules.Live.Services.ILiveServerStore, Modules.Live.Services.LiveServerStore>();
+        services.AddSingleton<Modules.Settings.Services.ISecretProtector, Modules.Settings.Services.SecretProtector>();
 
         services.Scan(scan => scan
             .FromAssemblyOf<HubState>()

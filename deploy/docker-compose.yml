@@ -6,6 +6,8 @@ services:
       - "5080:8080"
     volumes:
       - hub-data:/data
+      - hub-secrets:/secrets
 
 volumes:
   hub-data:
+  hub-secrets:
