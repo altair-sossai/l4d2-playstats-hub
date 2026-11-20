@@ -8,6 +8,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -19,18 +20,21 @@ public class InGameController(
     IMatchQueryService matchQueryService) : Controller
 {
     [HttpGet("/ingame")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, false, cancellationToken));
     }
 
     [HttpGet("/ingame/player")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Player(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, false, cancellationToken));
     }
 
     [HttpGet("/ingame/matches")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Matches(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, true, cancellationToken));

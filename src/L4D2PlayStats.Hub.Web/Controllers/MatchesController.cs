@@ -4,6 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -11,6 +12,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class MatchesController(IMatchViewService matchViewService, IMatchResultService matchResultService) : Controller
 {
     [HttpGet("/matches")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(int? season, int? year, int? server, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.LastMatches = "active";
@@ -21,6 +23,7 @@ public class MatchesController(IMatchViewService matchViewService, IMatchResultS
     }
 
     [HttpGet("/matches/{id:int}")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
         var model = await matchViewService.DetailsAsync(id, cancellationToken);
@@ -29,6 +32,7 @@ public class MatchesController(IMatchViewService matchViewService, IMatchResultS
     }
 
     [HttpGet("/matches/{id:int}/statistics/{fileId:int}")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Statistics(int id, int fileId, CancellationToken cancellationToken)
     {
         var model = await matchViewService.StatisticsAsync(id, fileId, cancellationToken);

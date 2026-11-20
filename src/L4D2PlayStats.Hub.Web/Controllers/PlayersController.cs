@@ -6,6 +6,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -13,6 +14,7 @@ public class PlayersController(IPlayerViewService playerViewService, ISettingsSe
 {
     [RequireModule(HubModule.Ranking)]
     [HttpGet("/players")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(PlayerResultProperty orderBy = PlayerResultProperty.Experience, bool asc = false, int? season = null, int? year = null, string? period = null, int page = 1, CancellationToken cancellationToken = default)
     {
         ViewBag.Players = "active";
@@ -28,6 +30,7 @@ public class PlayersController(IPlayerViewService playerViewService, ISettingsSe
     }
 
     [HttpGet("/player/{communityId:long}/{compareWith:long?}")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Details(long communityId, long? compareWith = null, int? season = null, int? year = null, string? period = null, CancellationToken cancellationToken = default)
     {
         if (!SteamIds.IsValid(communityId) || (compareWith != null && !SteamIds.IsValid(compareWith.Value)))

@@ -79,6 +79,9 @@ No. La partida en vivo se guarda en la memoria de un solo proceso. Ejecuta una s
 **¿Quién ve las cuentas relacionadas de un jugador?**
 Todos, de forma predeterminada, como en el sitio antiguo. [Configuración > Privacidad](administration.es.md#privacidad) puede limitarlas a los administradores. El aviso en el chat del juego es un ajuste aparte del plugin, `gameinfo_related_accounts_chat`.
 
+**Los visitantes todavía ven la página antigua por un momento.**
+Las páginas de quienes no iniciaron sesión con Steam (ranking, jugadores, partidas, historial, ranking de la comunidad y el panel del juego) se guardan hasta 60 segundos, para que muchos visitantes y buscadores cuesten poco. Los nuevos archivos de estadísticas, la configuración, los castigos y el reprocesamiento las actualizan al instante; otros cambios, como los votos de la comunidad, los avatares o los nombres de los jugadores, aparecen en menos de un minuto. Los jugadores conectados y los administradores siempre ven la página actual.
+
 ## Solución de problemas
 
 | Lo que ves | Qué hacer |

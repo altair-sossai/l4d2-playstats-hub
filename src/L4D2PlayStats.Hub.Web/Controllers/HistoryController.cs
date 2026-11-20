@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -9,6 +10,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 public class HistoryController(IRankingHistoryService rankingHistoryService) : Controller
 {
     [HttpGet("/history/{historyId?}")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(string? historyId = null, CancellationToken cancellationToken = default)
     {
         ViewBag.History = "active";

@@ -79,6 +79,9 @@ No. The live match is kept in the memory of one process. Run one copy.
 **Who sees the related accounts of a player?**
 Everyone, by default, as on the old site. [Settings > Privacy](administration.md#privacy) can limit them to administrators. The game chat announcement is a separate setting of the plugin, `gameinfo_related_accounts_chat`.
 
+**Visitors still see the old page for a moment.**
+Pages for visitors who are not signed in (ranking, players, matches, history, community ranking and the in-game panel) are kept for up to 60 seconds, so many visitors and search engines cost little. New statistics files, settings, punishments and reprocessing refresh them at once; other changes, such as community votes, avatars or player names, show up within a minute. Signed-in players and administrators always see the current page.
+
 ## Troubleshooting
 
 | What you see | What to do |

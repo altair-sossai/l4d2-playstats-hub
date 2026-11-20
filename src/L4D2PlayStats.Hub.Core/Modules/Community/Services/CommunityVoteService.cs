@@ -100,6 +100,8 @@ public class CommunityVoteService(
             hubState.WriteLock.Release();
         }
 
+        hubState.CommunityChanged();
+
         return CommunityVoteResult.Accepted;
     }
 
