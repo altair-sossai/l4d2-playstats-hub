@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /player/*/*
+Disallow: /theme/
+Disallow: /language
+Disallow: /login
+Disallow: /admin
+Disallow: /api/
+Disallow: /hubs/
+Crawl-delay: 5

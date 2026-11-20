@@ -34,6 +34,7 @@
             : L["Compare {0} and {1}'s performance and statistics on {2}.", firstPlayer.MainName, secondPlayer.MainName, site.Name],
         Image = $"/avatar/{firstPlayer.CommunityId}",
         ImageAlt = firstPlayer.MainName,
+        NoIndex = secondPlayer != null,
         OpenGraphType = AppConsts.PlayerOpenGraphType
     };
 

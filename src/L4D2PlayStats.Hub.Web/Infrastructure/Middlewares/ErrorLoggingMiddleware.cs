@@ -11,7 +11,7 @@ public class ErrorLoggingMiddleware(RequestDelegate next, ILogger<ErrorLoggingMi
             await next(context);
 
             if (context.Response.StatusCode >= StatusCodes.Status400BadRequest && !ErrorPages.IsReExecuted(context))
-                logger.LogWarning("Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
+                logger.Log(context.Response.StatusCode == StatusCodes.Status404NotFound ? LogLevel.Debug : LogLevel.Warning, "Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

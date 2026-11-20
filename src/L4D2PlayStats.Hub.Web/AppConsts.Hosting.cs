@@ -11,6 +11,7 @@ public static partial class AppConsts
     public const string InGameQueryKey = "steamid";
     public const string InGameCookie = "hub-in-game";
     public const string InGameCookieValue = "1";
+    public const string RobotUserAgentPattern = "bot|spider|crawl|slurp";
     public const string HtmlContentType = "text/html";
     public const string PlainTextContentType = "text/plain";
 

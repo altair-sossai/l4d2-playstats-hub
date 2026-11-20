@@ -523,7 +523,7 @@
                         @if (light)
                         {
                             <li>
-                                <a href="/theme/default?returnUrl=@returnUrl">
+                                <a href="/theme/default?returnUrl=@returnUrl" rel="nofollow">
                                     <img src="~/imgs/dark-theme.png" alt="@L["Switch to dark theme"]" title="@L["Switch to dark theme"]" class="img-responsive img-header-icon">
                                     @L["Switch to dark theme"]
                                 </a>
@@ -532,7 +532,7 @@
                         else
                         {
                             <li>
-                                <a href="/theme/@AppConsts.LightTheme?returnUrl=@returnUrl">
+                                <a href="/theme/@AppConsts.LightTheme?returnUrl=@returnUrl" rel="nofollow">
                                     <img src="~/imgs/light-theme.png" alt="@L["Switch to light theme"]" title="@L["Switch to light theme"]" class="img-responsive img-header-icon">
                                     @L["Switch to light theme"]
                                 </a>
@@ -547,7 +547,7 @@
                             }
 
                             <li id="@id">
-                                <a href="/language?culture=@name&returnUrl=@returnUrl">
+                                <a href="/language?culture=@name&returnUrl=@returnUrl" rel="nofollow">
                                     <img src="~/imgs/@(flag).png" alt="@label" title="@label" class="img-responsive img-header-icon">
                                     @label
                                 </a>
@@ -689,6 +689,7 @@
 <script>
         var titlePlayersRegex = /^🟢\s*\d+\/\d+\s*\|\s*/;
         var liveServerEnabled = @Json.Serialize(liveServer);
+        var robotVisitor = new RegExp(@Json.Serialize(AppConsts.RobotUserAgentPattern), 'i').test(navigator.userAgent);
         var skinShopEnabled = @Json.Serialize(skinShop);
 
         function getBaseTitle() {
@@ -725,7 +726,7 @@
         }
 
         function updateServerInfo() {
-            if (!liveServerEnabled)
+            if (!liveServerEnabled || robotVisitor)
                 return;
 
             $.ajax({

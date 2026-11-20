@@ -144,6 +144,25 @@ public partial class PlayerPagesTests
         Assert.Contains("panel panel-warning", against);
         Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}\"", against);
         Assert.Contains(" vs ", TitleOf(against));
+        Assert.Contains("content=\"noindex, follow\"", against);
+        Assert.Contains("content=\"index, follow\"", await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}"));
+    }
+
+    [TestMethod]
+    public async Task TheRobotsFileKeepsCrawlersOffTheComparisonsAndTheSettingLinks()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        var robots = await client.GetStringAsync("/robots.txt");
+        var home = await client.GetStringAsync("/");
+
+        Assert.Contains("Disallow: /player/*/*", robots);
+        Assert.Contains("Disallow: /theme/", robots);
+        Assert.Contains("Disallow: /language", robots);
+        Assert.Contains("rel=\"nofollow\"", home);
     }
 
     [TestMethod]

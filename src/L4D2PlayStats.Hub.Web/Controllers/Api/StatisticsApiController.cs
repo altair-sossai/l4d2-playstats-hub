@@ -12,7 +12,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/statistics")]
-public class StatisticsApiController(IStatisticsService statisticsService) : ControllerBase
+public class StatisticsApiController(IStatisticsService statisticsService, ILogger<StatisticsApiController> logger) : ControllerBase
 {
     [HttpPost]
     [GameServerAuthorize]
@@ -26,6 +26,8 @@ public class StatisticsApiController(IStatisticsService statisticsService) : Con
         }
         catch (StatisticsRejectedException exception)
         {
+            logger.LogWarning("The statistics file {FileName} of the game server {GameServer} was rejected: {Reason}", command?.FileName, HttpContext.GameServer().Name, exception.Message);
+
             return BadRequest(new { error = exception.Message });
         }
     }
