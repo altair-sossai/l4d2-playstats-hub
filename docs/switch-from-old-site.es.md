@@ -251,6 +251,7 @@ En l4d2.com.br una release de este repositorio actualiza el sitio y los plugins 
 
 | Qué | Cómo |
 |---|---|
+| La release | Cada push a `main` que pasa sus verificaciones (Build and test, Browser tests, Databases y Plugins, las que se ejecuten para él) se publica con el workflow [Auto release](../.github/workflows/auto-release.yml) de GitHub: etiqueta el commit con la siguiente versión de corrección (`v0.10.1` pasa a `v0.10.2`) y ejecuta el workflow [Release](../.github/workflows/release.yml) para él. Un push que solo cambia documentación no ejecuta verificaciones y no se publica. Solo se publica el commit más reciente de `main`, y una tag creada a mano sigue funcionando como antes, por ejemplo para empezar una nueva versión menor. |
 | El sitio | El pipeline `l4d2-playstats-hub` de Azure Pipelines, de [deploy/azure-pipelines.yml](../deploy/azure-pipelines.yml), se ejecuta con cada tag `v*`. Por la conexión SSH del VPS espera el paquete Linux de la release y ejecuta el instalador con esa versión. Los datos y `/etc/l4d2-playstats-hub/hub.env` se conservan, así que el sitio sigue en el puerto `5000`. |
 | Los plugins | El pipeline de `l4d2-zone-server` se ejecuta después, y con cada push a su `master`. Descarga `l4d2-playstats-hub-plugins.zip` de la misma release (la más reciente, en un push), copia sus carpetas `plugins`, `translations` y `configs` sobre el `addons` del repositorio, escribe `cfg/playstats_token.cfg` desde la variable secreta `PLAYSTATS_TOKEN` del pipeline y publica. Los cinco plugins ya no están en `l4d2-zone-server`. |
 
