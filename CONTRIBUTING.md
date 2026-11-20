@@ -123,3 +123,5 @@ dotnet test
 ```
 
 The tests in the `Parity` category compare the rankings with a copy of real data and are skipped unless `HUB_PARITY_DUMP` points to that copy.
+
+The [browser tests](tools/e2e/README.md) check the main pages in a headless Chrome or Edge, on a throwaway site with generated data. Run them after changing a view, a style or a script.

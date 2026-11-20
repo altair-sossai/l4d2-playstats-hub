@@ -122,6 +122,7 @@ La migración se hace paso a paso. Los repositorios antiguos se archivan cuando 
 | [docs/site-parity](docs/site-parity/README.es.md) | Cada pantalla del sitio que se está reemplazando, elemento por elemento, y su estado aquí. |
 | [CONTRIBUTING.es.md](CONTRIBUTING.es.md) | Cómo está organizado el código y las reglas para los cambios. |
 | [tools/screenshots](tools/screenshots/README.es.md) | La herramienta que toma las capturas de pantalla de la documentación. |
+| [tools/e2e](tools/e2e/README.es.md) | Las pruebas en el navegador de las páginas principales, ejecutadas en cada push. |
 
 El inglés es el idioma predeterminado de este repositorio. Cada documento tiene también una versión en portugués (`.pt.md`) y otra en español (`.es.md`).
 

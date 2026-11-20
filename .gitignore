@@ -494,3 +494,6 @@ src/L4D2PlayStats.Hub.Web/data/
 appsettings.Local.json
 
 !tools/screenshots/terminal/*.log
+
+e2e-output/
+e2e-site/

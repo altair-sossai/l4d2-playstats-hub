@@ -123,3 +123,5 @@ dotnet test
 ```
 
 Las pruebas de la categoría `Parity` comparan los rankings con una copia de datos reales y se omiten a menos que `HUB_PARITY_DUMP` apunte a esa copia.
+
+Las [pruebas en el navegador](tools/e2e/README.es.md) verifican las páginas principales en un Chrome o Edge headless, en un sitio desechable con datos generados. Ejecútelas después de cambiar una vista, un estilo o un script.
