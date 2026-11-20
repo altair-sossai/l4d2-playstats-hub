@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 
 public static partial class StatisticsFileName
@@ -24,6 +26,6 @@ public static partial class StatisticsFileName
         return new DateTime(year, month, day, hour, minute, 0).AddMilliseconds(sequence);
     }
 
-    [System.Text.RegularExpressions.GeneratedRegex(@"^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})_(\d{4})_.+\.txt$")]
-    private static partial System.Text.RegularExpressions.Regex Pattern();
+    [GeneratedRegex(@"^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})_(\d{4})_.+\.txt$")]
+    private static partial Regex Pattern();
 }

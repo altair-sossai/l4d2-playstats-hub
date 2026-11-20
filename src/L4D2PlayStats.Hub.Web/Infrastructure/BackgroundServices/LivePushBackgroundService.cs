@@ -9,7 +9,6 @@ public class LivePushBackgroundService(LiveNotifier notifier, ILogger<LivePushBa
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(AppConsts.LivePushIntervalInMilliseconds));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
-        {
             try
             {
                 await notifier.NotifyAsync(stoppingToken);
@@ -18,6 +17,5 @@ public class LivePushBackgroundService(LiveNotifier notifier, ILogger<LivePushBa
             {
                 logger.LogWarning(exception, "Could not notify the live server pages");
             }
-        }
     }
 }

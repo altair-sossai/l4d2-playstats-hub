@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Models;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
@@ -8,7 +9,6 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.AntiCheat;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 

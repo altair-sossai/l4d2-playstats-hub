@@ -1,7 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using Microsoft.AspNetCore.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 

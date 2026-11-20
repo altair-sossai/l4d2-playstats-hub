@@ -72,24 +72,40 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="how-it-works-title"><span class="glyphicon glyphicon-info-sign"></span> @L["How does the community ranking work?"]</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="how-it-works-title">
+                    <span class="glyphicon glyphicon-info-sign"></span> @L["How does the community ranking work?"]
+                </h4>
             </div>
             <div class="modal-body">
                 <p>@L["The statistics ranking measures what the game records: kills, damage, wins. The community ranking measures what the players think: it is built only from the votes of the players themselves, who know best who plays well. It does not reset with the season."]</p>
                 <div class="how-it-works-steps">
                     <div class="how-it-works-step">
-                        <h5><span class="how-it-works-icon"><span class="glyphicon glyphicon-transfer"></span></span> @L["You compare two players"]</h5>
+                        <h5>
+                            <span class="how-it-works-icon">
+                                <span class="glyphicon glyphicon-transfer"></span>
+                            </span> @L["You compare two players"]
+                        </h5>
                         <p>@L["The site shows two players, preferably people you have played with or against. Say which one is better, that they are at the same level, or that you do not know them."]</p>
                         <p>@L["You are never asked about yourself, nor about the same pair twice."]</p>
                     </div>
                     <div class="how-it-works-step">
-                        <h5><span class="how-it-works-icon"><span class="glyphicon glyphicon-stats"></span></span> @L["The votes become a rating"]</h5>
+                        <h5>
+                            <span class="how-it-works-icon">
+                                <span class="glyphicon glyphicon-stats"></span>
+                            </span> @L["The votes become a rating"]
+                        </h5>
                         <p>@L["Everybody starts with {0} points. Each answer moves the two ratings, as in chess: beating someone with a higher rating is worth more than beating someone with a lower one.", Model.InitialRating]</p>
                         <p>@L["After thousands of votes, the order reflects what the whole community thinks, not the opinion of one person."]</p>
                     </div>
                     <div class="how-it-works-step">
-                        <h5><span class="how-it-works-icon"><span class="glyphicon glyphicon-eye-open"></span></span> @L["Who appears"]</h5>
+                        <h5>
+                            <span class="how-it-works-icon">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </span> @L["Who appears"]
+                        </h5>
                         <p>
                             @if (Model.CandidatePlayedWithinDays > 0)
                             {
@@ -112,7 +128,11 @@
                         </p>
                     </div>
                     <div class="how-it-works-step">
-                        <h5><span class="how-it-works-icon"><span class="glyphicon glyphicon-thumbs-up"></span></span> @L["Who can vote"]</h5>
+                        <h5>
+                            <span class="how-it-works-icon">
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            </span> @L["Who can vote"]
+                        </h5>
                         <p>@L["Anyone signed in with Steam who has played at least {0} matches on the server.", Model.MinimumMatchesToVote]</p>
                         <p>@L["Each player has {0} votes per day. \"I don't know\" answers are free, so only vote on who you really know.", Model.VotesPerDay]</p>
                     </div>

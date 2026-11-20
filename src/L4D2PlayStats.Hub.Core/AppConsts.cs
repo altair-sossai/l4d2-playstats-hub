@@ -130,7 +130,6 @@ public static class AppConsts
     public const int LiveHealthRedLimit = 25;
     public const int LiveHealthOrangeLimit = 40;
     public const int LivePlayerNameMaxLength = 100;
-    public static readonly string[] LiveChatBindPhrases = ["gogogo", "go go go", "back back", "back back back", "tank tank", "tank tank tank", "hit hit", "hit hit hit", "r"];
 
     public const int SiteChatRetentionInMinutes = 60;
     public const int SiteChatGlobalCooldownInSeconds = 15;
@@ -225,4 +224,5 @@ public static class AppConsts
     public const string BackupContainerNamePattern = "^(?!.*--)[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$";
     public const string BackupSignatureParameter = "sig=";
     public const string BackupNamePatternFormat = @"^{0}-\d{{8}}-\d{{6}}\.zip$";
+    public static readonly string[] LiveChatBindPhrases = ["gogogo", "go go go", "back back", "back back back", "tank tank", "tank tank tank", "hit hit", "hit hit hit", "r"];
 }

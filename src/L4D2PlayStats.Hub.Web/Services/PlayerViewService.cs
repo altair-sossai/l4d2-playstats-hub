@@ -1,29 +1,29 @@
-using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 
@@ -66,17 +66,6 @@ public class PlayerViewService(
         var selected = seasonId == null ? current : started.FirstOrDefault(season => season.Id == seasonId);
 
         return selected == null ? null : new PlayerPeriodModel { Season = selected, CurrentSeason = current, Options = options };
-    }
-
-    private async Task<IReadOnlyList<MatchCardModel>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
-    {
-        var ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken);
-        var ids = await playerMatchService.RecentMatchIdsAsync(period.Season?.Id, period.Year, communityIds, ranking.PlayerRecentMatches, cancellationToken);
-
-        if (ids.Count == 0)
-            return [];
-
-        return await matchViewService.CardsAsync(new MatchFilter { Ids = ids, PageSize = ids.Count }, period.Query, cancellationToken);
     }
 
     public Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken = default)
@@ -153,6 +142,17 @@ public class PlayerViewService(
             Period = period,
             TimeZone = TimeZone(site)
         };
+    }
+
+    private async Task<IReadOnlyList<MatchCardModel>> MatchesAsync(PlayerPeriodModel period, long[] communityIds, CancellationToken cancellationToken)
+    {
+        var ranking = await settingsService.GetAsync<RankingSettings>(cancellationToken);
+        var ids = await playerMatchService.RecentMatchIdsAsync(period.Season?.Id, period.Year, communityIds, ranking.PlayerRecentMatches, cancellationToken);
+
+        if (ids.Count == 0)
+            return [];
+
+        return await matchViewService.CardsAsync(new MatchFilter { Ids = ids, PageSize = ids.Count }, period.Query, cancellationToken);
     }
 
     private async Task<bool> RelatedAccountsVisibleAsync(CancellationToken cancellationToken)

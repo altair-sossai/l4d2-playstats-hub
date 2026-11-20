@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 

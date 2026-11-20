@@ -1,5 +1,5 @@
-@using L4D2PlayStats.Hub.Web.Models.AntiCheat
-@model AntiCheatModel
+@using Microsoft.Extensions.Localization
+@model L4D2PlayStats.Hub.Web.Models.AntiCheat.AntiCheatModel
 @inject ISettingsService Settings
 
 @{
@@ -492,7 +492,8 @@
 </div>
 
 @functions {
-    private Microsoft.Extensions.Localization.LocalizedString TextWindowLog(object key)
+
+    private LocalizedString TextWindowLog(object key)
     {
         return key.ToString() switch
         {
@@ -503,7 +504,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextStepTitle(object key)
+    private LocalizedString TextStepTitle(object key)
     {
         return key.ToString() switch
         {
@@ -515,7 +516,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextStepText(object key)
+    private LocalizedString TextStepText(object key)
     {
         return key.ToString() switch
         {
@@ -526,7 +527,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextStatusLabel(object key)
+    private LocalizedString TextStatusLabel(object key)
     {
         return key.ToString() switch
         {
@@ -538,7 +539,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextStatusText(object key)
+    private LocalizedString TextStatusText(object key)
     {
         return key.ToString() switch
         {
@@ -550,7 +551,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextFaqQ(object key)
+    private LocalizedString TextFaqQ(object key)
     {
         return key.ToString() switch
         {
@@ -563,7 +564,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextFaqA(object key)
+    private LocalizedString TextFaqA(object key)
     {
         return key.ToString() switch
         {
@@ -576,7 +577,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextPrivacySends(object key)
+    private LocalizedString TextPrivacySends(object key)
     {
         return key.ToString() switch
         {
@@ -588,7 +589,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextPrivacyNever(object key)
+    private LocalizedString TextPrivacyNever(object key)
     {
         return key.ToString() switch
         {
@@ -599,4 +600,5 @@
             _ => L[key.ToString()!]
         };
     }
+
 }

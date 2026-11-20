@@ -1,16 +1,16 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
-using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
-using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
-using L4D2PlayStats.Hub.Web.Models.Backups;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
+using L4D2PlayStats.Hub.Web.Models.Backups;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
@@ -90,7 +90,9 @@ public class BackupService(
             await storage.PrepareAsync(cancellationToken);
 
             await using (var content = new MemoryStream(Encoding.UTF8.GetBytes(AppConsts.BackupTestContent)))
+            {
                 await storage.UploadAsync(name, content, AppConsts.BackupTestContentType, cancellationToken);
+            }
 
             var listed = (await storage.ListAsync(prefix, cancellationToken)).Contains(name);
 
@@ -132,7 +134,9 @@ public class BackupService(
             await storage.PrepareAsync(cancellationToken);
 
             await using (var content = File.OpenRead(zipPath))
+            {
                 await storage.UploadAsync(name, content, AppConsts.BackupContentType, cancellationToken);
+            }
 
             run.Succeeded = true;
 

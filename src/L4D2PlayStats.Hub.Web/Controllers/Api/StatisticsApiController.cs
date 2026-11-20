@@ -1,10 +1,10 @@
-using L4D2PlayStats.Hub.Web.Models.Api;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Exceptions;
+using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using ParsedStatistics = L4D2PlayStats.Statistics;
 

@@ -20,7 +20,6 @@ public class TrustedProxyList
         var invalid = new List<string>();
 
         foreach (var entry in (value ?? string.Empty).Split(AppConsts.TrustedProxySeparators, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-        {
             if (entry.Contains('/'))
             {
                 if (IPNetwork.TryParse(entry, out var network))
@@ -32,7 +31,6 @@ public class TrustedProxyList
                 addresses.Add(address);
             else
                 invalid.Add(entry);
-        }
 
         return new TrustedProxyList { Addresses = addresses, Networks = networks, Invalid = invalid };
     }

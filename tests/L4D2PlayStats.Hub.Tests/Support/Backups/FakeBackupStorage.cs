@@ -69,7 +69,9 @@ public class FakeBackupStorage : IBackupStorage
         Blobs.TryRemove(name, out _);
 
         lock (Deleted)
+        {
             Deleted.Add(name);
+        }
 
         return Task.CompletedTask;
     }

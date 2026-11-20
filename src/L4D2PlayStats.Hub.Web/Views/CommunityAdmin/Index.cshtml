@@ -144,14 +144,18 @@
     <div class="modal-dialog" role="document">
         <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/community/reset">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title text-danger" id="community-reset-title">
                     <span class="glyphicon glyphicon-warning-sign"></span> @L["Reset the community ranking?"]
                 </h4>
             </div>
             <div class="modal-body">
                 <p>@L["All {0} votes and the ratings of all {1} players will be deleted for good. Every player starts again with the initial rating, and the votes of the day start again too.", Display.Number(Model.Votes), Display.Number(Model.RatedPlayers)]</p>
-                <p class="text-danger"><strong>@L["This cannot be undone. Are you sure?"]</strong></p>
+                <p class="text-danger">
+                    <strong>@L["This cannot be undone. Are you sure?"]</strong>
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>

@@ -1,17 +1,17 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
-using L4D2PlayStats.Hub.Core.Modules.Players;
-using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
-using Microsoft.EntityFrameworkCore;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
+using Microsoft.EntityFrameworkCore;
 using ParsedStatistics = L4D2PlayStats.Statistics;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Matches.Services;
@@ -147,13 +147,13 @@ public class MatchBuildService(
         var seen = new Dictionary<long, (string? Name, DateTime When)>();
 
         foreach (var match in matches.OrderBy(m => m.LastFileDate))
-            foreach (var player in match.Players.Where(p => SteamIds.IsValid(p.CommunityId)))
-            {
-                var when = match.EndedAtUtc ?? clock.UtcNow;
-                var name = string.IsNullOrEmpty(player.Name) && seen.TryGetValue(player.CommunityId, out var previous) ? previous.Name : player.Name;
+        foreach (var player in match.Players.Where(p => SteamIds.IsValid(p.CommunityId)))
+        {
+            var when = match.EndedAtUtc ?? clock.UtcNow;
+            var name = string.IsNullOrEmpty(player.Name) && seen.TryGetValue(player.CommunityId, out var previous) ? previous.Name : player.Name;
 
-                seen[player.CommunityId] = (name, when);
-            }
+            seen[player.CommunityId] = (name, when);
+        }
 
         if (seen.Count == 0)
             return;

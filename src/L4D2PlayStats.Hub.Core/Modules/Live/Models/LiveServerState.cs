@@ -1,18 +1,14 @@
-using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using System.Collections.Concurrent;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 
 public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
 {
-    public LiveServerState(IClock clock) : this(clock, () => new LiveServerSettings())
-    {
-    }
-
     private static readonly TimeSpan PlayersExpiration = TimeSpan.FromMinutes(AppConsts.LivePlayersExpirationInMinutes);
     private static readonly TimeSpan SiteChatRetention = TimeSpan.FromMinutes(AppConsts.SiteChatRetentionInMinutes);
 
@@ -29,6 +25,10 @@ public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
     private readonly List<SiteChatMessage> _siteMessages = [];
     private readonly TimedValue<IReadOnlyList<LivePlayer>> _spectators = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), PlayersExpiration, []);
     private readonly TimedValue<IReadOnlyList<LiveSurvivor>> _survivors = new(clock, () => TimeSpan.FromSeconds(settings().DelayInSeconds), PlayersExpiration, []);
+
+    public LiveServerState(IClock clock) : this(clock, () => new LiveServerSettings())
+    {
+    }
 
     public IReadOnlyList<FeedItem> Feed => _feed.Items;
 
@@ -179,7 +179,9 @@ public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
     public void EnqueueInternal(QueuedCommand command)
     {
         lock (_internalCommandsLock)
+        {
             _internalCommands.Add(command);
+        }
     }
 
     public QueuedCommand? DequeueInternal()

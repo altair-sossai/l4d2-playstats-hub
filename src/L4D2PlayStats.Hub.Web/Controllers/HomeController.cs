@@ -1,13 +1,13 @@
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Localization;
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 

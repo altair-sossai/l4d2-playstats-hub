@@ -1,12 +1,13 @@
+using System.Net;
 using System.Text.RegularExpressions;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 
@@ -114,12 +115,12 @@ public partial class AdminPagesTests
         var stranger = await anonymous.GetAsync($"/admin/servers/{credentials.Server.Id}/status");
         var html = await status.Content.ReadAsStringAsync();
 
-        Assert.AreEqual(System.Net.HttpStatusCode.OK, status.StatusCode);
+        Assert.AreEqual(HttpStatusCode.OK, status.StatusCode);
         Assert.Contains($"id=\"server-status-{credentials.Server.Id}\"", html);
         Assert.DoesNotContain("<html", html);
-        Assert.AreEqual(System.Net.HttpStatusCode.Redirect, page.StatusCode);
+        Assert.AreEqual(HttpStatusCode.Redirect, page.StatusCode);
         Assert.AreEqual("/setup", page.Headers.Location?.OriginalString);
-        Assert.AreNotEqual(System.Net.HttpStatusCode.OK, stranger.StatusCode);
+        Assert.AreNotEqual(HttpStatusCode.OK, stranger.StatusCode);
     }
 
     [TestMethod]

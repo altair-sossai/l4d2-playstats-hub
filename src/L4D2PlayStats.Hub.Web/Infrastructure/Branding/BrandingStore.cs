@@ -54,8 +54,10 @@ public class BrandingStore(HubPaths paths)
     public void RemoveLogo()
     {
         if (Directory.Exists(_directory))
+        {
             foreach (var file in Directory.EnumerateFiles(_directory, $"{AppConsts.LogoFile}.*"))
                 File.Delete(file);
+        }
 
         Reset();
     }

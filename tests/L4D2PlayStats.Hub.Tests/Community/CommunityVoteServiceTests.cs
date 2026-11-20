@@ -1,13 +1,13 @@
-using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Tests.Community.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Community;
 

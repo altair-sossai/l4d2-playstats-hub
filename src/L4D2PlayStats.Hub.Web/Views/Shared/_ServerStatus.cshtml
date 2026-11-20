@@ -63,7 +63,9 @@
     <ul class="list-unstyled server-checks">
         @foreach (var check in checks)
         {
-            <li class="@Style(check.Ok)"><span class="glyphicon @Icon(check.Ok)"></span> @check.Text</li>
+            <li class="@Style(check.Ok)">
+                <span class="glyphicon @Icon(check.Ok)"></span> @check.Text
+            </li>
         }
     </ul>
     @if (signal != null)

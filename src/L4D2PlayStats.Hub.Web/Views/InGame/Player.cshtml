@@ -16,11 +16,15 @@ else
     var progress = Model.Me.Progress;
 
     <div class="box">
-        <div style="float: left; width: 60px;"><img src="@progress.Patent.Image" alt="" width="52" height="52"></div>
+        <div style="float: left; width: 60px;">
+            <img src="@progress.Patent.Image" alt="" width="52" height="52">
+        </div>
         <div style="margin-left: 64px;">
             <div class="big">@player.MainName</div>
             <div>#@player.Position · @progress.Patent.Name · @Display.Number(player.Experience) @L["experience"]</div>
-            <div class="bar" style="margin-top: 6px;"><div style="width: @((int)(progress.Progress * 100))%"></div></div>
+            <div class="bar" style="margin-top: 6px;">
+                <div style="width: @((int)(progress.Progress * 100))%"></div>
+            </div>
             @if (progress.NextPatent != null)
             {
                 <div class="muted" style="margin-top: 3px;">@L["Next"]: @progress.NextPatent.Name (@Display.Number(progress.NextPatent.Experience))</div>
@@ -28,12 +32,30 @@ else
         </div>
     </div>
     <div class="box">
-        <div class="cell"><div class="big win">@player.Wins</div><div class="muted">@L["Wins"]</div></div>
-        <div class="cell"><div class="big loss">@player.Loss</div><div class="muted">@L["Losses"]</div></div>
-        <div class="cell"><div class="big">@Display.Percent(player.WinRate)</div><div class="muted">@L["Win rate"]</div></div>
-        <div class="cell"><div class="big">@player.MaxWinStreak</div><div class="muted">@L["Best win streak"]</div></div>
-        <div class="cell"><div class="big">@player.Stars</div><div class="muted">@L["MVPs"]</div></div>
-        <div class="cell"><div class="big">@player.RageQuit</div><div class="muted">@L["Rage quits"]</div></div>
+        <div class="cell">
+            <div class="big win">@player.Wins</div>
+            <div class="muted">@L["Wins"]</div>
+        </div>
+        <div class="cell">
+            <div class="big loss">@player.Loss</div>
+            <div class="muted">@L["Losses"]</div>
+        </div>
+        <div class="cell">
+            <div class="big">@Display.Percent(player.WinRate)</div>
+            <div class="muted">@L["Win rate"]</div>
+        </div>
+        <div class="cell">
+            <div class="big">@player.MaxWinStreak</div>
+            <div class="muted">@L["Best win streak"]</div>
+        </div>
+        <div class="cell">
+            <div class="big">@player.Stars</div>
+            <div class="muted">@L["MVPs"]</div>
+        </div>
+        <div class="cell">
+            <div class="big">@player.RageQuit</div>
+            <div class="muted">@L["Rage quits"]</div>
+        </div>
     </div>
     <table>
         <tr>

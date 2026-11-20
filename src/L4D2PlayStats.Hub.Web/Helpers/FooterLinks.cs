@@ -27,10 +27,13 @@ public static class FooterLinks
 
     private static List<FooterLink> Valid(string? text)
     {
-        return [.. Lines(text)
-            .Select(line => line.Split(AppConsts.FooterLinkSeparator, 2, StringSplitOptions.TrimEntries))
-            .Where(parts => parts.Length == 2 && parts[0].Length > 0 && IsWebAddress(parts[1]))
-            .Select(parts => new FooterLink(parts[0], parts[1]))];
+        return
+        [
+            .. Lines(text)
+                .Select(line => line.Split(AppConsts.FooterLinkSeparator, 2, StringSplitOptions.TrimEntries))
+                .Where(parts => parts.Length == 2 && parts[0].Length > 0 && IsWebAddress(parts[1]))
+                .Select(parts => new FooterLink(parts[0], parts[1]))
+        ];
     }
 
     private static string[] Lines(string? text)

@@ -1,6 +1,6 @@
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Live;

@@ -72,9 +72,7 @@ public static class MatchAssembler
                 campaignName = campaign.Name;
             }
             else
-            {
                 sequential = draft is { Campaign: null } && last != null && SequentialUnknownMaps(file, last);
-            }
 
             if (!sequential)
             {

@@ -1,15 +1,15 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
@@ -121,9 +121,7 @@ public class SkinsAdminController(
             TempData["Saved"] = true;
         }
         else
-        {
             TempData["Error"] = AppConsts.SkinSettingsInvalidUrl;
-        }
 
         return RedirectToAction(nameof(Settings));
     }

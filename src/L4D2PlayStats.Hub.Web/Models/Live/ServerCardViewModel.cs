@@ -1,8 +1,8 @@
-using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Models.Live;
 

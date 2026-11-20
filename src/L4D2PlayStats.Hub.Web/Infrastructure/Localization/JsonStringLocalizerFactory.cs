@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Localization;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.Json;
+using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 
@@ -47,8 +47,8 @@ public class JsonStringLocalizerFactory(IWebHostEnvironment environment) : IStri
             var files = Directory.EnumerateFiles(folder, $"{name}.json").Concat(Directory.EnumerateFiles(folder, $"{name}.*.json").Order());
 
             foreach (var file in files)
-                foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
-                    texts[pair.Key] = pair.Value;
+            foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
+                texts[pair.Key] = pair.Value;
 
             return texts;
         });

@@ -6,6 +6,11 @@ public sealed class BackupLock : IDisposable
 
     public bool IsRunning => _gate.CurrentCount == 0;
 
+    public void Dispose()
+    {
+        _gate.Dispose();
+    }
+
     public bool TryEnter()
     {
         return _gate.Wait(0);
@@ -14,10 +19,5 @@ public sealed class BackupLock : IDisposable
     public void Exit()
     {
         _gate.Release();
-    }
-
-    public void Dispose()
-    {
-        _gate.Dispose();
     }
 }

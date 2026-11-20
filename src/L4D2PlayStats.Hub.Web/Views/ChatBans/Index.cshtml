@@ -65,7 +65,9 @@
 <form method="post" action="/admin/chat-bans/limits" class="panel panel-default">
     @Html.AntiForgeryToken()
     <div class="panel-heading">
-        <h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]</h3>
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]
+        </h3>
     </div>
     <div class="panel-body">
         <div class="row cb-limits">
@@ -88,7 +90,9 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]</button>
+        <button class="btn btn-primary" type="submit">
+            <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+        </button>
     </div>
 </form>
 

@@ -1,7 +1,7 @@
-using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
-using Microsoft.Extensions.DependencyInjection;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 

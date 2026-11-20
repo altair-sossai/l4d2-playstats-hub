@@ -6,13 +6,13 @@ namespace L4D2PlayStats.Hub.Core.Modules.Live.Helpers;
 
 public class LiveChangeTracker
 {
-    private bool _started;
-    private string? _header;
-    private string? _players;
     private long _feed;
-    private DateTime _headerNotifiedAt = DateTime.MinValue;
-    private DateTime _playersNotifiedAt = DateTime.MinValue;
     private DateTime _feedNotifiedAt = DateTime.MinValue;
+    private string? _header;
+    private DateTime _headerNotifiedAt = DateTime.MinValue;
+    private string? _players;
+    private DateTime _playersNotifiedAt = DateTime.MinValue;
+    private bool _started;
 
     public LiveChange Detect(LiveServerState state, GameServerSignal? signal, DateTime now, TimeSpan interval, TimeSpan feedInterval)
     {

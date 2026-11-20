@@ -2,6 +2,7 @@ using System.Net;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -9,7 +10,6 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Caching;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using WebConsts = L4D2PlayStats.Hub.Web.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;

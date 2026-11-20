@@ -1,6 +1,6 @@
-using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 
@@ -15,8 +15,8 @@ public class PlayerDetailsModel(
     IReadOnlyDictionary<long, string> knownNames,
     PlayerPeriodModel period)
 {
-    private List<PlayerRelationRowModel>? _relationRows;
     private List<PlayerCampaignRowModel>? _campaigns;
+    private List<PlayerRelationRowModel>? _relationRows;
 
     public RankingModel FirstPlayerRanking { get; } = firstPlayerRanking;
     public RankingModel? SecondPlayerRanking { get; } = secondPlayerRanking;

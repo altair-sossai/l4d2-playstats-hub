@@ -8,18 +8,16 @@ public class StatisticsBuilder
     public const long PlayerA1 = 76561197990571514;
     public const string SampleFileName = "2023-02-04_03-13_0011_c8m1_apartment.txt";
 
-    private readonly ParsedStatistics _statistics;
-
     private StatisticsBuilder(string content)
     {
-        _statistics = new ParsedStatistics(content);
+        Statistics = new ParsedStatistics(content);
     }
 
-    public ParsedStatistics Statistics => _statistics;
+    public ParsedStatistics Statistics { get; }
 
-    public string FileName => $"{_statistics.GameRound!.When:yyyy-MM-dd_HH-mm}_{_statistics.GameRound.Round:0000}_{_statistics.GameRound.MapName}.txt";
+    public string FileName => $"{Statistics.GameRound!.When:yyyy-MM-dd_HH-mm}_{Statistics.GameRound.Round:0000}_{Statistics.GameRound.MapName}.txt";
 
-    public string Content => _statistics.ToString();
+    public string Content => Statistics.ToString();
 
     public static string SampleContent()
     {
@@ -44,37 +42,37 @@ public class StatisticsBuilder
 
     public StatisticsBuilder WithMap(string mapName)
     {
-        _statistics.GameRound!.MapName = mapName;
+        Statistics.GameRound!.MapName = mapName;
 
         return this;
     }
 
     public StatisticsBuilder At(DateTime when)
     {
-        _statistics.GameRound!.When = when;
+        Statistics.GameRound!.When = when;
 
         return this;
     }
 
     public StatisticsBuilder WithRound(int round)
     {
-        _statistics.GameRound!.Round = round;
+        Statistics.GameRound!.Round = round;
 
         return this;
     }
 
     public StatisticsBuilder WithConfiguration(string configurationName, int teamSize = 4)
     {
-        _statistics.GameRound!.ConfigurationName = configurationName;
-        _statistics.GameRound.TeamSize = teamSize;
+        Statistics.GameRound!.ConfigurationName = configurationName;
+        Statistics.GameRound.TeamSize = teamSize;
 
         return this;
     }
 
     public StatisticsBuilder WithScores(int teamAScore, int teamBScore)
     {
-        _statistics.Scoring!.TeamA!.Score = teamAScore;
-        _statistics.Scoring.TeamB!.Score = teamBScore;
+        Statistics.Scoring!.TeamA!.Score = teamAScore;
+        Statistics.Scoring.TeamB!.Score = teamBScore;
 
         return this;
     }
@@ -83,7 +81,7 @@ public class StatisticsBuilder
     {
         var id = communityId.ToString();
 
-        foreach (var half in _statistics.Halves)
+        foreach (var half in Statistics.Halves)
         {
             half.Players.RemoveAll(p => p.CommunityId == id);
             half.InfectedPlayers.RemoveAll(p => p.CommunityId == id);
@@ -94,7 +92,7 @@ public class StatisticsBuilder
 
     public List<long> Survivors(char team)
     {
-        var half = _statistics.Halves.First(h => h.RoundHalf!.Team == team);
+        var half = Statistics.Halves.First(h => h.RoundHalf!.Team == team);
 
         return [.. half.Players.Select(p => long.Parse(p.CommunityId!))];
     }

@@ -1,10 +1,10 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Models;
+using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.GameModes.Services;
 

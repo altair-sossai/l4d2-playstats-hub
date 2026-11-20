@@ -6,10 +6,10 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Models.Backups;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Backups;
 
@@ -85,7 +85,9 @@ public sealed class BackupArchiveTests : IDisposable
         var database = Path.Combine(_work, "restored.db");
 
         using (var zip = ZipFile.OpenRead(zipPath))
+        {
             zip.GetEntry("hub.db")!.ExtractToFile(database);
+        }
 
         await using var connection = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = database, Mode = SqliteOpenMode.ReadOnly, Pooling = false }.ConnectionString);
 

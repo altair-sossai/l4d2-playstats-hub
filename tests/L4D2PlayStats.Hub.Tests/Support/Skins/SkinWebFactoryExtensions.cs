@@ -5,9 +5,9 @@ using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Support.Skins;
 

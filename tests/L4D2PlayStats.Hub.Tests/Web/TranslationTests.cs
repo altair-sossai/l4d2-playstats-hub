@@ -53,8 +53,8 @@ public partial class TranslationTests
         var texts = new Dictionary<string, string>();
 
         foreach (var file in Directory.EnumerateFiles(folder, $"{culture}.json").Concat(Directory.EnumerateFiles(folder, $"{culture}.*.json").Order()))
-            foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
-                texts[pair.Key] = pair.Value;
+        foreach (var pair in JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [])
+            texts[pair.Key] = pair.Value;
 
         return texts;
     }

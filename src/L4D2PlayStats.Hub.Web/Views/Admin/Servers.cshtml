@@ -31,7 +31,9 @@
         {
             <tr>
                 <td class="vertical-align-middle" data-label="@L["Server"]">
-                    <a href="/admin/servers/@server.Server.Id"><span class="text-underline">@server.Server.Name</span></a>
+                    <a href="/admin/servers/@server.Server.Id">
+                        <span class="text-underline">@server.Server.Name</span>
+                    </a>
                     @if (!server.Server.Enabled)
                     {
                         <span class="label label-default">@L["Disabled"]</span>
@@ -80,7 +82,9 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Live server page"]</h3>
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-time"></span> @L["Live server page"]
+                </h3>
             </div>
             <div class="panel-body">
                 @if (TempData["LiveSaved"] != null)

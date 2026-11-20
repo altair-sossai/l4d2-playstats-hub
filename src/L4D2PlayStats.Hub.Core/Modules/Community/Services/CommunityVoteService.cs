@@ -1,15 +1,15 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
-using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using Microsoft.EntityFrameworkCore;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
 

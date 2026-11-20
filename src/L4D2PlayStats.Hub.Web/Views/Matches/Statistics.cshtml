@@ -1,3 +1,4 @@
+@using Microsoft.Extensions.Localization
 @model StatisticsDetailsModel
 @inject ICurrentUser CurrentUser
 
@@ -41,7 +42,7 @@
 }
 
 @{
-    Microsoft.Extensions.Localization.LocalizedString? PlayerStatsHelp(PlayerStats playerStats)
+    LocalizedString? PlayerStatsHelp(PlayerStats playerStats)
     {
         return playerStats switch
         {
@@ -50,7 +51,7 @@
         };
     }
 
-    Microsoft.Extensions.Localization.LocalizedString? InfectedStatsHelp(InfectedStats infectedStats)
+    LocalizedString? InfectedStatsHelp(InfectedStats infectedStats)
     {
         return infectedStats switch
         {
@@ -788,7 +789,8 @@
 </div>
 
 @functions {
-    private Microsoft.Extensions.Localization.LocalizedString PlayerStatsText(PlayerStats key)
+
+    private LocalizedString PlayerStatsText(PlayerStats key)
     {
         return key switch
         {
@@ -867,7 +869,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString InfectedStatsText(InfectedStats key)
+    private LocalizedString InfectedStatsText(InfectedStats key)
     {
         return key switch
         {
@@ -898,7 +900,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString RoundStatsText(RoundStats key)
+    private LocalizedString RoundStatsText(RoundStats key)
     {
         return key switch
         {
@@ -919,7 +921,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextHitsPercent(object key)
+    private LocalizedString TextHitsPercent(object key)
     {
         return key.ToString() switch
         {
@@ -939,7 +941,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextHitsSiPercent(object key)
+    private LocalizedString TextHitsSiPercent(object key)
     {
         return key.ToString() switch
         {
@@ -951,7 +953,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextHitsTankPercent(object key)
+    private LocalizedString TextHitsTankPercent(object key)
     {
         return key.ToString() switch
         {
@@ -963,7 +965,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextHeadshotsPercent(object key)
+    private LocalizedString TextHeadshotsPercent(object key)
     {
         return key.ToString() switch
         {
@@ -977,7 +979,7 @@
         };
     }
 
-    private Microsoft.Extensions.Localization.LocalizedString TextHeadshotsSiPercent(object key)
+    private LocalizedString TextHeadshotsSiPercent(object key)
     {
         return key.ToString() switch
         {
@@ -987,4 +989,5 @@
             _ => L[key.ToString()!]
         };
     }
+
 }

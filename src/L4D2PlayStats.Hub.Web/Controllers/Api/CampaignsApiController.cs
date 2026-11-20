@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 

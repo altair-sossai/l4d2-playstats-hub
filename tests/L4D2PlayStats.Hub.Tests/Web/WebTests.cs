@@ -1,15 +1,16 @@
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 
@@ -301,7 +302,7 @@ public class WebTests
         var last = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.Select(match => match.LastFileDate).SingleAsync());
         var html = await client.GetStringAsync("/ingame/matches");
 
-        Assert.Contains(last.ToString("dd/MM/yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture), html);
+        Assert.Contains(last.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture), html);
     }
 
     [TestMethod]

@@ -25,7 +25,9 @@ public static class BackupArchiveWriter
         var entry = zip.CreateEntry(AppConsts.BackupManifestEntry, CompressionLevel.Optimal);
 
         using (var stream = entry.Open())
+        {
             JsonSerializer.Serialize(stream, manifest, ManifestOptions);
+        }
 
         return manifest;
     }

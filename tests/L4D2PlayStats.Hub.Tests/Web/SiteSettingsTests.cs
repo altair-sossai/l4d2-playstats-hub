@@ -2,13 +2,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using WebConsts = L4D2PlayStats.Hub.Web.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
@@ -138,7 +138,7 @@ public class SiteSettingsTests
 
         using var client = factory.Client(HubWebFactory.Administrator);
 
-        await PostAsync(client, SettingsPage, SettingsPage, Fields(new Dictionary<string, string> { ["Site.MetaKeywords"] = new string('a', WebConsts.MetaKeywordsMaxLength + 50) }));
+        await PostAsync(client, SettingsPage, SettingsPage, Fields(new Dictionary<string, string> { ["Site.MetaKeywords"] = new('a', WebConsts.MetaKeywordsMaxLength + 50) }));
 
         var site = await SiteAsync(factory);
 

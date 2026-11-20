@@ -1,7 +1,7 @@
-using L4D2PlayStats.Hub.Tests.Community.Support;
+using System.Collections.Immutable;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
-using System.Collections.Immutable;
+using L4D2PlayStats.Hub.Tests.Community.Support;
 
 namespace L4D2PlayStats.Hub.Tests.Community;
 

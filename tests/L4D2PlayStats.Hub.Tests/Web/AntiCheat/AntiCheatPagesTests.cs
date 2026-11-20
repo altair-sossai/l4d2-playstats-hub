@@ -3,6 +3,7 @@ using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Models;
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Web.Live;
@@ -10,7 +11,6 @@ using L4D2PlayStats.Hub.Web;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.AntiCheat;
 

@@ -6,17 +6,17 @@ using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
+using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Models.Backups;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Backups;
 
@@ -286,7 +286,9 @@ public sealed class BackupVerificationTests : IDisposable
         factory.Backups.Storage.FailDownloadWith = $"The request for {ContainerUrl} failed";
 
         using (var scope = logged.Services.CreateScope())
+        {
             await scope.ServiceProvider.GetRequiredService<IBackupService>().VerifyLatestAsync();
+        }
 
         var errors = logs.Entries.Where(entry => entry.Category.Contains("Backup", StringComparison.Ordinal) && entry.Level == LogLevel.Error).ToList();
 

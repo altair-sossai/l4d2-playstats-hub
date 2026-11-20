@@ -1,5 +1,5 @@
-using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using System.Text.Json.Serialization;
+using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Models;
 

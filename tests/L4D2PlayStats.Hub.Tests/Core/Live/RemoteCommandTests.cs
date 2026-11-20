@@ -1,12 +1,13 @@
+using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Core.Live;
@@ -226,7 +227,7 @@ public class RemoteCommandTests
         return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().DequeueAsync(server));
     }
 
-    private static Task<List<L4D2PlayStats.Hub.Core.Modules.Live.RemoteCommandLog>> LogsAsync(TestHub hub)
+    private static Task<List<RemoteCommandLog>> LogsAsync(TestHub hub)
     {
         return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(0, 100));
     }

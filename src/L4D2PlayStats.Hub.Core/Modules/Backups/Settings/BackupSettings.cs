@@ -7,10 +7,13 @@ public class BackupSettings
 {
     public bool Enabled { get; set; }
     public BackupDestination Destination { get; set; } = BackupDestination.ContainerUrl;
+
     [Secret]
     public string? ContainerUrl { get; set; }
+
     [Secret]
     public string? ConnectionString { get; set; }
+
     public string? ContainerName { get; set; }
     public int IntervalInHours { get; set; } = AppConsts.BackupDefaultIntervalInHours;
     public int Keep { get; set; } = AppConsts.BackupDefaultKeep;

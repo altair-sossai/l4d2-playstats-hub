@@ -9,7 +9,6 @@ public class BackupBackgroundService(IServiceProvider serviceProvider, ILogger<B
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(AppConsts.BackupCheckIntervalInMinutes));
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
-        {
             try
             {
                 using var scope = serviceProvider.CreateScope();
@@ -20,6 +19,5 @@ public class BackupBackgroundService(IServiceProvider serviceProvider, ILogger<B
             {
                 logger.LogError("Could not check whether a backup is due: {Error}", exception.GetType().Name);
             }
-        }
     }
 }

@@ -132,7 +132,6 @@ public partial class PaginationTests
             var now = DateTime.UtcNow;
 
             for (var index = 0; index < 25; index++)
-            {
                 dbContext.Set<CommunityVote>().Add(new CommunityVote
                 {
                     VoterId = PagingSamples.CommunityId(index),
@@ -142,7 +141,6 @@ public partial class PaginationTests
                     CreatedAtUtc = now,
                     SiteDay = now.Date
                 });
-            }
 
             await dbContext.SaveChangesAsync();
         });
@@ -179,7 +177,6 @@ public partial class PaginationTests
             var start = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             for (var index = 0; index < 60; index++)
-            {
                 dbContext.Set<RemoteCommandLog>().Add(new RemoteCommandLog
                 {
                     GameServerId = credentials.Server.Id,
@@ -189,7 +186,6 @@ public partial class PaginationTests
                     CreatedAtUtc = start.AddMinutes(index),
                     DeliveredAtUtc = index % 3 == 0 ? start.AddMinutes(index) : null
                 });
-            }
 
             await dbContext.SaveChangesAsync();
         });

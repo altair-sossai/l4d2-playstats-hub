@@ -102,143 +102,142 @@ else
     }
     else
     {
-
-    <table class="table table-striped table-hover table-bordered table-condensed" id="table-ranking">
-        <thead>
-        <tr>
-            <th class="text-center">#</th>
-            @if (Model.ShowPatent)
-            {
-                <th class="text-center">@L["Patent"]</th>
-            }
-            <th colspan="2">@L["Player"]</th>
-            @if (Model.ShowPatent)
-            {
-                <th class="text-center hide-mobile" style="min-width: 90px">XP</th>
-            }
-            <th class="text-center">@L["Wins"]</th>
-            <th class="text-center hide-mobile">@L["Loss"]</th>
-            <th class="text-center hide-mobile">@L["SI MVP awards"]</th>
-            <th class="text-center hide-mobile">@L["CI MVP awards"]</th>
-            <th class="text-center hide-mobile">@L["Win rate"]</th>
-            <th class="text-center hide-mobile">@L["Games"]</th>
-            <th class="text-center hide-mobile">@L["Rage quit"]</th>
-        </tr>
-        </thead>
-        <tbody>
-        @{
-            var count = 0;
-        }
-        @foreach (var ranking in Model.Ranking.Take(rankingSettings.HomeListedPlayers))
-        {
-            var player = ranking.Player;
-            var patentProgress = ranking.PatentProgress;
-            var patent = patentProgress.Patent;
-
-            <tr class="hover @(++count > rankingSettings.HomeVisiblePlayers ? "hidden" : string.Empty) @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
-                <td class="text-center vertical-align-middle">
-                    @switch (player.Position)
-                    {
-                        case 1:
-                            <img src="~/imgs/first-place.png" alt="@L["First place"]" title="@L["First place"]" class="place" data-toggle="tooltip" data-placement="top"/>
-                            break;
-                        case 2:
-                            <img src="~/imgs/second-place.png" alt="@L["Second place"]" title="@L["Second place"]" class="place" data-toggle="tooltip" data-placement="top"/>
-                            break;
-                        case 3:
-                            <img src="~/imgs/third-place.png" alt="@L["Third place"]" title="@L["Third place"]" class="place" data-toggle="tooltip" data-placement="top"/>
-                            break;
-                        default:
-                            @($"#{player.Position:N0}")
-                            break;
-                    }
-                </td>
+        <table class="table table-striped table-hover table-bordered table-condensed" id="table-ranking">
+            <thead>
+            <tr>
+                <th class="text-center">#</th>
                 @if (Model.ShowPatent)
                 {
-                    <td class="text-center vertical-align-middle slim">
-                        <img src="@patent.Image" alt="@patent.FullName" data-toggle="tooltip" data-placement="top" title="@patent.FullName" style="width: 32px"/>
-                    </td>
+                    <th class="text-center">@L["Patent"]</th>
                 }
-                <td class="text-center vertical-align-middle slim" style="margin: 0; padding: 0">
-                    <a href="@PlayerUrls.Details(player.CommunityId, null, periodQuery)" title="@player.MainName">
-                        <img src="/avatar/@player.CommunityId" alt="@player.MainName" title="@player.MainName" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
-                    </a>
-                </td>
-                <td class="vertical-align-middle">
-                    <a href="@PlayerUrls.Details(player.CommunityId, null, periodQuery)">@player.MainName.TruncatePlayerName()</a>
-                    @if (Model.ShowPatent && patentProgress.LevelUp)
-                    {
-                        <span class="label label-success pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
-                            @L["Level Up!"]
-                        </span>
-                    }
-                    @if (Model.ShowPatent && patentProgress.LevelDrop)
-                    {
-                        <span class="label label-danger pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
-                            @L["Level Drop!"]
-                        </span>
-                    }
-                </td>
+                <th colspan="2">@L["Player"]</th>
                 @if (Model.ShowPatent)
                 {
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <div class="progress" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
-                        <div class="progress-bar progress-bar-@patentProgress.ProgressBarType @(patentProgress.ProgressBarPulsate ? "pulsate" : string.Empty) @(patentProgress.MaxLevel ? "progress-bar-striped active" : string.Empty)" role="progressbar" style="width: @patentProgress.ProgressBarWidth;">
-                        </div>
-                        <div class="progress-bar progress-bar-@patentProgress.PreviousExperienceProgressBarType pulsate" role="progressbar" style="width: @patentProgress.PreviousExperienceProgressBarWidth;">
-                        </div>
-                    </div>
-                </td>
+                    <th class="text-center hide-mobile" style="min-width: 90px">XP</th>
                 }
-                <td class="text-center vertical-align-middle">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Wins"] - @player.WinRate.ToString("P0") @L["Win rate"]">
-                        @player.Wins.ToString("N0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Loss"]">
-                        @player.Loss.ToString("N0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["SI MVP awards"]">
-                        @player.MvpSiDamage.ToString("N0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["CI MVP awards"]">
-                        @player.MvpCommon.ToString("N0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Win rate"]">
-                        @player.WinRate.ToString("P0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Games"]">
-                        @player.Games.ToString("N0")
-                    </p>
-                </td>
-                <td class="text-center vertical-align-middle hide-mobile">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Rage quit"]">
-                        @player.RageQuit.ToString("N0")
-                    </p>
-                </td>
+                <th class="text-center">@L["Wins"]</th>
+                <th class="text-center hide-mobile">@L["Loss"]</th>
+                <th class="text-center hide-mobile">@L["SI MVP awards"]</th>
+                <th class="text-center hide-mobile">@L["CI MVP awards"]</th>
+                <th class="text-center hide-mobile">@L["Win rate"]</th>
+                <th class="text-center hide-mobile">@L["Games"]</th>
+                <th class="text-center hide-mobile">@L["Rage quit"]</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @{
+                var count = 0;
+            }
+            @foreach (var ranking in Model.Ranking.Take(rankingSettings.HomeListedPlayers))
+            {
+                var player = ranking.Player;
+                var patentProgress = ranking.PatentProgress;
+                var patent = patentProgress.Patent;
 
-    @if (Model.Ranking.Count > rankingSettings.HomeVisiblePlayers)
-    {
-        <div class="row text-center" style="margin: 10px">
-            <div class="col-md-12">
-                <button class="btn btn-sm btn-primary" id="btn-show-more">
-                    @L["Show more..."]
-                </button>
+                <tr class="hover @(++count > rankingSettings.HomeVisiblePlayers ? "hidden" : string.Empty) @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
+                    <td class="text-center vertical-align-middle">
+                        @switch (player.Position)
+                        {
+                            case 1:
+                                <img src="~/imgs/first-place.png" alt="@L["First place"]" title="@L["First place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                                break;
+                            case 2:
+                                <img src="~/imgs/second-place.png" alt="@L["Second place"]" title="@L["Second place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                                break;
+                            case 3:
+                                <img src="~/imgs/third-place.png" alt="@L["Third place"]" title="@L["Third place"]" class="place" data-toggle="tooltip" data-placement="top"/>
+                                break;
+                            default:
+                                @($"#{player.Position:N0}")
+                                break;
+                        }
+                    </td>
+                    @if (Model.ShowPatent)
+                    {
+                        <td class="text-center vertical-align-middle slim">
+                            <img src="@patent.Image" alt="@patent.FullName" data-toggle="tooltip" data-placement="top" title="@patent.FullName" style="width: 32px"/>
+                        </td>
+                    }
+                    <td class="text-center vertical-align-middle slim" style="margin: 0; padding: 0">
+                        <a href="@PlayerUrls.Details(player.CommunityId, null, periodQuery)" title="@player.MainName">
+                            <img src="/avatar/@player.CommunityId" alt="@player.MainName" title="@player.MainName" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
+                        </a>
+                    </td>
+                    <td class="vertical-align-middle">
+                        <a href="@PlayerUrls.Details(player.CommunityId, null, periodQuery)">@player.MainName.TruncatePlayerName()</a>
+                        @if (Model.ShowPatent && patentProgress.LevelUp)
+                        {
+                            <span class="label label-success pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
+                                @L["Level Up!"]
+                            </span>
+                        }
+                        @if (Model.ShowPatent && patentProgress.LevelDrop)
+                        {
+                            <span class="label label-danger pulsate" style="float: right; margin-left: 5px" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
+                                @L["Level Drop!"]
+                            </span>
+                        }
+                    </td>
+                    @if (Model.ShowPatent)
+                    {
+                        <td class="text-center vertical-align-middle hide-mobile">
+                            <div class="progress" data-toggle="tooltip" data-placement="top" data-html="true" title="@patentProgress.Tooltip">
+                                <div class="progress-bar progress-bar-@patentProgress.ProgressBarType @(patentProgress.ProgressBarPulsate ? "pulsate" : string.Empty) @(patentProgress.MaxLevel ? "progress-bar-striped active" : string.Empty)" role="progressbar" style="width: @patentProgress.ProgressBarWidth;">
+                                </div>
+                                <div class="progress-bar progress-bar-@patentProgress.PreviousExperienceProgressBarType pulsate" role="progressbar" style="width: @patentProgress.PreviousExperienceProgressBarWidth;">
+                                </div>
+                            </div>
+                        </td>
+                    }
+                    <td class="text-center vertical-align-middle">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["Wins"] - @player.WinRate.ToString("P0") @L["Win rate"]">
+                            @player.Wins.ToString("N0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["Loss"]">
+                            @player.Loss.ToString("N0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["SI MVP awards"]">
+                            @player.MvpSiDamage.ToString("N0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["CI MVP awards"]">
+                            @player.MvpCommon.ToString("N0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["Win rate"]">
+                            @player.WinRate.ToString("P0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["Games"]">
+                            @player.Games.ToString("N0")
+                        </p>
+                    </td>
+                    <td class="text-center vertical-align-middle hide-mobile">
+                        <p data-toggle="tooltip" data-placement="top" title="@L["Rage quit"]">
+                            @player.RageQuit.ToString("N0")
+                        </p>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        @if (Model.Ranking.Count > rankingSettings.HomeVisiblePlayers)
+        {
+            <div class="row text-center" style="margin: 10px">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-primary" id="btn-show-more">
+                        @L["Show more..."]
+                    </button>
+                </div>
             </div>
-        </div>
-    }
+        }
     }
 }

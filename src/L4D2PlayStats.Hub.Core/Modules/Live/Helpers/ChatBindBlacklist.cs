@@ -26,9 +26,7 @@ public static class ChatBindBlacklist
                 pendingSpace = false;
             }
             else
-            {
                 pendingSpace = true;
-            }
 
         return builder.ToString();
     }

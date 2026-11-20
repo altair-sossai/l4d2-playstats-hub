@@ -26,10 +26,12 @@ public class AccountController : Controller
     public IActionResult Language(string culture, string? returnUrl = null)
     {
         if (AppConsts.SupportedCultures.Contains(culture))
+        {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), IsEssential = true });
+        }
 
         return Redirect(Local(returnUrl));
     }

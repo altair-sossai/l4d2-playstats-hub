@@ -1,5 +1,5 @@
-@model VoteInviteModel
 @using L4D2PlayStats.Hub.Web.Infrastructure.InGame
+@model VoteInviteModel
 @{
     if (InGameBrowser.IsInGame(Context))
         return;
@@ -171,7 +171,9 @@
         <span>@L["Pick the better of two players you know and help build the community ranking. It takes a few seconds."]</span>
         @if (Model.HowItWorks)
         {
-            <a class="vote-invite-more" href="#how-it-works-modal" data-toggle="modal"><span class="glyphicon glyphicon-info-sign"></span> @L["How does it work?"] <span class="glyphicon glyphicon-chevron-right"></span></a>
+            <a class="vote-invite-more" href="#how-it-works-modal" data-toggle="modal">
+                <span class="glyphicon glyphicon-info-sign"></span> @L["How does it work?"] <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
         }
     </div>
     <a class="btn btn-success @(Model.Compact ? "" : "btn-lg ")vote-invite-button" href="@AppConsts.CommunityVotePage">

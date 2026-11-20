@@ -1,11 +1,11 @@
-using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
+using L4D2PlayStats.Hub.Tests.Community.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Community;
 
@@ -314,7 +314,6 @@ public class CommunityRankingServiceTests
         var active = voters.ToList();
 
         while (active.Count > 0)
-        {
             foreach (var voter in active.ToList())
             {
                 var outcome = Outcomes[votes % Outcomes.Length];
@@ -324,7 +323,6 @@ public class CommunityRankingServiceTests
                 else
                     votes++;
             }
-        }
 
         return votes;
     }

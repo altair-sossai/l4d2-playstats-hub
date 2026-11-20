@@ -1,10 +1,10 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
 using Microsoft.EntityFrameworkCore;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 

@@ -1,8 +1,8 @@
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 

@@ -48,7 +48,9 @@
 
 @if (TempData["Queued"] is string queued)
 {
-    <div class="alert alert-success">@L["Command queued. The game server runs it on its next check."] <code>@queued</code></div>
+    <div class="alert alert-success">
+        @L["Command queued. The game server runs it on its next check."] <code>@queued</code>
+    </div>
 }
 
 <div class="panel panel-default">
@@ -123,7 +125,9 @@
         <div class="admin-item rc-log">
             <img class="admin-avatar" src="@($"{AppConsts.AvatarUrl}{log.AdministratorCommunityId}")" alt="@administrator" onerror="imgOnError(this)"/>
             <div class="admin-main">
-                <div class="admin-title"><code>@log.Command</code></div>
+                <div class="admin-title">
+                    <code>@log.Command</code>
+                </div>
                 <small>
                     @L["Administrator"]:
                     <a href="@PlayerUrls.Details(log.AdministratorCommunityId)" target="_blank">@administrator</a>
@@ -134,11 +138,15 @@
                 <strong>@LiveDisplay.ShortDateTime(log.CreatedAtUtc, Model.TimeZone)</strong>
                 @if (log.DeliveredAtUtc != null)
                 {
-                    <small><span class="label label-success">@L["Delivered"]</span> @LiveDisplay.ShortDateTime(log.DeliveredAtUtc.Value, Model.TimeZone)</small>
+                    <small>
+                        <span class="label label-success">@L["Delivered"]</span> @LiveDisplay.ShortDateTime(log.DeliveredAtUtc.Value, Model.TimeZone)
+                    </small>
                 }
                 else
                 {
-                    <small><span class="label label-default">@L["Not delivered"]</span></small>
+                    <small>
+                        <span class="label label-default">@L["Not delivered"]</span>
+                    </small>
                 }
             </div>
         </div>

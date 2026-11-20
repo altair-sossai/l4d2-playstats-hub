@@ -575,7 +575,12 @@
 }
 
 <div class="community-lead">
-    <small>@L["Your answers move players up and down the community ranking."] <a class="how-it-works-link" href="#how-it-works-modal" data-toggle="modal"><span class="glyphicon glyphicon-info-sign"></span> @L["How does it work?"]</a></small>
+    <small>
+        @L["Your answers move players up and down the community ranking."]
+        <a class="how-it-works-link" href="#how-it-works-modal" data-toggle="modal">
+            <span class="glyphicon glyphicon-info-sign"></span> @L["How does it work?"]
+        </a>
+    </small>
     <a class="btn btn-sm btn-default" href="/community">
         <span class="glyphicon glyphicon-list"></span> @L["Community ranking"]
     </a>
@@ -583,6 +588,8 @@
 
 @await Html.PartialAsync("_HowItWorks", Model.Settings)
 
-<h3 class="text-center ballot-title"><span class="glyphicon glyphicon-fire"></span> @L["Who is better?"]</h3>
+<h3 class="text-center ballot-title">
+    <span class="glyphicon glyphicon-fire"></span> @L["Who is better?"]
+</h3>
 
 <partial name="_Ballot" model="Model"/>

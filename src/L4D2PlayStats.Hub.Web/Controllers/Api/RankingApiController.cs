@@ -1,11 +1,11 @@
-using L4D2PlayStats.Hub.Web.Models.Api;
-using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models.Api;
 using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 

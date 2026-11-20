@@ -7,7 +7,9 @@ public class RoutingHttpMessageHandler(Func<Uri, HttpResponseMessage> route) : H
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         lock (Requests)
+        {
             Requests.Add(request.RequestUri!);
+        }
 
         return Task.FromResult(route(request.RequestUri!));
     }

@@ -1,6 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
-using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Backups.Services;
@@ -16,10 +16,13 @@ public class BackupHistoryService(ISettingsService settingsService) : IBackupHis
     {
         var history = await settingsService.GetAsync<BackupHistory>(cancellationToken);
 
-        history.Runs = [.. history.Runs
-            .Append(run)
-            .OrderByDescending(item => item.StartedAtUtc)
-            .Take(AppConsts.BackupHistorySize)];
+        history.Runs =
+        [
+            .. history.Runs
+                .Append(run)
+                .OrderByDescending(item => item.StartedAtUtc)
+                .Take(AppConsts.BackupHistorySize)
+        ];
 
         await settingsService.SaveAsync(history, cancellationToken);
     }

@@ -30,12 +30,10 @@ public class CampaignImageService(IWebHostEnvironment environment) : ICampaignIm
         var builder = new StringBuilder();
 
         foreach (var character in campaign.ToLowerInvariant())
-        {
             if (character is >= 'a' and <= 'z' or >= '0' and <= '9')
                 builder.Append(character);
             else if (character is ' ' or '-' && builder.Length > 0 && builder[^1] != '-')
                 builder.Append('-');
-        }
 
         return builder.ToString().Trim('-');
     }

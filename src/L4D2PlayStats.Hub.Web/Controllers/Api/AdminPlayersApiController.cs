@@ -1,14 +1,14 @@
 using System.Globalization;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Models.Players;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 

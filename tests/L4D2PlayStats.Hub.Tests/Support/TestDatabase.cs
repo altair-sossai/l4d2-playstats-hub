@@ -43,6 +43,19 @@ public sealed class TestDatabase : IDisposable
 
     public bool IsSqlite => Provider.Equals(SqliteProvider, StringComparison.OrdinalIgnoreCase);
 
+    public void Dispose()
+    {
+        if (_connection != null)
+        {
+            _connection.Dispose();
+            return;
+        }
+
+        using var dbContext = CreateContext();
+
+        dbContext.Database.EnsureDeleted();
+    }
+
     public void Configure(DbContextOptionsBuilder options)
     {
         if (_connection != null)
@@ -61,18 +74,5 @@ public sealed class TestDatabase : IDisposable
         Configure(options);
 
         return new HubDbContext(options.Options);
-    }
-
-    public void Dispose()
-    {
-        if (_connection != null)
-        {
-            _connection.Dispose();
-            return;
-        }
-
-        using var dbContext = CreateContext();
-
-        dbContext.Database.EnsureDeleted();
     }
 }

@@ -103,7 +103,12 @@ else
                 <th class="text-center hide-mobile">@L["Patent"]</th>
             }
             <th colspan="2">@L["Player"]</th>
-            <th class="text-center">@L["Rating"] <a href="#community-columns-modal" class="field-help" style="color: #5bc0de; cursor: pointer" data-toggle="modal" title="@L["What the columns mean"]" aria-label="@L["What the columns mean"]"><span class="glyphicon glyphicon-question-sign"></span></a></th>
+            <th class="text-center">
+                @L["Rating"]
+                <a href="#community-columns-modal" class="field-help" style="color: #5bc0de; cursor: pointer" data-toggle="modal" title="@L["What the columns mean"]" aria-label="@L["What the columns mean"]">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </a>
+            </th>
             <th class="text-center hide-mobile">@L["Comparisons"]</th>
             <th class="text-center hide-mobile">@L["Wins"]</th>
             <th class="text-center hide-mobile">@L["Draws"]</th>
@@ -146,7 +151,9 @@ else
                 </td>
                 <td class="vertical-align-middle">
                     <a href="@PlayerUrls.Details(player.CommunityId)">@player.Name.TruncatePlayerName()</a>
-                    <a class="community-votes-link" href="@AppConsts.CommunityVotesPage?player=@player.CommunityId" title="@L["See the comparisons of this player"]" aria-label="@L["See the comparisons of this player"]"><span class="glyphicon glyphicon-transfer"></span></a>
+                    <a class="community-votes-link" href="@AppConsts.CommunityVotesPage?player=@player.CommunityId" title="@L["See the comparisons of this player"]" aria-label="@L["See the comparisons of this player"]">
+                        <span class="glyphicon glyphicon-transfer"></span>
+                    </a>
                 </td>
                 <td class="text-center vertical-align-middle">
                     <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating"]">

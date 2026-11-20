@@ -32,32 +32,32 @@
 
 @if (Model.HasPeriodChoices || Model.Servers.Count > 1)
 {
-<div class="match-filter text-right">
-    @if (Model.HasPeriodChoices)
-    {
-        <select class="form-control input-sm" aria-label="@L["Season"]" title="@L["Season"]" onchange="location.href = this.value">
-            <option value="@Model.Url(null, null, Model.ServerId)">@L["All seasons"]</option>
-            @foreach (var season in Model.Seasons)
-            {
-                <option value="@Model.Url(season.Id, null, Model.ServerId)" selected="@(season.Id == Model.SeasonId)">@RankingPeriod.ForSeason(season).Label(L)</option>
-            }
-            @foreach (var year in Model.Years)
-            {
-                <option value="@Model.Url(null, year, Model.ServerId)" selected="@(year == Model.Year)">@L["Year of {0}", year]</option>
-            }
-        </select>
-    }
-    @if (Model.Servers.Count > 1)
-    {
-        <select class="form-control input-sm" aria-label="@L["Server"]" title="@L["Server"]" onchange="location.href = this.value">
-            <option value="@Model.Url(Model.SeasonId, Model.Year, null)">@L["All servers"]</option>
-            @foreach (var server in Model.Servers)
-            {
-                <option value="@Model.Url(Model.SeasonId, Model.Year, server.Id)" selected="@(server.Id == Model.ServerId)">@server.Name</option>
-            }
-        </select>
-    }
-</div>
+    <div class="match-filter text-right">
+        @if (Model.HasPeriodChoices)
+        {
+            <select class="form-control input-sm" aria-label="@L["Season"]" title="@L["Season"]" onchange="location.href = this.value">
+                <option value="@Model.Url(null, null, Model.ServerId)">@L["All seasons"]</option>
+                @foreach (var season in Model.Seasons)
+                {
+                    <option value="@Model.Url(season.Id, null, Model.ServerId)" selected="@(season.Id == Model.SeasonId)">@RankingPeriod.ForSeason(season).Label(L)</option>
+                }
+                @foreach (var year in Model.Years)
+                {
+                    <option value="@Model.Url(null, year, Model.ServerId)" selected="@(year == Model.Year)">@L["Year of {0}", year]</option>
+                }
+            </select>
+        }
+        @if (Model.Servers.Count > 1)
+        {
+            <select class="form-control input-sm" aria-label="@L["Server"]" title="@L["Server"]" onchange="location.href = this.value">
+                <option value="@Model.Url(Model.SeasonId, Model.Year, null)">@L["All servers"]</option>
+                @foreach (var server in Model.Servers)
+                {
+                    <option value="@Model.Url(Model.SeasonId, Model.Year, server.Id)" selected="@(server.Id == Model.ServerId)">@server.Name</option>
+                }
+            </select>
+        }
+    </div>
 }
 
 @if (Model.Matches.Count == 0)

@@ -31,7 +31,9 @@
     else if (ballot.Status == CommunityBallotStatus.LimitReached)
     {
         <div class="jumbotron text-center">
-            <p><span class="glyphicon glyphicon-ok-circle text-success"></span> @L["You have used all your votes for today. Come back tomorrow."]</p>
+            <p>
+                <span class="glyphicon glyphicon-ok-circle text-success"></span> @L["You have used all your votes for today. Come back tomorrow."]
+            </p>
             <p>
                 <small>@L["Votes per day:"] @ballot.VotesPerDay</small>
             </p>
@@ -63,13 +65,19 @@
                 <div class="panel panel-default ballot-card ballot-left">
                     <div class="ballot-photo" title="@L["This one is better"]">
                         <img class="ballot-avatar" src="/avatar/@left.CommunityId" alt="@left.Name" onerror="imgOnError(this)">
-                        <span class="ballot-mark ballot-mark-win"><span class="glyphicon glyphicon-ok"></span></span>
-                        <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
+                        <span class="ballot-mark ballot-mark-win">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </span>
+                        <span class="ballot-mark ballot-mark-unknown">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                        </span>
                     </div>
                     <h4 class="ballot-name">@left.Name</h4>
                     @if (left.OtherNames.Count > 0)
                     {
-                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]"><span>@L["Also known as"]</span> @string.Join(" · ", left.OtherNames)</p>
+                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]">
+                            <span>@L["Also known as"]</span> @string.Join(" · ", left.OtherNames)
+                        </p>
                     }
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Left">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&larr;</kbd>
@@ -82,13 +90,19 @@
                 <div class="panel panel-default ballot-card ballot-right">
                     <div class="ballot-photo" title="@L["This one is better"]">
                         <img class="ballot-avatar" src="/avatar/@right.CommunityId" alt="@right.Name" onerror="imgOnError(this)">
-                        <span class="ballot-mark ballot-mark-win"><span class="glyphicon glyphicon-ok"></span></span>
-                        <span class="ballot-mark ballot-mark-unknown"><span class="glyphicon glyphicon-question-sign"></span></span>
+                        <span class="ballot-mark ballot-mark-win">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </span>
+                        <span class="ballot-mark ballot-mark-unknown">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                        </span>
                     </div>
                     <h4 class="ballot-name">@right.Name</h4>
                     @if (right.OtherNames.Count > 0)
                     {
-                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]"><span>@L["Also known as"]</span> @string.Join(" · ", right.OtherNames)</p>
+                        <p class="ballot-aka" title="@L["Other names this player has used, the most used first"]">
+                            <span>@L["Also known as"]</span> @string.Join(" · ", right.OtherNames)
+                        </p>
                     }
                     <button class="btn btn-success btn-block ballot-pick" type="submit" name="Outcome" value="@CommunityVoteOutcome.Right">
                         <span class="glyphicon glyphicon-thumbs-up"></span> @L["This one is better"] <kbd class="ballot-key hidden-xs">&rarr;</kbd>

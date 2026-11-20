@@ -349,7 +349,9 @@
     </style>
 }
 
-<h4 class="text-center"><span class="glyphicon glyphicon-transfer"></span> @L["Latest votes"]</h4>
+<h4 class="text-center">
+    <span class="glyphicon glyphicon-transfer"></span> @L["Latest votes"]
+</h4>
 
 <div class="vf-lead">
     <p>@L["See who voted for whom. Click a player to see only their comparisons."]</p>
@@ -372,7 +374,9 @@
                 <div class="input-group input-group-sm">
                     <input class="form-control" id="vf-voter-name" list="vf-voters" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.VoterName">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" data-player-picker="#vf-voter" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-role="@AppConsts.CommunityVoterRole" data-player-picker-hint="@L["The players who voted, the most recent vote first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+                        <button type="button" class="btn btn-default" data-player-picker="#vf-voter" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-role="@AppConsts.CommunityVoterRole" data-player-picker-hint="@L["The players who voted, the most recent vote first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
                     </span>
                 </div>
                 <input type="hidden" name="voter" id="vf-voter" value="@Model.VoterId">
@@ -389,7 +393,9 @@
             <div class="input-group input-group-sm">
                 <input class="form-control" id="vf-player-name" list="vf-players" autocomplete="off" placeholder="@L["Type a player name"]" value="@Model.PlayerName">
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-player-picker="#vf-player" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-hint="@L["The players who were compared in the voting, the most recent comparison first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="btn btn-default" data-player-picker="#vf-player" data-player-picker-source="@AppConsts.CommunityPlayersSearchUrl" data-player-picker-hint="@L["The players who were compared in the voting, the most recent comparison first."]" data-player-picker-submit title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
                 </span>
             </div>
             <input type="hidden" name="player" id="vf-player" value="@Model.PlayerId">
@@ -401,10 +407,14 @@
             </datalist>
         </div>
         <div class="vf-actions col-sm-2">
-            <button class="btn btn-sm btn-primary" type="submit"><span class="glyphicon glyphicon-filter"></span> @L["Filter"]</button>
+            <button class="btn btn-sm btn-primary" type="submit">
+                <span class="glyphicon glyphicon-filter"></span> @L["Filter"]
+            </button>
             @if (Model.VoterId != null || Model.PlayerId != null)
             {
-                <a class="btn btn-sm btn-default" href="@AppConsts.CommunityVotesPage"><span class="glyphicon glyphicon-remove"></span> @L["Clear"]</a>
+                <a class="btn btn-sm btn-default" href="@AppConsts.CommunityVotesPage">
+                    <span class="glyphicon glyphicon-remove"></span> @L["Clear"]
+                </a>
             }
         </div>
     </div>
@@ -418,7 +428,9 @@
             <span class="vf-chip">
                 <img src="/avatar/@Model.VoterId" alt="@Model.VoterName" onerror="imgOnError(this)">
                 <span>@L["Votes made by {0}", Model.VoterName ?? ""]</span>
-                <a href="@Url(null, Model.PlayerId)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                <a href="@Url(null, Model.PlayerId)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]">
+                    <span class="glyphicon glyphicon-remove-circle"></span>
+                </a>
             </span>
         }
         @if (Model.PlayerId != null)
@@ -426,7 +438,9 @@
             <span class="vf-chip">
                 <img src="/avatar/@Model.PlayerId" alt="@Model.PlayerName" onerror="imgOnError(this)">
                 <span>@L["Comparisons of {0}", Model.PlayerName ?? ""]</span>
-                <a href="@Url(Model.VoterId, null)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                <a href="@Url(Model.VoterId, null)" title="@L["Remove this filter"]" aria-label="@L["Remove this filter"]">
+                    <span class="glyphicon glyphicon-remove-circle"></span>
+                </a>
             </span>
             @if (rating != null)
             {
@@ -470,7 +484,9 @@ else
                 }
                 else
                 {
-                    <span class="vf-voter"><span class="glyphicon glyphicon-user"></span> <span>@L["A player voted"]</span></span>
+                    <span class="vf-voter">
+                        <span class="glyphicon glyphicon-user"></span> <span>@L["A player voted"]</span>
+                    </span>
                 }
                 <div class="vf-pair">
                     <div class="vf-pair-cells">

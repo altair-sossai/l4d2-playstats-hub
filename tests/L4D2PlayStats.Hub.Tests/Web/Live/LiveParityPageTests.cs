@@ -1,12 +1,13 @@
 using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Live;
 
@@ -302,7 +303,7 @@ public class LiveParityPageTests
 
         var credentials = await factory.CreateServerAsync();
         var page = await client.GetStringAsync("/servers/test-server");
-        var token = System.Text.RegularExpressions.Regex.Match(page, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = Regex.Match(page, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
 
         await factory.RunAsync(services => services.GetRequiredService<IChatBanService>().SaveAsync(HubWebFactory.Player, "Player", "Too much spam", HubWebFactory.Administrator, "Admin"));
 

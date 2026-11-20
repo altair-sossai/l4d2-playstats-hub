@@ -1,12 +1,12 @@
+using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
-using L4D2PlayStats.Hub.Web.Models.AntiCheat;
-using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models.AntiCheat;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 

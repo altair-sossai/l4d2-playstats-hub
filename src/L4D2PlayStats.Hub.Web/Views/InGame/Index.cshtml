@@ -25,7 +25,9 @@ else
             <tr class="@(row.Player.CommunityId == Model.SteamId ? "me" : "")">
                 <td>@row.Player.Position</td>
                 <td>@row.Player.MainName</td>
-                <td><img class="patent" src="@row.Progress.Patent.Image" alt=""> @row.Progress.Patent.Name</td>
+                <td>
+                    <img class="patent" src="@row.Progress.Patent.Image" alt=""> @row.Progress.Patent.Name
+                </td>
                 <td class="num">@Display.Number(row.Player.Experience)</td>
                 <td class="num win">@row.Player.Wins</td>
                 <td class="num loss">@row.Player.Loss</td>
@@ -38,7 +40,9 @@ else
             <tr class="me">
                 <td>@Model.Me.Player.Position</td>
                 <td>@Model.Me.Player.MainName</td>
-                <td><img class="patent" src="@Model.Me.Progress.Patent.Image" alt=""> @Model.Me.Progress.Patent.Name</td>
+                <td>
+                    <img class="patent" src="@Model.Me.Progress.Patent.Image" alt=""> @Model.Me.Progress.Patent.Name
+                </td>
                 <td class="num">@Display.Number(Model.Me.Player.Experience)</td>
                 <td class="num win">@Model.Me.Player.Wins</td>
                 <td class="num loss">@Model.Me.Player.Loss</td>

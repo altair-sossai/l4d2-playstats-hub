@@ -1,8 +1,8 @@
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Support.Paging;
 

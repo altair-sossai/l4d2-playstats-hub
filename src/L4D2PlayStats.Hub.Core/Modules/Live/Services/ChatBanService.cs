@@ -1,8 +1,8 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
-using Microsoft.EntityFrameworkCore;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
@@ -39,9 +39,7 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
             dbContext.Set<ChatBan>().Add(ban);
         }
         else
-        {
             ban.UpdatedAtUtc = now;
-        }
 
         if (!string.IsNullOrWhiteSpace(name))
             ban.Name = Limit(name, AppConsts.LivePlayerNameMaxLength);

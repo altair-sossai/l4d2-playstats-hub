@@ -1,8 +1,8 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
-using Microsoft.AspNetCore.Mvc;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 

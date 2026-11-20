@@ -1,12 +1,12 @@
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Punishments.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using L4D2PlayStats.Hub.Core.Modules.Punishments.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 

@@ -1,3 +1,4 @@
+@using Microsoft.Extensions.Localization
 @model ServerCardViewModel
 @{
     var theme = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme ? AppConsts.IconThemeLight : AppConsts.IconThemeDark;
@@ -390,7 +391,8 @@
 </div>
 
 @functions {
-    private Microsoft.Extensions.Localization.LocalizedString TextLatency(object key)
+
+    private LocalizedString TextLatency(object key)
     {
         return key.ToString() switch
         {
@@ -400,4 +402,5 @@
             _ => L[key.ToString()!]
         };
     }
+
 }

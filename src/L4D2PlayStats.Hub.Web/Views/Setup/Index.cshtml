@@ -171,7 +171,9 @@
                         <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" type="password" value="" autocomplete="new-password" placeholder="@(string.IsNullOrWhiteSpace(Model.Settings.Site.SteamApiKey) ? "" : L["A key is saved. Leave empty to keep it."].Value)">
                         <span class="help-block">
                             @L["Optional. Player avatars load without it; with a key they load faster."]
-                            <a href="https://steamcommunity.com/dev/apikey" rel="noopener" target="_blank"><span class="text-underline">steamcommunity.com/dev/apikey</span></a>
+                            <a href="https://steamcommunity.com/dev/apikey" rel="noopener" target="_blank">
+                                <span class="text-underline">steamcommunity.com/dev/apikey</span>
+                            </a>
                         </span>
                     </div>
                     <button class="btn btn-primary" type="submit">

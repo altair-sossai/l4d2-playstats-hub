@@ -1,5 +1,6 @@
+@using Microsoft.AspNetCore.Antiforgery
 @model MatchDetailsModel
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject IAntiforgery Antiforgery
 
 @{
     var match = Model.Match;

@@ -3,10 +3,10 @@ using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
-using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using Microsoft.EntityFrameworkCore;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
 
@@ -80,9 +80,12 @@ public class CommunityRankingService(
 
         var names = await playerService.NamesAsync([.. voters.Keys.Concat(compared.Keys)], cancellationToken);
 
-        return [.. names
-            .Select(pair => new CommunityVoteParticipant(pair.Key, pair.Value, voters.TryGetValue(pair.Key, out var voted) ? voted : null, compared.TryGetValue(pair.Key, out var judged) ? judged : null))
-            .OrderBy(participant => participant.Name, StringComparer.CurrentCultureIgnoreCase)];
+        return
+        [
+            .. names
+                .Select(pair => new CommunityVoteParticipant(pair.Key, pair.Value, voters.TryGetValue(pair.Key, out var voted) ? voted : null, compared.TryGetValue(pair.Key, out var judged) ? judged : null))
+                .OrderBy(participant => participant.Name, StringComparer.CurrentCultureIgnoreCase)
+        ];
     }
 
     public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(int skip, int take, CancellationToken cancellationToken = default)

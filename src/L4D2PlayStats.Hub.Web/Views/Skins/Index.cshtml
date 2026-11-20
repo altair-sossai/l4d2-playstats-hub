@@ -1057,11 +1057,13 @@
                         <div class="sk-author" title="@skin.AuthorName">
                             @if (authorUrl != null)
                             {
-                                @L["by"] <a href="@authorUrl" target="_blank" rel="noopener">@skin.AuthorName</a>
+                                @L["by"]
+                                <a href="@authorUrl" target="_blank" rel="noopener">@skin.AuthorName</a>
                             }
                             else
                             {
-                                @L["by"] @skin.AuthorName
+                                @L["by"]
+                                @skin.AuthorName
                             }
                         </div>
                     }

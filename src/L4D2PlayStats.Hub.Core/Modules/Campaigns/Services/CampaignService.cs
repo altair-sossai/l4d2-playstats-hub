@@ -1,9 +1,9 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Models;
+using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Campaigns.Services;
 
@@ -47,9 +47,7 @@ public class CampaignService(HubDbContext dbContext, IMemoryCache memoryCache, H
         var campaign = id == null ? null : await dbContext.Campaigns.Include(c => c.Maps).FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         if (campaign == null)
-        {
             dbContext.Campaigns.Add(NewCampaign(name.Trim(), maps));
-        }
         else
         {
             campaign.Name = name.Trim();

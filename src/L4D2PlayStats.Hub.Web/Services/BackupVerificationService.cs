@@ -1,16 +1,16 @@
 using System.Diagnostics;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
-using L4D2PlayStats.Hub.Web.Models.Backups;
-using Microsoft.EntityFrameworkCore;
-using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
+using L4D2PlayStats.Hub.Web.Models.Backups;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 
@@ -43,7 +43,9 @@ public class BackupVerificationService(HubDbContext dbContext, IClock clock, ILo
             var zipPath = Path.Combine(work, AppConsts.BackupVerifyZipName);
 
             await using (var file = new FileStream(zipPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, AppConsts.BackupVerifyBufferSize, true))
+            {
                 await storage.DownloadAsync(blobName, file, cancellationToken);
+            }
 
             verification = await BackupArchiveVerifier.VerifyAsync(zipPath, work, BackupTables.From(dbContext.Model), expectedSize, cancellationToken);
         }

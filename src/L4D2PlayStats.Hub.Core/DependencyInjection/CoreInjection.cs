@@ -1,8 +1,12 @@
 using L4D2PlayStats.Hub.Core.Infrastructure;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
-using Microsoft.Extensions.DependencyInjection;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services;
+using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Core.DependencyInjection;
 
@@ -16,9 +20,9 @@ public static class CoreInjection
         services.AddSingleton<HubState>();
         services.AddSingleton<IClock, SystemClock>();
         services.AddSingleton<IGameServerPresence, GameServerPresence>();
-        services.AddSingleton<Modules.Live.Services.Contracts.ILiveSettings, Modules.Live.Services.LiveSettings>();
-        services.AddSingleton<Modules.Live.Services.Contracts.ILiveServerStore, Modules.Live.Services.LiveServerStore>();
-        services.AddSingleton<Modules.Settings.Services.Contracts.ISecretProtector, Modules.Settings.Services.SecretProtector>();
+        services.AddSingleton<ILiveSettings, LiveSettings>();
+        services.AddSingleton<ILiveServerStore, LiveServerStore>();
+        services.AddSingleton<ISecretProtector, SecretProtector>();
 
         services.Scan(scan => scan
             .FromAssemblyOf<HubState>()

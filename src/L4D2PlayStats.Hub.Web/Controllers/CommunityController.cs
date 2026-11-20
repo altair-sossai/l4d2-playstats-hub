@@ -1,25 +1,25 @@
-using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Localization;
-using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.Extensions.Localization;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
@@ -101,7 +101,7 @@ public class CommunityController(
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
         var voters = string.Equals(role, AppConsts.CommunityVoterRole, StringComparison.OrdinalIgnoreCase);
-        IReadOnlyList<CommunityVoteParticipant> participants = voters && !settings.ShowVoterNames ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
+        var participants = voters && !settings.ShowVoterNames ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
         var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
         var term = q?.Trim();
         var steamId = SteamIdParser.Parse(term);

@@ -38,9 +38,7 @@ public class PageCachePolicy : IOutputCachePolicy
     public ValueTask ServeResponseAsync(OutputCacheContext context, CancellationToken cancellation)
     {
         if (!IsStorable(context.HttpContext.Response))
-        {
             context.AllowCacheStorage = false;
-        }
 
         return ValueTask.CompletedTask;
     }

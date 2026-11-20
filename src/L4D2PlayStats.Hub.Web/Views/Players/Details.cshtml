@@ -694,11 +694,11 @@
     </li>
     @if (Model.SkinShop)
     {
-    <li role="presentation">
-        <a href="#skins" role="tab" data-toggle="tab">
-            @L["Skins"] <span class="badge">@(((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0) + (Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0)).ToString("N0"))</span>
-        </a>
-    </li>
+        <li role="presentation">
+            <a href="#skins" role="tab" data-toggle="tab">
+                @L["Skins"] <span class="badge">@(((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0) + (Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0)).ToString("N0"))</span>
+            </a>
+        </li>
     }
     @if (Model.Relations.Any())
     {
@@ -1335,31 +1335,31 @@
 </div>
 @if (Model.SkinShop)
 {
-<div role="tabpanel" class="tab-pane" id="skins">
+    <div role="tabpanel" class="tab-pane" id="skins">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            @L["Skins"] <span class="badge">@((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
-            @if (secondPlayer != null)
-            {
-                <span class="separator"> | </span>
-                <span class="badge badge-second">@((Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
-            }
-            <a class="pull-right" href="@AppConsts.SkinShopUrl">@L["See the skin shop"]</a>
-        </div>
-        <div class="panel-body">
-            @{
-                RenderPlayerSkins(Model.FirstPlayerSkins, firstPlayer, false, secondPlayer != null);
-
-                if (secondPlayer != null)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @L["Skins"] <span class="badge">@((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
+                @if (secondPlayer != null)
                 {
-                    RenderPlayerSkins(Model.SecondPlayerSkins, secondPlayer, true, true);
+                    <span class="separator"> | </span>
+                    <span class="badge badge-second">@((Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
                 }
-            }
-        </div>
-    </div>
+                <a class="pull-right" href="@AppConsts.SkinShopUrl">@L["See the skin shop"]</a>
+            </div>
+            <div class="panel-body">
+                @{
+                    RenderPlayerSkins(Model.FirstPlayerSkins, firstPlayer, false, secondPlayer != null);
 
-</div>
+                    if (secondPlayer != null)
+                    {
+                        RenderPlayerSkins(Model.SecondPlayerSkins, secondPlayer, true, true);
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
 }
 
 @{

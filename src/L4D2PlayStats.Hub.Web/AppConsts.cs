@@ -38,16 +38,6 @@ public static partial class AppConsts
     public const int LoginCookieInDays = 30;
 
     public const string ResourcesFolder = "Resources";
-    public static readonly string[] SupportedCultures = ["en-US", "pt-BR", "es-ES"];
-
-    public static readonly IReadOnlyDictionary<string, string> LogoContentTypes = new Dictionary<string, string>
-    {
-        [".png"] = "image/png",
-        [".jpg"] = "image/jpeg",
-        [".jpeg"] = "image/jpeg",
-        [".webp"] = "image/webp",
-        [".gif"] = "image/gif"
-    };
     public const int InGameRankingPlayers = 50;
     public const int InGameMatches = 10;
 
@@ -92,7 +82,6 @@ public static partial class AppConsts
     public const string ServerPluginLoadFormat = "sm plugins load {0}.smx";
     public const string ServerReleasesUrl = "https://github.com/altair-sossai/l4d2-playstats-hub/releases";
     public const string ServerGuideUrl = "https://github.com/altair-sossai/l4d2-playstats-hub/blob/main/docs/game-server.md";
-    public static readonly string[] ServerPlugins = ["optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins"];
 
     public const string NpgsqlLegacyTimestampSwitch = "Npgsql.EnableLegacyTimestampBehavior";
     public const string SqliteMemoryDataSource = ":memory:";
@@ -128,4 +117,16 @@ public static partial class AppConsts
     public const int SkinSeasonRefundStartDelayInSeconds = 30;
     public const string SkinImportTempData = "SkinImport";
     public const char SkinTempDataSeparator = ',';
+    public static readonly string[] SupportedCultures = ["en-US", "pt-BR", "es-ES"];
+
+    public static readonly IReadOnlyDictionary<string, string> LogoContentTypes = new Dictionary<string, string>
+    {
+        [".png"] = "image/png",
+        [".jpg"] = "image/jpeg",
+        [".jpeg"] = "image/jpeg",
+        [".webp"] = "image/webp",
+        [".gif"] = "image/gif"
+    };
+
+    public static readonly string[] ServerPlugins = ["optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins"];
 }

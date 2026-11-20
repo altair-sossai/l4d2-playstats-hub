@@ -6,5 +6,6 @@ public class SetupSettings
 {
     [Secret]
     public string? Token { get; set; }
+
     public bool Completed { get; set; }
 }

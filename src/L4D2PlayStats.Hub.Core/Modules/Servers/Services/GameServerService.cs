@@ -1,12 +1,12 @@
+using System.Text;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
-using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 
@@ -165,12 +165,10 @@ public class GameServerService(HubDbContext dbContext, HubState hubState, IGameS
         var builder = new StringBuilder();
 
         foreach (var character in name.Trim().ToLowerInvariant())
-        {
             if (character is >= 'a' and <= 'z' or >= '0' and <= '9')
                 builder.Append(character);
             else if (builder.Length > 0 && builder[^1] != '-')
                 builder.Append('-');
-        }
 
         var slug = builder.ToString().Trim('-');
         if (slug.Length > AppConsts.GameServerPublicIdMaxLength)

@@ -1,3 +1,4 @@
+@using Microsoft.Extensions.Localization
 @model CarAlarmTriggeredEvent
 
 <span class="game-event-stars">@Model.StarsText()</span>
@@ -15,7 +16,8 @@
 <text>.</text>
 
 @functions {
-    private Microsoft.Extensions.Localization.LocalizedString TextGameEventCarAlarm(object key)
+
+    private LocalizedString TextGameEventCarAlarm(object key)
     {
         return key.ToString() switch
         {
@@ -26,4 +28,5 @@
             _ => L[key.ToString()!]
         };
     }
+
 }

@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Http.Headers;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 

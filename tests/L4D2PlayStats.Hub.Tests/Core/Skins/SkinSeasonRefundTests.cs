@@ -1,11 +1,11 @@
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Tests.Core.Skins;
 

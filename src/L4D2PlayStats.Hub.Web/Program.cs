@@ -1,35 +1,35 @@
-using L4D2PlayStats.Hub.Web.Infrastructure.Telemetry;
 using System.Security.Claims;
-using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Web;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
+using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
-using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
+using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Caching;
 using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
-using L4D2PlayStats.Hub.Web.Infrastructure.Health;
-using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Infrastructure.Health;
 using L4D2PlayStats.Hub.Web.Infrastructure.Live;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
 using L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
 using L4D2PlayStats.Hub.Web.Infrastructure.Skins;
+using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
+using L4D2PlayStats.Hub.Web.Infrastructure.Telemetry;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 if (HealthCheck.IsCommand(args))
     return await HealthCheck.RunAsync(args);
@@ -154,6 +154,7 @@ app.MapControllers();
 app.MapHub<LiveHub>(AppConsts.LiveHubUrl, options => options.LongPolling.PollTimeout = TimeSpan.FromSeconds(AppConsts.LiveHubLongPollingTimeoutInSeconds));
 
 if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConsts.DevelopmentSignInSetting))
+{
     app.MapGet("/dev/sign-in/{communityId:long}", async (long communityId, string? returnUrl, HttpContext httpContext) =>
     {
         var knownName = await httpContext.RequestServices.GetRequiredService<IPlayerNameService>().KnownNameAsync(communityId, httpContext.RequestAborted);
@@ -165,6 +166,7 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConst
 
         return Results.Redirect(!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith('/') && !returnUrl.StartsWith("//") ? returnUrl : "/");
     });
+}
 
 await app.RunAsync();
 

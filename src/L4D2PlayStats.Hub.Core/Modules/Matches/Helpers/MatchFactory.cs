@@ -102,8 +102,8 @@ public static class MatchFactory
         }
 
         foreach (var row in rows.ToList().Where(r => r.TeamA || r.TeamB))
-            foreach (var file in draft.Files)
-                Accumulate(row, file.Statistics!);
+        foreach (var file in draft.Files)
+            Accumulate(row, file.Statistics!);
     }
 
     private static void Accumulate(MatchPlayer row, ParsedStatistics statistics)

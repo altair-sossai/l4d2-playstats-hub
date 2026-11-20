@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
-using System.Collections.Immutable;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 
@@ -40,7 +40,7 @@ public class RankingCalculatorTests
     [TestMethod]
     public void MvpsAddBonusPoints()
     {
-        var ranking = Calculate(Match(1, Winner(Ana, mvpSiDamage: 2, mvpCommon: 1), Loser(Bia)));
+        var ranking = Calculate(Match(1, Winner(Ana, 2, 1), Loser(Bia)));
 
         Assert.AreEqual(85 + 2 * 8 + 6, Player(ranking, Ana).Experience);
         Assert.AreEqual(3, Player(ranking, Ana).Stars);
@@ -75,7 +75,7 @@ public class RankingCalculatorTests
     {
         var ranking = Calculate(
             Match(1, Winner(Ana), Loser(Bia)),
-            Match(2, Winner(Caio, mvpSiDamage: 1), Loser(Davi)),
+            Match(2, Winner(Caio, 1), Loser(Davi)),
             Match(3, Winner(Bia), Loser(Davi)));
 
         CollectionAssert.AreEqual(new[] { Caio, Ana, Bia, Davi }, ranking.Select(p => p.CommunityId).ToList());
@@ -181,7 +181,7 @@ public class RankingCalculatorTests
         var settings = new RankingSettings { Win = 10, Loss = -3, Mvp = 1, MvpCommon = 2 };
 
         var ranking = RankingCalculator.Calculate(
-            [Match(1, Winner(Ana, mvpSiDamage: 1, mvpCommon: 1), Loser(Bia)), Match(2, Winner(Bia), Loser(Ana))],
+            [Match(1, Winner(Ana, 1, 1), Loser(Bia)), Match(2, Winner(Bia), Loser(Ana))],
             NoPunishments,
             settings);
 

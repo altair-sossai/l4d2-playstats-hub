@@ -1,13 +1,13 @@
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
 using L4D2PlayStats.Hub.Web.Models.Players;
-using Microsoft.Extensions.Caching.Memory;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 

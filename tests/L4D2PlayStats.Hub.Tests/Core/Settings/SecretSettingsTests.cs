@@ -6,11 +6,11 @@ using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Tests.Core.Settings;
@@ -232,7 +232,9 @@ public sealed class SecretSettingsTests : IDisposable
         var other = Key();
 
         using (var services = Services(other))
+        {
             await SaveAsync(services, new SiteSettings { SteamApiKey = "NEWSTEAMKEY" });
+        }
 
         Assert.AreEqual("NEWSTEAMKEY", (await ReadAsync<SiteSettings>(other)).SteamApiKey);
         Assert.IsNull((await ReadAsync<SiteSettings>(_key)).SteamApiKey);
@@ -319,8 +321,8 @@ public sealed class SecretSettingsTests : IDisposable
     private static void AssertNoSecretIn(LogCollector logs)
     {
         foreach (var entry in logs.Entries)
-            foreach (var secret in new[] { SteamApiKey, ContainerUrl, "SASSIGNATURE123", "ACCOUNTKEYSECRET", SetupToken })
-                Assert.DoesNotContain(secret, entry.Message);
+        foreach (var secret in new[] { SteamApiKey, ContainerUrl, "SASSIGNATURE123", "ACCOUNTKEYSECRET", SetupToken })
+            Assert.DoesNotContain(secret, entry.Message);
     }
 
     private ServiceProvider Services(SecretsKey key, LogCollector? logs = null)

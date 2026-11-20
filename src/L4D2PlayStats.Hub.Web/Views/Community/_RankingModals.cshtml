@@ -157,33 +157,57 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="community-columns-title"><span class="glyphicon glyphicon-question-sign"></span> @L["What the columns mean"]</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="community-columns-title">
+                    <span class="glyphicon glyphicon-question-sign"></span> @L["What the columns mean"]
+                </h4>
             </div>
             <div class="modal-body">
                 <ul class="crm-columns">
                     <li>
-                        <span class="crm-icon"><span class="glyphicon glyphicon-stats"></span></span>
-                        <div><strong>@L["Rating"]</strong>@L["The points built from the votes. Everybody starts with the same rating; it goes up when voters say the player is better and down when they say the other one is. Beating someone with a higher rating is worth more."]</div>
+                        <span class="crm-icon">
+                            <span class="glyphicon glyphicon-stats"></span>
+                        </span>
+                        <div>
+                            <strong>@L["Rating"]</strong>@L["The points built from the votes. Everybody starts with the same rating; it goes up when voters say the player is better and down when they say the other one is. Beating someone with a higher rating is worth more."]
+                        </div>
                     </li>
                     <li>
-                        <span class="crm-icon"><span class="glyphicon glyphicon-transfer"></span></span>
-                        <div><strong>@L["Comparisons"]</strong>@L["How many times the player was judged against another player. The more comparisons, the more reliable the rating."]</div>
+                        <span class="crm-icon">
+                            <span class="glyphicon glyphicon-transfer"></span>
+                        </span>
+                        <div>
+                            <strong>@L["Comparisons"]</strong>@L["How many times the player was judged against another player. The more comparisons, the more reliable the rating."]
+                        </div>
                     </li>
                     <li>
-                        <span class="crm-icon crm-win"><span class="glyphicon glyphicon-thumbs-up"></span></span>
-                        <div><strong>@L["Wins"]</strong>@L["Comparisons in which voters said this player is better."]</div>
+                        <span class="crm-icon crm-win">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        </span>
+                        <div>
+                            <strong>@L["Wins"]</strong>@L["Comparisons in which voters said this player is better."]
+                        </div>
                     </li>
                     <li>
                         <span class="crm-icon crm-draw">=</span>
-                        <div><strong>@L["Draws"]</strong>@L["Comparisons in which voters said the two are at the same level."]</div>
+                        <div>
+                            <strong>@L["Draws"]</strong>@L["Comparisons in which voters said the two are at the same level."]
+                        </div>
                     </li>
                     <li>
-                        <span class="crm-icon crm-loss"><span class="glyphicon glyphicon-thumbs-down"></span></span>
-                        <div><strong>@L["Losses"]</strong>@L["Comparisons in which voters said the other player is better."]</div>
+                        <span class="crm-icon crm-loss">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        </span>
+                        <div>
+                            <strong>@L["Losses"]</strong>@L["Comparisons in which voters said the other player is better."]
+                        </div>
                     </li>
                 </ul>
-                <p class="crm-note"><span class="glyphicon glyphicon-info-sign"></span> @L["Answers of the kind \"I don't know\" do not count as comparisons. Click a player's row to see their details."]</p>
+                <p class="crm-note">
+                    <span class="glyphicon glyphicon-info-sign"></span> @L["Answers of the kind \"I don't know\" do not count as comparisons. Click a player's row to see their details."]
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
@@ -196,8 +220,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><span class="glyphicon glyphicon-user"></span> @L["Community ranking"]</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-user"></span> @L["Community ranking"]
+                </h4>
             </div>
             <div class="modal-body">
                 <div class="crm-player">
@@ -208,8 +236,12 @@
                     </div>
                 </div>
                 <div class="crm-tiles">
-                    <div><strong class="crm-rating"></strong><small>@L["Rating"]</small></div>
-                    <div><strong class="crm-comparisons"></strong><small>@L["Comparisons"]</small></div>
+                    <div>
+                        <strong class="crm-rating"></strong><small>@L["Rating"]</small>
+                    </div>
+                    <div>
+                        <strong class="crm-comparisons"></strong><small>@L["Comparisons"]</small>
+                    </div>
                 </div>
                 <div class="crm-bar">
                     <span class="crm-bar-win" style="background: #5cb85c"></span>

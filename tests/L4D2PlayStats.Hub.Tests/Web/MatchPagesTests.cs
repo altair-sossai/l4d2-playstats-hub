@@ -2,12 +2,13 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 using L4D2PlayStats.Hub.Tests.Support;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
+using Match = L4D2PlayStats.Hub.Core.Modules.Matches.Match;
 
 namespace L4D2PlayStats.Hub.Tests.Web;
 
@@ -401,7 +402,7 @@ public partial class MatchPagesTests
         return factory;
     }
 
-    private static Task<L4D2PlayStats.Hub.Core.Modules.Matches.Match> MatchAsync(HubWebFactory factory)
+    private static Task<Match> MatchAsync(HubWebFactory factory)
     {
         return factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.AsNoTracking().SingleAsync());
     }
