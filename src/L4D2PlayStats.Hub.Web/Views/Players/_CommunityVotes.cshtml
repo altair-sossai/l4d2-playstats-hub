@@ -1,0 +1,41 @@
+@model PlayerCommunityModel
+@{
+    var active = ViewData[AppConsts.PlayerVotesActiveViewData] is true;
+}
+
+<div role="tabpanel" class="tab-pane@(active ? " active" : "")" id="votes-received">
+    <p class="player-votes-lead">@L["The latest votes in which this player was compared, in the community ranking."]</p>
+    @if (Model.Received.Count == 0)
+    {
+        <p class="text-muted text-center">@L["Nobody has compared this player yet."]</p>
+    }
+    else
+    {
+        @await Html.PartialAsync("~/Views/Community/_VoteRows.cshtml", Model.ReceivedRows)
+    }
+    <div class="player-votes-more">
+        <a class="btn btn-sm btn-default" href="@CommunityVoteUrls.Votes(null, Model.First.CommunityId)">
+            <span class="glyphicon glyphicon-transfer"></span> @L["See all the comparisons of this player"]
+        </a>
+    </div>
+</div>
+
+@if (Model.ShowVoters)
+{
+    <div role="tabpanel" class="tab-pane" id="votes-cast">
+        <p class="player-votes-lead">@L["The latest votes this player made in the community ranking."]</p>
+        @if (Model.Cast.Count == 0)
+        {
+            <p class="text-muted text-center">@L["This player has not voted yet."]</p>
+        }
+        else
+        {
+            @await Html.PartialAsync("~/Views/Community/_VoteRows.cshtml", Model.CastRows)
+        }
+        <div class="player-votes-more">
+            <a class="btn btn-sm btn-default" href="@CommunityVoteUrls.Votes(Model.First.CommunityId, null)">
+                <span class="glyphicon glyphicon-transfer"></span> @L["See all the votes made by this player"]
+            </a>
+        </div>
+    </div>
+}

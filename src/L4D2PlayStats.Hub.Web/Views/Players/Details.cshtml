@@ -198,6 +198,10 @@
 }
 
 @section Styles {
+    @if (Model.Community != null)
+    {
+        @await Html.PartialAsync("_CommunityStyles", Model.Community)
+    }
     <style>
         .player-skins {
             display: flex;
@@ -648,6 +652,10 @@
     </div>
 
     <img src="/avatar/@(firstPlayer.CommunityId).jpg" alt="@firstPlayer.MainName" title="@firstPlayer.MainName" class="img-responsive img-thumbnail" style="margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+    @if (Model.Community != null)
+    {
+        @await Html.PartialAsync("_CommunityStanding", Model.Community.First)
+    }
 
     <hr/>
 
@@ -679,6 +687,10 @@
     @if (secondPlayer != null)
     {
         <img src="/avatar/@(secondPlayer.CommunityId).jpg" alt="@secondPlayer.MainName" title="@secondPlayer.MainName" class="img-responsive img-thumbnail" style="background-color: #FFBC00; margin-top: 5px" onerror="imgOnError(this)" data-lity/>
+        @if (Model.Community?.Second != null)
+        {
+            @await Html.PartialAsync("_CommunityStanding", Model.Community.Second)
+        }
     }
 </div>
 <div class="col-xs-10 right-side">
@@ -707,6 +719,22 @@
                 @L["Relations"] <span class="badge">@Model.Relations.Count.ToString("N0")</span>
             </a>
         </li>
+    }
+    @if (Model.Community?.ShowsVotes == true)
+    {
+        <li role="presentation">
+            <a href="#votes-received" role="tab" data-toggle="tab">
+                @L["Votes received"] <span class="badge">@(Model.Community.Received.Count.ToString("N0") + (Model.Community.HasMoreReceived ? "+" : ""))</span>
+            </a>
+        </li>
+        @if (Model.Community.ShowVoters)
+        {
+            <li role="presentation">
+                <a href="#votes-cast" role="tab" data-toggle="tab">
+                    @L["Votes cast"] <span class="badge">@(Model.Community.Cast.Count.ToString("N0") + (Model.Community.HasMoreCast ? "+" : ""))</span>
+                </a>
+            </li>
+        }
     }
 </ul>
 
@@ -1560,6 +1588,11 @@
         }
     }
 </div>
+
+@if (Model.Community?.ShowsVotes == true)
+{
+    @await Html.PartialAsync("_CommunityVotes", Model.Community)
+}
 
 </div>
 </div>

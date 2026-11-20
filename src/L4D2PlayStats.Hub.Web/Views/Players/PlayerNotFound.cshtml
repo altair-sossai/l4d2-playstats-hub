@@ -19,7 +19,20 @@
 }
 
 @section Styles {
+    @if (Model.Community?.HasActivity == true)
+    {
+        @await Html.PartialAsync("_CommunityStyles", Model.Community)
+    }
     <style>
+        .player-community {
+            max-width: 184px;
+            margin: 10px auto 0 auto;
+        }
+
+        .player-not-found-tabs {
+            margin-top: 15px;
+        }
+
         .player-summary-avatar {
             max-width: 184px;
             width: 100%;
@@ -75,6 +88,10 @@
         <a href="@Model.ProfileUrl" class="btn btn-primary btn-block player-steam-profile" target="_blank" rel="noopener noreferrer">
             <span class="glyphicon glyphicon-new-window"></span> @L["Open Steam profile"]
         </a>
+        @if (Model.Community?.HasActivity == true)
+        {
+            @await Html.PartialAsync("_CommunityStanding", Model.Community.First)
+        }
     </div>
     <div class="col-sm-9">
         <div class="panel panel-default">
@@ -195,6 +212,31 @@
             }
             </tbody>
         </table>
+    </div>
+}
+
+@if (Model.Community is { ShowsVotes: true, HasActivity: true })
+{
+    <ul class="nav nav-tabs player-not-found-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#votes-received" role="tab" data-toggle="tab">
+                @L["Votes received"] <span class="badge">@(Model.Community.Received.Count.ToString("N0") + (Model.Community.HasMoreReceived ? "+" : ""))</span>
+            </a>
+        </li>
+        @if (Model.Community.ShowVoters)
+        {
+            <li role="presentation">
+                <a href="#votes-cast" role="tab" data-toggle="tab">
+                    @L["Votes cast"] <span class="badge">@(Model.Community.Cast.Count.ToString("N0") + (Model.Community.HasMoreCast ? "+" : ""))</span>
+                </a>
+            </li>
+        }
+    </ul>
+    <div class="tab-content player-not-found-votes">
+        @{
+            ViewData[AppConsts.PlayerVotesActiveViewData] = true;
+        }
+        @await Html.PartialAsync("_CommunityVotes", Model.Community)
     </div>
 }
 

@@ -1,0 +1,21 @@
+@model PlayerCommunityStanding
+
+@if (Model.Entry != null)
+{
+    <a class="player-community" href="@AppConsts.CommunityUrl" title="@L["Position in the community ranking, built from the votes of the players"]">
+        <small>@L["Community ranking"]</small>
+        <strong>#@Model.Entry.Position</strong>
+        <small>@L["Rating"]: @Display.Number((decimal)Math.Round(Model.Entry.Rating))</small>
+    </a>
+}
+else
+{
+    <a class="player-community player-community-none" href="@CommunityVoteUrls.Votes(null, Model.CommunityId)" title="@L["The player appears in the community ranking after enough comparisons"]">
+        <small>@L["Community ranking"]</small>
+        <small>@L["Not in the community ranking yet"]</small>
+        @if (Model.Rating != null)
+        {
+            <small>@L["Comparisons"]: @Model.Rating.Comparisons.ToString("N0")</small>
+        }
+    </a>
+}

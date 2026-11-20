@@ -99,6 +99,10 @@ public static partial class AppConsts
     public const string CommunityUrl = "/community";
     public const string CommunityVotePage = "/community/vote";
     public const string CommunityVotesPage = "/community/votes";
+    public const string CommunityVoterQuery = "voter";
+    public const string CommunityPlayerQuery = "player";
+    public const string CommunityPageQuery = "page";
+    public const int PlayerCommunityVotes = 20;
     public const string CommunityPlayersSearchUrl = "/api/community/players";
     public const string CommunityVoterRole = "voter";
     public const int VoteInviteHiddenDays = 7;

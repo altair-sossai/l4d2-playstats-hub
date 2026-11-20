@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.OutputCaching;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
 
-public class PlayersController(IPlayerViewService playerViewService, ISettingsService settingsService) : Controller
+public class PlayersController(IPlayerViewService playerViewService, IPlayerCommunityService playerCommunityService, ISettingsService settingsService) : Controller
 {
     [RequireModule(HubModule.Ranking)]
     [HttpGet("/players")]
@@ -30,7 +30,7 @@ public class PlayersController(IPlayerViewService playerViewService, ISettingsSe
     }
 
     [HttpGet("/player/{communityId:long}/{compareWith:long?}")]
-    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy, Tags = [AppConsts.CommunityCacheTag])]
     public async Task<IActionResult> Details(long communityId, long? compareWith = null, int? season = null, int? year = null, string? period = null, CancellationToken cancellationToken = default)
     {
         if (!SteamIds.IsValid(communityId) || (compareWith != null && !SteamIds.IsValid(compareWith.Value)))
@@ -38,7 +38,7 @@ public class PlayersController(IPlayerViewService playerViewService, ISettingsSe
 
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
         if (!modules.IsEnabled(HubModule.Ranking))
-            return View(AppConsts.PlayerNotFoundView, await playerViewService.NotFoundAsync(null, communityId, cancellationToken));
+            return await PlayerNotFoundAsync(null, communityId, cancellationToken);
 
         var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
         if (selected == null)
@@ -46,8 +46,19 @@ public class PlayersController(IPlayerViewService playerViewService, ISettingsSe
 
         var model = await playerViewService.DetailsAsync(selected, communityId, compareWith, cancellationToken);
         if (model == null)
-            return View(AppConsts.PlayerNotFoundView, await playerViewService.NotFoundAsync(selected, communityId, cancellationToken));
+            return await PlayerNotFoundAsync(selected, communityId, cancellationToken);
+
+        model.Community = await playerCommunityService.BuildAsync(communityId, compareWith, cancellationToken);
 
         return View(model);
+    }
+
+    private async Task<IActionResult> PlayerNotFoundAsync(PlayerPeriodModel? period, long communityId, CancellationToken cancellationToken)
+    {
+        var model = await playerViewService.NotFoundAsync(period, communityId, cancellationToken);
+
+        model.Community = await playerCommunityService.BuildAsync(communityId, null, cancellationToken);
+
+        return View(AppConsts.PlayerNotFoundView, model);
     }
 }

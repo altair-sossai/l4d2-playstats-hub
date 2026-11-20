@@ -28,6 +28,7 @@ public class PlayerDetailsModel(
     public bool SkinShop { get; init; }
     public bool Administrator { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
+    public PlayerCommunityModel? Community { get; set; }
 
     public IReadOnlyList<MatchCardModel> LastMatches { get; } = matches;
 

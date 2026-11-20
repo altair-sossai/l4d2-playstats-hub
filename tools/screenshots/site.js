@@ -87,7 +87,7 @@ function shots(vars) {
     const tab = name => `$('#player-tabs a[href="#${name}"]').tab('show'); window.scrollTo(0, 0)`;
     const markPanelWithTable = index => `Array.from(document.querySelectorAll('.panel')).filter(panel => panel.querySelector('table') && !panel.parentElement.closest('.panel'))[${index}].id = 'shot-target'`;
     const hideFloating = `$('#connect-icon').remove()`;
-    const fillBackup = `$('#Enabled').prop('checked', true); $('#Destination_ContainerUrl').prop('checked', true); $('#ContainerUrl').val('https://example.blob.core.windows.net/hub-backups?sv=2025-01-05&sp=racwdl&sig=example'); $('#ConnectionString').attr('placeholder', 'DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...')`;
+    const fillBackup = `$('#Enabled').prop('checked', true); $('#Destination_ContainerUrl').prop('checked', true); $('#ContainerUrl').val('https://example.blob.core.windows.net/hub-backups?sv=2025-01-05&sp=racwdl&sig=example'); $('#ConnectionString').attr('placeholder', 'DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...'); $('.alert').each(function () { this.innerHTML = this.innerHTML.split(' ').map(word => word.endsWith('secrets.key.') ? '/etc/l4d2-playstats-hub/secrets.key.' : word).join(' '); })`;
     const firstLiveServer = `location.href = document.querySelector('a[href^="/servers/"]').getAttribute('href')`;
 
     return [
@@ -116,6 +116,7 @@ function shots(vars) {
         { name: 'player-campaigns', path: `/player/${player}`, before: [tab('campaigns')], full: true, maxHeight: 1100 },
         { name: 'player-skins', path: `/player/${player}`, before: [tab('skins')], full: true, maxHeight: 1000 },
         { name: 'player-relations', path: `/player/${player}`, before: [tab('relations')], full: true, maxHeight: 1200 },
+        { name: 'player-votes', path: `/player/${player}`, before: [tab('votes-received')], full: true, maxHeight: 1100 },
         { name: 'player-compare', path: `/player/${player}/${admin}`, full: true, maxHeight: 1080 },
         { name: 'community', path: '/community', full: true, maxHeight: 1000 },
         { name: 'community-vote', user: vars.voter, path: '/community/vote', full: true, maxHeight: 640 },

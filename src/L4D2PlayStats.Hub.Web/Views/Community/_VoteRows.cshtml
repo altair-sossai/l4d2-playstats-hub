@@ -1,0 +1,48 @@
+@model CommunityVoteRowsModel
+
+<div class="vf-list">
+    @foreach (var vote in Model.Votes)
+    {
+        var same = vote.Outcome == CommunityVoteOutcome.SameLevel;
+        var leftClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Left ? "vf-win" : "vf-lose";
+        var rightClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Right ? "vf-win" : "vf-lose";
+
+        <div class="vf-row">
+            <time class="vf-when" datetime="@vote.CreatedAtUtc.ToString("o")">@LiveDisplay.ShortDateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
+            @if (Model.ShowVoters)
+            {
+                <a class="vf-voter" href="@CommunityVoteUrls.Votes(vote.VoterId, Model.PlayerId)" title="@L["See the votes made by this player"]">
+                    <img src="/avatar/@vote.VoterId" alt="" onerror="imgOnError(this)">
+                    <span>@vote.VoterName</span>
+                </a>
+            }
+            else
+            {
+                <span class="vf-voter">
+                    <span class="glyphicon glyphicon-user"></span> <span>@L["A player voted"]</span>
+                </span>
+            }
+            <div class="vf-pair">
+                <div class="vf-pair-cells">
+                    <div class="vf-side">
+                        <a class="vf-player @leftClass" href="@CommunityVoteUrls.Votes(Model.VoterId, vote.LeftPlayerId)" title="@L["See the comparisons of this player"]">
+                            <img src="/avatar/@vote.LeftPlayerId" alt="" onerror="imgOnError(this)">
+                            <span class="vf-name">@vote.LeftName</span>
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </a>
+                    </div>
+                    <div class="vf-center">
+                        <span class="vf-mid@(same ? " vf-mid-same" : "")" title="@(same ? L["Same level"] : L["Better"])">@(same ? "=" : "VS")</span>
+                    </div>
+                    <div class="vf-side">
+                        <a class="vf-player vf-right @rightClass" href="@CommunityVoteUrls.Votes(Model.VoterId, vote.RightPlayerId)" title="@L["See the comparisons of this player"]">
+                            <img src="/avatar/@vote.RightPlayerId" alt="" onerror="imgOnError(this)">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            <span class="vf-name">@vote.RightName</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

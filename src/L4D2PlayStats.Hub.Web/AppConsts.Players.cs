@@ -17,4 +17,5 @@ public static partial class AppConsts
     public const int PlayerSearchDelayInMilliseconds = 300;
     public const string PlayerPickerModalItem = "PlayerPickerModal";
     public const string PlayerNotFoundView = "PlayerNotFound";
+    public const string PlayerVotesActiveViewData = "PlayerVotesActive";
 }

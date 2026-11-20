@@ -15,6 +15,7 @@ Cada jugador que jugó en tus servidores de juego tiene una página con sus resu
 - [Pestaña Campañas](#pestaña-campañas)
 - [Pestaña Skins](#pestaña-skins)
 - [Pestaña Relaciones](#pestaña-relaciones)
+- [Pestañas de votos de la comunidad](#pestañas-de-votos-de-la-comunidad)
 - [Comparar dos jugadores](#comparar-dos-jugadores)
 - [Cuentas relacionadas](#cuentas-relacionadas)
 - [Castigos](#castigos)
@@ -33,7 +34,9 @@ La lista tiene los mismos jugadores que el ranking del período, todos y no solo
 
 ## La página del jugador
 
-Haz clic en un jugador en cualquier parte del sitio para abrir su página: el ranking, las partidas, el servidor en vivo, el ranking de la comunidad y las páginas de administración llevan todos a ella, nunca directo a Steam. Tiene un selector de período, un botón **Comparar...** y hasta cuatro pestañas.
+Haz clic en un jugador en cualquier parte del sitio para abrir su página: el ranking, las partidas, el servidor en vivo, el ranking de la comunidad y las páginas de administración llevan todos a ella, nunca directo a Steam. Tiene un selector de período, un botón **Comparar...** y hasta seis pestañas.
+
+Cuando el módulo del ranking de la comunidad está activado, un cuadro debajo del avatar muestra la posición del jugador en el [ranking de la comunidad](community-ranking.es.md) y la puntuación, o **Todavía fuera del ranking de la comunidad** con el número de comparaciones. No cambia con el período, porque el ranking de la comunidad no se reinicia con la temporada. Cuando se comparan dos jugadores, cada uno tiene su cuadro.
 
 ![La página del jugador](../images/es/player.webp)
 
@@ -46,6 +49,7 @@ Un jugador que no tiene estadísticas en el período elegido, o que nunca jugó 
 - El mejor nombre que el sitio conoce: el último nombre visto en un servidor de juego, o el nombre del perfil de Steam.
 - El SteamID64 (Community ID), el Steam ID en las formas `STEAM_0` y `STEAM_1` y el Steam3 ID (`[U:1:n]`), cada uno con botón de copiar, y la dirección del perfil.
 - El último inicio de sesión y la cantidad de conexiones, y las [cuentas relacionadas](#cuentas-relacionadas), cuando el módulo del servidor en vivo está activado.
+- El cuadro del ranking de la comunidad y las [pestañas de votos de la comunidad](#pestañas-de-votos-de-la-comunidad), cuando el jugador ya participó en la votación.
 
 Una dirección que no es un SteamID64 válido, como `/player/0` o `/player/abc`, responde como no encontrada.
 
@@ -90,6 +94,17 @@ Dos tablas armadas a partir de las partidas de ranking del período:
 - **Jugando en contra**: para cada rival, las partidas ganadas y perdidas contra él, y los porcentajes.
 
 **No entiendo, explícamelo** abre una breve explicación de una fila. Se muestran los primeros 12 jugadores; **Ver más jugadores** muestra el resto.
+
+## Pestañas de votos de la comunidad
+
+![La pestaña de votos recibidos](../images/es/player-votes.webp)
+
+Aparecen cuando el módulo del ranking de la comunidad está activado, y solo para un jugador, no en una comparación:
+
+- **Votos recibidos**: los 20 votos más recientes en los que el jugador fue comparado, con las mismas filas de [Últimos votos](community-ranking.es.md), con el jugador elegido en verde.
+- **Votos hechos**: los 20 votos más recientes que hizo el jugador. Se oculta cuando un administrador oculta quién votó; entonces **Votos recibidos** muestra "Un jugador votó" en lugar de los nombres.
+
+**Ver todas las comparaciones de este jugador** y **Ver todos los votos hechos por este jugador** abren **Últimos votos** filtrado por el jugador.
 
 ## Comparar dos jugadores
 

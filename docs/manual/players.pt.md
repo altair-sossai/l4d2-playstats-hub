@@ -15,6 +15,7 @@ Todo jogador que jogou nos seus servidores de jogo tem uma página com os result
 - [Aba Campanhas](#aba-campanhas)
 - [Aba Skins](#aba-skins)
 - [Aba Relações](#aba-relações)
+- [Abas de votos da comunidade](#abas-de-votos-da-comunidade)
 - [Comparando dois jogadores](#comparando-dois-jogadores)
 - [Contas relacionadas](#contas-relacionadas)
 - [Punições](#punições)
@@ -33,7 +34,9 @@ A lista tem os mesmos jogadores do ranking do período, todos eles e não só os
 
 ## A página do jogador
 
-Clique em um jogador em qualquer lugar do site para abrir a página dele: o ranking, as partidas, o servidor ao vivo, o ranking da comunidade e as páginas da administração levam todos a ela, nunca direto para a Steam. Ela tem um seletor de período, um botão **Comparar...** e até quatro abas.
+Clique em um jogador em qualquer lugar do site para abrir a página dele: o ranking, as partidas, o servidor ao vivo, o ranking da comunidade e as páginas da administração levam todos a ela, nunca direto para a Steam. Ela tem um seletor de período, um botão **Comparar...** e até seis abas.
+
+Quando o módulo do ranking da comunidade está ligado, um quadro embaixo do avatar mostra a posição do jogador no [ranking da comunidade](community-ranking.pt.md) e a pontuação, ou **Ainda fora do ranking da comunidade** com o número de comparações. Ele não muda com o período, porque o ranking da comunidade não reinicia com a temporada. Quando dois jogadores são comparados, cada um tem o seu quadro.
 
 ![A página do jogador](../images/pt/player.webp)
 
@@ -46,6 +49,7 @@ Um jogador que não tem estatísticas no período escolhido, ou que nunca jogou 
 - O melhor nome que o site conhece: o último nome visto em um servidor de jogo, ou o nome do perfil Steam.
 - O SteamID64 (Community ID), o Steam ID nas formas `STEAM_0` e `STEAM_1` e o Steam3 ID (`[U:1:n]`), cada um com botão de copiar, e o endereço do perfil.
 - O último login e o número de conexões, e as [contas relacionadas](#contas-relacionadas), quando o módulo do servidor ao vivo está ligado.
+- O quadro do ranking da comunidade e as [abas de votos da comunidade](#abas-de-votos-da-comunidade), quando o jogador já participou da votação.
 
 Um endereço que não é um SteamID64 válido, como `/player/0` ou `/player/abc`, responde como não encontrado.
 
@@ -90,6 +94,17 @@ Duas tabelas montadas a partir das partidas ranqueadas do período:
 - **Jogando contra**: para cada adversário, as partidas ganhas e perdidas contra ele, e as taxas.
 
 **Não entendi, me explique melhor** abre uma explicação curta de uma linha. Os primeiros 12 jogadores aparecem; **Ver mais jogadores** mostra o resto.
+
+## Abas de votos da comunidade
+
+![A aba de votos recebidos](../images/pt/player-votes.webp)
+
+Aparecem quando o módulo do ranking da comunidade está ligado, e só para um jogador, não numa comparação:
+
+- **Votos recebidos**: os 20 votos mais recentes em que o jogador foi comparado, nas mesmas linhas de [Últimos votos](community-ranking.pt.md), com o jogador escolhido em verde.
+- **Votos feitos**: os 20 votos mais recentes que o jogador fez. Fica escondida quando um administrador esconde quem votou; aí **Votos recebidos** mostra "Um jogador votou" no lugar dos nomes.
+
+**Ver todas as comparações deste jogador** e **Ver todos os votos feitos por este jogador** abrem **Últimos votos** filtrado pelo jogador.
 
 ## Comparando dois jogadores
 

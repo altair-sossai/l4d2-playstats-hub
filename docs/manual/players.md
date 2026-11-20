@@ -15,6 +15,7 @@ Every player who played on your game servers has a page with their results, thei
 - [Campaigns tab](#campaigns-tab)
 - [Skins tab](#skins-tab)
 - [Relations tab](#relations-tab)
+- [Community votes tabs](#community-votes-tabs)
 - [Comparing two players](#comparing-two-players)
 - [Related accounts](#related-accounts)
 - [Punishments](#punishments)
@@ -33,7 +34,9 @@ The list has the same players as the ranking of the period, all of them and not 
 
 ## The player page
 
-Click a player anywhere on the site to open their page: the ranking, the matches, the live server, the community ranking and the administration pages all link to it, never straight to Steam. It has a period selector, a **Compare** button, and up to four tabs.
+Click a player anywhere on the site to open their page: the ranking, the matches, the live server, the community ranking and the administration pages all link to it, never straight to Steam. It has a period selector, a **Compare** button, and up to six tabs.
+
+When the community ranking module is on, a box under the avatar shows the position of the player in the [community ranking](community-ranking.md) and the rating, or **Not in the community ranking yet** with the number of comparisons. It does not change with the period, since the community ranking does not reset with the season. When two players are compared, each one has a box.
 
 ![The player page](../images/en/player.webp)
 
@@ -46,6 +49,7 @@ A player who has no statistics in the chosen period, or who never played a ranke
 - The best name the site knows: the last name seen on a game server, or the name of the Steam profile.
 - The SteamID64 (Community ID), the Steam ID in the `STEAM_0` and `STEAM_1` forms and the Steam3 ID (`[U:1:n]`), each with a copy button, and the profile URL.
 - The last login and the number of connections, and the [related accounts](#related-accounts), when the live server module is on.
+- The community ranking box and the [community votes tabs](#community-votes-tabs), when the player already took part in the voting.
 
 An address that is not a valid SteamID64, such as `/player/0` or `/player/abc`, answers as not found.
 
@@ -90,6 +94,17 @@ Two tables built from the ranked matches of the period:
 - **Playing against**: for each opponent, the matches won and lost against them, and the rates.
 
 **I don't get it, explain it to me** opens a short explanation of one row. The first 12 players are shown; **Show more players** shows the rest.
+
+## Community votes tabs
+
+![The votes received tab](../images/en/player-votes.webp)
+
+Shown when the community ranking module is on, and only for one player, not in a comparison:
+
+- **Votes received**: the latest 20 votes in which the player was compared, the same rows as [Latest votes](community-ranking.md), with the chosen player in green.
+- **Votes cast**: the latest 20 votes the player made. Hidden when an administrator hides who voted; then **Votes received** shows "A player voted" instead of the names.
+
+**See all the comparisons of this player** and **See all the votes made by this player** open **Latest votes** filtered by the player.
 
 ## Comparing two players
 

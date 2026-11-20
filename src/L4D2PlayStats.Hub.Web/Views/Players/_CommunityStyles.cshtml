@@ -1,0 +1,52 @@
+@model PlayerCommunityModel
+
+@if (Model.ShowsVotes)
+{
+    @await Html.PartialAsync("~/Views/Community/_VoteStyles.cshtml")
+}
+<style>
+    .player-community {
+        display: block;
+        margin-top: 6px;
+        padding: 5px 4px;
+        border: 1px solid rgba(92, 184, 92, .55);
+        border-radius: 6px;
+        background: rgba(92, 184, 92, .12);
+        color: inherit;
+        line-height: 1.25;
+    }
+
+        .player-community:hover,
+        .player-community:focus {
+            color: inherit;
+            text-decoration: none;
+            background: rgba(92, 184, 92, .22);
+        }
+
+        .player-community small {
+            display: block;
+            font-size: 11px;
+            opacity: .8;
+        }
+
+        .player-community strong {
+            display: block;
+            font-size: 18px;
+        }
+
+    .player-community-none {
+        border-color: rgba(255, 255, 255, .15);
+        background: rgba(255, 255, 255, .04);
+    }
+
+    .player-votes-lead {
+        margin: 10px 0;
+        font-style: italic;
+        opacity: .85;
+    }
+
+    .player-votes-more {
+        margin: 12px 0 20px;
+        text-align: center;
+    }
+</style>
