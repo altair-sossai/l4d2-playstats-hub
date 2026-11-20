@@ -17,6 +17,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Health;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
 using L4D2PlayStats.Hub.Web.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Infrastructure.Live;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Infrastructure.Middlewares;
 using L4D2PlayStats.Hub.Web.Infrastructure.Proxies;
@@ -74,6 +75,10 @@ builder.Services.AddHostedService<AvatarBackgroundService>();
 builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();
 builder.Services.AddHostedService<SkinSeasonRefundBackgroundService>();
 builder.Services.AddHostedService<SkinAuthorSyncBackgroundService>();
+builder.Services.AddHostedService<LivePushBackgroundService>();
+builder.Services.AddSingleton<LiveWatchers>();
+builder.Services.AddSingleton<LiveNotifier>();
+builder.Services.AddSignalR();
 
 builder.Services
     .AddAuthentication(options =>
@@ -132,6 +137,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<InGameBrowserMiddleware>();
+app.UseMiddleware<LiveHubHeadersMiddleware>();
 
 app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecute(AppConsts.ErrorStatusPath));
 app.UseMiddleware<ErrorLoggingMiddleware>();
@@ -143,6 +149,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UsePageCache();
 app.MapControllers();
+app.MapHub<LiveHub>(AppConsts.LiveHubUrl, options => options.LongPolling.PollTimeout = TimeSpan.FromSeconds(AppConsts.LiveHubLongPollingTimeoutInSeconds));
 
 if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConsts.DevelopmentSignInSetting))
     app.MapGet("/dev/sign-in/{communityId:long}", async (long communityId, string? returnUrl, HttpContext httpContext) =>

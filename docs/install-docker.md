@@ -201,6 +201,8 @@ services:
 
 `docker network inspect` shows the exact subnet if you prefer a narrower range. Do not trust a network that visitors reach directly, or any of them could pretend to come from somewhere else.
 
+The [live server page](manual/live-server.md) gets its updates through a WebSocket at `/hubs/live`, so let the proxy pass WebSockets (for nginx, the lines in [Switching from the old site](switch-from-old-site.md#part-3-the-switch)). Without them the page still works, through Server-Sent Events or long polling.
+
 ## Building the image yourself
 
 From a clone of the repository:

@@ -101,7 +101,7 @@ curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/ma
 
 The installer adds [Caddy](https://caddyserver.com/), which gets and renews the HTTPS certificate by itself. Your site is then at `https://stats.example.com`.
 
-Caddy runs on the same machine and talks to the site through `127.0.0.1`, so the site believes the visitor address and the `https` scheme it forwards without any setting. A proxy on another machine has to be listed in `Hub__TrustedProxies` (see [Changing the configuration](#changing-the-configuration)).
+Caddy runs on the same machine and talks to the site through `127.0.0.1`, so the site believes the visitor address and the `https` scheme it forwards without any setting. A proxy on another machine has to be listed in `Hub__TrustedProxies` (see [Changing the configuration](#changing-the-configuration)). Caddy also passes the WebSocket the [live server page](manual/live-server.md) uses for its updates, with no extra setting.
 
 You can do this on a machine where the application is already installed. Nothing is lost.
 

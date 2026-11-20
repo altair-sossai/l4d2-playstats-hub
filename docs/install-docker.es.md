@@ -201,6 +201,8 @@ services:
 
 `docker network inspect` muestra la subred exacta si prefieres un rango más estrecho. No confíes en una red a la que los visitantes llegan directamente, o cualquiera de ellos podría fingir que viene de otro lugar.
 
+La [página del servidor en vivo](manual/live-server.es.md) recibe sus actualizaciones por un WebSocket en `/hubs/live`, así que deja que el proxy pase WebSockets (en nginx, las líneas de [Cambiar desde el sitio antiguo](switch-from-old-site.es.md#parte-3-el-cambio)). Sin eso la página sigue funcionando, por Server-Sent Events o long polling.
+
 ## Construir la imagen tú mismo
 
 Desde un clon del repositorio:

@@ -33,6 +33,8 @@ public class TimedFeed(IClock clock, Func<TimeSpan> delay, TimeSpan expireIn, in
         {
             lock (_lock)
             {
+                Refresh();
+
                 return _sequence;
             }
         }

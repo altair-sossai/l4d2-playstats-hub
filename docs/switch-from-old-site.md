@@ -228,6 +228,23 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
 
+The [live server page](manual/live-server.md) gets its updates through a WebSocket at `/hubs/live`. nginx passes WebSockets only with these lines in the same `location`; the other pages work as before with them. Without them the page falls back to Server-Sent Events or long polling, which work but are heavier:
+
+```nginx
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection $connection_upgrade;
+```
+
+`$connection_upgrade` comes from this `map`, written once in the `http` block (in `/etc/nginx/nginx.conf`, or a file in `/etc/nginx/conf.d/`) unless it is already there. Then check and reload with `sudo nginx -t && sudo systemctl reload nginx`:
+
+```nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+```
+
 ## Automatic deploy
 
 On l4d2.com.br one release of this repository updates the site and the plugins of the game server:

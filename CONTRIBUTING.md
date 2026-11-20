@@ -93,7 +93,7 @@ A test fails when the model and the migrations of the database in use do not mat
 
 ## Web pages
 
-- Pages are server-rendered Razor views that keep the look of the site this project replaces: Bootstrap 3 with its dark and light themes, jQuery, Chart.js, diffDOM and lity, all in `wwwroot`. A few administration pages also load htmx from `wwwroot/lib`. There is no Node build step. A page that existed in the old site is a port of it: read [docs/site-parity](docs/site-parity/README.md) before changing one.
+- Pages are server-rendered Razor views that keep the look of the site this project replaces: Bootstrap 3 with its dark and light themes, jQuery, Chart.js, diffDOM and lity, all in `wwwroot`. A few administration pages also load htmx from `wwwroot/lib`, and the live server page loads the SignalR client from there. There is no Node build step. A page that existed in the old site is a port of it: read [docs/site-parity](docs/site-parity/README.md) before changing one.
 - Every text shown to a visitor goes through the localizer: `@L["Text in English"]`. The English text is the key. Translations are in `Resources/pt-BR.json` and `Resources/es-ES.json`. When one English word needs two translations, use a key with a context prefix, such as `Rarity.Common`, and give its English text in `Resources/en-US.json`.
 - A form that posts needs `asp-antiforgery="true"`, and its controller needs `[AutoValidateAntiforgeryToken]`. A checkbox bound to a boolean is followed by a hidden input with the same name and the value `false`.
 - Admin pages use `[Authorize(Policy = AppConsts.AdministratorPolicy)]` and live under `/admin`.

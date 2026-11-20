@@ -52,9 +52,9 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | `#game-info-chat` row, hidden while nobody is connected | `Web/Views/Server/Index.cshtml:845` | adapted | Same row. It has this id only when one server is enabled, because the layout shows and hides it by the server with most players; with several servers the page toggles it itself from the players partial. |
 | "connect <ip>" button, centred, hidden on phones (`hide-mobile`) | `Web/Views/Server/Index.cshtml:915` | adapted | Same button. It links straight to `steam://connect/<address>` of the server on screen (the old `/connect` only did that redirect) and is left out when the server has no address. |
 | Page styles (tables, progress bars, latency, feed, event colours, terminal) | `Web/Views/Server/Index.cshtml:21` | done |  |
-| Header refreshed every 2.6 s and patched with diffDOM | `Web/Views/Server/Index.cshtml:195` | done |  |
-| Players refreshed every 2.6 s and patched with diffDOM | `Web/Views/Server/Index.cshtml:211` | done |  |
-| Feed refreshed every 1.3 s, only one request at a time | `Web/Views/Server/Index.cshtml:244` | done |  |
+| Header refreshed every 2.6 s and patched with diffDOM | `Web/Views/Server/Index.cshtml:195` | adapted | Still the same requests and diffDOM. When the SignalR link at `/hubs/live` is open, the page asks only when the site says the data changed (never more often than this, never before the delay) and every 30 s as a safety; without it, as before. |
+| Players refreshed every 2.6 s and patched with diffDOM | `Web/Views/Server/Index.cshtml:211` | adapted | Still the same requests and diffDOM. When the SignalR link at `/hubs/live` is open, the page asks only when the site says the data changed (never more often than this, never before the delay) and every 30 s as a safety; without it, as before. |
+| Feed refreshed every 1.3 s, only one request at a time | `Web/Views/Server/Index.cshtml:244` | adapted | Still the same requests and diffDOM. When the SignalR link at `/hubs/live` is open, the page asks only when the site says the data changed (never more often than this, never before the delay) and every 30 s as a safety; without it, as before. |
 | Requests time out after 2 s and the next one is scheduled on completion | `Web/Views/Server/Index.cshtml:199` | done |  |
 
 ## Scoreboard header
@@ -279,7 +279,7 @@ These did not exist in the old site. They are listed so that nothing the hub had
 
 ## Notes
 
-- Totals: 154 `done`, 25 `adapted`, 1 `not ported`.
+- Totals: 151 `done`, 28 `adapted`, 1 `not ported`.
 - The old players tables show no patent icon: neither `Views/Server/_Players.cshtml` nor the page in production has one, so there is nothing to port there.
 - The statuses were checked against the rendered pages: side by side with `https://l4d2.com.br/server` (desktop, phone width and light theme), with a simulated match that sends every game event, and by driving the pages in a headless browser (feed filter, sending a message, the terminal, the server info modal, every modal of the chat bans page).
 - The game server plugin sends the server slots in its heartbeat (`maxPlayers`) from this change on. A game server still running the previous plugin shows twice the team size as the maximum.

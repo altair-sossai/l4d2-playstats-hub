@@ -47,7 +47,7 @@ From top to bottom:
 - **Chat messages**: the events and the chat of the match.
 - **A `connect` button** at the bottom, which copies the command to join the server.
 
-The page updates by itself.
+The page updates by itself. The site tells it as soon as something changes, and it asks again on its own when that link cannot be opened.
 
 ## Events and chat
 
@@ -82,6 +82,7 @@ On a narrow screen the teams stack one under the other.
 ## Good to know
 
 - The live page is about 15 seconds behind the game, on purpose, as on the site this project replaces. The delay is set in **Administration > Game servers > Live server page**, from 0 to 600 seconds, and applies at once; messages sent from the site are not delayed.
+- The site tells each open live page when the match changed, never before the delay and at most once per refresh interval of **Live server page**. This uses a WebSocket at `/hubs/live`; when it cannot be opened, as behind a proxy without WebSocket support, it falls back to Server-Sent Events or long polling, and if that fails too the page asks every refresh interval, as before. While the link is open the page still checks every 30 seconds.
 - The match in progress is kept in memory only. If the site restarts, the page is empty until the game server sends the next update.
 - Each game server has its own live state, chat and command queue.
 - The live server module can be turned off in [Modules](administration.md#modules). The **Server** menu item disappears, and so do the site chat and remote commands, which need it.
