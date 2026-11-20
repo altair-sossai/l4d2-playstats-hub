@@ -1,13 +1,14 @@
 using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
+using System.Collections.Immutable;
 
 namespace L4D2PlayStats.Hub.Tests.Community;
 
 [TestClass]
 public class CommunityPairSelectorTests
 {
-    private static readonly HashSet<CommunityPair> Nothing = [];
+    private static readonly ImmutableHashSet<CommunityPair> Nothing = [];
 
     [TestMethod]
     public void NothingIsOfferedWithFewerThanTwoCandidates()
@@ -70,7 +71,7 @@ public class CommunityPairSelectorTests
     [TestMethod]
     public void TheOpponentIsThePlayerWithTheClosestRating()
     {
-        var candidates = new[] { Candidate(1, 1500), Candidate(2, 1900, 5), Candidate(3, 1540, 5), Candidate(4, 1380, 5) };
+        var candidates = new[] { Candidate(1), Candidate(2, 1900, 5), Candidate(3, 1540, 5), Candidate(4, 1380, 5) };
 
         var pair = CommunityPairSelector.Select(candidates, Nothing, new SequenceRandomService())!;
 
@@ -81,7 +82,7 @@ public class CommunityPairSelectorTests
     [TestMethod]
     public void OpponentsFarAwayInRatingStayOutWhileCloserOnesExist()
     {
-        var candidates = new List<CommunityCandidate> { Candidate(1, 1500) };
+        var candidates = new List<CommunityCandidate> { Candidate(1) };
 
         for (var id = 2; id <= 7; id++)
             candidates.Add(Candidate(id, 1500 + id * 10, 5));

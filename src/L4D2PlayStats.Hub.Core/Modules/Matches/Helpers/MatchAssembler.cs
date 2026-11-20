@@ -53,7 +53,7 @@ public static class MatchAssembler
             if (teamA.Score == 0 && teamB.Score == 0)
                 continue;
 
-            var sequential = false;
+            bool sequential;
             string? campaignName = null;
 
             if (knownMap)

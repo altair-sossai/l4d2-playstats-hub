@@ -89,7 +89,7 @@ public class LivePagesTests
         await factory.CompleteSetupAsync();
 
         var first = await factory.CreateServerAsync("First");
-        var second = await factory.CreateServerAsync("Second");
+        await factory.CreateServerAsync("Second");
 
         await factory.RunAsync(services =>
         {

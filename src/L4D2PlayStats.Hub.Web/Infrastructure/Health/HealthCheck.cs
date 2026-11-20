@@ -13,8 +13,11 @@ public static class HealthCheck
     {
         var address = args.Length > 1 ? args[1] : LocalAddress(Environment.GetEnvironmentVariable(AppConsts.UrlsVariable), Environment.GetEnvironmentVariable(AppConsts.HttpPortsVariable));
 
-        using var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
-        using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(AppConsts.HealthTimeoutInSeconds) };
+        using var handler = new HttpClientHandler();
+        handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+        using var client = new HttpClient(handler);
+        client.Timeout = TimeSpan.FromSeconds(AppConsts.HealthTimeoutInSeconds);
 
         try
         {

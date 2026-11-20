@@ -236,24 +236,22 @@ public class ProductionParityTests
         return differences;
     }
 
-    private class ExpectedPlayer
-    {
-        public long CommunityId { get; set; }
-        public int Position { get; set; }
-        public string? MainName { get; set; }
-        public decimal Experience { get; set; }
-        public int Wins { get; set; }
-        public int Loss { get; set; }
-        public int Draws { get; set; }
-        public int RageQuit { get; set; }
-        public int MvpSiDamage { get; set; }
-        public int MvpCommon { get; set; }
-        public int SiDamage { get; set; }
-        public int Common { get; set; }
-        public int DmgTotal { get; set; }
-        public int Punishment { get; set; }
-        public decimal? PreviousExperience { get; set; }
-        public int MaxWinStreak { get; set; }
-        public int MaxLossStreak { get; set; }
-    }
+    private record ExpectedPlayer(
+        long CommunityId,
+        int Position,
+        string? MainName,
+        decimal Experience,
+        int Wins,
+        int Loss,
+        int Draws,
+        int RageQuit,
+        int MvpSiDamage,
+        int MvpCommon,
+        int SiDamage,
+        int Common,
+        int DmgTotal,
+        int Punishment,
+        decimal? PreviousExperience,
+        int MaxWinStreak,
+        int MaxLossStreak);
 }

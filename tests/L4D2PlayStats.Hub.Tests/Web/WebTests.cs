@@ -16,8 +16,6 @@ namespace L4D2PlayStats.Hub.Tests.Web;
 [TestClass]
 public class WebTests
 {
-    private static readonly DateTime Night = new(2026, 11, 14, 21, 0, 0);
-
     [TestMethod]
     public async Task BeforeSetupEveryPageLeadsToTheWizard()
     {

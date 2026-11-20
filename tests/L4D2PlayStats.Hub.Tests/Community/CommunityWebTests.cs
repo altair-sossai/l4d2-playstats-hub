@@ -528,7 +528,7 @@ public class CommunityWebTests
         await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
 
         using var voter = site.Factory.Client(site.Voter);
-        using var visitor = site.Factory.Client(null);
+        using var visitor = site.Factory.Client();
 
         var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
 
@@ -559,7 +559,7 @@ public class CommunityWebTests
         await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
 
         using var voter = site.Factory.Client(site.Voter);
-        using var visitor = site.Factory.Client(null);
+        using var visitor = site.Factory.Client();
 
         var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
 
@@ -588,7 +588,7 @@ public class CommunityWebTests
         await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, ShowVoterNames = false });
 
         using var voter = site.Factory.Client(site.Voter);
-        using var visitor = site.Factory.Client(null);
+        using var visitor = site.Factory.Client();
 
         var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
 
@@ -609,7 +609,7 @@ public class CommunityWebTests
         await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, ShowVoterNames = false });
 
         using var voter = site.Factory.Client(site.Voter);
-        using var visitor = site.Factory.Client(null);
+        using var visitor = site.Factory.Client();
 
         var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
 

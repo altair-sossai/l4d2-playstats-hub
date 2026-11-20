@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Matches;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
+using System.Collections.Immutable;
 
 namespace L4D2PlayStats.Hub.Tests.Core;
 
@@ -14,7 +15,7 @@ public class RankingCalculatorTests
     private const long Davi = 76561198000000004;
 
     private static readonly RankingSettings Settings = new();
-    private static readonly Dictionary<long, int> NoPunishments = [];
+    private static readonly ImmutableDictionary<long, int> NoPunishments = ImmutableDictionary<long, int>.Empty;
 
     [TestMethod]
     public void AWinAndALossGiveTheConfiguredPoints()

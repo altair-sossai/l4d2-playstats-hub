@@ -93,9 +93,9 @@ public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
 
     public void Update(PlayersCommand command)
     {
-        _survivors.Set([.. (command.Survivors ?? []).OfType<LiveSurvivor>().OrderBy(survivor => survivor.Character)]);
-        _infecteds.Set([.. (command.Infecteds ?? []).OfType<LiveInfected>().OrderBy(infected => infected.Damage)]);
-        _spectators.Set([.. (command.Spectators ?? []).OfType<LivePlayer>().OrderBy(spectator => spectator.Name, StringComparer.CurrentCulture)]);
+        _survivors.Set([.. (command.Survivors ?? []).Where(survivor => survivor != null).OrderBy(survivor => survivor.Character)]);
+        _infecteds.Set([.. (command.Infecteds ?? []).Where(infected => infected != null).OrderBy(infected => infected.Damage)]);
+        _spectators.Set([.. (command.Spectators ?? []).Where(spectator => spectator != null).OrderBy(spectator => spectator.Name, StringComparer.CurrentCulture)]);
     }
 
     public bool AddMessage(ChatMessageCommand command)
@@ -123,9 +123,9 @@ public class LiveServerState(IClock clock, Func<LiveServerSettings> settings)
         _feed.Add(gameEvent, true);
     }
 
-    public SiteChatResult AddSiteMessage(SiteChatUser user, string? text, bool skipCooldown, SiteChatSettings? settings = null)
+    public SiteChatResult AddSiteMessage(SiteChatUser user, string? text, bool skipCooldown, SiteChatSettings? chatSettings = null)
     {
-        var limits = settings ?? new SiteChatSettings();
+        var limits = chatSettings ?? new SiteChatSettings();
         var message = text?.Trim();
 
         if (string.IsNullOrEmpty(message))

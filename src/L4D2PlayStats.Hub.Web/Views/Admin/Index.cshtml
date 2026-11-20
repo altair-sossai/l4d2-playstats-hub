@@ -49,7 +49,7 @@
     <div class="alert alert-warning">
         <span class="glyphicon glyphicon-warning-sign"></span>
         @L["Some game configurations seen on your servers match no rule, so their matches do not count toward the ranking."]
-        <a class="alert-link" href="/admin/game-modes"><u>@L["Review the game modes"]</u></a>
+        <a class="alert-link" href="/admin/game-modes"><span class="text-underline">@L["Review the game modes"]</span></a>
     </div>
 }
 
@@ -60,7 +60,7 @@
     {
         <div class="admin-empty">
             @L["No game server registered yet."]
-            <a href="/admin/servers"><u>@L["Add one"]</u></a>
+            <a href="/admin/servers"><span class="text-underline">@L["Add one"]</span></a>
         </div>
     }
     @foreach (var server in Model.Servers)

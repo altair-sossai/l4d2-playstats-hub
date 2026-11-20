@@ -20,7 +20,7 @@ public static class BackupArchiveVerifier
         var databasePath = Path.Combine(workFolder, AppConsts.BackupDatabaseEntry);
         BackupManifest? manifest;
 
-        using (var zip = ZipFile.OpenRead(zipPath))
+        await using (var zip = await ZipFile.OpenReadAsync(zipPath, cancellationToken))
         {
             var manifestEntry = zip.GetEntry(AppConsts.BackupManifestEntry);
 
@@ -45,7 +45,7 @@ public static class BackupArchiveVerifier
             foreach (var entry in zip.Entries.Where(entry => entry != database && entry != manifestEntry))
                 await ReadThroughAsync(entry, cancellationToken);
 
-            database.ExtractToFile(databasePath);
+            await database.ExtractToFileAsync(databasePath, cancellationToken);
         }
 
         return await CheckDatabaseAsync(databasePath, tables, manifest.Counts, cancellationToken);
@@ -53,14 +53,14 @@ public static class BackupArchiveVerifier
 
     private static async Task<BackupManifest?> ReadManifestAsync(ZipArchiveEntry entry, CancellationToken cancellationToken)
     {
-        await using var stream = entry.Open();
+        await using var stream = await entry.OpenAsync(cancellationToken);
 
         return await JsonSerializer.DeserializeAsync<BackupManifest>(stream, cancellationToken: cancellationToken);
     }
 
     private static async Task ReadThroughAsync(ZipArchiveEntry entry, CancellationToken cancellationToken)
     {
-        await using var stream = entry.Open();
+        await using var stream = await entry.OpenAsync(cancellationToken);
 
         await stream.CopyToAsync(Stream.Null, cancellationToken);
     }

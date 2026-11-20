@@ -57,7 +57,7 @@ public static class SkinDisplay
 
     public static object[] Arguments(string values)
     {
-        return [.. values.Split(AppConsts.SkinTempDataSeparator).Cast<object>()];
+        return [.. values.Split(AppConsts.SkinTempDataSeparator)];
     }
 
     public static string CatalogMessage(SkinCatalogImportStatus status)

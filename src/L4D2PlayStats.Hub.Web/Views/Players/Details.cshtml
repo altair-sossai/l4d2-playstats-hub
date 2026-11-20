@@ -1,7 +1,6 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Antiforgery
 @model PlayerDetailsModel
-@inject ICurrentUser CurrentUser
 @inject ISettingsService Settings
 @inject IAntiforgery Antiforgery
 @inject ICampaignImageService CampaignImages
@@ -51,7 +50,7 @@
                 <div class="streak-name @(second ? "second" : "text-muted")">@player.MainName</div>
             }
             <div class="streak-tiles">
-                @if (player.Results == null || player.Results.Count == 0)
+                @if (player.Results.Count == 0)
                 {
                     <small class="text-muted">@Html.Raw("&mdash;")</small>
                 }
@@ -174,7 +173,7 @@
                     {
                         var title = skin.Title(CultureInfo.CurrentUICulture);
                         var image = playerSkins!.Image(skin);
-                        var equipped = playerSkins!.IsEquipped(skin);
+                        var equipped = playerSkins.IsEquipped(skin);
 
                         <a class="player-skin @(equipped ? "player-skin-equipped" : "")" href="@(AppConsts.SkinShopUrl + AppConsts.PlayerSkinAnchor + skin.Id)" title="@title">
                             @if (image != null)
@@ -783,7 +782,7 @@
                 }
             </td>
         </tr>
-        @if (firstPlayer.PreviousNames != null && firstPlayer.PreviousNames.Any())
+        @if (firstPlayer.PreviousNames.Any())
         {
             <tr class="previous-names">
                 <th>@L["Previous names"]:</th>
