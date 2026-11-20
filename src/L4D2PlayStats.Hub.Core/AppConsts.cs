@@ -17,6 +17,18 @@ public static class AppConsts
 
     public const int GameServerKeyBytes = 32;
     public const int GameServerPublicIdMaxLength = 40;
+    public const int GameServerPublicIdColumnMaxLength = 60;
+    public const int GameServerNameMaxLength = 100;
+    public const int GameServerAddressMaxLength = 200;
+    public const int GameServerKeyHashMaxLength = 100;
+    public const int SettingKeyMaxLength = 100;
+    public const int PlayerNameColumnMaxLength = 100;
+    public const int CampaignNameMaxLength = 100;
+    public const int MapNameMaxLength = 100;
+    public const int GameModeNameMaxLength = 100;
+    public const int ConfigurationNameMaxLength = 100;
+    public const int StatisticsFileNameMaxLength = 200;
+    public const int PunishmentReasonMaxLength = 300;
     public const char GameServerTokenSeparator = ':';
     public const int ServerOnlineWindowInSeconds = 90;
     public const int ServerLastSeenSaveIntervalInSeconds = 60;
