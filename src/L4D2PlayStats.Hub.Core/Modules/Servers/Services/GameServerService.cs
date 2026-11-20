@@ -8,7 +8,7 @@ using System.Text;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services;
 
-public class GameServerService(HubDbContext dbContext, IGameServerPresence presence, ILiveServerStore liveServerStore, IClock clock) : IGameServerService
+public class GameServerService(HubDbContext dbContext, HubState hubState, IGameServerPresence presence, ILiveServerStore liveServerStore, IClock clock) : IGameServerService
 {
     public Task<List<GameServer>> ListAsync(CancellationToken cancellationToken = default)
     {
@@ -40,6 +40,7 @@ public class GameServerService(HubDbContext dbContext, IGameServerPresence prese
 
         dbContext.GameServers.Add(server);
         await dbContext.SaveChangesAsync(cancellationToken);
+        hubState.DataChanged();
 
         return new GameServerCredentials(server, key);
     }
@@ -55,6 +56,7 @@ public class GameServerService(HubDbContext dbContext, IGameServerPresence prese
         server.Enabled = enabled;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        hubState.DataChanged();
 
         return server;
     }
@@ -99,6 +101,7 @@ public class GameServerService(HubDbContext dbContext, IGameServerPresence prese
         await dbContext.SaveChangesAsync(cancellationToken);
         presence.Forget(server);
         liveServerStore.Forget(server.Id);
+        hubState.DataChanged();
 
         return true;
     }

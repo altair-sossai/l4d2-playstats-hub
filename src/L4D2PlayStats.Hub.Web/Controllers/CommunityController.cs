@@ -17,6 +17,7 @@ using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 
@@ -40,6 +41,7 @@ public class CommunityController(
     }
 
     [HttpGet("/community")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy, Tags = [AppConsts.CommunityCacheTag])]
     public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);

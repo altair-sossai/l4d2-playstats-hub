@@ -11,6 +11,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Avatars;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Infrastructure.Steam;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
+using L4D2PlayStats.Hub.Web.Infrastructure.Caching;
 using L4D2PlayStats.Hub.Web.Infrastructure.Errors;
 using L4D2PlayStats.Hub.Web.Infrastructure.Health;
 using L4D2PlayStats.Hub.Web.Infrastructure.BackgroundServices;
@@ -52,6 +53,7 @@ builder.Services
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
+builder.Services.AddPageCache();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<Program>()
@@ -139,6 +141,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UsePageCache();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>(AppConsts.DevelopmentSignInSetting))

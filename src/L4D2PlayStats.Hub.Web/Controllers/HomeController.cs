@@ -6,6 +6,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 using L4D2PlayStats.Hub.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Controllers;
@@ -18,6 +19,7 @@ public class HomeController(
     IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet("/")]
+    [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(int? season = null, int? year = null, string? period = null, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);

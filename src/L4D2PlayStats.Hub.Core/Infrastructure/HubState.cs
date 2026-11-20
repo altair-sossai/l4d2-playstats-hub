@@ -7,6 +7,7 @@ public class HubState
 {
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _gates = new();
     private CancellationTokenSource _changes = new();
+    private CancellationTokenSource _communityChanges = new();
     private long _dataVersion;
 
     public SemaphoreSlim WriteLock { get; } = new(1, 1);
@@ -17,11 +18,20 @@ public class HubState
 
     public IChangeToken DataChangeToken => new CancellationChangeToken(Volatile.Read(ref _changes).Token);
 
+    public IChangeToken CommunityChangeToken => new CancellationChangeToken(Volatile.Read(ref _communityChanges).Token);
+
     public void DataChanged()
     {
         Interlocked.Increment(ref _dataVersion);
 
         var previous = Interlocked.Exchange(ref _changes, new CancellationTokenSource());
+
+        previous.Cancel();
+    }
+
+    public void CommunityChanged()
+    {
+        var previous = Interlocked.Exchange(ref _communityChanges, new CancellationTokenSource());
 
         previous.Cancel();
     }
