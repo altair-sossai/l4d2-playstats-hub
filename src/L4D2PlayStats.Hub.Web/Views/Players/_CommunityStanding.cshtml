@@ -5,7 +5,7 @@
     <a class="player-community" href="@AppConsts.CommunityUrl" title="@L["Position in the community ranking, built from the votes of the players"]">
         <small>@L["Community ranking"]</small>
         <strong>#@Model.Entry.Position</strong>
-        <small>@L["Rating"]: @Display.Number((decimal)Math.Round(Model.Entry.Rating))</small>
+        <small>@L["Rating"]: @CommunityDisplay.RatingWithMargin(Model.Entry.Rating, Model.Entry.Deviation)</small>
     </a>
 }
 else

@@ -196,6 +196,9 @@ namespace L4D2PlayStats.Hub.Migrations.SqlServer.Migrations
                     b.Property<int>("Comparisons")
                         .HasColumnType("int");
 
+                    b.Property<double>("Deviation")
+                        .HasColumnType("float");
+
                     b.Property<int>("Draws")
                         .HasColumnType("int");
 

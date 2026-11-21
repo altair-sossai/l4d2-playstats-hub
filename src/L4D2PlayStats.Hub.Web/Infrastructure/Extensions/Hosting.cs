@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
@@ -51,6 +52,16 @@ public static class Hosting
 
         if (encrypted > 0)
             app.Logger.LogInformation("Encrypted the secrets of {Count} settings that were stored in plain text by an older version.", encrypted);
+
+        var ratings = services.GetRequiredService<ICommunityRatingService>();
+
+        if (await ratings.NeedsRecalculationAsync())
+        {
+            var votes = await ratings.RecalculateAsync();
+
+            await dbContext.SaveChangesAsync();
+            app.Logger.LogInformation("Recalculated the community ratings from {Count} votes.", votes);
+        }
 
         var token = await services.GetRequiredService<ISetupService>().EnsureTokenAsync();
 

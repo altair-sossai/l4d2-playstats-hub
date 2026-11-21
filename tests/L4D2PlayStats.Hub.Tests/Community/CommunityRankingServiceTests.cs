@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Tests.Community.Support;
@@ -76,7 +77,7 @@ public class CommunityRankingServiceTests
 
         var pair = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Left))!;
 
-        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, KFactor = 10, InitialRating = 1000 });
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, InitialRating = 1000 });
 
         var untouched = (await community.RatingsAsync()).ToDictionary(r => r.CommunityId);
 
@@ -84,9 +85,9 @@ public class CommunityRankingServiceTests
 
         var rebuilt = (await community.RatingsAsync()).ToDictionary(r => r.CommunityId);
 
-        Assert.AreEqual(1516d, untouched[pair.Left].Rating);
-        Assert.AreEqual(1005d, rebuilt[pair.Left].Rating);
-        Assert.AreEqual(995d, rebuilt[pair.Right].Rating);
+        Assert.IsGreaterThan(1500d, untouched[pair.Left].Rating);
+        Assert.AreEqual(untouched[pair.Left].Rating - 1500, rebuilt[pair.Left].Rating - 1000, 0.001);
+        Assert.AreEqual(2000, rebuilt[pair.Left].Rating + rebuilt[pair.Right].Rating, 0.001);
     }
 
     [TestMethod]
@@ -272,7 +273,7 @@ public class CommunityRankingServiceTests
     }
 
     [TestMethod]
-    public async Task TheRankingGoesFromTheHighestRatingToTheLowestWithNames()
+    public async Task TheRankingGoesFromTheSurestRatingToTheLowestWithNames()
     {
         using var community = new CommunityTestHub();
 
@@ -284,7 +285,10 @@ public class CommunityRankingServiceTests
 
         Assert.HasCount(8, ranking);
         CollectionAssert.AreEqual(Enumerable.Range(1, 8).ToList(), ranking.Select(entry => entry.Position).ToList());
-        CollectionAssert.AreEqual(ranking.Select(entry => entry.Rating).OrderByDescending(rating => rating).ToList(), ranking.Select(entry => entry.Rating).ToList());
+        var conservative = ranking.Select(entry => new CommunityStrength(entry.Rating, entry.Deviation).Conservative).ToList();
+
+        CollectionAssert.AreEqual(conservative.OrderByDescending(score => score).ToList(), conservative);
+        Assert.IsTrue(ranking.All(entry => entry.Deviation > 0));
         Assert.IsTrue(ranking.All(entry => entry.Name == profiles[entry.CommunityId]));
         Assert.IsTrue(ranking.All(entry => entry.Comparisons == entry.Wins + entry.Draws + entry.Losses));
     }

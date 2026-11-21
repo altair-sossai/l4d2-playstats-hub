@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
@@ -263,8 +264,9 @@ public class CommunityVoteServiceTests
         var loser = ratings[chosenLeft.Right];
 
         Assert.HasCount(2, ratings);
-        Assert.AreEqual(1516, winner.Rating, Precision);
-        Assert.AreEqual(1484, loser.Rating, Precision);
+        Assert.IsGreaterThan(1500d, winner.Rating);
+        Assert.AreEqual(3000, winner.Rating + loser.Rating, Precision);
+        Assert.IsLessThan(AppConsts.CommunityPriorDeviation, winner.Deviation);
         Assert.AreEqual((1, 1, 0, 0), (winner.Comparisons, winner.Wins, winner.Losses, winner.Draws));
         Assert.AreEqual((1, 0, 1, 0), (loser.Comparisons, loser.Wins, loser.Losses, loser.Draws));
     }
@@ -274,13 +276,13 @@ public class CommunityVoteServiceTests
     {
         using var community = new CommunityTestHub();
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, KFactor = 20, InitialRating = 1000 });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, InitialRating = 1000 });
 
         var pair = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Right))!;
         var ratings = (await community.RatingsAsync()).ToDictionary(r => r.CommunityId);
 
-        Assert.AreEqual(990, ratings[pair.Left].Rating, Precision);
-        Assert.AreEqual(1010, ratings[pair.Right].Rating, Precision);
+        Assert.IsLessThan(1000d, ratings[pair.Left].Rating);
+        Assert.AreEqual(2000, ratings[pair.Left].Rating + ratings[pair.Right].Rating, Precision);
         Assert.AreEqual(1, ratings[pair.Left].Losses);
         Assert.AreEqual(1, ratings[pair.Right].Wins);
     }
@@ -310,8 +312,9 @@ public class CommunityVoteServiceTests
         var weaker = ratings[first.Right];
 
         Assert.AreEqual(CommunityVoteResult.Accepted, result);
-        Assert.AreEqual(1514.53, stronger.Rating, Precision);
-        Assert.AreEqual(1485.47, weaker.Rating, Precision);
+        Assert.IsGreaterThan(1500d, stronger.Rating);
+        Assert.IsLessThan(1500d, weaker.Rating);
+        Assert.AreEqual(3000, stronger.Rating + weaker.Rating, Precision);
         Assert.AreEqual((2, 1, 0, 1), (stronger.Comparisons, stronger.Wins, stronger.Losses, stronger.Draws));
         Assert.AreEqual((2, 0, 1, 1), (weaker.Comparisons, weaker.Wins, weaker.Losses, weaker.Draws));
     }

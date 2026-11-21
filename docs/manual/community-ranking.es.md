@@ -65,22 +65,23 @@ Cuando no puedes votar, la página dice por qué: tienes que iniciar sesión, ne
 
 ## Cómo se elige la pareja
 
-El sitio elige la pareja; un votante no puede elegir a quién juzgar, y una respuesta solo se acepta para la pareja que ofreció el sitio.
+El sitio elige la pareja; quien vota no elige a quién juzgar, y una respuesta solo se acepta para la pareja que el sitio ofreció.
 
-1. Prefiere jugadores con los que o contra los que jugaste, porque son los que mejor conoces. Solo cuando no queda ninguna pareja así ofrece otros jugadores.
-2. Entre ellos, parte de uno de los jugadores con menos comparaciones, para que los jugadores nuevos reciban una puntuación.
-3. Empareja a ese jugador con alguien de puntuación cercana.
-4. Cuál aparece a la izquierda es aleatorio.
+1. Prefiere jugadores con los que o contra los que jugaste, porque los conoces mejor. Solo cuando no queda ninguna pareja así ofrece otros jugadores.
+2. Entre ellos, empieza por uno de los jugadores cuya puntuación es menos segura (en general los que tienen menos comparaciones), para que los jugadores nuevos sean evaluados.
+3. Junta a ese jugador con el rival cuya respuesta más enseña: alguien de puntuación cercana, de preferencia también incierta. Así los mejores jugadores se comparan entre sí, y no con jugadores mucho más débiles.
+4. Cuál aparece a la izquierda se sortea.
 
 ## Cómo se calcula la puntuación
 
-La puntuación usa el sistema Elo, la misma idea que en el ajedrez.
+La puntuación usa el modelo de Bradley–Terry, el modelo estadístico hecho para comparaciones en parejas.
 
-- Todos los jugadores empiezan con la puntuación inicial, 1500 de forma predeterminada.
-- Antes de una comparación, el sitio calcula la probabilidad de que cada jugador sea juzgado mejor, a partir de la diferencia entre sus puntuaciones. Una diferencia de 400 puntos significa más o menos 10 a 1.
-- El ganador gana y el perdedor pierde la misma cantidad de puntos: el factor K (32 de forma predeterminada) multiplicado por la diferencia entre el resultado (1 por una victoria, ½ por un empate, 0 por una derrota) y la probabilidad esperada.
-- Ganarle a un jugador con una puntuación mucho más alta da muchos puntos; ganarle a uno mucho más débil da pocos. Un empate entre jugadores de puntuaciones distintas sube al más débil.
-- Las respuestas "No lo conozco" no cambian nada.
+- Con cada respuesta que evalúa, el sitio calcula de nuevo todas las puntuaciones con todos los votos juntos. El orden de los votos no importa, y un voto vale lo mismo siendo el primero o el último.
+- Ser elegido frente a un jugador de puntuación alta vale más que frente a uno de puntuación baja, porque el modelo pesa cada respuesta según quién es el otro jugador. "Están al mismo nivel" vale media victoria para cada uno.
+- Una diferencia de 400 puntos significa una probabilidad de unos 10 a 1 de ser juzgado mejor. La escala está centrada en la puntuación inicial, 1500 de forma predeterminada.
+- Cada puntuación tiene un margen de incertidumbre (±), mostrado a su lado. Empieza grande y se reduce a medida que el jugador es comparado con más jugadores. Un jugador con muy pocos votos se queda cerca del centro de la escala hasta que los votos digan lo contrario.
+- La posición en el ranking usa la puntuación menos dos veces el margen. Un jugador con dos votos de suerte no pasa por delante de un jugador que ganó muchas comparaciones.
+- Las respuestas "no conozco" no cambian nada.
 
 La puntuación es permanente. No vuelve a empezar con la temporada.
 
@@ -101,10 +102,9 @@ Cada campo tiene un **?** junto a su nombre: al pasar el ratón muestra una expl
 | Mínimo de comparaciones para aparecer en la lista | Comparaciones que un jugador necesita para aparecer en el ranking de la comunidad. | 5 |
 | Mostrar quién votó en los últimos votos | Muestra el nombre y el avatar de cada votante en la página Últimos votos. Desactivado, cada voto muestra solo "Un jugador votó". | Activado |
 | Máximo de jugadores en el ranking | El ranking de la comunidad muestra como máximo esta cantidad de jugadores, de la puntuación más alta hacia abajo. 0 muestra a todos. | 100 |
-| Factor K de Elo | Cuánto mueve las puntuaciones un voto, de 1 a 200. | 32 |
-| Puntuación inicial | La puntuación de un jugador que nunca fue comparado. | 1500 |
+| Puntuación inicial | El centro de la escala: la puntuación de un jugador que nunca fue comparado. | 1500 |
 
-El factor K y la puntuación inicial se aplican a los votos nuevos. **Reconstruir las puntuaciones** vuelve a aplicar en orden todos los votos guardados con los ajustes actuales, para que se apliquen a todos los votos.
+Las puntuaciones se calculan de nuevo con todos los votos en cada voto nuevo. **Reconstruir las puntuaciones** lo hace en el momento, por ejemplo después de cambiar la puntuación inicial.
 
 **Reiniciar el ranking de la comunidad**, en un panel rojo, borra todos los votos y todas las puntuaciones, y el ranking de la comunidad vuelve a empezar desde cero; los ajustes se conservan. Una ventana muestra cuántos votos y jugadores se borrarán y pide confirmación, ya que no se puede deshacer.
 

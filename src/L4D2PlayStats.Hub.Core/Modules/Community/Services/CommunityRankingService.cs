@@ -14,7 +14,8 @@ public class CommunityRankingService(
     HubDbContext dbContext,
     HubState hubState,
     ISettingsService settingsService,
-    ICommunityPlayerService playerService) : ICommunityRankingService
+    ICommunityPlayerService playerService,
+    ICommunityRatingService ratingService) : ICommunityRankingService
 {
     public async Task<IReadOnlyList<CommunityRankingEntry>> ListAsync(CancellationToken cancellationToken = default)
     {
@@ -24,17 +25,18 @@ public class CommunityRankingService(
         var rated = await dbContext.Set<CommunityRating>()
             .AsNoTracking()
             .Where(r => r.Comparisons >= settings.MinimumComparisonsToBeListed)
-            .OrderByDescending(r => r.Rating)
-            .ThenByDescending(r => r.Comparisons)
-            .ThenBy(r => r.CommunityId)
             .ToListAsync(cancellationToken);
 
-        var listed = rated.Where(r => eligible.Contains(r.CommunityId));
+        var listed = rated
+            .Where(r => eligible.Contains(r.CommunityId))
+            .OrderByDescending(r => new CommunityStrength(r.Rating, r.Deviation).Conservative)
+            .ThenByDescending(r => r.Comparisons)
+            .ThenBy(r => r.CommunityId);
         var ratings = (settings.MaximumPlayersListed > 0 ? listed.Take(settings.MaximumPlayersListed) : listed).ToList();
 
         var names = await playerService.NamesAsync([.. ratings.Select(r => r.CommunityId)], cancellationToken);
 
-        return [.. ratings.Select((r, index) => new CommunityRankingEntry(index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Comparisons, r.Wins, r.Draws, r.Losses))];
+        return [.. ratings.Select((r, index) => new CommunityRankingEntry(index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Deviation, r.Comparisons, r.Wins, r.Draws, r.Losses))];
     }
 
     public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? voterId, long? playerId, int skip, int take, CancellationToken cancellationToken = default)
@@ -122,7 +124,7 @@ public class CommunityRankingService(
 
         try
         {
-            votes = await ReplayAsync(null, cancellationToken);
+            votes = await ratingService.RecalculateAsync(null, cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -173,7 +175,7 @@ public class CommunityRankingService(
             dbContext.RemoveRange(votes);
             dbContext.RemoveRange(offers);
 
-            await ReplayAsync(voterId, cancellationToken);
+            await ratingService.RecalculateAsync(voterId, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
 
             removed = votes.Count;
@@ -188,45 +190,10 @@ public class CommunityRankingService(
         return removed;
     }
 
-    private async Task<int> ReplayAsync(long? withoutVoterId, CancellationToken cancellationToken)
-    {
-        var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
-        var ratings = await dbContext.Set<CommunityRating>().ToListAsync(cancellationToken);
-
-        foreach (var rating in ratings)
-            Reset(rating, settings);
-
-        var votes = await dbContext.Set<CommunityVote>()
-            .AsNoTracking()
-            .Where(v => withoutVoterId == null || v.VoterId != withoutVoterId)
-            .OrderBy(v => v.Id)
-            .Select(v => new { v.LeftPlayerId, v.RightPlayerId, v.Outcome })
-            .ToListAsync(cancellationToken);
-
-        var ledger = new CommunityRatingLedger(settings, ratings);
-
-        foreach (var vote in votes)
-            ledger.Apply(vote.LeftPlayerId, vote.RightPlayerId, vote.Outcome);
-
-        dbContext.AddRange(ledger.Created);
-        dbContext.RemoveRange(ratings.Where(rating => rating.Comparisons == 0));
-
-        return votes.Count;
-    }
-
     private IQueryable<CommunityVote> JudgingVotes()
     {
         return dbContext.Set<CommunityVote>()
             .AsNoTracking()
             .Where(v => v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel);
-    }
-
-    private static void Reset(CommunityRating rating, CommunityRankingSettings settings)
-    {
-        rating.Rating = settings.InitialRating;
-        rating.Comparisons = 0;
-        rating.Wins = 0;
-        rating.Losses = 0;
-        rating.Draws = 0;
     }
 }

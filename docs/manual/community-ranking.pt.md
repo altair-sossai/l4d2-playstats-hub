@@ -65,22 +65,23 @@ Quando você não pode votar, a página diz o motivo: você precisa fazer login,
 
 ## Como a dupla é escolhida
 
-Quem escolhe a dupla é o site; quem vota não escolhe quem vai avaliar, e uma resposta só é aceita para a dupla que o site ofereceu.
+O site escolhe a dupla; quem vota não escolhe quem vai julgar, e uma resposta só é aceita para a dupla que o site ofereceu.
 
-1. Ele prefere jogadores com quem ou contra quem você jogou, porque são os que você conhece melhor. Só quando não sobra nenhuma dupla assim ele oferece outros jogadores.
-2. Entre eles, começa por um dos jogadores com menos comparações, para que os jogadores novos recebam uma pontuação.
-3. Ele forma a dupla desse jogador com alguém de pontuação próxima.
-4. Qual deles aparece à esquerda é aleatório.
+1. Ele prefere jogadores com quem ou contra quem você jogou, porque você os conhece melhor. Só quando não sobra nenhuma dupla assim ele oferece outros jogadores.
+2. Entre esses, ele começa por um dos jogadores cuja pontuação é menos certa (em geral os com menos comparações), para que os jogadores novos sejam avaliados.
+3. Ele junta esse jogador com o adversário cuja resposta mais ensina: alguém de pontuação próxima, de preferência também incerta. Assim os melhores jogadores são comparados entre si, e não com jogadores bem mais fracos.
+4. Qual aparece à esquerda é sorteado.
 
 ## Como a pontuação é calculada
 
-A pontuação usa o sistema Elo, a mesma ideia do xadrez.
+A pontuação usa o modelo de Bradley–Terry, o modelo estatístico feito para comparações em pares.
 
-- Todo jogador começa com a pontuação inicial, 1500 por padrão.
-- Antes de uma comparação, o site calcula a chance de cada jogador ser avaliado como melhor, a partir da diferença entre as pontuações deles. Uma diferença de 400 pontos significa cerca de 10 para 1.
-- O vencedor ganha e o perdedor perde o mesmo número de pontos: o fator K (32 por padrão) vezes a diferença entre o resultado (1 para vitória, ½ para empate, 0 para derrota) e a chance esperada.
-- Vencer um jogador com pontuação muito mais alta dá muitos pontos; vencer um muito mais fraco dá poucos. Um empate entre jogadores de pontuações diferentes faz o mais fraco subir.
-- Respostas "Não conheço" não mudam nada.
+- A cada resposta que avalia, o site calcula de novo todas as pontuações com todos os votos juntos. A ordem dos votos não importa, e um voto vale o mesmo sendo o primeiro ou o último.
+- Ser escolhido contra um jogador de pontuação alta vale mais do que contra um de pontuação baixa, porque o modelo pesa cada resposta por quem é o outro jogador. "Estão no mesmo nível" vale meia vitória para cada um.
+- Uma diferença de 400 pontos significa uma chance de cerca de 10 para 1 de ser julgado melhor. A escala é centrada na pontuação inicial, 1500 por padrão.
+- Cada pontuação tem uma margem de incerteza (±), mostrada ao lado dela. Ela começa grande e diminui conforme o jogador é comparado com mais jogadores. Um jogador com pouquíssimos votos fica perto do meio da escala até os votos dizerem o contrário.
+- A posição no ranking usa a pontuação menos duas vezes a margem. Um jogador com dois votos de sorte não passa à frente de um jogador que ganhou muitas comparações.
+- Respostas "não conheço" não mudam nada.
 
 A pontuação é permanente. Ela não recomeça com a temporada.
 
@@ -101,10 +102,9 @@ Cada campo tem um **?** ao lado do nome: passar o mouse mostra uma explicação 
 | Mínimo de comparações para aparecer na lista | Comparações de que um jogador precisa para aparecer no ranking da comunidade. | 5 |
 | Mostrar quem votou nos últimos votos | Mostra o nome e o avatar de cada votante na página Últimos votos. Desligado, cada voto mostra só "Um jogador votou". | Ligado |
 | Máximo de jogadores no ranking | O ranking da comunidade mostra no máximo esse número de jogadores, da maior pontuação para baixo. 0 mostra todos. | 100 |
-| Fator K do Elo | Quanto um voto mexe nas pontuações, de 1 a 200. | 32 |
-| Pontuação inicial | A pontuação de um jogador que nunca foi comparado. | 1500 |
+| Pontuação inicial | O meio da escala: a pontuação de um jogador que nunca foi comparado. | 1500 |
 
-O fator K e a pontuação inicial valem para os novos votos. **Reconstruir as pontuações** reaplica em ordem todos os votos armazenados com as configurações atuais, para que elas valham para todos os votos.
+As pontuações são calculadas de novo com todos os votos a cada voto novo. **Reconstruir as pontuações** faz isso na hora, por exemplo depois de mudar a pontuação inicial.
 
 **Reiniciar o ranking da comunidade**, num painel vermelho, apaga todos os votos e todas as pontuações, e o ranking da comunidade recomeça do zero; as configurações são mantidas. Uma janela mostra quantos votos e jogadores serão apagados e pede confirmação, já que não dá para desfazer.
 

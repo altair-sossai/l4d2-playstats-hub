@@ -11,6 +11,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Community.Support;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Web.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -387,8 +388,11 @@ public class CommunityWebTests
         Assert.Contains($"href=\"/player/{pair.Left}\"", ranking);
         Assert.Contains($"href=\"/player/{pair.Right}\"", ranking);
         Assert.Contains($"src=\"/avatar/{pair.Left}\"", ranking);
-        Assert.Contains("1,516", ranking);
-        Assert.Contains("1,484", ranking);
+        var ratings = (await site.RatingsAsync()).ToDictionary(rating => rating.CommunityId);
+
+        Assert.Contains(CommunityDisplay.Rating(ratings[pair.Left].Rating), ranking);
+        Assert.Contains(CommunityDisplay.Rating(ratings[pair.Right].Rating), ranking);
+        Assert.Contains(HtmlEncoder.Default.Encode(CommunityDisplay.Margin(ratings[pair.Left].Deviation)), ranking);
         Assert.IsLessThan(ranking.IndexOf($"/player/{pair.Right}", StringComparison.Ordinal), ranking.IndexOf($"/player/{pair.Left}", StringComparison.Ordinal));
         Assert.Contains("href=\"/community/vote\"", ranking);
     }
@@ -449,7 +453,6 @@ public class CommunityWebTests
             ["CandidatePlayedWithinDays"] = "90",
             ["MaximumPlayersListed"] = "-1",
             ["MinimumComparisonsToBeListed"] = "-3",
-            ["KFactor"] = "999",
             ["InitialRating"] = "1200"
         });
 
@@ -465,7 +468,6 @@ public class CommunityWebTests
         Assert.AreEqual(0, settings.MaximumPlayersListed);
         Assert.Contains("name=\"CandidatePlayedWithinDays\" type=\"number\" min=\"0\" value=\"90\"", page);
         Assert.AreEqual(0, settings.MinimumComparisonsToBeListed);
-        Assert.AreEqual(200, settings.KFactor);
         Assert.AreEqual(1200, settings.InitialRating);
     }
 
@@ -480,7 +482,6 @@ public class CommunityWebTests
         Assert.AreEqual(0, settings.CandidatePlayedWithinDays);
         Assert.AreEqual(100, settings.MaximumPlayersListed);
         Assert.AreEqual(5, settings.MinimumComparisonsToBeListed);
-        Assert.AreEqual(32, settings.KFactor);
         Assert.AreEqual(1500, settings.InitialRating);
     }
 

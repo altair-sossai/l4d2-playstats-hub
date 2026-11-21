@@ -16,6 +16,7 @@ public static class CommunityPairSelector
     {
         var anchors = pool
             .OrderByDescending(candidate => candidate.Familiar)
+            .ThenByDescending(candidate => candidate.Deviation)
             .ThenBy(candidate => candidate.Comparisons)
             .ThenBy(candidate => candidate.CommunityId)
             .Where(candidate => Opponents(candidate, pool, judged).Any())
@@ -28,8 +29,7 @@ public static class CommunityPairSelector
         var anchor = anchors[random.Next(anchors.Count)];
 
         var opponents = Opponents(anchor, pool, judged)
-            .OrderByDescending(candidate => candidate.Familiar)
-            .ThenBy(candidate => Math.Abs(candidate.Rating - anchor.Rating))
+            .OrderByDescending(candidate => Information(anchor, candidate))
             .ThenBy(candidate => candidate.Comparisons)
             .ThenBy(candidate => candidate.CommunityId)
             .Take(AppConsts.CommunityOpponentPoolSize)
@@ -40,6 +40,13 @@ public static class CommunityPairSelector
         return random.Next(AppConsts.CommunityPairSides) == 0
             ? new CommunityPair(anchor.CommunityId, opponent.CommunityId)
             : new CommunityPair(opponent.CommunityId, anchor.CommunityId);
+    }
+
+    public static double Information(CommunityCandidate anchor, CommunityCandidate opponent)
+    {
+        var expected = CommunityRatingFit.Expected(anchor.Rating, opponent.Rating);
+
+        return expected * (1 - expected) * (anchor.Deviation * anchor.Deviation + opponent.Deviation * opponent.Deviation);
     }
 
     private static IEnumerable<CommunityCandidate> Opponents(CommunityCandidate anchor, IReadOnlyList<CommunityCandidate> pool, IReadOnlySet<CommunityPair> judged)

@@ -10,7 +10,7 @@ public class FakeCommunityRankingService(int count) : ICommunityRankingService
     {
         IReadOnlyList<CommunityRankingEntry> entries =
         [
-            .. Enumerable.Range(0, count).Select(index => new CommunityRankingEntry(index + 1, PagingSamples.CommunityId(index), PagingSamples.Name(index), 2000 - index, 10, 5, 2, 3))
+            .. Enumerable.Range(0, count).Select(index => new CommunityRankingEntry(index + 1, PagingSamples.CommunityId(index), PagingSamples.Name(index), 2000 - index, 40, 10, 5, 2, 3))
         ];
 
         return Task.FromResult(entries);

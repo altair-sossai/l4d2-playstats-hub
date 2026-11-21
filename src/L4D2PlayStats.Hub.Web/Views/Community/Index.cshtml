@@ -120,7 +120,7 @@ else
         {
             var player = row.Entry;
 
-            <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)" data-player="@player.CommunityId" data-name="@player.Name" data-position="@player.Position" data-rating="@Display.Number((decimal)Math.Round(player.Rating))" data-comparisons="@player.Comparisons" data-wins="@player.Wins" data-draws="@player.Draws" data-losses="@player.Losses" data-patent="@row.Patent?.FullName" data-profile="@PlayerUrls.Details(player.CommunityId)">
+            <tr class="hover @(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)" data-player="@player.CommunityId" data-name="@player.Name" data-position="@player.Position" data-rating="@CommunityDisplay.RatingWithMargin(player.Rating, player.Deviation)" data-comparisons="@player.Comparisons" data-wins="@player.Wins" data-draws="@player.Draws" data-losses="@player.Losses" data-patent="@row.Patent?.FullName" data-profile="@PlayerUrls.Details(player.CommunityId)">
                 <td class="text-center vertical-align-middle">
                     @switch (player.Position)
                     {
@@ -156,8 +156,8 @@ else
                     </a>
                 </td>
                 <td class="text-center vertical-align-middle">
-                    <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating"]">
-                        @Display.Number((decimal)Math.Round(player.Rating))
+                    <p class="bold" data-toggle="tooltip" data-placement="top" title="@L["Rating, with its margin of uncertainty"]">
+                        @CommunityDisplay.Rating(player.Rating) <small class="text-muted">@CommunityDisplay.Margin(player.Deviation)</small>
                     </p>
                 </td>
                 <td class="text-center vertical-align-middle hide-mobile">

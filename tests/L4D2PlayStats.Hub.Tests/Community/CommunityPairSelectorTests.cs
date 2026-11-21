@@ -80,6 +80,25 @@ public class CommunityPairSelectorTests
     }
 
     [TestMethod]
+    public void ATopPlayerIsComparedWithAnotherTopPlayerRatherThanAWeakOne()
+    {
+        var candidates = new[] { Candidate(1, 1900, 2), Candidate(2, 1880, 20), Candidate(3, 1100, 20) };
+
+        var pair = CommunityPairSelector.Select([candidates[0], candidates[1], candidates[2]], Nothing, new SequenceRandomService())!;
+
+        Assert.AreEqual(new CommunityPair(1, 2), pair);
+        Assert.IsGreaterThan(CommunityPairSelector.Information(candidates[0], candidates[2]), CommunityPairSelector.Information(candidates[0], candidates[1]));
+    }
+
+    [TestMethod]
+    public void AnUncertainOpponentTeachesMoreThanACertainOneAtTheSameDistance()
+    {
+        var anchor = Candidate(1, 1500, 3);
+
+        Assert.IsGreaterThan(CommunityPairSelector.Information(anchor, Candidate(3, 1550, 40)), CommunityPairSelector.Information(anchor, Candidate(2, 1550, 2)));
+    }
+
+    [TestMethod]
     public void OpponentsFarAwayInRatingStayOutWhileCloserOnesExist()
     {
         var candidates = new List<CommunityCandidate> { Candidate(1) };
@@ -152,6 +171,11 @@ public class CommunityPairSelectorTests
 
     private static CommunityCandidate Candidate(long communityId, double rating = 1500, int comparisons = 0, bool familiar = false)
     {
-        return new CommunityCandidate(communityId, rating, comparisons, familiar);
+        return new CommunityCandidate(communityId, rating, Deviation(comparisons), comparisons, familiar);
+    }
+
+    private static double Deviation(int comparisons)
+    {
+        return 350 / Math.Sqrt(1 + comparisons);
     }
 }

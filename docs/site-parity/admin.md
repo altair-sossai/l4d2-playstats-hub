@@ -272,7 +272,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Panel "Voting": "Votes per day" (with its minimum) | `Views/CommunityAdmin/Index.cshtml:34` | `done` |  |
 | Panel "Voting": "Minimum matches to be compared" and the help text | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
 | Panel "Rating": "Minimum comparisons to be listed" | `Views/CommunityAdmin/Index.cshtml:51` | `done` |  |
-| Panel "Rating": "Elo K factor" (with its limits) | `Views/CommunityAdmin/Index.cshtml:55` | `done` |  |
+| Panel "Rating": "Elo K factor" (with its limits) | — | `adapted` | Removed on 21 November 2026: the rating became a Bradley–Terry fit of all the votes, which has no K factor. |
 | Panel "Rating": "Initial rating" and the help text | `Views/CommunityAdmin/Index.cshtml:59` | `done` |  |
 | Panel "Maintenance": explanation and button "Rebuild the ratings" (asks "Rebuild every rating now?") | `Views/CommunityAdmin/Index.cshtml:73` | `done` |  |
 | Panel "Voters": explanation and the form to remove the votes of a SteamID64 (asks "Remove all votes of this voter?") | `Views/CommunityAdmin/Index.cshtml:85` | `done` |  |

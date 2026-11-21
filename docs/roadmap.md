@@ -129,7 +129,7 @@ The statistics file carries the display name of the configuration, such as `Zone
 
 - The voter sees two players with their avatars and answers which one is better: left, right, same level, or "I don't know" one or both of them.
 - Same level counts as a draw. "I don't know" changes nothing and hides that player from that voter afterwards.
-- The rating is Elo, and it does not reset with the season.
+- The rating is a Bradley–Terry fit of all the votes, with a margin of uncertainty, and it does not reset with the season.
 - Voting needs a minimum number of matches played, counted over all seasons: 10 by default.
 - Votes per day are limited: 20 by default. Players cannot vote on themselves or on the same pair twice.
 - The site chooses the pair, preferring players the voter has played with or against, and accepts an answer only for the pair it offered.
@@ -171,7 +171,7 @@ The browser inside the game is Chromium 18 from 2012. It runs ES5 only and has n
 
 ## Tests
 
-- **Back end.** Unit tests for match assembly, scoring, seasons, game mode rules, the Elo rating and the skin shop. Tests through HTTP for every page and for every endpoint the plugins call.
+- **Back end.** Unit tests for match assembly, scoring, seasons, game mode rules, the community rating and the skin shop. Tests through HTTP for every page and for every endpoint the plugins call.
 - **Parity.** A test compares the rankings with a copy of the production data. It matches the old API exactly for the seasons computed with the current rules.
 - **Databases.** The same tests run on SQLite, SQL Server, PostgreSQL and MySQL, and check that the migrations of each one match the model.
 - **Plugins.** Every plugin is compiled on each change.

@@ -20,6 +20,7 @@ public class CommunityVoteService(
     ISettingsService settingsService,
     ISeasonService seasonService,
     ICommunityPlayerService playerService,
+    ICommunityRatingService ratingService,
     ICommunityRandomService random) : ICommunityVoteService
 {
     public async Task<CommunityBallot> BallotAsync(long voterId, CancellationToken cancellationToken = default)
@@ -92,10 +93,13 @@ public class CommunityVoteService(
                 SiteDay = await TodayAsync(cancellationToken)
             });
 
-            if (outcome.IsJudgement())
-                await ApplyAsync(pair, outcome, settings, cancellationToken);
-
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            if (outcome.IsJudgement())
+            {
+                await ratingService.RecalculateAsync(null, cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
+            }
         }
         finally
         {
@@ -105,19 +109,6 @@ public class CommunityVoteService(
         hubState.CommunityChanged();
 
         return CommunityVoteResult.Accepted;
-    }
-
-    private async Task ApplyAsync(CommunityPair pair, CommunityVoteOutcome outcome, CommunityRankingSettings settings, CancellationToken cancellationToken)
-    {
-        var ratings = await dbContext.Set<CommunityRating>()
-            .Where(r => r.CommunityId == pair.Left || r.CommunityId == pair.Right)
-            .ToListAsync(cancellationToken);
-
-        var ledger = new CommunityRatingLedger(settings, ratings);
-
-        ledger.Apply(pair.Left, pair.Right, outcome);
-
-        dbContext.AddRange(ledger.Created);
     }
 
     private async Task<CommunityPair?> OfferAsync(long voterId, CommunityRankingSettings settings, CancellationToken cancellationToken)
@@ -211,7 +202,7 @@ public class CommunityVoteService(
 
     private static CommunityCandidate Candidate(long communityId, CommunityRating? rating, CommunityRankingSettings settings, HashSet<long> familiar)
     {
-        return new CommunityCandidate(communityId, rating?.Rating ?? settings.InitialRating, rating?.Comparisons ?? 0, familiar.Contains(communityId));
+        return new CommunityCandidate(communityId, rating?.Rating ?? settings.InitialRating, rating?.Deviation ?? AppConsts.CommunityPriorDeviation, rating?.Comparisons ?? 0, familiar.Contains(communityId));
     }
 
     private static CommunityBallot Ballot(CommunityBallotStatus status, CommunityRankingSettings settings, int matches, int votesLeft, CommunityBallotPlayer? left = null, CommunityBallotPlayer? right = null)

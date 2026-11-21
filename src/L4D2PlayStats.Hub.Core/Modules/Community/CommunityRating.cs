@@ -4,6 +4,7 @@ public class CommunityRating
 {
     public long CommunityId { get; set; }
     public double Rating { get; set; }
+    public double Deviation { get; set; }
     public int Comparisons { get; set; }
     public int Wins { get; set; }
     public int Losses { get; set; }

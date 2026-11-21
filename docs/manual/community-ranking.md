@@ -68,18 +68,19 @@ When you cannot vote, the page says why: you need to sign in, you need more matc
 The site chooses the pair; a voter cannot choose who to judge, and an answer is accepted only for the pair the site offered.
 
 1. It prefers players you have played with or against, since you know them best. Only when there is no such pair left does it offer other players.
-2. Among those, it starts from one of the players with the fewest comparisons, so that new players get rated.
-3. It pairs that player with someone of a close rating.
+2. Among those, it starts from one of the players whose rating is least certain (usually the ones with the fewest comparisons), so that new players get rated.
+3. It pairs that player with the opponent whose answer teaches the most: someone with a close rating, preferring a rating that is also uncertain. So the best players are compared with each other, not with much weaker ones.
 4. Which one appears on the left is random.
 
 ## How the rating is calculated
 
-The rating uses the Elo system, the same idea as in chess.
+The rating uses the Bradley–Terry model, the statistical model made for comparisons in pairs.
 
-- Every player starts at the initial rating, 1500 by default.
-- Before a comparison, the site works out the chance of each player being judged better, from the difference of their ratings. A difference of 400 points means about 10 to 1.
-- The winner gains and the loser loses the same number of points: the K factor (32 by default) times the difference between the result (1 for a win, ½ for a draw, 0 for a loss) and the expected chance.
-- Beating a player with a much higher rating gives many points; beating a much weaker one gives few. A draw between players of different ratings moves the weaker one up.
+- After each judging answer, the site calculates every rating again from all the votes together. The order of the votes does not matter, and a vote counts the same whether it came first or last.
+- Being chosen over a player with a high rating is worth more than being chosen over one with a low rating, because the model weighs each answer by who the other player is. "They are at the same level" counts as half a win for each.
+- A difference of 400 points means a chance of about 10 to 1 of being judged better. The scale is centered on the initial rating, 1500 by default.
+- Each rating has a margin of uncertainty (±), shown next to it. It starts large and shrinks as the player is compared with more players. A player with very few votes is held near the middle of the scale until the votes say otherwise.
+- The position in the ranking uses the rating minus twice the margin. A player with two lucky votes does not go above a player who won many comparisons.
 - "I don't know" answers change nothing.
 
 The rating is permanent. It does not start again with the season.
@@ -101,10 +102,9 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |
 | Show who voted in the latest votes | Shows the name and the avatar of each voter on the Latest votes page. Off, each vote shows only "A player voted". | On |
 | Maximum players in the ranking | The community ranking shows at most this many players, from the highest rating down. 0 shows everyone. | 100 |
-| Elo K factor | How much one vote moves the ratings, from 1 to 200. | 32 |
-| Initial rating | The rating of a player who was never compared. | 1500 |
+| Initial rating | The middle of the scale: the rating of a player who was never compared. | 1500 |
 
-The K factor and the initial rating apply to new votes. **Rebuild the ratings** replays every stored vote in order with the current settings, so that they apply to all votes.
+The ratings are calculated again from every vote after each new vote. **Rebuild the ratings** does it right away, for example after changing the initial rating.
 
 **Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
 

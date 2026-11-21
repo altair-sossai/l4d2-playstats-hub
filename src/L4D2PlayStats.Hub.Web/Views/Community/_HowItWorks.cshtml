@@ -90,6 +90,7 @@
                         </h5>
                         <p>@L["The site shows two players, preferably people you have played with or against. Say which one is better, that they are at the same level, or that you do not know them."]</p>
                         <p>@L["You are never asked about yourself, nor about the same pair twice."]</p>
+                        <p>@L["The two players have close ratings, and the site prefers the ones whose rating is least certain, so the best players are compared with each other."]</p>
                     </div>
                     <div class="how-it-works-step">
                         <h5>
@@ -97,7 +98,8 @@
                                 <span class="glyphicon glyphicon-stats"></span>
                             </span> @L["The votes become a rating"]
                         </h5>
-                        <p>@L["Everybody starts with {0} points. Each answer moves the two ratings, as in chess: beating someone with a higher rating is worth more than beating someone with a lower one.", Model.InitialRating]</p>
+                        <p>@L["Everybody starts with {0} points. After each answer the ratings are calculated again from all the votes together, so being chosen over a strong player is worth more than over a weak one, and the order of the votes does not matter.", Model.InitialRating]</p>
+                        <p>@L["Each rating has a margin (±) that shrinks as the player is compared more. The position uses the rating minus twice the margin, so a player with few votes does not jump to the top."]</p>
                         <p>@L["After thousands of votes, the order reflects what the whole community thinks, not the opinion of one person."]</p>
                     </div>
                     <div class="how-it-works-step">

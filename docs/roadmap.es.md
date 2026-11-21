@@ -129,7 +129,7 @@ El archivo de estadísticas trae el nombre visible de la configuración, como `Z
 
 - El votante ve a dos jugadores con sus avatares y responde cuál es mejor: izquierda, derecha, mismo nivel, o "no conozco" a uno o a los dos.
 - Mismo nivel cuenta como empate. "No conozco" no cambia nada y, de ahí en adelante, oculta a ese jugador para ese votante.
-- La puntuación es Elo, y no se reinicia con la temporada.
+- La puntuación es un ajuste de Bradley–Terry con todos los votos, con un margen de incertidumbre, y no se reinicia con la temporada.
 - Para votar se necesita un número mínimo de partidas jugadas, contadas entre todas las temporadas: 10 de forma predeterminada.
 - Los votos por día están limitados: 20 de forma predeterminada. Los jugadores no pueden votar por sí mismos ni dos veces por el mismo par.
 - El sitio elige el par, prefiriendo a jugadores con los que el votante ha jugado o contra los que ha jugado, y acepta una respuesta solo para el par que ofreció.
@@ -171,7 +171,7 @@ El navegador que está dentro del juego es Chromium 18, de 2012. Solo ejecuta ES
 
 ## Pruebas
 
-- **Back-end.** Pruebas unitarias para el armado de partidas, la puntuación, las temporadas, las reglas de modos de juego, la puntuación Elo y la tienda de skins. Pruebas a través de HTTP para cada página y para cada endpoint que llaman los plugins.
+- **Back-end.** Pruebas unitarias para el armado de partidas, la puntuación, las temporadas, las reglas de modos de juego, la puntuación de la comunidad y la tienda de skins. Pruebas a través de HTTP para cada página y para cada endpoint que llaman los plugins.
 - **Paridad.** Una prueba compara los rankings con una copia de los datos de producción. Coincide exactamente con la API antigua en las temporadas calculadas con las reglas actuales.
 - **Bases de datos.** Las mismas pruebas se ejecutan en SQLite, SQL Server, PostgreSQL y MySQL, y verifican que las migraciones de cada una coincidan con el modelo.
 - **Plugins.** Todos los plugins se compilan en cada cambio.

@@ -196,6 +196,9 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.Property<int>("Comparisons")
                         .HasColumnType("integer");
 
+                    b.Property<double>("Deviation")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("Draws")
                         .HasColumnType("integer");
 

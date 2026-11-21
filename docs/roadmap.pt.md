@@ -129,7 +129,7 @@ O arquivo de estatísticas traz o nome de exibição da configuração, como `Zo
 
 - O votante vê dois jogadores com seus avatares e responde qual é melhor: o da esquerda, o da direita, mesmo nível ou "não conheço" um deles ou os dois.
 - Mesmo nível conta como empate. "Não conheço" não altera nada e esconde aquele jogador daquele votante dali em diante.
-- O rating é Elo e não é zerado com a temporada.
+- O rating é um ajuste de Bradley–Terry com todos os votos, com uma margem de incerteza, e não é zerado com a temporada.
 - Votar exige um número mínimo de partidas jogadas, contadas em todas as temporadas: 10 por padrão.
 - Os votos por dia são limitados: 20 por padrão. Os jogadores não podem votar em si mesmos nem duas vezes no mesmo par.
 - O site escolhe o par, dando preferência a jogadores com quem ou contra quem o votante já jogou, e só aceita resposta para o par que ofereceu.
@@ -171,7 +171,7 @@ O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não
 
 ## Testes
 
-- **Back-end.** Testes unitários para montagem de partidas, pontuação, temporadas, regras de modos de jogo, rating Elo e loja de skins. Testes via HTTP para cada página e para cada endpoint que os plugins chamam.
+- **Back-end.** Testes unitários para montagem de partidas, pontuação, temporadas, regras de modos de jogo, rating da comunidade e loja de skins. Testes via HTTP para cada página e para cada endpoint que os plugins chamam.
 - **Paridade.** Um teste compara os rankings com uma cópia dos dados de produção. O resultado bate exatamente com o da API antiga nas temporadas calculadas com as regras atuais.
 - **Bancos de dados.** Os mesmos testes rodam em SQLite, SQL Server, PostgreSQL e MySQL e verificam se as migrations de cada um batem com o modelo.
 - **Plugins.** Todos os plugins são compilados a cada mudança.

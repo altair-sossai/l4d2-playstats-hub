@@ -23,7 +23,7 @@ Cada lista de verificación enumera todos los elementos de las pantallas antigua
 | [matches.es.md](matches.es.md) | Últimas partidas, detalles de la partida, estadísticas del mapa | 128 | 18 | 1 |
 | [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 151 | 28 | 1 |
 | [skins.es.md](skins.es.md) | Tienda de skins, regalos, precios, compras | 146 | 11 | 0 |
-| [admin.es.md](admin.es.md) | Páginas que solo existen aquí: asistente, administración, ranking de la comunidad | 183 | 11 | 1 |
+| [admin.es.md](admin.es.md) | Páginas que solo existen aquí: asistente, administración, ranking de la comunidad | 182 | 12 | 1 |
 
 Las cinco primeras comparan el hub con el sitio antiguo. La última compara las páginas que son nuevas aquí con su primera versión, que usaba otro aspecto, para que no se perdiera nada al convertirlas.
 

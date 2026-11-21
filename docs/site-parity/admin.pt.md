@@ -272,7 +272,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Painel "Votação": "Votos por dia" (com o mínimo dele) | `Views/CommunityAdmin/Index.cshtml:34` | `done` |  |
 | Painel "Votação": "Mínimo de partidas para ser comparado" e o texto de ajuda | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
 | Painel "Pontuação": "Mínimo de comparações para aparecer na lista" | `Views/CommunityAdmin/Index.cshtml:51` | `done` |  |
-| Painel "Pontuação": "Fator K do Elo" (com os limites dele) | `Views/CommunityAdmin/Index.cshtml:55` | `done` |  |
+| Painel "Pontuação": "Fator K do Elo" (com os limites dele) | — | `adapted` | Removido em 21 de novembro de 2026: a pontuação virou um ajuste de Bradley–Terry com todos os votos, que não tem fator K. |
 | Painel "Pontuação": "Pontuação inicial" e o texto de ajuda | `Views/CommunityAdmin/Index.cshtml:59` | `done` |  |
 | Painel "Manutenção": explicação e botão "Reconstruir as pontuações" (pergunta "Reconstruir todas as pontuações agora?") | `Views/CommunityAdmin/Index.cshtml:73` | `done` |  |
 | Painel "Votantes": explicação e o formulário para remover os votos de um SteamID64 (pergunta "Remover todos os votos deste votante?") | `Views/CommunityAdmin/Index.cshtml:85` | `done` |  |

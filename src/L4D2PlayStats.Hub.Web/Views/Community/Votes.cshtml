@@ -110,7 +110,7 @@
             @if (rating != null)
             {
                 <span class="vf-summary">
-                    <span>@L["Rating"]: <b>@Display.Number((decimal)Math.Round(rating.Rating))</b></span>
+                    <span>@L["Rating"]: <b>@CommunityDisplay.RatingWithMargin(rating.Rating, rating.Deviation)</b></span>
                     <span style="color: #5cb85c">@L["Wins"]: <b>@rating.Wins</b></span>
                     <span style="color: #f0ad4e">@L["Draws"]: <b>@rating.Draws</b></span>
                     <span style="color: #d9534f">@L["Losses"]: <b>@rating.Losses</b></span>
