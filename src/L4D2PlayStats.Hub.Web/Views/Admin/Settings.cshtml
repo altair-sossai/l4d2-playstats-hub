@@ -9,6 +9,33 @@
 }
 
 @section Styles {
+    <style>
+        .fl-table {
+            margin-bottom: 6px;
+        }
+
+            .fl-table > tbody > tr > td {
+                vertical-align: middle;
+                border-top: 0;
+            }
+
+            .fl-table .fl-actions {
+                width: 1%;
+                white-space: nowrap;
+            }
+
+        .fl-editor .fl-empty {
+            display: none;
+        }
+
+        .fl-editor.fl-none .fl-empty {
+            display: block;
+        }
+
+        .fl-editor.fl-none .fl-table {
+            display: none;
+        }
+    </style>
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
 }
@@ -114,10 +141,47 @@
                     </div>
                 }
             </div>
-            <div class="form-group">
-                <label for="Site_FooterLinks">@L["Footer links"] @FieldHelp.More(L["Links shown at the bottom of every page, such as the Discord or the group of your community."], L["Footer links"], L["Write one link per line: the text shown, a vertical bar | and the address. For example: Discord | https://discord.gg/example.\nThe address must start with http:// or https://. A line that does not follow this format is left out, and the page warns you when you save.\nThe links appear in the order of the lines. When the field is empty, the footer shows only the link to the project."])</label>
-                <textarea class="form-control admin-mono" id="Site_FooterLinks" name="Site.FooterLinks" rows="4" placeholder="@AppConsts.FooterLinkExample">@Model.Site.FooterLinks</textarea>
-                <span class="help-block">@L["One link per line, as a text, a vertical bar and the address: {0}. Leave empty to show only the link to the project.", AppConsts.FooterLinkExample]</span>
+            <div class="form-group fl-editor" id="footer-links">
+                <label>@L["Footer links"] @FieldHelp.More(L["Links shown at the bottom of every page, such as the Discord or the group of your community."], L["Footer links"], L["Add one line for each link, with the text shown and the address. The address must start with http:// or https://.\nThe arrows change the order: the links appear in the footer in the order of the list.\nA line without a text or with an invalid address is left out, and the page warns you when you save. With no links, the footer shows only the link to the project."])</label>
+                <input type="hidden" id="Site_FooterLinks" name="Site.FooterLinks" value="@Model.Site.FooterLinks">
+                <table class="table table-condensed fl-table">
+                    <thead>
+                    <tr>
+                        <th>@L["Description"]</th>
+                        <th>@L["Address"]</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody class="fl-rows">
+                    @foreach (var link in FooterLinks.Read(Model.Site.FooterLinks))
+                    {
+                        <tr class="fl-row">
+                            <td><input class="form-control input-sm fl-text" type="text" value="@link.Text" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
+                            <td><input class="form-control input-sm fl-url" type="url" value="@link.Url" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
+                            <td class="fl-actions">
+                                <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <p class="help-block fl-empty">@L["No links yet: the footer shows only the link to the project."]</p>
+                <button type="button" class="btn btn-default btn-sm fl-add">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add a link"]
+                </button>
+                <template class="fl-template">
+                        <tr class="fl-row">
+                            <td><input class="form-control input-sm fl-text" type="text" value="" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
+                            <td><input class="form-control input-sm fl-url" type="url" value="" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
+                            <td class="fl-actions">
+                                <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                        </tr>
+                </template>
             </div>
             <div class="form-group">
                 <label for="Site_MetaKeywords">@L["Keywords for search engines (optional)"] @FieldHelp.Tip(L["Words that describe your community, such as l4d2, versus, ranking, separated by commas. Up to 500 characters."])</label>
@@ -263,3 +327,64 @@
     <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
 </button>
 </form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var editor = document.getElementById('footer-links');
+
+            if (!editor)
+                return;
+
+            var rows = editor.querySelector('.fl-rows');
+            var hidden = document.getElementById('Site_FooterLinks');
+            var template = editor.querySelector('.fl-template');
+
+            function refresh() {
+                var lines = [];
+
+                rows.querySelectorAll('.fl-row').forEach(function (row, index, all) {
+                    var text = row.querySelector('.fl-text').value.replace(/\|/g, '/').trim();
+                    var url = row.querySelector('.fl-url').value.trim();
+
+                    row.querySelector('.fl-up').disabled = index === 0;
+                    row.querySelector('.fl-down').disabled = index === all.length - 1;
+
+                    if (text || url)
+                        lines.push(text + ' | ' + url);
+                });
+
+                hidden.value = lines.join('\n');
+                editor.classList.toggle('fl-none', rows.querySelectorAll('.fl-row').length === 0);
+            }
+
+            editor.querySelector('.fl-add').addEventListener('click', function () {
+                rows.appendChild(template.content.firstElementChild.cloneNode(true));
+                refresh();
+                rows.lastElementChild.querySelector('.fl-text').focus();
+            });
+
+            rows.addEventListener('click', function (event) {
+                var button = event.target.closest('button');
+
+                if (!button)
+                    return;
+
+                var row = button.closest('.fl-row');
+
+                if (button.classList.contains('fl-remove'))
+                    row.remove();
+                else if (button.classList.contains('fl-up') && row.previousElementSibling)
+                    rows.insertBefore(row, row.previousElementSibling);
+                else if (button.classList.contains('fl-down') && row.nextElementSibling)
+                    rows.insertBefore(row.nextElementSibling, row);
+
+                refresh();
+            });
+
+            rows.addEventListener('input', refresh);
+            editor.closest('form').addEventListener('submit', refresh);
+            refresh();
+        })();
+    </script>
+}

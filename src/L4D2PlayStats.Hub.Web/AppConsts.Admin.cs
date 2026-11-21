@@ -11,6 +11,9 @@ public static partial class AppConsts
 
     public const string FooterLinksIgnoredMessage = "Some footer links were left out: each line must be a text, a vertical bar and an address that starts with http:// or https://.";
     public const string FooterLinkExample = "Discord | https://discord.gg/example";
+    public const string FooterLinkTextExample = "Discord";
+    public const string FooterLinkUrlExample = "https://discord.gg/example";
+    public const int FooterLinkTextMaxLength = 100;
 
     public const int MetaKeywordsMaxLength = 500;
 

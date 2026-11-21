@@ -121,7 +121,7 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Ajuste | Qué hace |
 |---|---|
 | Logo del sitio | PNG, JPG, WEBP o GIF de hasta 1 MB, que se muestra en el menú en lugar del nombre del sitio. **Quitar el logo y mostrar el nombre del sitio** vuelve al nombre. |
-| Enlaces del pie de página | Un enlace por línea, con el texto, una barra vertical y la dirección: `Discord \| https://discord.gg/example`. Vacío muestra solo el enlace del proyecto. |
+| Enlaces del pie de página | Una lista con descripción y dirección para cada enlace. **Añadir un enlace** crea una línea, las flechas cambian el orden y la papelera la quita. La dirección debe empezar con http:// o https://. Sin enlaces, el pie muestra solo el enlace del proyecto. |
 | Palabras clave para buscadores (opcional) | Separadas por comas. Van en la etiqueta de palabras clave de todas las páginas. |
 | ID de Google Analytics (opcional) | Con un ID como `G-XXXXXXXXXX`, todas las páginas cargan el script de Google Analytics. Vacío no carga nada. |
 

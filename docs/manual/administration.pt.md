@@ -121,7 +121,7 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | Configuração | O que faz |
 |---|---|
 | Logo do site | PNG, JPG, WEBP ou GIF de até 1 MB, mostrado no menu no lugar do nome do site. **Remover a logo e mostrar o nome do site** volta para o nome. |
-| Links do rodapé | Um link por linha, como um texto, uma barra vertical e o endereço: `Discord \| https://discord.gg/example`. Vazio mostra só o link do projeto. |
+| Links do rodapé | Uma lista com descrição e endereço para cada link. **Adicionar um link** cria uma linha, as setas mudam a ordem e a lixeira remove. O endereço precisa começar com http:// ou https://. Sem links, o rodapé mostra só o link do projeto. |
 | Palavras-chave para buscadores (opcional) | Separadas por vírgulas. Elas vão na tag de palavras-chave de todas as páginas. |
 | ID do Google Analytics (opcional) | Com um ID como `G-XXXXXXXXXX`, todas as páginas carregam o script do Google Analytics. Vazio não carrega nada. |
 

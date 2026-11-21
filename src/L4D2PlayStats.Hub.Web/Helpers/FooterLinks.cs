@@ -13,6 +13,11 @@ public static class FooterLinks
         return links.Count == 0 ? Default : links;
     }
 
+    public static IReadOnlyList<FooterLink> Read(string? text)
+    {
+        return Valid(text);
+    }
+
     public static string? Normalize(string? text)
     {
         var links = Valid(text);

@@ -121,7 +121,7 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Setting | What it does |
 |---|---|
 | Site logo | PNG, JPG, WEBP or GIF up to 1 MB, shown in the menu in place of the site name. **Remove the logo and show the site name** goes back to the name. |
-| Footer links | One link per line, as a text, a vertical bar and the address: `Discord \| https://discord.gg/example`. Empty shows only the link to the project. |
+| Footer links | A list with a description and an address per link. **Add a link** adds a line, the arrows change the order and the trash button removes it. The address must start with http:// or https://. With no links, the footer shows only the link to the project. |
 | Keywords for search engines (optional) | Separated by commas. They go in the keywords tag of every page. |
 | Google Analytics ID (optional) | With an ID such as `G-XXXXXXXXXX`, every page loads the Google Analytics script. Empty loads nothing. |
 

@@ -50,9 +50,11 @@ public class SiteSettingsTests
         Assert.Contains("<small>Steam group</small>", home);
         Assert.DoesNotContain(WebConsts.ProjectUrl, home);
         Assert.Contains("googletagmanager.com/gtag/js?id=G-TEST12345", home);
+        Assert.Contains("class=\"form-control input-sm fl-text\" type=\"text\" value=\"Steam group\"", settings);
+        Assert.Contains("class=\"form-control input-sm fl-url\" type=\"url\" value=\"https://discord.gg/example\"", settings);
+        Assert.IsLessThan(settings.IndexOf("value=\"Steam group\"", StringComparison.Ordinal), settings.IndexOf("value=\"Discord\"", StringComparison.Ordinal));
         Assert.Contains("value=\"G-TEST12345\"", settings);
         Assert.Contains("value=\"left 4 dead 2, ranking, statistics\"", settings);
-        Assert.Contains("Steam group | https://steamcommunity.com/groups/example</textarea>", settings);
     }
 
     [TestMethod]

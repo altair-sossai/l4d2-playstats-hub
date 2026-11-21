@@ -1277,7 +1277,6 @@
   "An image shown in the menu in place of the site name. Choose a file only to change it: saving without a file keeps the current logo.": "Uma imagem mostrada no menu no lugar do nome do site. Escolha um arquivo só para trocar: salvar sem arquivo mantém a logo atual.",
   "Deletes the saved logo when you save. The menu shows the site name again.": "Apaga a logo salva quando você salvar. O menu volta a mostrar o nome do site.",
   "Links shown at the bottom of every page, such as the Discord or the group of your community.": "Links mostrados no rodapé de todas as páginas, como o Discord ou o grupo da sua comunidade.",
-  "Write one link per line: the text shown, a vertical bar | and the address. For example: Discord | https://discord.gg/example.\nThe address must start with http:// or https://. A line that does not follow this format is left out, and the page warns you when you save.\nThe links appear in the order of the lines. When the field is empty, the footer shows only the link to the project.": "Escreva um link por linha: o texto mostrado, uma barra vertical | e o endereço. Por exemplo: Discord | https://discord.gg/example.\nO endereço precisa começar com http:// ou https://. Uma linha fora desse formato fica de fora, e a página avisa quando você salva.\nOs links aparecem na ordem das linhas. Com o campo vazio, o rodapé mostra só o link do projeto.",
   "Words that describe your community, such as l4d2, versus, ranking, separated by commas. Up to 500 characters.": "Palavras que descrevem a sua comunidade, como l4d2, versus, ranking, separadas por vírgulas. Até 500 caracteres.",
   "The measurement ID of your Google Analytics property, such as G-XXXXXXXXXX. Only letters, numbers and hyphens are accepted.": "O ID de medição da sua propriedade do Google Analytics, como G-XXXXXXXXXX. Só letras, números e hífens são aceitos.",
   "How long each season lasts, from 1 to 24 months. The ranking starts again from zero at each season.": "Quanto dura cada temporada, de 1 a 24 meses. O ranking recomeça do zero a cada temporada.",
@@ -1426,5 +1425,11 @@
   "Block and delete the votes": "Bloquear e excluir os votos",
   "See votes": "Ver votos",
   "Block a player": "Bloquear um jogador",
-  "Choose any player, even one who has not voted yet, to stop them from voting.": "Escolha qualquer jogador, mesmo um que ainda não votou, para impedir que ele vote."
+  "Choose any player, even one who has not voted yet, to stop them from voting.": "Escolha qualquer jogador, mesmo um que ainda não votou, para impedir que ele vote.",
+  "Add one line for each link, with the text shown and the address. The address must start with http:// or https://.\nThe arrows change the order: the links appear in the footer in the order of the list.\nA line without a text or with an invalid address is left out, and the page warns you when you save. With no links, the footer shows only the link to the project.": "Adicione uma linha para cada link, com o texto mostrado e o endereço. O endereço precisa começar com http:// ou https://.\nAs setas mudam a ordem: os links aparecem no rodapé na ordem da lista.\nUma linha sem texto ou com endereço inválido fica de fora, e a página avisa quando você salva. Sem links, o rodapé mostra só o link do projeto.",
+  "No links yet: the footer shows only the link to the project.": "Nenhum link ainda: o rodapé mostra só o link do projeto.",
+  "Add a link": "Adicionar um link",
+  "Address": "Endereço",
+  "Move up": "Mover para cima",
+  "Move down": "Mover para baixo"
 }
