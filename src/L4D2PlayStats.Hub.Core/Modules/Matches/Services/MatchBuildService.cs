@@ -8,6 +8,7 @@ using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
@@ -22,8 +23,11 @@ public class MatchBuildService(
     ICampaignService campaignService,
     IGameModeService gameModeService,
     ISettingsService settingsService,
+    IPlayerRegistryService playerRegistryService,
     IClock clock) : IMatchBuildService
 {
+    private readonly HashSet<long> _touched = [];
+
     public async Task RebuildAroundAsync(int gameServerId, int seasonId, DateTime fileDate, CancellationToken cancellationToken = default)
     {
         var dates = await dbContext.StatisticsFiles
@@ -41,8 +45,11 @@ public class MatchBuildService(
             .Where(f => f.GameServerId == gameServerId && f.SeasonId == seasonId && f.FileDate >= cluster.Value.Start && f.FileDate <= cluster.Value.End)
             .ToListAsync(cancellationToken);
 
+        _touched.Clear();
+
         await RebuildAsync(gameServerId, seasonId, files, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await playerRegistryService.RefreshAsync([.. _touched], cancellationToken);
 
         hubState.DataChanged();
     }
@@ -69,7 +76,11 @@ public class MatchBuildService(
 
             await dbContext.SaveChangesAsync(cancellationToken);
             dbContext.ChangeTracker.Clear();
+            _touched.Clear();
         }
+
+        await playerRegistryService.BackfillAsync(cancellationToken);
+        dbContext.ChangeTracker.Clear();
 
         hubState.DataChanged();
 
@@ -86,6 +97,8 @@ public class MatchBuildService(
         var replaceable = matchIds.Count == 0
             ? []
             : await dbContext.Matches.Include(m => m.Players).Where(m => matchIds.Contains(m.Id)).ToListAsync(cancellationToken);
+
+        _touched.UnionWith(replaceable.SelectMany(m => m.Players).Select(p => p.CommunityId));
 
         var assemblyFiles = files.Select(file => new AssemblyFile(file, Parse(file.Content)));
         var drafts = MatchAssembler.Assemble(assemblyFiles, catalog, settings.IncludeUnknownCampaigns);
@@ -157,6 +170,8 @@ public class MatchBuildService(
 
         if (seen.Count == 0)
             return;
+
+        _touched.UnionWith(seen.Keys);
 
         var ids = seen.Keys.ToList();
         var profiles = await dbContext.PlayerProfiles.Where(p => ids.Contains(p.CommunityId)).ToDictionaryAsync(p => p.CommunityId, cancellationToken);

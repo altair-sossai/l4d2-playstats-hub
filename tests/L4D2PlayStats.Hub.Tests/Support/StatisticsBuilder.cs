@@ -77,6 +77,16 @@ public class StatisticsBuilder
         return this;
     }
 
+    public StatisticsBuilder WithName(long communityId, string name)
+    {
+        var id = communityId.ToString();
+
+        foreach (var playerName in Statistics.PlayerNames.Where(p => p.CommunityId == id))
+            playerName.Name = name;
+
+        return this;
+    }
+
     public StatisticsBuilder WithoutPlayer(long communityId)
     {
         var id = communityId.ToString();

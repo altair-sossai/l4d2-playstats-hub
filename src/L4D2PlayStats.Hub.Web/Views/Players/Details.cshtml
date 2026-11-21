@@ -831,6 +831,7 @@
                 </td>
             </tr>
         }
+        @await Html.PartialAsync("_SteamFacts", new PlayerSteamFactsModel(Model.FirstPlayerSteam, Model.SecondPlayerSteam, true))
         <tr class="hide-mobile">
             <th class="vertical-align-middle">@L["Patent"]:</th>
             <td class="vertical-align-middle" data-label="@L["Patent"]:">

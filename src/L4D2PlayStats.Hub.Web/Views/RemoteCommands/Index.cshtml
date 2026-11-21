@@ -117,7 +117,7 @@
     }
     @foreach (var log in Model.Logs.Items)
     {
-        var administrator = ForcedNames.Apply(log.AdministratorCommunityId, log.AdministratorName) ?? log.AdministratorCommunityId.ToString();
+        var administrator = DisplayNames.Apply(log.AdministratorCommunityId, log.AdministratorName) ?? log.AdministratorCommunityId.ToString();
 
         <div class="admin-item rc-log">
             <img class="admin-avatar" src="@($"{AppConsts.AvatarUrl}{log.AdministratorCommunityId}")" alt="@administrator" onerror="imgOnError(this)"/>

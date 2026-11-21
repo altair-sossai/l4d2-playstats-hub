@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
@@ -8,7 +9,6 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Live;
-using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -24,24 +24,40 @@ public class CommunityRankingService(
 {
     public async Task<IReadOnlyList<CommunityRankingEntry>> ListAsync(CancellationToken cancellationToken = default)
     {
+        var ratings = await (await ListedAsync(cancellationToken)).ToListAsync(cancellationToken);
+
+        return await EntriesAsync(ratings, 0, cancellationToken);
+    }
+
+    public async Task<Page<CommunityRankingEntry>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
+    {
+        var ratings = await (await ListedAsync(cancellationToken)).ToPageAsync(page, size, cancellationToken);
+        var entries = await EntriesAsync(ratings.Items, Paging.Skip(ratings.Number, ratings.Size), cancellationToken);
+
+        return new Page<CommunityRankingEntry>(entries, ratings.Number, ratings.Size, ratings.Total);
+    }
+
+    private async Task<IQueryable<CommunityRating>> ListedAsync(CancellationToken cancellationToken)
+    {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
-        var eligible = await playerService.CandidatesAsync(settings.MinimumMatchesToBeCandidate, cancellationToken: cancellationToken);
+        var eligible = playerService.Candidates(settings.MinimumMatchesToBeCandidate);
+        var minimum = settings.MinimumComparisonsToBeListed;
 
-        var rated = await dbContext.Set<CommunityRating>()
+        var listed = dbContext.Set<CommunityRating>()
             .AsNoTracking()
-            .Where(r => r.Comparisons >= settings.MinimumComparisonsToBeListed)
-            .ToListAsync(cancellationToken);
-
-        var listed = rated
-            .Where(r => eligible.Contains(r.CommunityId))
-            .OrderByDescending(r => new CommunityStrength(r.Rating, r.Deviation).Conservative)
+            .Where(r => r.Comparisons >= minimum && eligible.Contains(r.CommunityId))
+            .OrderByDescending(r => r.Rating - AppConsts.CommunityConservativeDeviations * r.Deviation)
             .ThenByDescending(r => r.Comparisons)
             .ThenBy(r => r.CommunityId);
-        var ratings = (settings.MaximumPlayersListed > 0 ? listed.Take(settings.MaximumPlayersListed) : listed).ToList();
 
+        return settings.MaximumPlayersListed > 0 ? listed.Take(settings.MaximumPlayersListed) : listed;
+    }
+
+    private async Task<IReadOnlyList<CommunityRankingEntry>> EntriesAsync(IReadOnlyList<CommunityRating> ratings, int skip, CancellationToken cancellationToken)
+    {
         var names = await playerService.NamesAsync([.. ratings.Select(r => r.CommunityId)], cancellationToken);
 
-        return [.. ratings.Select((r, index) => new CommunityRankingEntry(index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Deviation, r.Comparisons, r.Wins, r.Draws, r.Losses))];
+        return [.. ratings.Select((r, index) => new CommunityRankingEntry(skip + index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Deviation, r.Comparisons, r.Wins, r.Draws, r.Losses))];
     }
 
     public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? voterId, long? playerId, int skip, int take, CancellationToken cancellationToken = default)
@@ -126,14 +142,12 @@ public class CommunityRankingService(
                 .GroupBy(v => v.CommunityId)
                 .Select(group => new CommunityLastVote { CommunityId = group.Key, LastAtUtc = group.Max(v => v.CreatedAtUtc) });
 
-        var forced = dbContext.Set<ForcedName>();
         var profiles = dbContext.PlayerProfiles;
         var connections = dbContext.Set<PlayerConnection>();
 
         var found = await search
             .Apply(participants, participant => participant.CommunityId, participant =>
-                forced.Where(entry => entry.CommunityId == participant.CommunityId).Select(entry => entry.Name).FirstOrDefault()
-                ?? profiles.Where(profile => profile.CommunityId == participant.CommunityId && profile.Name != null && profile.Name != string.Empty).Select(profile => profile.Name).FirstOrDefault()
+                profiles.Where(profile => profile.CommunityId == participant.CommunityId).Select(profile => profile.DisplayName ?? profile.Name).FirstOrDefault()
                 ?? connections.Where(connection => connection.CommunityId == participant.CommunityId).OrderByDescending(connection => connection.LastSeenAtUtc).Select(connection => connection.Name).FirstOrDefault())
             .OrderByDescending(participant => participant.LastAtUtc)
             .ThenBy(participant => participant.CommunityId)

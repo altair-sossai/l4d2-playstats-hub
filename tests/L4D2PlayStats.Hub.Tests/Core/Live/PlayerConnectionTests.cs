@@ -52,7 +52,7 @@ public class PlayerConnectionTests
 
         Assert.HasCount(1, related!);
         Assert.AreEqual(Bob.ToString(), related![0].CommunityId);
-        Assert.AreEqual("Bob", related[0].Name);
+        Assert.AreEqual("Bobby", related[0].Name);
         Assert.AreEqual("STEAM_1:0:19867137", related[0].SteamId);
         Assert.AreEqual($"https://steamcommunity.com/profiles/{Bob}", related[0].ProfileUrl);
         Assert.HasCount(1, fromBob);

@@ -7,6 +7,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 public interface ICommunityRankingService
 {
     Task<IReadOnlyList<CommunityRankingEntry>> ListAsync(CancellationToken cancellationToken = default);
+    Task<Page<CommunityRankingEntry>> PageAsync(int page, int size, CancellationToken cancellationToken = default);
     Task<Page<CommunityVoter>> VotersAsync(int page, int size, CancellationToken cancellationToken = default);
     Task<Page<CommunityVoteParticipant>> ParticipantsAsync(bool voters, PlayerSearch search, int page, int size, CancellationToken cancellationToken = default);
     Task<int> RebuildAsync(CancellationToken cancellationToken = default);

@@ -598,46 +598,75 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.ToTable("MatchPlayers");
                 });
 
-            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.ForcedName", b =>
-                {
-                    b.Property<long>("CommunityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CommunityId");
-
-                    b.ToTable("ForcedName");
-                });
-
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.PlayerProfile", b =>
                 {
                     b.Property<long>("CommunityId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("AccountCreatedAtUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("AvatarUpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DaysSinceLastBan")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FirstSeenAtUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ForcedName")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ForcedNameUpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("ForcedNameUpdatedBy")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("GameBans")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("LastSeenAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Left4Dead2Minutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Left4Dead2RecentMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MostUsedName")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("SteamLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SteamName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("SteamUpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("VacBans")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("CommunityId");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("ForcedName");
 
                     b.ToTable("PlayerProfiles");
                 });

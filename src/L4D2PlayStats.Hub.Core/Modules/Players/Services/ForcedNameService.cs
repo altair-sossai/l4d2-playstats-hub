@@ -13,24 +13,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock clock, IForcedNameStore store) : IForcedNameService
+public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock clock, IForcedNameStore store, IPlayerRegistryService playerRegistryService) : IForcedNameService
 {
     public async Task<Page<ForcedNameEntry>> PageAsync(PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
     {
         var query = search
-            .Apply(dbContext.Set<ForcedName>().AsNoTracking(), entry => entry.CommunityId, entry => entry.Name)
-            .OrderBy(entry => entry.Name.ToLower())
-            .ThenBy(entry => entry.CommunityId);
+            .Apply(Forced().AsNoTracking(), profile => profile.CommunityId, profile => profile.ForcedName)
+            .OrderBy(profile => profile.ForcedName!.ToLower())
+            .ThenBy(profile => profile.CommunityId)
+            .Select(profile => new ForcedNameEntry(profile.CommunityId, profile.ForcedName!, profile.Name, profile.ForcedNameUpdatedAtUtc ?? profile.LastSeenAtUtc));
 
-        var entries = await query.ToPageAsync(page, size, cancellationToken);
-        List<long> ids = [.. entries.Items.Select(entry => entry.CommunityId)];
-
-        var current = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(profile => ids.Contains(profile.CommunityId) && profile.Name != null)
-            .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name, cancellationToken);
-
-        return entries.Map(entry => new ForcedNameEntry(entry.CommunityId, entry.Name, current.GetValueOrDefault(entry.CommunityId), entry.UpdatedAtUtc));
+        return await query.ToPageAsync(page, size, cancellationToken);
     }
 
     public async Task<ForcedNameSaveResult> SaveAsync(long communityId, string? name, long? updatedBy, CancellationToken cancellationToken = default)
@@ -45,9 +38,12 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
         await using (await hubState.LockAsync(cancellationToken))
         {
-            await UpsertAsync(communityId, clean, updatedBy, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await LoadAsync(cancellationToken);
+            var profiles = await ProfilesAsync([communityId], cancellationToken);
+            var profile = Profile(profiles, communityId);
+
+            Force(profile, clean, updatedBy);
+
+            await SaveAsync([profile], cancellationToken);
         }
 
         Changed();
@@ -57,20 +53,23 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
     public async Task<bool> DeleteAsync(long communityId, CancellationToken cancellationToken = default)
     {
-        int removed;
-
         await using (await hubState.LockAsync(cancellationToken))
         {
-            removed = await dbContext.Set<ForcedName>().Where(entry => entry.CommunityId == communityId).ExecuteDeleteAsync(cancellationToken);
+            var profile = await Forced().FirstOrDefaultAsync(p => p.CommunityId == communityId, cancellationToken);
 
-            if (removed > 0)
-                await LoadAsync(cancellationToken);
+            if (profile == null)
+                return false;
+
+            profile.ForcedName = null;
+            profile.ForcedNameUpdatedAtUtc = clock.UtcNow;
+            profile.ForcedNameUpdatedBy = null;
+
+            await SaveAsync([profile], cancellationToken);
         }
 
-        if (removed > 0)
-            Changed();
+        Changed();
 
-        return removed > 0;
+        return true;
     }
 
     public async Task<ForcedNameImport> ImportAsync(string? text, long? updatedBy, CancellationToken cancellationToken = default)
@@ -101,33 +100,30 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
         await using (await hubState.LockAsync(cancellationToken))
         {
-            List<long> ids = [.. parsed.Keys];
-            var existing = await dbContext.Set<ForcedName>().Where(entry => ids.Contains(entry.CommunityId)).ToDictionaryAsync(entry => entry.CommunityId, cancellationToken);
+            var profiles = await ProfilesAsync([.. parsed.Keys], cancellationToken);
+            var changed = new List<PlayerProfile>();
 
             foreach (var (communityId, name) in parsed)
             {
-                if (!existing.TryGetValue(communityId, out var entry))
-                {
-                    dbContext.Add(new ForcedName { CommunityId = communityId, Name = name, UpdatedAtUtc = clock.UtcNow, UpdatedBy = updatedBy });
-                    added++;
-                }
-                else if (entry.Name != name)
-                {
-                    entry.Name = name;
-                    entry.UpdatedAtUtc = clock.UtcNow;
-                    entry.UpdatedBy = updatedBy;
-                    updated++;
-                }
-                else
+                var profile = Profile(profiles, communityId);
+
+                if (profile.ForcedName == name)
                 {
                     unchanged++;
+                    continue;
                 }
+
+                if (profile.ForcedName == null)
+                    added++;
+                else
+                    updated++;
+
+                Force(profile, name, updatedBy);
+                changed.Add(profile);
             }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-
-            if (added + updated > 0)
-                await LoadAsync(cancellationToken);
+            if (changed.Count > 0)
+                await SaveAsync(changed, cancellationToken);
         }
 
         if (added + updated > 0)
@@ -138,24 +134,66 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
-        var names = await dbContext.Set<ForcedName>().AsNoTracking().ToDictionaryAsync(entry => entry.CommunityId, entry => entry.Name, cancellationToken);
+        var names = await Forced()
+            .AsNoTracking()
+            .Select(profile => new { profile.CommunityId, profile.ForcedName })
+            .ToDictionaryAsync(entry => entry.CommunityId, entry => entry.ForcedName!, cancellationToken);
 
         store.Replace(names);
     }
 
-    private async Task UpsertAsync(long communityId, string name, long? updatedBy, CancellationToken cancellationToken)
+    private IQueryable<PlayerProfile> Forced()
     {
-        var entry = await dbContext.Set<ForcedName>().FirstOrDefaultAsync(e => e.CommunityId == communityId, cancellationToken);
+        return dbContext.PlayerProfiles.Where(profile => profile.ForcedName != null);
+    }
 
-        if (entry == null)
+    private async Task<Dictionary<long, PlayerProfile>> ProfilesAsync(List<long> communityIds, CancellationToken cancellationToken)
+    {
+        var profiles = new Dictionary<long, PlayerProfile>();
+
+        foreach (var chunk in communityIds.Chunk(AppConsts.PlayerNameRefreshBatchSize))
         {
-            dbContext.Add(new ForcedName { CommunityId = communityId, Name = name, UpdatedAtUtc = clock.UtcNow, UpdatedBy = updatedBy });
-            return;
+            List<long> ids = [.. chunk];
+            var found = await dbContext.PlayerProfiles.Where(profile => ids.Contains(profile.CommunityId)).ToListAsync(cancellationToken);
+
+            foreach (var profile in found)
+                profiles[profile.CommunityId] = profile;
         }
 
-        entry.Name = name;
-        entry.UpdatedAtUtc = clock.UtcNow;
-        entry.UpdatedBy = updatedBy;
+        return profiles;
+    }
+
+    private PlayerProfile Profile(Dictionary<long, PlayerProfile> profiles, long communityId)
+    {
+        if (profiles.TryGetValue(communityId, out var profile))
+            return profile;
+
+        var now = clock.UtcNow;
+
+        profile = new PlayerProfile { CommunityId = communityId, FirstSeenAtUtc = now, LastSeenAtUtc = now };
+        profiles[communityId] = profile;
+        dbContext.PlayerProfiles.Add(profile);
+
+        return profile;
+    }
+
+    private void Force(PlayerProfile profile, string name, long? updatedBy)
+    {
+        profile.ForcedName = name;
+        profile.ForcedNameUpdatedAtUtc = clock.UtcNow;
+        profile.ForcedNameUpdatedBy = updatedBy;
+    }
+
+    private async Task SaveAsync(IReadOnlyCollection<PlayerProfile> profiles, CancellationToken cancellationToken)
+    {
+        foreach (var profile in profiles)
+            PlayerDisplayNames.Refresh(profile);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        playerRegistryService.Publish(profiles);
+
+        await LoadAsync(cancellationToken);
     }
 
     private void Changed()

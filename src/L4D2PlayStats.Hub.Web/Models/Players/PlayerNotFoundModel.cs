@@ -19,6 +19,7 @@ public class PlayerNotFoundModel(long communityId, PlayerConnectionResult? playe
     public bool Ranking => Period != null;
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
     public PlayerCommunityModel? Community { get; set; }
+    public PlayerSteamModel Steam { get; init; } = new(null, TimeZoneInfo.Utc, DateTime.UtcNow);
 
     public DateTime LocalTime(DateTime utc)
     {

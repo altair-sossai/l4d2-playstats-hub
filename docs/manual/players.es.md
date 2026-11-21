@@ -10,8 +10,10 @@ Cada jugador que jugó en tus servidores de juego tiene una página con sus resu
 
 - [La lista de jugadores](#la-lista-de-jugadores)
 - [La página del jugador](#la-página-del-jugador)
+- [El nombre del jugador](#el-nombre-del-jugador)
 - [Un jugador sin estadísticas](#un-jugador-sin-estadísticas)
 - [Pestaña General](#pestaña-general)
+- [Datos de Steam](#datos-de-steam)
 - [Pestaña Campañas](#pestaña-campañas)
 - [Pestaña Skins](#pestaña-skins)
 - [Pestaña Relaciones](#pestaña-relaciones)
@@ -40,13 +42,26 @@ Cuando el módulo del ranking de la comunidad está activado, un cuadro debajo d
 
 ![La página del jugador](../images/es/player.webp)
 
+## El nombre del jugador
+
+El sitio muestra un nombre para cada jugador, el mismo en todas las páginas: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo y su chat, el ranking de la comunidad, las páginas del juego, las búsquedas, las APIs y la administración. Se elige en este orden:
+
+1. El [nombre forzado](moderation.es.md#nombres-forzados), cuando un administrador definió uno.
+2. El nombre que el jugador más usó en todas las partidas del sitio, de todas las temporadas.
+3. El nombre del perfil de Steam, cuando el sitio tiene una [clave de la Steam Web API](administration.es.md#sitio).
+4. El último nombre visto en un servidor de juego.
+5. El SteamID64, cuando no se conoce nada más.
+
+El nombre se actualiza cuando se sube una partida, cuando cambia un nombre forzado y cuando cambian los datos de Steam. Los otros nombres que el jugador usó en las partidas siguen en **Nombres anteriores**, y la búsqueda de jugadores también encuentra al jugador por ellos.
+
 ## Un jugador sin estadísticas
 
 Un jugador que no tiene estadísticas en el período elegido, o que nunca jugó una partida rankeada, también tiene una página. Muestra:
 
 - **Jugador fuera del ranking**, con el selector de período, para elegir otra temporada o todo el período. Con el módulo de ranking desactivado dice **Aún sin estadísticas**.
 - El avatar y un botón **Abrir perfil de Steam**.
-- El mejor nombre que el sitio conoce: el último nombre visto en un servidor de juego, o el nombre del perfil de Steam.
+- El [nombre del jugador](#el-nombre-del-jugador).
+- Los [datos de Steam](#datos-de-steam).
 - El SteamID64 (Community ID), el Steam ID en las formas `STEAM_0` y `STEAM_1` y el Steam3 ID (`[U:1:n]`), cada uno con botón de copiar, y la dirección del perfil.
 - El último inicio de sesión y la cantidad de conexiones, y las [cuentas relacionadas](#cuentas-relacionadas), cuando el módulo del servidor en vivo está activado.
 - El cuadro del ranking de la comunidad y las [pestañas de votos de la comunidad](#pestañas-de-votos-de-la-comunidad), cuando el jugador ya participó en la votación.
@@ -61,7 +76,8 @@ Una dirección que no es un SteamID64 válido, como `/player/0` o `/player/abc`,
 |---|---|
 | Ranking | Posición en el ranking del período. |
 | Steam ID, URL del perfil | La cuenta, con botones para copiar y un enlace al perfil de Steam. |
-| Nombre, Nombres anteriores | El nombre usado con más frecuencia y los otros nombres usados. |
+| Nombre, Nombres anteriores | El [nombre del jugador](#el-nombre-del-jugador) y los otros nombres usados en las partidas. |
+| Horas en Left 4 Dead 2, Nivel de Steam, Cuenta de Steam creada el, Baneos VAC, Baneos de juego | Los [datos de Steam](#datos-de-steam) de la cuenta. |
 | Patente, XP | La patente y la experiencia en la temporada. Consulta [Patentes](patents.es.md). |
 | Juegos, Victorias, Derrotas, Porcentaje de victorias, Rage quit | Como en el [ranking](ranking.es.md#la-página-del-ranking). |
 | Castigo | Experiencia quitada por un administrador en esta temporada. |
@@ -71,6 +87,21 @@ Una dirección que no es un SteamID64 válido, como `/player/0` o `/player/abc`,
 **Estadísticas como superviviente** y **Estadísticas como infectado** suman los números de todas las partidas de ranking del período: premios de MVP, eliminaciones, daño, muertes, skeets, levels, crowns, etc. Los íconos ⓘ explican los menos obvios.
 
 **Últimas partidas** lista las partidas del jugador en el período con las mismas tarjetas que la [lista de partidas](matches.es.md#la-lista-de-partidas). Cuando has iniciado sesión, tu propia fila aparece resaltada.
+
+## Datos de Steam
+
+Cuando el sitio tiene una [clave de la Steam Web API](administration.es.md#sitio), lee en segundo plano datos públicos de la cuenta de Steam de cada jugador y los muestra en la pestaña **General**, a todos los visitantes:
+
+| Elemento | Significado |
+|---|---|
+| Horas en Left 4 Dead 2 | El total de horas jugadas en Left 4 Dead 2 y, entre paréntesis, las horas de las últimas 2 semanas. |
+| Nivel de Steam | El nivel de la cuenta de Steam. |
+| Cuenta de Steam creada el | El día en que se creó la cuenta, en la zona horaria del sitio, y su antigüedad. |
+| Baneos VAC, Baneos de juego | Cuántos baneos VAC y de juego tiene la cuenta, y hace cuántos días fue el último. |
+
+Un valor que el jugador mantiene privado en Steam, como los detalles de juegos o la fecha de creación de la cuenta, muestra **No disponible**. Los baneos son públicos en Steam incluso para perfiles privados. Sin una clave no se lee nada y todos los elementos muestran **No disponible**.
+
+Cada 10 minutos el sitio lee hasta 100 jugadores: primero los que nunca se leyeron, después los vistos más recientemente. Un jugador que jugó en los últimos 30 días se lee de nuevo después de 24 horas, los demás después de 7 días, lo que queda muy por debajo del límite diario de la Steam Web API. Una llamada a Steam que falla se intenta de nuevo más tarde.
 
 ## Pestaña Campañas
 
@@ -108,7 +139,7 @@ Aparecen cuando el módulo del ranking de la comunidad está activado, y solo pa
 
 ## Comparar dos jugadores
 
-**Comparar...** elige un segundo jugador. La página muestra entonces los dos jugadores lado a lado: las estadísticas generales, las de superviviente y de infectado, y las partidas que jugaron, con los números del segundo jugador junto a los del primero.
+**Comparar...** elige un segundo jugador. La página muestra entonces los dos jugadores lado a lado: las estadísticas generales con los datos de Steam, las de superviviente y de infectado, y las partidas que jugaron, con los números del segundo jugador junto a los del primero.
 
 ![Dos jugadores comparados](../images/es/player-compare.webp)
 

@@ -1,8 +1,10 @@
 using System.Net;
 using System.Text.Json;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Support.Skins;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Skins;
 
@@ -68,7 +70,7 @@ public class SkinShopApiTests
         Assert.AreEqual(1, bought.GetProperty("price").GetInt32());
         Assert.AreEqual(3, bought.GetProperty("balance").GetInt32());
         Assert.AreEqual(SkinSamples.DesertSmg, afterBuying.Equipped[SkinSamples.Smg]);
-        Assert.AreEqual($"Player {player}", purchase.PlayerName);
+        Assert.AreEqual(await factory.RunAsync(services => services.GetRequiredService<IPlayerNameService>().KnownNameAsync(player)), purchase.PlayerName);
         Assert.AreEqual(4, purchase.StarsBefore);
         Assert.IsTrue(equipped.GetProperty("succeeded").GetBoolean());
         Assert.AreEqual(SkinSamples.DesertSmg, afterEquipping.Equipped[SkinSamples.Smg]);

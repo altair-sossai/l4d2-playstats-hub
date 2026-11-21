@@ -16,7 +16,7 @@ public class CommunityPlayerService(HubDbContext dbContext, IPlayerNameService p
         return Played().CountAsync(p => p.CommunityId == communityId, cancellationToken);
     }
 
-    public async Task<HashSet<long>> CandidatesAsync(int minimumMatches, DateTime? playedSince = null, CancellationToken cancellationToken = default)
+    public IQueryable<long> Candidates(int minimumMatches, DateTime? playedSince = null)
     {
         var players = Played().Where(p => p.CommunityId > AppConsts.SteamCommunityIdBase);
 
@@ -28,11 +28,15 @@ public class CommunityPlayerService(HubDbContext dbContext, IPlayerNameService p
             players = players.Where(p => recent.Contains(p.CommunityId));
         }
 
-        var candidates = await players
+        return players
             .GroupBy(p => p.CommunityId)
             .Where(group => group.Count() >= minimumMatches)
-            .Select(group => group.Key)
-            .ToListAsync(cancellationToken);
+            .Select(group => group.Key);
+    }
+
+    public async Task<HashSet<long>> CandidatesAsync(int minimumMatches, DateTime? playedSince = null, CancellationToken cancellationToken = default)
+    {
+        var candidates = await Candidates(minimumMatches, playedSince).ToListAsync(cancellationToken);
 
         return [.. candidates];
     }

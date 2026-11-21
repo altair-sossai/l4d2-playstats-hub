@@ -1,3 +1,4 @@
+using PageMath = L4D2PlayStats.Hub.Core.Infrastructure.Helpers.Paging;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
@@ -16,6 +17,14 @@ public class FakeCommunityRankingService(int count) : ICommunityRankingService
         ];
 
         return Task.FromResult(entries);
+    }
+
+    public async Task<Page<CommunityRankingEntry>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
+    {
+        var entries = await ListAsync(cancellationToken);
+        var number = PageMath.Clamp(page, entries.Count, size);
+
+        return new Page<CommunityRankingEntry>([.. entries.Skip(PageMath.Skip(number, size)).Take(size)], number, size, entries.Count);
     }
 
     public Task<Page<CommunityVoter>> VotersAsync(int page, int size, CancellationToken cancellationToken = default)

@@ -5,7 +5,6 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
-using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
@@ -78,14 +77,14 @@ public class SkinShopService(
 
         if (!search.IsEmpty)
         {
-            var forced = dbContext.Set<ForcedName>();
             var profiles = dbContext.PlayerProfiles;
             List<string> titled = [.. skinIds];
             Expression<Func<SkinPurchase, bool>> skin = p => titled.Contains(p.SkinId);
 
             var filter = search.Filter<SkinPurchase>(
                 p => p.CommunityId,
-                p => p.PlayerName ?? forced.Where(entry => entry.CommunityId == p.CommunityId).Select(entry => entry.Name).FirstOrDefault() ?? profiles.Where(profile => profile.CommunityId == p.CommunityId).Select(profile => profile.Name).FirstOrDefault(),
+                p => p.PlayerName,
+                p => profiles.Where(profile => profile.CommunityId == p.CommunityId).Select(profile => profile.DisplayName ?? profile.Name).FirstOrDefault(),
                 p => p.SkinId);
 
             purchases = purchases.Where(filter.Or(skin));

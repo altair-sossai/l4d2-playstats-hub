@@ -24,7 +24,7 @@ public class RankingService(
     ISeasonService seasonService,
     IPunishmentService punishmentService,
     ISettingsService settingsService,
-    IForcedNameStore forcedNames,
+    IPlayerNameService playerNameService,
     IPatentService patentService) : IRankingService
 {
     public Task<IReadOnlyList<RankingPlayer>> SeasonAsync(int seasonId, CancellationToken cancellationToken = default)
@@ -98,10 +98,11 @@ public class RankingService(
         var settings = await settingsService.GetAsync<RankingSettings>(cancellationToken);
         var players = RankingCalculator.Calculate(matches, punishments, settings);
         var patents = await patentService.ScaleAsync(cancellationToken);
+        var names = await playerNameService.DisplayNamesAsync(cancellationToken);
 
         foreach (var player in players)
         {
-            player.ForcedName = forcedNames.Find(player.CommunityId);
+            player.DisplayName = names.GetValueOrDefault(player.CommunityId);
             player.Patents = patents;
         }
 

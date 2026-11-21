@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
@@ -33,6 +34,8 @@ public class PlayerViewService(
     IMatchViewService matchViewService,
     IPlayerConnectionService playerConnectionService,
     IPlayerNameService playerNameService,
+    IPlayerSteamService playerSteamService,
+    IClock clock,
     ISkinService skinService,
     ISkinShopService skinShopService,
     ICurrentUser currentUser,
@@ -108,6 +111,7 @@ public class PlayerViewService(
         var firstPlayerRanking = new RankingModel(localizer, firstPlayer);
         var secondPlayerRanking = secondPlayer == null ? null : new RankingModel(localizer, secondPlayer);
         var knownNames = await KnownNamesAsync(players, firstPlayer, secondPlayer, cancellationToken);
+        var steam = await playerSteamService.DetailsAsync(communityIds, cancellationToken);
 
         IReadOnlyCollection<Skin> skins = skinShop ? await skinService.ListAsync(cancellationToken) : [];
         var assetsUrl = skinShop ? (await settingsService.GetAsync<SkinShopSettings>(cancellationToken)).AssetsUrl : null;
@@ -117,6 +121,8 @@ public class PlayerViewService(
             SkinShop = skinShop,
             FirstPlayerSkins = skinShop ? await PlayerSkinsAsync(skins, firstPlayer.CommunityId, assetsUrl, cancellationToken) : null,
             SecondPlayerSkins = skinShop && secondPlayer != null ? await PlayerSkinsAsync(skins, secondPlayer.CommunityId, assetsUrl, cancellationToken) : null,
+            FirstPlayerSteam = new PlayerSteamModel(steam.GetValueOrDefault(firstPlayer.CommunityId), timeZone, clock.UtcNow),
+            SecondPlayerSteam = secondPlayer == null ? null : new PlayerSteamModel(steam.GetValueOrDefault(secondPlayer.CommunityId), timeZone, clock.UtcNow),
             Administrator = period.Season != null && await currentUser.IsAdministratorAsync(),
             TimeZone = timeZone
         };
@@ -131,11 +137,14 @@ public class PlayerViewService(
             : new PlayerConnectionDetails(null, []);
         var relatedPlayers = await RelatedAccountsVisibleAsync(cancellationToken) ? connectionInfo.RelatedPlayers : [];
         var knownName = await playerNameService.KnownNameAsync(communityId, cancellationToken);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
+        var steam = await playerSteamService.DetailsAsync([communityId], cancellationToken);
 
         return new PlayerNotFoundModel(communityId, connectionInfo.Player, relatedPlayers, knownName)
         {
             Period = period,
-            TimeZone = await siteClock.ZoneAsync(cancellationToken)
+            TimeZone = timeZone,
+            Steam = new PlayerSteamModel(steam.GetValueOrDefault(communityId), timeZone, clock.UtcNow)
         };
     }
 

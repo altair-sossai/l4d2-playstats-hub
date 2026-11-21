@@ -95,4 +95,6 @@ The list has 20 players per page and a search by name or Steam ID. **Add** opens
 
 ![Importing a forced_names.cfg file](../images/en/admin-forced-names-import.webp)
 
+The forced names are part of the player registry of the site: each one is kept on the profile of the player, with who set it and when, and adding, editing or removing one changes the [name of the player](players.md#the-player-name) on every page at once. The page, the import and the list read by the game servers work as before.
+
 The game servers read the list from `GET <site>/api/forced-names` with their token, as described in [Connecting a game server](../game-server.md).

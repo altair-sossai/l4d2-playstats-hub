@@ -118,7 +118,7 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Public address of the site | The address written in the instructions for the game servers (`playstats_url`). Leave it empty to use the address you are using now. Fill it when you open the administration through a different address than the game servers use, for example `https://stats.example.com`. |
 | Default language | The language of visitors who did not choose one. |
 | Time zone | The clock of the site: dates on the pages, the day for the vote limits, and the start and end of each season. Use a name such as `America/Sao_Paulo` or `Europe/Lisbon`. |
-| Steam Web API key (optional) | Avatars and names load without it; with a key they load faster. |
+| Steam Web API key (optional) | Avatars and names load without it; with a key they load faster. The key also lets the site read the [Steam data](players.md#steam-data) of the players: hours in Left 4 Dead 2, Steam level, creation date of the account and bans, and the Steam name used in the [name of the player](players.md#the-player-name). |
 
 ### Appearance
 

@@ -115,9 +115,9 @@ public class PagingTests
         Assert.IsEmpty(page.Items);
     }
 
-    private static Task<Page<ForcedName>> PageAsync(TestHub hub, int page)
+    private static Task<Page<PlayerProfile>> PageAsync(TestHub hub, int page)
     {
-        return hub.RunAsync(services => services.GetRequiredService<HubDbContext>().Set<ForcedName>().AsNoTracking().OrderBy(entry => entry.CommunityId).ToPageAsync(page, 20));
+        return hub.RunAsync(services => services.GetRequiredService<HubDbContext>().PlayerProfiles.AsNoTracking().OrderBy(entry => entry.CommunityId).ToPageAsync(page, 20));
     }
 
     private static Task SeedAsync(TestHub hub, int count)
@@ -127,7 +127,7 @@ public class PagingTests
             var dbContext = services.GetRequiredService<HubDbContext>();
 
             for (var index = 0; index < count; index++)
-                dbContext.Add(new ForcedName { CommunityId = CoreConsts.SteamCommunityIdBase + 1000 + index, Name = $"Player {index}", UpdatedAtUtc = hub.Clock.UtcNow });
+                dbContext.Add(new PlayerProfile { CommunityId = CoreConsts.SteamCommunityIdBase + 1000 + index, Name = $"Player {index}", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
 
             await dbContext.SaveChangesAsync();
         });

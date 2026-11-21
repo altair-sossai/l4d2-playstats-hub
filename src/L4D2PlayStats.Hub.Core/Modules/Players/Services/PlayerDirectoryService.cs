@@ -1,104 +1,125 @@
+using System.Linq.Expressions;
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rankingService, IForcedNameStore forcedNames) : IPlayerDirectoryService
+public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rankingService) : IPlayerDirectoryService
 {
     public async Task<Page<PlayerDirectoryEntry>> SearchAsync(string? term, int page, CancellationToken cancellationToken = default)
     {
-        var entries = await EntriesAsync(cancellationToken);
-        var matches = Matches(entries, PlayerSearch.Of(term));
+        var search = PlayerSearch.Of(term);
         var size = AppConsts.PlayerDirectoryPageSize;
-        var number = Paging.Clamp(page, matches.Count, size);
+        var profiles = dbContext.PlayerProfiles.AsNoTracking().Where(profile => profile.CommunityId > AppConsts.SteamCommunityIdBase);
 
-        var players = matches
-            .OrderByDescending(entry => entry.LastSeenAtUtc)
-            .ThenBy(entry => entry.Position ?? int.MaxValue)
-            .ThenBy(entry => entry.Name, StringComparer.CurrentCultureIgnoreCase)
-            .ThenBy(entry => entry.CommunityId)
-            .Skip(Paging.Skip(number, size))
-            .Take(size)
-            .ToList();
-
-        return new Page<PlayerDirectoryEntry>(players, number, size, matches.Count);
-    }
-
-    private async Task<List<PlayerDirectoryEntry>> EntriesAsync(CancellationToken cancellationToken)
-    {
-        var current = await rankingService.CurrentAsync(cancellationToken);
-        var allTime = await rankingService.AllTimeAsync(cancellationToken);
-
-        var profiles = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Select(profile => new { profile.CommunityId, profile.Name, profile.LastSeenAtUtc })
-            .ToListAsync(cancellationToken);
-
-        var connections = await dbContext.Set<PlayerConnection>()
-            .AsNoTracking()
-            .GroupBy(connection => new { connection.CommunityId, connection.Name })
-            .Select(group => new { group.Key.CommunityId, group.Key.Name, LastSeenAtUtc = group.Max(connection => connection.LastSeenAtUtc) })
-            .ToListAsync(cancellationToken);
-
-        var entries = new Dictionary<long, PlayerDirectoryEntry>();
-
-        foreach (var (communityId, name) in forcedNames.All.Where(entry => SteamIds.IsValid(entry.Key)))
-            AddName(Entry(entries, communityId), name);
-
-        foreach (var player in current.Where(player => SteamIds.IsValid(player.CommunityId)))
+        if (search.CommunityId != null)
         {
-            var entry = Entry(entries, player.CommunityId);
+            var communityId = search.CommunityId.Value;
+            var found = await PageAsync(profiles.Where(profile => profile.CommunityId == communityId), 1, size, cancellationToken);
 
-            entry.Position = player.Position;
-            AddRanked(entry, player);
+            return found.Total > 0 ? found : new Page<PlayerDirectoryEntry>([new PlayerDirectoryEntry(communityId, false)], 1, size, 1);
         }
 
-        foreach (var player in allTime.Where(player => SteamIds.IsValid(player.CommunityId)))
-            AddRanked(Entry(entries, player.CommunityId), player);
-
-        foreach (var profile in profiles.Where(profile => SteamIds.IsValid(profile.CommunityId)))
-            AddSeen(Entry(entries, profile.CommunityId), profile.Name, profile.LastSeenAtUtc);
-
-        foreach (var connection in connections.Where(connection => SteamIds.IsValid(connection.CommunityId)).OrderByDescending(connection => connection.LastSeenAtUtc))
-            AddSeen(Entry(entries, connection.CommunityId), connection.Name, connection.LastSeenAtUtc);
-
-        return [.. entries.Values];
+        return await PageAsync(search.IsEmpty ? profiles : profiles.Where(Filter(search)), page, size, cancellationToken);
     }
 
-    private static PlayerDirectoryEntry Entry(Dictionary<long, PlayerDirectoryEntry> entries, long communityId)
+    private Expression<Func<PlayerProfile, bool>> Filter(PlayerSearch search)
     {
-        if (entries.TryGetValue(communityId, out var entry))
+        var lower = search.Lower;
+        var players = dbContext.MatchPlayers;
+        var connections = dbContext.Set<PlayerConnection>();
+
+        Expression<Func<PlayerProfile, bool>> used = profile =>
+            players.Any(player => player.CommunityId == profile.CommunityId && player.Name != null && player.Name.ToLower().Contains(lower))
+            || connections.Any(connection => connection.CommunityId == profile.CommunityId && connection.Name.ToLower().Contains(lower));
+
+        return search
+            .Filter<PlayerProfile>(profile => profile.CommunityId, profile => profile.DisplayName, profile => profile.Name, profile => profile.SteamName)
+            .Or(used);
+    }
+
+    private async Task<Page<PlayerDirectoryEntry>> PageAsync(IQueryable<PlayerProfile> profiles, int page, int size, CancellationToken cancellationToken)
+    {
+        var connections = dbContext.Set<PlayerConnection>();
+
+        var found = await profiles
+            .Select(profile => new
+            {
+                profile.CommunityId,
+                profile.DisplayName,
+                profile.Name,
+                profile.LastSeenAtUtc,
+                ConnectedAtUtc = connections.Where(connection => connection.CommunityId == profile.CommunityId).Max(connection => (DateTime?)connection.LastSeenAtUtc)
+            })
+            .Select(profile => new
+            {
+                profile.CommunityId,
+                profile.DisplayName,
+                profile.Name,
+                LastSeenAtUtc = profile.ConnectedAtUtc != null && profile.ConnectedAtUtc > profile.LastSeenAtUtc ? profile.ConnectedAtUtc.Value : profile.LastSeenAtUtc
+            })
+            .OrderByDescending(profile => profile.LastSeenAtUtc)
+            .ThenBy(profile => profile.DisplayName ?? profile.Name)
+            .ThenBy(profile => profile.CommunityId)
+            .ToPageAsync(page, size, cancellationToken);
+
+        List<long> ids = [.. found.Items.Select(profile => profile.CommunityId)];
+        var used = await UsedNamesAsync(ids, cancellationToken);
+        var current = await rankingService.CurrentAsync(cancellationToken);
+        var allTime = await rankingService.AllTimeAsync(cancellationToken);
+        var positions = current.Where(player => ids.Contains(player.CommunityId)).ToDictionary(player => player.CommunityId, player => player.Position);
+        var ranked = allTime.Where(player => ids.Contains(player.CommunityId)).Select(player => player.CommunityId).ToHashSet();
+
+        return found.Map(profile =>
+        {
+            var entry = new PlayerDirectoryEntry(profile.CommunityId)
+            {
+                LastSeenAtUtc = profile.LastSeenAtUtc,
+                Position = positions.TryGetValue(profile.CommunityId, out var position) ? position : null,
+                Ranked = positions.ContainsKey(profile.CommunityId) || ranked.Contains(profile.CommunityId)
+            };
+
+            AddName(entry, PlayerDisplayNames.Known(profile.CommunityId, profile.DisplayName));
+            AddName(entry, profile.Name);
+
+            foreach (var name in used[profile.CommunityId])
+                AddName(entry, name);
+
             return entry;
-
-        entry = new PlayerDirectoryEntry(communityId);
-        entries[communityId] = entry;
-
-        return entry;
+        });
     }
 
-    private static void AddRanked(PlayerDirectoryEntry entry, RankingPlayer player)
+    private async Task<ILookup<long, string>> UsedNamesAsync(List<long> ids, CancellationToken cancellationToken)
     {
-        entry.Ranked = true;
-        AddName(entry, player.PreviousNames.FirstOrDefault()?.Name ?? player.Name);
+        if (ids.Count == 0)
+            return Array.Empty<string>().ToLookup(_ => 0L);
 
-        foreach (var previous in player.PreviousNames)
-            AddName(entry, previous.Name);
-    }
+        var played = await dbContext.MatchPlayers
+            .AsNoTracking()
+            .Where(player => ids.Contains(player.CommunityId) && player.Name != null && player.Name != string.Empty)
+            .GroupBy(player => new { player.CommunityId, player.Name })
+            .Select(group => new PlayerNameUsage(group.Key.CommunityId, group.Key.Name!, group.Count(), group.Min(player => player.Id)))
+            .ToListAsync(cancellationToken);
 
-    private static void AddSeen(PlayerDirectoryEntry entry, string? name, DateTime lastSeenAtUtc)
-    {
-        if (entry.LastSeenAtUtc == null || lastSeenAtUtc > entry.LastSeenAtUtc)
-            entry.LastSeenAtUtc = lastSeenAtUtc;
+        var connected = await dbContext.Set<PlayerConnection>()
+            .AsNoTracking()
+            .Where(connection => ids.Contains(connection.CommunityId))
+            .Select(connection => new { connection.CommunityId, connection.Name, connection.LastSeenAtUtc })
+            .ToListAsync(cancellationToken);
 
-        AddName(entry, name);
+        return ids
+            .SelectMany(id => MostUsedNames.Rank(played.Where(usage => usage.CommunityId == id))
+                .Concat(connected.Where(connection => connection.CommunityId == id).OrderByDescending(connection => connection.LastSeenAtUtc).Select(connection => connection.Name))
+                .Take(AppConsts.PlayerDirectoryNames)
+                .Select(name => new { Id = id, Name = name }))
+            .ToLookup(entry => entry.Id, entry => entry.Name);
     }
 
     private static void AddName(PlayerDirectoryEntry entry, string? name)
@@ -112,18 +133,5 @@ public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rank
 
         if (!entry.Names.Contains(text, StringComparer.CurrentCultureIgnoreCase))
             entry.Names.Add(text);
-    }
-
-    private static List<PlayerDirectoryEntry> Matches(List<PlayerDirectoryEntry> entries, PlayerSearch search)
-    {
-        if (search.IsEmpty)
-            return entries;
-
-        if (search.CommunityId == null)
-            return [.. entries.Where(entry => search.Matches(entry.CommunityId, entry.Names))];
-
-        var found = entries.Where(entry => entry.CommunityId == search.CommunityId).ToList();
-
-        return found.Count > 0 ? found : [new PlayerDirectoryEntry(search.CommunityId.Value, false)];
     }
 }

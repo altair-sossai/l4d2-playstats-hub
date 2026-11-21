@@ -1,4 +1,5 @@
 using System.Net;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
@@ -238,7 +239,9 @@ public class SkinPagesTests
         Assert.Contains("<strong>1</strong>", all);
         Assert.Contains("<strong>3 ⭐</strong>", all);
         Assert.Contains("ska-refund-all-open", all);
-        Assert.Contains($"data-player=\"{player}\" data-player-name=\"Rich Player\" data-avatar=\"/avatar/{player}\"", all);
+        var shown = await factory.RunAsync(services => services.GetRequiredService<IPlayerNameService>().KnownNameAsync(player));
+
+        Assert.Contains($"data-player=\"{player}\" data-player-name=\"{shown}\" data-avatar=\"/avatar/{player}\"", all);
         Assert.Contains($"data-image=\"{AssetsUrl}/skins/gold-magnum.jpg\"", all);
         Assert.Contains("data-shop-url=\"/skins#skin-gold-magnum\"", all);
         Assert.Contains("data-rarity=\"Legendary\" data-rarity-css=\"ska-rarity-legendary\"", all);
@@ -248,7 +251,7 @@ public class SkinPagesTests
         Assert.Contains("data-gift=\"1\" data-gifted-by=\"The Admin\"", all);
         Assert.Contains("by The Admin", all);
         Assert.Contains("id=\"gm-modal\"", all);
-        Assert.Contains("Rich Player", bySearch);
+        Assert.Contains("data-skin=\"gold-magnum\"", bySearch);
         Assert.DoesNotContain("data-skin=\"galaxy-pump\"", bySearch);
         Assert.Contains("class=\"ska-filter-player\"", byPlayer);
         Assert.Contains("data-skin=\"galaxy-pump\"", byPlayer);

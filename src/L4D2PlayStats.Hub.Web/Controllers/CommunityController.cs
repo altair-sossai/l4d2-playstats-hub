@@ -50,9 +50,9 @@ public class CommunityController(
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
 
         var patents = modules.IsEnabled(HubModule.Ranking);
-        var entries = await communityRankingService.ListAsync(cancellationToken);
+        var entries = await communityRankingService.PageAsync(page, AppConsts.CommunityRankingPageSize, cancellationToken);
         var experience = patents ? await ExperienceAsync(cancellationToken) : null;
-        var listed = new PagedListModel<CommunityRankingEntry>(entries, page, AppConsts.CommunityRankingPageSize);
+        var listed = new PagedListModel<CommunityRankingEntry>(entries);
         var scale = await patentService.ScaleAsync(cancellationToken);
 
         var model = new CommunityRankingViewModel

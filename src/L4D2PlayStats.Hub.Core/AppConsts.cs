@@ -220,6 +220,11 @@ public static class AppConsts
     public const string SteamCommunityIdPattern = @"^(\d{16,})$";
     public const string SteamProfileUrlPattern = @"^(?:https?:\/\/)?(?:www\.)?steamcommunity\.com\/profiles\/(\d{16,})\/?$";
     public const int PlayerDirectoryPageSize = 25;
+    public const int PlayerDirectoryNames = 10;
+    public const int PlayerNameRefreshBatchSize = 500;
+    public const int SteamDataMaxAgeInHours = 24;
+    public const int SteamDataInactiveMaxAgeInDays = 7;
+    public const int SteamDataActivePlayerInDays = 30;
 
     public const int BackupDefaultIntervalInHours = 8;
     public const int BackupMinIntervalInHours = 1;

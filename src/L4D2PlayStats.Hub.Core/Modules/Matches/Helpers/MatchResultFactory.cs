@@ -6,7 +6,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 
 public static class MatchResultFactory
 {
-    public static MatchResult Create(Match match, IReadOnlyList<MatchMapResult> maps, ParsedStatistics? newest, IForcedNameStore forcedNames)
+    public static MatchResult Create(Match match, IReadOnlyList<MatchMapResult> maps, ParsedStatistics? newest, IDisplayNameStore displayNames)
     {
         var rows = match.Players
             .GroupBy(player => player.CommunityId)
@@ -15,11 +15,11 @@ public static class MatchResultFactory
         var teamA = new MatchTeamResult(AppConsts.TeamACode, match.TeamAScore);
         var teamB = new MatchTeamResult(AppConsts.TeamBCode, match.TeamBScore);
 
-        if (!AddPlayers(teamA, newest, rows, forcedNames))
-            AddStoredPlayers(teamA, match.Players.Where(player => player.TeamA), forcedNames);
+        if (!AddPlayers(teamA, newest, rows, displayNames))
+            AddStoredPlayers(teamA, match.Players.Where(player => player.TeamA), displayNames);
 
-        if (!AddPlayers(teamB, newest, rows, forcedNames))
-            AddStoredPlayers(teamB, match.Players.Where(player => player.TeamB), forcedNames);
+        if (!AddPlayers(teamB, newest, rows, displayNames))
+            AddStoredPlayers(teamB, match.Players.Where(player => player.TeamB), displayNames);
 
         return new MatchResult
         {
@@ -41,7 +41,7 @@ public static class MatchResultFactory
         };
     }
 
-    private static bool AddPlayers(MatchTeamResult team, ParsedStatistics? newest, Dictionary<long, MatchPlayer> rows, IForcedNameStore forcedNames)
+    private static bool AddPlayers(MatchTeamResult team, ParsedStatistics? newest, Dictionary<long, MatchPlayer> rows, IDisplayNameStore displayNames)
     {
         var half = newest?.Halves.FirstOrDefault(h => h.RoundHalf?.Team == team.Code);
         if (newest == null || half == null)
@@ -56,15 +56,15 @@ public static class MatchResultFactory
 
             var row = rows.GetValueOrDefault(communityId);
 
-            team.AddPlayer(communityId, forcedNames.Apply(communityId, playerName.Name ?? row?.Name), row);
+            team.AddPlayer(communityId, displayNames.Apply(communityId, playerName.Name ?? row?.Name), row);
         }
 
         return true;
     }
 
-    private static void AddStoredPlayers(MatchTeamResult team, IEnumerable<MatchPlayer> players, IForcedNameStore forcedNames)
+    private static void AddStoredPlayers(MatchTeamResult team, IEnumerable<MatchPlayer> players, IDisplayNameStore displayNames)
     {
         foreach (var player in players.OrderBy(player => player.Order))
-            team.AddPlayer(player.CommunityId, forcedNames.Apply(player.CommunityId, player.Name), player);
+            team.AddPlayer(player.CommunityId, displayNames.Apply(player.CommunityId, player.Name), player);
     }
 }

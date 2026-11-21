@@ -39,9 +39,9 @@ public class RankingPlayer(long communityId) : MatchPlayerStatistics
         }
     }
 
-    public string? ForcedName { get; set; }
+    public string? DisplayName { get; set; }
     public PatentScale Patents { get; set; } = PatentCatalog.Default;
-    public string MainName => ForcedName ?? PreviousNames.FirstOrDefault()?.Name ?? Name ?? AppConsts.UnknownPlayerName;
+    public string MainName => DisplayName ?? PreviousNames.FirstOrDefault()?.Name ?? Name ?? AppConsts.UnknownPlayerName;
     public string MostUsedNames => string.Join(" | ", PreviousNames.Take(AppConsts.MostUsedNames).Select(pn => pn.Name));
     public List<PreviousName> PreviousNames { get; } = [];
     public Dictionary<long, PlayerRelation> Relations { get; } = [];

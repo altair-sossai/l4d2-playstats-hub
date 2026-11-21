@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISettingsService settingsService, IForcedNameStore forcedNames) : IPlayerConnectionService
+public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISettingsService settingsService, IDisplayNameStore displayNames, IPlayerRegistryService playerRegistryService) : IPlayerConnectionService
 {
     public async Task<List<PlayerConnectionResult>?> RegisterAsync(PlayerConnectionCommand? command, CancellationToken cancellationToken = default)
     {
@@ -42,6 +42,7 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
         connection.Count++;
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await playerRegistryService.SeenAsync(communityId, name, cancellationToken);
 
         return await RelatedAsync(communityId, cancellationToken);
     }
@@ -116,7 +117,7 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
 
                     return new PlayerConnectionResult(latest.CommunityId)
                     {
-                        Name = forcedNames.Apply(latest.CommunityId, latest.Name),
+                        Name = displayNames.Apply(latest.CommunityId, latest.Name),
                         FirstConnectedAtUtc = group.Min(c => c.FirstSeenAtUtc),
                         LastConnectedAtUtc = latest.LastSeenAtUtc,
                         ConnectionCount = group.Sum(c => c.Count)

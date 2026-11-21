@@ -69,6 +69,7 @@ builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddSingleton<AvatarQueue>();
 builder.Services.AddSingleton<SteamProfileClient>();
+builder.Services.AddSingleton<SteamWebApiClient>();
 builder.Services.AddSingleton<BrandingStore>();
 builder.Services.AddSingleton<SkinThumbnailStore>();
 builder.Services.AddSingleton<BackupLock>();
@@ -76,6 +77,7 @@ builder.Services.AddSingleton<IBackupStorageFactory, AzureBackupStorageFactory>(
 builder.Services.AddHostedService<SeasonBackgroundService>();
 builder.Services.AddHostedService<BackupBackgroundService>();
 builder.Services.AddHostedService<AvatarBackgroundService>();
+builder.Services.AddHostedService<SteamDataBackgroundService>();
 builder.Services.AddHostedService<PlayerConnectionCleanupBackgroundService>();
 builder.Services.AddHostedService<SkinSeasonRefundBackgroundService>();
 builder.Services.AddHostedService<SkinAuthorSyncBackgroundService>();

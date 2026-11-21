@@ -454,16 +454,21 @@ function checks(context) {
                 const message = `e2e live ${stamp}`;
                 const renamed = `Live${stamp}`;
                 const player = fixtures.players[0];
+                const newcomer = '76561198099999991';
 
                 await postLive(context, '/api/game-info/messages', { public: true, team: 2, communityId: player.id, name: player.name, isAdmin: false, message });
                 await browser.until(`document.body.innerText.includes(${quote(message)})`, 'the chat message on the live page', liveTimeout);
 
+                const survivor = { isAdmin: false, latency: 0.04, character: 0, permanentHealth: 100, temporaryHealth: 0, incapacitated: false, isPlayerAlive: true, blackAndWhite: false, primaryWeapon: 2, secondaryWeapon: 1, meleeWeapon: 0, progress: 0.5 };
+
                 await postLive(context, '/api/game-info/players', {
-                    survivors: [{ communityId: player.id, name: renamed, isAdmin: false, latency: 0.04, character: 0, permanentHealth: 100, temporaryHealth: 0, incapacitated: false, isPlayerAlive: true, blackAndWhite: false, primaryWeapon: 2, secondaryWeapon: 1, meleeWeapon: 0, progress: 0.5 }],
+                    survivors: [{ ...survivor, communityId: player.id, name: `${renamed} known` }, { ...survivor, communityId: newcomer, name: renamed }],
                     infecteds: [],
                     spectators: []
                 });
                 await browser.until(`document.querySelector('#game-info-players').innerText.includes(${quote(renamed)})`, 'the new players on the live page', liveTimeout);
+                expect(await browser.eval(`document.querySelector('#game-info-players').innerText.includes(${quote(player.name)})`), 'The live page does not show the site name of a known player');
+                expect(!(await browser.eval(`document.querySelector('#game-info-players').innerText.includes(${quote(`${renamed} known`)})`)), 'The live page shows the in-game name of a known player instead of the site name');
             }
         },
         {

@@ -3,6 +3,7 @@ using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Tests.Web.Live;
 using Microsoft.EntityFrameworkCore;
@@ -215,6 +216,7 @@ public class PlayerSearchTests
             dbContext.Set<PlayerConnection>().Add(new PlayerConnection { IpAddress = "200.100.50.2", CommunityId = Carol, Name = "CarolConnected", FirstSeenAtUtc = now.AddHours(-2), LastSeenAtUtc = now.AddHours(-1), Count = 1 });
 
             await dbContext.SaveChangesAsync();
+            await services.GetRequiredService<IPlayerRegistryService>().BackfillAsync();
         });
     }
 }

@@ -1,5 +1,16 @@
 {
   "Browse statistics for {0} players from the {1} server.": "Consulta las estadísticas de {0} jugadores del servidor {1}.",
   "Compare {0} and {1}'s performance and statistics on {2}.": "Compara el rendimiento y las estadísticas de {0} y {1} en {2}.",
-  "See the available information about player {0} on {1}.": "Consulta la información disponible sobre el jugador {0} en {1}."
+  "See the available information about player {0} on {1}.": "Consulta la información disponible sobre el jugador {0} en {1}.",
+  "Hours in Left 4 Dead 2": "Horas en Left 4 Dead 2",
+  "{0} h": "{0} h",
+  "{0} h in the last 2 weeks": "{0} h en las últimas 2 semanas",
+  "Steam level": "Nivel de Steam",
+  "Steam account created": "Cuenta de Steam creada el",
+  "less than a year": "menos de un año",
+  "1 year": "1 año",
+  "{0} years": "{0} años",
+  "VAC bans": "Baneos VAC",
+  "Game bans": "Baneos de juego",
+  "last ban {0} days ago": "último baneo hace {0} días"
 }

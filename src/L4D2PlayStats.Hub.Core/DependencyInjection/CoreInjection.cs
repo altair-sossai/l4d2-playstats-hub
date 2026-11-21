@@ -26,6 +26,7 @@ public static class CoreInjection
         services.AddSingleton<ILiveServerStore, LiveServerStore>();
         services.AddSingleton<ISecretProtector, SecretProtector>();
         services.AddSingleton<IForcedNameStore, ForcedNameStore>();
+        services.AddSingleton<IDisplayNameStore, DisplayNameStore>();
         services.AddScoped<ISiteClock, SiteClock>();
 
         services.Scan(scan => scan

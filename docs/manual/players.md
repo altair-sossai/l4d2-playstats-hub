@@ -10,8 +10,10 @@ Every player who played on your game servers has a page with their results, thei
 
 - [The players list](#the-players-list)
 - [The player page](#the-player-page)
+- [The player name](#the-player-name)
 - [A player without statistics](#a-player-without-statistics)
 - [General tab](#general-tab)
+- [Steam data](#steam-data)
 - [Campaigns tab](#campaigns-tab)
 - [Skins tab](#skins-tab)
 - [Relations tab](#relations-tab)
@@ -40,14 +42,27 @@ When the community ranking module is on, a box under the avatar shows the positi
 
 ![The player page](../images/en/player.webp)
 
+## The player name
+
+The site shows one name for each player, the same on every page: the rankings, the player page, the matches and their statistics, the live server and its chat, the community ranking, the in-game pages, the searches, the APIs and the administration. It is chosen in this order:
+
+1. The [forced name](moderation.md#forced-names), when an administrator set one.
+2. The name the player used most often in all the matches on the site, of every season.
+3. The name of the Steam profile, when the site has a [Steam Web API key](administration.md#site).
+4. The last name seen on a game server.
+5. The SteamID64, when nothing else is known.
+
+The name is updated when a match is uploaded, when a forced name changes and when the Steam data changes. The other names the player used in the matches stay in **Previous names**, and the player search also finds the player by them.
+
 ## A player without statistics
 
 A player who has no statistics in the chosen period, or who never played a ranked match, still has a page. It shows:
 
 - **Player not ranked**, with the period selector, so another season or all time can be chosen. With the ranking module off it says **No statistics yet** instead.
 - The avatar and an **Open Steam profile** button.
-- The best name the site knows: the last name seen on a game server, or the name of the Steam profile.
+- The [name of the player](#the-player-name).
 - The SteamID64 (Community ID), the Steam ID in the `STEAM_0` and `STEAM_1` forms and the Steam3 ID (`[U:1:n]`), each with a copy button, and the profile URL.
+- The [Steam data](#steam-data).
 - The last login and the number of connections, and the [related accounts](#related-accounts), when the live server module is on.
 - The community ranking box and the [community votes tabs](#community-votes-tabs), when the player already took part in the voting.
 
@@ -61,7 +76,8 @@ An address that is not a valid SteamID64, such as `/player/0` or `/player/abc`, 
 |---|---|
 | Ranking | Position in the ranking of the period. |
 | Steam ID, Profile URL | The account, with copy buttons and a link to the Steam profile. |
-| Name, Previous names | The name used most often, and the other names used. |
+| Name, Previous names | The [name of the player](#the-player-name), and the other names used in the matches. |
+| Hours in Left 4 Dead 2, Steam level, Steam account created, VAC bans, Game bans | The [Steam data](#steam-data) of the account. |
 | Patent, XP | The patent and experience in the season. See [Patents](patents.md). |
 | Games, Wins, Loss, Win rate, Rage quit | As in the [ranking](ranking.md#the-ranking-page). |
 | Punishment | Experience taken away by an administrator in this season. |
@@ -71,6 +87,21 @@ An address that is not a valid SteamID64, such as `/player/0` or `/player/abc`, 
 **Statistics as survivor** and **Statistics as infected** add up the numbers of every ranked match of the period: MVP awards, kills, damage, deaths, skeets, levels, crowns and so on. The ⓘ icons explain the less obvious ones.
 
 **Last matches** lists the player's matches of the period with the same cards as the [match list](matches.md#the-match-list). When you are signed in, your own row is highlighted.
+
+## Steam data
+
+When the site has a [Steam Web API key](administration.md#site), it reads public data of each player's Steam account in the background and shows it in the **General** tab, to every visitor:
+
+| Item | Meaning |
+|---|---|
+| Hours in Left 4 Dead 2 | The total hours played in Left 4 Dead 2 and, in brackets, the hours of the last 2 weeks. |
+| Steam level | The level of the Steam account. |
+| Steam account created | The day the account was created, in the time zone of the site, and its age. |
+| VAC bans, Game bans | How many VAC and game bans the account has, and how many days ago the last one happened. |
+
+A value the player keeps private on Steam, such as the game details or the creation date of the account, shows **Not available**. The bans are public on Steam even for private profiles. Without a key nothing is read and every item shows **Not available**.
+
+Every 10 minutes the site reads up to 100 players: first the ones never read, then the ones seen most recently. A player who played in the last 30 days is read again after 24 hours, the others after 7 days, which stays far below the daily limit of the Steam Web API. A Steam call that fails is tried again later.
 
 ## Campaigns tab
 
@@ -108,7 +139,7 @@ Shown when the community ranking module is on, and only for one player, not in a
 
 ## Comparing two players
 
-**Compare** chooses a second player. The page then shows both players side by side: the general statistics, the survivor and infected statistics, and the matches they played, with the second player's numbers next to the first one's.
+**Compare** chooses a second player. The page then shows both players side by side: the general statistics with the Steam data, the survivor and infected statistics, and the matches they played, with the second player's numbers next to the first one's.
 
 ![Two players compared](../images/en/player-compare.webp)
 

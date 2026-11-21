@@ -95,4 +95,6 @@ A lista mostra 20 jogadores por página e tem busca por nome ou Steam ID. **Adic
 
 ![Importando um arquivo forced_names.cfg](../images/pt/admin-forced-names-import.webp)
 
+Os nomes forçados fazem parte do cadastro de jogadores do site: cada um fica guardado no perfil do jogador, com quem o definiu e quando, e adicionar, editar ou remover um muda o [nome do jogador](players.pt.md#o-nome-do-jogador) em todas as páginas na hora. A página, a importação e a lista lida pelos servidores de jogo funcionam como antes.
+
 Os servidores de jogo leem a lista em `GET <site>/api/forced-names` com o token deles, como descrito em [Conectando um servidor de jogo](../game-server.pt.md).

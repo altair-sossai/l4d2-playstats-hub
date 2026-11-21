@@ -20,8 +20,8 @@ else
         </tr>
         @foreach (var match in Model.Matches)
         {
-            var teamA = string.Join(", ", match.Players.Where(p => p.TeamA).Select(p => ForcedNames.Apply(p.CommunityId, p.Name)));
-            var teamB = string.Join(", ", match.Players.Where(p => p.TeamB).Select(p => ForcedNames.Apply(p.CommunityId, p.Name)));
+            var teamA = string.Join(", ", match.Players.Where(p => p.TeamA).Select(p => DisplayNames.Apply(p.CommunityId, p.Name)));
+            var teamB = string.Join(", ", match.Players.Where(p => p.TeamB).Select(p => DisplayNames.Apply(p.CommunityId, p.Name)));
 
             <tr>
                 <td class="muted">@match.LastFileDate.ToString("d") @match.LastFileDate.ToString(AppConsts.ShortTimeFormat)</td>

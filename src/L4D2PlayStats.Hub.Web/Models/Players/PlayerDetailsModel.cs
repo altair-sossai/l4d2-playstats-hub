@@ -29,6 +29,8 @@ public class PlayerDetailsModel(
     public bool Administrator { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
     public PlayerCommunityModel? Community { get; set; }
+    public PlayerSteamModel FirstPlayerSteam { get; init; } = new(null, TimeZoneInfo.Utc, DateTime.UtcNow);
+    public PlayerSteamModel? SecondPlayerSteam { get; init; }
 
     public IReadOnlyList<MatchCardModel> LastMatches { get; } = matches;
 

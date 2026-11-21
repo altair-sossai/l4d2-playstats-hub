@@ -6,7 +6,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 
-public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministratorService administratorService, IForcedNameStore forcedNames) : ICurrentUser
+public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministratorService administratorService, IDisplayNameStore displayNames) : ICurrentUser
 {
     private bool? _administrator;
 
@@ -16,7 +16,7 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministrato
 
     public long? CommunityId => SteamClaims.CommunityId(Principal);
 
-    public string? Name => forcedNames.Apply(CommunityId, Principal?.FindFirstValue(ClaimTypes.Name));
+    public string? Name => displayNames.Apply(CommunityId, Principal?.FindFirstValue(ClaimTypes.Name));
 
     public bool ItIsMe(long? communityId)
     {

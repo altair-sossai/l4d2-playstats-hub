@@ -118,7 +118,7 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Dirección pública del sitio | La dirección que se escribe en las instrucciones para los servidores de juego (`playstats_url`). Déjala vacía para usar la dirección que estás usando ahora. Complétala cuando abres la administración por una dirección distinta de la que usan los servidores de juego, por ejemplo `https://stats.example.com`. |
 | Idioma predeterminado | El idioma de los visitantes que no eligieron uno. |
 | Zona horaria | El reloj del sitio: las fechas en las páginas, el día para los límites de votos y el inicio y el fin de cada temporada. Usa un nombre como `America/Sao_Paulo` o `Europe/Lisbon`. |
-| Clave de la Steam Web API (opcional) | Los avatares y los nombres se cargan sin ella; con una clave se cargan más rápido. |
+| Clave de la Steam Web API (opcional) | Los avatares y los nombres se cargan sin ella; con una clave se cargan más rápido. La clave también permite al sitio leer los [datos de Steam](players.es.md#datos-de-steam) de los jugadores: horas en Left 4 Dead 2, nivel de Steam, fecha de creación de la cuenta y baneos, y el nombre de Steam usado en el [nombre del jugador](players.es.md#el-nombre-del-jugador). |
 
 ### Apariencia
 

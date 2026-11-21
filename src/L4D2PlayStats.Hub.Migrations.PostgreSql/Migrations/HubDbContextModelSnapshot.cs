@@ -621,46 +621,75 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.ToTable("MatchPlayers");
                 });
 
-            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.ForcedName", b =>
-                {
-                    b.Property<long>("CommunityId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CommunityId");
-
-                    b.ToTable("ForcedName");
-                });
-
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.PlayerProfile", b =>
                 {
                     b.Property<long>("CommunityId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime?>("AccountCreatedAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<DateTime?>("AvatarUpdatedAtUtc")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("DaysSinceLastBan")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("FirstSeenAtUtc")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("ForcedName")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime?>("ForcedNameUpdatedAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long?>("ForcedNameUpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("GameBans")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("LastSeenAtUtc")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("Left4Dead2Minutes")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Left4Dead2RecentMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MostUsedName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("SteamLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SteamName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("SteamUpdatedAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("VacBans")
+                        .HasColumnType("integer");
+
                     b.HasKey("CommunityId");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("ForcedName");
 
                     b.ToTable("PlayerProfiles");
                 });

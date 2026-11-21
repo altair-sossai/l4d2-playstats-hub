@@ -69,7 +69,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
 
     private static object MixPlayer(RankingPlayer player)
     {
-        return new { position = player.Position, communityId = player.CommunityId.ToString(), name = player.ForcedName ?? player.Name };
+        return new { position = player.Position, communityId = player.CommunityId.ToString(), name = player.MainName };
     }
 
     private static int Listed(int count)

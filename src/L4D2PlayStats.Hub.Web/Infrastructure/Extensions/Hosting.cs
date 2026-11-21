@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
@@ -55,6 +56,12 @@ public static class Hosting
             app.Logger.LogInformation("Encrypted the secrets of {Count} settings that were stored in plain text by an older version.", encrypted);
 
         await services.GetRequiredService<IForcedNameService>().LoadAsync();
+
+        var started = Stopwatch.GetTimestamp();
+        var registry = await services.GetRequiredService<IPlayerRegistryService>().BackfillAsync();
+
+        if (registry.Created + registry.Updated > 0)
+            app.Logger.LogInformation("Updated the names of {Updated} of {Profiles} players and created {Created} missing player profiles in {Elapsed} ms.", registry.Updated, registry.Profiles, registry.Created, (long)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
 
         var ratings = services.GetRequiredService<ICommunityRatingService>();
 

@@ -77,14 +77,14 @@ public class PlayerSearchTests
         {
             var dbContext = services.GetRequiredService<HubDbContext>();
 
-            dbContext.Add(new ForcedName { CommunityId = Player, Name = "Ellis", UpdatedAtUtc = hub.Clock.UtcNow });
-            dbContext.Add(new ForcedName { CommunityId = Other, Name = "Coach", UpdatedAtUtc = hub.Clock.UtcNow });
+            dbContext.Add(new PlayerProfile { CommunityId = Player, ForcedName = "Ellis", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
+            dbContext.Add(new PlayerProfile { CommunityId = Other, ForcedName = "Coach", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
 
             await dbContext.SaveChangesAsync();
         });
 
         var found = await hub.RunAsync(services => PlayerSearch.Of(term)
-            .Apply(services.GetRequiredService<HubDbContext>().Set<ForcedName>().AsNoTracking(), entry => entry.CommunityId, entry => entry.Name)
+            .Apply(services.GetRequiredService<HubDbContext>().PlayerProfiles.AsNoTracking(), entry => entry.CommunityId, entry => entry.ForcedName)
             .Select(entry => entry.CommunityId)
             .ToListAsync());
 
@@ -100,14 +100,14 @@ public class PlayerSearchTests
         {
             var dbContext = services.GetRequiredService<HubDbContext>();
 
-            dbContext.Add(new ForcedName { CommunityId = Player, Name = "Ellis", UpdatedAtUtc = hub.Clock.UtcNow });
-            dbContext.Add(new ForcedName { CommunityId = Other, Name = "Coach", UpdatedAtUtc = hub.Clock.UtcNow });
+            dbContext.Add(new PlayerProfile { CommunityId = Player, ForcedName = "Ellis", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
+            dbContext.Add(new PlayerProfile { CommunityId = Other, ForcedName = "Coach", FirstSeenAtUtc = hub.Clock.UtcNow, LastSeenAtUtc = hub.Clock.UtcNow });
 
             await dbContext.SaveChangesAsync();
         });
 
         var count = await hub.RunAsync(services => PlayerSearch.Of(" ")
-            .Apply(services.GetRequiredService<HubDbContext>().Set<ForcedName>().AsNoTracking(), entry => entry.CommunityId, entry => entry.Name)
+            .Apply(services.GetRequiredService<HubDbContext>().PlayerProfiles.AsNoTracking(), entry => entry.CommunityId, entry => entry.ForcedName)
             .CountAsync());
 
         Assert.AreEqual(2, count);

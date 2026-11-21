@@ -77,8 +77,8 @@ public class SkinViewService(
         var rows = purchases.Map(purchase => new SkinPurchaseRowModel(
             purchase,
             skinsById.GetValueOrDefault(purchase.SkinId),
-            purchase.PlayerName ?? names[purchase.CommunityId],
-            purchase.GiftedByCommunityId == null ? null : purchase.GiftedByName ?? names[purchase.GiftedByCommunityId.Value],
+            PlayerDisplayNames.Known(purchase.CommunityId, names[purchase.CommunityId]) ?? purchase.PlayerName ?? names[purchase.CommunityId],
+            purchase.GiftedByCommunityId == null ? null : PlayerDisplayNames.Known(purchase.GiftedByCommunityId.Value, names[purchase.GiftedByCommunityId.Value]) ?? purchase.GiftedByName ?? names[purchase.GiftedByCommunityId.Value],
             SiteTime.FromUtc(purchase.PurchasedAtUtc, timeZone)));
 
         return new SkinPurchasesAdminModel
@@ -86,7 +86,7 @@ public class SkinViewService(
             Purchases = new PagedListModel<SkinPurchaseRowModel>(rows),
             Query = query,
             Player = playerId?.ToString(CultureInfo.InvariantCulture),
-            PlayerName = playerId == null ? null : await skinShopService.PurchaserNameAsync(playerId.Value, cancellationToken) ?? names[playerId.Value],
+            PlayerName = playerId == null ? null : PlayerDisplayNames.Known(playerId.Value, names[playerId.Value]) ?? await skinShopService.PurchaserNameAsync(playerId.Value, cancellationToken) ?? names[playerId.Value],
             Skins = [.. skins.Where(skin => skin.Available)],
             AssetsUrl = settings.AssetsUrl,
             Season = await SeasonAsync(settings, cancellationToken),

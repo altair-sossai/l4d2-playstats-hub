@@ -1,16 +1,22 @@
-using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class PlayerNameService(HubDbContext dbContext, IForcedNameStore forcedNames) : IPlayerNameService
+public class PlayerNameService(HubDbContext dbContext) : IPlayerNameService
 {
     public async Task<string?> KnownNameAsync(long communityId, CancellationToken cancellationToken = default)
     {
-        return forcedNames.Find(communityId) ?? await RealNameAsync(communityId, cancellationToken);
+        var displayName = await dbContext.PlayerProfiles
+            .AsNoTracking()
+            .Where(p => p.CommunityId == communityId)
+            .Select(p => p.DisplayName)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return PlayerDisplayNames.Known(communityId, displayName) ?? await RealNameAsync(communityId, cancellationToken);
     }
 
     public async Task<string?> RealNameAsync(long communityId, CancellationToken cancellationToken = default)
@@ -37,31 +43,56 @@ public class PlayerNameService(HubDbContext dbContext, IForcedNameStore forcedNa
     public async Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
     {
         var ids = communityIds.Distinct().ToList();
-        var missing = ids.Where(id => forcedNames.Find(id) == null).ToList();
+        var names = new Dictionary<long, string>();
 
-        var profiles = missing.Count == 0
-            ? []
-            : await dbContext.PlayerProfiles
+        foreach (var chunk in ids.Chunk(AppConsts.PlayerNameRefreshBatchSize))
+        {
+            List<long> batch = [.. chunk];
+
+            var profiles = await dbContext.PlayerProfiles
                 .AsNoTracking()
-                .Where(p => missing.Contains(p.CommunityId) && p.Name != null && p.Name != string.Empty)
-                .ToDictionaryAsync(p => p.CommunityId, p => p.Name!, cancellationToken);
+                .Where(p => batch.Contains(p.CommunityId))
+                .Select(p => new { p.CommunityId, p.DisplayName, p.Name })
+                .ToListAsync(cancellationToken);
 
-        List<long> unnamed = [.. missing.Where(id => string.IsNullOrWhiteSpace(profiles.GetValueOrDefault(id)))];
+            foreach (var profile in profiles)
+            {
+                var name = PlayerDisplayNames.Known(profile.CommunityId, profile.DisplayName) ?? Named(profile.Name);
 
-        var connections = unnamed.Count == 0
-            ? []
-            : await dbContext.Set<PlayerConnection>()
+                if (name != null)
+                    names[profile.CommunityId] = name;
+            }
+
+            List<long> unnamed = [.. batch.Where(id => !names.ContainsKey(id))];
+
+            if (unnamed.Count == 0)
+                continue;
+
+            var connections = await dbContext.Set<PlayerConnection>()
                 .AsNoTracking()
                 .Where(c => unnamed.Contains(c.CommunityId) && c.Name != string.Empty)
                 .Select(c => new { c.CommunityId, c.Name, c.LastSeenAtUtc })
                 .ToListAsync(cancellationToken);
 
-        var latest = connections
-            .Where(c => !string.IsNullOrWhiteSpace(c.Name))
-            .GroupBy(c => c.CommunityId)
-            .ToDictionary(group => group.Key, group => group.MaxBy(c => c.LastSeenAtUtc)!.Name);
+            foreach (var group in connections.Where(c => !string.IsNullOrWhiteSpace(c.Name)).GroupBy(c => c.CommunityId))
+                names[group.Key] = group.MaxBy(c => c.LastSeenAtUtc)!.Name;
+        }
 
-        return ids.ToDictionary(id => id, id => forcedNames.Find(id) ?? Named(profiles.GetValueOrDefault(id)) ?? latest.GetValueOrDefault(id) ?? id.ToString(CultureInfo.InvariantCulture));
+        return ids.ToDictionary(id => id, id => names.GetValueOrDefault(id) ?? PlayerDisplayNames.Fallback(id));
+    }
+
+    public async Task<Dictionary<long, string>> DisplayNamesAsync(CancellationToken cancellationToken = default)
+    {
+        var profiles = await dbContext.PlayerProfiles
+            .AsNoTracking()
+            .Where(p => p.DisplayName != null)
+            .Select(p => new { p.CommunityId, p.DisplayName })
+            .ToListAsync(cancellationToken);
+
+        return profiles
+            .Select(p => new { p.CommunityId, Name = PlayerDisplayNames.Known(p.CommunityId, p.DisplayName) })
+            .Where(p => p.Name != null)
+            .ToDictionary(p => p.CommunityId, p => p.Name!);
     }
 
     private static string? Named(string? name)

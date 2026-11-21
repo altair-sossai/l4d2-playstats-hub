@@ -8,7 +8,7 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class LiveDataService(ILiveServerStore store, IGameServerPresence presence, IForcedNameStore forcedNames) : ILiveDataService
+public class LiveDataService(ILiveServerStore store, IGameServerPresence presence, IDisplayNameStore displayNames) : ILiveDataService
 {
     public void UpdateConfiguration(GameServer server, LiveConfiguration? configuration)
     {
@@ -49,7 +49,7 @@ public class LiveDataService(ILiveServerStore store, IGameServerPresence presenc
         if (command == null)
             return;
 
-        command.Name = forcedNames.Apply(command.CommunityId, command.Name);
+        command.Name = displayNames.Apply(command.CommunityId, command.Name);
         state.AddMessage(command);
     }
 
@@ -69,7 +69,7 @@ public class LiveDataService(ILiveServerStore store, IGameServerPresence presenc
     private void Rename(LivePlayer? player)
     {
         if (player?.Id != null)
-            player.Name = forcedNames.Apply(player.Id.Value, player.Name);
+            player.Name = displayNames.Apply(player.Id.Value, player.Name);
     }
 
     public LiveSnapshot Snapshot(GameServer server)

@@ -9,7 +9,6 @@ using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Models;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
@@ -26,7 +25,7 @@ public class AntiCheatAccessService(
     IPlayerNameService playerNameService,
     IClock clock,
     ILogger<AntiCheatAccessService> logger,
-    IForcedNameStore forcedNames) : IAntiCheatAccessService
+    IDisplayNameStore displayNames) : IAntiCheatAccessService
 {
     public async Task<AntiCheatAccessSnapshot> GetAsync(CancellationToken cancellationToken = default)
     {
@@ -156,7 +155,7 @@ public class AntiCheatAccessService(
         {
             Mode = setting?.Mode ?? AppConsts.AntiCheatDefaultMode,
             ModeSaved = setting != null,
-            UpdatedByName = forcedNames.Apply(setting?.UpdatedByCommunityId, setting?.UpdatedByName),
+            UpdatedByName = displayNames.Apply(setting?.UpdatedByCommunityId, setting?.UpdatedByName),
             UpdatedFrom = setting?.UpdatedFrom,
             UpdatedAtUtc = setting?.UpdatedAtUtc,
             Whitelist = whitelist,
@@ -166,10 +165,10 @@ public class AntiCheatAccessService(
 
     private async Task<Page<AntiCheatAccessPlayer>> PageAsync<T>(PlayerSearch search, int page, int size, CancellationToken cancellationToken) where T : AntiCheatAccessPlayer
     {
-        var forced = dbContext.Set<ForcedName>();
+        var profiles = dbContext.PlayerProfiles;
 
         var players = await search
-            .Apply(dbContext.Set<T>().AsNoTracking(), player => player.CommunityId, player => forced.Where(entry => entry.CommunityId == player.CommunityId).Select(entry => entry.Name).FirstOrDefault() ?? player.Name)
+            .Apply(dbContext.Set<T>().AsNoTracking(), player => player.CommunityId, player => profiles.Where(profile => profile.CommunityId == player.CommunityId).Select(profile => profile.DisplayName).FirstOrDefault(), player => player.Name)
             .OrderByDescending(player => player.CreatedAtUtc)
             .ThenBy(player => player.CommunityId)
             .ToPageAsync(page, size, cancellationToken);
@@ -179,8 +178,8 @@ public class AntiCheatAccessService(
 
     private AntiCheatAccessPlayer Displayed(AntiCheatAccessPlayer player)
     {
-        player.Name = forcedNames.Apply(player.CommunityId, player.Name);
-        player.AddedByName = forcedNames.Apply(player.AddedByCommunityId, player.AddedByName);
+        player.Name = displayNames.Apply(player.CommunityId, player.Name);
+        player.AddedByName = displayNames.Apply(player.AddedByCommunityId, player.AddedByName);
 
         return player;
     }

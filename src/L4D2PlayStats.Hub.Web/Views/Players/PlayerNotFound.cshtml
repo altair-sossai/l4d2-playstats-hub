@@ -136,6 +136,7 @@
                         @await Html.PartialAsync("_CopyButton", Model.Steam3)
                     </td>
                 </tr>
+                @await Html.PartialAsync("_SteamFacts", new PlayerSteamFactsModel(Model.Steam, null, false))
                 @if (Model.LastConnectedAtUtc.HasValue)
                 {
                     <tr>

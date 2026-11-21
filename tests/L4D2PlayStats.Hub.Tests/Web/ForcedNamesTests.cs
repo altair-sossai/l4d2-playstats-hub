@@ -200,6 +200,6 @@ public class ForcedNamesTests
 
     private static Task<Dictionary<long, string>> NamesAsync(HubWebFactory factory)
     {
-        return factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Set<ForcedName>().AsNoTracking().ToDictionaryAsync(entry => entry.CommunityId, entry => entry.Name));
+        return factory.RunAsync(services => services.GetRequiredService<HubDbContext>().PlayerProfiles.AsNoTracking().Where(entry => entry.ForcedName != null).ToDictionaryAsync(entry => entry.CommunityId, entry => entry.ForcedName!));
     }
 }

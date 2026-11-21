@@ -1,0 +1,126 @@
+@model PlayerSteamFactsModel
+
+@{
+    var first = Model.First;
+    var second = Model.Second;
+
+    void Missing()
+    {
+        <span class="text-muted steam-not-available">@L["Not available"]</span>
+    }
+
+    void Hours(PlayerSteamModel steam)
+    {
+        if (steam.TotalHours == null)
+        {
+            Missing();
+            return;
+        }
+
+        <span class="steam-hours">@string.Format(L["{0} h"].Value, steam.TotalHours)</span>
+        if (steam.RecentHours != null)
+        {
+            <small class="text-muted steam-recent-hours">(@string.Format(L["{0} h in the last 2 weeks"].Value, steam.RecentHours))</small>
+        }
+    }
+
+    void Created(PlayerSteamModel steam)
+    {
+        if (steam.AccountCreated == null)
+        {
+            Missing();
+            return;
+        }
+
+        <span class="steam-created">@steam.AccountCreated</span>
+        <small class="text-muted steam-age">(@(steam.AccountAgeInYears switch { 0 => L["less than a year"].Value, 1 => L["1 year"].Value, _ => string.Format(L["{0} years"].Value, steam.AccountAgeInYears) }))</small>
+    }
+
+    void Level(PlayerSteamModel steam)
+    {
+        if (steam.SteamLevel == null)
+        {
+            Missing();
+            return;
+        }
+
+        <span class="steam-level">@steam.SteamLevel.Value.ToString("N0")</span>
+    }
+
+    void Bans(int? count, int? days)
+    {
+        if (count == null)
+        {
+            Missing();
+            return;
+        }
+
+        <span class="steam-bans @(count > 0 ? "text-danger" : "")">@count.Value.ToString("N0")</span>
+        if (count > 0 && days != null)
+        {
+            <small class="text-muted steam-last-ban">(@string.Format(L["last ban {0} days ago"].Value, days.Value.ToString("N0")))</small>
+        }
+    }
+
+    void VacBans(PlayerSteamModel steam)
+    {
+        Bans(steam.VacBans, steam.DaysSinceLastBan);
+    }
+
+    void GameBans(PlayerSteamModel steam)
+    {
+        Bans(steam.GameBans, steam.DaysSinceLastBan);
+    }
+
+    void Both(Action<PlayerSteamModel> render)
+    {
+        render(first);
+
+        if (second == null)
+            return;
+
+        <span class="separator"> | </span>
+        <span class="second">@{ render(second); }</span>
+    }
+}
+
+@if (Model.Wide)
+{
+    <tr class="steam-facts">
+        <th>@L["Hours in Left 4 Dead 2"]:</th>
+        <td data-label="@L["Hours in Left 4 Dead 2"]:" colspan="3">@{ Both(Hours); }</td>
+        <th>@L["Steam level"]:</th>
+        <td data-label="@L["Steam level"]:">@{ Both(Level); }</td>
+    </tr>
+    <tr class="steam-facts">
+        <th>@L["Steam account created"]:</th>
+        <td data-label="@L["Steam account created"]:">@{ Both(Created); }</td>
+        <th>@L["VAC bans"]:</th>
+        <td data-label="@L["VAC bans"]:">@{ Both(VacBans); }</td>
+        <th>@L["Game bans"]:</th>
+        <td data-label="@L["Game bans"]:">@{ Both(GameBans); }</td>
+    </tr>
+}
+else
+{
+    <tr class="steam-facts">
+        <th>@L["Hours in Left 4 Dead 2"]:</th>
+        <td data-label="@L["Hours in Left 4 Dead 2"]:">@{ Hours(first); }</td>
+    </tr>
+    <tr class="steam-facts">
+        <th>@L["Steam level"]:</th>
+        <td data-label="@L["Steam level"]:">@{ Level(first); }</td>
+    </tr>
+    <tr class="steam-facts">
+        <th>@L["Steam account created"]:</th>
+        <td data-label="@L["Steam account created"]:">@{ Created(first); }</td>
+    </tr>
+    <tr class="steam-facts">
+        <th>@L["VAC bans"]:</th>
+        <td data-label="@L["VAC bans"]:">@{ VacBans(first); }</td>
+    </tr>
+    <tr class="steam-facts">
+        <th>@L["Game bans"]:</th>
+        <td data-label="@L["Game bans"]:">@{ GameBans(first); }</td>
+    </tr>
+}
