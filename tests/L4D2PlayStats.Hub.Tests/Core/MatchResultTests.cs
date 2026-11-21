@@ -144,17 +144,17 @@ public class MatchResultTests
         await hub.UploadAsync(server, StatisticsBuilder.Map("c8m1_apartment", Night.AddDays(1), 1, 100, 50));
 
         var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter { PageSize = 1, Page = 2 }));
-        var found = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().FindAsync(page.Matches[0].Id));
+        var found = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().FindAsync(page.Items[0].Id));
 
         Assert.AreEqual(2, page.Total);
-        Assert.AreEqual(2, page.Pages);
-        Assert.HasCount(1, page.Matches);
-        Assert.AreEqual("Dark Carnival", page.Matches[0].Campaign);
-        Assert.AreEqual(server.Name, page.Matches[0].GameServerName);
-        CollectionAssert.AreEqual(found!.Maps.ToList(), page.Matches[0].Maps.ToList());
+        Assert.AreEqual(2, page.TotalPages);
+        Assert.HasCount(1, page.Items);
+        Assert.AreEqual("Dark Carnival", page.Items[0].Campaign);
+        Assert.AreEqual(server.Name, page.Items[0].GameServerName);
+        CollectionAssert.AreEqual(found!.Maps.ToList(), page.Items[0].Maps.ToList());
         CollectionAssert.AreEqual(
             found.Teams.SelectMany(team => team.Players).Select(player => (player.CommunityId, player.Name, player.SiDamage, player.TotalMvp)).ToList(),
-            page.Matches[0].Teams.SelectMany(team => team.Players).Select(player => (player.CommunityId, player.Name, player.SiDamage, player.TotalMvp)).ToList());
+            page.Items[0].Teams.SelectMany(team => team.Players).Select(player => (player.CommunityId, player.Name, player.SiDamage, player.TotalMvp)).ToList());
     }
 
     [TestMethod]
@@ -257,7 +257,7 @@ public class MatchResultTests
     {
         var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter()));
 
-        return page.Matches;
+        return page.Items;
     }
 
     private static async Task<MatchResult> SingleAsync(TestHub hub)

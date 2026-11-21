@@ -157,6 +157,13 @@ public class AntiCheatAdminApiTests
         Assert.AreEqual(HttpStatusCode.NoContent, remove.StatusCode);
         Assert.AreEqual(0, required);
         Assert.AreEqual(1, whitelisted);
+
+        var invalidRemove = await LiveWebFactory.SendJsonAsync(client, Page, HttpMethod.Delete, $"{Api}/whitelist/alice", null);
+        var invalidRemoveError = await invalidRemove.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.AreEqual(HttpStatusCode.BadRequest, invalidRemove.StatusCode);
+        Assert.AreEqual("The Steam ID is invalid.", invalidRemoveError.GetProperty("errorMessage").GetString());
+        Assert.AreEqual(1, await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().AntiCheatWhitelist.CountAsync()));
     }
 
     [TestMethod]

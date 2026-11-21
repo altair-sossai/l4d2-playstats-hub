@@ -1,5 +1,7 @@
 @model GameModesViewModel
+@inject ISiteClock SiteClock
 @{
+    var timeZone = await SiteClock.ZoneAsync();
     ViewData["Title"] = L["Game modes"].Value;
     var rulesPagination = PaginationModel.Of(Model.Rules, number => AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesRulesTab, AppConsts.AdminPageQuery, number));
     var seenPagination = PaginationModel.Of(Model.Configurations, number => AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesSeenTab, AppConsts.GameModesSeenPageQuery, number));
@@ -120,7 +122,7 @@
                     <tr>
                         <td class="vertical-align-middle" data-label="@L["Configuration"]">@seen.Configuration.Name</td>
                         <td class="text-center vertical-align-middle" data-label="@L["Team size"]">@seen.Configuration.TeamSize</td>
-                        <td class="text-center vertical-align-middle" data-label="@L["Last seen"]">@seen.Configuration.LastSeenAtUtc.ToString("d")</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Last seen"]">@Display.Date(seen.Configuration.LastSeenAtUtc, timeZone)</td>
                         <td class="vertical-align-middle" data-label="@L["Rule"]">
                             @if (seen.Rule == null)
                             {

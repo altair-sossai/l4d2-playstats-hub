@@ -22,8 +22,8 @@
     var season = Model.Season;
     var authors = Model.Authors(culture);
     var loginUrl = $"/login?returnUrl={Uri.EscapeDataString(AppConsts.SkinShopUrl)}";
-    var authorContactUrl = SkinAssets.IsHttpUrl(Model.Settings.AuthorContactUrl) ? Model.Settings.AuthorContactUrl : null;
-    var authorRequestUrl = SkinAssets.IsHttpUrl(Model.Settings.AuthorRequestUrl) ? Model.Settings.AuthorRequestUrl : null;
+    var authorContactUrl = L4D2PlayStats.Hub.Core.Infrastructure.Helpers.SafeUrl.IsHttp(Model.Settings.AuthorContactUrl) ? Model.Settings.AuthorContactUrl : null;
+    var authorRequestUrl = L4D2PlayStats.Hub.Core.Infrastructure.Helpers.SafeUrl.IsHttp(Model.Settings.AuthorRequestUrl) ? Model.Settings.AuthorRequestUrl : null;
     var authorNotice = authorContactUrl != null || authorRequestUrl != null;
 
     string WeaponName(string weapon)

@@ -8,15 +8,11 @@ using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 using L4D2PlayStats.Hub.Web.Models.Backups;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
-[Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [Route("admin/backup")]
 public class BackupAdminController(
     ISettingsService settingsService,
@@ -24,20 +20,15 @@ public class BackupAdminController(
     IBackupService backupService,
     IBackupArchiveService archiveService,
     IBackupStorageFactory storageFactory,
-    ILiveViewService liveViewService,
-    SecretsKey secretsKey) : Controller
+    ISiteClock siteClock,
+    SecretsKey secretsKey) : AdminControllerBase
 {
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        ViewBag.Admin = "active";
-    }
-
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var settings = await settingsService.GetAsync<BackupSettings>(cancellationToken);
         var history = await historyService.GetAsync(cancellationToken);
-        var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
 
         return View(new BackupAdminModel(settings, history, archiveService.IncludesDatabase, backupService.IsRunning, timeZone, secretsKey));
     }
@@ -63,7 +54,7 @@ public class BackupAdminController(
         if (problems.Count > 0)
             TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
         else
-            TempData["Saved"] = true;
+            Saved();
 
         return Redirect(AdminTabs.Url(AppConsts.AdminBackupUrl, AppConsts.BackupStorageTab));
     }

@@ -1,6 +1,8 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Models;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -34,24 +36,14 @@ public class GameModeService(HubDbContext dbContext, IMemoryCache memoryCache, H
         return dbContext.GameConfigurations.AsNoTracking().OrderByDescending(c => c.LastSeenAtUtc).ToListAsync(cancellationToken);
     }
 
-    public Task<List<GameModeRule>> ListRulesAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<GameModeRule>> RulesPageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.GameModeRules.AsNoTracking().OrderBy(r => r.Priority).ThenBy(r => r.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
+        return dbContext.GameModeRules.AsNoTracking().OrderBy(r => r.Priority).ThenBy(r => r.Id).ToPageAsync(page, size, cancellationToken);
     }
 
-    public Task<int> CountRulesAsync(CancellationToken cancellationToken = default)
+    public Task<Page<GameConfiguration>> ConfigurationsPageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.GameModeRules.CountAsync(cancellationToken);
-    }
-
-    public Task<List<GameConfiguration>> ListConfigurationsAsync(int skip, int take, CancellationToken cancellationToken = default)
-    {
-        return dbContext.GameConfigurations.AsNoTracking().OrderByDescending(c => c.LastSeenAtUtc).ThenBy(c => c.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
-    }
-
-    public Task<int> CountConfigurationsAsync(CancellationToken cancellationToken = default)
-    {
-        return dbContext.GameConfigurations.CountAsync(cancellationToken);
+        return dbContext.GameConfigurations.AsNoTracking().OrderByDescending(c => c.LastSeenAtUtc).ThenBy(c => c.Id).ToPageAsync(page, size, cancellationToken);
     }
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)

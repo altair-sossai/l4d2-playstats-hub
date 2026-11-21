@@ -3,9 +3,9 @@ using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Matches;
@@ -18,6 +18,7 @@ public class MatchViewService(
     ISeasonService seasonService,
     IGameServerService gameServerService,
     ISettingsService settingsService,
+    ISiteClock siteClock,
     ICampaignImageService campaignImageService,
     ICurrentUser currentUser) : IMatchViewService
 {
@@ -32,12 +33,10 @@ public class MatchViewService(
         var now = await seasonService.SiteNowAsync(cancellationToken);
         var servers = await gameServerService.ListAsync(cancellationToken);
         var result = await matchResultService.ListAsync(filter, cancellationToken);
-        var firstItem = result.Total == 0 ? 0 : (result.Page - 1) * result.PageSize + 1;
-        var lastItem = Math.Min(result.Page * result.PageSize, result.Total);
 
         return new LastMatchesModel
         {
-            Matches = await CardsAsync(result.Matches, servers, true, null, cancellationToken),
+            Matches = await CardsAsync(result.Items, servers, true, null, cancellationToken),
             Seasons = [.. seasons.Where(season => season.StartsAt <= now && (season.StartsAt.Year == now.Year || season.Id == seasonId))],
             Years = [.. seasons.Where(season => season.StartsAt <= now).Select(season => season.StartsAt.Year).Distinct().OrderByDescending(value => value)],
             HasPeriodChoices = seasons.Count > 1,
@@ -46,7 +45,7 @@ public class MatchViewService(
             Servers = servers,
             SeasonId = seasonId,
             ServerId = serverId,
-            Pagination = new PaginationModel(result.Page, result.Pages, firstItem, lastItem, result.Total, number => PageUrl(number, seasonId, year, serverId))
+            Pagination = PaginationModel.Of(result, number => PageUrl(number, seasonId, year, serverId))
         };
     }
 
@@ -55,7 +54,7 @@ public class MatchViewService(
         var servers = await gameServerService.ListAsync(cancellationToken);
         var result = await matchResultService.ListAsync(filter, cancellationToken);
 
-        return await CardsAsync(result.Matches, servers, true, playerPeriod, cancellationToken);
+        return await CardsAsync(result.Items, servers, true, playerPeriod, cancellationToken);
     }
 
     public async Task<MatchDetailsModel?> DetailsAsync(int id, CancellationToken cancellationToken = default)
@@ -102,10 +101,8 @@ public class MatchViewService(
 
     private async Task<IReadOnlyList<MatchCardModel>> CardsAsync(IReadOnlyList<MatchResult> matches, List<GameServer> servers, bool showDetailsButton, string? playerPeriod, CancellationToken cancellationToken)
     {
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
-
-        var timeZone = SiteTime.Zone(site.TimeZone);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
 
         return
         [
@@ -124,20 +121,6 @@ public class MatchViewService(
 
     private static string PageUrl(int? page, int? seasonId, int? year, int? serverId)
     {
-        var parts = new List<string>();
-
-        if (page != null)
-            parts.Add($"page={page}");
-
-        if (seasonId != null)
-            parts.Add($"season={seasonId}");
-
-        if (year != null)
-            parts.Add($"year={year}");
-
-        if (serverId != null)
-            parts.Add($"server={serverId}");
-
-        return parts.Count == 0 ? AppConsts.MatchesUrl : $"{AppConsts.MatchesUrl}?{string.Join('&', parts)}";
+        return QueryUrl.Build(AppConsts.MatchesUrl, (AppConsts.AdminPageQuery, page), (AppConsts.MatchSeasonQuery, seasonId), (AppConsts.MatchYearQuery, year), (AppConsts.MatchServerQuery, serverId));
     }
 }

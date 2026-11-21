@@ -5,7 +5,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 
 namespace L4D2PlayStats.Hub.Web.Models.AntiCheat;
 
-public class AntiCheatAdminModel(AntiCheatSettings settings, AntiCheatAccessSnapshot access, AntiCheatAccessList shownList, PagedListModel<AntiCheatAccessPlayerResult> players, string? query, TimeZoneInfo timeZone)
+public class AntiCheatAdminModel(AntiCheatSettings settings, AntiCheatAccessSnapshot access, AntiCheatAccessList shownList, PagedListModel<AntiCheatAccessPlayerResult> players, string? query, TimeZoneInfo timeZone, IReadOnlyList<long> listedIds, int otherCount)
 {
     public AntiCheatSettings Settings { get; } = settings;
     public AntiCheatAccessSnapshot Access { get; } = access;
@@ -17,8 +17,9 @@ public class AntiCheatAdminModel(AntiCheatSettings settings, AntiCheatAccessSnap
     public PagedListModel<AntiCheatAccessPlayerResult> Players { get; } = players;
     public string? Query { get; } = query;
     public TimeZoneInfo TimeZone { get; } = timeZone;
-    public int ShownCount => Access[ShownList].Count;
-    public int OtherCount => Access[OtherList].Count;
+    public IReadOnlyList<long> ListedIds { get; } = listedIds;
+    public int ShownCount => ListedIds.Count;
+    public int OtherCount { get; } = otherCount;
     public string ShownListName => ShownList.ToName();
     public string OtherListName => OtherList.ToName();
 }

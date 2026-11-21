@@ -1,12 +1,17 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanService
+public class ChatBanService(HubDbContext dbContext, IClock clock, IPlayerNameService playerNameService) : IChatBanService
 {
     public Task<ChatBan?> FindAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -16,6 +21,33 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
     public Task<List<ChatBan>> ListAsync(CancellationToken cancellationToken = default)
     {
         return dbContext.Set<ChatBan>().AsNoTracking().OrderByDescending(ban => ban.CreatedAtUtc).ToListAsync(cancellationToken);
+    }
+
+    public Task<Page<ChatBan>> PageAsync(PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
+    {
+        return search
+            .Apply(dbContext.Set<ChatBan>().AsNoTracking(), ban => ban.CommunityId, ban => ban.Name, ban => ban.Reason)
+            .OrderByDescending(ban => ban.CreatedAtUtc)
+            .ThenBy(ban => ban.CommunityId)
+            .ToPageAsync(page, size, cancellationToken);
+    }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.Set<ChatBan>().CountAsync(cancellationToken);
+    }
+
+    public async Task<HashSet<long>> BannedAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
+    {
+        List<long> ids = [.. communityIds.Distinct()];
+
+        var banned = await dbContext.Set<ChatBan>()
+            .AsNoTracking()
+            .Where(ban => ids.Contains(ban.CommunityId))
+            .Select(ban => ban.CommunityId)
+            .ToListAsync(cancellationToken);
+
+        return [.. banned];
     }
 
     public async Task<ChatBan?> SaveAsync(long communityId, string? name, string? reason, long? createdBy, string? createdByName, CancellationToken cancellationToken = default)
@@ -32,7 +64,7 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
             {
                 CommunityId = communityId,
                 CreatedByCommunityId = createdBy,
-                CreatedByName = Limit(createdByName, AppConsts.LivePlayerNameMaxLength),
+                CreatedByName = Text.Clip(createdByName, AppConsts.LivePlayerNameMaxLength),
                 CreatedAtUtc = now
             };
 
@@ -42,12 +74,12 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
             ban.UpdatedAtUtc = now;
 
         if (!string.IsNullOrWhiteSpace(name))
-            ban.Name = Limit(name, AppConsts.LivePlayerNameMaxLength);
+            ban.Name = Text.Clip(name, AppConsts.LivePlayerNameMaxLength);
 
         if (string.IsNullOrWhiteSpace(ban.Name))
-            ban.Name = Limit(await KnownNameAsync(communityId, cancellationToken), AppConsts.LivePlayerNameMaxLength);
+            ban.Name = Text.Clip(await playerNameService.RealNameAsync(communityId, cancellationToken), AppConsts.LivePlayerNameMaxLength);
 
-        ban.Reason = Limit(reason, AppConsts.ChatBanReasonMaxLength);
+        ban.Reason = Text.Clip(reason, AppConsts.ChatBanReasonMaxLength);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -64,34 +96,5 @@ public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanServ
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return true;
-    }
-
-    private async Task<string?> KnownNameAsync(long communityId, CancellationToken cancellationToken)
-    {
-        var profile = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(p => p.CommunityId == communityId && p.Name != null)
-            .Select(p => p.Name)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (!string.IsNullOrWhiteSpace(profile))
-            return profile;
-
-        return await dbContext.Set<PlayerConnection>()
-            .AsNoTracking()
-            .Where(c => c.CommunityId == communityId)
-            .OrderByDescending(c => c.LastSeenAtUtc)
-            .Select(c => c.Name)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    private static string? Limit(string? value, int length)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return null;
-
-        var text = value.Trim();
-
-        return text.Length > length ? text[..length] : text;
     }
 }

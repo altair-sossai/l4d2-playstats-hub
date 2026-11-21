@@ -6,64 +6,49 @@ using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Players;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
-[Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [Route("admin/forced-names")]
-public class ForcedNamesController(IForcedNameService forcedNameService, ICurrentUser currentUser) : Controller
+public class ForcedNamesController(IForcedNameService forcedNameService, ICurrentUser currentUser) : AdminControllerBase
 {
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        ViewBag.Admin = "active";
-    }
-
     [HttpGet("")]
     public async Task<IActionResult> Index(string? q, int page = 1, CancellationToken cancellationToken = default)
     {
-        var size = AppConsts.ForcedNamesPageSize;
-        var total = await forcedNameService.CountAsync(q, cancellationToken);
-        var current = Paging.Page(page, total, size);
-        var names = await forcedNameService.ListAsync(q, Paging.Skip(current, size), size, cancellationToken);
+        var names = await forcedNameService.PageAsync(PlayerSearch.Of(q), page, AppConsts.ForcedNamesPageSize, cancellationToken);
 
         return View(new ForcedNamesViewModel
         {
-            Names = new PagedListModel<ForcedNameEntry>(names, current, size, total),
+            Names = new PagedListModel<ForcedNameEntry>(names),
             Search = q?.Trim(),
-            ReturnUrl = ForcedNameUrls.Page(q, current)
+            ReturnUrl = ForcedNameUrls.Page(q, names.Number)
         });
     }
 
     [HttpPost("save")]
-    public async Task<IActionResult> Save(string? communityId, string? name, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> Save(ForcedNameForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (!await ValidAsync(form, cancellationToken))
+            return Back(form.ReturnUrl, AppConsts.ForcedNamesUrl);
 
-        var result = parsed == null
-            ? ForcedNameSaveResult.InvalidPlayer
-            : await forcedNameService.SaveAsync(parsed.Value, name, currentUser.CommunityId, cancellationToken);
+        var result = await forcedNameService.SaveAsync(SteamIdParser.Parse(form.CommunityId)!.Value, form.Name, currentUser.CommunityId, cancellationToken);
 
         if (result == ForcedNameSaveResult.Saved)
-            TempData["Saved"] = true;
+            Saved();
         else
-            TempData["Error"] = result == ForcedNameSaveResult.InvalidPlayer ? AppConsts.ForcedNameInvalidPlayerMessage : AppConsts.ForcedNameInvalidNameMessage;
+            Error(result == ForcedNameSaveResult.InvalidPlayer ? AppConsts.InvalidSteamIdMessage : AppConsts.ForcedNameInvalidNameMessage);
 
-        return Back(returnUrl);
+        return Back(form.ReturnUrl, AppConsts.ForcedNamesUrl);
     }
 
     [HttpPost("delete")]
-    public async Task<IActionResult> Delete(string? communityId, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(PlayerForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (await ValidAsync(form, cancellationToken) && await forcedNameService.DeleteAsync(SteamIdParser.Parse(form.CommunityId)!.Value, cancellationToken))
+            TempData[AppConsts.ForcedNameRemovedTempData] = true;
 
-        if (parsed != null && await forcedNameService.DeleteAsync(parsed.Value, cancellationToken))
-            TempData["ForcedNameRemoved"] = true;
-
-        return Back(returnUrl);
+        return Back(form.ReturnUrl, AppConsts.ForcedNamesUrl);
     }
 
     [HttpPost("import")]
@@ -71,13 +56,8 @@ public class ForcedNamesController(IForcedNameService forcedNameService, ICurren
     {
         var import = await forcedNameService.ImportAsync(text, currentUser.CommunityId, cancellationToken);
 
-        TempData["ForcedNamesImported"] = new[] { import.Added, import.Updated, import.Unchanged, import.Invalid.Count };
+        TempData[AppConsts.ForcedNamesImportedTempData] = new[] { import.Added, import.Updated, import.Unchanged, import.Invalid.Count };
 
         return Redirect(AppConsts.ForcedNamesUrl);
-    }
-
-    private IActionResult Back(string? returnUrl)
-    {
-        return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) ? LocalRedirect(returnUrl) : Redirect(AppConsts.ForcedNamesUrl);
     }
 }

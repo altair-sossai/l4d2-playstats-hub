@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 
 public static class SkinAssets
@@ -6,12 +8,7 @@ public static class SkinAssets
     {
         var trimmed = (string.IsNullOrWhiteSpace(assetsUrl) ? AppConsts.SkinDefaultAssetsUrl : assetsUrl).Trim().TrimEnd('/');
 
-        return IsHttpUrl(trimmed) ? trimmed : null;
-    }
-
-    public static bool IsHttpUrl(string? url)
-    {
-        return Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        return SafeUrl.IsHttp(trimmed) ? trimmed : null;
     }
 
     public static string? Thumbnail(string? assetsUrl, string skinId)

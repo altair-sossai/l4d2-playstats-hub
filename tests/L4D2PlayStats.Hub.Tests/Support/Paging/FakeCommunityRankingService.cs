@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 
 namespace L4D2PlayStats.Hub.Tests.Support.Paging;
 
@@ -16,14 +18,14 @@ public class FakeCommunityRankingService(int count) : ICommunityRankingService
         return Task.FromResult(entries);
     }
 
-    public Task<IReadOnlyList<CommunityVoter>> VotersAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<CommunityVoter>> VotersAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult<IReadOnlyList<CommunityVoter>>([]);
+        return Task.FromResult(Page<CommunityVoter>.Empty(size));
     }
 
-    public Task<int> VoterCountAsync(CancellationToken cancellationToken = default)
+    public Task<Page<CommunityVoteParticipant>> ParticipantsAsync(bool voters, PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(0);
+        return Task.FromResult(Page<CommunityVoteParticipant>.Empty(size));
     }
 
     public Task<int> RebuildAsync(CancellationToken cancellationToken = default)

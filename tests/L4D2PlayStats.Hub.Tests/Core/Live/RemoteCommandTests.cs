@@ -227,9 +227,11 @@ public class RemoteCommandTests
         return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().DequeueAsync(server));
     }
 
-    private static Task<List<RemoteCommandLog>> LogsAsync(TestHub hub)
+    private static async Task<List<RemoteCommandLog>> LogsAsync(TestHub hub)
     {
-        return hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().ListAsync(0, 100));
+        var page = await hub.RunAsync(services => services.GetRequiredService<IRemoteCommandService>().PageAsync(1, 100));
+
+        return [.. page.Items];
     }
 
     private static Task<SiteChatResult> SendAsync(TestHub hub, GameServer server, long communityId, string message)

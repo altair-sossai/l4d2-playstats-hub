@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
@@ -74,12 +75,9 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
 
         var season = new SeasonSettings { LengthInMonths = SeasonCalendar.NormalizeLength(model.Season.LengthInMonths) };
 
-        var ranking = model.Ranking;
-        ranking.Normalize();
-
         await settingsService.SaveAsync(site, cancellationToken);
         await settingsService.SaveAsync(season, cancellationToken);
-        await settingsService.SaveAsync(ranking, cancellationToken);
+        await settingsService.SaveAsync(model.Ranking, cancellationToken);
         await settingsService.SaveAsync(Privacy(model.Privacy), cancellationToken);
 
         var logoProblem = await SaveLogoAsync(model, cancellationToken);
@@ -144,6 +142,6 @@ public class AdminViewService(HubDbContext dbContext, IGameServerPresence presen
 
         var keywords = string.Join(", ", text.Split([',', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 
-        return keywords.Length > AppConsts.MetaKeywordsMaxLength ? keywords[..AppConsts.MetaKeywordsMaxLength] : keywords;
+        return Text.Clip(keywords, AppConsts.MetaKeywordsMaxLength);
     }
 }

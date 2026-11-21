@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
@@ -5,8 +6,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 public interface IGameServerService
 {
     Task<List<GameServer>> ListAsync(CancellationToken cancellationToken = default);
-    Task<List<GameServer>> ListAsync(int skip, int take, CancellationToken cancellationToken = default);
-    Task<int> CountAsync(CancellationToken cancellationToken = default);
+    Task<Page<GameServer>> PageAsync(int page, int size, CancellationToken cancellationToken = default);
     Task<GameServer?> FindAsync(int id, CancellationToken cancellationToken = default);
     Task<GameServer?> FindAsync(string publicId, CancellationToken cancellationToken = default);
     Task<GameServerCredentials> CreateAsync(string name, string? address, CancellationToken cancellationToken = default);

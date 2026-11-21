@@ -136,6 +136,33 @@ public class PlayerSearchTests
     }
 
     [TestMethod]
+    public async Task AFullLastPageIsNotFollowedByAnEmptyOne()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await factory.CompleteSetupAsync();
+        await factory.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+            var now = DateTime.UtcNow;
+
+            for (var index = 1; index <= 25; index++)
+                dbContext.PlayerProfiles.Add(new PlayerProfile { CommunityId = Alice + index, Name = $"Player{index:00}", FirstSeenAtUtc = now.AddDays(-index), LastSeenAtUtc = now.AddDays(-index) });
+
+            await dbContext.SaveChangesAsync();
+        });
+
+        var first = await client.GetFromJsonAsync<JsonElement>(Api);
+        var second = await client.GetFromJsonAsync<JsonElement>($"{Api}?page=2");
+
+        Assert.AreEqual(25, first.GetProperty("players").GetArrayLength());
+        Assert.IsFalse(first.GetProperty("hasMore").GetBoolean());
+        Assert.AreEqual(1, second.GetProperty("page").GetInt32());
+        Assert.AreEqual(25, second.GetProperty("players").GetArrayLength());
+    }
+
+    [TestMethod]
     [DataRow("/admin/administrators", "data-player-picker=\"#communityId\"")]
     [DataRow("/admin/player-connections", "data-player-picker=\"#pc-player-id\"")]
     public async Task ThePlayerFieldsOpenTheSharedSearchWindow(string page, string button)

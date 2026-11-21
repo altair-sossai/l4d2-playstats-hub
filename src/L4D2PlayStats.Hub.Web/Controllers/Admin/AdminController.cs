@@ -1,7 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Administrators;
-using L4D2PlayStats.Hub.Core.Modules.Campaigns;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Campaigns;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
@@ -17,16 +17,13 @@ using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
+using L4D2PlayStats.Hub.Web.Models.Admin;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
-[Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [Route("admin")]
 public class AdminController(
     HubDbContext dbContext,
@@ -39,13 +36,8 @@ public class AdminController(
     IMatchBuildService matchBuildService,
     ISkinCatalogService skinCatalogService,
     ILiveSettings liveSettings,
-    ICurrentUser currentUser) : Controller
+    ICurrentUser currentUser) : AdminControllerBase
 {
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        ViewBag.Admin = "active";
-    }
-
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
@@ -74,29 +66,22 @@ public class AdminController(
     [HttpGet("servers")]
     public async Task<IActionResult> Servers(int page = 1, CancellationToken cancellationToken = default)
     {
-        var size = AppConsts.GameServersPageSize;
-        var total = await gameServerService.CountAsync(cancellationToken);
-        var current = Paging.Page(page, total, size);
-        var servers = new List<ServerStatusViewModel>();
-
-        foreach (var server in await gameServerService.ListAsync(Paging.Skip(current, size), size, cancellationToken))
-            servers.Add(await adminViewService.StatusAsync(server, cancellationToken));
+        var listed = await gameServerService.PageAsync(page, AppConsts.GameServersPageSize, cancellationToken);
+        var servers = await listed.MapAsync(server => adminViewService.StatusAsync(server, cancellationToken));
 
         return View(new ServersViewModel
         {
-            Servers = new PagedListModel<ServerStatusViewModel>(servers, current, size, total),
-            ReturnUrl = AdminListUrls.TabPage(AppConsts.AdminServersUrl, AppConsts.ServersListTab, AppConsts.AdminPageQuery, current)
+            Servers = new PagedListModel<ServerStatusViewModel>(servers),
+            ReturnUrl = AdminListUrls.TabPage(AppConsts.AdminServersUrl, AppConsts.ServersListTab, AppConsts.AdminPageQuery, servers.Number)
         });
     }
 
     [HttpPost("servers/live")]
     public async Task<IActionResult> LiveSettings(LiveServerSettings settings, CancellationToken cancellationToken)
     {
-        settings.Normalize();
-
         await settingsService.SaveAsync(settings, cancellationToken);
         liveSettings.Set(settings);
-        TempData["LiveSaved"] = true;
+        TempData[AppConsts.LiveSavedTempData] = true;
 
         return Redirect(AdminTabs.Url(AppConsts.AdminServersUrl, AppConsts.ServersLiveTab));
     }
@@ -104,15 +89,12 @@ public class AdminController(
     [HttpPost("servers")]
     public async Task<IActionResult> CreateServer(ServerForm form, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(form.Name))
-        {
-            TempData["Error"] = "A name is required.";
+        if (!await ValidAsync(form, cancellationToken))
             return RedirectToAction(nameof(Servers));
-        }
 
-        var credentials = await gameServerService.CreateAsync(form.Name, form.Address, cancellationToken);
+        var credentials = await gameServerService.CreateAsync(form.Name!, form.Address, cancellationToken);
         await gameServerService.SetAlternativeAddressAsync(credentials.Server.Id, form.AlternativeAddress, cancellationToken);
-        TempData["Token"] = credentials.Token;
+        TempData[AppConsts.TokenTempData] = credentials.Token;
 
         return RedirectToAction(nameof(Server), new { id = credentials.Server.Id });
     }
@@ -129,7 +111,7 @@ public class AdminController(
         var model = new ServerViewModel
         {
             Status = await adminViewService.StatusAsync(server, cancellationToken),
-            Token = TempData["Token"] as string,
+            Token = TempData[AppConsts.TokenTempData] as string,
             SiteUrl = adminViewService.SiteUrl(Request, site)
         };
 
@@ -150,9 +132,9 @@ public class AdminController(
     [HttpPost("servers/{id:int}")]
     public async Task<IActionResult> UpdateServer(int id, ServerForm form, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(form.Name))
+        if (await ValidAsync(form, cancellationToken))
         {
-            await gameServerService.UpdateAsync(id, form.Name, form.Address, form.Enabled, cancellationToken);
+            await gameServerService.UpdateAsync(id, form.Name!, form.Address, form.Enabled, cancellationToken);
             await gameServerService.SetAlternativeAddressAsync(id, form.AlternativeAddress, cancellationToken);
         }
 
@@ -166,7 +148,7 @@ public class AdminController(
         if (credentials == null)
             return NotFound();
 
-        TempData["Token"] = credentials.Token;
+        TempData[AppConsts.TokenTempData] = credentials.Token;
 
         return RedirectToAction(nameof(Server), new { id });
     }
@@ -175,7 +157,7 @@ public class AdminController(
     public async Task<IActionResult> DeleteServer(int id, string? returnUrl, CancellationToken cancellationToken)
     {
         if (!await gameServerService.DeleteAsync(id, cancellationToken))
-            TempData["Error"] = "A server that already sent statistics cannot be deleted. Disable it instead.";
+            Error(AppConsts.ServerInUseMessage);
 
         return Back(returnUrl, AppConsts.AdminServersUrl);
     }
@@ -192,7 +174,7 @@ public class AdminController(
     {
         var problems = await adminViewService.SaveAsync(model, cancellationToken);
 
-        TempData["Saved"] = true;
+        Saved();
 
         if (problems.Count > 0)
             TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
@@ -211,7 +193,7 @@ public class AdminController(
     {
         await settingsService.SaveAsync(modules, cancellationToken);
         await skinCatalogService.SeedAsync(cancellationToken);
-        TempData["Saved"] = true;
+        Saved();
 
         return RedirectToAction(nameof(Modules));
     }
@@ -219,23 +201,15 @@ public class AdminController(
     [HttpGet("game-modes")]
     public async Task<IActionResult> GameModes(int page = 1, int seenPage = 1, CancellationToken cancellationToken = default)
     {
-        var rulesSize = AppConsts.GameModeRulesPageSize;
-        var rulesTotal = await gameModeService.CountRulesAsync(cancellationToken);
-        var rulesPage = Paging.Page(page, rulesTotal, rulesSize);
-        var rules = await gameModeService.ListRulesAsync(Paging.Skip(rulesPage, rulesSize), rulesSize, cancellationToken);
-
-        var seenSize = AppConsts.GameConfigurationsPageSize;
-        var seenTotal = await gameModeService.CountConfigurationsAsync(cancellationToken);
-        var seenCurrent = Paging.Page(seenPage, seenTotal, seenSize);
-        var configurations = await gameModeService.ListConfigurationsAsync(Paging.Skip(seenCurrent, seenSize), seenSize, cancellationToken);
+        var rules = await gameModeService.RulesPageAsync(page, AppConsts.GameModeRulesPageSize, cancellationToken);
+        var configurations = await gameModeService.ConfigurationsPageAsync(seenPage, AppConsts.GameConfigurationsPageSize, cancellationToken);
         var ruleSet = await gameModeService.GetRuleSetAsync(cancellationToken);
-        var seen = configurations.Select(c => new SeenConfiguration(c, ruleSet.Find(c.Name, c.TeamSize))).ToList();
 
         var model = new GameModesViewModel
         {
-            Rules = new PagedListModel<GameModeRule>(rules, rulesPage, rulesSize, rulesTotal),
-            Configurations = new PagedListModel<SeenConfiguration>(seen, seenCurrent, seenSize, seenTotal),
-            ReturnUrl = AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesRulesTab, AppConsts.AdminPageQuery, rulesPage)
+            Rules = new PagedListModel<GameModeRule>(rules),
+            Configurations = new PagedListModel<SeenConfiguration>(configurations.Map(c => new SeenConfiguration(c, ruleSet.Find(c.Name, c.TeamSize)))),
+            ReturnUrl = AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesRulesTab, AppConsts.AdminPageQuery, rules.Number)
         };
 
         return View(model);
@@ -244,7 +218,7 @@ public class AdminController(
     [HttpPost("game-modes")]
     public async Task<IActionResult> SaveGameMode(GameModeRule rule, string? returnUrl, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(rule.Name))
+        if (await ValidAsync(rule, cancellationToken))
             await gameModeService.SaveRuleAsync(rule, cancellationToken);
 
         return Back(returnUrl, AppConsts.AdminGameModesUrl);
@@ -261,25 +235,20 @@ public class AdminController(
     [HttpGet("campaigns")]
     public async Task<IActionResult> Campaigns(int page = 1, CancellationToken cancellationToken = default)
     {
-        var size = AppConsts.CampaignsPageSize;
-        var total = await campaignService.CountAsync(cancellationToken);
-        var current = Paging.Page(page, total, size);
-        var campaigns = await campaignService.ListAsync(Paging.Skip(current, size), size, cancellationToken);
+        var campaigns = await campaignService.PageAsync(page, AppConsts.CampaignsPageSize, cancellationToken);
 
         return View(new CampaignsViewModel
         {
-            Campaigns = new PagedListModel<Campaign>(campaigns, current, size, total),
-            ReturnUrl = AdminListUrls.Page(AppConsts.AdminCampaignsUrl, current)
+            Campaigns = new PagedListModel<Campaign>(campaigns),
+            ReturnUrl = AdminListUrls.Page(AppConsts.AdminCampaignsUrl, campaigns.Number)
         });
     }
 
     [HttpPost("campaigns")]
     public async Task<IActionResult> SaveCampaign(CampaignForm form, string? returnUrl, CancellationToken cancellationToken)
     {
-        var maps = (form.Maps ?? string.Empty).Split(['\n', '\r', ',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (!string.IsNullOrWhiteSpace(form.Name) && maps.Length > 0)
-            await campaignService.SaveAsync(form.Id, form.Name, maps, cancellationToken);
+        if (await ValidAsync(form, cancellationToken))
+            await campaignService.SaveAsync(form.Id, form.Name!, CampaignMaps.Parse(form.Maps), cancellationToken);
 
         return Back(returnUrl, AppConsts.AdminCampaignsUrl);
     }
@@ -295,37 +264,30 @@ public class AdminController(
     [HttpGet("administrators")]
     public async Task<IActionResult> Administrators(int page = 1, CancellationToken cancellationToken = default)
     {
-        var size = AppConsts.AdministratorsPageSize;
-        var total = await administratorService.CountAsync(cancellationToken);
-        var current = Paging.Page(page, total, size);
-        var administrators = await administratorService.ListAsync(Paging.Skip(current, size), size, cancellationToken);
+        var administrators = await administratorService.PageAsync(page, AppConsts.AdministratorsPageSize, cancellationToken);
 
         return View(new AdministratorsViewModel
         {
-            Administrators = new PagedListModel<Administrator>(administrators, current, size, total),
+            Administrators = new PagedListModel<Administrator>(administrators),
             Current = currentUser.CommunityId,
-            ReturnUrl = AdminListUrls.Page(AppConsts.AdminAdministratorsUrl, current)
+            ReturnUrl = AdminListUrls.Page(AppConsts.AdminAdministratorsUrl, administrators.Number)
         });
     }
 
     [HttpPost("administrators")]
-    public async Task<IActionResult> AddAdministrator(string? communityId, string? name, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddAdministrator(AdministratorForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (await ValidAsync(form, cancellationToken))
+            await administratorService.AddAsync(SteamIdParser.Parse(form.CommunityId)!.Value, form.Name, cancellationToken);
 
-        if (parsed != null)
-            await administratorService.AddAsync(parsed.Value, name, cancellationToken);
-        else
-            TempData["Error"] = "That is not a valid SteamID64.";
-
-        return Back(returnUrl, AppConsts.AdminAdministratorsUrl);
+        return Back(form.ReturnUrl, AppConsts.AdminAdministratorsUrl);
     }
 
     [HttpPost("administrators/{communityId:long}/delete")]
     public async Task<IActionResult> RemoveAdministrator(long communityId, string? returnUrl, CancellationToken cancellationToken)
     {
         if (communityId == currentUser.CommunityId || !await administratorService.RemoveAsync(communityId, cancellationToken))
-            TempData["Error"] = "You cannot remove yourself or the last administrator.";
+            Error(AppConsts.LastAdministratorMessage);
 
         return Back(returnUrl, AppConsts.AdminAdministratorsUrl);
     }
@@ -333,13 +295,8 @@ public class AdminController(
     [HttpPost("reprocess")]
     public async Task<IActionResult> Reprocess(CancellationToken cancellationToken)
     {
-        TempData["Reprocessed"] = await matchBuildService.RebuildAllAsync(cancellationToken);
+        TempData[AppConsts.ReprocessedTempData] = await matchBuildService.RebuildAllAsync(cancellationToken);
 
         return RedirectToAction(nameof(Index));
-    }
-
-    private IActionResult Back(string? returnUrl, string fallback)
-    {
-        return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) ? LocalRedirect(returnUrl) : Redirect(fallback);
     }
 }

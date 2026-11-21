@@ -94,7 +94,7 @@
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ServersLiveTab)" id="@AdminTabs.PaneId(AppConsts.ServersLiveTab)">
         <div class="row">
             <div class="col-lg-8">
-                @if (TempData["LiveSaved"] != null)
+                @if (TempData[AppConsts.LiveSavedTempData] != null)
                 {
                     <div class="alert alert-success">@L["Saved."]</div>
                 }

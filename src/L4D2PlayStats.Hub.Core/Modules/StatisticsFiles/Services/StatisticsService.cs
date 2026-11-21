@@ -42,9 +42,7 @@ public class StatisticsService(
             throw new StatisticsRejectedException("Incomplete statistics");
         }
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var season = await seasonService.GetOrCreateAsync(fileDate.Value, cancellationToken);
             var file = await dbContext.StatisticsFiles.FirstOrDefaultAsync(f => f.GameServerId == server.Id && f.FileName == fileName, cancellationToken);
@@ -65,10 +63,6 @@ public class StatisticsService(
             await dbContext.SaveChangesAsync(cancellationToken);
             await matchBuildService.RebuildAroundAsync(server.Id, season.Id, file.FileDate, cancellationToken);
         }
-        finally
-        {
-            hubState.WriteLock.Release();
-        }
 
         presence.StatisticsReceived(server.Id);
 
@@ -80,9 +74,7 @@ public class StatisticsService(
         if (teamAScore < 0 || teamAScore > AppConsts.MaxScore || teamBScore < 0 || teamBScore > AppConsts.MaxScore)
             return null;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var file = await dbContext.StatisticsFiles.FirstOrDefaultAsync(f => f.Id == fileId, cancellationToken);
             if (file == null)
@@ -101,10 +93,6 @@ public class StatisticsService(
             await matchBuildService.RebuildAroundAsync(file.GameServerId, file.SeasonId, file.FileDate, cancellationToken);
 
             return file;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 

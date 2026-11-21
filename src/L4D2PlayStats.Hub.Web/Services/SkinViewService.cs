@@ -1,9 +1,10 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
@@ -29,7 +30,8 @@ public class SkinViewService(
     ISkinAuthorService skinAuthorService,
     ICurrentUser currentUser,
     SkinThumbnailStore skinThumbnailStore,
-    IForcedNameStore forcedNames) : ISkinViewService
+    IPlayerNameService playerNameService,
+    ISiteClock siteClock) : ISkinViewService
 {
     public async Task<SkinsModel> ShopAsync(CancellationToken cancellationToken = default)
     {
@@ -55,54 +57,42 @@ public class SkinViewService(
         var culture = CultureInfo.CurrentUICulture;
         var skins = await skinService.ListAsync(cancellationToken);
         var skinsById = skins.ToDictionary(skin => skin.Id);
-        var purchases = await skinShopService.ListPurchasesAsync(cancellationToken);
         var settings = await settingsService.GetAsync<SkinShopSettings>(cancellationToken);
-        var timeZone = await TimeZoneAsync(cancellationToken);
-        var playerId = long.TryParse(player?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var parsed) ? parsed : (long?)null;
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
+        var playerId = SteamIdParser.Parse(player);
+        var search = PlayerSearch.Of(query);
+        List<string> titled = search.IsEmpty ? [] : [.. skins.Where(skin => skin.Title(culture).Contains(search.Term!, StringComparison.OrdinalIgnoreCase)).Select(skin => skin.Id)];
+        var purchases = await skinShopService.PurchasesAsync(playerId, search, titled, page, AppConsts.SkinListPageSize, cancellationToken);
 
-        var ids = purchases.Select(purchase => purchase.CommunityId)
-            .Concat(purchases.Where(purchase => purchase.GiftedByCommunityId != null).Select(purchase => purchase.GiftedByCommunityId!.Value))
-            .Append(playerId ?? 0)
-            .Distinct()
-            .ToList();
+        List<long> ids =
+        [
+            .. purchases.Items.Select(purchase => purchase.CommunityId),
+            .. purchases.Items.Where(purchase => purchase.GiftedByCommunityId != null).Select(purchase => purchase.GiftedByCommunityId!.Value),
+            .. playerId == null ? [] : new[] { playerId.Value }
+        ];
 
-        var names = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(profile => profile.Name != null && ids.Contains(profile.CommunityId))
-            .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name!, cancellationToken);
+        var names = await playerNameService.NamesAsync(ids, cancellationToken);
+        var totals = await skinShopService.PurchaseTotalsAsync(cancellationToken);
 
-        foreach (var id in ids.Where(id => forcedNames.Find(id) != null))
-            names[id] = forcedNames.Find(id)!;
-
-        var rows = purchases
-            .Where(purchase => playerId == null || purchase.CommunityId == playerId)
-            .Select(purchase => new SkinPurchaseRowModel(
-                purchase,
-                skinsById.GetValueOrDefault(purchase.SkinId),
-                purchase.PlayerName ?? names.GetValueOrDefault(purchase.CommunityId) ?? Text(purchase.CommunityId),
-                purchase.GiftedByCommunityId == null ? null : purchase.GiftedByName ?? names.GetValueOrDefault(purchase.GiftedByCommunityId.Value) ?? Text(purchase.GiftedByCommunityId.Value),
-                ToSiteTime(purchase.PurchasedAtUtc, timeZone)))
-            .Where(row => row.Matches(query, culture))
-            .ToList();
-
-        var playerName = playerId == null
-            ? null
-            : purchases.FirstOrDefault(purchase => purchase.CommunityId == playerId && purchase.PlayerName != null)?.PlayerName
-              ?? names.GetValueOrDefault(playerId.Value)
-              ?? Text(playerId.Value);
+        var rows = purchases.Map(purchase => new SkinPurchaseRowModel(
+            purchase,
+            skinsById.GetValueOrDefault(purchase.SkinId),
+            purchase.PlayerName ?? names[purchase.CommunityId],
+            purchase.GiftedByCommunityId == null ? null : purchase.GiftedByName ?? names[purchase.GiftedByCommunityId.Value],
+            SiteTime.FromUtc(purchase.PurchasedAtUtc, timeZone)));
 
         return new SkinPurchasesAdminModel
         {
-            Purchases = new PagedListModel<SkinPurchaseRowModel>(rows, page, AppConsts.SkinListPageSize),
+            Purchases = new PagedListModel<SkinPurchaseRowModel>(rows),
             Query = query,
-            Player = playerId == null ? null : Text(playerId.Value),
-            PlayerName = playerName,
+            Player = playerId?.ToString(CultureInfo.InvariantCulture),
+            PlayerName = playerId == null ? null : await skinShopService.PurchaserNameAsync(playerId.Value, cancellationToken) ?? names[playerId.Value],
             Skins = [.. skins.Where(skin => skin.Available)],
             AssetsUrl = settings.AssetsUrl,
             Season = await SeasonAsync(settings, cancellationToken),
-            TotalPurchases = purchases.Count(purchase => !purchase.Gift),
-            TotalStars = purchases.Sum(purchase => purchase.Price),
-            TotalGifts = purchases.Count(purchase => purchase.Gift)
+            TotalPurchases = totals.Purchases,
+            TotalStars = totals.Stars,
+            TotalGifts = totals.Gifts
         };
     }
 
@@ -113,20 +103,14 @@ public class SkinViewService(
         var settings = await settingsService.GetAsync<SkinShopSettings>(cancellationToken);
         var term = query?.Trim();
 
-        var filtered = skins
-            .Where(skin => rarity == null || skin.Rarity == rarity)
-            .Where(skin => string.IsNullOrEmpty(weapon) || skin.Weapon == weapon)
-            .Where(skin => string.IsNullOrEmpty(term)
-                           || skin.Id.Contains(term, StringComparison.OrdinalIgnoreCase)
-                           || skin.Title(culture).Contains(term, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(skin => skin.Rarity)
-            .ThenByDescending(skin => skin.Price)
-            .ThenBy(skin => SkinWeapons.Order(skin.Weapon))
-            .ThenBy(skin => skin.Id)
-            .ToList();
+        List<string>? ids = string.IsNullOrEmpty(term)
+            ? null
+            : [.. skins.Where(skin => skin.Id.Contains(term, StringComparison.OrdinalIgnoreCase) || skin.Title(culture).Contains(term, StringComparison.OrdinalIgnoreCase)).Select(skin => skin.Id)];
+
+        var listed = await skinService.PageAsync(rarity, weapon, ids, page, AppConsts.SkinListPageSize, cancellationToken);
 
         return new SkinPricesAdminModel(
-            new PagedListModel<Skin>(filtered, page, AppConsts.SkinListPageSize),
+            new PagedListModel<Skin>(listed),
             [.. skins.Where(skin => skin.Available)],
             SkinWeapons.Sort(SkinWeapons.All.Concat(skins.Select(skin => skin.Weapon))),
             settings.AssetsUrl,
@@ -141,7 +125,7 @@ public class SkinViewService(
         var skins = dbContext.Set<Skin>().AsNoTracking();
         var total = await skins.CountAsync(cancellationToken);
         var available = await skins.CountAsync(skin => skin.Available, cancellationToken);
-        var timeZone = await TimeZoneAsync(cancellationToken);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
         DateTime? updatedAtUtc = total == 0 ? null : await skins.MaxAsync(skin => skin.UpdatedAtUtc, cancellationToken);
         var authors = await skinAuthorService.StatusAsync(cancellationToken);
 
@@ -152,10 +136,10 @@ public class SkinViewService(
             Available = available,
             Unavailable = total - available,
             Bundled = SkinBundledCatalog.Count,
-            UpdatedAt = updatedAtUtc == null ? null : ToSiteTime(updatedAtUtc.Value, timeZone),
+            UpdatedAt = updatedAtUtc == null ? null : SiteTime.FromUtc(updatedAtUtc.Value, timeZone),
             Authors = authors,
-            AuthorsSyncedAt = authors.LastSyncedAtUtc == null ? null : ToSiteTime(authors.LastSyncedAtUtc.Value, timeZone),
-            AuthorRenamedAt = authors.LastRenamedAtUtc == null ? null : ToSiteTime(authors.LastRenamedAtUtc.Value, timeZone)
+            AuthorsSyncedAt = authors.LastSyncedAtUtc == null ? null : SiteTime.FromUtc(authors.LastSyncedAtUtc.Value, timeZone),
+            AuthorRenamedAt = authors.LastRenamedAtUtc == null ? null : SiteTime.FromUtc(authors.LastRenamedAtUtc.Value, timeZone)
         };
     }
 
@@ -171,22 +155,5 @@ public class SkinViewService(
             LengthInMonths = (season.EndsAt.Year - season.StartsAt.Year) * AppConsts.SkinSeasonMonthsInYear + season.EndsAt.Month - season.StartsAt.Month,
             Refunds = settings.RefundAtSeasonEnd
         };
-    }
-
-    private async Task<TimeZoneInfo> TimeZoneAsync(CancellationToken cancellationToken)
-    {
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
-
-        return SiteTime.Zone(site.TimeZone);
-    }
-
-    private static DateTime ToSiteTime(DateTime utc, TimeZoneInfo timeZone)
-    {
-        return SiteTime.FromUtc(utc, timeZone);
-    }
-
-    private static string Text(long communityId)
-    {
-        return communityId.ToString(CultureInfo.InvariantCulture);
     }
 }

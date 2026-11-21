@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+
 namespace L4D2PlayStats.Hub.Web.Models;
 
 public class PaginationModel(int page, int totalPages, int firstItem, int lastItem, int totalItems, Func<int, string> pageUrl)
@@ -19,6 +21,11 @@ public class PaginationModel(int page, int totalPages, int firstItem, int lastIt
     public static PaginationModel Of<T>(PagedListModel<T> list, Func<int, string> pageUrl)
     {
         return new PaginationModel(list.Page, list.TotalPages, list.FirstItem, list.LastItem, list.TotalItems, pageUrl);
+    }
+
+    public static PaginationModel Of<T>(Page<T> page, Func<int, string> pageUrl)
+    {
+        return new PaginationModel(page.Number, page.TotalPages, page.FirstItem, page.LastItem, page.Total, pageUrl);
     }
 
     public string UrlFor(int number)

@@ -1,4 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
@@ -8,7 +10,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 
 public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
 {
-    public async Task<MatchPage> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
+    public Task<Page<Match>> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
     {
         var query = dbContext.Matches.AsNoTracking().InPeriod(filter.SeasonId, filter.Year);
 
@@ -28,20 +30,12 @@ public class MatchQueryService(HubDbContext dbContext) : IMatchQueryService
         if (filter.CommunityId != null)
             query = query.Where(m => m.Players.Any(p => p.CommunityId == filter.CommunityId && (p.TeamA || p.TeamB || p.Win || p.Loss || p.Draws > 0 || p.RageQuits > 0)));
 
-        var page = Math.Max(1, filter.Page);
-        var pageSize = Math.Clamp(filter.PageSize, 1, 200);
-        var total = await query.CountAsync(cancellationToken);
-
-        var matches = await query
+        return query
             .Include(m => m.GameServer)
             .Include(m => m.Players)
             .NewestFirst()
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .AsSplitQuery()
-            .ToListAsync(cancellationToken);
-
-        return new MatchPage(matches, total, page, pageSize);
+            .ToPageAsync(filter.Page, Math.Clamp(filter.PageSize, 1, AppConsts.MatchListMaxSize), cancellationToken);
     }
 
     public Task<Match?> FindAsync(int id, CancellationToken cancellationToken = default)

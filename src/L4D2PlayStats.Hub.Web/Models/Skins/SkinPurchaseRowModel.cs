@@ -16,17 +16,4 @@ public class SkinPurchaseRowModel(SkinPurchase purchase, Skin? skin, string play
     {
         return Skin?.Title(culture) ?? Purchase.SkinId;
     }
-
-    public bool Matches(string? query, CultureInfo culture)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return true;
-
-        var term = query.Trim();
-
-        return PlayerName.Contains(term, StringComparison.OrdinalIgnoreCase)
-               || CommunityId.Contains(term, StringComparison.OrdinalIgnoreCase)
-               || Purchase.SkinId.Contains(term, StringComparison.OrdinalIgnoreCase)
-               || SkinTitle(culture).Contains(term, StringComparison.OrdinalIgnoreCase);
-    }
 }

@@ -2,9 +2,8 @@ using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -19,15 +18,15 @@ public class AdminPlayersApiController(
     IRankingService rankingService,
     IPlayerLookupService playerLookupService,
     IPlayerDirectoryService playerDirectoryService,
-    ISettingsService settingsService) : ControllerBase
+    ISiteClock siteClock) : ControllerBase
 {
     [HttpGet("search")]
     public async Task<IActionResult> SearchAsync([FromQuery] string? q, [FromQuery] int page, CancellationToken cancellationToken)
     {
         var result = await playerDirectoryService.SearchAsync(q, page, cancellationToken);
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
 
-        return Ok(new PlayerSearchPageResult(result, SiteTime.Zone(site.TimeZone)));
+        return Ok(new PlayerSearchPageResult(result, timeZone));
     }
 
     [HttpGet]
@@ -50,7 +49,7 @@ public class AdminPlayersApiController(
             player.SteamId,
             position = currentIds.Contains(player.CommunityId) ? player.Position : (int?)null,
             previousNames = PreviousNames(player, allTimeById.GetValueOrDefault(player.CommunityId)),
-            avatarUrl = $"/avatar/{player.CommunityId}"
+            avatarUrl = PlayerUrls.Avatar(player.CommunityId)
         });
 
         return Ok(result);

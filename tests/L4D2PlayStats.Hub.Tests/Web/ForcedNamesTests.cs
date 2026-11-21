@@ -65,6 +65,23 @@ public class ForcedNamesTests
     }
 
     [TestMethod]
+    public async Task RemovingAnInvalidPlayerShowsTheError()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+
+        var response = await HubWebFactory.PostFormAsync(administrator, Page, $"{Page}/delete", new Dictionary<string, string> { ["communityId"] = "12" });
+        var page = await administrator.GetStringAsync(Page);
+
+        Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Contains("That is not a valid SteamID64.", page);
+        Assert.DoesNotContain("The forced name was removed.", page);
+    }
+
+    [TestMethod]
     public async Task TheForcedNamesConfigIsImported()
     {
         using var factory = new HubWebFactory();

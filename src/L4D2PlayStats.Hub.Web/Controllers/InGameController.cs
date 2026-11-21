@@ -57,7 +57,7 @@ public class InGameController(
             Season = season,
             Players = [.. ranking.Take(AppConsts.InGameRankingPlayers).Select(player => new RankingRow(player))],
             Me = me == null ? null : new RankingRow(me),
-            Matches = page?.Matches ?? [],
+            Matches = page?.Items ?? [],
             SteamId = steamId
         };
     }

@@ -326,12 +326,12 @@
                                 {
                                     <tr class="@(CurrentUser.ItIsMe(player.CommunityId) ? "it-is-me" : string.Empty)">
                                         <td style="padding: 2px" class="slim">
-                                            <a href="/player/@player.CommunityId" title="@(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)">
-                                                <img src="/avatar/@player.CommunityId" alt="@(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)" title="@(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
+                                            <a href="/player/@player.CommunityId" title="@(ForcedNames.Apply(player.CommunityId, player.PlayerName))">
+                                                <img src="/avatar/@player.CommunityId" alt="@(ForcedNames.Apply(player.CommunityId, player.PlayerName))" title="@(ForcedNames.Apply(player.CommunityId, player.PlayerName))" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
                                             </a>
                                         </td>
                                         <td class="vertical-align-middle">
-                                            <a href="/player/@player.CommunityId">@((ForcedNames.Find(player.CommunityId) ?? player.PlayerName)?.TruncatePlayerName() ?? "-")</a>
+                                            <a href="/player/@player.CommunityId">@((ForcedNames.Apply(player.CommunityId, player.PlayerName))?.TruncatePlayerName() ?? "-")</a>
 
                                             @if (player == mvpSiDamage)
                                             {
@@ -367,12 +367,12 @@
                                 {
                                     <tr class="@(CurrentUser.ItIsMe(infectedPlayer.CommunityId) ? "it-is-me" : string.Empty)">
                                         <td style="padding: 2px" class="slim">
-                                            <a href="/player/@infectedPlayer.CommunityId" title="@(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)">
-                                                <img src="/avatar/@infectedPlayer.CommunityId" alt="@(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)" title="@(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
+                                            <a href="/player/@infectedPlayer.CommunityId" title="@(ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))">
+                                                <img src="/avatar/@infectedPlayer.CommunityId" alt="@(ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))" title="@(ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))" style="width: 32px; border-radius: 5px" onerror="imgOnError(this)"/>
                                             </a>
                                         </td>
                                         <td class="vertical-align-middle">
-                                            <a href="/player/@infectedPlayer.CommunityId">@((ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)?.TruncatePlayerName() ?? "-")</a>
+                                            <a href="/player/@infectedPlayer.CommunityId">@((ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))?.TruncatePlayerName() ?? "-")</a>
                                         </td>
                                         <td class="slim text-center">
                                             <span data-toggle="tooltip" data-placement="top" title="@L["SI damage (excl. Tank)"]">
@@ -502,8 +502,8 @@
                             @foreach (var player in players)
                             {
                                 <th class="text-center player-name">
-                                    <a href="/player/@player.CommunityId" title="@(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)">
-                                        @((ForcedNames.Find(player.CommunityId) ?? player.PlayerName)?.TruncatePlayerName())
+                                    <a href="/player/@player.CommunityId" title="@(ForcedNames.Apply(player.CommunityId, player.PlayerName))">
+                                        @((ForcedNames.Apply(player.CommunityId, player.PlayerName))?.TruncatePlayerName())
                                     </a>
                                 </th>
                             }
@@ -691,8 +691,8 @@
                             @foreach (var infectedPlayer in infectedPlayers)
                             {
                                 <th class="text-center player-name">
-                                    <a href="/player/@infectedPlayer.CommunityId" title="@(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)">
-                                        @((ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)?.TruncatePlayerName())
+                                    <a href="/player/@infectedPlayer.CommunityId" title="@(ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))">
+                                        @((ForcedNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))?.TruncatePlayerName())
                                     </a>
                                 </th>
                             }
@@ -771,8 +771,8 @@
                                     }
                                 </td>
                                 <td>
-                                    <a href="/player/@playerName.CommunityId" title="@(ForcedNames.Find(playerName.CommunityId) ?? playerName.Name)">
-                                        @((ForcedNames.Find(playerName.CommunityId) ?? playerName.Name)?.TruncatePlayerName())
+                                    <a href="/player/@playerName.CommunityId" title="@(ForcedNames.Apply(playerName.CommunityId, playerName.Name))">
+                                        @((ForcedNames.Apply(playerName.CommunityId, playerName.Name))?.TruncatePlayerName())
                                     </a>
                                 </td>
                             </tr>

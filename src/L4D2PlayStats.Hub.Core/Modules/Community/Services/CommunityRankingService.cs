@@ -1,10 +1,15 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Live;
+using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -90,7 +95,7 @@ public class CommunityRankingService(
         ];
     }
 
-    public async Task<IReadOnlyList<CommunityVoter>> VotersAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<Page<CommunityVoter>> VotersAsync(int page, int size, CancellationToken cancellationToken = default)
     {
         var voters = await dbContext.Set<CommunityVote>()
             .AsNoTracking()
@@ -98,11 +103,9 @@ public class CommunityRankingService(
             .Select(group => new { VoterId = group.Key, Votes = group.Count(), LastVoteAtUtc = group.Max(v => v.CreatedAtUtc) })
             .OrderByDescending(voter => voter.Votes)
             .ThenBy(voter => voter.VoterId)
-            .Skip(Math.Max(0, skip))
-            .Take(Math.Max(0, take))
-            .ToListAsync(cancellationToken);
+            .ToPageAsync(page, size, cancellationToken);
 
-        List<long> ids = [.. voters.Select(voter => voter.VoterId)];
+        List<long> ids = [.. voters.Items.Select(voter => voter.VoterId)];
         var names = await playerService.NamesAsync(ids, cancellationToken);
 
         var blocked = await dbContext.Set<CommunityVoterBlock>()
@@ -111,33 +114,45 @@ public class CommunityRankingService(
             .Select(b => b.CommunityId)
             .ToListAsync(cancellationToken);
 
-        return [.. voters.Select(voter => new CommunityVoter(voter.VoterId, names[voter.VoterId], voter.Votes, voter.LastVoteAtUtc, blocked.Contains(voter.VoterId)))];
+        return voters.Map(voter => new CommunityVoter(voter.VoterId, names[voter.VoterId], voter.Votes, voter.LastVoteAtUtc, blocked.Contains(voter.VoterId)));
     }
 
-    public Task<int> VoterCountAsync(CancellationToken cancellationToken = default)
+    public async Task<Page<CommunityVoteParticipant>> ParticipantsAsync(bool voters, PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.Set<CommunityVote>()
-            .AsNoTracking()
-            .Select(v => v.VoterId)
-            .Distinct()
-            .CountAsync(cancellationToken);
+        var participants = voters
+            ? JudgingVotes().GroupBy(v => v.VoterId).Select(group => new CommunityLastVote { CommunityId = group.Key, LastAtUtc = group.Max(v => v.CreatedAtUtc) })
+            : JudgingVotes().Select(v => new { CommunityId = v.LeftPlayerId, v.CreatedAtUtc })
+                .Concat(JudgingVotes().Select(v => new { CommunityId = v.RightPlayerId, v.CreatedAtUtc }))
+                .GroupBy(v => v.CommunityId)
+                .Select(group => new CommunityLastVote { CommunityId = group.Key, LastAtUtc = group.Max(v => v.CreatedAtUtc) });
+
+        var forced = dbContext.Set<ForcedName>();
+        var profiles = dbContext.PlayerProfiles;
+        var connections = dbContext.Set<PlayerConnection>();
+
+        var found = await search
+            .Apply(participants, participant => participant.CommunityId, participant =>
+                forced.Where(entry => entry.CommunityId == participant.CommunityId).Select(entry => entry.Name).FirstOrDefault()
+                ?? profiles.Where(profile => profile.CommunityId == participant.CommunityId && profile.Name != null && profile.Name != string.Empty).Select(profile => profile.Name).FirstOrDefault()
+                ?? connections.Where(connection => connection.CommunityId == participant.CommunityId).OrderByDescending(connection => connection.LastSeenAtUtc).Select(connection => connection.Name).FirstOrDefault())
+            .OrderByDescending(participant => participant.LastAtUtc)
+            .ThenBy(participant => participant.CommunityId)
+            .ToPageAsync(page, size, cancellationToken);
+
+        var names = await playerService.NamesAsync([.. found.Items.Select(participant => participant.CommunityId)], cancellationToken);
+
+        return found.Map(participant => new CommunityVoteParticipant(participant.CommunityId, names[participant.CommunityId], voters ? participant.LastAtUtc : null, voters ? null : participant.LastAtUtc));
     }
 
     public async Task<int> RebuildAsync(CancellationToken cancellationToken = default)
     {
         int votes;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             votes = await ratingService.RecalculateAsync(null, cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         hubState.CommunityChanged();
@@ -149,18 +164,12 @@ public class CommunityRankingService(
     {
         int removed;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             removed = await dbContext.Set<CommunityVote>().ExecuteDeleteAsync(cancellationToken);
 
             await dbContext.Set<CommunityOffer>().ExecuteDeleteAsync(cancellationToken);
             await dbContext.Set<CommunityRating>().ExecuteDeleteAsync(cancellationToken);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         hubState.CommunityChanged();
@@ -172,9 +181,7 @@ public class CommunityRankingService(
     {
         int removed;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var votes = await dbContext.Set<CommunityVote>().Where(v => v.VoterId == voterId).ToListAsync(cancellationToken);
             var offers = await dbContext.Set<CommunityOffer>().Where(o => o.VoterId == voterId).ToListAsync(cancellationToken);
@@ -186,10 +193,6 @@ public class CommunityRankingService(
             await dbContext.SaveChangesAsync(cancellationToken);
 
             removed = votes.Count;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         hubState.CommunityChanged();

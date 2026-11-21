@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live;
@@ -22,8 +24,8 @@ public partial class PaginationTests
     [TestMethod]
     public void APageAlreadyCutByTheDatabaseKeepsItsItemsAndClampsThePage()
     {
-        var page = new PagedListModel<int>([41, 42], 9, 20, 42);
-        var empty = new PagedListModel<int>([], 3, 20, 0);
+        var page = new PagedListModel<int>(new Page<int>([41, 42], Paging.Clamp(9, 42, 20), 20, 42));
+        var empty = new PagedListModel<int>(new Page<int>([], Paging.Clamp(3, 0, 20), 20, 0));
 
         Assert.AreEqual(3, page.Page);
         Assert.AreEqual(3, page.TotalPages);
@@ -33,7 +35,7 @@ public partial class PaginationTests
         Assert.AreEqual(1, empty.Page);
         Assert.AreEqual(0, empty.FirstItem);
         Assert.AreEqual(40, Paging.Skip(3, 20));
-        Assert.AreEqual(1, Paging.Page(-5, 10, 20));
+        Assert.AreEqual(1, Paging.Clamp(-5, 10, 20));
     }
 
     [TestMethod]

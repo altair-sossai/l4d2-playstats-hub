@@ -1,5 +1,5 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using ParsedStatistics = L4D2PlayStats.Statistics;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
@@ -56,7 +56,7 @@ public static class MatchResultFactory
 
             var row = rows.GetValueOrDefault(communityId);
 
-            team.AddPlayer(communityId, forcedNames.Find(communityId) ?? playerName.Name ?? row?.Name, row);
+            team.AddPlayer(communityId, forcedNames.Apply(communityId, playerName.Name ?? row?.Name), row);
         }
 
         return true;
@@ -65,6 +65,6 @@ public static class MatchResultFactory
     private static void AddStoredPlayers(MatchTeamResult team, IEnumerable<MatchPlayer> players, IForcedNameStore forcedNames)
     {
         foreach (var player in players.OrderBy(player => player.Order))
-            team.AddPlayer(player.CommunityId, forcedNames.Find(player.CommunityId) ?? player.Name, player);
+            team.AddPlayer(player.CommunityId, forcedNames.Apply(player.CommunityId, player.Name), player);
     }
 }

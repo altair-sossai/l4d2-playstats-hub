@@ -1,8 +1,8 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
@@ -69,7 +69,7 @@ public class LiveDataService(ILiveServerStore store, IGameServerPresence presenc
     private void Rename(LivePlayer? player)
     {
         if (player?.Id != null)
-            player.Name = forcedNames.Find(player.Id.Value) ?? player.Name;
+            player.Name = forcedNames.Apply(player.Id.Value, player.Name);
     }
 
     public LiveSnapshot Snapshot(GameServer server)

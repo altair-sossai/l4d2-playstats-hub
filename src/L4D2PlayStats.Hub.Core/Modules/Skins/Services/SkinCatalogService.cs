@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
@@ -31,19 +32,13 @@ public class SkinCatalogService(
         if (entries.Count == 0)
             return SkinCatalogImportResult.Failed(SkinCatalogImportStatus.EmptyCatalog);
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var result = await ApplyAsync(entries, cancellationToken);
 
             logger.LogInformation("Skin catalog imported: {Total} skins, {Added} added, {Updated} updated, {Removed} removed", result.Total, result.Added, result.Updated, result.Removed);
 
             return result;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 
@@ -52,7 +47,7 @@ public class SkinCatalogService(
         var settings = await settingsService.GetAsync<SkinShopSettings>(cancellationToken);
         var url = settings.CatalogUrl?.Trim();
 
-        if (!SkinAssets.IsHttpUrl(url))
+        if (!SafeUrl.IsHttp(url))
             return SkinCatalogImportResult.Failed(SkinCatalogImportStatus.UrlNotConfigured);
 
         var json = await DownloadAsync(url!, cancellationToken);
@@ -162,11 +157,11 @@ public class SkinCatalogService(
         skin.Weapon = entry.Weapon!;
         skin.Rarity = entry.Rarity!.Value;
         skin.DefaultPrice = entry.Price!.Value;
-        skin.WorkshopId = Clean(entry.WorkshopId, AppConsts.SkinWorkshopIdMaxLength);
-        skin.AuthorName = Clean(entry.Author?.Name, AppConsts.SkinNameMaxLength);
+        skin.WorkshopId = Text.Clip(entry.WorkshopId, AppConsts.SkinWorkshopIdMaxLength);
+        skin.AuthorName = Text.Clip(entry.Author?.Name, AppConsts.SkinNameMaxLength);
         skin.AuthorCommunityId = long.TryParse(entry.Author?.CommunityId, out var communityId) ? communityId : null;
-        skin.OriginalTitle = Clean(entry.OriginalTitle, AppConsts.SkinTitleMaxLength);
-        skin.OriginalDescription = Clean(entry.OriginalDescription, int.MaxValue);
+        skin.OriginalTitle = Text.Clip(entry.OriginalTitle, AppConsts.SkinTitleMaxLength);
+        skin.OriginalDescription = Text.Clip(entry.OriginalDescription, int.MaxValue);
         skin.Shots = entry.Shots;
         skin.Available = true;
 
@@ -190,8 +185,8 @@ public class SkinCatalogService(
                 skin.Texts.Add(text);
             }
 
-            text.Title = Clean(titles.GetValueOrDefault(language), AppConsts.SkinTitleMaxLength);
-            text.Description = Clean(descriptions.GetValueOrDefault(language), int.MaxValue);
+            text.Title = Text.Clip(titles.GetValueOrDefault(language), AppConsts.SkinTitleMaxLength);
+            text.Description = Text.Clip(descriptions.GetValueOrDefault(language), int.MaxValue);
         }
     }
 
@@ -210,15 +205,5 @@ public class SkinCatalogService(
         }
 
         return result;
-    }
-
-    private static string? Clean(string? value, int maxLength)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return null;
-
-        var trimmed = value.Trim();
-
-        return trimmed.Length <= maxLength ? trimmed : trimmed[..maxLength];
     }
 }

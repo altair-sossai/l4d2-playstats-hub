@@ -11,7 +11,7 @@
         var rightClass = same ? "vf-same" : vote.Outcome == CommunityVoteOutcome.Right ? "vf-win" : "vf-lose";
 
         <div class="vf-row">
-            <time class="vf-when" datetime="@vote.CreatedAtUtc.ToString("o")">@LiveDisplay.ShortDateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
+            <time class="vf-when" datetime="@vote.CreatedAtUtc.ToString("o")">@Display.DateTime(vote.CreatedAtUtc, Model.TimeZone)</time>
             @if (Model.ShowVoters)
             {
                 <a class="vf-voter" href="@CommunityVoteUrls.Votes(vote.VoterId, Model.PlayerId)" title="@L["See the votes made by this player"]">

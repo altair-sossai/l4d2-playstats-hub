@@ -1,6 +1,7 @@
 using System.Text.Json;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -22,11 +23,17 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
             return setting == null ? string.Empty : secretProtector.Open(typeof(T), setting.Value);
         });
 
-        return string.IsNullOrEmpty(json) ? new T() : JsonSerializer.Deserialize<T>(json) ?? new T();
+        var settings = string.IsNullOrEmpty(json) ? new T() : JsonSerializer.Deserialize<T>(json) ?? new T();
+
+        Normalize(settings);
+
+        return settings;
     }
 
     public async Task SaveAsync<T>(T settings, CancellationToken cancellationToken = default) where T : class, new()
     {
+        Normalize(settings);
+
         var key = typeof(T).Name;
         var json = JsonSerializer.Serialize(settings);
         var setting = await dbContext.Settings.FirstOrDefaultAsync(s => s.Key == key, cancellationToken);
@@ -44,6 +51,12 @@ public class SettingsService(HubDbContext dbContext, IMemoryCache memoryCache, H
 
         memoryCache.Remove(CacheKey(key));
         hubState.DataChanged();
+    }
+
+    private static void Normalize<T>(T settings)
+    {
+        if (settings is INormalizable normalizable)
+            normalizable.Normalize();
     }
 
     private static string CacheKey(string key)

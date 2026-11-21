@@ -1,5 +1,7 @@
 @model AdministratorsViewModel
+@inject ISiteClock SiteClock
 @{
+    var timeZone = await SiteClock.ZoneAsync();
     ViewData["Title"] = L["Administrators"].Value;
     var pagination = PaginationModel.Of(Model.Administrators, number => AdminListUrls.Page(AppConsts.AdminAdministratorsUrl, number));
 }
@@ -43,7 +45,7 @@
                     <span class="text-underline">@administrator.CommunityId</span>
                 </a>
             </td>
-            <td class="text-center vertical-align-middle" data-label="@L["Since"]">@administrator.AddedAtUtc.ToString("d")</td>
+            <td class="text-center vertical-align-middle" data-label="@L["Since"]">@Display.Date(administrator.AddedAtUtc, timeZone)</td>
             <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                 <button class="btn btn-xs btn-default" type="button" data-admin-edit="@administrator.CommunityId" data-admin-name="@administrator.Name">
                     <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]

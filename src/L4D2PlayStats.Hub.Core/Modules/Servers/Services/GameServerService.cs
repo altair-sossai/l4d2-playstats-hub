@@ -2,6 +2,8 @@ using System.Text;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Models;
@@ -17,14 +19,9 @@ public class GameServerService(HubDbContext dbContext, HubState hubState, IGameS
         return dbContext.GameServers.AsNoTracking().OrderBy(s => s.Name).ToListAsync(cancellationToken);
     }
 
-    public Task<List<GameServer>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<GameServer>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.GameServers.AsNoTracking().OrderBy(s => s.Name).ThenBy(s => s.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
-    }
-
-    public Task<int> CountAsync(CancellationToken cancellationToken = default)
-    {
-        return dbContext.GameServers.CountAsync(cancellationToken);
+        return dbContext.GameServers.AsNoTracking().OrderBy(s => s.Name).ThenBy(s => s.Id).ToPageAsync(page, size, cancellationToken);
     }
 
     public Task<GameServer?> FindAsync(int id, CancellationToken cancellationToken = default)

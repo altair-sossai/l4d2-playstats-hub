@@ -4,8 +4,7 @@
 @{
     ViewData["Title"] = L["Chat Bans"].Value;
     var culture = CultureInfo.CurrentUICulture;
-    var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
-    var pagination = PaginationModel.Of(Model.Bans, number => $"{AppConsts.ChatBansUrl}?{query}page={number}");
+    var pagination = PaginationModel.Of(Model.Bans, number => QueryUrl.Build(AppConsts.ChatBansUrl, (AppConsts.SearchQuery, Model.Query), (AppConsts.AdminPageQuery, number)));
     var tabs = new AdminTabsModel(
     [
         new AdminTab(AppConsts.ChatBansListTab, L["Bans"].Value, "ban-circle"),
@@ -59,7 +58,7 @@
     </div>
 </div>
 
-@if (TempData["LimitsSaved"] != null)
+@if (TempData[AppConsts.LimitsSavedTempData] != null)
 {
     <div class="alert alert-success">@L["Saved."]</div>
 }
@@ -94,8 +93,8 @@
             @foreach (var ban in Model.Bans.Items)
             {
                 var name = ForcedNames.Apply(ban.CommunityId, string.IsNullOrWhiteSpace(ban.Name) ? ban.CommunityId : ban.Name);
-                var bannedAt = LiveDisplay.ShortDateTime(ban.CreatedAtUtc, Model.TimeZone);
-                var updatedAt = ban.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(ban.UpdatedAtUtc.Value, Model.TimeZone);
+                var bannedAt = Display.DateTime(ban.CreatedAtUtc, Model.TimeZone);
+                var updatedAt = ban.UpdatedAtUtc == null ? null : Display.DateTime(ban.UpdatedAtUtc.Value, Model.TimeZone);
 
                 <div class="admin-item cb-ban"
                      data-community-id="@ban.CommunityId" data-name="@name" data-stored-name="@ban.Name" data-avatar="@ban.AvatarUrl" data-steam-id="@ban.SteamId"

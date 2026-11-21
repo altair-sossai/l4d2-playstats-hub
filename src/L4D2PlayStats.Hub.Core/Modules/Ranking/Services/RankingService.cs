@@ -1,9 +1,10 @@
-using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Extensions;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Punishments.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
@@ -117,9 +118,7 @@ public class RankingService(
 
         var gate = hubState.Gate($"ranking_{scope}");
 
-        await gate.WaitAsync(cancellationToken);
-
-        try
+        await using (await gate.LockAsync(cancellationToken))
         {
             if (memoryCache.TryGetValue(key, out cached))
                 return cached!;
@@ -130,10 +129,6 @@ public class RankingService(
             memoryCache.Set(key, value, options.AddExpirationToken(changes));
 
             return value;
-        }
-        finally
-        {
-            gate.Release();
         }
     }
 }

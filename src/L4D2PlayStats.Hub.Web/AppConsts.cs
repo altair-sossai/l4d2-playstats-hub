@@ -27,6 +27,7 @@ public static partial class AppConsts
     public const string AntiforgeryHeader = "RequestVerificationToken";
     public const string ShortTimeFormat = "HH:mm";
     public const string ShortDateTimeFormat = "g";
+    public const string ShortDateFormat = "d";
     public const int PaginationWindow = 2;
     public const int NavbarDesktopWidth = 768;
     public const int PlayerPickerPreviousNames = 5;
@@ -42,6 +43,7 @@ public static partial class AppConsts
     public const int InGameMatches = 10;
 
     public const int RankingPageSize = 100;
+    public const int RankingApiMaxPlayers = 5000;
     public const int ServerStatusRefreshInSeconds = 3;
     public const int SeasonCheckIntervalInMinutes = 30;
 

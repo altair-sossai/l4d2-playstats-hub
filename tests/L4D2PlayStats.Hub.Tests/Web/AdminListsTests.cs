@@ -59,6 +59,27 @@ public partial class AdminListsTests
     }
 
     [TestMethod]
+    public async Task ACampaignWithoutMapsOrARuleWithoutANameShowsTheError()
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await HubWebFactory.PostFormAsync(client, "/admin/campaigns", "/admin/campaigns", new Dictionary<string, string> { ["Name"] = "No Maps", ["Maps"] = " , " });
+        var campaigns = WebUtility.HtmlDecode(await client.GetStringAsync("/admin/campaigns"));
+        var saved = await factory.RunAsync(services => services.GetRequiredService<ICampaignService>().ListAsync());
+
+        await HubWebFactory.PostFormAsync(client, "/admin/game-modes", "/admin/game-modes", new Dictionary<string, string> { ["Name"] = " ", ["ConfigurationPattern"] = "*" });
+        var rules = WebUtility.HtmlDecode(await client.GetStringAsync("/admin/game-modes"));
+
+        Assert.Contains("Write the name of the campaign and at least one map.", campaigns);
+        Assert.IsFalse(saved.Any(campaign => campaign.Name == "No Maps"));
+        Assert.Contains("A name is required.", rules);
+    }
+
+    [TestMethod]
     public async Task TheCampaignsArePagedAndTheirMapsAreEditedAsAList()
     {
         using var factory = new HubWebFactory();
@@ -67,7 +88,7 @@ public partial class AdminListsTests
 
         using var client = factory.Client(HubWebFactory.Administrator);
 
-        var total = await factory.RunAsync(services => services.GetRequiredService<ICampaignService>().CountAsync());
+        var total = (await factory.RunAsync(services => services.GetRequiredService<ICampaignService>().PageAsync(1, 1))).Total;
         var first = WebUtility.HtmlDecode(await client.GetStringAsync("/admin/campaigns"));
         var last = WebUtility.HtmlDecode(await client.GetStringAsync($"/admin/campaigns?page={(total + 19) / 20}"));
         var saved = await HubWebFactory.PostFormAsync(client, "/admin/campaigns", "/admin/campaigns", new Dictionary<string, string> { ["Name"] = "Custom Run", ["Maps"] = "custom_m1\ncustom_m2\ncustom_m3", ["returnUrl"] = "/admin/campaigns?page=2" });

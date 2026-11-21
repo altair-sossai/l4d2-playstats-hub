@@ -4,13 +4,11 @@ public static class AdminListUrls
 {
     public static string Page(string url, int page)
     {
-        return page > 1 ? $"{url}?{AppConsts.AdminPageQuery}={page}" : url;
+        return QueryUrl.Build(url, (AppConsts.AdminPageQuery, page));
     }
 
     public static string TabPage(string url, string tab, string query, int page)
     {
-        var tabUrl = AdminTabs.Url(url, tab);
-
-        return page > 1 ? $"{tabUrl}&{query}={page}" : tabUrl;
+        return QueryUrl.Build(url, (AppConsts.AdminTabQuery, tab), (query, page));
     }
 }

@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Models.AntiCheat;
@@ -16,7 +17,7 @@ public class AntiCheatVersionService(
     {
         var settings = await settingsService.GetAsync<AntiCheatSettings>(cancellationToken);
 
-        if (!Uri.TryCreate(settings.ServiceUrl, UriKind.Absolute, out var service) || service.Scheme != Uri.UriSchemeHttps)
+        if (!SafeUrl.IsHttps(settings.ServiceUrl))
             return null;
 
         var address = $"{settings.ServiceUrl!.TrimEnd('/')}{AppConsts.AntiCheatVersionPath}";

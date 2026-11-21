@@ -1,6 +1,8 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
@@ -20,32 +22,22 @@ public class CommunityModerationService(
         return dbContext.Set<CommunityVoterBlock>().AnyAsync(b => b.CommunityId == voterId, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<CommunityBlockedVoter>> BlockedAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<Page<CommunityBlockedVoter>> BlockedAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        var blocks = await dbContext.Set<CommunityVoterBlock>().AsNoTracking().ToListAsync(cancellationToken);
-
-        var page = blocks
+        var blocks = await dbContext.Set<CommunityVoterBlock>()
+            .AsNoTracking()
             .OrderByDescending(b => b.BlockedAtUtc)
             .ThenBy(b => b.CommunityId)
-            .Skip(Math.Max(0, skip))
-            .Take(Math.Max(0, take))
-            .ToList();
+            .ToPageAsync(page, size, cancellationToken);
 
-        var names = await playerService.NamesAsync([.. page.Select(b => b.CommunityId)], cancellationToken);
+        var names = await playerService.NamesAsync([.. blocks.Items.Select(b => b.CommunityId)], cancellationToken);
 
-        return [.. page.Select(b => new CommunityBlockedVoter(b.CommunityId, names[b.CommunityId], b.BlockedAtUtc))];
-    }
-
-    public Task<int> BlockedCountAsync(CancellationToken cancellationToken = default)
-    {
-        return dbContext.Set<CommunityVoterBlock>().CountAsync(cancellationToken);
+        return blocks.Map(b => new CommunityBlockedVoter(b.CommunityId, names[b.CommunityId], b.BlockedAtUtc));
     }
 
     public async Task<bool> BlockAsync(long voterId, long? blockedBy, CancellationToken cancellationToken = default)
     {
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             if (await IsBlockedAsync(voterId, cancellationToken))
                 return false;
@@ -59,33 +51,21 @@ public class CommunityModerationService(
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-        finally
-        {
-            hubState.WriteLock.Release();
-        }
 
         return true;
     }
 
     public async Task<bool> UnblockAsync(long voterId, CancellationToken cancellationToken = default)
     {
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             return await dbContext.Set<CommunityVoterBlock>().Where(b => b.CommunityId == voterId).ExecuteDeleteAsync(cancellationToken) > 0;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 
     public async Task<bool> RemoveVoteAsync(int voteId, CancellationToken cancellationToken = default)
     {
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var vote = await dbContext.Set<CommunityVote>().FirstOrDefaultAsync(v => v.Id == voteId, cancellationToken);
 
@@ -101,10 +81,6 @@ public class CommunityModerationService(
                 await ratingService.RecalculateAsync(null, cancellationToken);
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         hubState.CommunityChanged();

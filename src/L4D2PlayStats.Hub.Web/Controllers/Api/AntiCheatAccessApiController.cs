@@ -6,12 +6,10 @@ using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
-using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models.AntiCheat;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 
@@ -19,12 +17,10 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
 [AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.AntiCheat)]
-[ApiController]
 public class AntiCheatAccessApiController(
     IAntiCheatAccessService accessService,
     IPlayerLookupService playerLookupService,
-    ICurrentUser currentUser,
-    IStringLocalizer<SharedResource> localizer) : ControllerBase
+    ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
@@ -35,8 +31,10 @@ public class AntiCheatAccessApiController(
     [HttpPut("mode")]
     public async Task<IActionResult> PutModeAsync([FromBody] AntiCheatAccessModeCommand command, CancellationToken cancellationToken)
     {
-        if (!AntiCheatAccessNames.TryParseMode(command.Mode, out var mode))
-            return BadRequest(new { errorMessage = localizer["The mode is invalid."].Value });
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
+
+        AntiCheatAccessNames.TryParseMode(command.Mode, out var mode);
 
         await accessService.SetModeAsync(mode, Actor(), AntiCheatAccessSource.Site, cancellationToken);
 
@@ -49,19 +47,14 @@ public class AntiCheatAccessApiController(
         if (!AntiCheatAccessNames.TryParseList(list, out var accessList))
             return NotFound();
 
-        if (string.IsNullOrWhiteSpace(command.Player))
-            return BadRequest(new { errorMessage = localizer["The Steam ID must be provided."].Value });
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
 
-        var communityId = SteamIdParser.Parse(command.Player);
-        if (communityId == null)
-            return BadRequest(new { errorMessage = localizer["The Steam ID is invalid."].Value });
-
+        var communityId = SteamIdParser.Parse(command.Player)!.Value;
         var name = string.IsNullOrWhiteSpace(command.Name) ? (await playerLookupService.LookupAsync(command.Player, cancellationToken))?.Name : command.Name;
-        var result = await accessService.AddAsync(accessList, communityId.Value, name, Actor(), AntiCheatAccessSource.Site, cancellationToken);
+        var result = await accessService.AddAsync(accessList, communityId, name, Actor(), AntiCheatAccessSource.Site, cancellationToken);
 
-        return result == null
-            ? BadRequest(new { errorMessage = localizer["The Steam ID is invalid."].Value })
-            : Ok(new AntiCheatAccessPlayerResult(result.Player));
+        return result == null ? Invalid(AppConsts.SteamIdInvalidMessage) : Ok(new AntiCheatAccessPlayerResult(result.Player));
     }
 
     [HttpDelete("{list}/{communityId}")]
@@ -71,8 +64,10 @@ public class AntiCheatAccessApiController(
             return NotFound();
 
         var parsed = SteamIdParser.Parse(communityId);
-        if (parsed != null)
-            await accessService.RemoveAsync(accessList, parsed.Value, Actor(), AntiCheatAccessSource.Site, cancellationToken);
+        if (parsed == null)
+            return Invalid(AppConsts.SteamIdInvalidMessage);
+
+        await accessService.RemoveAsync(accessList, parsed.Value, Actor(), AntiCheatAccessSource.Site, cancellationToken);
 
         return NoContent();
     }

@@ -1,5 +1,6 @@
-using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
@@ -12,23 +13,23 @@ namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
 public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rankingService, IForcedNameStore forcedNames) : IPlayerDirectoryService
 {
-    public async Task<PlayerDirectoryPage> SearchAsync(string? term, int page, CancellationToken cancellationToken = default)
+    public async Task<Page<PlayerDirectoryEntry>> SearchAsync(string? term, int page, CancellationToken cancellationToken = default)
     {
         var entries = await EntriesAsync(cancellationToken);
-        var matches = Matches(entries, term?.Trim());
+        var matches = Matches(entries, PlayerSearch.Of(term));
         var size = AppConsts.PlayerDirectoryPageSize;
-        var number = Math.Clamp(page, 1, matches.Count / size + 1);
+        var number = Paging.Clamp(page, matches.Count, size);
 
         var players = matches
             .OrderByDescending(entry => entry.LastSeenAtUtc)
             .ThenBy(entry => entry.Position ?? int.MaxValue)
             .ThenBy(entry => entry.Name, StringComparer.CurrentCultureIgnoreCase)
             .ThenBy(entry => entry.CommunityId)
-            .Skip((number - 1) * size)
+            .Skip(Paging.Skip(number, size))
             .Take(size)
             .ToList();
 
-        return new PlayerDirectoryPage(players, matches.Count, number, number * size < matches.Count);
+        return new Page<PlayerDirectoryEntry>(players, number, size, matches.Count);
     }
 
     private async Task<List<PlayerDirectoryEntry>> EntriesAsync(CancellationToken cancellationToken)
@@ -113,26 +114,16 @@ public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rank
             entry.Names.Add(text);
     }
 
-    private static List<PlayerDirectoryEntry> Matches(List<PlayerDirectoryEntry> entries, string? term)
+    private static List<PlayerDirectoryEntry> Matches(List<PlayerDirectoryEntry> entries, PlayerSearch search)
     {
-        if (string.IsNullOrEmpty(term))
+        if (search.IsEmpty)
             return entries;
 
-        var communityId = SteamIdParser.Parse(term);
+        if (search.CommunityId == null)
+            return [.. entries.Where(entry => search.Matches(entry.CommunityId, entry.Names))];
 
-        if (communityId == null)
-            return [.. entries.Where(entry => Contains(entry, term))];
+        var found = entries.Where(entry => entry.CommunityId == search.CommunityId).ToList();
 
-        var found = entries.Where(entry => entry.CommunityId == communityId).ToList();
-
-        return found.Count > 0 ? found : [new PlayerDirectoryEntry(communityId.Value, false)];
-    }
-
-    private static bool Contains(PlayerDirectoryEntry entry, string term)
-    {
-        return entry.Names.Any(name => name.Contains(term, StringComparison.CurrentCultureIgnoreCase))
-               || entry.CommunityId.ToString(CultureInfo.InvariantCulture).Contains(term, StringComparison.Ordinal)
-               || SteamIds.SteamId(entry.CommunityId).Contains(term, StringComparison.OrdinalIgnoreCase)
-               || SteamIds.Steam3(entry.CommunityId).Contains(term, StringComparison.OrdinalIgnoreCase);
+        return found.Count > 0 ? found : [new PlayerDirectoryEntry(search.CommunityId.Value, false)];
     }
 }

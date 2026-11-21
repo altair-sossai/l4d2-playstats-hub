@@ -1,10 +1,11 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Net;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,8 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
             return null;
 
         var ipAddress = parsed.ToString();
-        var name = command.Name.Trim();
+        var name = Text.Clip(command.Name, AppConsts.LivePlayerNameMaxLength)!;
         var now = clock.UtcNow;
-
-        if (name.Length > AppConsts.LivePlayerNameMaxLength)
-            name = name[..AppConsts.LivePlayerNameMaxLength];
 
         var connection = await dbContext.Set<PlayerConnection>().FirstOrDefaultAsync(c => c.IpAddress == ipAddress && c.CommunityId == communityId, cancellationToken);
 
@@ -116,13 +114,9 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
                 {
                     var latest = group.OrderByDescending(c => c.LastSeenAtUtc).First();
 
-                    return new PlayerConnectionResult
+                    return new PlayerConnectionResult(latest.CommunityId)
                     {
-                        CommunityId = latest.CommunityId.ToString(),
-                        Name = forcedNames.Find(latest.CommunityId) ?? latest.Name,
-                        SteamId = SteamIds.SteamId(latest.CommunityId),
-                        Steam3 = SteamIds.Steam3(latest.CommunityId),
-                        ProfileUrl = SteamIds.ProfileUrl(latest.CommunityId),
+                        Name = forcedNames.Apply(latest.CommunityId, latest.Name),
                         FirstConnectedAtUtc = group.Min(c => c.FirstSeenAtUtc),
                         LastConnectedAtUtc = latest.LastSeenAtUtc,
                         ConnectionCount = group.Sum(c => c.Count)

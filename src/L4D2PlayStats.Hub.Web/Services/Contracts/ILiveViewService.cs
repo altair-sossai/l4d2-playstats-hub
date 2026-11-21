@@ -12,5 +12,4 @@ public interface ILiveViewService
     Task<ServerCardViewModel> CardAsync(GameServer server, CancellationToken cancellationToken = default);
     Task<LiveServerViewModel> LiveAsync(GameServer server, CancellationToken cancellationToken = default);
     Task<LiveFeedViewModel> FeedAsync(GameServer server, long after, CancellationToken cancellationToken = default);
-    Task<TimeZoneInfo> TimeZoneAsync(CancellationToken cancellationToken = default);
 }

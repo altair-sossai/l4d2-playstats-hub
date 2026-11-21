@@ -1,4 +1,3 @@
-using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
@@ -7,7 +6,6 @@ using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
@@ -22,14 +20,13 @@ using L4D2PlayStats.Hub.Web.Models.Matches;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Models.Ranking;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Services;
 
 public class PlayerViewService(
-    HubDbContext dbContext,
     ISettingsService settingsService,
+    ISiteClock siteClock,
     ISeasonService seasonService,
     IRankingService rankingService,
     IPlayerMatchService playerMatchService,
@@ -40,8 +37,7 @@ public class PlayerViewService(
     ISkinShopService skinShopService,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer,
-    SkinThumbnailStore skinThumbnailStore,
-    IForcedNameStore forcedNames) : IPlayerViewService
+    SkinThumbnailStore skinThumbnailStore) : IPlayerViewService
 {
     public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default)
     {
@@ -98,9 +94,8 @@ public class PlayerViewService(
             return null;
 
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
         var skinShop = modules.IsEnabled(HubModule.SkinShop);
-        var timeZone = TimeZone(site);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
 
         long[] communityIds = secondPlayer == null ? [firstPlayer.CommunityId] : [firstPlayer.CommunityId, secondPlayer.CommunityId];
 
@@ -130,7 +125,6 @@ public class PlayerViewService(
     public async Task<PlayerNotFoundModel> NotFoundAsync(PlayerPeriodModel? period, long communityId, CancellationToken cancellationToken = default)
     {
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
 
         var connectionInfo = modules.IsEnabled(HubModule.LiveServer)
             ? await playerConnectionService.DetailsAsync(communityId, cancellationToken)
@@ -141,7 +135,7 @@ public class PlayerViewService(
         return new PlayerNotFoundModel(communityId, connectionInfo.Player, relatedPlayers, knownName)
         {
             Period = period,
-            TimeZone = TimeZone(site)
+            TimeZone = await siteClock.ZoneAsync(cancellationToken)
         };
     }
 
@@ -184,17 +178,6 @@ public class PlayerViewService(
         if (unranked.Count == 0)
             return [];
 
-        var profiles = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(profile => unranked.Contains(profile.CommunityId) && profile.Name != null)
-            .Select(profile => new { profile.CommunityId, profile.Name })
-            .ToListAsync(cancellationToken);
-
-        return profiles.ToDictionary(profile => profile.CommunityId, profile => forcedNames.Find(profile.CommunityId) ?? profile.Name!);
-    }
-
-    private static TimeZoneInfo TimeZone(SiteSettings site)
-    {
-        return SiteTime.Zone(site.TimeZone);
+        return await playerNameService.NamesAsync(unranked, cancellationToken);
     }
 }

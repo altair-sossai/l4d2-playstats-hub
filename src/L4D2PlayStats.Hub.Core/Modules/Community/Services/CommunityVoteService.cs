@@ -74,9 +74,7 @@ public class CommunityVoteService(
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
         var pair = new CommunityPair(leftPlayerId, rightPlayerId);
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             if (await IsBlockedAsync(voterId, cancellationToken))
                 return CommunityVoteResult.Blocked;
@@ -121,10 +119,6 @@ public class CommunityVoteService(
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
         }
-        finally
-        {
-            hubState.WriteLock.Release();
-        }
 
         hubState.CommunityChanged();
 
@@ -133,9 +127,7 @@ public class CommunityVoteService(
 
     private async Task<CommunityPair?> OfferAsync(long voterId, CommunityRankingSettings settings, CancellationToken cancellationToken)
     {
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var selection = await SelectionAsync(voterId, settings, cancellationToken);
             var offer = await dbContext.Set<CommunityOffer>().FirstOrDefaultAsync(o => o.VoterId == voterId, cancellationToken);
@@ -155,10 +147,6 @@ public class CommunityVoteService(
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return pair;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 

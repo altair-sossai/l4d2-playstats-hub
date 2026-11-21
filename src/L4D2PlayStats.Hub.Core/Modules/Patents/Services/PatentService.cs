@@ -12,8 +12,6 @@ public class PatentService(ISettingsService settingsService) : IPatentService
     {
         var settings = await settingsService.GetAsync<PatentSettings>(cancellationToken);
 
-        settings.Normalize();
-
         var standard = settings.MaxExperience == AppConsts.PatentMaxExperience && settings.Curve.Equals(AppConsts.PatentCurve);
 
         return standard ? PatentCatalog.Default : PatentCatalog.Scale(settings.MaxExperience, settings.Curve);

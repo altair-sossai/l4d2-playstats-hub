@@ -94,10 +94,10 @@
                             }
                         </div>
                         <small title="SteamID64: @player.CommunityId">@player.SteamId</small>
-                        <small>@L["First seen"]: @LiveDisplay.ShortDateTime(player.FirstConnectedAtUtc, Model.TimeZone)</small>
+                        <small>@L["First seen"]: @Display.DateTime(player.FirstConnectedAtUtc, Model.TimeZone)</small>
                     </div>
                     <div class="admin-side">
-                        <strong>@LiveDisplay.ShortDateTime(player.LastConnectedAtUtc, Model.TimeZone)</strong>
+                        <strong>@Display.DateTime(player.LastConnectedAtUtc, Model.TimeZone)</strong>
                         <small>@L["Last seen"]</small>
                         <small>@player.ConnectionCount.ToString("N0", culture) @L["Connections"]</small>
                     </div>

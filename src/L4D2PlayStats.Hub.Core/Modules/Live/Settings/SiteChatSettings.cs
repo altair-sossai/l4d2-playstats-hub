@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 
-public class SiteChatSettings
+public class SiteChatSettings : INormalizable
 {
     public int GlobalCooldownInSeconds { get; set; } = AppConsts.SiteChatGlobalCooldownInSeconds;
     public int UserCooldownInSeconds { get; set; } = AppConsts.SiteChatUserCooldownInSeconds;

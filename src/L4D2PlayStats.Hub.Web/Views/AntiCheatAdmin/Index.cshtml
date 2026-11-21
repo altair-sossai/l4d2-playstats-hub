@@ -10,13 +10,12 @@
     };
 
     var culture = CultureInfo.CurrentUICulture;
-    var query = string.IsNullOrEmpty(Model.Query) ? string.Empty : $"q={Uri.EscapeDataString(Model.Query)}&";
-    var pagination = PaginationModel.Of(Model.Players, number => $"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}&{query}page={number}");
+    var pagination = PaginationModel.Of(Model.Players, number => QueryUrl.Build(AppConsts.AntiCheatAdminUrl, (AppConsts.AntiCheatListQuery, Model.ShownListName), (AppConsts.SearchQuery, Model.Query), (AppConsts.AdminPageQuery, number)));
     var whitelistShown = Model.ShownList == AntiCheatAccessList.Whitelist;
     var listTitle = whitelistShown ? L["Except these players"].Value : L["Only these players"].Value;
     var listHelp = whitelistShown ? L["Whitelist: these players can play without the Anti-Cheat while everyone must use it."].Value : L["Required list: these players must run the Anti-Cheat while no one else has to."].Value;
     var otherListName = Model.OtherList == AntiCheatAccessList.Whitelist ? L["whitelist"].Value : L["required list"].Value;
-    var updatedAt = Model.Access.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(Model.Access.UpdatedAtUtc.Value, Model.TimeZone);
+    var updatedAt = Model.Access.UpdatedAtUtc == null ? null : Display.DateTime(Model.Access.UpdatedAtUtc.Value, Model.TimeZone);
     var updatedFrom = Model.Access.UpdatedFrom == AntiCheatAccessSource.Game ? L["in the game"].Value : L["on the site"].Value;
     var tabs = new AdminTabsModel(
     [
@@ -219,7 +218,7 @@
             }
             @foreach (var player in Model.Players.Items)
             {
-                var addedAt = LiveDisplay.ShortDateTime(player.CreatedAtUtc, Model.TimeZone);
+                var addedAt = Display.DateTime(player.CreatedAtUtc, Model.TimeZone);
                 var addedFrom = player.AddedFrom == nameof(AntiCheatAccessSource.Game) ? L["in the game"].Value : L["on the site"].Value;
                 var addedBy = string.IsNullOrWhiteSpace(player.AddedByName) ? addedFrom : string.Format(L["by {0} {1}"].Value, player.AddedByName, addedFrom);
 
@@ -371,7 +370,7 @@
                 already: @Json.Serialize(L["This player is already on this list."].Value),
                 error: @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
             };
-            var listedIds = @Json.Serialize(Model.Access[Model.ShownList].Select(player => player.CommunityId.ToString()));
+            var listedIds = @Json.Serialize(Model.ListedIds.Select(communityId => communityId.ToString()));
 
             var selected = null;
             var picked = null;

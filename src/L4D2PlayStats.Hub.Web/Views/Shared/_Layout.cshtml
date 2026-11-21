@@ -642,11 +642,11 @@
 </script>
 
 <div class="container-fluid main-container">
-    @if (TempData["Error"] is string error)
+    @if (TempData[AppConsts.ErrorTempData] is string error)
     {
         <div class="alert alert-danger" style="margin-top: 15px">@L[error]</div>
     }
-    @if (TempData["Saved"] != null)
+    @if (TempData[AppConsts.SavedTempData] != null)
     {
         <div class="alert alert-success" style="margin-top: 15px">@L["Saved."]</div>
     }

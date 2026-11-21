@@ -1,34 +1,47 @@
-using L4D2PlayStats.Hub.Web.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 
 namespace L4D2PlayStats.Hub.Web.Models;
 
 public class PagedListModel<T>
 {
-    public PagedListModel(IReadOnlyCollection<T> source, int page, int pageSize)
-        : this(page, pageSize, source.Count)
+    public PagedListModel(Page<T> page)
     {
+        Items = page.Items;
+        Page = page.Number;
+        PageSize = page.Size;
+        TotalItems = page.Total;
+        TotalPages = page.TotalPages;
+    }
+
+    public PagedListModel(IReadOnlyCollection<T> source, int page, int pageSize)
+    {
+        PageSize = pageSize;
+        TotalItems = source.Count;
+        TotalPages = Paging.TotalPages(TotalItems, pageSize);
+        Page = Paging.Clamp(page, TotalItems, pageSize);
         Items = [.. source.Skip(Paging.Skip(Page, pageSize)).Take(pageSize)];
     }
 
-    public PagedListModel(IReadOnlyCollection<T> items, int page, int pageSize, int totalItems)
-        : this(page, pageSize, totalItems)
+    private PagedListModel(IReadOnlyCollection<T> items, int page, int pageSize, int totalItems, int totalPages)
     {
         Items = items;
-    }
-
-    private PagedListModel(int page, int pageSize, int totalItems)
-    {
+        Page = page;
         PageSize = pageSize;
         TotalItems = totalItems;
-        TotalPages = Paging.TotalPages(totalItems, pageSize);
-        Page = Paging.Page(page, totalItems, pageSize);
+        TotalPages = totalPages;
     }
 
-    public IReadOnlyCollection<T> Items { get; private set; } = [];
+    public IReadOnlyCollection<T> Items { get; }
     public int Page { get; }
     public int PageSize { get; }
     public int TotalItems { get; }
     public int TotalPages { get; }
     public int FirstItem => TotalItems == 0 ? 0 : Paging.Skip(Page, PageSize) + 1;
     public int LastItem => Math.Min(Page * PageSize, TotalItems);
+
+    public PagedListModel<TResult> Map<TResult>(Func<T, TResult> selector)
+    {
+        return new PagedListModel<TResult>([.. Items.Select(selector)], Page, PageSize, TotalItems, TotalPages);
+    }
 }

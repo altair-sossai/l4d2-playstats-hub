@@ -40,18 +40,16 @@ public class SiteChatService(
 
     public async Task<List<RecentChatSender>> RecentSendersAsync(CancellationToken cancellationToken = default)
     {
-        var bans = await chatBanService.ListAsync(cancellationToken);
-        var banned = bans.Select(ban => ban.CommunityId).ToHashSet();
+        var latest = store.States
+            .SelectMany(state => state.SiteMessages)
+            .GroupBy(message => message.UserId)
+            .Select(group => group.OrderByDescending(message => message.When).First())
+            .OrderByDescending(message => message.When)
+            .Take(AppConsts.SiteChatRecentSenders)
+            .ToList();
 
-        return
-        [
-            .. store.States
-                .SelectMany(state => state.SiteMessages)
-                .GroupBy(message => message.UserId)
-                .Select(group => group.OrderByDescending(message => message.When).First())
-                .OrderByDescending(message => message.When)
-                .Take(AppConsts.SiteChatRecentSenders)
-                .Select(message => new RecentChatSender(message.UserId, message.Name, message.Text, message.When, banned.Contains(message.UserId)))
-        ];
+        var banned = await chatBanService.BannedAsync([.. latest.Select(message => message.UserId)], cancellationToken);
+
+        return [.. latest.Select(message => new RecentChatSender(message.UserId, message.Name, message.Text, message.When, banned.Contains(message.UserId)))];
     }
 }

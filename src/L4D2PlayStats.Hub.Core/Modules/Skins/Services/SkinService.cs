@@ -1,5 +1,9 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +14,31 @@ public class SkinService(HubDbContext dbContext, IClock clock) : ISkinService
     public Task<List<Skin>> ListAsync(CancellationToken cancellationToken = default)
     {
         return Query().OrderBy(skin => skin.Id).ToListAsync(cancellationToken);
+    }
+
+    public Task<Page<Skin>> PageAsync(SkinRarity? rarity, string? weapon, IReadOnlyCollection<string>? ids, int page, int size, CancellationToken cancellationToken = default)
+    {
+        var query = Query();
+
+        if (rarity != null)
+            query = query.Where(skin => skin.Rarity == rarity);
+
+        if (!string.IsNullOrEmpty(weapon))
+            query = query.Where(skin => skin.Weapon == weapon);
+
+        if (ids != null)
+        {
+            List<string> listed = [.. ids];
+
+            query = query.Where(skin => listed.Contains(skin.Id));
+        }
+
+        return query
+            .OrderByDescending(skin => skin.Rarity)
+            .ThenByDescending(skin => skin.PriceOverride != null ? skin.PriceOverride.Price : skin.DefaultPrice)
+            .ThenBy(SkinWeapons.OrderOf())
+            .ThenBy(skin => skin.Id)
+            .ToPageAsync(page, size, cancellationToken);
     }
 
     public Task<Skin?> FindAsync(string? skinId, CancellationToken cancellationToken = default)

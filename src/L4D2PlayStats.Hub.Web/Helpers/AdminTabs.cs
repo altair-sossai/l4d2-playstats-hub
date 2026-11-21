@@ -23,6 +23,6 @@ public static class AdminTabs
 
     public static string Url(string page, string key)
     {
-        return $"{page}?{AppConsts.AdminTabQuery}={key}";
+        return QueryUrl.Build(page, (AppConsts.AdminTabQuery, key));
     }
 }

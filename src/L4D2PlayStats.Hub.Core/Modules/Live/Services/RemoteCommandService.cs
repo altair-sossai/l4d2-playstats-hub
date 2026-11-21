@@ -1,5 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
@@ -114,22 +116,20 @@ public class RemoteCommandService(
         return queued.Command;
     }
 
-    public Task<List<RemoteCommandLog>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<RemoteCommandLog>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
         return dbContext.Set<RemoteCommandLog>()
             .AsNoTracking()
             .OrderByDescending(entry => entry.CreatedAtUtc)
             .ThenByDescending(entry => entry.Id)
-            .Skip(Math.Max(0, skip))
-            .Take(Math.Max(0, take))
-            .ToListAsync(cancellationToken);
+            .ToPageAsync(page, size, cancellationToken);
     }
 
-    public Task<int> CountAsync(bool deliveredOnly = false, CancellationToken cancellationToken = default)
+    public Task<int> DeliveredCountAsync(CancellationToken cancellationToken = default)
     {
         return dbContext.Set<RemoteCommandLog>()
             .AsNoTracking()
-            .Where(entry => !deliveredOnly || entry.DeliveredAtUtc != null)
+            .Where(entry => entry.DeliveredAtUtc != null)
             .CountAsync(cancellationToken);
     }
 

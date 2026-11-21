@@ -1,9 +1,11 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
@@ -14,7 +16,6 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
-using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.OutputCaching;
@@ -31,14 +32,14 @@ public class CommunityController(
     ICommunityVoteService communityVoteService,
     IRankingService rankingService,
     ICommunityPlayerService communityPlayerService,
-    ILiveViewService liveViewService,
+    ISiteClock siteClock,
     IStringLocalizer<SharedResource> localizer,
     ICurrentUser currentUser,
     IPatentService patentService) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Community = "active";
+        ViewBag.Community = AppConsts.ActiveMenu;
     }
 
     [HttpGet("/community")]
@@ -53,11 +54,10 @@ public class CommunityController(
         var experience = patents ? await ExperienceAsync(cancellationToken) : null;
         var listed = new PagedListModel<CommunityRankingEntry>(entries, page, AppConsts.CommunityRankingPageSize);
         var scale = await patentService.ScaleAsync(cancellationToken);
-        var rows = listed.Items.Select(entry => new CommunityRankingRow(entry, experience == null ? null : scale.For(experience.GetValueOrDefault(entry.CommunityId)))).ToList();
 
         var model = new CommunityRankingViewModel
         {
-            Players = new PagedListModel<CommunityRankingRow>(rows, listed.Page, listed.PageSize, listed.TotalItems),
+            Players = listed.Map(entry => new CommunityRankingRow(entry, experience == null ? null : scale.For(experience.GetValueOrDefault(entry.CommunityId)))),
             MinimumComparisons = settings.MinimumComparisonsToBeListed,
             MinimumMatches = settings.MinimumMatchesToBeCandidate,
             Settings = settings,
@@ -95,7 +95,7 @@ public class CommunityController(
             HasMore = votes.Count > size,
             ShowVoters = showVoters,
             Moderate = moderate,
-            TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
+            TimeZone = await siteClock.ZoneAsync(cancellationToken)
         };
 
         return View(model);
@@ -106,34 +106,23 @@ public class CommunityController(
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
         var voters = string.Equals(role, AppConsts.CommunityVoterRole, StringComparison.OrdinalIgnoreCase);
-        var participants = voters && !settings.ShowVoterNames && !await currentUser.IsAdministratorAsync() ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
-        var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
-        var term = q?.Trim();
-        var steamId = SteamIdParser.Parse(term);
         var size = CoreConsts.PlayerDirectoryPageSize;
+        var hidden = voters && !settings.ShowVoterNames && !await currentUser.IsAdministratorAsync();
+        var participants = hidden ? Page<CommunityVoteParticipant>.Empty(size) : await communityRankingService.ParticipantsAsync(voters, PlayerSearch.Of(q), page, size, cancellationToken);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
+        var label = voters ? localizer["Last vote"].Value : localizer["Last compared"].Value;
 
-        var matches = participants
-            .Select(participant => new { Participant = participant, Last = voters ? participant.LastVotedAtUtc : participant.LastComparedAtUtc })
-            .Where(entry => entry.Last != null)
-            .Where(entry => string.IsNullOrEmpty(term)
-                            || entry.Participant.CommunityId == steamId
-                            || entry.Participant.Name.Contains(term, StringComparison.CurrentCultureIgnoreCase)
-                            || entry.Participant.CommunityId.ToString().Contains(term, StringComparison.Ordinal))
-            .OrderByDescending(entry => entry.Last)
-            .ToList();
-
-        var current = Math.Max(1, page);
-        var players = matches.Skip((current - 1) * size).Take(size).Select(entry => new
+        var players = participants.Items.Select(participant => new
         {
-            communityId = entry.Participant.CommunityId.ToString(),
-            name = entry.Participant.Name,
-            steamId = SteamIds.SteamId(entry.Participant.CommunityId),
-            avatarUrl = $"{AppConsts.AvatarUrl}{entry.Participant.CommunityId}",
-            lastSeen = LiveDisplay.ShortDateTime(entry.Last!.Value, timeZone),
-            lastSeenLabel = voters ? localizer["Last vote"].Value : localizer["Last compared"].Value
+            communityId = participant.CommunityId.ToString(),
+            name = participant.Name,
+            steamId = SteamIds.SteamId(participant.CommunityId),
+            avatarUrl = PlayerUrls.Avatar(participant.CommunityId),
+            lastSeen = Display.DateTime((voters ? participant.LastVotedAtUtc : participant.LastComparedAtUtc)!.Value, timeZone),
+            lastSeenLabel = label
         });
 
-        return Ok(new { page = current, total = matches.Count, hasMore = matches.Count > current * size, players });
+        return Ok(new { page = participants.Number, total = participants.Total, hasMore = participants.HasMore, players });
     }
 
     [HttpGet(AppConsts.CommunityVotePage)]
@@ -155,7 +144,7 @@ public class CommunityController(
             return PartialView("_Ballot", await ModelAsync(refusal, cancellationToken));
 
         if (refusal != null)
-            TempData["Error"] = refusal;
+            TempData[AppConsts.ErrorTempData] = refusal;
 
         return Redirect(AppConsts.CommunityVotePage);
     }

@@ -13,7 +13,7 @@ namespace L4D2PlayStats.Hub.Web.Services;
 public class PlayerCommunityService(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService,
-    ILiveViewService liveViewService,
+    ISiteClock siteClock,
     ICurrentUser currentUser) : IPlayerCommunityService
 {
     public async Task<PlayerCommunityModel?> BuildAsync(long communityId, long? compareWith, CancellationToken cancellationToken = default)
@@ -40,7 +40,7 @@ public class PlayerCommunityService(
             HasMoreCast = cast.Count > size,
             ShowVoters = showVoters,
             Moderate = moderate,
-            TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
+            TimeZone = await siteClock.ZoneAsync(cancellationToken)
         };
     }
 

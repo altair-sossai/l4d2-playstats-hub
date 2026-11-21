@@ -1,12 +1,7 @@
 namespace L4D2PlayStats.Hub.Web.Models.Players;
 
-public class PlayerLookupResult
+public class PlayerLookupResult(long communityId, string? name, string? avatarUrl, bool knownOnSite) : SteamIdentityResult(communityId, avatarUrl)
 {
-    public required string CommunityId { get; init; }
-    public required string SteamId { get; init; }
-    public required string Steam3 { get; init; }
-    public required string ProfileUrl { get; init; }
-    public string? Name { get; init; }
-    public required string AvatarUrl { get; init; }
-    public bool KnownOnSite { get; init; }
+    public string? Name { get; } = name;
+    public bool KnownOnSite { get; } = knownOnSite;
 }

@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 
-public class RankingSettings
+public class RankingSettings : INormalizable
 {
     public int Win { get; set; } = AppConsts.DefaultWinExperience;
     public int Loss { get; set; } = AppConsts.DefaultLossExperience;

@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,7 @@ public class SkinAuthorService(HubDbContext dbContext, HubState hubState, IClock
         if (checkedIds.Count == 0)
             return 0;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var now = clock.UtcNow;
             var ids = checkedIds.ToHashSet();
@@ -57,7 +56,7 @@ public class SkinAuthorService(HubDbContext dbContext, HubState hubState, IClock
 
                 author.SyncedAtUtc = now;
 
-                var name = Clean(names.GetValueOrDefault(id));
+                var name = Text.Clip(names.GetValueOrDefault(id), AppConsts.SkinNameMaxLength);
                 if (name == null)
                     continue;
 
@@ -77,10 +76,6 @@ public class SkinAuthorService(HubDbContext dbContext, HubState hubState, IClock
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return renamed;
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 
@@ -109,15 +104,5 @@ public class SkinAuthorService(HubDbContext dbContext, HubState hubState, IClock
             .Select(skin => skin.AuthorCommunityId!.Value)
             .Distinct()
             .ToListAsync(cancellationToken);
-    }
-
-    private static string? Clean(string? name)
-    {
-        var trimmed = name?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            return null;
-
-        return trimmed.Length > AppConsts.SkinNameMaxLength ? trimmed[..AppConsts.SkinNameMaxLength] : trimmed;
     }
 }

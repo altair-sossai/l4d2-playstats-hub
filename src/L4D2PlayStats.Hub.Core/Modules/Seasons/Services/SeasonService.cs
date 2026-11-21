@@ -28,15 +28,9 @@ public class SeasonService(HubDbContext dbContext, HubState hubState, ISettingsS
         if (season != null)
             return season;
 
-        await hubState.SeasonLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.SeasonLockAsync(cancellationToken))
         {
             return await ContainingAsync(date, cancellationToken) ?? await CreateAsync(date, cancellationToken);
-        }
-        finally
-        {
-            hubState.SeasonLock.Release();
         }
     }
 

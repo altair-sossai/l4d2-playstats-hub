@@ -1,5 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Models;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -30,14 +32,9 @@ public class CampaignService(HubDbContext dbContext, IMemoryCache memoryCache, H
         return dbContext.Campaigns.AsNoTracking().Include(c => c.Maps).OrderBy(c => c.Id).ToListAsync(cancellationToken);
     }
 
-    public Task<List<Campaign>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<Campaign>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.Campaigns.AsNoTracking().Include(c => c.Maps).OrderBy(c => c.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
-    }
-
-    public Task<int> CountAsync(CancellationToken cancellationToken = default)
-    {
-        return dbContext.Campaigns.CountAsync(cancellationToken);
+        return dbContext.Campaigns.AsNoTracking().Include(c => c.Maps).OrderBy(c => c.Id).ToPageAsync(page, size, cancellationToken);
     }
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)

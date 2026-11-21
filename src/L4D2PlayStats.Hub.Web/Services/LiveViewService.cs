@@ -18,6 +18,7 @@ public class LiveViewService(
     ILiveDataService liveDataService,
     ICampaignService campaignService,
     ISettingsService settingsService,
+    ISiteClock siteClock,
     IChatBanService chatBanService,
     ICurrentUser currentUser,
     ICampaignImageService campaignImageService) : ILiveViewService
@@ -101,14 +102,7 @@ public class LiveViewService(
         {
             PublicId = server.PublicId,
             Items = liveDataService.FeedAfter(server, after),
-            TimeZone = await TimeZoneAsync(cancellationToken)
+            TimeZone = await siteClock.ZoneAsync(cancellationToken)
         };
-    }
-
-    public async Task<TimeZoneInfo> TimeZoneAsync(CancellationToken cancellationToken = default)
-    {
-        var site = await settingsService.GetAsync<SiteSettings>(cancellationToken);
-
-        return SiteTime.Zone(site.TimeZone);
     }
 }

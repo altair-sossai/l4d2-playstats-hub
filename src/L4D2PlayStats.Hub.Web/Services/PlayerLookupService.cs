@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
@@ -30,16 +31,10 @@ public class PlayerLookupService(
         var steam = siteName == null ? await SteamProfileAsync(communityId, cancellationToken) : null;
         var stored = File.Exists(avatarStore.PathFor(communityId));
 
-        return new PlayerLookupResult
-        {
-            CommunityId = communityId.ToString(),
-            SteamId = SteamIds.SteamId(communityId),
-            Steam3 = SteamIds.Steam3(communityId),
-            ProfileUrl = SteamIds.ProfileUrl(communityId),
-            Name = siteName ?? (string.IsNullOrWhiteSpace(steam?.Name) ? null : steam.Name),
-            AvatarUrl = !stored && IsHttps(steam?.AvatarUrl) ? steam!.AvatarUrl! : $"{AppConsts.AvatarUrl}{communityId}",
-            KnownOnSite = siteName != null
-        };
+        var name = siteName ?? (string.IsNullOrWhiteSpace(steam?.Name) ? null : steam.Name);
+        var avatarUrl = !stored && SafeUrl.IsHttps(steam?.AvatarUrl) ? steam!.AvatarUrl : null;
+
+        return new PlayerLookupResult(communityId, name, avatarUrl, siteName != null);
     }
 
     private async Task<string?> SiteNameAsync(long communityId, CancellationToken cancellationToken)
@@ -73,10 +68,5 @@ public class PlayerLookupService(
 
             return lookup.Profiles.GetValueOrDefault(communityId);
         });
-    }
-
-    private static bool IsHttps(string? url)
-    {
-        return Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps;
     }
 }

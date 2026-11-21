@@ -11,15 +11,12 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
-using Microsoft.AspNetCore.Authorization;
+using L4D2PlayStats.Hub.Web.Models.Players;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
-[Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.CommunityRanking)]
 [Route("admin/community")]
 public class CommunityAdminController(
@@ -27,29 +24,18 @@ public class CommunityAdminController(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService,
     ICommunityModerationService moderationService,
-    ICurrentUser currentUser) : Controller
+    ICurrentUser currentUser) : AdminControllerBase
 {
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        ViewBag.Admin = "active";
-    }
-
     [HttpGet("")]
     public async Task<IActionResult> Index(int page = 1, int blockedPage = 1, string? tab = null, CancellationToken cancellationToken = default)
     {
         var size = AppConsts.CommunityVotersPageSize;
-        var total = await communityRankingService.VoterCountAsync(cancellationToken);
-        var current = Paging.Page(page, total, size);
-        var voters = await communityRankingService.VotersAsync(Paging.Skip(current, size), size, cancellationToken);
-        var blockedTotal = await moderationService.BlockedCountAsync(cancellationToken);
-        var blockedCurrent = Paging.Page(blockedPage, blockedTotal, size);
-        var blocked = await moderationService.BlockedAsync(Paging.Skip(blockedCurrent, size), size, cancellationToken);
 
         var model = new CommunityAdminViewModel
         {
             Settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken),
-            Voters = new PagedListModel<CommunityVoter>(voters, current, size, total),
-            Blocked = new PagedListModel<CommunityBlockedVoter>(blocked, blockedCurrent, size, blockedTotal),
+            Voters = new PagedListModel<CommunityVoter>(await communityRankingService.VotersAsync(page, size, cancellationToken)),
+            Blocked = new PagedListModel<CommunityBlockedVoter>(await moderationService.BlockedAsync(blockedPage, size, cancellationToken)),
             Tab = CommunityAdminUrls.Tab(tab, page, blockedPage),
             Votes = await dbContext.Set<CommunityVote>().CountAsync(cancellationToken),
             RatedPlayers = await dbContext.Set<CommunityRating>().CountAsync(cancellationToken)
@@ -61,10 +47,8 @@ public class CommunityAdminController(
     [HttpPost("")]
     public async Task<IActionResult> Save(CommunityRankingSettings settings, CancellationToken cancellationToken)
     {
-        settings.Normalize();
-
         await settingsService.SaveAsync(settings, cancellationToken);
-        TempData["Saved"] = true;
+        Saved();
 
         return Redirect(CommunityAdminUrls.Of(AppConsts.CommunitySettingsTab));
     }
@@ -72,7 +56,7 @@ public class CommunityAdminController(
     [HttpPost("rebuild")]
     public async Task<IActionResult> Rebuild(CancellationToken cancellationToken)
     {
-        TempData["Rebuilt"] = await communityRankingService.RebuildAsync(cancellationToken);
+        TempData[AppConsts.RebuiltTempData] = await communityRankingService.RebuildAsync(cancellationToken);
 
         return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityMaintenanceTab));
     }
@@ -80,55 +64,50 @@ public class CommunityAdminController(
     [HttpPost("reset")]
     public async Task<IActionResult> Reset(CancellationToken cancellationToken)
     {
-        TempData["Reset"] = await communityRankingService.ResetAsync(cancellationToken);
+        TempData[AppConsts.ResetTempData] = await communityRankingService.ResetAsync(cancellationToken);
 
         return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityMaintenanceTab));
     }
 
     [HttpPost("voters/delete")]
-    public async Task<IActionResult> RemoveVoter(string? communityId, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveVoter(PlayerForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (!await ValidAsync(form, cancellationToken))
+            return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityVotersTab));
 
-        if (parsed == null)
-            return InvalidSteamId();
+        TempData[AppConsts.RemovedTempData] = await communityRankingService.RemoveVoterAsync(SteamIdParser.Parse(form.CommunityId)!.Value, cancellationToken);
 
-        TempData["Removed"] = await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken);
-
-        return Back(returnUrl, AppConsts.CommunityVotersTab);
+        return BackToTab(form.ReturnUrl, AppConsts.CommunityVotersTab);
     }
 
     [HttpPost("voters/block")]
-    public async Task<IActionResult> BlockVoter(string? communityId, bool removeVotes, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> BlockVoter(BlockVoterForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (!await ValidAsync(form, cancellationToken))
+            return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityVotersTab));
 
-        if (parsed == null)
-            return InvalidSteamId();
+        var voterId = SteamIdParser.Parse(form.CommunityId)!.Value;
+        var blocked = await moderationService.BlockAsync(voterId, currentUser.CommunityId, cancellationToken);
+        var removed = form.RemoveVotes ? await communityRankingService.RemoveVoterAsync(voterId, cancellationToken) : (int?)null;
 
-        var blocked = await moderationService.BlockAsync(parsed.Value, currentUser.CommunityId, cancellationToken);
-        var removed = removeVotes ? await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken) : (int?)null;
-
-        if (IsAdministrationReturn(returnUrl))
+        if (IsAdministrationReturn(form.ReturnUrl))
         {
-            TempData[blocked ? "Blocked" : "AlreadyBlocked"] = true;
+            TempData[blocked ? AppConsts.BlockedTempData : AppConsts.AlreadyBlockedTempData] = true;
 
             if (removed != null)
-                TempData["Removed"] = removed;
+                TempData[AppConsts.RemovedTempData] = removed;
         }
 
-        return Back(returnUrl, AppConsts.CommunityVotersTab);
+        return BackToTab(form.ReturnUrl, AppConsts.CommunityVotersTab);
     }
 
     [HttpPost("voters/unblock")]
-    public async Task<IActionResult> UnblockVoter(string? communityId, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> UnblockVoter(PlayerForm form, CancellationToken cancellationToken)
     {
-        var parsed = SteamIdParser.Parse(communityId);
+        if (await ValidAsync(form, cancellationToken) && await moderationService.UnblockAsync(SteamIdParser.Parse(form.CommunityId)!.Value, cancellationToken))
+            TempData[AppConsts.UnblockedTempData] = true;
 
-        if (parsed != null && await moderationService.UnblockAsync(parsed.Value, cancellationToken))
-            TempData["Unblocked"] = true;
-
-        return Back(returnUrl, AppConsts.CommunityBlockedTab);
+        return BackToTab(form.ReturnUrl, AppConsts.CommunityBlockedTab);
     }
 
     [HttpPost("votes/delete")]
@@ -137,30 +116,18 @@ public class CommunityAdminController(
         var removed = await moderationService.RemoveVoteAsync(voteId, cancellationToken);
 
         if (IsAdministrationReturn(returnUrl))
-            TempData["VoteRemoved"] = removed;
+            TempData[AppConsts.VoteRemovedTempData] = removed;
 
-        return Back(returnUrl, AppConsts.CommunityVotersTab);
+        return BackToTab(returnUrl, AppConsts.CommunityVotersTab);
     }
 
-    private IActionResult InvalidSteamId()
+    private IActionResult BackToTab(string? returnUrl, string tab)
     {
-        TempData["Error"] = "That is not a valid SteamID64.";
-
-        return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityVotersTab));
-    }
-
-    private IActionResult Back(string? returnUrl, string tab)
-    {
-        return IsReturn(returnUrl) ? LocalRedirect(returnUrl!) : Redirect(CommunityAdminUrls.Of(tab));
-    }
-
-    private bool IsReturn(string? returnUrl)
-    {
-        return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl);
+        return Back(returnUrl, CommunityAdminUrls.Of(tab));
     }
 
     private bool IsAdministrationReturn(string? returnUrl)
     {
-        return !IsReturn(returnUrl) || returnUrl!.StartsWith(AppConsts.AdminCommunityUrl, StringComparison.OrdinalIgnoreCase);
+        return !IsLocal(returnUrl) || returnUrl!.StartsWith(AppConsts.AdminCommunityUrl, StringComparison.OrdinalIgnoreCase);
     }
 }

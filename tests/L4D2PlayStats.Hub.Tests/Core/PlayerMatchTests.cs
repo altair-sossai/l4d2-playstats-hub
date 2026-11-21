@@ -32,7 +32,7 @@ public class PlayerMatchTests
 
         var ids = await RecentAsync(hub, [StatisticsBuilder.PlayerA1]);
         var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter { Ids = ids }));
-        var match = page.Matches.Single();
+        var match = page.Items.Single();
 
         CollectionAssert.AreEqual(new[] { "c2m1_highway", "c2m2_fairgrounds", "c2m3_coaster" }, match.Maps.Select(map => map.MapName).ToList());
         CollectionAssert.AreEqual(new[] { 300, 450, 800 }, match.Maps.Select(map => map.TeamAScore).ToList());
@@ -168,7 +168,7 @@ public class PlayerMatchTests
     {
         var page = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().ListAsync(new MatchFilter { Ids = ids }));
 
-        return [.. page.Matches.Select(match => match.Campaign)];
+        return [.. page.Items.Select(match => match.Campaign)];
     }
 
 

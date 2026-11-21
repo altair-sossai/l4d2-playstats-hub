@@ -2,6 +2,9 @@ using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
@@ -12,25 +15,22 @@ namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
 public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock clock, IForcedNameStore store) : IForcedNameService
 {
-    public async Task<IReadOnlyList<ForcedNameEntry>> ListAsync(string? search, int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<Page<ForcedNameEntry>> PageAsync(PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
     {
-        var entries = await FilteredAsync(search, cancellationToken);
-        var page = entries.Skip(Math.Max(0, skip)).Take(Math.Max(0, take)).ToList();
-        List<long> ids = [.. page.Select(entry => entry.CommunityId)];
+        var query = search
+            .Apply(dbContext.Set<ForcedName>().AsNoTracking(), entry => entry.CommunityId, entry => entry.Name)
+            .OrderBy(entry => entry.Name.ToLower())
+            .ThenBy(entry => entry.CommunityId);
+
+        var entries = await query.ToPageAsync(page, size, cancellationToken);
+        List<long> ids = [.. entries.Items.Select(entry => entry.CommunityId)];
 
         var current = await dbContext.PlayerProfiles
             .AsNoTracking()
             .Where(profile => ids.Contains(profile.CommunityId) && profile.Name != null)
             .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name, cancellationToken);
 
-        return [.. page.Select(entry => new ForcedNameEntry(entry.CommunityId, entry.Name, current.GetValueOrDefault(entry.CommunityId), entry.UpdatedAtUtc))];
-    }
-
-    public async Task<int> CountAsync(string? search, CancellationToken cancellationToken = default)
-    {
-        var entries = await FilteredAsync(search, cancellationToken);
-
-        return entries.Count;
+        return entries.Map(entry => new ForcedNameEntry(entry.CommunityId, entry.Name, current.GetValueOrDefault(entry.CommunityId), entry.UpdatedAtUtc));
     }
 
     public async Task<ForcedNameSaveResult> SaveAsync(long communityId, string? name, long? updatedBy, CancellationToken cancellationToken = default)
@@ -38,22 +38,16 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         if (!SteamIds.IsValid(communityId))
             return ForcedNameSaveResult.InvalidPlayer;
 
-        var clean = Clean(name);
+        var clean = Text.Clip(name, AppConsts.ForcedNameMaxLength);
 
         if (clean == null)
             return ForcedNameSaveResult.InvalidName;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             await UpsertAsync(communityId, clean, updatedBy, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
             await LoadAsync(cancellationToken);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         Changed();
@@ -65,18 +59,12 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
     {
         int removed;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             removed = await dbContext.Set<ForcedName>().Where(entry => entry.CommunityId == communityId).ExecuteDeleteAsync(cancellationToken);
 
             if (removed > 0)
                 await LoadAsync(cancellationToken);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         if (removed > 0)
@@ -98,7 +86,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
                 continue;
 
             var communityId = SteamIdParser.Parse(match.Groups[1].Value);
-            var name = Clean(match.Groups[2].Value);
+            var name = Text.Clip(match.Groups[2].Value, AppConsts.ForcedNameMaxLength);
 
             if (communityId == null || name == null)
             {
@@ -111,9 +99,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
         int added = 0, updated = 0, unchanged = 0;
 
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             List<long> ids = [.. parsed.Keys];
             var existing = await dbContext.Set<ForcedName>().Where(entry => ids.Contains(entry.CommunityId)).ToDictionaryAsync(entry => entry.CommunityId, cancellationToken);
@@ -142,10 +128,6 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
 
             if (added + updated > 0)
                 await LoadAsync(cancellationToken);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
 
         if (added + updated > 0)
@@ -176,37 +158,9 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         entry.UpdatedBy = updatedBy;
     }
 
-    private async Task<List<ForcedName>> FilteredAsync(string? search, CancellationToken cancellationToken)
-    {
-        var entries = await dbContext.Set<ForcedName>().AsNoTracking().ToListAsync(cancellationToken);
-        var term = search?.Trim();
-        var steamId = SteamIdParser.Parse(term);
-
-        return
-        [
-            .. entries
-                .Where(entry => string.IsNullOrEmpty(term)
-                                || entry.CommunityId == steamId
-                                || entry.Name.Contains(term, StringComparison.CurrentCultureIgnoreCase)
-                                || entry.CommunityId.ToString().Contains(term, StringComparison.Ordinal))
-                .OrderBy(entry => entry.Name, StringComparer.CurrentCultureIgnoreCase)
-                .ThenBy(entry => entry.CommunityId)
-        ];
-    }
-
     private void Changed()
     {
         hubState.DataChanged();
         hubState.CommunityChanged();
-    }
-
-    private static string? Clean(string? name)
-    {
-        var clean = name?.Trim();
-
-        if (string.IsNullOrEmpty(clean))
-            return null;
-
-        return clean.Length > AppConsts.ForcedNameMaxLength ? clean[..AppConsts.ForcedNameMaxLength] : clean;
     }
 }

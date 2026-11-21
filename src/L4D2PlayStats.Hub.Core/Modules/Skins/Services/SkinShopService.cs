@@ -1,7 +1,13 @@
+using System.Linq.Expressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
@@ -63,13 +69,53 @@ public class SkinShopService(
         return [.. skins.Select(skin => new PurchasedSkin(skin.Id, skin.Weapon))];
     }
 
-    public Task<List<SkinPurchase>> ListPurchasesAsync(CancellationToken cancellationToken = default)
+    public Task<Page<SkinPurchase>> PurchasesAsync(long? communityId, PlayerSearch search, IReadOnlyCollection<string> skinIds, int page, int size, CancellationToken cancellationToken = default)
+    {
+        var purchases = dbContext.Set<SkinPurchase>().AsNoTracking();
+
+        if (communityId != null)
+            purchases = purchases.Where(p => p.CommunityId == communityId);
+
+        if (!search.IsEmpty)
+        {
+            var forced = dbContext.Set<ForcedName>();
+            var profiles = dbContext.PlayerProfiles;
+            List<string> titled = [.. skinIds];
+            Expression<Func<SkinPurchase, bool>> skin = p => titled.Contains(p.SkinId);
+
+            var filter = search.Filter<SkinPurchase>(
+                p => p.CommunityId,
+                p => p.PlayerName ?? forced.Where(entry => entry.CommunityId == p.CommunityId).Select(entry => entry.Name).FirstOrDefault() ?? profiles.Where(profile => profile.CommunityId == p.CommunityId).Select(profile => profile.Name).FirstOrDefault(),
+                p => p.SkinId);
+
+            purchases = purchases.Where(filter.Or(skin));
+        }
+
+        return purchases
+            .OrderByDescending(p => p.PurchasedAtUtc)
+            .ThenByDescending(p => p.Id)
+            .ToPageAsync(page, size, cancellationToken);
+    }
+
+    public async Task<SkinPurchaseTotals> PurchaseTotalsAsync(CancellationToken cancellationToken = default)
+    {
+        var purchases = dbContext.Set<SkinPurchase>().AsNoTracking();
+
+        return new SkinPurchaseTotals(
+            await purchases.CountAsync(p => !p.Gift, cancellationToken),
+            await purchases.SumAsync(p => p.Price, cancellationToken),
+            await purchases.CountAsync(p => p.Gift, cancellationToken));
+    }
+
+    public Task<string?> PurchaserNameAsync(long communityId, CancellationToken cancellationToken = default)
     {
         return dbContext.Set<SkinPurchase>()
             .AsNoTracking()
+            .Where(p => p.CommunityId == communityId && p.PlayerName != null)
             .OrderByDescending(p => p.PurchasedAtUtc)
             .ThenByDescending(p => p.Id)
-            .ToListAsync(cancellationToken);
+            .Select(p => p.PlayerName)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public Task<SkinShopResult> BuyAsync(long communityId, string? playerName, string? skinId, CancellationToken cancellationToken = default)
@@ -98,7 +144,7 @@ public class SkinShopService(
                 SkinId = skin.Id,
                 Price = skin.Price,
                 StarsBefore = wallet.Balance,
-                PlayerName = Name(playerName),
+                PlayerName = Text.Clip(playerName, AppConsts.SkinNameMaxLength),
                 PurchasedAtUtc = now
             };
 
@@ -172,7 +218,7 @@ public class SkinShopService(
                 SkinId = skin.Id,
                 Gift = true,
                 GiftedByCommunityId = giftedBy,
-                GiftedByName = Name(giftedByName),
+                GiftedByName = Text.Clip(giftedByName, AppConsts.SkinNameMaxLength),
                 PurchasedAtUtc = now
             };
 
@@ -229,19 +275,13 @@ public class SkinShopService(
 
     private async Task<SkinRefundSummary> RefundAsync(IQueryable<SkinPurchase> query, CancellationToken cancellationToken)
     {
-        await hubState.WriteLock.WaitAsync(cancellationToken);
-
-        try
+        await using (await hubState.LockAsync(cancellationToken))
         {
             var purchases = await query.ToListAsync(cancellationToken);
 
             await RemoveAsync(purchases, cancellationToken);
 
             return SkinRefundSummary.Of(purchases);
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
         }
     }
 
@@ -299,26 +339,11 @@ public class SkinShopService(
 
     private async Task<SkinShopResult> LockedAsync(Func<Task<SkinShopResult>> action, CancellationToken cancellationToken)
     {
-        if (!await hubState.WriteLock.WaitAsync(TimeSpan.FromSeconds(AppConsts.SkinShopLockTimeoutInSeconds), cancellationToken))
+        await using var locked = await hubState.TryLockAsync(TimeSpan.FromSeconds(AppConsts.SkinShopLockTimeoutInSeconds), cancellationToken);
+
+        if (locked == null)
             return SkinShopResult.Of(SkinShopStatus.Busy);
 
-        try
-        {
-            return await action();
-        }
-        finally
-        {
-            hubState.WriteLock.Release();
-        }
-    }
-
-    private static string? Name(string? name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return null;
-
-        var trimmed = name.Trim();
-
-        return trimmed.Length <= AppConsts.SkinNameMaxLength ? trimmed : trimmed[..AppConsts.SkinNameMaxLength];
+        return await action();
     }
 }

@@ -27,11 +27,4 @@ public static class LiveDisplay
 
         return local.ToString(AppConsts.ShortTimeFormat, CultureInfo.InvariantCulture);
     }
-
-    public static string ShortDateTime(DateTime utc, TimeZoneInfo timeZone)
-    {
-        var local = SiteTime.FromUtc(utc, timeZone);
-
-        return local.ToString(AppConsts.ShortDateTimeFormat, CultureInfo.CurrentUICulture);
-    }
 }

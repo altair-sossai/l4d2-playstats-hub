@@ -17,7 +17,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
     {
         var ranking = await rankingService.CurrentAsync(cancellationToken);
 
-        return Ok(ranking.Take(Math.Clamp(count, 1, 5000)).Select(player => new
+        return Ok(ranking.Take(Listed(count)).Select(player => new
         {
             communityId = player.CommunityId.ToString(),
             position = player.Position,
@@ -34,7 +34,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
     {
         var ranking = await rankingService.CurrentAsync(cancellationToken);
 
-        return Ok(ranking.Take(Math.Clamp(count, 1, 5000)).Select(player => new
+        return Ok(ranking.Take(Listed(count)).Select(player => new
         {
             communityId = player.CommunityId.ToString(),
             level = player.Patents.For(player.Experience).Level
@@ -51,7 +51,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
             return BadRequest(new { error = "Eight different players are required" });
 
         var ranking = await rankingService.CurrentAsync(cancellationToken);
-        var players = ranking.Take(Math.Clamp(count, 1, 5000)).ToDictionary(player => player.CommunityId.ToString());
+        var players = ranking.Take(Listed(count)).ToDictionary(player => player.CommunityId.ToString());
         var available = requested.Where(players.ContainsKey).OrderBy(id => players[id].Position).ToList();
 
         if (available.Count != CoreConsts.MixPlayers)
@@ -70,5 +70,10 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
     private static object MixPlayer(RankingPlayer player)
     {
         return new { position = player.Position, communityId = player.CommunityId.ToString(), name = player.ForcedName ?? player.Name };
+    }
+
+    private static int Listed(int count)
+    {
+        return Math.Clamp(count, 1, AppConsts.RankingApiMaxPlayers);
     }
 }

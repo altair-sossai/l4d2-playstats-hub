@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
@@ -8,49 +9,40 @@ using L4D2PlayStats.Hub.Core.Modules.Skins.Settings;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
-[Authorize(Policy = AppConsts.AdministratorPolicy)]
-[AutoValidateAntiforgeryToken]
 [RequireModule(HubModule.SkinShop)]
 [Route("admin/skins")]
 public class SkinsAdminController(
     ISkinViewService skinViewService,
     ISkinCatalogService skinCatalogService,
     ISkinAuthorSyncService skinAuthorSyncService,
-    ISettingsService settingsService) : Controller
+    ISettingsService settingsService) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Purchases(string? q, string? player, int page = 1, CancellationToken cancellationToken = default)
     {
-        ViewBag.Admin = "active";
-
         return View(await skinViewService.PurchasesAsync(q, player, page, cancellationToken));
     }
 
     [HttpGet("purchases")]
     public IActionResult LegacyPurchases()
     {
-        return RedirectPermanent($"{AppConsts.SkinAdminUrl}{Request.QueryString}");
+        return Legacy(AppConsts.SkinAdminUrl);
     }
 
     [HttpGet("prices")]
     public async Task<IActionResult> Prices(string? q, SkinRarity? rarity, string? weapon, int page = 1, CancellationToken cancellationToken = default)
     {
-        ViewBag.Admin = "active";
-
         return View(await skinViewService.PricesAsync(q, rarity, weapon, page, cancellationToken));
     }
 
     [HttpGet("catalog")]
     public async Task<IActionResult> Catalog(CancellationToken cancellationToken)
     {
-        ViewBag.Admin = "active";
-
         return View(await skinViewService.CatalogAsync(cancellationToken));
     }
 
@@ -60,7 +52,7 @@ public class SkinsAdminController(
     {
         if (file == null || file.Length == 0)
         {
-            TempData["Error"] = AppConsts.SkinCatalogNoFile;
+            Error(AppConsts.SkinCatalogNoFile);
             return RedirectToAction(nameof(Catalog));
         }
 
@@ -88,7 +80,7 @@ public class SkinsAdminController(
         var result = await skinAuthorSyncService.SyncAsync(true, cancellationToken);
 
         if (result.Due > 0 && result.Checked == 0)
-            TempData["Error"] = AppConsts.SkinAuthorSyncNoAnswer;
+            Error(AppConsts.SkinAuthorSyncNoAnswer);
         else
             TempData[AppConsts.SkinAuthorSyncTempData] = string.Join(AppConsts.SkinTempDataSeparator, result.Checked, result.Renamed);
 
@@ -98,8 +90,6 @@ public class SkinsAdminController(
     [HttpGet("settings")]
     public async Task<IActionResult> Settings(CancellationToken cancellationToken)
     {
-        ViewBag.Admin = "active";
-
         return View(await settingsService.GetAsync<SkinShopSettings>(cancellationToken));
     }
 
@@ -111,15 +101,11 @@ public class SkinsAdminController(
         settings.AuthorContactUrl = Clean(settings.AuthorContactUrl);
         settings.AuthorRequestUrl = Clean(settings.AuthorRequestUrl);
 
-        string?[] addresses = [settings.AssetsUrl, settings.CatalogUrl, settings.AuthorContactUrl, settings.AuthorRequestUrl];
-
-        if (addresses.All(address => address == null || SkinAssets.IsHttpUrl(address)))
+        if (await ValidAsync(settings, cancellationToken))
         {
             await settingsService.SaveAsync(settings, cancellationToken);
-            TempData["Saved"] = true;
+            Saved();
         }
-        else
-            TempData["Error"] = AppConsts.SkinSettingsInvalidUrl;
 
         return RedirectToAction(nameof(Settings));
     }
@@ -129,13 +115,13 @@ public class SkinsAdminController(
         if (result.Succeeded)
             TempData[AppConsts.SkinImportTempData] = string.Join(AppConsts.SkinTempDataSeparator, result.Total, result.Added, result.Updated, result.Removed);
         else
-            TempData["Error"] = SkinDisplay.CatalogMessage(result.Status);
+            Error(SkinDisplay.CatalogMessage(result.Status));
 
         return RedirectToAction(nameof(Catalog));
     }
 
     private static string? Clean(string? value)
     {
-        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        return Text.Clip(value, int.MaxValue);
     }
 }

@@ -143,7 +143,7 @@ public class SetupController(
             return Redirect($"/setup?step={ServerStep}");
 
         var credentials = await gameServerService.CreateAsync(form.Name, form.Address, cancellationToken);
-        TempData["Token"] = credentials.Token;
+        TempData[AppConsts.TokenTempData] = credentials.Token;
 
         return Redirect($"/setup?step={ServerStep}&server={credentials.Server.Id}");
     }
@@ -173,7 +173,7 @@ public class SetupController(
         return new ServerViewModel
         {
             Status = await adminViewService.StatusAsync(server, cancellationToken),
-            Token = TempData["Token"] as string,
+            Token = TempData[AppConsts.TokenTempData] as string,
             SiteUrl = adminViewService.SiteUrl(Request, site),
             Wizard = true
         };

@@ -37,10 +37,6 @@ public class LiveSettings(IServiceScopeFactory scopeFactory) : ILiveSettings
     {
         using var scope = scopeFactory.CreateScope();
 
-        var settings = scope.ServiceProvider.GetRequiredService<ISettingsService>().GetAsync<LiveServerSettings>().GetAwaiter().GetResult();
-
-        settings.Normalize();
-
-        return settings;
+        return scope.ServiceProvider.GetRequiredService<ISettingsService>().GetAsync<LiveServerSettings>().GetAwaiter().GetResult();
     }
 }

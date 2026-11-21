@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Patents.Settings;
 
-public class PatentSettings
+public class PatentSettings : INormalizable
 {
     public int MaxExperience { get; set; } = AppConsts.PatentMaxExperience;
     public double Curve { get; set; } = AppConsts.PatentCurve;

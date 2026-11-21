@@ -26,6 +26,11 @@ public static class PlayerUrls
         return $"{List(orderBy, asc, period)}&page={page}";
     }
 
+    public static string Avatar(long communityId)
+    {
+        return $"{AppConsts.AvatarUrl}{communityId}";
+    }
+
     public static string SeasonQuery(int seasonId)
     {
         return $"{AppConsts.PlayerSeasonParameter}={seasonId}";

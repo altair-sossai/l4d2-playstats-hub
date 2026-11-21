@@ -1,5 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
-using L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
@@ -13,9 +13,8 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 
 [Route("api/shop")]
 [Authorize]
-[ApiController]
 [RequireModule(HubModule.SkinShop)]
-public class SkinShopApiController(ISkinShopService skinShopService, ISkinService skinService, ICurrentUser currentUser) : ControllerBase
+public class SkinShopApiController(ISkinShopService skinShopService, ISkinService skinService, ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpGet("wallet")]
     public async Task<IActionResult> Wallet(CancellationToken cancellationToken)
@@ -73,8 +72,8 @@ public class SkinShopApiController(ISkinShopService skinShopService, ISkinServic
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Price(string skinId, [FromBody] SkinPriceCommand command, CancellationToken cancellationToken)
     {
-        if (command.Price is < CoreConsts.SkinMinPrice or > CoreConsts.SkinMaxPrice)
-            return BadRequest();
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
 
         if (!await skinService.SetPriceAsync(skinId, command.Price, currentUser.CommunityId, cancellationToken))
             return NotFound();
@@ -91,10 +90,10 @@ public class SkinShopApiController(ISkinShopService skinShopService, ISkinServic
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Gift([FromBody] SkinOwnershipCommand command, CancellationToken cancellationToken)
     {
-        if (!SkinRecipient.TryParse(command.CommunityId, out var communityId) || string.IsNullOrEmpty(command.SkinId))
-            return BadRequest();
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
 
-        var result = await skinShopService.GiftAsync(communityId, command.SkinId, currentUser.CommunityId, currentUser.Name, cancellationToken);
+        var result = await skinShopService.GiftAsync(SteamIdParser.Parse(command.CommunityId)!.Value, command.SkinId, currentUser.CommunityId, currentUser.Name, cancellationToken);
 
         return Ok(ToResponse(result));
     }
@@ -104,10 +103,10 @@ public class SkinShopApiController(ISkinShopService skinShopService, ISkinServic
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Refund([FromBody] SkinOwnershipCommand command, CancellationToken cancellationToken)
     {
-        if (!SkinRecipient.TryParse(command.CommunityId, out var communityId) || string.IsNullOrEmpty(command.SkinId))
-            return BadRequest();
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
 
-        var result = await skinShopService.RefundAsync(communityId, command.SkinId, currentUser.CommunityId, cancellationToken);
+        var result = await skinShopService.RefundAsync(SteamIdParser.Parse(command.CommunityId)!.Value, command.SkinId, currentUser.CommunityId, cancellationToken);
 
         return Ok(ToResponse(result));
     }

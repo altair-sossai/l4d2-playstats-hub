@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Helpers;
 
 public static class SkinWeapons
@@ -35,6 +37,18 @@ public static class SkinWeapons
         var index = Array.FindIndex(Known, item => item.Weapon == weapon);
 
         return index < 0 ? Known.Length : index;
+    }
+
+    public static Expression<Func<Skin, int>> OrderOf()
+    {
+        var skin = Expression.Parameter(typeof(Skin));
+        var weapon = Expression.Property(skin, nameof(Skin.Weapon));
+        Expression order = Expression.Constant(Known.Length);
+
+        for (var index = Known.Length - 1; index >= 0; index--)
+            order = Expression.Condition(Expression.Equal(weapon, Expression.Constant(Known[index].Weapon)), Expression.Constant(index), order);
+
+        return Expression.Lambda<Func<Skin, int>>(order, skin);
     }
 
     public static bool IsMelee(string weapon)

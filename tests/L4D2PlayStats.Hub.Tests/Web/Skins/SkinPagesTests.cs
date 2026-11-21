@@ -230,6 +230,8 @@ public class SkinPagesTests
         var all = await client.GetStringAsync("/admin/skins");
         var bySearch = await client.GetStringAsync("/admin/skins?q=rich");
         var byPlayer = await client.GetStringAsync($"/admin/skins?player={HubWebFactory.Player}");
+        var bySteamId = await client.GetStringAsync("/admin/skins?player=STEAM_1:0:19867236");
+        var bySteam3Search = await client.GetStringAsync("/admin/skins?q=%5BU%3A1%3A39734472%5D");
         var nothing = await client.GetStringAsync("/admin/skins?q=nobody");
         var lastPage = await client.GetAsync("/admin/skins?page=9");
 
@@ -251,6 +253,11 @@ public class SkinPagesTests
         Assert.Contains("class=\"ska-filter-player\"", byPlayer);
         Assert.Contains("data-skin=\"galaxy-pump\"", byPlayer);
         Assert.DoesNotContain("data-skin=\"gold-magnum\"", byPlayer);
+        Assert.Contains("class=\"ska-filter-player\"", bySteamId);
+        Assert.Contains("data-skin=\"galaxy-pump\"", bySteamId);
+        Assert.DoesNotContain("data-skin=\"gold-magnum\"", bySteamId);
+        Assert.Contains("data-skin=\"galaxy-pump\"", bySteam3Search);
+        Assert.DoesNotContain("data-skin=\"gold-magnum\"", bySteam3Search);
         Assert.Contains("class=\"admin-empty\"", nothing);
         Assert.AreEqual(HttpStatusCode.OK, lastPage.StatusCode);
     }

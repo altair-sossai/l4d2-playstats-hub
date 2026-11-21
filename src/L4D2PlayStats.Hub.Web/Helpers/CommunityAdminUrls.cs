@@ -17,16 +17,16 @@ public static class CommunityAdminUrls
 
     public static string Of(string tab)
     {
-        return $"{AppConsts.AdminCommunityUrl}?tab={tab}";
+        return QueryUrl.Build(AppConsts.AdminCommunityUrl, (AppConsts.AdminTabQuery, tab));
     }
 
     public static string Voters(int page)
     {
-        return page > 1 ? $"{Of(AppConsts.CommunityVotersTab)}&page={page}" : Of(AppConsts.CommunityVotersTab);
+        return QueryUrl.Build(AppConsts.AdminCommunityUrl, (AppConsts.AdminTabQuery, AppConsts.CommunityVotersTab), (AppConsts.AdminPageQuery, page));
     }
 
     public static string Blocked(int page)
     {
-        return page > 1 ? $"{Of(AppConsts.CommunityBlockedTab)}&blockedPage={page}" : Of(AppConsts.CommunityBlockedTab);
+        return QueryUrl.Build(AppConsts.AdminCommunityUrl, (AppConsts.AdminTabQuery, AppConsts.CommunityBlockedTab), (AppConsts.CommunityBlockedPageQuery, page));
     }
 }

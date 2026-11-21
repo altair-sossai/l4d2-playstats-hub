@@ -4,7 +4,7 @@
     ViewData["Title"] = L["Remote commands"].Value;
 
     var culture = CultureInfo.CurrentUICulture;
-    var pagination = PaginationModel.Of(Model.Logs, number => $"{AppConsts.RemoteCommandsUrl}?page={number}");
+    var pagination = PaginationModel.Of(Model.Logs, number => AdminListUrls.Page(AppConsts.RemoteCommandsUrl, number));
 }
 
 @section Styles {
@@ -43,7 +43,7 @@
     <h3>@L["Remote commands"]</h3>
 </div>
 
-@if (TempData["Queued"] is string queued)
+@if (TempData[AppConsts.QueuedTempData] is string queued)
 {
     <div class="alert alert-success">
         @L["Command queued. The game server runs it on its next check."] <code>@queued</code>
@@ -132,11 +132,11 @@
                 </small>
             </div>
             <div class="admin-side">
-                <strong>@LiveDisplay.ShortDateTime(log.CreatedAtUtc, Model.TimeZone)</strong>
+                <strong>@Display.DateTime(log.CreatedAtUtc, Model.TimeZone)</strong>
                 @if (log.DeliveredAtUtc != null)
                 {
                     <small>
-                        <span class="label label-success">@L["Delivered"]</span> @LiveDisplay.ShortDateTime(log.DeliveredAtUtc.Value, Model.TimeZone)
+                        <span class="label label-success">@L["Delivered"]</span> @Display.DateTime(log.DeliveredAtUtc.Value, Model.TimeZone)
                     </small>
                 }
                 else

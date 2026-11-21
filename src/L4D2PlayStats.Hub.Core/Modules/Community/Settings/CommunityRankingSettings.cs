@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 
-public class CommunityRankingSettings
+public class CommunityRankingSettings : INormalizable
 {
     public int MinimumMatchesToVote { get; set; } = AppConsts.DefaultCommunityMinimumMatchesToVote;
     public int VotesPerDay { get; set; } = AppConsts.DefaultCommunityVotesPerDay;

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using AspNet.Security.OpenId.Steam;
+using FluentValidation;
 using L4D2PlayStats.Hub.Core.DependencyInjection;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Web;
@@ -63,6 +64,7 @@ builder.Services.Scan(scan => scan
     .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service", StringComparison.Ordinal) && !typeof(IHostedService).IsAssignableFrom(type)))
     .AsImplementedInterfaces()
     .WithScopedLifetime());
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IAuthorizationHandler, AdministratorHandler>();
 builder.Services.AddSingleton<AvatarStore>();
 builder.Services.AddSingleton<AvatarQueue>();

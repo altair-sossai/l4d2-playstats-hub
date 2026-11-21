@@ -1,13 +1,13 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Linq.Expressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
 
-public class CommunityPlayerService(HubDbContext dbContext, IForcedNameStore forcedNames) : ICommunityPlayerService
+public class CommunityPlayerService(HubDbContext dbContext, IPlayerNameService playerNameService) : ICommunityPlayerService
 {
     private static readonly Expression<Func<MatchPlayer, bool>> TookPart = p => p.TeamA || p.TeamB || p.Win || p.Loss || p.Draws > 0 || p.RageQuits > 0;
 
@@ -50,16 +50,9 @@ public class CommunityPlayerService(HubDbContext dbContext, IForcedNameStore for
         return [.. familiar];
     }
 
-    public async Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
+    public Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
     {
-        var ids = communityIds.Distinct().ToList();
-
-        var names = await dbContext.PlayerProfiles
-            .AsNoTracking()
-            .Where(p => ids.Contains(p.CommunityId) && p.Name != null && p.Name != string.Empty)
-            .ToDictionaryAsync(p => p.CommunityId, p => p.Name!, cancellationToken);
-
-        return ids.ToDictionary(id => id, id => forcedNames.Find(id) ?? names.GetValueOrDefault(id) ?? id.ToString());
+        return playerNameService.NamesAsync(communityIds, cancellationToken);
     }
 
     public async Task<Dictionary<long, List<string>>> MostUsedNamesAsync(IReadOnlyCollection<long> communityIds, int count, CancellationToken cancellationToken = default)

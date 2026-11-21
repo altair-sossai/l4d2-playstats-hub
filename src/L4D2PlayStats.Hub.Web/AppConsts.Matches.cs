@@ -3,6 +3,9 @@ namespace L4D2PlayStats.Hub.Web;
 public static partial class AppConsts
 {
     public const string MatchesUrl = "/matches";
+    public const string MatchSeasonQuery = "season";
+    public const string MatchYearQuery = "year";
+    public const string MatchServerQuery = "server";
     public const int MatchChartMapNameLength = 16;
     public const string MatchElapsedFormat = @"hh\:mm\:ss";
     public const string MatchChartSuccessColor = "rgba(40, 167, 69, 1)";

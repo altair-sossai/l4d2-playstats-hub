@@ -1,5 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,14 +19,9 @@ public class AdministratorService(HubDbContext dbContext, IClock clock) : IAdmin
         return dbContext.Administrators.AsNoTracking().OrderBy(a => a.AddedAtUtc).ToListAsync(cancellationToken);
     }
 
-    public Task<List<Administrator>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<Administrator>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        return dbContext.Administrators.AsNoTracking().OrderBy(a => a.AddedAtUtc).ThenBy(a => a.CommunityId).Skip(skip).Take(take).ToListAsync(cancellationToken);
-    }
-
-    public Task<int> CountAsync(CancellationToken cancellationToken = default)
-    {
-        return dbContext.Administrators.CountAsync(cancellationToken);
+        return dbContext.Administrators.AsNoTracking().OrderBy(a => a.AddedAtUtc).ThenBy(a => a.CommunityId).ToPageAsync(page, size, cancellationToken);
     }
 
     public async Task AddAsync(long communityId, string? name, CancellationToken cancellationToken = default)

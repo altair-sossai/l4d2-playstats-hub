@@ -14,14 +14,15 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
 [RequireModule(HubModule.Ranking)]
 [ValidateAntiForgeryToken]
-[ApiController]
-public class PunishmentsApiController(IPunishmentService punishmentService, ISeasonService seasonService, ICurrentUser currentUser) : ControllerBase
+public class PunishmentsApiController(IPunishmentService punishmentService, ISeasonService seasonService, ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> PostAsync([FromBody] PunishmentCommand command, CancellationToken cancellationToken)
     {
-        if (!long.TryParse(command.CommunityId, out var communityId) || !SteamIds.IsValid(communityId) || command.LostExperiencePoints <= 0)
-            return BadRequest();
+        if (await InvalidAsync(command, cancellationToken) is { } invalid)
+            return invalid;
+
+        var communityId = SteamIdParser.Parse(command.CommunityId)!.Value;
 
         var seasonId = await SeasonIdAsync(command.SeasonId, cancellationToken);
         if (seasonId == null)

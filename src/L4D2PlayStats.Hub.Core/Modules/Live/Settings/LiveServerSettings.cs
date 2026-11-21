@@ -1,6 +1,8 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 
-public class LiveServerSettings
+public class LiveServerSettings : INormalizable
 {
     public int DelayInSeconds { get; set; } = AppConsts.LiveDelayInSeconds;
     public int RefreshInMilliseconds { get; set; } = AppConsts.LiveRefreshInMilliseconds;

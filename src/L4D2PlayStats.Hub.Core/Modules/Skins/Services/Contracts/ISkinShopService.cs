@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Models;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
@@ -8,7 +10,9 @@ public interface ISkinShopService
     Task<PlayerSkins> GetPlayerSkinsAsync(long communityId, CancellationToken cancellationToken = default);
     Task<List<PlayerSkins>> GetAllPlayerSkinsAsync(CancellationToken cancellationToken = default);
     Task<List<PurchasedSkin>> GetPurchasedSkinsAsync(CancellationToken cancellationToken = default);
-    Task<List<SkinPurchase>> ListPurchasesAsync(CancellationToken cancellationToken = default);
+    Task<Page<SkinPurchase>> PurchasesAsync(long? communityId, PlayerSearch search, IReadOnlyCollection<string> skinIds, int page, int size, CancellationToken cancellationToken = default);
+    Task<SkinPurchaseTotals> PurchaseTotalsAsync(CancellationToken cancellationToken = default);
+    Task<string?> PurchaserNameAsync(long communityId, CancellationToken cancellationToken = default);
     Task<SkinShopResult> BuyAsync(long communityId, string? playerName, string? skinId, CancellationToken cancellationToken = default);
     Task<SkinShopResult> EquipAsync(long communityId, string? skinId, string source, CancellationToken cancellationToken = default);
     Task<SkinShopResult> UnequipAsync(long communityId, string? weapon, CancellationToken cancellationToken = default);

@@ -1,8 +1,9 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using ParsedStatistics = L4D2PlayStats.Statistics;
 
@@ -10,10 +11,10 @@ namespace L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 
 public class MatchResultService(HubDbContext dbContext, IMatchQueryService matchQueryService, IForcedNameStore forcedNames) : IMatchResultService
 {
-    public async Task<MatchResultPage> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
+    public async Task<Page<MatchResult>> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
     {
         var page = await matchQueryService.ListAsync(filter, cancellationToken);
-        var ids = page.Matches.Select(match => match.Id).ToList();
+        var ids = page.Items.Select(match => match.Id).ToList();
 
         var files = await dbContext.StatisticsFiles
             .AsNoTracking()
@@ -39,11 +40,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
             .GroupBy(file => file.MatchId)
             .ToDictionary(group => group.Key, group => group.First().Content);
 
-        var matches = page.Matches
-            .Select(match => MatchResultFactory.Create(match, maps.GetValueOrDefault(match.Id) ?? [], Parse(contents.GetValueOrDefault(match.Id)), forcedNames))
-            .ToList();
-
-        return new MatchResultPage(matches, page.Total, page.Page, page.PageSize);
+        return page.Map(match => MatchResultFactory.Create(match, maps.GetValueOrDefault(match.Id) ?? [], Parse(contents.GetValueOrDefault(match.Id)), forcedNames));
     }
 
     public async Task<MatchResult?> FindAsync(int id, CancellationToken cancellationToken = default)

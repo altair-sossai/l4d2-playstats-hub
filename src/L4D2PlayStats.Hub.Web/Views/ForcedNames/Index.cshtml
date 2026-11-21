@@ -1,13 +1,14 @@
 @model L4D2PlayStats.Hub.Web.Models.Players.ForcedNamesViewModel
-@inject L4D2PlayStats.Hub.Web.Services.Contracts.ILiveViewService LiveView
+@inject ISiteClock SiteClock
 @{
-    var timeZone = await LiveView.TimeZoneAsync();
+    var timeZone = await SiteClock.ZoneAsync();
     ViewData["Title"] = L["Forced names"].Value;
     var pagination = PaginationModel.Of(Model.Names, number => ForcedNameUrls.Page(Model.Search, number));
 }
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
     <style>
         .fn-current {
             display: block;
@@ -23,11 +24,11 @@
 
 <p class="text-muted">@L["A player on this list always plays with the name written here: the game servers rename them when they join or change the name, and the site shows this name on every page. The servers read the list at the start of each round."]</p>
 
-@if (TempData["ForcedNameRemoved"] != null)
+@if (TempData[AppConsts.ForcedNameRemovedTempData] != null)
 {
     <div class="alert alert-success">@L["The forced name was removed."]</div>
 }
-@if (TempData["ForcedNamesImported"] is int[] imported && imported.Length == 4)
+@if (TempData[AppConsts.ForcedNamesImportedTempData] is int[] imported && imported.Length == 4)
 {
     <div class="alert @(imported[3] > 0 ? "alert-warning" : "alert-success")">@L["Import finished: {0} added, {1} updated, {2} already up to date, {3} lines left out.", imported[0], imported[1], imported[2], imported[3]]</div>
 }
@@ -80,7 +81,7 @@ else
                     <span class="fn-current">@SteamIds.DisplaySteamId(entry.CommunityId)</span>
                 </td>
                 <td class="vertical-align-middle" data-label="@L["Forced name"]"><strong>@entry.Name</strong></td>
-                <td class="text-center vertical-align-middle" data-label="@L["Changed on"]">@TimeZoneInfo.ConvertTimeFromUtc(entry.UpdatedAtUtc, timeZone).ToString("d")</td>
+                <td class="text-center vertical-align-middle" data-label="@L["Changed on"]">@Display.Date(entry.UpdatedAtUtc, timeZone)</td>
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                     <button class="btn btn-xs btn-default" type="button" data-fn-edit="@entry.CommunityId" data-fn-name="@entry.Name">
                         <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]

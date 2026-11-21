@@ -12,9 +12,9 @@
     <h3>@L["Administration"]</h3>
 </div>
 
-@if (TempData["Reprocessed"] != null)
+@if (TempData[AppConsts.ReprocessedTempData] != null)
 {
-    <div class="alert alert-success">@L["Reprocessing finished. Matches rebuilt:"] @TempData["Reprocessed"]</div>
+    <div class="alert alert-success">@L["Reprocessing finished. Matches rebuilt:"] @TempData[AppConsts.ReprocessedTempData]</div>
 }
 
 <div class="admin-stats">
