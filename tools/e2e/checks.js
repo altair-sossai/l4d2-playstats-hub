@@ -364,15 +364,18 @@ function checks(context) {
             name: 'admin-player-search',
             run: async browser => {
                 await at(browser, fixtures.admin, desktop, '/admin/administrators');
+                await browser.click('[data-admin-edit=""]', { settle: 0 });
+                await browser.modalShown('#admin-edit-modal');
 
-                const target = await browser.eval(`document.querySelector('[data-player-picker]').getAttribute('data-player-picker')`);
+                const target = await browser.eval(`document.querySelector('#admin-edit-modal [data-player-picker]').getAttribute('data-player-picker')`);
 
-                await browser.click('[data-player-picker]', { settle: 0 });
+                await browser.click('#admin-edit-modal [data-player-picker]', { settle: 0 });
 
                 const picked = await pickFirstPlayer(browser);
 
-                await browser.modalHidden('#pp-modal');
+                await browser.until(`!document.querySelector('#pp-modal').classList.contains('in') && document.querySelector('#admin-edit-modal').classList.contains('in')`, 'the search window to close over the add window');
                 expect(await browser.eval(`document.querySelector(${quote(target)}).value`) === picked, `Picking ${picked} in the search window did not fill ${target}`);
+                await closeModal(browser, '#admin-edit-modal');
 
                 await browser.open('/admin/player-connections');
                 await browser.click('[data-player-picker]', { settle: 0 });

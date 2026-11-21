@@ -503,7 +503,7 @@
                             {
                                 <th class="text-center player-name">
                                     <a href="/player/@player.CommunityId" title="@(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)">
-                                        @(ForcedNames.Find(player.CommunityId) ?? player.PlayerName)?.TruncatePlayerName()
+                                        @((ForcedNames.Find(player.CommunityId) ?? player.PlayerName)?.TruncatePlayerName())
                                     </a>
                                 </th>
                             }
@@ -692,7 +692,7 @@
                             {
                                 <th class="text-center player-name">
                                     <a href="/player/@infectedPlayer.CommunityId" title="@(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)">
-                                        @(ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)?.TruncatePlayerName()
+                                        @((ForcedNames.Find(infectedPlayer.CommunityId) ?? infectedPlayer.PlayerName)?.TruncatePlayerName())
                                     </a>
                                 </th>
                             }
@@ -772,7 +772,7 @@
                                 </td>
                                 <td>
                                     <a href="/player/@playerName.CommunityId" title="@(ForcedNames.Find(playerName.CommunityId) ?? playerName.Name)">
-                                        @(ForcedNames.Find(playerName.CommunityId) ?? playerName.Name)?.TruncatePlayerName()
+                                        @((ForcedNames.Find(playerName.CommunityId) ?? playerName.Name)?.TruncatePlayerName())
                                     </a>
                                 </td>
                             </tr>
