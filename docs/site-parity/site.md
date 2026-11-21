@@ -53,7 +53,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Tooltips on every `data-toggle="tooltip"` | _Layout.cshtml:688 | done | |
 | Google Analytics tag | _Layout.cshtml:717-723 | adapted | The fixed ID became the optional setting `SiteSettings.GoogleAnalyticsId`. |
 | HTML minification and HTTP compression | Program.cs:9-16, 65 | adapted | Responses are compressed (Brotli/Gzip). The markup is not minified: no visible effect, and one dependency less. |
-| Warning in the log for every request that ends in an error, and the exception for failures | Middlewares/ErrorLoggingMiddleware.cs | done | Through the application's logger; a Linux install keeps it in the system journal instead of `logs/app.log`. |
+| Warning in the log for every request that ends in an error, and the exception for failures | Middlewares/ErrorLoggingMiddleware.cs | done | Through the application's logger; a Linux install keeps it in the system journal instead of `logs/app.log`. Not found goes to the debug level; every server error is logged as an error with the original address, also when the error page itself fails or a cancellation the visitor did not cause ends the request. |
 | Error page for unhandled exceptions and for status codes such as 404 | (new) | adapted | Hub addition: the old site answered an empty 500 in production. Pages now show a translated error page in the site layout; the exception is still logged as above. The API, the pages inside the game, static files and requests made by scripts keep a bare status, and the pages inside the game get a plain text line for an exception. |
 | JSON without nulls and with enums as text | Program.cs:21-25 | done | |
 | Steam sign-in with a 30 day sliding cookie | Program.cs:28-39 | done | |

@@ -44,6 +44,49 @@ public class ErrorPagesTests
     }
 
     [TestMethod]
+    public async Task ACancellationTheVisitorDidNotCauseIsLoggedAsAnError()
+    {
+        using var factory = new HubWebFactory();
+        var logs = new LogCollector();
+
+        await factory.CompleteSetupAsync();
+
+        using var cancelled = factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+        {
+            services.AddScoped(_ => CancellingProxy.Create<IMatchViewService>());
+            services.AddSingleton<ILoggerProvider>(logs);
+        }));
+        using var client = Client(cancelled);
+
+        var response = await client.GetAsync("/matches");
+
+        Assert.AreEqual(HttpStatusCode.InternalServerError, response.StatusCode);
+
+        var errors = logs.Entries.Where(entry => entry.Level == LogLevel.Error).ToList();
+
+        Assert.HasCount(1, errors);
+        Assert.Contains("Unhandled exception during request: GET /matches", errors[0].Message);
+        Assert.AreEqual(CancellingProxy.Message, errors[0].Exception!.Message);
+    }
+
+    [TestMethod]
+    public async Task ANotFoundPageLogsNoWarningOrError()
+    {
+        using var factory = new HubWebFactory();
+        var logs = new LogCollector();
+
+        await factory.CompleteSetupAsync();
+
+        using var logged = factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(services => services.AddSingleton<ILoggerProvider>(logs)));
+        using var client = Client(logged);
+
+        var response = await client.GetAsync("/wp-json/");
+
+        Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.IsFalse(logs.Entries.Any(entry => entry.Category.StartsWith("L4D2PlayStats", StringComparison.Ordinal) && entry.Level >= LogLevel.Warning));
+    }
+
+    [TestMethod]
     public async Task TheErrorPageIsTranslated()
     {
         using var factory = new HubWebFactory();

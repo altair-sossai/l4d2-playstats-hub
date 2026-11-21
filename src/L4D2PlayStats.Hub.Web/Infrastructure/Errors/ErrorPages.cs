@@ -57,6 +57,26 @@ public static class ErrorPages
         return (exception != null ? exception.Path : context.Request.Path.Value) + context.Request.QueryString;
     }
 
+    public static bool IsUnloggedServerError(HttpContext context)
+    {
+        if (context.Features.Get<IExceptionHandlerFeature>() != null)
+            return false;
+
+        var statusCode = context.Features.Get<IStatusCodeReExecuteFeature>();
+
+        return statusCode == null || statusCode.OriginalStatusCode < StatusCodes.Status500InternalServerError;
+    }
+
+    public static void MarkExceptionLogged(HttpContext context)
+    {
+        context.Items[AppConsts.ExceptionLoggedItem] = true;
+    }
+
+    public static bool IsExceptionLogged(HttpContext context)
+    {
+        return context.Items.ContainsKey(AppConsts.ExceptionLoggedItem);
+    }
+
     public static bool IsReExecuted(HttpContext context)
     {
         return context.Features.Get<IStatusCodeReExecuteFeature>() != null || context.Features.Get<IExceptionHandlerFeature>() != null;

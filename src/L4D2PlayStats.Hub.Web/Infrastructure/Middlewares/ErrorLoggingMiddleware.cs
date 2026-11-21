@@ -10,12 +10,18 @@ public class ErrorLoggingMiddleware(RequestDelegate next, ILogger<ErrorLoggingMi
         {
             await next(context);
 
-            if (context.Response.StatusCode >= StatusCodes.Status400BadRequest && !ErrorPages.IsReExecuted(context))
-                logger.Log(context.Response.StatusCode == StatusCodes.Status404NotFound ? LogLevel.Debug : LogLevel.Warning, "Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
+            var statusCode = context.Response.StatusCode;
+
+            if (statusCode >= StatusCodes.Status500InternalServerError && ErrorPages.IsUnloggedServerError(context))
+                logger.LogError("Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, ErrorPages.OriginalPath(context), statusCode);
+            else if (statusCode >= StatusCodes.Status400BadRequest && !ErrorPages.IsReExecuted(context))
+                logger.Log(statusCode == StatusCodes.Status404NotFound ? LogLevel.Debug : LogLevel.Warning, "Request resulted in error: {Method} {Path} => {StatusCode}", context.Request.Method, context.Request.Path, statusCode);
         }
-        catch (Exception exception) when (exception is not OperationCanceledException)
+        catch (Exception exception) when (exception is not OperationCanceledException || !context.RequestAborted.IsCancellationRequested)
         {
             logger.LogError(exception, "Unhandled exception during request: {Method} {Path}", context.Request.Method, context.Request.Path);
+
+            ErrorPages.MarkExceptionLogged(context);
 
             throw;
         }
