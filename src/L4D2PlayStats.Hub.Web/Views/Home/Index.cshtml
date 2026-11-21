@@ -89,7 +89,7 @@ else
                     @string.Format(L["Next reset in {0} day(s)"].Value, Model.NextResetIn)
                     <text>|</text>
                 }
-                <a href="@PlayerUrls.Summary(null, false, Model.Period.Query)">@L["View previous rankings"]</a>
+                <a href="@PlayerUrls.Summary(null, false, Model.Period.IsCurrent ? PlayerUrls.YearQuery(Model.Period.CurrentSeason.StartsAt.Year) : Model.Period.Query)">@L["View previous rankings"]</a>
             </small>
         </div>
     </div>

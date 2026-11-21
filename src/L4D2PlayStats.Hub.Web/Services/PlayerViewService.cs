@@ -43,7 +43,7 @@ public class PlayerViewService(
     IStringLocalizer<SharedResource> localizer,
     SkinThumbnailStore skinThumbnailStore) : IPlayerViewService
 {
-    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default, bool everySeason = false)
+    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, bool everySeason = false, CancellationToken cancellationToken = default)
     {
         var current = await seasonService.GetCurrentAsync(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);

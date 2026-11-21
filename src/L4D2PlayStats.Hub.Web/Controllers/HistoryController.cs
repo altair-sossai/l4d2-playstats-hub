@@ -9,29 +9,38 @@ namespace L4D2PlayStats.Hub.Web.Controllers;
 [RequireModule(HubModule.Ranking)]
 public class HistoryController(IRankingHistoryService rankingHistoryService) : Controller
 {
-    [HttpGet("/history/{historyId?}")]
-    public async Task<IActionResult> Index(string? historyId = null, CancellationToken cancellationToken = default)
+    [HttpGet("/history")]
+    public IActionResult Index()
     {
-        var period = await rankingHistoryService.PlayersPeriodAsync(historyId, cancellationToken);
+        return RedirectPermanent(PlayerUrls.Summary(null, false, null));
+    }
 
-        return RedirectPermanent(PlayerUrls.Summary(null, false, period));
+    [HttpGet("/history/{historyId}")]
+    public async Task<IActionResult> Period(string historyId, CancellationToken cancellationToken)
+    {
+        return ToPlayers(await rankingHistoryService.PlayersPeriodAsync(historyId, cancellationToken));
     }
 
     [HttpGet("/ranking/season/{id:int}")]
-    public IActionResult Season(int id)
+    public async Task<IActionResult> Season(int id, CancellationToken cancellationToken)
     {
-        return RedirectPermanent(PlayerUrls.Summary(null, false, PlayerUrls.SeasonQuery(id)));
+        return ToPlayers(await rankingHistoryService.SeasonPeriodAsync(id, cancellationToken));
     }
 
     [HttpGet("/ranking/year/{year:int}")]
-    public IActionResult Year(int year)
+    public async Task<IActionResult> Year(int year, CancellationToken cancellationToken)
     {
-        return RedirectPermanent(PlayerUrls.Summary(null, false, PlayerUrls.YearQuery(year)));
+        return ToPlayers(await rankingHistoryService.YearPeriodAsync(year, cancellationToken));
     }
 
     [HttpGet("/ranking/all-time")]
     public IActionResult AllTime()
     {
-        return RedirectPermanent(PlayerUrls.Summary(null, false, PlayerUrls.AllTimeQuery()));
+        return ToPlayers(PlayerUrls.AllTimeQuery());
+    }
+
+    private IActionResult ToPlayers(string? period)
+    {
+        return period == null ? NotFound() : RedirectPermanent(PlayerUrls.Summary(null, false, period));
     }
 }

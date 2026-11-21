@@ -254,7 +254,7 @@
                     $modal.modal('show');
                     load(true);
                 },
-                swap: function ($parent, onPick, options) {
+                swap: function ($parent, onPick, options, onClose) {
                     function pick() {
                         window.PlayerPicker.open(function (player) {
                             if (player)
@@ -262,6 +262,9 @@
 
                             if ($parent.length > 0)
                                 $parent.modal('show');
+
+                            if (onClose)
+                                onClose(player);
                         }, options);
                     }
 
@@ -295,9 +298,10 @@
                         else
                             form.submit();
                     }
-                    else if ($parent.length === 0 && $target.is(':visible'))
+                }, options, function () {
+                    if ($parent.length === 0 && $target.is(':visible'))
                         $target.focus();
-                }, options);
+                });
             });
         });
     </script>

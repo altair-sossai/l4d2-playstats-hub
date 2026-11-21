@@ -9,4 +9,6 @@ public static partial class AppConsts
     public const string CommandsGlyphiconPrefix = "glyphicon-";
     public const string CommandsSectionAnchorPrefix = "commands-";
     public const string CommandsCodePattern = "`([^`]+)`";
+    public const string CommandsCodeOpen = "<code>";
+    public const string CommandsCodeClose = "</code>";
 }

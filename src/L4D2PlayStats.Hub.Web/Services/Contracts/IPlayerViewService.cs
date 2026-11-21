@@ -5,7 +5,7 @@ namespace L4D2PlayStats.Hub.Web.Services.Contracts;
 
 public interface IPlayerViewService
 {
-    Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default, bool everySeason = false);
+    Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, bool everySeason = false, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<RankingPlayer>> RankingAsync(PlayerPeriodModel period, CancellationToken cancellationToken = default);
     Task<PlayersModel> ListAsync(PlayerPeriodModel period, PlayerResultProperty orderBy, bool asc, int page, CancellationToken cancellationToken = default);
     Task<PlayersModel> SummaryAsync(PlayerPeriodModel period, PlayerResultProperty? sort, bool asc, int page, CancellationToken cancellationToken = default);

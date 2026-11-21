@@ -132,15 +132,12 @@
                 <td class="vertical-align-middle">
                     <a href="@PlayerUrls.Details(player.CommunityId, null, seasonId)" title="@row.Name">@row.Name.TruncatePlayerName()</a>
                 </td>
-                <td class="text-center vertical-align-middle">
-                    <p data-toggle="tooltip" data-placement="top" title="@L["Wins"] - @player.WinRate.ToString("P0") @L["Win rate"]">
-                        @player.Wins.ToString("N0")
-                    </p>
-                </td>
-                @foreach (var column in PlayerProperties.SummaryColumns.Where(column => column != PlayerResultProperty.Wins))
+                @foreach (var column in PlayerProperties.SummaryColumns)
                 {
-                    <td class="text-center vertical-align-middle hide-mobile">
-                        <p data-toggle="tooltip" data-placement="top" title="@L[PlayerProperties.Title(column)]">
+                    var wins = column == PlayerResultProperty.Wins;
+
+                    <td class="text-center vertical-align-middle @(wins ? null : "hide-mobile")">
+                        <p data-toggle="tooltip" data-placement="top" title="@(wins ? $"{L["Wins"].Value} - {player.WinRate.ToString("P0")} {L["Win rate"].Value}" : L[PlayerProperties.Title(column)].Value)">
                             @PlayerProperties.Format(column, PlayerProperties.Value(player, column))
                         </p>
                     </td>

@@ -20,7 +20,7 @@ public class PlayersController(IPlayerViewService playerViewService, IPlayerComm
     {
         ViewBag.Players = "active";
 
-        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken, true);
+        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, true, cancellationToken);
         if (selected == null)
             return NotFound();
 
@@ -44,7 +44,7 @@ public class PlayersController(IPlayerViewService playerViewService, IPlayerComm
         if (!modules.IsEnabled(HubModule.Ranking))
             return await PlayerNotFoundAsync(null, communityId, cancellationToken);
 
-        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
+        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken: cancellationToken);
         if (selected == null)
             return NotFound();
 

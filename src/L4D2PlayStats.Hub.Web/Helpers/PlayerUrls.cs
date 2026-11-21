@@ -34,13 +34,13 @@ public static class PlayerUrls
             query.Add($"{AppConsts.PlayerSortParameter}={sort}");
 
         if (asc)
-            query.Add("asc=True");
+            query.Add($"{AppConsts.PlayerAscendingParameter}={bool.TrueString}");
 
         if (!string.IsNullOrEmpty(period))
             query.Add(period);
 
         if (page is > 1)
-            query.Add($"page={page}");
+            query.Add($"{AppConsts.PlayerPageParameter}={page}");
 
         return query.Count == 0 ? AppConsts.PlayersUrl : $"{AppConsts.PlayersUrl}?{string.Join('&', query)}";
     }

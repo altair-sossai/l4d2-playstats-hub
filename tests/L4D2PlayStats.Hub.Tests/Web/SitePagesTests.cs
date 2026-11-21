@@ -1,4 +1,5 @@
 using System.Net;
+using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -125,15 +126,18 @@ public class SitePagesTests
 
         await factory.CompleteSetupAsync();
 
+        var season = await factory.RunAsync(services => services.GetRequiredService<ISeasonService>().GetCurrentAsync());
+        var year = season.StartsAt.Year;
+
         var expected = new Dictionary<string, string>
         {
             ["/ranking/all-time"] = "/players?period=all-time",
-            ["/ranking/year/2026"] = "/players?year=2026",
-            ["/ranking/season/7"] = "/players?season=7",
+            [$"/ranking/year/{year}"] = $"/players?year={year}",
+            [$"/ranking/season/{season.Id}"] = $"/players?season={season.Id}",
             ["/history"] = "/players",
             ["/history/all-time"] = "/players?period=all-time",
-            ["/history/2025"] = "/players?year=2025",
-            ["/history/unknown"] = "/players"
+            [$"/history/{year}"] = $"/players?year={year}",
+            [$"/history/{season.StartsAt:yyyy-MM}"] = $"/players?season={season.Id}"
         };
 
         foreach (var (path, location) in expected)
@@ -142,6 +146,13 @@ public class SitePagesTests
 
             Assert.AreEqual(HttpStatusCode.MovedPermanently, response.StatusCode, path);
             Assert.AreEqual(location, response.Headers.Location?.ToString(), path);
+        }
+
+        foreach (var path in new[] { "/history/unknown", "/history/1900", "/ranking/year/1900", $"/ranking/season/{season.Id + 1000}" })
+        {
+            var response = await client.GetAsync(path);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, path);
         }
     }
 

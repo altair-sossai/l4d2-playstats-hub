@@ -28,7 +28,7 @@ public class HomeController(
 
         ViewBag.Home = "active";
 
-        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
+        var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken: cancellationToken);
         if (selected == null)
             return NotFound();
 

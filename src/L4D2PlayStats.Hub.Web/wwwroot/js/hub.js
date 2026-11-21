@@ -2,7 +2,7 @@
     var Hub = window.Hub || {};
 
     Hub.escapeHtml = function (text) {
-        return $('<div/>').text(text == null ? '' : text).html();
+        return $('<div/>').text(text == null ? '' : text).html().replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     };
 
     Hub.format = function (template) {
