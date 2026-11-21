@@ -11,7 +11,7 @@
           "id": "anticheat-check",
           "names": ["!aac"],
           "who": ["Todos"],
-          "description": "Te dice, en privado, si debes usar el Anti-Cheat y si el tuyo funciona, con el enlace de descarga."
+          "description": "Te dice, en privado, si el Anti-Cheat está activado y si tienes que usarlo. Si tienes que usarlo y el tuyo no está funcionando, también te da el enlace de descarga."
         },
         {
           "id": "anticheat-vote",
@@ -22,7 +22,7 @@
           "notes": [
             "Solo en el ready-up de la primera ronda del primer mapa, con los dos equipos completos y sin mix en curso.",
             "La votación dura 20 s y pasa con más de la mitad de los jugadores de los equipos.",
-            "Si pasa, queda activado toda la partida.",
+            "Si pasa, queda activado hasta que termina la partida, o hasta que el servidor queda vacío durante 10 minutos. Quien tiene que usarlo y no lo tiene abierto pasa a espectadores.",
             "Tras una votación que no pasó, espera 60 s para intentarlo de nuevo."
           ]
         }
@@ -136,9 +136,14 @@
         {
           "id": "match-decided",
           "title": "\"Partida decidida, ¿seguir jugando?\"",
-          "who": ["Todos"],
+          "who": ["Equipo que va perdiendo"],
           "when": ["Automático"],
-          "description": "En el 4.º mapa, 2.ª ronda, cuando la diferencia en el marcador es de 15 puntos o más, el servidor pregunta solo a todos si la partida está decidida o si debe seguir."
+          "description": "En el 4.º mapa de una campaña de más de 4 mapas, en la 2.ª ronda, cuando un equipo va 15 puntos o más adelante, o el equipo que va atrás ya no puede alcanzarlo, el servidor le pregunta al equipo que va perdiendo si quiere seguir jugando.",
+          "notes": [
+            "Espera mientras hay un Tank vivo o un sobreviviente incapacitado.",
+            "Solo votan los jugadores humanos del equipo que va perdiendo, durante 15 s. La partida sigue si al menos la mitad vota Sí; quien no vota cuenta como No.",
+            "Con No, la partida termina: se anuncia la próxima campaña, todos mueren después de 5 s y el servidor cambia a esa campaña."
+          ]
         }
       ]
     },
@@ -153,9 +158,13 @@
           "names": ["!hear"],
           "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
           "who": ["Espectadores"],
-          "description": "Elige de quién escuchas la voz mientras miras. Sin opción, se abre un menú.",
-          "examples": [{ "code": "!hear infected", "text": "Escuchas solo al equipo de los Infectados." }],
-          "notes": ["Las formas cortas de las opciones también funcionan.", "No tiene efecto con el all-talk activado."]
+          "description": "Elige de quién escuchas la voz mientras miras, además de los otros espectadores, a quienes siempre escuchas. Sin opción, abre un menú con tu elección actual marcada.",
+          "examples": [{ "code": "!hear infected", "text": "Escuchas al equipo de los Infectados y a los espectadores." }],
+          "notes": [
+            "También sirven formas cortas: `surv` o `2` para los Sobrevivientes, `infec`, `zombie` o `3` para los Infectados, `spec` o `1` solo para los espectadores, `everyone` o `0` para todos.",
+            "Vuelve a `all` en cada cambio de mapa.",
+            "No tiene efecto mientras el all-talk está activado."
+          ]
         }
       ]
     },
@@ -518,13 +527,15 @@
         {
           "id": "teams-specspeed",
           "title": "Velocidad de la cámara de espectador",
-          "names": ["sm_set_specspeed_multi", "sm_increase_specspeed", "sm_decrease_specspeed"],
+          "names": ["sm_set_specspeed_multi", "sm_set_specspeed_increment", "sm_increase_specspeed", "sm_decrease_specspeed", "sm_set_vertical_increment"],
           "syntax": ["sm_set_specspeed_multi <0-2>", "sm_set_specspeed_increment <paso>", "sm_set_vertical_increment <velocidad>"],
           "who": ["Espectadores"],
-          "description": "Comandos de consola que cambian la velocidad de la cámara libre. 1.0 es la velocidad normal y 2 la más rápida. Volando, Usar (E) sube y Recargar (R) baja.",
-          "examples": [
-            { "code": "sm_set_specspeed_multi 1.5", "text": "Vuela un 50% más rápido." },
-            { "code": "bind KP_PLUS sm_increase_specspeed", "text": "Una tecla que acelera según el paso (0.1 por defecto)." }
+          "description": "Comandos de consola que cambian la velocidad de la cámara libre mientras miras. El multiplicador va de 0 a 2 y empieza en 1.0, la velocidad normal. Volando, Usar (E) sube y Recargar (R) baja.",
+          "examples": [{ "code": "sm_set_specspeed_multi 1.5", "text": "Vuela un 50% más rápido." }, { "code": "bind KP_PLUS sm_increase_specspeed", "text": "Una tecla que acelera según el paso (0.1 por defecto)." }],
+          "notes": [
+            "`sm_set_specspeed_increment` define cuánto cambian la velocidad `sm_increase_specspeed` y `sm_decrease_specspeed` cada vez; empieza en 0.1.",
+            "`sm_set_vertical_increment` define qué tan rápido suben y bajan E y R; empieza en 450.",
+            "Un multiplicador fuera de 0 a 2 se ignora. Tu velocidad se aplica de nuevo cada vez que pasas a espectadores."
           ]
         }
       ]
@@ -588,7 +599,11 @@
           "names": ["!weaponstats", "!weapon_attributes"],
           "syntax": ["!weaponstats", "!weaponstats <arma>"],
           "who": ["Todos"],
-          "description": "Muestra los atributos de las armas en esta config, como el daño y la dispersión."
+          "description": "Muestra los atributos que esta config le da a un arma, como el daño y la dispersión. Sin nombre, muestra el arma que tienes en la mano.",
+          "examples": [{ "code": "!weaponstats pumpshotgun", "text": "La escopeta de bombeo." }, { "code": "!weaponstats smg_silenced", "text": "La SMG con silenciador." }],
+          "notes": [
+            "Usa el nombre del arma sin `weapon_`. Las armas cuerpo a cuerpo también sirven, como `katana` o `crowbar`."
+          ]
         },
         {
           "id": "info-stats",
@@ -674,12 +689,6 @@
           "names": ["!teamflip", "!tf"],
           "who": ["Todos"],
           "description": "Sortea un equipo para ti: Supervivientes o Infectados."
-        },
-        {
-          "id": "fun-settings",
-          "names": ["!settings"],
-          "who": ["Todos"],
-          "description": "Abre el menú de tus preferencias personales en el servidor. Quedan guardadas para tu cuenta."
         }
       ]
     },
@@ -715,7 +724,10 @@
           "names": ["!aac on", "!aac off", "!aac config"],
           "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <jugador>", "!aac remove <jugador>", "!aac list"],
           "module": "AntiCheat",
-          "description": "`!aac on` y `!aac off` exigen o no el Anti-Cheat en esta partida. `!aac config`, `mode`, `add`, `remove` y `list` muestran y cambian quién debe usarlo; la configuración de Anti-Cheat del sitio sigue el cambio."
+          "description": "`!aac on` y `!aac off` activan o desactivan la exigencia del Anti-Cheat hasta que un admin la cambie de nuevo o una votación la active; `!aac off` también cancela una activada por votación. `!aac config`, `mode`, `add`, `remove` y `list` muestran y cambian quién tiene que usarlo; la configuración del Anti-Cheat en el sitio sigue el cambio.",
+          "notes": [
+            "Solo los admins root pueden usarlo."
+          ]
         },
         {
           "id": "admin-stopmix",
@@ -737,7 +749,7 @@
         {
           "id": "admin-nextcampaign",
           "names": ["!setnextcampaign"],
-          "description": "Abre un menú para poner en cola las siguientes campañas, o vaciar la cola, en vez de un sorteo."
+          "description": "Abre un menú para agregar campañas a la cola de las próximas, o para vaciarla. La cola se usa cuando una partida termina antes, por rendición o por partida decidida; cuando está vacía, la próxima campaña se sortea."
         },
         {
           "id": "admin-campaigns",
@@ -770,7 +782,7 @@
           "id": "admin-hp",
           "names": ["!hp"],
           "syntax": ["!hp", "!hp <1-100>"],
-          "description": "Da vida a todos los supervivientes vivos: 100 salvo que digas otro valor, nunca por encima de 100."
+          "description": "Suma vida a todos los sobrevivientes vivos: 100 a menos que indiques otra cantidad de 1 a 100. La vida nunca pasa de 100, y los sobrevivientes incapacitados se levantan."
         },
         {
           "id": "admin-slots",

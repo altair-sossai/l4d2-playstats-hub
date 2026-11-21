@@ -21,6 +21,8 @@ A página segue os [módulos](administration.pt.md#módulos): os comandos que pr
 
 ![A página de comandos](../images/pt/commands.webp)
 
+Os jogadores também podem ler os comandos dentro do jogo: o painel que o `!ranking` abre tem uma aba **Comandos** com o mesmo texto, sem os comandos dos administradores. Veja [Páginas dentro do jogo](in-game-pages.pt.md#as-quatro-páginas).
+
 ## Onde fica o conteúdo
 
 O texto da página não está no HTML. Ele fica num catálogo por idioma, em `src/L4D2PlayStats.Hub.Web/Resources/Commands`:

@@ -8,13 +8,13 @@ Players can see the ranking without leaving Left 4 Dead 2. The `!ranking` chat c
 
 ## Contents
 
-- [The three pages](#the-three-pages)
+- [The four pages](#the-four-pages)
 - [Why they look different](#why-they-look-different)
 - [The address used by the game](#the-address-used-by-the-game)
 
-## The three pages
+## The four pages
 
-The panel has three tabs. They show the current season only, and only ranked matches. The bar at the top names that season as the site does, such as **From 11/2026 to 12/2026**.
+The panel has four tabs. The first three show the current season only, and only ranked matches. The bar at the top names that season as the site does, such as **From 11/2026 to 12/2026**.
 
 **Ranking**: the top 50 players, with patent, experience, wins, losses, win rate and MVPs. The row of the player who opened the panel is highlighted.
 
@@ -30,7 +30,11 @@ A player with no ranked match in the season sees a short message instead.
 
 ![The last matches, in the game](../images/en/ingame-matches.webp)
 
-The pages are at `/ingame`, `/ingame/player` and `/ingame/matches`. The game adds the SteamID64 of the player to the address, so the site knows who opened the panel. They can be opened in a normal browser too, for example `/ingame?steamid=76561198000000000`.
+**Commands**: the commands players can use on the server, from the same catalog as the [commands page](commands.md), without the administrator commands. A row of links at the top jumps to each section.
+
+![The commands, in the game](../images/en/ingame-commands.webp)
+
+The pages are at `/ingame`, `/ingame/player`, `/ingame/matches` and `/ingame/commands`. The game adds the SteamID64 of the player to the address, so the site knows who opened the panel. They can be opened in a normal browser too, for example `/ingame?steamid=76561198000000000`.
 
 ## Why they look different
 

@@ -31,6 +31,15 @@
         .cell { float: left; width: 16%; text-align: center; }
         .bar { background: #323844; height: 6px; -webkit-border-radius: 3px; border-radius: 3px; overflow: hidden; }
         .bar div { background: #2f6fed; height: 6px; }
+        code { font-family: Consolas, "Courier New", monospace; background: #262b35; color: #ffd479; padding: 1px 4px; -webkit-border-radius: 3px; border-radius: 3px; }
+        .jump { margin-bottom: 8px; line-height: 22px; }
+        .jump a { margin-right: 10px; white-space: nowrap; }
+        .section { font-size: 15px; font-weight: bold; color: #ffffff; margin: 14px 0 2px; }
+        .intro { margin: 0 0 6px; }
+        .cmd { border-bottom: 1px solid #23272f; padding: 6px 0; }
+        .cmd p { margin: 3px 0; }
+        .cmd ul { margin: 3px 0; padding-left: 18px; }
+        .cmd-title { font-weight: bold; color: #ffffff; margin-right: 6px; }
     </style>
 </head>
 <body>
@@ -39,6 +48,7 @@
     <a class="tab @(active == "ranking" ? "on" : "")" href="/ingame@(query)">@L["Ranking"]</a>
     <a class="tab @(active == "player" ? "on" : "")" href="/ingame/player@(query)">@L["My summary"]</a>
     <a class="tab @(active == "matches" ? "on" : "")" href="/ingame/matches@(query)">@L["Matches"]</a>
+    <a class="tab @(active == "commands" ? "on" : "")" href="/ingame/commands@(query)">@L["Commands"]</a>
     <div class="season">@RankingPeriod.ForSeason(Model.Season).Label(L)</div>
 </div>
 <div class="body">

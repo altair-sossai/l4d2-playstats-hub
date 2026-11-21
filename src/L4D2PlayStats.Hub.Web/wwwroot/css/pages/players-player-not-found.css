@@ -1,0 +1,30 @@
+.player-community {
+    max-width: 184px;
+    margin: 10px auto 0 auto;
+}
+
+.player-not-found-tabs {
+    margin-top: 15px;
+}
+
+.player-summary-avatar {
+    max-width: 184px;
+    width: 100%;
+}
+
+.player-steam-profile {
+    max-width: 184px;
+    margin: 10px auto 0 auto;
+}
+
+th {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 24px !important;
+}
+
+@media screen and (max-width: 767px) {
+    .player-summary-avatar-container {
+        margin-bottom: 15px;
+    }
+}

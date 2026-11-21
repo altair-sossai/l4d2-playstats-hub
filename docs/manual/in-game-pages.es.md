@@ -8,13 +8,13 @@ Los jugadores pueden ver el ranking sin salir de Left 4 Dead 2. El comando de ch
 
 ## Contenido
 
-- [Las tres páginas](#las-tres-páginas)
+- [Las cuatro páginas](#las-cuatro-páginas)
 - [Por qué se ven distintas](#por-qué-se-ven-distintas)
 - [La dirección que usa el juego](#la-dirección-que-usa-el-juego)
 
-## Las tres páginas
+## Las cuatro páginas
 
-El panel tiene tres pestañas. Muestran solo la temporada actual, y solo las partidas del ranking. La barra de arriba nombra esa temporada como lo hace el sitio, por ejemplo **De 11/2026 a 12/2026**.
+El panel tiene cuatro pestañas. Las tres primeras muestran solo la temporada actual, y solo las partidas del ranking. La barra de arriba nombra esa temporada como lo hace el sitio, por ejemplo **De 11/2026 a 12/2026**.
 
 **Ranking**: los 50 mejores jugadores, con patente, experiencia, victorias, derrotas, porcentaje de victorias y MVP. La fila del jugador que abrió el panel aparece resaltada.
 
@@ -30,7 +30,11 @@ Un jugador sin ninguna partida del ranking en la temporada ve un mensaje corto e
 
 ![Las últimas partidas, dentro del juego](../images/es/ingame-matches.webp)
 
-Las páginas están en `/ingame`, `/ingame/player` y `/ingame/matches`. El juego agrega el SteamID64 del jugador a la dirección, para que el sitio sepa quién abrió el panel. También se pueden abrir en un navegador normal, por ejemplo `/ingame?steamid=76561198000000000`.
+**Comandos**: los comandos que los jugadores pueden usar en el servidor, del mismo catálogo que la [página de comandos](commands.es.md), sin los comandos de los administradores. Una fila de enlaces arriba lleva a cada sección.
+
+![Los comandos, dentro del juego](../images/es/ingame-commands.webp)
+
+Las páginas están en `/ingame`, `/ingame/player`, `/ingame/matches` y `/ingame/commands`. El juego agrega el SteamID64 del jugador a la dirección, para que el sitio sepa quién abrió el panel. También se pueden abrir en un navegador normal, por ejemplo `/ingame?steamid=76561198000000000`.
 
 ## Por qué se ven distintas
 

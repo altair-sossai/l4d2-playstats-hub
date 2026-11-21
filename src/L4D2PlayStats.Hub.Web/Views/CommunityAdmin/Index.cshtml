@@ -14,20 +14,7 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
-    <style>
-        .ca-tabs {
-            margin-bottom: 15px;
-        }
-
-            .ca-tabs .badge {
-                margin-left: 4px;
-            }
-
-        .ca-actions form {
-            display: inline-block;
-            margin: 2px;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/community-admin-index.css" asp-append-version="true"/>
 }
 
 <div class="admin-header">

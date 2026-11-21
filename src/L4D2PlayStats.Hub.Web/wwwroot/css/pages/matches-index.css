@@ -1,0 +1,8 @@
+.match-filter {
+    margin-bottom: 10px;
+}
+
+.match-filter .form-control {
+    display: inline-block;
+    width: auto;
+}

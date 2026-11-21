@@ -39,11 +39,7 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
-    <style>
-        .backup-wrap {
-            overflow-wrap: anywhere;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/backup-admin-index.css" asp-append-version="true"/>
 }
 
 <div class="admin-header">

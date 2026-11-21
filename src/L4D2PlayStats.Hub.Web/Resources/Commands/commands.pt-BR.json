@@ -11,7 +11,7 @@
           "id": "anticheat-check",
           "names": ["!aac"],
           "who": ["Todos"],
-          "description": "Diz a você, em particular, se você precisa usar o Anti-Cheat e se o seu está funcionando, com o link para baixar."
+          "description": "Diz a você, em particular, se o Anti-Cheat está ligado e se você precisa usá-lo. Se precisar e o seu não estiver rodando, também mostra o link para baixar."
         },
         {
           "id": "anticheat-vote",
@@ -22,7 +22,7 @@
           "notes": [
             "Só no ready-up da primeira rodada do primeiro mapa, com os dois times completos e sem mix em andamento.",
             "A votação dura 20 s e passa com mais da metade dos jogadores dos times.",
-            "Se passar, fica ligado a partida inteira.",
+            "Se passar, fica ligado até o fim da partida, ou até o servidor ficar vazio por 10 minutos. Quem precisa usar e não está com ele aberto vai para os espectadores.",
             "Depois de uma votação que não passou, espere 60 s para tentar de novo."
           ]
         }
@@ -136,9 +136,14 @@
         {
           "id": "match-decided",
           "title": "\"Jogo decidido, continuar jogando?\"",
-          "who": ["Todos"],
+          "who": ["Time que está perdendo"],
           "when": ["Automático"],
-          "description": "No 4º mapa, 2ª rodada, quando a diferença no placar é de 15 pontos ou mais, o servidor pergunta sozinho a todos se o jogo está decidido ou se deve continuar."
+          "description": "No 4º mapa de uma campanha com mais de 4 mapas, na 2ª rodada, quando um time está 15 pontos ou mais à frente, ou o time que está atrás não consegue mais alcançar, o servidor pergunta ao time que está perdendo se quer continuar jogando.",
+          "notes": [
+            "Ele espera enquanto há um Tank vivo ou um sobrevivente incapacitado.",
+            "Só os jogadores humanos do time que está perdendo votam, por 15 s. O jogo continua se pelo menos metade deles votar Sim; quem não vota conta como Não.",
+            "Com Não, o jogo termina: a próxima campanha é anunciada, todos morrem depois de 5 s e o servidor muda para essa campanha."
+          ]
         }
       ]
     },
@@ -153,9 +158,13 @@
           "names": ["!hear"],
           "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
           "who": ["Espectadores"],
-          "description": "Escolhe de quem você ouve a voz enquanto assiste. Sem opção, abre um menu.",
-          "examples": [{ "code": "!hear infected", "text": "Você ouve só o time dos Infectados." }],
-          "notes": ["Formas curtas das opções também funcionam.", "Não tem efeito com o all-talk ligado."]
+          "description": "Escolhe de quem você ouve a voz enquanto assiste, além dos outros espectadores, que você sempre ouve. Sem opção, abre um menu com a sua escolha atual marcada.",
+          "examples": [{ "code": "!hear infected", "text": "Você ouve o time dos Infectados e os espectadores." }],
+          "notes": [
+            "Formas curtas também funcionam: `surv` ou `2` para os Sobreviventes, `infec`, `zombie` ou `3` para os Infectados, `spec` ou `1` só para os espectadores, `everyone` ou `0` para todos.",
+            "Volta para `all` a cada troca de mapa.",
+            "Não tem efeito enquanto o all-talk está ligado."
+          ]
         }
       ]
     },
@@ -518,13 +527,15 @@
         {
           "id": "teams-specspeed",
           "title": "Velocidade da câmera de espectador",
-          "names": ["sm_set_specspeed_multi", "sm_increase_specspeed", "sm_decrease_specspeed"],
+          "names": ["sm_set_specspeed_multi", "sm_set_specspeed_increment", "sm_increase_specspeed", "sm_decrease_specspeed", "sm_set_vertical_increment"],
           "syntax": ["sm_set_specspeed_multi <0-2>", "sm_set_specspeed_increment <passo>", "sm_set_vertical_increment <velocidade>"],
           "who": ["Espectadores"],
-          "description": "Comandos de console que mudam a velocidade da câmera livre. 1.0 é a velocidade normal e 2 a mais rápida. Voando, Usar (E) sobe e Recarregar (R) desce.",
-          "examples": [
-            { "code": "sm_set_specspeed_multi 1.5", "text": "Voa 50% mais rápido." },
-            { "code": "bind KP_PLUS sm_increase_specspeed", "text": "Uma tecla que acelera pelo passo (0.1 por padrão)." }
+          "description": "Comandos de console que mudam a velocidade da câmera livre enquanto você assiste. O multiplicador vai de 0 a 2 e começa em 1.0, a velocidade normal. Voando, Usar (E) sobe e Recarregar (R) desce.",
+          "examples": [{ "code": "sm_set_specspeed_multi 1.5", "text": "Voa 50% mais rápido." }, { "code": "bind KP_PLUS sm_increase_specspeed", "text": "Uma tecla que acelera pelo passo (0.1 por padrão)." }],
+          "notes": [
+            "O `sm_set_specspeed_increment` define quanto o `sm_increase_specspeed` e o `sm_decrease_specspeed` mudam a velocidade a cada vez; começa em 0.1.",
+            "O `sm_set_vertical_increment` define a velocidade com que E e R sobem e descem; começa em 450.",
+            "Um multiplicador fora de 0 a 2 é ignorado. A sua velocidade é aplicada de novo toda vez que você vai para os espectadores."
           ]
         }
       ]
@@ -588,7 +599,11 @@
           "names": ["!weaponstats", "!weapon_attributes"],
           "syntax": ["!weaponstats", "!weaponstats <arma>"],
           "who": ["Todos"],
-          "description": "Mostra os atributos das armas nesta config, como dano e dispersão."
+          "description": "Mostra os atributos que esta config dá a uma arma, como dano e dispersão. Sem nome, mostra a arma que está na sua mão.",
+          "examples": [{ "code": "!weaponstats pumpshotgun", "text": "A pump shotgun." }, { "code": "!weaponstats smg_silenced", "text": "A SMG com silenciador." }],
+          "notes": [
+            "Use o nome da arma sem `weapon_`. Armas corpo a corpo também funcionam, como `katana` ou `crowbar`."
+          ]
         },
         {
           "id": "info-stats",
@@ -674,12 +689,6 @@
           "names": ["!teamflip", "!tf"],
           "who": ["Todos"],
           "description": "Sorteia um time para você: Sobreviventes ou Infectados."
-        },
-        {
-          "id": "fun-settings",
-          "names": ["!settings"],
-          "who": ["Todos"],
-          "description": "Abre o menu das suas preferências pessoais no servidor. Elas ficam salvas para a sua conta."
         }
       ]
     },
@@ -715,7 +724,10 @@
           "names": ["!aac on", "!aac off", "!aac config"],
           "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <jogador>", "!aac remove <jogador>", "!aac list"],
           "module": "AntiCheat",
-          "description": "O `!aac on` e o `!aac off` exigem ou não o Anti-Cheat nesta partida. O `!aac config`, `mode`, `add`, `remove` e `list` mostram e mudam quem precisa usá-lo; as configurações de Anti-Cheat do site acompanham a mudança."
+          "description": "O `!aac on` e o `!aac off` ligam ou desligam a exigência do Anti-Cheat até um admin mudar de novo ou uma votação ligá-la; o `!aac off` também cancela uma ligada por votação. O `!aac config`, `mode`, `add`, `remove` e `list` mostram e mudam quem precisa usá-lo; as configurações do Anti-Cheat no site acompanham a mudança.",
+          "notes": [
+            "Só os admins root podem usar."
+          ]
         },
         {
           "id": "admin-stopmix",
@@ -737,7 +749,7 @@
         {
           "id": "admin-nextcampaign",
           "names": ["!setnextcampaign"],
-          "description": "Abre um menu para enfileirar as próximas campanhas, ou limpar a fila, em vez de um sorteio."
+          "description": "Abre um menu para pôr campanhas na fila das próximas, ou para limpá-la. A fila é usada quando um jogo termina antes, por desistência ou por jogo decidido; quando ela está vazia, a próxima campanha é sorteada."
         },
         {
           "id": "admin-campaigns",
@@ -770,7 +782,7 @@
           "id": "admin-hp",
           "names": ["!hp"],
           "syntax": ["!hp", "!hp <1-100>"],
-          "description": "Dá vida a todos os sobreviventes vivos: 100 a não ser que você diga outro valor, nunca acima de 100."
+          "description": "Soma vida a todos os sobreviventes vivos: 100 a não ser que você diga outro valor de 1 a 100. A vida nunca passa de 100, e os sobreviventes incapacitados são levantados."
         },
         {
           "id": "admin-slots",

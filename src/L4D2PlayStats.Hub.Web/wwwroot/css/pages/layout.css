@@ -1,0 +1,259 @@
+.main-container {
+    max-width: 1200px;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+a, a:visited, a:hover, a:active {
+    color: inherit;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+.navbar-nav .nav-item img {
+    width: 20px;
+    height: auto;
+    margin-top: -2px;
+}
+
+.logo {
+    height: 100%;
+    max-height: 50px;
+}
+
+.navbar-brand.site-name {
+    font-weight: bold;
+    letter-spacing: .5px;
+}
+
+.img-header-icon {
+    height: 100%;
+    max-height: 20px !important;
+    max-width: 20px !important;
+    display: inline !important;
+    margin-right: 5px;
+}
+
+.vertical-align-middle {
+    vertical-align: middle !important;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.line-break-anywhere {
+    line-break: anywhere
+}
+
+.tooltip-inner {
+    min-width: 150px;
+}
+
+.icon-copy {
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    margin: 0 5px;
+    margin-bottom: 4px;
+}
+
+.match .panel h4,
+.match .panel p {
+    margin: 0;
+}
+
+.match .icon {
+    width: 16px;
+}
+
+.match .teams .col-xs-6 {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.match table {
+    margin-bottom: 0 !important;
+}
+
+.match .img-campaign {
+    max-height: 155px;
+}
+
+.show-mobile {
+    display: none;
+}
+
+.server-info {
+    font-size: 14px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.float-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+    .float-icon img {
+        width: 70px;
+    }
+
+@media screen and (min-width: 700px) {
+    .slim {
+        width: 1px;
+        white-space: nowrap;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .hide-mobile {
+        display: none !important;
+    }
+
+    .show-mobile {
+        display: inline;
+    }
+
+    .match .left-side {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+    .match .right-side {
+        width: 100% !important;
+    }
+
+    .table-responsive thead,
+    .table-responsive tfoot,
+    .table-responsive th {
+        display: none;
+    }
+
+    .table-responsive tr {
+        border-top: 1px solid #ddd;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+
+    .table-responsive td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        text-align: right !important;
+        padding: 5px !important;
+        margin: 0px !important;
+        overflow-wrap: anywhere;
+    }
+
+        .table-responsive td::before {
+            content: attr(data-label);
+            float: left;
+            vertical-align: middle;
+            font-weight: bold;
+            padding-right: 15px;
+        }
+
+        .table-responsive td::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+}
+
+@media (min-width: 768px) and (max-width: 930px) {
+    .navbar-nav > li > a {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+.nav-stars-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: -4px 0;
+    padding: 3px 10px 3px 7px;
+    border: 1px solid rgba(240, 173, 78, .6);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(240, 173, 78, .28), rgba(240, 173, 78, .08));
+    line-height: 20px;
+    white-space: nowrap;
+    transition: background-color .2s, border-color .2s;
+}
+
+.nav-stars a:hover .nav-stars-pill,
+.nav-stars a:focus .nav-stars-pill {
+    border-color: #f0ad4e;
+    background-color: rgba(240, 173, 78, .18);
+}
+
+.nav-stars-icon {
+    color: #f0ad4e;
+    font-size: 16px;
+    text-shadow: 0 0 6px rgba(240, 173, 78, .7);
+}
+
+.nav-stars-label {
+    font-size: 12px;
+    opacity: .85;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .nav-stars-label {
+        display: none;
+    }
+}
+
+.nav-compact .nav-stars-label {
+    display: none;
+}
+
+.field-help {
+    margin-left: 4px;
+    color: #8a8f98;
+    cursor: help;
+    font-size: 13px;
+    font-weight: normal;
+    vertical-align: 1px;
+}
+
+.field-help:hover,
+.field-help:focus {
+    color: #5bc0de;
+    text-decoration: none;
+    outline: none;
+}
+
+.field-help-more {
+    color: #5bc0de;
+    cursor: pointer;
+}
+
+.field-help-more:hover,
+.field-help-more:focus {
+    color: #8fd9ef;
+}
+
+#field-help-modal .modal-title .glyphicon,
+#field-help-modal .modal-body strong {
+    color: #5bc0de;
+}
+
+.field-help-summary {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border-left: 4px solid #5bc0de;
+    border-radius: 4px;
+    background: rgba(91, 192, 222, .1);
+    font-weight: bold;
+}
+
+#field-help-modal .modal-body p:last-child {
+    margin-bottom: 0;
+}

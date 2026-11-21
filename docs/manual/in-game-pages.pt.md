@@ -8,13 +8,13 @@ Os jogadores podem ver o ranking sem sair do Left 4 Dead 2. O comando de chat `!
 
 ## Conteúdo
 
-- [As três páginas](#as-três-páginas)
+- [As quatro páginas](#as-quatro-páginas)
 - [Por que elas são diferentes](#por-que-elas-são-diferentes)
 - [O endereço usado pelo jogo](#o-endereço-usado-pelo-jogo)
 
-## As três páginas
+## As quatro páginas
 
-O painel tem três abas. Elas mostram só a temporada atual, e só as partidas ranqueadas. A barra do topo mostra o nome dessa temporada como o site faz, por exemplo **De 11/2026 até 12/2026**.
+O painel tem quatro abas. As três primeiras mostram só a temporada atual, e só as partidas ranqueadas. A barra do topo mostra o nome dessa temporada como o site faz, por exemplo **De 11/2026 até 12/2026**.
 
 **Ranking**: os 50 melhores jogadores, com patente, experiência, vitórias, derrotas, taxa de vitória e MVPs. A linha do jogador que abriu o painel fica destacada.
 
@@ -30,7 +30,11 @@ Um jogador sem nenhuma partida ranqueada na temporada vê uma mensagem curta no 
 
 ![As últimas partidas, dentro do jogo](../images/pt/ingame-matches.webp)
 
-As páginas ficam em `/ingame`, `/ingame/player` e `/ingame/matches`. O jogo acrescenta o SteamID64 do jogador ao endereço, e assim o site sabe quem abriu o painel. Elas também podem ser abertas em um navegador comum, por exemplo `/ingame?steamid=76561198000000000`.
+**Comandos**: os comandos que os jogadores podem usar no servidor, do mesmo catálogo da [página de comandos](commands.pt.md), sem os comandos dos administradores. Uma linha de links no topo leva a cada seção.
+
+![Os comandos, dentro do jogo](../images/pt/ingame-commands.webp)
+
+As páginas ficam em `/ingame`, `/ingame/player`, `/ingame/matches` e `/ingame/commands`. O jogo acrescenta o SteamID64 do jogador ao endereço, e assim o site sabe quem abriu o painel. Elas também podem ser abertas em um navegador comum, por exemplo `/ingame?steamid=76561198000000000`.
 
 ## Por que elas são diferentes
 

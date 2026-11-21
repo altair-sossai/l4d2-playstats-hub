@@ -1,0 +1,107 @@
+@using System.Text.Encodings.Web
+@model PlayerDetailsModel
+@inject ISettingsService Settings
+@inject ICampaignImageService CampaignImages
+
+@{
+    var firstPlayerRanking = Model.FirstPlayerRanking;
+    var firstPlayer = firstPlayerRanking.Player;
+    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
+    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
+
+    var secondPlayerRanking = Model.SecondPlayerRanking;
+    var secondPlayer = secondPlayerRanking?.Player;
+    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
+    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
+
+    var seasonId = Model.Period.Query;
+
+    string Width(decimal rate)
+    {
+        return (rate * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
+    }
+
+    void RenderCampaign(PlayerCampaign? campaign, RankingPlayer player, bool second, bool showName)
+    {
+        <div class="campaign-line">
+            @if (showName)
+            {
+                <div class="campaign-player @(second ? "second" : "text-muted")">
+                    @player.MainName
+                    @if (campaign is { Games: > 0 })
+                    {
+                        <small>· @campaign.Games.ToString("N0") @L["Games"]</small>
+                    }
+                </div>
+            }
+            @if (campaign is not { Games: > 0 })
+            {
+                <small class="text-muted">@L["Has not played it yet"]</small>
+            }
+            else
+            {
+                <div class="campaign-bar">
+                    <span class="streak-win" style="width: @Width(campaign.WinRate)" data-toggle="tooltip" data-container="body" title="@L["Wins"]: @campaign.WinRate.ToString("P0")"></span>
+                    <span class="streak-draw" style="width: @Width(campaign.DrawRate)" data-toggle="tooltip" data-container="body" title="@L["Draws"]: @campaign.DrawRate.ToString("P0")"></span>
+                    <span class="streak-loss" style="width: @Width(campaign.LossRate)" data-toggle="tooltip" data-container="body" title="@L["Loss"]: @campaign.LossRate.ToString("P0")"></span>
+                </div>
+                <div class="campaign-numbers">
+                    <div>
+                        <strong class="campaign-win">@campaign.Wins.ToString("N0")</strong>
+                        <small>@L["Wins"] · @campaign.WinRate.ToString("P0")</small>
+                    </div>
+                    <div>
+                        <strong>@campaign.Draws.ToString("N0")</strong>
+                        <small>@L["Draws"] · @campaign.DrawRate.ToString("P0")</small>
+                    </div>
+                    <div>
+                        <strong class="campaign-loss">@campaign.Loss.ToString("N0")</strong>
+                        <small>@L["Loss"] · @campaign.LossRate.ToString("P0")</small>
+                    </div>
+                </div>
+                @if (campaign.RageQuit > 0)
+                {
+                    <small class="text-muted">@L["Rage quit"]: @campaign.RageQuit.ToString("N0")</small>
+                }
+            }
+        </div>
+    }
+}
+
+<div role="tabpanel" class="tab-pane" id="campaigns">
+    @if (Model.Campaigns.Count == 0)
+    {
+        <div class="alert alert-info">@L["No campaign statistics for this player yet."]</div>
+    }
+    else
+    {
+        <p class="text-muted campaign-help">
+            <span class="glyphicon glyphicon-info-sign"></span> @L["Games played in each campaign this season, from the most played. Draws count as games, and a rage quit counts as a loss."]
+        </p>
+        <div class="campaign-grid">
+            @foreach (var campaign in Model.Campaigns)
+            {
+                <div class="campaign-card">
+                    <img class="campaign-cover" src="@CampaignImages.Url(campaign.Name)" alt="@campaign.Name" loading="lazy" onerror="this.onerror = null; this.src = '@CampaignImages.NoImage'"/>
+                    <div class="campaign-body">
+                        <div class="campaign-title">
+                            <strong>@campaign.Name</strong>
+                            @if (secondPlayer == null)
+                            {
+                                <span>@campaign.Games.ToString("N0") @L["Games"]</span>
+                            }
+                        </div>
+                        @{
+                            RenderCampaign(campaign.First, firstPlayer, false, secondPlayer != null);
+
+                            if (secondPlayer != null)
+                            {
+                                RenderCampaign(campaign.Second, secondPlayer, true, true);
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,217 @@
+@using System.Text.Encodings.Web
+@model PlayerDetailsModel
+@inject ISettingsService Settings
+@inject ICampaignImageService CampaignImages
+
+@{
+    var firstPlayerRanking = Model.FirstPlayerRanking;
+    var firstPlayer = firstPlayerRanking.Player;
+    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
+    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
+
+    var secondPlayerRanking = Model.SecondPlayerRanking;
+    var secondPlayer = secondPlayerRanking?.Player;
+    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
+    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
+
+    var seasonId = Model.Period.Query;
+}
+
+@{
+    void RenderCell(PlayerRelationModel? side, Func<PlayerRelationModel, int> count, Func<PlayerRelationModel, decimal>? rate, string? rateTooltip, Func<PlayerRelationModel, int> groupGames, bool second)
+    {
+        <td class="text-right @(second ? "second" : null)">@(side == null ? "0" : count(side).ToString("N0"))</td>
+        <td class="text-left @(second ? "second" : null)">
+            @if (side != null && rate != null && groupGames(side) > 0)
+            {
+                <small data-toggle="tooltip" data-placement="top" data-container="body" title="@rateTooltip">(@rate(side).ToString("P0"))</small>
+            }
+            else
+            {
+                <small>@Html.Raw("&nbsp;")</small>
+            }
+        </td>
+    }
+
+    void RenderGroup(PlayerRelationRowModel row, Func<PlayerRelationModel, int> count, Func<PlayerRelationModel, decimal>? rate, string? rateTooltip, Func<PlayerRelationModel, int> groupGames)
+    {
+        RenderCell(row.First, count, rate, rateTooltip, groupGames, false);
+        @if (secondPlayer != null)
+        {
+            RenderCell(row.Second, count, rate, rateTooltip, groupGames, true);
+        }
+    }
+
+    string Bold(int value)
+    {
+        return $"<strong>{value:N0}</strong>";
+    }
+
+    string BoldPercentage(decimal value)
+    {
+        return $"<strong>{value:P0}</strong>";
+    }
+
+    string ColoredPlayerName(long communityId, string? name)
+    {
+        var encoded = HtmlEncoder.Default.Encode(name ?? communityId.ToString());
+        var cssClass = secondPlayer != null && communityId == secondPlayer.CommunityId ? "second"
+            : communityId == firstPlayer.CommunityId ? null
+            : "text-muted";
+
+        return cssClass == null ? $"<strong>{encoded}</strong>" : $"<strong class=\"{cssClass}\">{encoded}</strong>";
+    }
+
+    void RenderRelationExplanation(long subjectId, string? subjectName, long otherId, string? otherName, PlayerRelationModel relation)
+    {
+        var subject = ColoredPlayerName(subjectId, subjectName);
+        var other = ColoredPlayerName(otherId, otherName);
+        var total = relation.TogetherGames + relation.AgainstGames;
+
+        <p>@Html.Raw(string.Format(L["{0} and {1} have crossed paths in {2} games in total."].Value, subject, other, Bold(total)))</p>
+        @if (relation.TogetherGames > 0)
+        {
+            <p>@Html.Raw(string.Format(L["Playing together, on the same team, there were {0} games: {1} wins ({2}) and {3} losses ({4})."].Value, Bold(relation.TogetherGames), Bold(relation.TogetherWins), BoldPercentage(relation.TogetherWinRate), Bold(relation.TogetherLosses), BoldPercentage(relation.TogetherLossRate)))</p>
+        }
+
+        @if (relation.AgainstGames > 0)
+        {
+            <p>@Html.Raw(string.Format(L["Playing against each other, there were {0} games: {1} won {2} ({3}) and lost {4} ({5})."].Value, Bold(relation.AgainstGames), subject, Bold(relation.AgainstWins), BoldPercentage(relation.AgainstWinRate), Bold(relation.AgainstLosses), BoldPercentage(relation.AgainstLossRate)))</p>
+        }
+    }
+}
+
+@{
+    var relations = Model.Relations;
+}
+
+<div role="tabpanel" class="tab-pane" id="relations">
+    @if (relations.Any())
+    {
+        <h4 class="text-center">
+            @L["Player relationships"]
+            <small class="text-muted">
+                (@firstPlayer.MainName
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.MainName</span>
+                }
+                )
+            </small>
+        </h4>
+
+        var relationColspan = secondPlayer != null ? 4 : 2;
+        var relationCount = 0;
+
+        <div class="row">
+            @foreach (var row in relations)
+            {
+                <div class="col-md-6 col-xs-12 relation-card-item @(++relationCount > AppConsts.PlayerRelationsVisible ? "hidden" : null)">
+                    <div class="panel @(secondPlayer != null && row.CommunityId == secondPlayer.CommunityId ? "panel-warning" : "panel-default")">
+                        <div class="panel-heading">
+                            <button type="button" class="btn btn-link btn-xs pull-right" style="padding: 0" data-toggle="tooltip" data-placement="left" title="@L["I don't get it, explain it to me"]" onclick="$('#relation-help-@row.CommunityId').modal('show')">
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </button>
+                            @if (row.Player != null)
+                            {
+                                <a href="@PlayerUrls.Details(row.CommunityId, secondPlayer?.CommunityId, seasonId)">@row.Name</a>
+                            }
+                            else
+                            {
+                                @row.Name
+                            }
+                            <small class="text-muted">| @row.TotalGames.ToString("N0") @L["Games"]</small>
+                        </div>
+                        <div class="panel-body" style="padding: 5px">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <img src="/avatar/@row.CommunityId" alt="@row.Name" title="@row.Name" class="img-thumbnail" onerror="imgOnError(this)" style="margin-bottom: 15px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <table class="table table-condensed" style="margin-bottom: 5px">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="text-center" colspan="@relationColspan">@L["Playing together"]</th>
+                                            <th class="text-center" colspan="@relationColspan">@L["Playing against"]</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th>@L["Games"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherGames, null, null, r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstGames, null, null, r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <th>@L["Wins"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherWins, r => r.TogetherWinRate, L["Win rate"], r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstWins, r => r.AgainstWinRate, L["Win rate"], r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <th>@L["Loss"]</th>
+                                            @{
+                                                RenderGroup(row, r => r.TogetherLosses, r => r.TogetherLossRate, L["Loss rate"], r => r.TogetherGames);
+                                                RenderGroup(row, r => r.AgainstLosses, r => r.AgainstLossRate, L["Loss rate"], r => r.AgainstGames);
+                                            }
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="relation-help-@row.CommunityId" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">@L["Understanding the numbers"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    @if (row.First != null)
+                                    {
+                                        RenderRelationExplanation(firstPlayer.CommunityId, firstPlayer.MainName, row.CommunityId, row.Name, row.First);
+                                    }
+                                    @if (row.Second != null && secondPlayer != null)
+                                    {
+                                        var otherIsSecond = row.CommunityId == secondPlayer.CommunityId;
+                                        var otherId = otherIsSecond ? firstPlayer.CommunityId : row.CommunityId;
+                                        var otherName = otherIsSecond ? firstPlayer.MainName : row.Name;
+
+                                        if (row.First != null)
+                                        {
+                                            <hr/>
+                                        }
+
+                                        RenderRelationExplanation(secondPlayer.CommunityId, secondPlayer.MainName, otherId, otherName, row.Second);
+                                    }
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (relations.Count > AppConsts.PlayerRelationsVisible)
+        {
+            <div class="row text-center" style="margin: 10px; margin-bottom: 25px">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-primary" id="btn-show-more-relations" data-visible="@AppConsts.PlayerRelationsVisible" data-more="@L["Show more players"]" data-less="@L["Hide"]">
+                        @L["Show more players"]
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -7,54 +7,7 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
-    <style>
-        .cm-route {
-            display: block;
-            font-size: 12px;
-            opacity: .75;
-        }
-
-        .cm-table {
-            margin-bottom: 6px;
-        }
-
-            .cm-table > tbody > tr > td {
-                vertical-align: middle;
-                border-top: 0;
-            }
-
-            .cm-table .cm-order {
-                width: 1%;
-                opacity: .65;
-                text-align: right;
-                white-space: nowrap;
-            }
-
-            .cm-table .cm-actions {
-                width: 1%;
-                white-space: nowrap;
-            }
-
-        .cm-editor .cm-empty {
-            display: none;
-        }
-
-        .cm-editor.cm-none .cm-empty {
-            display: block;
-        }
-
-        .cm-editor.cm-none .cm-table {
-            display: none;
-        }
-
-        .cm-editor .cm-required {
-            display: none;
-        }
-
-        .cm-editor.cm-invalid .cm-required {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/admin-campaigns.css" asp-append-version="true"/>
 }
 
 <div class="admin-header">

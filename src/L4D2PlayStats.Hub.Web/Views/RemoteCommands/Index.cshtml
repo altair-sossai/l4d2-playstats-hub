@@ -9,15 +9,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
-    <style>
-        .rc-command {
-            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-        }
-
-        .rc-log {
-            cursor: default;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/remote-commands-index.css" asp-append-version="true"/>
 }
 
 @section Scripts {

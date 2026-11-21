@@ -7,16 +7,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
-    <style>
-        .pa-table img {
-            width: 32px;
-            height: 32px;
-        }
-
-        .pa-table .pa-xp {
-            font-variant-numeric: tabular-nums;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/patents-admin-index.css" asp-append-version="true"/>
 }
 
 <div class="admin-header">

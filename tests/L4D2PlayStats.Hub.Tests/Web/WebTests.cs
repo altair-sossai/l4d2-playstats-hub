@@ -256,6 +256,26 @@ public class WebTests
     }
 
     [TestMethod]
+    public async Task TheGameHasACommandsTabWithThePlayerCommandsOnly()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        var page = await client.GetStringAsync($"/ingame/commands?steamid={StatisticsBuilder.PlayerA1}");
+        var ranking = await client.GetStringAsync("/ingame");
+
+        Assert.Contains("<code>!mix</code>", page);
+        Assert.Contains("<code>!ready</code>", page);
+        Assert.Contains("href=\"#commands-mix\"", page);
+        Assert.DoesNotContain("<code>!stopmix</code>", page);
+        Assert.DoesNotContain("commands-admin", page);
+        Assert.Contains($"href=\"/ingame/player?steamid={StatisticsBuilder.PlayerA1}\"", page);
+        Assert.Contains("href=\"/ingame/commands\"", ranking);
+    }
+
+    [TestMethod]
     public async Task ThePagesForTheGameUseNothingTheOldBrowserLacks()
     {
         using var factory = new HubWebFactory();
@@ -273,7 +293,7 @@ public class WebTests
 
         string[] forbidden = ["<script", "display: flex", "display:flex", "display: grid", "display:grid", "var(--", "calc(", "vh;", "vw;", "<link", ".webp", ".avif"];
 
-        foreach (var page in new[] { "/ingame", $"/ingame/player?steamid={StatisticsBuilder.PlayerA1}", "/ingame/matches" })
+        foreach (var page in new[] { "/ingame", $"/ingame/player?steamid={StatisticsBuilder.PlayerA1}", "/ingame/matches", "/ingame/commands" })
         {
             var html = await client.GetStringAsync(page);
 

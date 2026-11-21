@@ -166,6 +166,7 @@ function shots(vars) {
         { name: 'ingame-ranking', path: `/ingame?steamid=${player}`, width: 900, height: 450 },
         { name: 'ingame-player', path: `/ingame/player?steamid=${player}`, width: 900, height: 450 },
         { name: 'ingame-matches', path: `/ingame/matches?steamid=${player}`, width: 900, height: 450 },
+        { name: 'ingame-commands', path: `/ingame/commands?steamid=${player}`, width: 900, height: 450 },
         { name: 'theme-light-ranking', theme: 'light', path: '/', full: true, maxHeight: 800 },
         { name: 'theme-light-match', theme: 'light', path: vars.match, full: true, maxHeight: 960 },
         { name: 'phone-menu', width: phone, path: '/', before: [`$('.navbar-toggle').click()`, { sleep: 800 }] },

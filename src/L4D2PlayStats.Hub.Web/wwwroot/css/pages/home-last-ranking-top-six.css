@@ -1,0 +1,15 @@
+.last-ranking-header {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.last-ranking-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.trophy {
+    margin: 0 16px;
+}

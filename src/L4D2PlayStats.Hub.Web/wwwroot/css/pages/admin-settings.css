@@ -1,0 +1,25 @@
+.fl-table {
+    margin-bottom: 6px;
+}
+
+    .fl-table > tbody > tr > td {
+        vertical-align: middle;
+        border-top: 0;
+    }
+
+    .fl-table .fl-actions {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+.fl-editor .fl-empty {
+    display: none;
+}
+
+.fl-editor.fl-none .fl-empty {
+    display: block;
+}
+
+.fl-editor.fl-none .fl-table {
+    display: none;
+}

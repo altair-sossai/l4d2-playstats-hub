@@ -11,7 +11,7 @@
           "id": "anticheat-check",
           "names": ["!aac"],
           "who": ["Everyone"],
-          "description": "Tells you, privately, whether you must run the Anti-Cheat and whether yours is working, with the download link."
+          "description": "Tells you, privately, whether the Anti-Cheat is on and whether you must use it. If you must and yours is not running, it also gives you the download link."
         },
         {
           "id": "anticheat-vote",
@@ -22,7 +22,7 @@
           "notes": [
             "Only in the ready-up of the first round of the first map, with both teams full and no mix running.",
             "The vote lasts 20 s and passes with more than half of the team players.",
-            "If it passes, it stays on for the whole match.",
+            "If it passes, it stays on until the match ends, or until the server has been empty for 10 minutes. Whoever must use it and does not have it open goes to the spectators.",
             "After a failed vote, wait 60 s before trying again."
           ]
         }
@@ -136,9 +136,14 @@
         {
           "id": "match-decided",
           "title": "\"Game decided, keep playing?\"",
-          "who": ["Everyone"],
+          "who": ["Losing team"],
           "when": ["Automatic"],
-          "description": "On the 4th map, 2nd round, when the score difference is 15 points or more, the server asks everyone by itself whether the game is decided or should go on."
+          "description": "On the 4th map of a campaign longer than 4 maps, in the 2nd round, when one team is 15 points or more ahead, or the team that is behind can no longer catch up, the server asks the losing team whether to keep playing.",
+          "notes": [
+            "It waits while a Tank is alive or a survivor is incapacitated.",
+            "Only the human players of the losing team vote, for 15 s. The game goes on if at least half of them vote Yes; not voting counts as No.",
+            "On No, the game ends: the next campaign is announced, everyone is slain after 5 s and the server changes to that campaign."
+          ]
         }
       ]
     },
@@ -153,9 +158,13 @@
           "names": ["!hear"],
           "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
           "who": ["Spectators"],
-          "description": "Chooses whose voice you hear while you watch. Without an option, a menu opens.",
-          "examples": [{ "code": "!hear infected", "text": "You hear only the Infected team." }],
-          "notes": ["Short forms of the options also work.", "It has no effect while all-talk is on."]
+          "description": "Chooses whose voice you hear while you watch, besides the other spectators, whom you always hear. Without an option, a menu opens with your current choice marked.",
+          "examples": [{ "code": "!hear infected", "text": "You hear the Infected team and the spectators." }],
+          "notes": [
+            "Short forms also work: `surv` or `2` for the Survivors, `infec`, `zombie` or `3` for the Infected, `spec` or `1` for the spectators only, `everyone` or `0` for all.",
+            "It goes back to `all` at every map change.",
+            "It has no effect while all-talk is on."
+          ]
         }
       ]
     },
@@ -518,13 +527,15 @@
         {
           "id": "teams-specspeed",
           "title": "Spectator fly speed",
-          "names": ["sm_set_specspeed_multi", "sm_increase_specspeed", "sm_decrease_specspeed"],
+          "names": ["sm_set_specspeed_multi", "sm_set_specspeed_increment", "sm_increase_specspeed", "sm_decrease_specspeed", "sm_set_vertical_increment"],
           "syntax": ["sm_set_specspeed_multi <0-2>", "sm_set_specspeed_increment <step>", "sm_set_vertical_increment <speed>"],
           "who": ["Spectators"],
-          "description": "Console commands that change how fast the free camera flies. 1.0 is the normal speed and 2 the fastest. While flying, Use (E) goes up and Reload (R) goes down.",
-          "examples": [
-            { "code": "sm_set_specspeed_multi 1.5", "text": "Flies 50% faster." },
-            { "code": "bind KP_PLUS sm_increase_specspeed", "text": "A key that speeds up by the step (0.1 by default)." }
+          "description": "Console commands that change how fast the free camera flies while you spectate. The speed multiplier goes from 0 to 2 and starts at 1.0, the normal speed. While flying, Use (E) goes up and Reload (R) goes down.",
+          "examples": [{ "code": "sm_set_specspeed_multi 1.5", "text": "Flies 50% faster." }, { "code": "bind KP_PLUS sm_increase_specspeed", "text": "A key that speeds up by the step (0.1 by default)." }],
+          "notes": [
+            "`sm_set_specspeed_increment` sets how much `sm_increase_specspeed` and `sm_decrease_specspeed` change the speed each time; it starts at 0.1.",
+            "`sm_set_vertical_increment` sets how fast E and R move you up and down; it starts at 450.",
+            "A multiplier outside 0 to 2 is ignored. Your speed is applied again every time you join the spectators."
           ]
         }
       ]
@@ -588,7 +599,11 @@
           "names": ["!weaponstats", "!weapon_attributes"],
           "syntax": ["!weaponstats", "!weaponstats <weapon>"],
           "who": ["Everyone"],
-          "description": "Shows the attributes of the weapons in this config, such as damage and spread."
+          "description": "Shows the attributes this config gives a weapon, such as damage and spread. Without a name it shows the weapon in your hands.",
+          "examples": [{ "code": "!weaponstats pumpshotgun", "text": "The pump shotgun." }, { "code": "!weaponstats smg_silenced", "text": "The silenced SMG." }],
+          "notes": [
+            "Use the weapon name without `weapon_`. Melee weapons work too, such as `katana` or `crowbar`."
+          ]
         },
         {
           "id": "info-stats",
@@ -674,12 +689,6 @@
           "names": ["!teamflip", "!tf"],
           "who": ["Everyone"],
           "description": "Draws a team for you: Survivors or Infected."
-        },
-        {
-          "id": "fun-settings",
-          "names": ["!settings"],
-          "who": ["Everyone"],
-          "description": "Opens the menu of your personal preferences on the server. They are saved for your account."
         }
       ]
     },
@@ -715,7 +724,10 @@
           "names": ["!aac on", "!aac off", "!aac config"],
           "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <player>", "!aac remove <player>", "!aac list"],
           "module": "AntiCheat",
-          "description": "`!aac on` and `!aac off` require the Anti-Cheat or not in this match. `!aac config`, `mode`, `add`, `remove` and `list` show and change who must use it; the site's Anti-Cheat settings follow the change."
+          "description": "`!aac on` and `!aac off` turn the Anti-Cheat requirement on or off until an admin changes it again or a vote turns it on; `!aac off` also cancels one turned on by a vote. `!aac config`, `mode`, `add`, `remove` and `list` show and change who must use it; the site's Anti-Cheat settings follow the change.",
+          "notes": [
+            "Only root admins can use it."
+          ]
         },
         {
           "id": "admin-stopmix",
@@ -737,7 +749,7 @@
         {
           "id": "admin-nextcampaign",
           "names": ["!setnextcampaign"],
-          "description": "Opens a menu to queue the next campaigns, or clear the queue, instead of a random draw."
+          "description": "Opens a menu to add campaigns to the queue of next campaigns, or to clear it. The queue is used when a game ends early, by a surrender or a decided game; when it is empty, the next campaign is drawn at random."
         },
         {
           "id": "admin-campaigns",
@@ -770,7 +782,7 @@
           "id": "admin-hp",
           "names": ["!hp"],
           "syntax": ["!hp", "!hp <1-100>"],
-          "description": "Gives health to every living survivor: 100 unless you say otherwise, never above 100."
+          "description": "Adds health to every living survivor: 100 unless you give another amount from 1 to 100. Health never goes above 100, and incapacitated survivors are picked up."
         },
         {
           "id": "admin-slots",

@@ -21,6 +21,8 @@ The page follows the [modules](administration.md#modules): commands that need a 
 
 ![The commands page](../images/en/commands.webp)
 
+Players can also read the commands inside the game: the panel that `!ranking` opens has a **Commands** tab with the same text, without the administrator commands. See [Pages inside the game](in-game-pages.md#the-four-pages).
+
 ## Where the content lives
 
 The text of the page is not in the HTML. It is in one catalog per language, in `src/L4D2PlayStats.Hub.Web/Resources/Commands`:

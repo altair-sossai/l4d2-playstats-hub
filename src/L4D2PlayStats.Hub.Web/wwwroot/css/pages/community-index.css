@@ -1,0 +1,45 @@
+.place {
+    width: 30px;
+}
+
+table {
+    margin-bottom: 0 !important;
+}
+
+p {
+    margin-bottom: 0 !important;
+}
+
+th {
+    vertical-align: middle !important;
+}
+
+.community-lead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+    .community-lead small {
+        margin-right: 10px;
+        font-style: italic;
+    }
+
+.community-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.community-votes-link {
+    margin-left: 6px;
+    font-size: 12px;
+    opacity: .55;
+}
+
+    .community-votes-link:hover,
+    .community-votes-link:focus {
+        opacity: 1;
+        text-decoration: none;
+    }

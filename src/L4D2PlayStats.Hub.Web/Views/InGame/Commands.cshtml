@@ -1,0 +1,65 @@
+@model InGameCommandsViewModel
+@{
+    Layout = "_InGameLayout";
+    ViewData["Tab"] = "commands";
+}
+<div class="jump">
+    @foreach (var group in Model.Sections)
+    {
+        <a href="#@group.Anchor">@group.Title</a>
+    }
+</div>
+@foreach (var group in Model.Sections)
+{
+    <div class="section" id="@group.Anchor">@group.Title</div>
+    <p class="intro muted">@CommandText.Format(group.Intro)</p>
+    @foreach (var command in group.Commands)
+    {
+        <div class="cmd">
+            <p>
+                @if (!string.IsNullOrEmpty(command.Title))
+                {
+                    <span class="cmd-title">@command.Title</span>
+                }
+                @foreach (var name in command.Names)
+                {
+                    <code>@name</code>
+                }
+                @if (command.Who.Count > 0 || command.When.Count > 0)
+                {
+                    <span class="muted">&nbsp;@string.Join(" · ", command.Who.Concat(command.When))</span>
+                }
+            </p>
+            @if (command.Syntax.Count > 0)
+            {
+                <p>
+                    <span class="muted">@L["How to use"]:</span>
+                    @foreach (var syntax in command.Syntax)
+                    {
+                        <code>@syntax</code>
+                    }
+                </p>
+            }
+            <p>@CommandText.Format(command.Description)</p>
+            @if (command.Examples.Count > 0 || command.Notes.Count > 0)
+            {
+                <ul>
+                    @foreach (var example in command.Examples)
+                    {
+                        <li>
+                            <code>@example.Code</code>
+                            @if (!string.IsNullOrEmpty(example.Text))
+                            {
+                                <span class="muted">@CommandText.Format(example.Text)</span>
+                            }
+                        </li>
+                    }
+                    @foreach (var note in command.Notes)
+                    {
+                        <li class="muted">@CommandText.Format(note)</li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+}

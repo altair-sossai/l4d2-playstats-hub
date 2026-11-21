@@ -1,0 +1,8 @@
+.pa-table img {
+    width: 32px;
+    height: 32px;
+}
+
+.pa-table .pa-xp {
+    font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,120 @@
+.admin-layout {
+    margin-top: 15px;
+}
+
+.admin-menu {
+    margin-bottom: 10px;
+}
+
+.admin-menu-toggle {
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+}
+
+    .admin-menu-toggle .admin-menu-current {
+        flex: 1;
+        min-width: 0;
+        margin: 0 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .admin-menu-toggle small {
+        opacity: .7;
+        margin-right: 4px;
+    }
+
+    .admin-menu-toggle:not(.collapsed) .caret {
+        transform: rotate(180deg);
+    }
+
+.admin-menu-title {
+    display: none;
+    font-weight: bold;
+}
+
+.admin-menu-items {
+    padding: 4px 6px 8px;
+}
+
+.admin-menu-heading {
+    margin: 10px 10px 4px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    opacity: .6;
+}
+
+.admin-menu .nav-stacked > li + li {
+    margin-top: 1px;
+}
+
+.admin-menu .nav-pills > li > a {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.admin-menu .nav-pills > li:not(.active) > a {
+    border-color: transparent;
+    background-color: transparent;
+    background-image: none;
+    text-shadow: none;
+}
+
+    .admin-menu .nav-pills > li:not(.active) > a:hover,
+    .admin-menu .nav-pills > li:not(.active) > a:focus {
+        background-color: rgba(128, 128, 128, .15);
+    }
+
+.admin-menu-icon {
+    display: inline-block;
+    flex: 0 0 16px;
+    width: 16px;
+    margin-right: 8px;
+    text-align: center;
+}
+
+img.admin-menu-icon {
+    height: 16px;
+    vertical-align: -3px;
+}
+
+@media (min-width: 992px) {
+    .admin-layout {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+    .admin-menu {
+        position: sticky;
+        top: 10px;
+        flex: 0 0 240px;
+        width: 240px;
+        max-height: calc(100vh - 20px);
+        margin: 0 20px 20px 0;
+        overflow-y: auto;
+    }
+
+    .admin-menu-toggle {
+        display: none;
+    }
+
+    .admin-menu-title {
+        display: block;
+    }
+
+    .admin-menu-items.collapse {
+        display: block;
+        height: auto !important;
+    }
+
+    .admin-content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}

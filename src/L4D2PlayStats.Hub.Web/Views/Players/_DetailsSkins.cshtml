@@ -1,0 +1,113 @@
+@using System.Text.Encodings.Web
+@model PlayerDetailsModel
+@inject ISettingsService Settings
+@inject ICampaignImageService CampaignImages
+
+@{
+    var firstPlayerRanking = Model.FirstPlayerRanking;
+    var firstPlayer = firstPlayerRanking.Player;
+    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
+    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
+
+    var secondPlayerRanking = Model.SecondPlayerRanking;
+    var secondPlayer = secondPlayerRanking?.Player;
+    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
+    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
+
+    var seasonId = Model.Period.Query;
+
+    void RenderWallet(PlayerSkinsModel? playerSkins)
+    {
+        var wallet = playerSkins?.Wallet;
+
+        if (wallet == null)
+            return;
+
+        <span class="player-stars">
+            <span class="player-stars-icon">★</span>
+            <strong>@wallet.Balance.ToString("N0")</strong>
+            @L[wallet.Balance == 1 ? "star available" : "stars available"]
+            <small>· @string.Format(L["{0} earned, {1} spent"].Value, wallet.Stars.ToString("N0"), wallet.Spent.ToString("N0"))</small>
+        </span>
+    }
+
+    void RenderPlayerSkins(PlayerSkinsModel? playerSkins, RankingPlayer player, bool second, bool showName)
+    {
+        var ownedSkins = playerSkins?.OwnedSkins ?? [];
+
+        <div class="player-skins-row">
+            @if (showName || playerSkins?.Wallet != null)
+            {
+                <div class="player-skins-header">
+                    @if (showName)
+                    {
+                        <span class="streak-name @(second ? "second" : "text-muted")">
+                            @player.MainName <small>(@ownedSkins.Count.ToString("N0"))</small>
+                        </span>
+                    }
+                    @{ RenderWallet(playerSkins); }
+                </div>
+            }
+            @if (ownedSkins.Count == 0)
+            {
+                <p class="text-muted" style="margin: 0">@L["This player does not own any skins yet."]</p>
+            }
+            else
+            {
+                <div class="player-skins">
+                    @foreach (var skin in ownedSkins)
+                    {
+                        var title = skin.Title(CultureInfo.CurrentUICulture);
+                        var image = playerSkins!.Image(skin);
+                        var equipped = playerSkins.IsEquipped(skin);
+
+                        <a class="player-skin @(equipped ? "player-skin-equipped" : "")" href="@(AppConsts.SkinShopUrl + AppConsts.PlayerSkinAnchor + skin.Id)" title="@title">
+                            @if (image != null)
+                            {
+                                <img src="@image" alt="@title" loading="lazy"/>
+                            }
+                            else
+                            {
+                                <div class="player-skin-no-image"></div>
+                            }
+                            <span class="@(second ? "second" : "")">@title</span>
+                            @if (equipped)
+                            {
+                                <span class="label label-success">@L["Equipped"]</span>
+                            }
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (Model.SkinShop)
+{
+    <div role="tabpanel" class="tab-pane" id="skins">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @L["Skins"] <span class="badge">@((Model.FirstPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="badge badge-second">@((Model.SecondPlayerSkins?.OwnedSkins.Count ?? 0).ToString("N0"))</span>
+                }
+                <a class="pull-right" href="@AppConsts.SkinShopUrl">@L["See the skin shop"]</a>
+            </div>
+            <div class="panel-body">
+                @{
+                    RenderPlayerSkins(Model.FirstPlayerSkins, firstPlayer, false, secondPlayer != null);
+
+                    if (secondPlayer != null)
+                    {
+                        RenderPlayerSkins(Model.SecondPlayerSkins, secondPlayer, true, true);
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+}

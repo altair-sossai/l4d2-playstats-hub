@@ -1,0 +1,15 @@
+#command-container {
+    text-align: center;
+    margin: 8px 0;
+    padding: 0 10px;
+    word-break: break-all;
+}
+
+#commands {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+#commands h5 {
+    margin: 0;
+}
