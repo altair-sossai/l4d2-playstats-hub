@@ -79,12 +79,12 @@ public class LiveParityPageTests
         await factory.CreateServerAsync("First");
         await factory.RunAsync(services => services.GetRequiredService<IGameServerService>().CreateAsync("Second", "play.example.com:27015"));
 
-        var page = await client.GetStringAsync("/servers");
+        var page = await client.WithScriptsAsync("/servers");
         var cards = await client.GetStringAsync("/servers?cards=true");
 
         Assert.Contains("<html", page);
         Assert.Contains("id=\"server-cards\"", page);
-        Assert.Contains("/servers?cards=true", page);
+        Assert.Contains("+ '?cards=true'", page);
         Assert.DoesNotContain("<html", cards);
         Assert.Contains("id=\"server-card-first\"", cards);
         Assert.Contains("id=\"server-card-second\"", cards);
@@ -223,7 +223,7 @@ public class LiveParityPageTests
         factory.PassTheDelay();
 
         var header = await client.GetStringAsync("/servers/test-server/header");
-        var page = await client.GetStringAsync("/servers");
+        var page = await client.WithScriptsAsync("/servers");
         var badge = await client.GetFromJsonAsync<JsonElement>("/api/server");
         var status = factory.Services.GetRequiredService<IGameServerPresence>().GetStatus(credentials.Server);
 

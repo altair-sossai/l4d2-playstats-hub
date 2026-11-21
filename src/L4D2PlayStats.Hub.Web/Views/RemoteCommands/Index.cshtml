@@ -17,17 +17,7 @@
     {
         @await Html.PartialAsync("_CommandBuilder")
 
-        <script>
-            terminal.apply = function (command) {
-                $('#command').val(command);
-
-                $('#terminal').one('hidden.bs.modal', function () {
-                    $('#command').trigger('focus');
-                });
-
-                return true;
-            };
-        </script>
+        <script src="~/js/pages/remote-commands-index.js" asp-append-version="true"></script>
     }
 }
 

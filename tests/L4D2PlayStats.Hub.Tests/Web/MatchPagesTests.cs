@@ -165,7 +165,7 @@ public partial class MatchPagesTests
         Assert.DoesNotContain("editScore(", await visitor.GetStringAsync(page));
         Assert.DoesNotContain("editScore(", await player.GetStringAsync(page));
 
-        var body = await administrator.GetStringAsync(page);
+        var body = await administrator.WithScriptsAsync(page);
 
         Assert.AreEqual(4, Regex.Count(body, "onclick=\"editScore\\("));
         Assert.Contains("/update-score", body);
@@ -446,6 +446,6 @@ public partial class MatchPagesTests
         return new DateTime(now.Year, now.Month, Math.Min(now.Day, 20), 12, 0, 0);
     }
 
-    [GeneratedRegex("\"RequestVerificationToken\": \"([^\"]+)\"")]
+    [GeneratedRegex("\"RequestVerificationToken\":\\s*\"([^\"]+)\"")]
     private static partial Regex TokenPattern();
 }

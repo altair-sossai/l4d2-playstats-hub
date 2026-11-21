@@ -74,7 +74,7 @@ public class PlayerLinksTests
 
         Assert.Contains($"href=\"/player/{HubWebFactory.Administrator}\"", administrators);
         Assert.DoesNotContain($"href=\"https://steamcommunity.com/profiles/{HubWebFactory.Administrator}\"", administrators);
-        Assert.Contains("playerUrl: \"/player/\"", chatBans);
+        Assert.Contains("\"playerUrl\": \"/player/\"", chatBans);
     }
 
     [TestMethod]

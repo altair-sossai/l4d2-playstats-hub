@@ -3,6 +3,7 @@ using System.Threading.Channels;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
+using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Infrastructure.Live;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -215,16 +216,19 @@ public class LiveHubTests
         await factory.CompleteSetupAsync();
         await factory.CreateServerAsync();
 
-        var page = await client.GetStringAsync("/servers/test-server");
+        var page = await client.WithScriptsAsync("/servers/test-server");
+        var values = PageScripts.Config(page, "servers-live").GetProperty("values");
 
         Assert.Contains("/lib/signalr/signalr.min.js", page);
-        Assert.Contains($"var liveHubUrl = '{WebConsts.LiveHubUrl}';", page);
-        Assert.Contains("var serverPublicId = \"test-server\";", page);
-        Assert.Contains($"var refreshInterval = {CoreConsts.LiveRefreshInMilliseconds};", page);
-        Assert.Contains($"var safetyRefreshInterval = {WebConsts.LivePageSafetyRefreshInMilliseconds};", page);
+        Assert.AreEqual(WebConsts.LiveHubUrl, values.GetProperty("AppConsts.LiveHubUrl").GetString());
+        Assert.AreEqual("test-server", values.GetProperty("publicId").GetString());
+        Assert.AreEqual(CoreConsts.LiveRefreshInMilliseconds, values.GetProperty("(await ChatSettings.GetAsync<LiveServerSettings>()).RefreshInMilliseconds").GetInt32());
+        Assert.AreEqual(WebConsts.LivePageSafetyRefreshInMilliseconds, values.GetProperty("AppConsts.LivePageSafetyRefreshInMilliseconds").GetInt32());
         Assert.Contains("if (typeof signalR === 'undefined' || !window.Promise)", page);
-        Assert.Contains($"connection.on('{WebConsts.LiveHubChangedMethod}'", page);
-        Assert.Contains($"connection.invoke('{nameof(LiveHub.Watch)}', serverPublicId)", page);
+        Assert.AreEqual(WebConsts.LiveHubChangedMethod, values.GetProperty("AppConsts.LiveHubChangedMethod").GetString());
+        Assert.Contains("connection.on(serversLiveConfig.values[\"AppConsts.LiveHubChangedMethod\"]", page);
+        Assert.AreEqual(nameof(LiveHub.Watch), values.GetProperty("nameof(LiveHub.Watch)").GetString());
+        Assert.Contains("connection.invoke(serversLiveConfig.values[\"nameof(LiveHub.Watch)\"], serverPublicId)", page);
         Assert.Contains("pushConnected ? safetyRefreshInterval : interval", page);
         Assert.Contains("url: serverUrl + '/header'", page);
         Assert.Contains("url: serverUrl + '/players'", page);

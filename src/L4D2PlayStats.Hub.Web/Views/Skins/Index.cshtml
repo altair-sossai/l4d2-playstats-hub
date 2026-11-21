@@ -33,7 +33,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/pages/skins.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/skins-index.css" asp-append-version="true"/>
 }
 
 @Html.AntiForgeryToken()
@@ -679,40 +679,38 @@
 }
 
 @section Scripts {
-    <script src="~/js/panzoom.min.js"></script>
-    <script>
-        var HubPage = {
-            texts: {
-                balance: @Json.Serialize(wallet?.Balance ?? 0),
-                confirmUnequip: @Json.Serialize(L["Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later."].Value),
-                confirmBuy: @Json.Serialize(L["Buy <b>{0}</b> for <b>{1} ⭐</b>?"].Value),
-                confirmBalance: @Json.Serialize(L["Your balance goes from {0} ⭐ to {1} ⭐."].Value),
-                confirmEquip: @Json.Serialize(L["Once done, it is equipped on your weapon ({0}) right away and shows up on the server from the next map change."].Value),
-                confirmSeason: @Json.Serialize(season.Refunds ? string.Format(L["It lasts until the end of the ranking season, on {0}; then it is refunded automatically and the stars come back to you."].Value, season.LastDay.ToString("d", culture)) : null),
-                confirmFinal: @Json.Serialize(season.Refunds ? L["Purchases cannot be undone before the ranking reset."].Value : L["Purchases cannot be undone."].Value),
-                authorRequestUrl: @Json.Serialize(authorRequestUrl),
-                buySuccessTitle: @Json.Serialize(L["Purchase complete!"].Value),
-                buySuccess: @Json.Serialize(L["<b>{0}</b> is now equipped on your weapon ({1})."].Value),
-                equipSuccessTitle: @Json.Serialize(L["Skin equipped!"].Value),
-                equipSuccess: @Json.Serialize(L["Skins.Index.EquipSuccessText"].Value),
-                unequipSuccessTitle: @Json.Serialize(L["Default skin is back"].Value),
-                unequipSuccess: @Json.Serialize(L["Your weapon ({0}) is back to the default skin."].Value),
-                nextMap: @Json.Serialize(L["The change shows up on the server <b>from the next map change</b>. If you are playing right now, it kicks in when the map changes."].Value),
-                switchHint: @Json.Serialize(L["In game, during ready-up, use <code>!skin next</code> and <code>!skin prev</code> to switch between your skins, or <code>!skin default</code> to go back to the default one."].Value),
-                errorTitle: @Json.Serialize(L["It did not work"].Value),
-                previousPhoto: @Json.Serialize(L["Previous photo"].Value),
-                nextPhoto: @Json.Serialize(L["Next photo"].Value),
-                errors: {
-                    InsufficientStars: @Json.Serialize(L["You do not have enough stars for this skin. No stars were spent."].Value),
-                    AlreadyOwned: @Json.Serialize(L["You already own this skin. No stars were spent."].Value),
-                    StarsUnavailable: @Json.Serialize(L["We could not check your stars right now. Try again in a moment. No stars were spent."].Value),
-                    Busy: @Json.Serialize(L["Too many operations at the same time. Try again. No stars were spent."].Value),
-                    NotOwned: @Json.Serialize(L["You do not own this skin yet."].Value),
-                    SkinNotFound: @Json.Serialize(L["This skin is no longer available."].Value),
-                    Generic: @Json.Serialize(L["Something went wrong. Reload the page to check whether the operation went through before trying again."].Value)
+    <script src="~/js/panzoom.min.js" asp-append-version="true"></script>
+    <script type="application/json" id="skins-index-config">{
+            "texts": {
+                "balance": @Json.Serialize(wallet?.Balance ?? 0),
+                "confirmUnequip": @Json.Serialize(L["Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later."].Value),
+                "confirmBuy": @Json.Serialize(L["Buy <b>{0}</b> for <b>{1} ⭐</b>?"].Value),
+                "confirmBalance": @Json.Serialize(L["Your balance goes from {0} ⭐ to {1} ⭐."].Value),
+                "confirmEquip": @Json.Serialize(L["Once done, it is equipped on your weapon ({0}) right away and shows up on the server from the next map change."].Value),
+                "confirmSeason": @Json.Serialize(season.Refunds ? string.Format(L["It lasts until the end of the ranking season, on {0}; then it is refunded automatically and the stars come back to you."].Value, season.LastDay.ToString("d", culture)) : null),
+                "confirmFinal": @Json.Serialize(season.Refunds ? L["Purchases cannot be undone before the ranking reset."].Value : L["Purchases cannot be undone."].Value),
+                "authorRequestUrl": @Json.Serialize(authorRequestUrl),
+                "buySuccessTitle": @Json.Serialize(L["Purchase complete!"].Value),
+                "buySuccess": @Json.Serialize(L["<b>{0}</b> is now equipped on your weapon ({1})."].Value),
+                "equipSuccessTitle": @Json.Serialize(L["Skin equipped!"].Value),
+                "equipSuccess": @Json.Serialize(L["Skins.Index.EquipSuccessText"].Value),
+                "unequipSuccessTitle": @Json.Serialize(L["Default skin is back"].Value),
+                "unequipSuccess": @Json.Serialize(L["Your weapon ({0}) is back to the default skin."].Value),
+                "nextMap": @Json.Serialize(L["The change shows up on the server <b>from the next map change</b>. If you are playing right now, it kicks in when the map changes."].Value),
+                "switchHint": @Json.Serialize(L["In game, during ready-up, use <code>!skin next</code> and <code>!skin prev</code> to switch between your skins, or <code>!skin default</code> to go back to the default one."].Value),
+                "errorTitle": @Json.Serialize(L["It did not work"].Value),
+                "previousPhoto": @Json.Serialize(L["Previous photo"].Value),
+                "nextPhoto": @Json.Serialize(L["Next photo"].Value),
+                "errors": {
+                    "InsufficientStars": @Json.Serialize(L["You do not have enough stars for this skin. No stars were spent."].Value),
+                    "AlreadyOwned": @Json.Serialize(L["You already own this skin. No stars were spent."].Value),
+                    "StarsUnavailable": @Json.Serialize(L["We could not check your stars right now. Try again in a moment. No stars were spent."].Value),
+                    "Busy": @Json.Serialize(L["Too many operations at the same time. Try again. No stars were spent."].Value),
+                    "NotOwned": @Json.Serialize(L["You do not own this skin yet."].Value),
+                    "SkinNotFound": @Json.Serialize(L["This skin is no longer available."].Value),
+                    "Generic": @Json.Serialize(L["Something went wrong. Reload the page to check whether the operation went through before trying again."].Value)
                 }
             }
-        };
-    </script>
-    <script src="~/js/pages/skins.js" asp-append-version="true"></script>
+    }</script>
+    <script src="~/js/pages/skins-index.js" asp-append-version="true"></script>
 }

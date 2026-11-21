@@ -183,6 +183,13 @@
           "notes": ["Também abre sozinho 60 s depois de você entrar num jogo novo.", "Um lembrete aparece no chat a cada 200 s."]
         },
         {
+          "id": "site-commands",
+          "names": ["!comandos", "!commands"],
+          "who": ["Todos"],
+          "module": "Ranking",
+          "description": "Abre esta lista de comandos dentro do jogo, no mesmo painel do ranking."
+        },
+        {
           "id": "site-skins",
           "names": ["!skin", "!skins"],
           "syntax": ["!skin", "!skin <id>", "!skin next [arma]", "!skin prev [arma]", "!skin default [arma]", "!skin status"],

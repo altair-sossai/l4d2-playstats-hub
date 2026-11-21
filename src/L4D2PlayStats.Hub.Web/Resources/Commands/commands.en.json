@@ -183,6 +183,13 @@
           "notes": ["It also opens by itself 60 s after you join a new game.", "A reminder shows in the chat every 200 s."]
         },
         {
+          "id": "site-commands",
+          "names": ["!comandos", "!commands"],
+          "who": ["Everyone"],
+          "module": "Ranking",
+          "description": "Opens this list of commands inside the game, in the same panel as the ranking."
+        },
+        {
           "id": "site-skins",
           "names": ["!skin", "!skins"],
           "syntax": ["!skin", "!skin <id>", "!skin next [weapon]", "!skin prev [weapon]", "!skin default [weapon]", "!skin status"],

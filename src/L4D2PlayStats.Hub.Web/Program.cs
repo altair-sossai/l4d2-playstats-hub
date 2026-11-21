@@ -152,7 +152,7 @@ app.UseWhen(ErrorPages.ShowsPage, branch => branch.UseStatusCodePagesWithReExecu
 app.UseMiddleware<ErrorLoggingMiddleware>();
 app.UseRequestLocalization(localization);
 app.UseResponseCompression();
-app.UseStaticFiles();
+app.UseStaticFiles(StaticFileCaching.Options());
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

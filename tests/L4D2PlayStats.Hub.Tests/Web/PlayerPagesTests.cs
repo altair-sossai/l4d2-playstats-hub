@@ -539,7 +539,7 @@ public partial class PlayerPagesTests
     [GeneratedRegex("<a href=\"/player/(\\d+)\">")]
     private static partial Regex PlayerLink();
 
-    [GeneratedRegex("\"RequestVerificationToken\": \"([^\"]+)\"")]
+    [GeneratedRegex("\"RequestVerificationToken\":\\s*\"([^\"]+)\"")]
     private static partial Regex Token();
 
     [GeneratedRegex("<title>([^<]*)</title>")]

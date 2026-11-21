@@ -50,7 +50,7 @@ Los archivos `.smx` del repositorio son siempre el resultado de compilar las fue
 |---|---|---|---|
 | `l4d2_playstats_sync` | Le avisa al sitio cada 30 segundos que el servidor está activo y sube los archivos de estadísticas que escribe `l4d2_playstats`. Tiene el comando `sm_playstats_test`. Todo servidor lo necesita. | Siempre activo | REST in Pawn |
 | `l4d2_gameinfo_sync` | Envía la partida en vivo: configuración, ronda, marcador, jugadores, eventos y chat. Lleva el chat del sitio al juego y ejecuta los comandos enviados desde el sitio. | Servidor en vivo, Chat del sitio, Comandos remotos | REST in Pawn, left4dhooks |
-| `l4d2_ranking` | Abre la página del ranking dentro del juego con `!ranking`, y por sí solo para los jugadores que entran antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks |
+| `l4d2_ranking` | Abre la página del ranking dentro del juego con `!ranking` y la página de comandos con `!comandos` o `!commands`, y el ranking por sí solo para los jugadores que entran antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks |
 | `l4d2_show_patent_icon` | Muestra el ícono de patente de cada jugador sobre su cabeza antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks, los sprites de patentes |
 | `l4d2_weapon_skins` | Aplica las skins de armas que los jugadores compraron en la tienda. | Tienda de skins de armas | REST in Pawn, los modelos y materiales de las skins |
 
@@ -106,6 +106,7 @@ Puedes cambiar (cada línea está desactivada en el archivo, y el plugin usa el 
 | `playstats_public_url` | `l4d2_ranking`, `l4d2_weapon_skins` | vacío | Una dirección, sin barra al final | Dirección del sitio que los jugadores leen en el chat: el aviso del ranking y el enlace de la tienda de skins. Vacío significa `playstats_url`. Ponla cuando los plugins llegan al sitio por una dirección IP pero los jugadores lo conocen por un nombre, por ejemplo `https://stats.example.com`. |
 | `playstats_ingame_url` | `l4d2_ranking` | vacío | Una dirección, sin barra al final | Dirección que abre el navegador del juego. Vacío significa `playstats_url`. Pon una dirección `http://` simple cuando el panel se queda en blanco (ver más abajo). |
 | `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` o `1` | `0` hace que el plugin no abra la página del ranking, ni siquiera con `!ranking`. |
+| `ranking_commands_path` | `l4d2_ranking` | `/ingame/commands` | Una ruta que empieza con `/` | Página que abren `!comandos` y `!commands`, desde la raíz del sitio. |
 | `patent_icon_enabled` | `l4d2_show_patent_icon` | `0` | `0` o `1` | Activa los íconos de patente. Con `0` el plugin no pide las patentes al sitio y los jugadores no descargan los sprites. Actívalo solo cuando los sprites estén en el FastDL. |
 | `patent_icon_version` | `l4d2_show_patent_icon` | `2` | `1` o más | Versión en los nombres de los archivos de sprites, `patent_<level>_v<version>`, ambos con dos dígitos. Los archivos del repositorio de assets son la versión `2`. |
 | `patent_icon_max_level` | `l4d2_show_patent_icon` | `15` | `1` o más | Nivel de patente más alto que tiene un archivo de sprite. |
@@ -202,6 +203,7 @@ Las skins que un jugador puede elegir vienen del sitio: `weapon_skins.cfg` asoci
 |---|---|---|
 | `sm_playstats_test` | Consola del servidor, o admins con el flag root | Llama al sitio en el momento y muestra el resultado (ver más abajo). |
 | `sm_ranking` (`!ranking`) | Todos | Abre la página del ranking dentro del juego. |
+| `sm_comandos`, `sm_commands` (`!comandos`, `!commands`) | Todos | Abre la página con los comandos del servidor dentro del juego. |
 | `sm_skin`, `sm_skins` (`!skin`) | Todos | `!skin` muestra la ayuda; `!skin next`, `!skin prev`, `!skin <name>` y `!skin default` eligen la skin del arma en la mano, o del arma indicada después; `!skin status` muestra las monedas y las skins que tienes. Los supervivientes cambian de skin durante el ready-up. |
 | `sm_skin on`, `sm_skin off`, `sm_skin test <skin\|default> [weapon]` | Admins con el flag root; `on` y `off` también desde la consola del servidor | `on` y `off` reemplazan `weapon_skins_enabled` hasta que el plugin se carga de nuevo (un reinicio, o un modo de partida que recarga los plugins). `test` prueba una skin en ti mismo hasta que cambia el mapa, sin comprarla. El acceso se puede cambiar con el override `sm_weaponskins_admin` en `addons/sourcemod/configs/admin_overrides.cfg`. |
 
@@ -257,7 +259,7 @@ Cada solicitud lleva el encabezado `Authorization: <playstats_token>`. Los valor
 |---|---|
 | `l4d2_playstats_sync` | `POST /api/servers/heartbeat`, `POST /api/statistics` |
 | `l4d2_gameinfo_sync` | `PUT /api/game-info/configuration`, `PUT /api/game-info/round`, `PUT /api/game-info/scoreboard`, `PUT /api/game-info/players`, `PUT /api/game-info/messages`, `POST /api/game-info/events`, `POST /api/game-info/player-connection-info`, `GET /api/game-info/server-command/dequeue`, `GET /api/external-chat` |
-| `l4d2_ranking` | Ninguna. Abre `/ingame?steamid=...` en el juego del jugador. |
+| `l4d2_ranking` | Ninguna. Abre `/ingame?steamid=...` y `/ingame/commands?steamid=...` en el juego del jugador. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
 | `l4d2-anti-cheat` (aparte, 1.5.0 o posterior, con `l4d2_web_url` y `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |

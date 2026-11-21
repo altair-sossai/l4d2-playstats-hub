@@ -7,10 +7,14 @@
     }
     "RankingCommandHint"
     {
-        "en"    "Type {green}!ranking {default}to check your position."
+        "en"    "Type {green}!ranking {default}to check your position and {green}!commands {default}to see the server commands."
     }
     "RankingPanelTitle"
     {
         "en"    "L4D2 | Player Rankings"
+    }
+    "CommandsPanelTitle"
+    {
+        "en"    "L4D2 | Server commands"
     }
 }

@@ -23,44 +23,8 @@
 @section Scripts {
     @if (Model.Administrator)
     {
-        <script>
-            function showMatch(result) {
-                if (result && result.matchId)
-                    location.href = "@AppConsts.MatchesUrl/" + result.matchId;
-                else
-                    location.href = "@AppConsts.MatchesUrl";
-            }
-
-            function editScore(statisticId, team, score, message) {
-                var output = prompt(message, score);
-
-                if (!output)
-                    return;
-
-                var score = +output;
-
-                if (isNaN(score))
-                    return;
-
-                if (score < 0 || score > 10000) {
-                    alert("@L["Invalid score range"]");
-                    return;
-                }
-
-                var command = {
-                    team: team,
-                    score: score
-                };
-
-                $.ajax({
-                    url: "/api/statistics/" + statisticId + "/update-score",
-                    type: "PUT",
-                    contentType: "application/json",
-                    headers: { "@AppConsts.AntiforgeryHeader": "@Antiforgery.GetAndStoreTokens(Context).RequestToken" },
-                    data: JSON.stringify(command)
-                }).done(showMatch);
-            }
-        </script>
+        <script type="application/json" id="matches-details-config">{ "values": { "AppConsts.MatchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "L[\"Invalid score range\"].Value": @Json.Serialize(L["Invalid score range"].Value), "new Dictionary\u003cstring, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }) } }</script>
+        <script src="~/js/pages/matches-details.js" asp-append-version="true"></script>
     }
 }
 

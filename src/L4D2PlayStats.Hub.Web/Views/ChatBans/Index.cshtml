@@ -14,7 +14,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
-    <link rel="stylesheet" href="~/css/pages/chat-bans.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/chat-bans-index.css" asp-append-version="true"/>
 }
 
 @Html.AntiForgeryToken()
@@ -227,19 +227,17 @@
 @await Html.PartialAsync("_PlayerPickerModal")
 
 @section Scripts {
-    <script>
-        var HubPage = {
-            texts: {
-                required: @Json.Serialize(L["Steam ID or profile URL"].Value),
-                saved: @Json.Serialize(L["Ban saved. Reloading..."].Value),
-                removed: @Json.Serialize(L["Ban removed. Reloading..."].Value),
-                noRecent: @Json.Serialize(L["Nobody sent a message recently."].Value),
-                alreadyBanned: @Json.Serialize(L["Already banned"].Value),
-                error: @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
+    <script type="application/json" id="chat-bans-index-config">{
+            "texts": {
+                "required": @Json.Serialize(L["Steam ID or profile URL"].Value),
+                "saved": @Json.Serialize(L["Ban saved. Reloading..."].Value),
+                "removed": @Json.Serialize(L["Ban removed. Reloading..."].Value),
+                "noRecent": @Json.Serialize(L["Nobody sent a message recently."].Value),
+                "alreadyBanned": @Json.Serialize(L["Already banned"].Value),
+                "error": @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
             },
-            playerUrl: @Json.Serialize(AppConsts.PlayerUrlPrefix),
-            lookupUrl: @Json.Serialize(AppConsts.PlayerLookupUrl)
-        };
-    </script>
-    <script src="~/js/pages/chat-bans.js" asp-append-version="true"></script>
+            "playerUrl": @Json.Serialize(AppConsts.PlayerUrlPrefix),
+            "lookupUrl": @Json.Serialize(AppConsts.PlayerLookupUrl)
+    }</script>
+    <script src="~/js/pages/chat-bans-index.js" asp-append-version="true"></script>
 }

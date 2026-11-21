@@ -265,10 +265,10 @@ public class AntiCheatPagesTests
         await factory.EnableAsync();
 
         var page = await client.GetStringAsync("/admin/chat-bans");
-        var script = await client.GetStringAsync("/js/pages/chat-bans.js");
+        var script = await client.GetStringAsync("/js/pages/chat-bans-index.js");
 
-        Assert.Contains("lookupUrl: \"/api/admin/players/lookup\"", page);
-        Assert.Contains("<script src=\"/js/pages/chat-bans.js", page);
+        Assert.Contains("\"lookupUrl\": \"/api/admin/players/lookup\"", page);
+        Assert.Contains("<script src=\"/js/pages/chat-bans-index.js", page);
         Assert.Contains("$.getJSON(lookupUrl, { id: value })", script);
     }
 

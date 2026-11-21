@@ -1,0 +1,213 @@
+var layout3Config = JSON.parse(document.getElementById("layout-3-config").textContent);
+
+var titlePlayersRegex = /^🟢\s*\d+\/\d+\s*\|\s*/;
+var liveServerEnabled = layout3Config.values["liveServer"];
+var robotVisitor = new RegExp(layout3Config.values["AppConsts.RobotUserAgentPattern"], 'i').test(navigator.userAgent);
+var skinShopEnabled = layout3Config.values["skinShop"];
+
+function getBaseTitle() {
+    return document.title.replace(titlePlayersRegex, '');
+}
+
+function pulsate(element, options) {
+    if (!options)
+        options = {};
+
+    if (!options.start)
+        options.start = {};
+
+    if (!options.start.opacity)
+        options.start.opacity = 0.6;
+
+    if (!options.start.interval)
+        options.start.interval = 700;
+
+    if (!options.end)
+        options.end = {};
+
+    if (!options.end.opacity)
+        options.end.opacity = 1;
+
+    if (!options.end.interval)
+        options.end.interval = 700;
+
+    $(element).animate(options.start, options.start.interval, function () {
+        $(this).animate(options.end, options.end.interval, function () {
+            pulsate(this, options);
+        });
+    });
+}
+
+function updateServerInfo() {
+    if (!liveServerEnabled || robotVisitor)
+        return;
+
+    $.ajax({
+        url: '/api/server',
+        method: 'GET',
+        success: function (serverInfo) {
+            var baseTitle = getBaseTitle();
+
+            if (serverInfo && serverInfo.address) {
+                $('#connect-icon img').attr('alt', 'connect ' + serverInfo.address).attr('title', 'connect ' + serverInfo.address).attr('data-original-title', 'connect ' + serverInfo.address);
+                $('#connect-icon').show();
+            } else {
+                $('#connect-icon').hide();
+            }
+
+            if (!serverInfo || serverInfo.players == 0) {
+                $('#server-info').hide();
+                $('#game-info-chat').hide();
+                document.title = baseTitle;
+                fitNavbar();
+                return;
+            }
+
+            $('#server-status').text('● ' + serverInfo.players + '/' + serverInfo.max_players);
+            $('#server-info').show();
+            $('#game-info-chat').show();
+            fitNavbar();
+            document.title = '🟢 ' + serverInfo.players + '/' + serverInfo.max_players + ' | ' + baseTitle;
+        },
+        complete: function () {
+            setTimeout(updateServerInfo, 4000);
+        }
+    });
+}
+
+function createChart(canvas) {
+    var ctx = canvas.getContext('2d');
+    var chartData = $(canvas).data('chart');
+
+    new Chart(ctx, chartData);
+}
+
+function isElementInViewport(el, margin) {
+    margin = margin || 150;
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= -margin &&
+        rect.left >= -margin &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) + margin &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) + margin
+    );
+}
+
+function lazyLoadCharts() {
+    $('.app-chart').each(function () {
+        if ($(this).data('loaded'))
+            return;
+
+        if (!isElementInViewport(this))
+            return;
+
+        createChart(this);
+
+        $(this).data('loaded', true);
+    });
+}
+
+function isObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+var navStarsKey = 'nav-stars-' + layout3Config.values["$\"{CurrentUser.CommunityId}\""];
+
+function setNavStars(balance) {
+    var $stars = $('.nav-stars');
+
+    $stars.find('.nav-stars-value').text(balance.toLocaleString(document.documentElement.lang || undefined));
+    $stars.find('.nav-stars-label').text(balance === 1 ? layout3Config.texts["star available"] : layout3Config.texts["stars available"]);
+    $stars.show();
+    fitNavbar();
+
+    try {
+        sessionStorage.setItem(navStarsKey, balance);
+    } catch (e) {
+    }
+}
+
+function loadNavStars() {
+    if (!skinShopEnabled || $('.nav-stars').length === 0)
+        return;
+
+    try {
+        var cached = sessionStorage.getItem(navStarsKey);
+
+        if (cached !== null)
+            setNavStars(parseInt(cached, 10));
+    } catch (e) {
+    }
+
+    $.ajax({
+        url: '/api/shop/wallet',
+        method: 'GET',
+        success: function (wallet) {
+            setNavStars(wallet.balance);
+        }
+    });
+}
+
+$(window).on('scroll resize', function () {
+    lazyLoadCharts();
+});
+
+function setUpFieldHelp() {
+    var more = $('#field-help-modal').data('more');
+
+    $('.field-help-more').each(function () {
+        var link = $(this);
+
+        link.attr('title', link.data('help-summary') + ' ' + more);
+    });
+
+    $(document).on('click', '.field-help-more', function (event) {
+        var link = $(this);
+        var body = $('#field-help-modal .modal-body').empty();
+
+        event.preventDefault();
+        link.tooltip('hide');
+
+        $('#field-help-modal .modal-title').empty().append('<span class="glyphicon glyphicon-question-sign"></span> ').append(document.createTextNode(link.data('help-title')));
+        $('<div class="field-help-summary">').text(link.data('help-summary')).appendTo(body);
+
+        String(link.data('help-details')).split('\n').forEach(function (paragraph) {
+            var text = paragraph.trim();
+            var term = /^([^:.]{2,40}):\s+(.+)$/.exec(text);
+            var item = $('<p>');
+
+            if (!text)
+                return;
+
+            if (term)
+                item.append($('<strong>').text(term[1])).append(document.createTextNode(' ' + term[2]));
+            else
+                item.text(text);
+
+            item.appendTo(body);
+        });
+
+        $('#field-help-modal').modal('show');
+    });
+
+    $(document).on('click', 'label .field-help', function (event) {
+        event.preventDefault();
+    });
+}
+
+$(document).ready(function () {
+    setUpFieldHelp();
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('.pulsate').each(function () {
+        pulsate(this);
+    });
+
+    updateServerInfo();
+
+    loadNavStars();
+
+    lazyLoadCharts();
+});

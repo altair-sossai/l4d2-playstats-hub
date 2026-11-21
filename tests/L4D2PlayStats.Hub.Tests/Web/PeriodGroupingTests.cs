@@ -127,7 +127,7 @@ public class PeriodGroupingTests
 
         await factory.CompleteSetupAsync();
 
-        var body = await client.GetStringAsync("/");
+        var body = await client.WithScriptsAsync("/");
 
         Assert.Contains("id=\"nav-main\"", body);
         Assert.Contains("id=\"nav-more\"", body);

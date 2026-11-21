@@ -1,3 +1,5 @@
+var HubPage = JSON.parse(document.getElementById("skins-index-config").textContent);
+
 $(function () {
     var texts = HubPage.texts;
 

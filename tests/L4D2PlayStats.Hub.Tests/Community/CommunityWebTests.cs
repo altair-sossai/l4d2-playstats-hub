@@ -53,7 +53,7 @@ public class CommunityWebTests
 
         using var voter = site.Factory.Client(site.Voter);
 
-        var page = await voter.GetStringAsync(CommunityWebSite.VotePage);
+        var page = await voter.WithScriptsAsync(CommunityWebSite.VotePage);
         var answers = Regex.Matches(page, @"name=""Outcome"" value=""(\w+)""").Select(match => match.Groups[1].Value).ToList();
 
         CollectionAssert.AreEqual(new[] { nameof(CommunityVoteOutcome.Left), nameof(CommunityVoteOutcome.Right), nameof(CommunityVoteOutcome.SameLevel), nameof(CommunityVoteOutcome.UnknownOne) }, answers);

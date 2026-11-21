@@ -10,6 +10,8 @@
 #define INGAME_URL_CVAR "playstats_ingame_url"
 #define INGAME_PATH_CVAR "ranking_motd_path"
 #define INGAME_DEFAULT_PATH "/"
+#define COMMANDS_PATH_CVAR "ranking_commands_path"
+#define COMMANDS_DEFAULT_PATH "/ingame/commands"
 #define INGAME_PATH_LENGTH 128
 #define INGAME_URL_LENGTH 384
 #define SCHEME_SEPARATOR "://"
@@ -24,13 +26,14 @@ public Plugin myinfo =
     name        = "L4D2 - Ranking",
     author      = "Altair Sossai",
     description = "Opens the ranking of L4D2 PlayStats Hub in the game",
-    version     = "2.2.0",
+    version     = "2.3.0",
     url         = "https://github.com/altair-sossai/l4d2-playstats-hub"
 };
 
 ConVar
     hInGameUrl,
     hInGamePath,
+    hCommandsPath,
     hShowMOTDPanel;
 
 bool showRankingEnabled = true;
@@ -44,9 +47,12 @@ public void OnPluginStart()
 
     hInGameUrl = CreateConVar(INGAME_URL_CVAR, "", "Address the game opens for the in-game pages, without a trailing slash. When empty, playstats_url is used");
     hInGamePath = CreateConVar(INGAME_PATH_CVAR, INGAME_DEFAULT_PATH, "Page the ranking window opens, from the root of the site. \"/\" opens the ranking of the home page, \"/ingame\" the compact in-game page");
+    hCommandsPath = CreateConVar(COMMANDS_PATH_CVAR, COMMANDS_DEFAULT_PATH, "Page the commands window opens, from the root of the site");
     hShowMOTDPanel = CreateConVar("ranking_show_motd_panel", "1", "Show MOTD panel with the ranking site URL", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
     RegConsoleCmd("sm_ranking", ShowRankingCmd);
+    RegConsoleCmd("sm_comandos", ShowCommandsCmd);
+    RegConsoleCmd("sm_commands", ShowCommandsCmd);
 
     HookEvent("round_start", RoundStart_Event, EventHookMode_PostNoCopy);
 
@@ -87,6 +93,14 @@ Action ShowRankingCmd(int client, int args)
     return Plugin_Handled;
 }
 
+Action ShowCommandsCmd(int client, int args)
+{
+    if (client > 0)
+        ShowCommands(client);
+
+    return Plugin_Handled;
+}
+
 Action DisplayRankingUrlTick(Handle timer)
 {
     if (!showRankingEnabled)
@@ -113,29 +127,43 @@ Action ShowRankingTick(Handle timer, int userId)
 
 void ShowRanking(int client)
 {
-    if (!IsClientInGame(client) || IsFakeClient(client) || !hShowMOTDPanel.IntValue)
-        return;
+    char path[INGAME_PATH_LENGTH];
+    GetPath(hInGamePath, INGAME_DEFAULT_PATH, path, sizeof(path));
 
-    char url[INGAME_URL_LENGTH];
-    if (!GetInGameUrl(client, url, sizeof(url)))
-        return;
-
-    displayed[client] = true;
-
-    char title[TITLE_LENGTH];
-    FormatEx(title, sizeof(title), "%T", "RankingPanelTitle", client);
-
-    ShowMOTDPanel(client, title, url, MOTDPANEL_TYPE_URL);
+    if (ShowPage(client, path, "RankingPanelTitle"))
+        displayed[client] = true;
 }
 
-bool GetInGameUrl(int client, char[] url, int maxlength)
+void ShowCommands(int client)
+{
+    char path[INGAME_PATH_LENGTH];
+    GetPath(hCommandsPath, COMMANDS_DEFAULT_PATH, path, sizeof(path));
+
+    ShowPage(client, path, "CommandsPanelTitle");
+}
+
+bool ShowPage(int client, const char[] path, const char[] titlePhrase)
+{
+    if (!IsClientInGame(client) || IsFakeClient(client) || !hShowMOTDPanel.IntValue)
+        return false;
+
+    char url[INGAME_URL_LENGTH];
+    if (!GetInGameUrl(client, path, url, sizeof(url)))
+        return false;
+
+    char title[TITLE_LENGTH];
+    FormatEx(title, sizeof(title), "%T", titlePhrase, client);
+
+    ShowMOTDPanel(client, title, url, MOTDPANEL_TYPE_URL);
+
+    return true;
+}
+
+bool GetInGameUrl(int client, const char[] path, char[] url, int maxlength)
 {
     char base[PLAYSTATS_HUB_URL_LENGTH];
     if (!GetInGameBase(base, sizeof(base)))
         return false;
-
-    char path[INGAME_PATH_LENGTH];
-    GetInGamePath(path, sizeof(path));
 
     char steamId[STEAM_ID_LENGTH];
     if (GetClientAuthId(client, AuthId_SteamID64, steamId, sizeof(steamId)))
@@ -146,13 +174,13 @@ bool GetInGameUrl(int client, char[] url, int maxlength)
     return true;
 }
 
-void GetInGamePath(char[] path, int maxlength)
+void GetPath(ConVar cvar, const char[] fallback, char[] path, int maxlength)
 {
-    hInGamePath.GetString(path, maxlength);
+    cvar.GetString(path, maxlength);
     TrimString(path);
 
     if (path[0] != '/')
-        strcopy(path, maxlength, INGAME_DEFAULT_PATH);
+        strcopy(path, maxlength, fallback);
 }
 
 bool GetInGameBase(char[] base, int maxlength)

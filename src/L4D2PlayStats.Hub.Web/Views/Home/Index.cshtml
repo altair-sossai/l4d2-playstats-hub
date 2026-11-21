@@ -25,14 +25,7 @@
 
 @section Scripts
 {
-    <script>
-        $(document).ready(function () {
-            $('#btn-show-more').click(function () {
-                $('#table-ranking tbody tr').removeClass('hidden');
-                $('#btn-show-more').hide();
-            });
-        });
-    </script>
+    <script src="~/js/pages/home-index.js" asp-append-version="true"></script>
 }
 
 @if (voteInvite)

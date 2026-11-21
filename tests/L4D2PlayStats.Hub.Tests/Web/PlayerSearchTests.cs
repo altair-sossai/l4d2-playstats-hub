@@ -178,7 +178,7 @@ public class PlayerSearchTests
 
         Assert.Contains(button, html);
         Assert.Contains("id=\"pp-modal\"", html);
-        Assert.Contains("var searchUrl = \"/api/admin/players/search\";", html);
+        Assert.Contains("\"AppConsts.PlayerSearchUrl\": \"/api/admin/players/search\"", html);
         Assert.AreEqual(1, html.Split("id=\"pp-modal\"").Length - 1);
     }
 

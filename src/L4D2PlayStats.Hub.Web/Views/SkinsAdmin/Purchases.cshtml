@@ -9,7 +9,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
-    <link rel="stylesheet" href="~/css/pages/skin-purchases.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/skins-admin-purchases.css" asp-append-version="true"/>
 }
 
 @Html.AntiForgeryToken()
@@ -257,25 +257,23 @@
 @await Html.PartialAsync("_GiftModal", Model.Skins)
 
 @section Scripts {
-    <script>
-        var HubPage = {
-            texts: {
-                confirmRefund: @Json.Serialize(L["Refund {0} from {1}? The stars paid go back to the player, the skin is removed from their account and, if it was equipped, the weapon goes back to the default skin."].Value),
-                refundDone: @Json.Serialize(L["Purchase refunded. Reloading..."].Value),
-                refundAllDone: @Json.Serialize(L["{0} purchases and {1} gifts refunded. {2} stars returned to {3} players."].Value),
-                refundAllFailed: @Json.Serialize(L["{0} items could not be refunded; try again to refund what is left."].Value),
-                refundAllRunning: @Json.Serialize(L["Refunding..."].Value),
-                confirmRefundAll: @Json.Serialize(L["Refund everything"].Value),
-                errors: {
-                    NotOwned: @Json.Serialize(L["The player no longer owns this skin."].Value),
-                    Busy: @Json.Serialize(L["Too many operations at the same time. Try again."].Value),
-                    Generic: @Json.Serialize(L["Something went wrong. Reload the page and check before trying again."].Value)
+    <script type="application/json" id="skins-admin-purchases-config">{
+            "texts": {
+                "confirmRefund": @Json.Serialize(L["Refund {0} from {1}? The stars paid go back to the player, the skin is removed from their account and, if it was equipped, the weapon goes back to the default skin."].Value),
+                "refundDone": @Json.Serialize(L["Purchase refunded. Reloading..."].Value),
+                "refundAllDone": @Json.Serialize(L["{0} purchases and {1} gifts refunded. {2} stars returned to {3} players."].Value),
+                "refundAllFailed": @Json.Serialize(L["{0} items could not be refunded; try again to refund what is left."].Value),
+                "refundAllRunning": @Json.Serialize(L["Refunding..."].Value),
+                "confirmRefundAll": @Json.Serialize(L["Refund everything"].Value),
+                "errors": {
+                    "NotOwned": @Json.Serialize(L["The player no longer owns this skin."].Value),
+                    "Busy": @Json.Serialize(L["Too many operations at the same time. Try again."].Value),
+                    "Generic": @Json.Serialize(L["Something went wrong. Reload the page and check before trying again."].Value)
                 }
             },
-            purchasesUrl: @Json.Serialize(Url.Action("Purchases", "SkinsAdmin")),
-            query: @Json.Serialize(Model.Query ?? string.Empty),
-            playerPageUrl: @Json.Serialize(AppConsts.PlayerUrlPrefix)
-        };
-    </script>
-    <script src="~/js/pages/skin-purchases.js" asp-append-version="true"></script>
+            "purchasesUrl": @Json.Serialize(Url.Action("Purchases", "SkinsAdmin")),
+            "query": @Json.Serialize(Model.Query ?? string.Empty),
+            "playerPageUrl": @Json.Serialize(AppConsts.PlayerUrlPrefix)
+    }</script>
+    <script src="~/js/pages/skins-admin-purchases.js" asp-append-version="true"></script>
 }

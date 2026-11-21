@@ -96,8 +96,8 @@ public class LiveAdminTests
 
         await factory.CreateServerAsync();
 
-        var page = await client.GetStringAsync("/admin/remote-commands");
-        var live = await client.GetStringAsync("/servers");
+        var page = await client.WithScriptsAsync("/admin/remote-commands");
+        var live = await client.WithScriptsAsync("/servers");
 
         Assert.DoesNotContain("command-builder.js", withoutServers);
         Assert.Contains("onclick=\"terminal.show()\"", page);

@@ -1,3 +1,5 @@
+var HubPage = JSON.parse(document.getElementById("anti-cheat-admin-index-config").textContent);
+
 $(function () {
     var shownList = HubPage.shownList;
     var savedMode = HubPage.savedMode;

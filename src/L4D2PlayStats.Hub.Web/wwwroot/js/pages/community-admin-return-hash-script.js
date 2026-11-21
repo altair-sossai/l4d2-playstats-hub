@@ -1,0 +1,5 @@
+document.addEventListener('submit', function (event) {
+    event.target.querySelectorAll('input[data-return-hash]').forEach(function (field) {
+        field.value = field.value.split('#')[0] + window.location.hash;
+    });
+}, true);

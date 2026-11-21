@@ -6,10 +6,14 @@
     }
     "RankingCommandHint"
     {
-        "pt"    "Digite {green}!ranking {default}para consultar sua posição."
+        "pt"    "Digite {green}!ranking {default}para consultar sua posição e {green}!comandos {default}para ver os comandos do servidor."
     }
     "RankingPanelTitle"
     {
         "pt"    "L4D2 | Ranking de jogadores"
+    }
+    "CommandsPanelTitle"
+    {
+        "pt"    "L4D2 | Comandos do servidor"
     }
 }

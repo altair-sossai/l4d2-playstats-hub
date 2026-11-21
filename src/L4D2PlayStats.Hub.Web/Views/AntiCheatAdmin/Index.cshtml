@@ -26,7 +26,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
-    <link rel="stylesheet" href="~/css/pages/anticheat-admin.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/anti-cheat-admin-index.css" asp-append-version="true"/>
 }
 
 @Html.AntiForgeryToken()
@@ -253,28 +253,26 @@
 @await Html.PartialAsync("_PlayerPickerModal")
 
 @section Scripts {
-    <script>
-        var HubPage = {
-            shownList: @Json.Serialize(Model.ShownListName),
-            savedMode: @Json.Serialize(Model.Access.ModeSaved ? Model.Mode.ToName() : null),
-            pageUrl: @Json.Serialize(AppConsts.AntiCheatAdminUrl),
-            apiUrl: @Json.Serialize(AppConsts.AntiCheatAccessApiUrl),
-            lookupUrl: @Json.Serialize(AppConsts.PlayerLookupUrl),
-            playerUrl: @Json.Serialize(AppConsts.PlayerUrlPrefix),
-            texts: {
-                saved: @Json.Serialize(L["Player added."].Value),
-                removed: @Json.Serialize(L["Player removed."].Value),
-                modeSaved: @Json.Serialize(L["Mode saved."].Value),
-                searching: @Json.Serialize(L["Looking up..."].Value),
-                notFound: @Json.Serialize(L["This is not a valid Steam ID or profile URL."].Value),
-                known: @Json.Serialize(L["Player on the site"].Value),
-                steam: @Json.Serialize(L["Steam profile (never played here)"].Value),
-                noName: @Json.Serialize(L["Name not found"].Value),
-                already: @Json.Serialize(L["This player is already on this list."].Value),
-                error: @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
+    <script type="application/json" id="anti-cheat-admin-index-config">{
+            "shownList": @Json.Serialize(Model.ShownListName),
+            "savedMode": @Json.Serialize(Model.Access.ModeSaved ? Model.Mode.ToName() : null),
+            "pageUrl": @Json.Serialize(AppConsts.AntiCheatAdminUrl),
+            "apiUrl": @Json.Serialize(AppConsts.AntiCheatAccessApiUrl),
+            "lookupUrl": @Json.Serialize(AppConsts.PlayerLookupUrl),
+            "playerUrl": @Json.Serialize(AppConsts.PlayerUrlPrefix),
+            "texts": {
+                "saved": @Json.Serialize(L["Player added."].Value),
+                "removed": @Json.Serialize(L["Player removed."].Value),
+                "modeSaved": @Json.Serialize(L["Mode saved."].Value),
+                "searching": @Json.Serialize(L["Looking up..."].Value),
+                "notFound": @Json.Serialize(L["This is not a valid Steam ID or profile URL."].Value),
+                "known": @Json.Serialize(L["Player on the site"].Value),
+                "steam": @Json.Serialize(L["Steam profile (never played here)"].Value),
+                "noName": @Json.Serialize(L["Name not found"].Value),
+                "already": @Json.Serialize(L["This player is already on this list."].Value),
+                "error": @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
             },
-            listedIds: @Json.Serialize(Model.ListedIds.Select(communityId => communityId.ToString()))
-        };
-    </script>
-    <script src="~/js/pages/anticheat-admin.js" asp-append-version="true"></script>
+            "listedIds": @Json.Serialize(Model.ListedIds.Select(communityId => communityId.ToString()))
+    }</script>
+    <script src="~/js/pages/anti-cheat-admin-index.js" asp-append-version="true"></script>
 }

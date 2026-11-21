@@ -16,39 +16,8 @@
 }
 
 @section Scripts {
-    <script>
-        var refreshInterval = @AppConsts.ServerPickerRefreshInMilliseconds;
-        var requestTimeout = @AppConsts.LivePageRequestTimeoutInMilliseconds;
-        var dd = new diffDOM.DiffDOM();
-
-        function sync(current, html) {
-            var source = document.createElement('div');
-            source.id = current.id;
-            source.innerHTML = html;
-
-            var diffs = dd.diff(current, source);
-            dd.apply(current, diffs);
-        }
-
-        function refreshServers() {
-            $.ajax({
-                url: '@AppConsts.ServersUrl?cards=true',
-                type: 'GET',
-                timeout: requestTimeout,
-                success: function (html) {
-                    var target = document.getElementById('server-cards');
-                    sync(target, html);
-                },
-                complete: function () {
-                    setTimeout(refreshServers, refreshInterval);
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            setTimeout(refreshServers, refreshInterval);
-        });
-    </script>
+    <script type="application/json" id="servers-index-config">{ "values": { "AppConsts.ServersUrl": @Json.Serialize(AppConsts.ServersUrl), "AppConsts.ServerPickerRefreshInMilliseconds": @Json.Serialize(AppConsts.ServerPickerRefreshInMilliseconds), "AppConsts.LivePageRequestTimeoutInMilliseconds": @Json.Serialize(AppConsts.LivePageRequestTimeoutInMilliseconds) } }</script>
+    <script src="~/js/pages/servers-index.js" asp-append-version="true"></script>
 }
 
 <h4 class="text-center">@L["Servers"]</h4>
