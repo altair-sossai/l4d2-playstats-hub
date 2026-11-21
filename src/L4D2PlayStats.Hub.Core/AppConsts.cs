@@ -77,6 +77,10 @@ public static class AppConsts
     public const int PatentMaxExperienceMinimum = 100;
     public const int PatentMaxExperienceMaximum = 1000000;
     public const int PatentExperienceRounding = 10;
+    public const double PatentCurve = 2;
+    public const double PatentCurveMinimum = 1;
+    public const double PatentCurveMaximum = 3;
+    public const int PatentCurveDecimals = 2;
 
     public const int SettingsCacheInMinutes = 60;
     public const string SettingsCacheKeyFormat = "settings_{0}";

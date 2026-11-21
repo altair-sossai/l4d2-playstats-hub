@@ -1,3 +1,4 @@
+using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Patents.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
@@ -7,6 +8,7 @@ using L4D2PlayStats.Hub.Web.Models.Ranking;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
@@ -28,13 +30,20 @@ public class PatentsAdminController(ISettingsService settingsService, IPatentSer
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Save(PatentSettings settings, CancellationToken cancellationToken)
+    public async Task<IActionResult> Save(int maxExperience, string? curve, CancellationToken cancellationToken)
     {
+        var settings = new PatentSettings { MaxExperience = maxExperience, Curve = ParseCurve(curve) };
+
         settings.Normalize();
 
         await settingsService.SaveAsync(settings, cancellationToken);
         TempData["Saved"] = true;
 
         return Redirect(AppConsts.AdminPatentsUrl);
+    }
+
+    private static double ParseCurve(string? curve)
+    {
+        return double.TryParse(curve?.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed) ? parsed : CoreConsts.PatentCurve;
     }
 }

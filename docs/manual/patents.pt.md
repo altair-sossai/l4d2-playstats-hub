@@ -39,7 +39,7 @@ Uma patente é um nível de 1 a 15 dado pela experiência que um jogador tem na 
 | 14 | Gold #4 | 2.150 |
 | 15 | Global | 2.500 |
 
-Os degraus crescem conforme o nível sobe: a experiência necessária é 2.500 × ((nível − 1) ÷ 14)², arredondada para baixo até um múltiplo de 10. Os 15 níveis e seus nomes são fixos, mas a experiência do nível mais alto, 2.500 por padrão, pode ser alterada em **Administração > Patentes**: a curva inteira acompanha, a página mostra uma prévia de cada nível enquanto você digita, e todas as páginas do site passam a usar os novos valores na hora. Também pode ser alterado é quanta experiência cada resultado dá; veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada).
+Os degraus crescem conforme o nível sobe: a experiência necessária é 2.500 × ((nível − 1) ÷ 14)², arredondada para baixo até um múltiplo de 10. Os 15 níveis e seus nomes são fixos, mas a experiência do nível mais alto, 2.500 por padrão, pode ser alterada em **Administração > Patentes**, junto com a curva entre os níveis, o expoente da fórmula (2 por padrão, de 1 a 3: com 1 todo degrau custa o mesmo, com valores maiores os primeiros níveis ficam mais fáceis e os últimos mais difíceis). A escala inteira acompanha, a página mostra uma prévia de cada nível enquanto você digita, e todas as páginas do site passam a usar os novos valores na hora. Também pode ser alterado é quanta experiência cada resultado dá; veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada).
 
 As patentes pertencem a uma temporada. Elas recomeçam do nível 1 com a temporada e não aparecem nos rankings de um ano ou de todo o período.
 

@@ -32,7 +32,7 @@ public class PatentsAdminTests
     [TestMethod]
     public void AnotherHighestLevelMovesTheWholeCurve()
     {
-        var scale = PatentCatalog.Scale(5000);
+        var scale = PatentCatalog.Scale(5000, 2);
 
         Assert.AreEqual(5000, scale.All[14].Experience);
         Assert.AreEqual(4310, scale.All[13].Experience);
@@ -51,7 +51,7 @@ public class PatentsAdminTests
         using var visitor = factory.Client();
 
         var before = await administrator.GetStringAsync(Page);
-        var response = await HubWebFactory.PostFormAsync(administrator, Page, Page, new Dictionary<string, string> { ["MaxExperience"] = "5000" });
+        var response = await HubWebFactory.PostFormAsync(administrator, Page, Page, new Dictionary<string, string> { ["MaxExperience"] = "5000", ["Curve"] = "2" });
         var after = await administrator.GetStringAsync(Page);
         var patents = await visitor.GetStringAsync("/patents");
         var saved = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<PatentSettings>());
@@ -111,6 +111,42 @@ public class PatentsAdminTests
         Assert.IsNotEmpty(low);
         Assert.IsTrue(high.Zip(low).All(pair => pair.First >= pair.Second));
         Assert.IsTrue(high.Zip(low).Any(pair => pair.First > pair.Second));
+    }
+
+    [TestMethod]
+    public void ACurveOfOneMakesEveryStepCostTheSame()
+    {
+        var scale = PatentCatalog.Scale(2500, 1);
+
+        Assert.AreEqual(170, scale.All[1].Experience);
+        Assert.AreEqual(1250, scale.All[7].Experience);
+        Assert.AreEqual(2500, scale.All[14].Experience);
+    }
+
+    [TestMethod]
+    [DataRow("1.5", 1.5)]
+    [DataRow("1,5", 1.5)]
+    [DataRow("0.2", 1.0)]
+    [DataRow("9", 3.0)]
+    [DataRow("abc", 2.0)]
+    public async Task TheCurveIsSavedWithinItsLimitsInAnyLanguage(string value, double expected)
+    {
+        using var factory = new HubWebFactory();
+
+        await factory.CompleteSetupAsync();
+
+        using var administrator = factory.Client(HubWebFactory.Administrator);
+
+        await administrator.GetAsync("/language?culture=pt-BR&returnUrl=/");
+        await HubWebFactory.PostFormAsync(administrator, Page, Page, new Dictionary<string, string> { ["MaxExperience"] = "2500", ["Curve"] = value });
+
+        var saved = await factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<PatentSettings>());
+        var patents = await administrator.GetStringAsync("/patents");
+
+        Assert.AreEqual(expected, saved.Curve, 0.0001);
+        Assert.AreEqual(2500, saved.MaxExperience);
+        if (expected.Equals(1.0))
+            Assert.Contains("1.250", patents);
     }
 
     [TestMethod]

@@ -4,13 +4,16 @@ public class PatentScale
 {
     private readonly List<Patent> _patents;
 
-    public PatentScale(int maxExperience, IReadOnlyList<string> names)
+    public PatentScale(int maxExperience, double curve, IReadOnlyList<string> names)
     {
         MaxExperience = maxExperience;
-        _patents = [.. names.Select((name, index) => new Patent(index + 1, name, Experience(index + 1, names.Count, maxExperience)))];
+        Curve = curve;
+        _patents = [.. names.Select((name, index) => new Patent(index + 1, name, Experience(index + 1, names.Count, maxExperience, curve)))];
     }
 
     public int MaxExperience { get; }
+
+    public double Curve { get; }
 
     public IReadOnlyList<Patent> All => _patents;
 
@@ -30,10 +33,10 @@ public class PatentScale
         return _patents.FirstOrDefault(p => p.Level > current.Level);
     }
 
-    public static int Experience(int level, int levels, int maxExperience)
+    public static int Experience(int level, int levels, int maxExperience, double curve)
     {
         var normalized = (level - AppConsts.PatentMinLevel) / ((double)levels - AppConsts.PatentMinLevel);
-        var exponential = Math.Pow(normalized, 2);
+        var exponential = Math.Pow(normalized, curve);
         var result = AppConsts.PatentMinExperience + exponential * (maxExperience - AppConsts.PatentMinExperience);
 
         return (int)(Math.Floor(result / AppConsts.PatentExperienceRounding) * AppConsts.PatentExperienceRounding);

@@ -14,6 +14,8 @@ public class PatentService(ISettingsService settingsService) : IPatentService
 
         settings.Normalize();
 
-        return settings.MaxExperience == AppConsts.PatentMaxExperience ? PatentCatalog.Default : PatentCatalog.Scale(settings.MaxExperience);
+        var standard = settings.MaxExperience == AppConsts.PatentMaxExperience && settings.Curve.Equals(AppConsts.PatentCurve);
+
+        return standard ? PatentCatalog.Default : PatentCatalog.Scale(settings.MaxExperience, settings.Curve);
     }
 }

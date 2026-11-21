@@ -23,10 +23,10 @@ public static class PatentCatalog
         "Global"
     ];
 
-    public static PatentScale Default { get; } = Scale(AppConsts.PatentMaxExperience);
+    public static PatentScale Default { get; } = Scale(AppConsts.PatentMaxExperience, AppConsts.PatentCurve);
 
-    public static PatentScale Scale(int maxExperience)
+    public static PatentScale Scale(int maxExperience, double curve)
     {
-        return new PatentScale(maxExperience, Names);
+        return new PatentScale(maxExperience, curve, Names);
     }
 }
