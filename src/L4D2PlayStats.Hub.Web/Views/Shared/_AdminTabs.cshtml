@@ -37,6 +37,18 @@
                 });
             }
 
+            document.addEventListener('invalid', function (event) {
+                var pane = event.target.closest('.tab-pane');
+
+                if (!pane || pane.classList.contains('active'))
+                    return;
+
+                $('.admin-tabs a[href="#' + pane.id + '"]').tab('show');
+                setTimeout(function () {
+                    event.target.reportValidity();
+                }, 200);
+            }, true);
+
             $('.admin-tabs a[data-toggle="tab"]').on('shown.bs.tab', function () {
                 var key = $(this).attr('data-admin-tab');
 

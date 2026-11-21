@@ -1,4 +1,3 @@
-using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class ChatBanService(HubDbContext dbContext, IClock clock, IForcedNameStore forcedNames) : IChatBanService
+public class ChatBanService(HubDbContext dbContext, IClock clock) : IChatBanService
 {
     public Task<ChatBan?> FindAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -69,11 +68,6 @@ public class ChatBanService(HubDbContext dbContext, IClock clock, IForcedNameSto
 
     private async Task<string?> KnownNameAsync(long communityId, CancellationToken cancellationToken)
     {
-        var forced = forcedNames.Find(communityId);
-
-        if (forced != null)
-            return forced;
-
         var profile = await dbContext.PlayerProfiles
             .AsNoTracking()
             .Where(p => p.CommunityId == communityId && p.Name != null)

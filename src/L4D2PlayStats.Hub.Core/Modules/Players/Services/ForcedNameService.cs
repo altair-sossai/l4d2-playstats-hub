@@ -49,13 +49,14 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         {
             await UpsertAsync(communityId, clean, updatedBy, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
+            await LoadAsync(cancellationToken);
         }
         finally
         {
             hubState.WriteLock.Release();
         }
 
-        await ChangedAsync(cancellationToken);
+        Changed();
 
         return ForcedNameSaveResult.Saved;
     }
@@ -69,6 +70,9 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         try
         {
             removed = await dbContext.Set<ForcedName>().Where(entry => entry.CommunityId == communityId).ExecuteDeleteAsync(cancellationToken);
+
+            if (removed > 0)
+                await LoadAsync(cancellationToken);
         }
         finally
         {
@@ -76,7 +80,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         }
 
         if (removed > 0)
-            await ChangedAsync(cancellationToken);
+            Changed();
 
         return removed > 0;
     }
@@ -135,6 +139,9 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
             }
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            if (added + updated > 0)
+                await LoadAsync(cancellationToken);
         }
         finally
         {
@@ -142,7 +149,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         }
 
         if (added + updated > 0)
-            await ChangedAsync(cancellationToken);
+            Changed();
 
         return new ForcedNameImport(added, updated, unchanged, invalid);
     }
@@ -187,10 +194,8 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
         ];
     }
 
-    private async Task ChangedAsync(CancellationToken cancellationToken)
+    private void Changed()
     {
-        await LoadAsync(cancellationToken);
-
         hubState.DataChanged();
         hubState.CommunityChanged();
     }

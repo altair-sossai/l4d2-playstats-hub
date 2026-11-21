@@ -98,7 +98,7 @@
                 var updatedAt = ban.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(ban.UpdatedAtUtc.Value, Model.TimeZone);
 
                 <div class="admin-item cb-ban"
-                     data-community-id="@ban.CommunityId" data-name="@name" data-avatar="@ban.AvatarUrl" data-steam-id="@ban.SteamId"
+                     data-community-id="@ban.CommunityId" data-name="@name" data-stored-name="@ban.Name" data-avatar="@ban.AvatarUrl" data-steam-id="@ban.SteamId"
                      data-profile-url="@ban.ProfileUrl" data-reason="@ban.Reason" data-banned-at="@bannedAt" data-updated-at="@updatedAt"
                      data-banned-by="@ForcedNames.Apply(ban.CreatedByCommunityId, ban.CreatedByName)">
                     <img class="admin-avatar" src="@ban.AvatarUrl" alt="@name" onerror="imgOnError(this)"/>
@@ -299,7 +299,7 @@
                 var bannedBy = $item.data('banned-by');
                 var profileUrl = $item.data('profile-url');
 
-                selected = { communityId: $item.data('community-id').toString(), name: $item.data('name') };
+                selected = { communityId: $item.data('community-id').toString(), name: $item.data('name'), storedName: $item.attr('data-stored-name') };
 
                 $modal.find('.cb-avatar').attr({ src: $item.data('avatar'), alt: selected.name });
                 $modal.find('.cb-player-link').text(selected.name).attr('href', playerUrl + encodeURIComponent(selected.communityId));
@@ -325,7 +325,7 @@
 
                 $button.prop('disabled', true);
 
-                saveBan(selected.communityId, selected.name, $.trim($('#cb-details-reason').val())).done(function () {
+                saveBan(selected.communityId, selected.storedName || selected.name, $.trim($('#cb-details-reason').val())).done(function () {
                     message($message, true, texts.saved);
                     setTimeout(function () { location.reload(); }, 900);
                 }).fail(function (xhr) {

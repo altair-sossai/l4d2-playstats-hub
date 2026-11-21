@@ -40,8 +40,7 @@
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
     <style>
-        .backup-secrets-key,
-        .backup-secrets-key-error {
+        .backup-wrap {
             overflow-wrap: anywhere;
         }
     </style>
@@ -94,11 +93,11 @@
 
 @if (Model.SecretsKeyAvailable)
 {
-    <div class="alert alert-warning backup-secrets-key">@L["The secrets saved in the settings, such as the Steam API key and the backup destination, are encrypted with the secrets key from {0}. That key is not in the backup zip: keep a copy of it in a safe place, because a backup restored without it has these secrets empty.", Model.SecretsKeyLocation]</div>
+    <div class="alert alert-warning backup-wrap backup-secrets-key">@L["The secrets saved in the settings, such as the Steam API key and the backup destination, are encrypted with the secrets key from {0}. That key is not in the backup zip: keep a copy of it in a safe place, because a backup restored without it has these secrets empty.", Model.SecretsKeyLocation]</div>
 }
 else
 {
-    <div class="alert alert-danger backup-secrets-key-error">@L["The secrets key from {0} could not be loaded, so the Steam API key and the backup destination can be neither read nor saved. The log of the site says why.", Model.SecretsKeyLocation]</div>
+    <div class="alert alert-danger backup-wrap backup-secrets-key-error">@L["The secrets key from {0} could not be loaded, so the Steam API key and the backup destination can be neither read nor saved. The log of the site says why.", Model.SecretsKeyLocation]</div>
 }
 
 @await Html.PartialAsync("_AdminTabs", tabs)
