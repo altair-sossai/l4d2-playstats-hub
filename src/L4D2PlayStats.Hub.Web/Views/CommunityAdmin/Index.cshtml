@@ -2,12 +2,30 @@
 @{
     ViewData["Title"] = L["Community ranking"].Value;
     var settings = Model.Settings;
-    var votersPagination = PaginationModel.Of(Model.Voters, number => $"{AppConsts.AdminCommunityUrl}?page={number}#{AppConsts.CommunityVotersAnchor}");
+    var votersUrl = CommunityAdminUrls.Voters(Model.Voters.Page);
+    var blockedUrl = CommunityAdminUrls.Blocked(Model.Blocked.Page);
+    var votersPagination = PaginationModel.Of(Model.Voters, CommunityAdminUrls.Voters);
+    var blockedPagination = PaginationModel.Of(Model.Blocked, CommunityAdminUrls.Blocked);
+    ViewData[AppConsts.CommunityBlockModalItem] = votersUrl;
 }
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
+    <style>
+        .ca-tabs {
+            margin-bottom: 15px;
+        }
+
+            .ca-tabs .badge {
+                margin-left: 4px;
+            }
+
+        .ca-actions form {
+            display: inline-block;
+            margin: 2px;
+        }
+    </style>
 }
 
 <div class="admin-header">
@@ -57,136 +75,106 @@
     </div>
 </div>
 
-<form method="post" asp-antiforgery="true" action="/admin/community" style="margin-bottom: 20px">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">@L["Voting"]</h3>
+<ul class="nav nav-tabs ca-tabs" role="tablist">
+    <li role="presentation" class="@(Model.Tab == AppConsts.CommunitySettingsTab ? "active" : "")">
+        <a href="#@AppConsts.CommunitySettingsAnchor" role="tab" data-toggle="tab" data-tab="@AppConsts.CommunitySettingsTab">
+            <span class="glyphicon glyphicon-cog"></span> @L["Settings"]
+        </a>
+    </li>
+    <li role="presentation" class="@(Model.Tab == AppConsts.CommunityVotersTab ? "active" : "")">
+        <a href="#@AppConsts.CommunityVotersAnchor" role="tab" data-toggle="tab" data-tab="@AppConsts.CommunityVotersTab">
+            <span class="glyphicon glyphicon-user"></span> @L["Voters"] <span class="badge">@Display.Number(Model.Voters.TotalItems)</span>
+        </a>
+    </li>
+    <li role="presentation" class="@(Model.Tab == AppConsts.CommunityBlockedTab ? "active" : "")">
+        <a href="#@AppConsts.CommunityBlockedAnchor" role="tab" data-toggle="tab" data-tab="@AppConsts.CommunityBlockedTab">
+            <span class="glyphicon glyphicon-ban-circle"></span> @L["Blocked voters"] <span class="badge">@Display.Number(Model.Blocked.TotalItems)</span>
+        </a>
+    </li>
+    <li role="presentation" class="@(Model.Tab == AppConsts.CommunityMaintenanceTab ? "active" : "")">
+        <a href="#@AppConsts.CommunityMaintenanceAnchor" role="tab" data-toggle="tab" data-tab="@AppConsts.CommunityMaintenanceTab">
+            <span class="glyphicon glyphicon-wrench"></span> @L["Maintenance"]
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunitySettingsTab ? " active" : "")" id="@AppConsts.CommunitySettingsAnchor">
+        <form method="post" asp-antiforgery="true" action="/admin/community" style="margin-bottom: 20px">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">@L["Voting"]</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="MinimumMatchesToVote">@L["Minimum matches to vote"] @FieldHelp.Tip(L["A player needs at least this many matches, counted over all seasons, ranked or not, to vote."])</label>
+                                <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
+                            </div>
+                            <div class="form-group">
+                                <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answer \"I don't know one of them\" is free and has no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
+                                <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
+                            </div>
+                            <div class="form-group">
+                                <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"] @FieldHelp.More(L["Players with fewer matches are never offered in the voting and do not appear in the community ranking."], L["Minimum matches to be compared and listed"], L["Matches are counted over all seasons, ranked or not.\nUse it to leave out players who played only one or two matches: few voters know them, so the votes about them would be random.\nRaising it takes players out of the ranking right away. Their votes and ratings are kept, and they come back when they reach the minimum."])</label>
+                                <input class="form-control" id="MinimumMatchesToBeCandidate" name="MinimumMatchesToBeCandidate" type="number" min="0" value="@settings.MinimumMatchesToBeCandidate">
+                            </div>
+                            <div class="form-group">
+                                <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"] @FieldHelp.More(L["Players whose last match is older than this are no longer offered in the voting. 0 means no limit."], L["Maximum days since the last match to be compared"], L["It keeps the voting about the people who play now. With 90, for example, a player who has not played for three months stops appearing in the pairs.\nIt only affects the voting: the player keeps the rating and stays in the community ranking.\nWhen the player plays again, they are offered again."])</label>
+                                <input class="form-control" id="CandidatePlayedWithinDays" name="CandidatePlayedWithinDays" type="number" min="0" value="@settings.CandidatePlayedWithinDays">
+                            </div>
+                            <div class="form-group">
+                                <label for="OtherNamesShown">@L["Other names shown on each voting card"] @FieldHelp.Tip(L["Up to this many other names the player used in matches appear under the name on the voting card, the most used first, so voters recognize who changed names. 0 hides them."])</label>
+                                <input class="form-control" id="OtherNamesShown" name="OtherNamesShown" type="number" min="0" max="@CoreConsts.CommunityMaxBallotNames" value="@settings.OtherNamesShown">
+                            </div>
+                            <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="MinimumMatchesToVote">@L["Minimum matches to vote"] @FieldHelp.Tip(L["A player needs at least this many matches, counted over all seasons, ranked or not, to vote."])</label>
-                        <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">@L["Rating"]</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="MinimumComparisonsToBeListed">@L["Minimum comparisons to be listed"] @FieldHelp.Tip(L["A player appears in the community ranking only after being judged this many times, so a single vote does not put anyone at the top."])</label>
+                                <input class="form-control" id="MinimumComparisonsToBeListed" name="MinimumComparisonsToBeListed" type="number" min="0" value="@settings.MinimumComparisonsToBeListed">
+                            </div>
+                            <div class="form-group">
+                                <label for="MaximumPlayersListed">@L["Maximum players in the ranking"] @FieldHelp.Tip(L["The community ranking shows at most this many players, from the highest rating down. 0 shows everyone."])</label>
+                                <input class="form-control" id="MaximumPlayersListed" name="MaximumPlayersListed" type="number" min="0" value="@settings.MaximumPlayersListed">
+                            </div>
+                            <div class="form-group">
+                                <label for="InitialRating">@L["Initial rating"] @FieldHelp.Tip(L["The middle of the scale: a player who was never compared has this rating, and the others spread above and below it."])</label>
+                                <input class="form-control" id="InitialRating" name="InitialRating" type="number" min="0" value="@settings.InitialRating">
+                            </div>
+                            <div class="checkbox">
+                                <label for="ShowVoterNames">
+                                    <input id="ShowVoterNames" name="ShowVoterNames" type="checkbox" value="true" @(settings.ShowVoterNames ? "checked" : "")>
+                                    @L["Show who voted in the latest votes"]
+                                </label>
+                                @FieldHelp.More(L["The public page of the latest votes shows the name and the avatar of each voter."], L["Show who voted in the latest votes"], L["The page Latest votes, open to everybody, lists the recent answers: the two players, which one was chosen and when.\nWith this option on, each vote also shows who gave it. It makes the voting transparent and lets players discuss the votes, but some may vote less freely when their choice is public.\nWith it off, every vote shows only \"A player voted\". The administrators still see the voters and their vote counts on this page."])
+                                <input name="ShowVoterNames" type="hidden" value="false">
+                            </div>
+                            <span class="help-block" style="margin-bottom: 0">@L["The ratings are calculated again from every vote after each new vote. Rebuild the ratings to apply a new initial rating right away."]</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answer \"I don't know one of them\" is free and has no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
-                        <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
-                    </div>
-                    <div class="form-group">
-                        <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"] @FieldHelp.More(L["Players with fewer matches are never offered in the voting and do not appear in the community ranking."], L["Minimum matches to be compared and listed"], L["Matches are counted over all seasons, ranked or not.\nUse it to leave out players who played only one or two matches: few voters know them, so the votes about them would be random.\nRaising it takes players out of the ranking right away. Their votes and ratings are kept, and they come back when they reach the minimum."])</label>
-                        <input class="form-control" id="MinimumMatchesToBeCandidate" name="MinimumMatchesToBeCandidate" type="number" min="0" value="@settings.MinimumMatchesToBeCandidate">
-                    </div>
-                    <div class="form-group">
-                        <label for="CandidatePlayedWithinDays">@L["Maximum days since the last match to be compared"] @FieldHelp.More(L["Players whose last match is older than this are no longer offered in the voting. 0 means no limit."], L["Maximum days since the last match to be compared"], L["It keeps the voting about the people who play now. With 90, for example, a player who has not played for three months stops appearing in the pairs.\nIt only affects the voting: the player keeps the rating and stays in the community ranking.\nWhen the player plays again, they are offered again."])</label>
-                        <input class="form-control" id="CandidatePlayedWithinDays" name="CandidatePlayedWithinDays" type="number" min="0" value="@settings.CandidatePlayedWithinDays">
-                    </div>
-                    <div class="form-group">
-                        <label for="OtherNamesShown">@L["Other names shown on each voting card"] @FieldHelp.Tip(L["Up to this many other names the player used in matches appear under the name on the voting card, the most used first, so voters recognize who changed names. 0 hides them."])</label>
-                        <input class="form-control" id="OtherNamesShown" name="OtherNamesShown" type="number" min="0" max="@CoreConsts.CommunityMaxBallotNames" value="@settings.OtherNamesShown">
-                    </div>
-                    <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">@L["Rating"]</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="MinimumComparisonsToBeListed">@L["Minimum comparisons to be listed"] @FieldHelp.Tip(L["A player appears in the community ranking only after being judged this many times, so a single vote does not put anyone at the top."])</label>
-                        <input class="form-control" id="MinimumComparisonsToBeListed" name="MinimumComparisonsToBeListed" type="number" min="0" value="@settings.MinimumComparisonsToBeListed">
-                    </div>
-                    <div class="form-group">
-                        <label for="MaximumPlayersListed">@L["Maximum players in the ranking"] @FieldHelp.Tip(L["The community ranking shows at most this many players, from the highest rating down. 0 shows everyone."])</label>
-                        <input class="form-control" id="MaximumPlayersListed" name="MaximumPlayersListed" type="number" min="0" value="@settings.MaximumPlayersListed">
-                    </div>
-                    <div class="form-group">
-                        <label for="InitialRating">@L["Initial rating"] @FieldHelp.Tip(L["The middle of the scale: a player who was never compared has this rating, and the others spread above and below it."])</label>
-                        <input class="form-control" id="InitialRating" name="InitialRating" type="number" min="0" value="@settings.InitialRating">
-                    </div>
-                    <div class="checkbox">
-                        <label for="ShowVoterNames">
-                            <input id="ShowVoterNames" name="ShowVoterNames" type="checkbox" value="true" @(settings.ShowVoterNames ? "checked" : "")>
-                            @L["Show who voted in the latest votes"]
-                        </label>
-                        @FieldHelp.More(L["The public page of the latest votes shows the name and the avatar of each voter."], L["Show who voted in the latest votes"], L["The page Latest votes, open to everybody, lists the recent answers: the two players, which one was chosen and when.\nWith this option on, each vote also shows who gave it. It makes the voting transparent and lets players discuss the votes, but some may vote less freely when their choice is public.\nWith it off, every vote shows only \"A player voted\". The administrators still see the voters and their vote counts on this page."])
-                        <input name="ShowVoterNames" type="hidden" value="false">
-                    </div>
-                    <span class="help-block" style="margin-bottom: 0">@L["The ratings are calculated again from every vote after each new vote. Rebuild the ratings to apply a new initial rating right away."]</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <button class="btn btn-primary" type="submit">
-        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
-    </button>
-</form>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">@L["Maintenance"]</h3>
-    </div>
-    <div class="panel-body">
-        <p>@L["Rebuilding replays every stored vote in order and recalculates every rating with the current settings."]</p>
-        <form method="post" asp-antiforgery="true" action="/admin/community/rebuild" onsubmit="return confirm('@L["Rebuild every rating now?"]')">
-            <button class="btn btn-warning" type="submit">
-                <span class="glyphicon glyphicon-refresh"></span> @L["Rebuild the ratings"]
+            <button class="btn btn-primary" type="submit">
+                <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
             </button>
         </form>
     </div>
-</div>
 
-<div class="panel panel-danger">
-    <div class="panel-heading">
-        <h3 class="panel-title">@L["Reset the community ranking"]</h3>
-    </div>
-    <div class="panel-body">
-        <p>@L["Deletes every vote of every player and every rating, and the community ranking starts again from zero. The settings are kept. This cannot be undone."]</p>
-        <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#community-reset-modal">
-            <span class="glyphicon glyphicon-trash"></span> @L["Delete all votes and start again"]
-        </button>
-    </div>
-</div>
-
-<div class="modal fade" id="community-reset-modal" tabindex="-1" role="dialog" aria-labelledby="community-reset-title">
-    <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/community/reset">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title text-danger" id="community-reset-title">
-                    <span class="glyphicon glyphicon-warning-sign"></span> @L["Reset the community ranking?"]
-                </h4>
-            </div>
-            <div class="modal-body">
-                <p>@L["All {0} votes and the ratings of all {1} players will be deleted for good. Every player starts again with the initial rating, and the votes of the day start again too.", Display.Number(Model.Votes), Display.Number(Model.RatedPlayers)]</p>
-                <p class="text-danger">
-                    <strong>@L["This cannot be undone. Are you sure?"]</strong>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                <button type="submit" class="btn btn-danger">
-                    <span class="glyphicon glyphicon-trash"></span> @L["Yes, delete everything"]
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="panel panel-default" id="@AppConsts.CommunityVotersAnchor">
-    <div class="panel-heading">
-        <h3 class="panel-title">@L["Voters"]</h3>
-    </div>
-    <div class="panel-body">
+    <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunityVotersTab ? " active" : "")" id="@AppConsts.CommunityVotersAnchor">
         <p>@L["Removing a voter deletes all of their votes and rebuilds the ratings without them."]</p>
-        <p>@L["Blocking a voter stops them from voting: the voting page tells them the administrators blocked their votes. Their votes stay until you remove them. To delete a single vote, open the latest votes or the player page while signed in as an administrator."]</p>
+        <p>@L["Blocking a voter stops them from voting: the voting page tells them the administrators blocked their votes. You can keep their votes or delete them at the same time. To delete a single vote, open the latest votes or the player page while signed in as an administrator."]</p>
         <form class="admin-filters" method="post" asp-antiforgery="true" action="/admin/community/voters/delete">
+            <input type="hidden" name="returnUrl" value="@votersUrl">
             <div class="input-group admin-search">
                 <input class="form-control" id="ca-voter-id" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="@L["Steam ID or profile URL"]">
                 <span class="input-group-btn">
@@ -198,7 +186,7 @@
             <button class="btn btn-danger" type="submit" onclick="return confirm('@L["Remove all votes of this voter?"]')">
                 <span class="glyphicon glyphicon-trash"></span> @L["Remove votes"]
             </button>
-            <button class="btn btn-warning" type="submit" formaction="@AppConsts.CommunityBlockVoterUrl" onclick="return confirm('@L["Block this voter? They will no longer be able to vote. Their votes stay until you remove them."]')">
+            <button class="btn btn-warning" type="button" data-block-source="#ca-voter-id">
                 <span class="glyphicon glyphicon-ban-circle"></span> @L["Block"]
             </button>
         </form>
@@ -234,9 +222,10 @@
                         </td>
                         <td class="text-center vertical-align-middle" data-label="@L["Votes"]">@voter.Votes</td>
                         <td class="text-center vertical-align-middle" data-label="@L["Last vote"]">@voter.LastVoteAtUtc.ToString("d")</td>
-                        <td class="text-center vertical-align-middle slim admin-actions">
+                        <td class="text-center vertical-align-middle slim admin-actions ca-actions">
                             <form method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
                                 <input type="hidden" name="communityId" value="@voter.CommunityId">
+                                <input type="hidden" name="returnUrl" value="@votersUrl">
                                 <button class="btn btn-xs btn-danger" type="submit">
                                     <span class="glyphicon glyphicon-trash"></span> @L["Remove votes"]
                                 </button>
@@ -245,6 +234,7 @@
                             {
                                 <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl">
                                     <input type="hidden" name="communityId" value="@voter.CommunityId">
+                                    <input type="hidden" name="returnUrl" value="@votersUrl">
                                     <button class="btn btn-xs btn-default" type="submit">
                                         <span class="glyphicon glyphicon-ok-circle"></span> @L["Unblock"]
                                     </button>
@@ -252,12 +242,9 @@
                             }
                             else
                             {
-                                <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" onsubmit="return confirm('@L["Block this voter? They will no longer be able to vote. Their votes stay until you remove them."]')">
-                                    <input type="hidden" name="communityId" value="@voter.CommunityId">
-                                    <button class="btn btn-xs btn-warning" type="submit">
-                                        <span class="glyphicon glyphicon-ban-circle"></span> @L["Block"]
-                                    </button>
-                                </form>
+                                <button class="btn btn-xs btn-warning" type="button" data-block-voter="@voter.CommunityId" data-block-name="@voter.Name">
+                                    <span class="glyphicon glyphicon-ban-circle"></span> @L["Block"]
+                                </button>
                             }
                         </td>
                     </tr>
@@ -268,14 +255,10 @@
             @await Html.PartialAsync("_Pagination", votersPagination)
         }
     </div>
-</div>
 
-<div class="panel panel-default" id="@AppConsts.CommunityBlockedAnchor">
-    <div class="panel-heading">
-        <h3 class="panel-title">@L["Blocked voters"]</h3>
-    </div>
-    <div class="panel-body">
-        @if (Model.Blocked.Count == 0)
+    <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunityBlockedTab ? " active" : "")" id="@AppConsts.CommunityBlockedAnchor">
+        <p>@L["Blocked voters cannot vote. Unblocking lets them vote again; the votes deleted when they were blocked do not come back."]</p>
+        @if (Model.Blocked.TotalItems == 0)
         {
             <div class="admin-empty">@L["Nobody is blocked from voting."]</div>
         }
@@ -290,7 +273,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var blocked in Model.Blocked)
+                @foreach (var blocked in Model.Blocked.Items)
                 {
                     <tr>
                         <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
@@ -303,6 +286,7 @@
                         <td class="text-center vertical-align-middle slim admin-actions">
                             <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl">
                                 <input type="hidden" name="communityId" value="@blocked.CommunityId">
+                                <input type="hidden" name="returnUrl" value="@blockedUrl">
                                 <button class="btn btn-xs btn-default" type="submit">
                                     <span class="glyphicon glyphicon-ok-circle"></span> @L["Unblock"]
                                 </button>
@@ -312,8 +296,79 @@
                 }
                 </tbody>
             </table>
+
+            @await Html.PartialAsync("_Pagination", blockedPagination)
         }
+    </div>
+
+    <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunityMaintenanceTab ? " active" : "")" id="@AppConsts.CommunityMaintenanceAnchor">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Maintenance"]</h3>
+            </div>
+            <div class="panel-body">
+                <p>@L["Rebuilding calculates every rating again from all the stored votes with the current settings."]</p>
+                <form method="post" asp-antiforgery="true" action="/admin/community/rebuild" onsubmit="return confirm('@L["Rebuild every rating now?"]')">
+                    <button class="btn btn-warning" type="submit">
+                        <span class="glyphicon glyphicon-refresh"></span> @L["Rebuild the ratings"]
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">@L["Reset the community ranking"]</h3>
+            </div>
+            <div class="panel-body">
+                <p>@L["Deletes every vote of every player and every rating, and the community ranking starts again from zero. The settings are kept. This cannot be undone."]</p>
+                <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#community-reset-modal">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Delete all votes and start again"]
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
+<div class="modal fade" id="community-reset-modal" tabindex="-1" role="dialog" aria-labelledby="community-reset-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/community/reset">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title text-danger" id="community-reset-title">
+                    <span class="glyphicon glyphicon-warning-sign"></span> @L["Reset the community ranking?"]
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>@L["All {0} votes and the ratings of all {1} players will be deleted for good. Every player starts again with the initial rating, and the votes of the day start again too.", Display.Number(Model.Votes), Display.Number(Model.RatedPlayers)]</p>
+                <p class="text-danger">
+                    <strong>@L["This cannot be undone. Are you sure?"]</strong>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Yes, delete everything"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@await Html.PartialAsync("_BlockVoterModal")
 @await Html.PartialAsync("_PlayerPickerModal")
+
+@section Scripts {
+    <script>
+        $('.ca-tabs a[data-toggle="tab"]').on('shown.bs.tab', function () {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                params.set('tab', $(this).attr('data-tab'));
+                history.replaceState(null, '', window.location.pathname + '?' + params.toString());
+            } catch (e) {
+            }
+        });
+    </script>
+}

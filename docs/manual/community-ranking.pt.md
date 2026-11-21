@@ -87,7 +87,7 @@ A pontuação é permanente. Ela não recomeça com a temporada.
 
 ## Para administradores
 
-**Administração > Ranking da comunidade** tem as configurações, a manutenção e a lista de votantes.
+**Administração > Ranking da comunidade** tem no topo os totais de votos e de jogadores avaliados e quatro abas: **Configurações**, **Votantes**, **Votantes bloqueados** e **Manutenção**, que tem **Reconstruir as pontuações** e **Reiniciar o ranking da comunidade**. O endereço guarda a aba e a página abertas, então recarregar ou abrir um link volta ao mesmo lugar.
 
 ![As configurações do ranking da comunidade](../images/pt/admin-community.webp)
 
@@ -110,7 +110,7 @@ As pontuações são calculadas de novo com todos os votos a cada voto novo. **R
 
 **Votantes** lista todo mundo que votou, com o número de votos e o último voto, 20 por página, quem tem mais votos primeiro. **Remover votos** exclui todos os votos de um votante e reconstrói as pontuações sem eles, por exemplo quando alguém votou de má-fé. O campo aceita o votante em qualquer formato de Steam ID ou pelo link do perfil, e o botão de busca ao lado abre a [busca de jogadores](administration.pt.md#a-busca-de-jogadores).
 
-**Bloquear** impede um votante de votar, pelo mesmo campo ou pela linha do votante. A página de votação dele passa a dizer que ele não pode mais votar porque os administradores analisaram as votações e bloquearam os votos dele, e qualquer resposta que ele enviar é recusada. Bloquear mantém os votos já dados; use também **Remover votos** para excluí-los. **Votantes bloqueados** lista todo mundo que está bloqueado, desde quando, com **Desbloquear** para deixar votar de novo.
+**Bloquear** impede um votante de votar, pelo mesmo campo ou pela linha do votante. Ele abre uma janela com duas opções: **Apenas bloquear** mantém os votos já dados, e **Bloquear e excluir os votos** também os exclui e calcula as pontuações de novo sem eles. A página de votação de um votante bloqueado passa a dizer que ele não pode mais votar porque os administradores analisaram as votações e bloquearam os votos dele, e qualquer resposta que ele enviar é recusada. **Votantes bloqueados** lista todo mundo que está bloqueado, desde quando, 20 por página, com **Desbloquear** para deixar votar de novo; os votos excluídos no bloqueio não voltam.
 
 Para excluir um único voto, abra **Últimos votos** ou as abas **Votos recebidos** e **Votos feitos** da página de um jogador conectado como administrador. Cada voto passa a ter um botão vermelho que o exclui, e as pontuações são calculadas de novo sem ele, e um botão amarelo que bloqueia o jogador que o deu. Os administradores sempre veem quem votou, mesmo com **Mostrar quem votou nos últimos votos** desligado.
 

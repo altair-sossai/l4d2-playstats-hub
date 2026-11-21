@@ -20,18 +20,25 @@ public class CommunityModerationService(
         return dbContext.Set<CommunityVoterBlock>().AnyAsync(b => b.CommunityId == voterId, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<CommunityBlockedVoter>> BlockedAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CommunityBlockedVoter>> BlockedAsync(int skip, int take, CancellationToken cancellationToken = default)
     {
         var blocks = await dbContext.Set<CommunityVoterBlock>().AsNoTracking().ToListAsync(cancellationToken);
-        var names = await playerService.NamesAsync([.. blocks.Select(b => b.CommunityId)], cancellationToken);
 
-        return
-        [
-            .. blocks
-                .OrderByDescending(b => b.BlockedAtUtc)
-                .ThenBy(b => b.CommunityId)
-                .Select(b => new CommunityBlockedVoter(b.CommunityId, names[b.CommunityId], b.BlockedAtUtc))
-        ];
+        var page = blocks
+            .OrderByDescending(b => b.BlockedAtUtc)
+            .ThenBy(b => b.CommunityId)
+            .Skip(Math.Max(0, skip))
+            .Take(Math.Max(0, take))
+            .ToList();
+
+        var names = await playerService.NamesAsync([.. page.Select(b => b.CommunityId)], cancellationToken);
+
+        return [.. page.Select(b => new CommunityBlockedVoter(b.CommunityId, names[b.CommunityId], b.BlockedAtUtc))];
+    }
+
+    public Task<int> BlockedCountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.Set<CommunityVoterBlock>().CountAsync(cancellationToken);
     }
 
     public async Task<bool> BlockAsync(long voterId, long? blockedBy, CancellationToken cancellationToken = default)

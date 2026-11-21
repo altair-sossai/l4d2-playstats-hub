@@ -56,15 +56,16 @@
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </form>
-                    <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" onsubmit="return confirm('@L["Block this voter? They will no longer be able to vote. Their votes stay until you remove them."]')">
-                        <input type="hidden" name="communityId" value="@vote.VoterId">
-                        <input type="hidden" name="returnUrl" value="@returnUrl">
-                        <button class="btn btn-xs btn-warning" type="submit" title="@L["Block this voter"]" aria-label="@L["Block this voter"]">
-                            <span class="glyphicon glyphicon-ban-circle"></span>
-                        </button>
-                    </form>
+                    <button class="btn btn-xs btn-warning" type="button" data-block-voter="@vote.VoterId" data-block-name="@vote.VoterName" title="@L["Block this voter"]" aria-label="@L["Block this voter"]">
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                    </button>
                 </div>
             }
         </div>
     }
 </div>
+
+@if (Model.Moderate)
+{
+    @await Html.PartialAsync("~/Views/CommunityAdmin/_BlockVoterModal.cshtml")
+}

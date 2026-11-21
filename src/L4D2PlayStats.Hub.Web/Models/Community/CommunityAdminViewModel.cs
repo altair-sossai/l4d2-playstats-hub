@@ -7,7 +7,8 @@ public class CommunityAdminViewModel
 {
     public CommunityRankingSettings Settings { get; init; } = new();
     public required PagedListModel<CommunityVoter> Voters { get; init; }
-    public IReadOnlyList<CommunityBlockedVoter> Blocked { get; init; } = [];
+    public required PagedListModel<CommunityBlockedVoter> Blocked { get; init; }
+    public string Tab { get; init; } = AppConsts.CommunitySettingsTab;
     public int Votes { get; init; }
     public int RatedPlayers { get; init; }
 }

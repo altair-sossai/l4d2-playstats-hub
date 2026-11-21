@@ -152,7 +152,7 @@ public class CommunityModerationTests
         var admin = await administrator.GetStringAsync(AdminPage);
 
         Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.AreEqual(AdminPage, response.Headers.Location?.OriginalString);
+        Assert.AreEqual("/admin/community?tab=voters", response.Headers.Location?.OriginalString);
         Assert.Contains("That vote no longer exists.", admin);
     }
 
@@ -178,6 +178,55 @@ public class CommunityModerationTests
 
         Assert.HasCount(1, await site.VotesAsync());
         Assert.AreEqual(0, blocks);
+    }
+
+    [TestMethod]
+    public async Task BlockingCanAlsoDeleteTheVotesOfTheVoter()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var administrator = site.Factory.Client(HubWebFactory.Administrator);
+
+        var pair = CommunityWebSite.Pair(await voter.GetStringAsync(CommunityWebSite.VotePage))!;
+
+        await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
+
+        var page = await administrator.GetStringAsync("/admin/community?tab=voters");
+        var response = await HubWebFactory.PostFormAsync(administrator, AdminPage, "/admin/community/voters/block", new Dictionary<string, string> { ["communityId"] = site.Voter.ToString(), ["removeVotes"] = "true", ["returnUrl"] = "/admin/community?tab=voters" });
+        var admin = await administrator.GetStringAsync("/admin/community?tab=voters");
+        var ballot = await voter.GetStringAsync(CommunityWebSite.VotePage);
+
+        Assert.Contains("id=\"ca-block-modal\"", page);
+        Assert.Contains($"data-block-voter=\"{site.Voter}\"", page);
+        Assert.AreEqual("/admin/community?tab=voters", response.Headers.Location?.OriginalString);
+        Assert.Contains("The voter was blocked and can no longer vote.", admin);
+        Assert.Contains("Votes removed: 1", admin);
+        Assert.Contains(BlockedMessage, ballot);
+        Assert.IsEmpty(await site.VotesAsync());
+        Assert.IsEmpty(await site.RatingsAsync());
+    }
+
+    [TestMethod]
+    [DataRow("", "ca-settings")]
+    [DataRow("?tab=voters", "ca-voters")]
+    [DataRow("?page=2", "ca-voters")]
+    [DataRow("?tab=Maintenance", "ca-maintenance")]
+    [DataRow("?tab=unknown", "ca-settings")]
+    public async Task TheAddressChoosesTheOpenTab(string query, string pane)
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var administrator = site.Factory.Client(HubWebFactory.Administrator);
+
+        var page = await administrator.GetStringAsync(AdminPage + query);
+
+        Assert.Contains($"class=\"tab-pane active\" id=\"{pane}\"", page);
+        Assert.AreEqual(1, Regex.Matches(page, "class=\"tab-pane active\"").Count);
     }
 
     private static Task<HttpResponseMessage> PostWithTokenAsync(HttpClient client, string html, CommunityPair pair, string outcome)

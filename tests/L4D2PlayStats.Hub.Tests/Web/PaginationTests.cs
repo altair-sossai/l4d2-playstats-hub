@@ -152,12 +152,42 @@ public partial class PaginationTests
         Assert.Contains(Voter(0), first);
         Assert.Contains(Voter(19), first);
         Assert.DoesNotContain(Voter(20), first);
-        Assert.Contains("/admin/community?page=2#ca-voters", first);
+        Assert.Contains("/admin/community?tab=voters&page=2", first);
         Assert.Contains("id=\"ca-voters\"", first);
         Assert.Contains("Showing 21–25 of 25", second);
         Assert.Contains(Voter(20), second);
         Assert.Contains(Voter(24), second);
         Assert.DoesNotContain(Voter(19), second);
+    }
+
+    [TestMethod]
+    public async Task TheBlockedVotersAreListedTwentyPerPage()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client(HubWebFactory.Administrator);
+
+        await factory.CompleteSetupAsync();
+        await factory.SaveAsync(new ModuleSettings { Ranking = true, CommunityRanking = true });
+        await factory.RunAsync(async services =>
+        {
+            var dbContext = services.GetRequiredService<HubDbContext>();
+            var now = DateTime.UtcNow;
+
+            for (var index = 0; index < 25; index++)
+                dbContext.Set<CommunityVoterBlock>().Add(new CommunityVoterBlock { CommunityId = PagingSamples.CommunityId(index), BlockedAtUtc = now.AddMinutes(-index) });
+
+            await dbContext.SaveChangesAsync();
+        });
+
+        var first = WebUtility.HtmlDecode(await client.GetStringAsync("/admin/community?tab=blocked"));
+        var second = WebUtility.HtmlDecode(await client.GetStringAsync("/admin/community?blockedPage=2"));
+
+        Assert.Contains("/admin/community?tab=blocked&blockedPage=2", first);
+        Assert.Contains($"name=\"communityId\" value=\"{PagingSamples.CommunityId(0)}\"", first);
+        Assert.DoesNotContain($"name=\"communityId\" value=\"{PagingSamples.CommunityId(20)}\"", first);
+        Assert.Contains($"name=\"communityId\" value=\"{PagingSamples.CommunityId(24)}\"", second);
+        Assert.DoesNotContain($"name=\"communityId\" value=\"{PagingSamples.CommunityId(0)}\"", second);
+        Assert.Contains("class=\"tab-pane active\" id=\"ca-blocked\"", second);
     }
 
     [TestMethod]

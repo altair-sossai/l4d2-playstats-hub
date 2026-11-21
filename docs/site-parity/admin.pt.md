@@ -282,6 +282,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Painel "Votantes": coluna da tabela "Último voto" | `Views/CommunityAdmin/Index.cshtml:104` | `done` |  |
 | Painel "Votantes": botão "Remover votos" em cada linha (pede confirmação) | `Views/CommunityAdmin/Index.cshtml:122` | `done` |  |
 | Erro "Esse não é um SteamID64 válido." | `Controllers/Admin/CommunityAdminController.cs:64` | `done` |  |
+| Seções em abas: Configurações, Votantes, Votantes bloqueados, Manutenção | `Views/CommunityAdmin/Index.cshtml` | `adapted` | Adicionado em 21 de novembro de 2026, a pedido do dono: a página tinha ficado longa demais. O endereço guarda a aba (`?tab=`). |
 
 ## Página de boas-vindas (`/` com o módulo de ranking desligado)
 

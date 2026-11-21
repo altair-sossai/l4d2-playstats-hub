@@ -35,18 +35,22 @@ public class CommunityAdminController(
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Index(int page = 1, int blockedPage = 1, string? tab = null, CancellationToken cancellationToken = default)
     {
         var size = AppConsts.CommunityVotersPageSize;
         var total = await communityRankingService.VoterCountAsync(cancellationToken);
         var current = Paging.Page(page, total, size);
         var voters = await communityRankingService.VotersAsync(Paging.Skip(current, size), size, cancellationToken);
+        var blockedTotal = await moderationService.BlockedCountAsync(cancellationToken);
+        var blockedCurrent = Paging.Page(blockedPage, blockedTotal, size);
+        var blocked = await moderationService.BlockedAsync(Paging.Skip(blockedCurrent, size), size, cancellationToken);
 
         var model = new CommunityAdminViewModel
         {
             Settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken),
             Voters = new PagedListModel<CommunityVoter>(voters, current, size, total),
-            Blocked = await moderationService.BlockedAsync(cancellationToken),
+            Blocked = new PagedListModel<CommunityBlockedVoter>(blocked, blockedCurrent, size, blockedTotal),
+            Tab = CommunityAdminUrls.Tab(tab, page, blockedPage),
             Votes = await dbContext.Set<CommunityVote>().CountAsync(cancellationToken),
             RatedPlayers = await dbContext.Set<CommunityRating>().CountAsync(cancellationToken)
         };
@@ -62,7 +66,7 @@ public class CommunityAdminController(
         await settingsService.SaveAsync(settings, cancellationToken);
         TempData["Saved"] = true;
 
-        return RedirectToAction(nameof(Index));
+        return Redirect(CommunityAdminUrls.Of(AppConsts.CommunitySettingsTab));
     }
 
     [HttpPost("rebuild")]
@@ -70,7 +74,7 @@ public class CommunityAdminController(
     {
         TempData["Rebuilt"] = await communityRankingService.RebuildAsync(cancellationToken);
 
-        return RedirectToAction(nameof(Index));
+        return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityMaintenanceTab));
     }
 
     [HttpPost("reset")]
@@ -78,53 +82,53 @@ public class CommunityAdminController(
     {
         TempData["Reset"] = await communityRankingService.ResetAsync(cancellationToken);
 
-        return RedirectToAction(nameof(Index));
+        return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityMaintenanceTab));
     }
 
     [HttpPost("voters/delete")]
-    public async Task<IActionResult> RemoveVoter(string? communityId, CancellationToken cancellationToken)
-    {
-        var parsed = SteamIdParser.Parse(communityId);
-
-        if (parsed != null)
-            TempData["Removed"] = await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken);
-        else
-            TempData["Error"] = "That is not a valid SteamID64.";
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    [HttpPost("voters/block")]
-    public async Task<IActionResult> BlockVoter(string? communityId, string? returnUrl, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveVoter(string? communityId, string? returnUrl, CancellationToken cancellationToken)
     {
         var parsed = SteamIdParser.Parse(communityId);
 
         if (parsed == null)
-        {
-            TempData["Error"] = "That is not a valid SteamID64.";
+            return InvalidSteamId();
 
-            return RedirectToAction(nameof(Index));
-        }
+        TempData["Removed"] = await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken);
+
+        return Back(returnUrl, AppConsts.CommunityVotersTab);
+    }
+
+    [HttpPost("voters/block")]
+    public async Task<IActionResult> BlockVoter(string? communityId, bool removeVotes, string? returnUrl, CancellationToken cancellationToken)
+    {
+        var parsed = SteamIdParser.Parse(communityId);
+
+        if (parsed == null)
+            return InvalidSteamId();
 
         var blocked = await moderationService.BlockAsync(parsed.Value, currentUser.CommunityId, cancellationToken);
+        var removed = removeVotes ? await communityRankingService.RemoveVoterAsync(parsed.Value, cancellationToken) : (int?)null;
 
-        if (IsReturn(returnUrl))
-            return LocalRedirect(returnUrl!);
+        if (IsAdministrationReturn(returnUrl))
+        {
+            TempData[blocked ? "Blocked" : "AlreadyBlocked"] = true;
 
-        TempData[blocked ? "Blocked" : "AlreadyBlocked"] = true;
+            if (removed != null)
+                TempData["Removed"] = removed;
+        }
 
-        return RedirectToAction(nameof(Index));
+        return Back(returnUrl, AppConsts.CommunityVotersTab);
     }
 
     [HttpPost("voters/unblock")]
-    public async Task<IActionResult> UnblockVoter(string? communityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> UnblockVoter(string? communityId, string? returnUrl, CancellationToken cancellationToken)
     {
         var parsed = SteamIdParser.Parse(communityId);
 
         if (parsed != null && await moderationService.UnblockAsync(parsed.Value, cancellationToken))
             TempData["Unblocked"] = true;
 
-        return RedirectToAction(nameof(Index));
+        return Back(returnUrl, AppConsts.CommunityBlockedTab);
     }
 
     [HttpPost("votes/delete")]
@@ -132,16 +136,31 @@ public class CommunityAdminController(
     {
         var removed = await moderationService.RemoveVoteAsync(voteId, cancellationToken);
 
-        if (IsReturn(returnUrl))
-            return LocalRedirect(returnUrl!);
+        if (IsAdministrationReturn(returnUrl))
+            TempData["VoteRemoved"] = removed;
 
-        TempData["VoteRemoved"] = removed;
+        return Back(returnUrl, AppConsts.CommunityVotersTab);
+    }
 
-        return RedirectToAction(nameof(Index));
+    private IActionResult InvalidSteamId()
+    {
+        TempData["Error"] = "That is not a valid SteamID64.";
+
+        return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityVotersTab));
+    }
+
+    private IActionResult Back(string? returnUrl, string tab)
+    {
+        return IsReturn(returnUrl) ? LocalRedirect(returnUrl!) : Redirect(CommunityAdminUrls.Of(tab));
     }
 
     private bool IsReturn(string? returnUrl)
     {
         return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl);
+    }
+
+    private bool IsAdministrationReturn(string? returnUrl)
+    {
+        return !IsReturn(returnUrl) || returnUrl!.StartsWith(AppConsts.AdminCommunityUrl, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -282,6 +282,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Panel "Voters": table column "Last vote" | `Views/CommunityAdmin/Index.cshtml:104` | `done` |  |
 | Panel "Voters": button "Remove votes" on each line (asks for confirmation) | `Views/CommunityAdmin/Index.cshtml:122` | `done` |  |
 | Error "That is not a valid SteamID64." | `Controllers/Admin/CommunityAdminController.cs:64` | `done` |  |
+| Sections in tabs: Settings, Voters, Blocked voters, Maintenance | `Views/CommunityAdmin/Index.cshtml` | `adapted` | Added on 21 November 2026, at the request of the owner: the page had grown too long. The address keeps the tab (`?tab=`). |
 
 ## Welcome page (`/` with the ranking module off)
 

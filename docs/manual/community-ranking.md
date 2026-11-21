@@ -87,7 +87,7 @@ The rating is permanent. It does not start again with the season.
 
 ## For administrators
 
-**Administration > Community ranking** has the settings, the maintenance and the list of voters.
+**Administration > Community ranking** has the totals of votes and rated players on top and four tabs: **Settings**, **Voters**, **Blocked voters** and **Maintenance**, which holds **Rebuild the ratings** and **Reset the community ranking**. The address keeps the open tab and page, so a reload or a link opens the same place.
 
 ![The community ranking settings](../images/en/admin-community.webp)
 
@@ -110,7 +110,7 @@ The ratings are calculated again from every vote after each new vote. **Rebuild 
 
 **Voters** lists everybody who voted, with their number of votes and their last vote, 20 per page, the most votes first. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
 
-**Block** stops a voter from voting, from the same field or from the voter's row. Their voting page then says they can no longer vote because the administrators reviewed the votes and blocked theirs, and any answer they send is refused. Blocking keeps the votes already given; use **Remove votes** as well to delete them. **Blocked voters** lists everybody who is blocked, since when, with **Unblock** to let them vote again.
+**Block** stops a voter from voting, from the same field or from the voter's row. It opens a window with two choices: **Only block** keeps the votes already given, and **Block and delete the votes** also deletes them and calculates the ratings again without them. The voting page of a blocked voter then says they can no longer vote because the administrators reviewed the votes and blocked theirs, and any answer they send is refused. **Blocked voters** lists everybody who is blocked, since when, 20 per page, with **Unblock** to let them vote again; the votes deleted when blocking do not come back.
 
 To delete a single vote, open **Latest votes** or the **Votes received** and **Votes cast** tabs of a player page while signed in as an administrator. Each vote then has a red button that deletes it, and the ratings are calculated again without it, and a yellow button that blocks the player who gave it. Administrators always see who voted, even when **Show who voted in the latest votes** is off.
 
