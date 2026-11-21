@@ -4,6 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
 using L4D2PlayStats.Hub.Web.Models.Backups;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
@@ -64,7 +65,7 @@ public class BackupAdminController(
         else
             TempData["Saved"] = true;
 
-        return Redirect(AppConsts.AdminBackupUrl);
+        return Redirect(AdminTabs.Url(AppConsts.AdminBackupUrl, AppConsts.BackupStorageTab));
     }
 
     [HttpPost("run")]

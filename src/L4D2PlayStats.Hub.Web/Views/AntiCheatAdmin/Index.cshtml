@@ -18,6 +18,11 @@
     var otherListName = Model.OtherList == AntiCheatAccessList.Whitelist ? L["whitelist"].Value : L["required list"].Value;
     var updatedAt = Model.Access.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(Model.Access.UpdatedAtUtc.Value, Model.TimeZone);
     var updatedFrom = Model.Access.UpdatedFrom == AntiCheatAccessSource.Game ? L["in the game"].Value : L["on the site"].Value;
+    var tabs = new AdminTabsModel(
+    [
+        new AdminTab(AppConsts.AntiCheatPlayersTab, L["Players"].Value, "user"),
+        new AdminTab(AppConsts.AntiCheatPageTab, L["Anti-Cheat page"].Value, "file")
+    ], AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], AppConsts.AntiCheatPlayersTab, AppConsts.AntiCheatPageTab));
 }
 
 @section Styles {
@@ -130,125 +135,137 @@
     </button>
 </div>
 
-<p class="text-muted">@L["Choose who must run the Anti-Cheat on the game server and keep one list of players for each mode. The server picks up every change within a minute."]</p>
+@await Html.PartialAsync("_AdminTabs", tabs)
 
-<h4>@L["Usage mode"] @FieldHelp.More(L["Who must run the Anti-Cheat to play on the game servers. Each mode has its own list of players."], L["Usage mode"], L["Everyone must use it: every player needs the Anti-Cheat running to play, except the players on the whitelist. On the game server this is anti_cheat_mode 0.\nNo one, except these players: only the players on the required list need the Anti-Cheat; everyone else plays without it. This is anti_cheat_mode 1.\nEach mode keeps its own list, so changing the mode loses neither of them. The mode and the lists are the same for every game server of the site.\nThe mode saved here wins over the anti_cheat_mode of the game server; until a mode is saved, each server uses its own value. After a change, the game servers pick it up within a minute.\nThese settings only decide who must use the program. Whether a game server enforces it at all is the anti_cheat_enabled setting of the plugin."])</h4>
-<div class="aca-modes">
-    <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Everyone ? "aca-selected" : "")">
-        <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Everyone.ToName()" @(Model.Mode == AntiCheatAccessMode.Everyone ? "checked" : "")/>
-        <span>
-            <strong>@L["Everyone must use it"]</strong>
-            <small>@L["Every player needs the Anti-Cheat running to play. The players on the list below are exempt."]</small>
-        </span>
-    </label>
-    <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Listed ? "aca-selected" : "")">
-        <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Listed.ToName()" @(Model.Mode == AntiCheatAccessMode.Listed ? "checked" : "")/>
-        <span>
-            <strong>@L["No one, except these players"]</strong>
-            <small>@L["Only the players on the list below need the Anti-Cheat running to play."]</small>
-        </span>
-    </label>
-</div>
-<div class="aca-mode-footer">
-    <small class="aca-mode-status">
-        @if (!Model.Access.ModeSaved)
+<div class="tab-content">
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.AntiCheatPlayersTab)" id="@AdminTabs.PaneId(AppConsts.AntiCheatPlayersTab)">
+        <p class="text-muted">@L["Choose who must run the Anti-Cheat on the game server and keep one list of players for each mode. The server picks up every change within a minute."]</p>
+
+        <h4>@L["Usage mode"] @FieldHelp.More(L["Who must run the Anti-Cheat to play on the game servers. Each mode has its own list of players."], L["Usage mode"], L["Everyone must use it: every player needs the Anti-Cheat running to play, except the players on the whitelist. On the game server this is anti_cheat_mode 0.\nNo one, except these players: only the players on the required list need the Anti-Cheat; everyone else plays without it. This is anti_cheat_mode 1.\nEach mode keeps its own list, so changing the mode loses neither of them. The mode and the lists are the same for every game server of the site.\nThe mode saved here wins over the anti_cheat_mode of the game server; until a mode is saved, each server uses its own value. After a change, the game servers pick it up within a minute.\nThese settings only decide who must use the program. Whether a game server enforces it at all is the anti_cheat_enabled setting of the plugin."])</h4>
+        <div class="aca-modes">
+            <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Everyone ? "aca-selected" : "")">
+                <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Everyone.ToName()" @(Model.Mode == AntiCheatAccessMode.Everyone ? "checked" : "")/>
+                <span>
+                    <strong>@L["Everyone must use it"]</strong>
+                    <small>@L["Every player needs the Anti-Cheat running to play. The players on the list below are exempt."]</small>
+                </span>
+            </label>
+            <label class="aca-mode @(Model.Mode == AntiCheatAccessMode.Listed ? "aca-selected" : "")">
+                <input type="radio" name="aca-mode" value="@AntiCheatAccessMode.Listed.ToName()" @(Model.Mode == AntiCheatAccessMode.Listed ? "checked" : "")/>
+                <span>
+                    <strong>@L["No one, except these players"]</strong>
+                    <small>@L["Only the players on the list below need the Anti-Cheat running to play."]</small>
+                </span>
+            </label>
+        </div>
+        <div class="aca-mode-footer">
+            <small class="aca-mode-status">
+                @if (!Model.Access.ModeSaved)
+                {
+                    @L["Not saved on the site yet: the server is using the anti_cheat_mode value from its config file."]
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.Access.UpdatedByName) && updatedAt != null)
+                {
+                    @string.Format(L["Last changed by {0} {1} on {2}."].Value, Model.Access.UpdatedByName, updatedFrom, updatedAt)
+                }
+            </small>
+            <button type="button" class="btn btn-success aca-save-mode" @(Model.Access.ModeSaved ? "disabled" : "")>
+                <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save mode"]
+            </button>
+        </div>
+        <div class="aca-mode-message"></div>
+
+        <div class="aca-list-header">
+            <h4>@listTitle</h4>
+            <a href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.OtherListName}")">@string.Format(L["See the {0} ({1})"].Value, otherListName, Model.OtherCount.ToString("N0", culture))</a>
+        </div>
+        <p class="text-muted">@listHelp</p>
+
+        @if (!Model.ShowingActiveList)
         {
-            @L["Not saved on the site yet: the server is using the anti_cheat_mode value from its config file."]
-        }
-        else if (!string.IsNullOrWhiteSpace(Model.Access.UpdatedByName) && updatedAt != null)
-        {
-            @string.Format(L["Last changed by {0} {1} on {2}."].Value, Model.Access.UpdatedByName, updatedFrom, updatedAt)
-        }
-    </small>
-    <button type="button" class="btn btn-success aca-save-mode" @(Model.Access.ModeSaved ? "disabled" : "")>
-        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save mode"]
-    </button>
-</div>
-<div class="aca-mode-message"></div>
-
-<div class="aca-list-header">
-    <h4>@listTitle</h4>
-    <a href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.OtherListName}")">@string.Format(L["See the {0} ({1})"].Value, otherListName, Model.OtherCount.ToString("N0", culture))</a>
-</div>
-<p class="text-muted">@listHelp</p>
-
-@if (!Model.ShowingActiveList)
-{
-    <div class="alert alert-info">
-        @L["This list is not used in the current mode. It stays saved for when the mode changes."]
-        <a class="alert-link" href="@AppConsts.AntiCheatAdminUrl">@L["See the list in use"]</a>
-    </div>
-}
-
-<div class="admin-stats">
-    <div>
-        <strong>@Model.ShownCount.ToString("N0", culture)</strong>
-        <small>@L["players on this list"]</small>
-    </div>
-</div>
-
-<form method="get" class="admin-filters" action="@AppConsts.AntiCheatAdminUrl">
-    <input type="hidden" name="list" value="@Model.ShownListName"/>
-    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name or Steam ID"]"/>
-    <button type="submit" class="btn btn-default">
-        <span class="glyphicon glyphicon-search"></span> @L["Search"]
-    </button>
-    @if (!string.IsNullOrEmpty(Model.Query))
-    {
-        <a class="btn btn-link" href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}")">@L["Clear filters"]</a>
-    }
-</form>
-
-<div class="admin-list">
-    @if (Model.Players.Items.Count == 0)
-    {
-        <div class="admin-empty">@L["No players on this list."]</div>
-    }
-    @foreach (var player in Model.Players.Items)
-    {
-        var addedAt = LiveDisplay.ShortDateTime(player.CreatedAtUtc, Model.TimeZone);
-        var addedFrom = player.AddedFrom == nameof(AntiCheatAccessSource.Game) ? L["in the game"].Value : L["on the site"].Value;
-        var addedBy = string.IsNullOrWhiteSpace(player.AddedByName) ? addedFrom : string.Format(L["by {0} {1}"].Value, player.AddedByName, addedFrom);
-
-        <div class="admin-item aca-player"
-             data-community-id="@player.CommunityId" data-name="@player.Name" data-avatar="@player.AvatarUrl" data-steam-id="@player.SteamId"
-             data-profile-url="@player.ProfileUrl" data-added-at="@addedAt" data-added-by="@addedBy">
-            <img class="admin-avatar" src="@player.AvatarUrl" alt="@player.Name" onerror="imgOnError(this)"/>
-            <div class="admin-main">
-                <div class="admin-title">@player.Name</div>
-                <small title="SteamID64: @player.CommunityId">@player.SteamId</small>
+            <div class="alert alert-info">
+                @L["This list is not used in the current mode. It stays saved for when the mode changes."]
+                <a class="alert-link" href="@AppConsts.AntiCheatAdminUrl">@L["See the list in use"]</a>
             </div>
-            <div class="admin-side">
-                <strong>@addedAt</strong>
-                <small>@addedBy</small>
+        }
+
+        <div class="admin-stats">
+            <div>
+                <strong>@Model.ShownCount.ToString("N0", culture)</strong>
+                <small>@L["players on this list"]</small>
             </div>
         </div>
-    }
-</div>
 
-@await Html.PartialAsync("_Pagination", pagination)
-
-<div class="panel panel-default aca-page-panel">
-    <div class="panel-heading">
-        <h3 class="panel-title">@L["Anti-Cheat page"]</h3>
-    </div>
-    <div class="panel-body">
-        <p>@L["The Anti-Cheat page explains how to play through the Anti-Cheat and offers its download. The Anti-Cheat itself is a separate program with its own service; this site only shows its page."]</p>
-
-        <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
-            <div class="form-group">
-                <label for="serviceUrl">@L["Anti-Cheat service address"] @FieldHelp.More(L["Optional. The service the Anti-Cheat page asks for the latest version of the program."], L["Anti-Cheat service address"], L["The Anti-Cheat is a separate program with its own service. When this address is set, the Anti-Cheat page asks that service for the latest version, its size, its date and its checksum, and shows them to the players with the download.\nIt must start with https://. Leave it empty to use only the download address.\nWhen the service does not answer, the page uses the download address instead."])</label>
-                <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.Settings.ServiceUrl" placeholder="https://">
-                <p class="help-block">@L["Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://."]</p>
-            </div>
-            <div class="form-group">
-                <label for="downloadUrl">@L["Download address"] @FieldHelp.Tip(L["The direct link to the Anti-Cheat download, used when the service is not set or does not answer. Must start with https://."])</label>
-                <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.Settings.DownloadUrl" placeholder="https://">
-                <p class="help-block">@L["Used when the service does not answer or is not set. Must start with https://."]</p>
-            </div>
-            <button class="btn btn-primary" type="submit">@L["Save"]</button>
-            <a class="btn btn-default" href="@AppConsts.AntiCheatUrl">@L["Open the Anti-Cheat page"]</a>
+        <form method="get" class="admin-filters" action="@AppConsts.AntiCheatAdminUrl">
+            <input type="hidden" name="list" value="@Model.ShownListName"/>
+            <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name or Steam ID"]"/>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> @L["Search"]
+            </button>
+            @if (!string.IsNullOrEmpty(Model.Query))
+            {
+                <a class="btn btn-link" href="@($"{AppConsts.AntiCheatAdminUrl}?list={Model.ShownListName}")">@L["Clear filters"]</a>
+            }
         </form>
+
+        <div class="admin-list">
+            @if (Model.Players.Items.Count == 0)
+            {
+                <div class="admin-empty">@L["No players on this list."]</div>
+            }
+            @foreach (var player in Model.Players.Items)
+            {
+                var addedAt = LiveDisplay.ShortDateTime(player.CreatedAtUtc, Model.TimeZone);
+                var addedFrom = player.AddedFrom == nameof(AntiCheatAccessSource.Game) ? L["in the game"].Value : L["on the site"].Value;
+                var addedBy = string.IsNullOrWhiteSpace(player.AddedByName) ? addedFrom : string.Format(L["by {0} {1}"].Value, player.AddedByName, addedFrom);
+
+                <div class="admin-item aca-player"
+                     data-community-id="@player.CommunityId" data-name="@player.Name" data-avatar="@player.AvatarUrl" data-steam-id="@player.SteamId"
+                     data-profile-url="@player.ProfileUrl" data-added-at="@addedAt" data-added-by="@addedBy">
+                    <img class="admin-avatar" src="@player.AvatarUrl" alt="@player.Name" onerror="imgOnError(this)"/>
+                    <div class="admin-main">
+                        <div class="admin-title">@player.Name</div>
+                        <small title="SteamID64: @player.CommunityId">@player.SteamId</small>
+                    </div>
+                    <div class="admin-side">
+                        <strong>@addedAt</strong>
+                        <small>@addedBy</small>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @await Html.PartialAsync("_Pagination", pagination)
+    </div>
+
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.AntiCheatPageTab)" id="@AdminTabs.PaneId(AppConsts.AntiCheatPageTab)">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="panel panel-default aca-page-panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">@L["Anti-Cheat page"]</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>@L["The Anti-Cheat page explains how to play through the Anti-Cheat and offers its download. The Anti-Cheat itself is a separate program with its own service; this site only shows its page."]</p>
+
+                        <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
+                            <div class="form-group">
+                                <label for="serviceUrl">@L["Anti-Cheat service address"] @FieldHelp.More(L["Optional. The service the Anti-Cheat page asks for the latest version of the program."], L["Anti-Cheat service address"], L["The Anti-Cheat is a separate program with its own service. When this address is set, the Anti-Cheat page asks that service for the latest version, its size, its date and its checksum, and shows them to the players with the download.\nIt must start with https://. Leave it empty to use only the download address.\nWhen the service does not answer, the page uses the download address instead."])</label>
+                                <input class="form-control" id="serviceUrl" name="serviceUrl" type="url" value="@Model.Settings.ServiceUrl" placeholder="https://">
+                                <p class="help-block">@L["Optional. The page asks this service for the latest version, its size, date and checksum. Must start with https://."]</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="downloadUrl">@L["Download address"] @FieldHelp.Tip(L["The direct link to the Anti-Cheat download, used when the service is not set or does not answer. Must start with https://."])</label>
+                                <input class="form-control" id="downloadUrl" name="downloadUrl" type="url" value="@Model.Settings.DownloadUrl" placeholder="https://">
+                                <p class="help-block">@L["Used when the service does not answer or is not set. Must start with https://."]</p>
+                            </div>
+                            <button class="btn btn-primary" type="submit">@L["Save"]</button>
+                            <a class="btn btn-default" href="@AppConsts.AntiCheatUrl">@L["Open the Anti-Cheat page"]</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

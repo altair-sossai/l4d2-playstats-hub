@@ -1431,5 +1431,7 @@
   "Add a link": "Añadir un enlace",
   "Address": "Dirección",
   "Move up": "Subir",
-  "Move down": "Bajar"
+  "Move down": "Bajar",
+  "Bans": "Bloqueos",
+  "Limits": "Límites"
 }

@@ -4,6 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.AntiCheat;
@@ -55,7 +56,7 @@ public class AntiCheatAdminController(ISettingsService settingsService, IAntiChe
 
         TempData["Saved"] = true;
 
-        return RedirectToAction(nameof(Index));
+        return Redirect(AdminTabs.Url(AppConsts.AntiCheatAdminUrl, AppConsts.AntiCheatPageTab));
     }
 
     [HttpGet(AppConsts.AntiCheatAdminLegacyUrl)]

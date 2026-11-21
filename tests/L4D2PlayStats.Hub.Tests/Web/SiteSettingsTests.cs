@@ -225,7 +225,7 @@ public class SiteSettingsTests
 
         var html = await client.GetStringAsync(SettingsPage);
 
-        Assert.Contains("<h3 class=\"panel-title\">Privacy</h3>", html);
+        Assert.Contains("data-admin-tab=\"privacy\"", html);
         Assert.Contains("<label for=\"Privacy_RelatedAccounts\">Who can see related accounts</label>", html);
         Assert.Contains("<option value=\"Everyone\" selected=\"selected\">Everyone</option>", html);
         Assert.Contains("<option value=\"Administrators\">Administrators only</option>", html);

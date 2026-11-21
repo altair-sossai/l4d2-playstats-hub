@@ -2,6 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Live;
@@ -48,7 +49,7 @@ public class ChatBansController(IChatBanService chatBanService, ILiveViewService
         await settingsService.SaveAsync(limits, cancellationToken);
         TempData["LimitsSaved"] = true;
 
-        return Redirect(AppConsts.ChatBansUrl);
+        return Redirect(AdminTabs.Url(AppConsts.ChatBansUrl, AppConsts.ChatBansLimitsTab));
     }
 
     [HttpGet("/chat-bans")]

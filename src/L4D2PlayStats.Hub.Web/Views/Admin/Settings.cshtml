@@ -6,6 +6,14 @@
     var cultures = new Dictionary<string, string> { ["en-US"] = "English", ["pt-BR"] = "Português", ["es-ES"] = "Español" };
     var logoTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
     var logoMegabytes = AppConsts.LogoMaxBytes / AppConsts.BytesPerMegabyte;
+    var tabs = new AdminTabsModel(
+    [
+        new AdminTab(AppConsts.SettingsSiteTab, L["Site"].Value, "globe"),
+        new AdminTab(AppConsts.SettingsAppearanceTab, L["Appearance"].Value, "picture"),
+        new AdminTab(AppConsts.SettingsSeasonsTab, L["Seasons"].Value, "calendar"),
+        new AdminTab(AppConsts.SettingsRankingTab, L["Ranking points"].Value, "stats"),
+        new AdminTab(AppConsts.SettingsPrivacyTab, L["Privacy"].Value, "lock")
+    ], AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], AppConsts.SettingsSiteTab, AppConsts.SettingsAppearanceTab, AppConsts.SettingsSeasonsTab, AppConsts.SettingsRankingTab, AppConsts.SettingsPrivacyTab));
 }
 
 @section Styles {
@@ -53,275 +61,285 @@
 }
 
 <form method="post" asp-antiforgery="true" action="/admin/settings" enctype="multipart/form-data">
-<div class="row">
-<div class="col-md-6">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">@L["Site"]</h3>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label for="Site_Name">@L["Site name"] @FieldHelp.Tip(L["Shown in the menu when there is no logo, in the title of every page and in the pages inside the game."])</label>
-                <input class="form-control" id="Site_Name" name="Site.Name" value="@Model.Site.Name" required>
-            </div>
-            <div class="form-group">
-                <label for="Site_PublicUrl">@L["Public address of the site"] @FieldHelp.More(L["The address the game servers use to reach this site, written in their instructions."], L["Public address of the site"], L["This address goes in the instructions of each game server, in the playstats_url line of cfg/playstats.cfg. The game servers use it to send the statistics and the live data to the site.\nLeave it empty to use the address you are using now in the browser.\nFill it when you open the administration through a different address than the one the game servers use. For example, you manage the site at http://localhost:8080, but the game servers reach it at https://stats.example.com.\nChanging it only changes the instructions shown on the site: a game server that is already connected keeps the address written in its cfg/playstats.cfg until you change that file."])</label>
-                <input class="form-control" id="Site_PublicUrl" name="Site.PublicUrl" value="@Model.Site.PublicUrl" placeholder="@AppConsts.AdminPublicUrlPlaceholder">
-                <span class="help-block">@L["Shown in the instructions for the game server. Leave empty to use the address you are using now."]</span>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Site_DefaultCulture">@L["Default language"] @FieldHelp.Tip(L["The language of visitors who have not chosen one. Each visitor can change it in the settings menu, and the choice is remembered in that browser."])</label>
-                        <select class="form-control" id="Site_DefaultCulture" name="Site.DefaultCulture">
-                            @foreach (var culture in cultures)
-                            {
-                                <option value="@culture.Key" selected="@(culture.Key == Model.Site.DefaultCulture)">@culture.Value</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Site_TimeZone">@L["Time zone"] @FieldHelp.More(L["The clock of the site: the dates on the pages and the start and end of each season."], L["Time zone"], L["Every date and time on the site is shown in this time zone. It also decides the day used by the vote limits of the community ranking and the moment each season starts and ends: a season that ends on 31 December ends at midnight in this time zone.\nChoose the time zone of your community from the list, such as America/Sao_Paulo or Europe/Lisbon. A name the server does not recognize is not saved, and the previous time zone stays."])</label>
-                        <input class="form-control" id="Site_TimeZone" name="Site.TimeZone" value="@Model.Site.TimeZone" list="timezones">
-                        <datalist id="timezones">
-                            @foreach (var zone in Model.TimeZones)
-                            {
-                                <option value="@zone"></option>
-                            }
-                        </datalist>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 0">
-                <label for="Site_SteamApiKey">@L["Steam Web API key (optional)"] @FieldHelp.More(L["A key from Steam that makes the avatars and names of the players load faster. The site works without it."], L["Steam Web API key"], L["The site downloads the avatars and the names of the players from Steam. Without a key it reads the public profile of each player, one at a time, which works but is slower. With a key it asks the Steam Web API for many players at once.\nThe key is also used to show the name and the photo of a player when you type a Steam ID in the administration forms, and to check the names of the skin authors.\nGet a key at steamcommunity.com/dev/apikey, signed in with any Steam account, and paste it here. Keep it private: it is linked to that Steam account. Leave the field empty to stop using it."])</label>
-                <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" type="password" value="" autocomplete="new-password" placeholder="@(string.IsNullOrWhiteSpace(Model.Site.SteamApiKey) ? "" : L["A key is saved. Leave empty to keep it."].Value)">
-                @if (!string.IsNullOrWhiteSpace(Model.Site.SteamApiKey))
-                {
-                    <div class="checkbox" style="margin-bottom: 0">
-                        <label>
-                            <input type="checkbox" name="RemoveSteamApiKey" value="true"> @L["Remove the saved key"]
-                        </label>
-                    </div>
-                }
-                <span class="help-block">@L["Optional. Player avatars load without it; with a key they load faster."]</span>
-            </div>
-        </div>
-    </div>
+    <input type="hidden" name="@AppConsts.AdminTabQuery" value="@tabs.Active" data-admin-tab-field>
+    @await Html.PartialAsync("_AdminTabs", tabs)
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">@L["Appearance"]</h3>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label for="Logo">@L["Site logo"] @FieldHelp.Tip(L["An image shown in the menu in place of the site name. Choose a file only to change it: saving without a file keeps the current logo."])</label>
-                <div>
-                    @if (Branding.HasLogo)
-                    {
-                        <div class="navbar navbar-default settings-logo">
-                            <img src="@AppConsts.LogoUrl?v=@Branding.LogoVersion" alt="@Model.Site.Name">
+    <div class="tab-content">
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.SettingsSiteTab)" id="@AdminTabs.PaneId(AppConsts.SettingsSiteTab)">
+            <div class="row">
+                <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="Site_Name">@L["Site name"] @FieldHelp.Tip(L["Shown in the menu when there is no logo, in the title of every page and in the pages inside the game."])</label>
+                            <input class="form-control" id="Site_Name" name="Site.Name" value="@Model.Site.Name" required>
                         </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">@L["No logo yet: the menu shows the site name."]</p>
-                    }
-                </div>
-                <input type="file" id="Logo" name="Logo" accept="@logoTypes">
-                <span class="help-block">@L["PNG, JPG, WEBP or GIF, up to {0} MB. It appears in the menu, in place of the site name.", logoMegabytes]</span>
-                @if (Branding.HasLogo)
-                {
-                    <div class="checkbox">
-                        <label for="RemoveLogo">
-                            <input type="checkbox" id="RemoveLogo" name="RemoveLogo" value="true">
-                            @L["Remove the logo and show the site name"] @FieldHelp.Tip(L["Deletes the saved logo when you save. The menu shows the site name again."])
-                        </label>
+                        <div class="form-group">
+                            <label for="Site_PublicUrl">@L["Public address of the site"] @FieldHelp.More(L["The address the game servers use to reach this site, written in their instructions."], L["Public address of the site"], L["This address goes in the instructions of each game server, in the playstats_url line of cfg/playstats.cfg. The game servers use it to send the statistics and the live data to the site.\nLeave it empty to use the address you are using now in the browser.\nFill it when you open the administration through a different address than the one the game servers use. For example, you manage the site at http://localhost:8080, but the game servers reach it at https://stats.example.com.\nChanging it only changes the instructions shown on the site: a game server that is already connected keeps the address written in its cfg/playstats.cfg until you change that file."])</label>
+                            <input class="form-control" id="Site_PublicUrl" name="Site.PublicUrl" value="@Model.Site.PublicUrl" placeholder="@AppConsts.AdminPublicUrlPlaceholder">
+                            <span class="help-block">@L["Shown in the instructions for the game server. Leave empty to use the address you are using now."]</span>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Site_DefaultCulture">@L["Default language"] @FieldHelp.Tip(L["The language of visitors who have not chosen one. Each visitor can change it in the settings menu, and the choice is remembered in that browser."])</label>
+                                    <select class="form-control" id="Site_DefaultCulture" name="Site.DefaultCulture">
+                                        @foreach (var culture in cultures)
+                                        {
+                                            <option value="@culture.Key" selected="@(culture.Key == Model.Site.DefaultCulture)">@culture.Value</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Site_TimeZone">@L["Time zone"] @FieldHelp.More(L["The clock of the site: the dates on the pages and the start and end of each season."], L["Time zone"], L["Every date and time on the site is shown in this time zone. It also decides the day used by the vote limits of the community ranking and the moment each season starts and ends: a season that ends on 31 December ends at midnight in this time zone.\nChoose the time zone of your community from the list, such as America/Sao_Paulo or Europe/Lisbon. A name the server does not recognize is not saved, and the previous time zone stays."])</label>
+                                    <input class="form-control" id="Site_TimeZone" name="Site.TimeZone" value="@Model.Site.TimeZone" list="timezones">
+                                    <datalist id="timezones">
+                                        @foreach (var zone in Model.TimeZones)
+                                        {
+                                            <option value="@zone"></option>
+                                        }
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="Site_SteamApiKey">@L["Steam Web API key (optional)"] @FieldHelp.More(L["A key from Steam that makes the avatars and names of the players load faster. The site works without it."], L["Steam Web API key"], L["The site downloads the avatars and the names of the players from Steam. Without a key it reads the public profile of each player, one at a time, which works but is slower. With a key it asks the Steam Web API for many players at once.\nThe key is also used to show the name and the photo of a player when you type a Steam ID in the administration forms, and to check the names of the skin authors.\nGet a key at steamcommunity.com/dev/apikey, signed in with any Steam account, and paste it here. Keep it private: it is linked to that Steam account. Leave the field empty to stop using it."])</label>
+                            <input class="form-control" id="Site_SteamApiKey" name="Site.SteamApiKey" type="password" value="" autocomplete="new-password" placeholder="@(string.IsNullOrWhiteSpace(Model.Site.SteamApiKey) ? "" : L["A key is saved. Leave empty to keep it."].Value)">
+                            @if (!string.IsNullOrWhiteSpace(Model.Site.SteamApiKey))
+                            {
+                                <div class="checkbox" style="margin-bottom: 0">
+                                    <label>
+                                        <input type="checkbox" name="RemoveSteamApiKey" value="true"> @L["Remove the saved key"]
+                                    </label>
+                                </div>
+                            }
+                            <span class="help-block">@L["Optional. Player avatars load without it; with a key they load faster."]</span>
+                        </div>
                     </div>
-                }
+                </div>
+                </div>
             </div>
-            <div class="form-group fl-editor" id="footer-links">
-                <label>@L["Footer links"] @FieldHelp.More(L["Links shown at the bottom of every page, such as the Discord or the group of your community."], L["Footer links"], L["Add one line for each link, with the text shown and the address. The address must start with http:// or https://.\nThe arrows change the order: the links appear in the footer in the order of the list.\nA line without a text or with an invalid address is left out, and the page warns you when you save. With no links, the footer shows only the link to the project."])</label>
-                <input type="hidden" id="Site_FooterLinks" name="Site.FooterLinks" value="@Model.Site.FooterLinks">
-                <table class="table table-condensed fl-table">
-                    <thead>
-                    <tr>
-                        <th>@L["Description"]</th>
-                        <th>@L["Address"]</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody class="fl-rows">
-                    @foreach (var link in FooterLinks.Read(Model.Site.FooterLinks))
-                    {
-                        <tr class="fl-row">
-                            <td><input class="form-control input-sm fl-text" type="text" value="@link.Text" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
-                            <td><input class="form-control input-sm fl-url" type="url" value="@link.Url" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
-                            <td class="fl-actions">
-                                <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                                <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
-                                <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-                <p class="help-block fl-empty">@L["No links yet: the footer shows only the link to the project."]</p>
-                <button type="button" class="btn btn-default btn-sm fl-add">
-                    <span class="glyphicon glyphicon-plus"></span> @L["Add a link"]
-                </button>
-                <template class="fl-template">
-                        <tr class="fl-row">
-                            <td><input class="form-control input-sm fl-text" type="text" value="" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
-                            <td><input class="form-control input-sm fl-url" type="url" value="" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
-                            <td class="fl-actions">
-                                <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
-                                <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
-                                <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
-                            </td>
-                        </tr>
-                </template>
+        </div>
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.SettingsAppearanceTab)" id="@AdminTabs.PaneId(AppConsts.SettingsAppearanceTab)">
+            <div class="row">
+                <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="Logo">@L["Site logo"] @FieldHelp.Tip(L["An image shown in the menu in place of the site name. Choose a file only to change it: saving without a file keeps the current logo."])</label>
+                            <div>
+                                @if (Branding.HasLogo)
+                                {
+                                    <div class="navbar navbar-default settings-logo">
+                                        <img src="@AppConsts.LogoUrl?v=@Branding.LogoVersion" alt="@Model.Site.Name">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">@L["No logo yet: the menu shows the site name."]</p>
+                                }
+                            </div>
+                            <input type="file" id="Logo" name="Logo" accept="@logoTypes">
+                            <span class="help-block">@L["PNG, JPG, WEBP or GIF, up to {0} MB. It appears in the menu, in place of the site name.", logoMegabytes]</span>
+                            @if (Branding.HasLogo)
+                            {
+                                <div class="checkbox">
+                                    <label for="RemoveLogo">
+                                        <input type="checkbox" id="RemoveLogo" name="RemoveLogo" value="true">
+                                        @L["Remove the logo and show the site name"] @FieldHelp.Tip(L["Deletes the saved logo when you save. The menu shows the site name again."])
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <div class="form-group fl-editor" id="footer-links">
+                            <label>@L["Footer links"] @FieldHelp.More(L["Links shown at the bottom of every page, such as the Discord or the group of your community."], L["Footer links"], L["Add one line for each link, with the text shown and the address. The address must start with http:// or https://.\nThe arrows change the order: the links appear in the footer in the order of the list.\nA line without a text or with an invalid address is left out, and the page warns you when you save. With no links, the footer shows only the link to the project."])</label>
+                            <input type="hidden" id="Site_FooterLinks" name="Site.FooterLinks" value="@Model.Site.FooterLinks">
+                            <table class="table table-condensed fl-table">
+                                <thead>
+                                <tr>
+                                    <th>@L["Description"]</th>
+                                    <th>@L["Address"]</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody class="fl-rows">
+                                @foreach (var link in FooterLinks.Read(Model.Site.FooterLinks))
+                                {
+                                    <tr class="fl-row">
+                                        <td><input class="form-control input-sm fl-text" type="text" value="@link.Text" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
+                                        <td><input class="form-control input-sm fl-url" type="url" value="@link.Url" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
+                                        <td class="fl-actions">
+                                            <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                            <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                            <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                            <p class="help-block fl-empty">@L["No links yet: the footer shows only the link to the project."]</p>
+                            <button type="button" class="btn btn-default btn-sm fl-add">
+                                <span class="glyphicon glyphicon-plus"></span> @L["Add a link"]
+                            </button>
+                            <template class="fl-template">
+                                    <tr class="fl-row">
+                                        <td><input class="form-control input-sm fl-text" type="text" value="" maxlength="@AppConsts.FooterLinkTextMaxLength" placeholder="@AppConsts.FooterLinkTextExample" aria-label="@L["Description"]"></td>
+                                        <td><input class="form-control input-sm fl-url" type="url" value="" placeholder="@AppConsts.FooterLinkUrlExample" aria-label="@L["Address"]"></td>
+                                        <td class="fl-actions">
+                                            <button type="button" class="btn btn-default btn-xs fl-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                            <button type="button" class="btn btn-default btn-xs fl-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                            <button type="button" class="btn btn-danger btn-xs fl-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
+                                        </td>
+                                    </tr>
+                            </template>
+                        </div>
+                        <div class="form-group">
+                            <label for="Site_MetaKeywords">@L["Keywords for search engines (optional)"] @FieldHelp.Tip(L["Words that describe your community, such as l4d2, versus, ranking, separated by commas. Up to 500 characters."])</label>
+                            <input class="form-control" id="Site_MetaKeywords" name="Site.MetaKeywords" value="@Model.Site.MetaKeywords" maxlength="@AppConsts.MetaKeywordsMaxLength">
+                            <span class="help-block">@L["Separated by commas. They go in the keywords tag of every page."]</span>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="Site_GoogleAnalyticsId">@L["Google Analytics ID (optional)"] @FieldHelp.Tip(L["The measurement ID of your Google Analytics property, such as G-XXXXXXXXXX. Only letters, numbers and hyphens are accepted."])</label>
+                            <input class="form-control" id="Site_GoogleAnalyticsId" name="Site.GoogleAnalyticsId" value="@Model.Site.GoogleAnalyticsId" placeholder="@AppConsts.GoogleAnalyticsIdPlaceholder" autocomplete="off">
+                            <span class="help-block">@L["With an ID, every page loads the Google Analytics script. Leave empty to load nothing."]</span>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="Site_MetaKeywords">@L["Keywords for search engines (optional)"] @FieldHelp.Tip(L["Words that describe your community, such as l4d2, versus, ranking, separated by commas. Up to 500 characters."])</label>
-                <input class="form-control" id="Site_MetaKeywords" name="Site.MetaKeywords" value="@Model.Site.MetaKeywords" maxlength="@AppConsts.MetaKeywordsMaxLength">
-                <span class="help-block">@L["Separated by commas. They go in the keywords tag of every page."]</span>
+        </div>
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.SettingsSeasonsTab)" id="@AdminTabs.PaneId(AppConsts.SettingsSeasonsTab)">
+            <div class="row">
+                <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="Season_LengthInMonths">@L["Season length, in months"] @FieldHelp.More(L["How long each season lasts, from 1 to 24 months. The ranking starts again from zero at each season."], L["Season length, in months"], L["The ranking is played in seasons. At the start of each season everybody starts again from zero experience; past seasons stay available in the period selectors and in the history.\nSeasons are blocks counted from the start of the year. With 2 months, the default, seasons start in January, March, May, July, September and November. With 3 months, in January, April, July and October.\nA change applies from the next season: the seasons that already exist keep their dates. The start and the end of a season follow the time zone of the site.\nWith the skin shop on, bought skins are refunded when a season ends, unless that is turned off in the shop settings."])</label>
+                            <input class="form-control" id="Season_LengthInMonths" name="Season.LengthInMonths" type="number" min="1" max="24" value="@Model.Season.LengthInMonths" style="max-width: 120px">
+                            <span class="help-block">@L["A change applies from the next season. Seasons that already exist keep their dates."]</span>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
-            <div class="form-group" style="margin-bottom: 0">
-                <label for="Site_GoogleAnalyticsId">@L["Google Analytics ID (optional)"] @FieldHelp.Tip(L["The measurement ID of your Google Analytics property, such as G-XXXXXXXXXX. Only letters, numbers and hyphens are accepted."])</label>
-                <input class="form-control" id="Site_GoogleAnalyticsId" name="Site.GoogleAnalyticsId" value="@Model.Site.GoogleAnalyticsId" placeholder="@AppConsts.GoogleAnalyticsIdPlaceholder" autocomplete="off">
-                <span class="help-block">@L["With an ID, every page loads the Google Analytics script. Leave empty to load nothing."]</span>
+        </div>
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.SettingsRankingTab)" id="@AdminTabs.PaneId(AppConsts.SettingsRankingTab)">
+            <div class="row">
+                <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-4">
+                                <div class="form-group">
+                                    <label for="Ranking_Win">@L["Win"] @FieldHelp.Tip(L["Experience a player gets for each ranked match won. 85 by default. A change applies to every season at once, past ones included."])</label>
+                                    <input class="form-control" id="Ranking_Win" name="Ranking.Win" type="number" value="@Model.Ranking.Win">
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4">
+                                <div class="form-group">
+                                    <label for="Ranking_Loss">@L["Loss"] @FieldHelp.Tip(L["Experience for each ranked match lost, usually a negative number. -80 by default. The experience of a player never goes below zero."])</label>
+                                    <input class="form-control" id="Ranking_Loss" name="Ranking.Loss" type="number" value="@Model.Ranking.Loss">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="form-group">
+                                    <label for="Ranking_RageQuit">@L["Rage quit"] @FieldHelp.More(L["Experience for leaving a ranked match before the end. -150 by default."], L["Rage quit"], L["A player who was in the first map of a ranked match but not in the last one left before the end. That counts as a loss, and the player gets this experience instead of everything else from that match, MVP points included.\nUse a negative number, usually lower than the one for a loss, so that leaving costs more than losing. The default is -150.\nA player who joined after the first map and stayed to the end gets no win and no loss, only the MVP points."])</label>
+                                    <input class="form-control" id="Ranking_RageQuit" name="Ranking.RageQuit" type="number" value="@Model.Ranking.RageQuit">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Ranking_Mvp">@L["MVP in special infected damage, per round"] @FieldHelp.Tip(L["Experience for each round half in which the player was the MVP in damage to special infected. 8 by default. Each award also gives one star in the skin shop."])</label>
+                            <input class="form-control" id="Ranking_Mvp" name="Ranking.Mvp" type="number" value="@Model.Ranking.Mvp">
+                        </div>
+                        <div class="form-group">
+                            <label for="Ranking_MvpCommon">@L["MVP in common infected, per round"] @FieldHelp.Tip(L["Experience for each round half in which the player killed the most common infected. 6 by default. Each award also gives one star in the skin shop."])</label>
+                            <input class="form-control" id="Ranking_MvpCommon" name="Ranking.MvpCommon" type="number" value="@Model.Ranking.MvpCommon">
+                        </div>
+                        <div class="form-group">
+                            <label for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"] @FieldHelp.More(L["Games (wins plus losses) a player needs in the period shown to be listed in the ranking. 0 lists everyone."], L["Minimum matches to appear in the ranking"], L["A player with fewer games than this, in the season or period shown, is left out of the ranking. Their matches still count for everybody else.\nOnly wins and losses count as games: draws and casual matches do not.\n0, the default, lists every player with at least one ranked match. A value such as 5 keeps players with a single lucky match out of the top positions."])</label>
+                            <input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_HomeListedPlayers">@L["Players in the ranking of the home page"] @FieldHelp.Tip(L["How many players the ranking of the home page and of previous seasons lists at most."])</label>
+                                    <input class="form-control" id="Ranking_HomeListedPlayers" name="Ranking.HomeListedPlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeListedPlayers">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_HomeVisiblePlayers">@L["Players shown before Show more"] @FieldHelp.Tip(L["The home page shows this many players at first; Show more reveals the rest of the list."])</label>
+                                    <input class="form-control" id="Ranking_HomeVisiblePlayers" name="Ranking.HomeVisiblePlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeVisiblePlayers">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_MatchesPerPage">@L["Matches per page in Last matches"] @FieldHelp.Tip(L["How many matches each page of Last matches shows."])</label>
+                                    <input class="form-control" id="Ranking_MatchesPerPage" name="Ranking.MatchesPerPage" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.MatchesPerPage">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_PlayerRecentMatches">@L["Recent matches on the player page"] @FieldHelp.Tip(L["How many of the most recent matches the player page lists, in the season or period shown."])</label>
+                                    <input class="form-control" id="Ranking_PlayerRecentMatches" name="Ranking.PlayerRecentMatches" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.PlayerRecentMatches">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_DefaultPunishment">@L["Default punishment, in points"] @FieldHelp.Tip(L["The value already filled in when an administrator punishes a player from the player page. It can still be changed for each punishment."])</label>
+                                    <input class="form-control" id="Ranking_DefaultPunishment" name="Ranking.DefaultPunishment" type="number" min="1" max="@CoreConsts.MaxScore" value="@Model.Ranking.DefaultPunishment">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="Ranking_MatchGapInHours">@L["Hours without files that split two matches"] @FieldHelp.More(L["Statistics files of a game server that are further apart than this belong to different matches."], L["Hours without files that split two matches"], L["The site joins the statistics files of a game server into matches. When more than this many hours pass between two files, the next file starts a new match, even on the same campaign.\nThe default, 6, keeps a match that was paused for a while in one piece and separates the matches of different nights.\nThe change applies to the files that arrive from now on. To apply it to the matches already built, use Reprocess all matches in the overview of the administration area."])</label>
+                                    <input class="form-control" id="Ranking_MatchGapInHours" name="Ranking.MatchGapInHours" type="number" min="@CoreConsts.MatchMinGapInHours" max="@CoreConsts.MatchMaxGapInHours" value="@Model.Ranking.MatchGapInHours">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox">
+                            <label for="Ranking_IncludeUnknownCampaigns">
+                                <input type="checkbox" id="Ranking_IncludeUnknownCampaigns" name="Ranking.IncludeUnknownCampaigns" value="true" checked="@Model.Ranking.IncludeUnknownCampaigns">
+                                <input type="hidden" name="Ranking.IncludeUnknownCampaigns" value="false">
+                                @L["Keep matches played on maps that are not in the campaign list"] @FieldHelp.More(L["Whether maps that are in no campaign of the list still make matches."], L["Maps that are not in the campaign list"], L["The site joins the maps of a campaign into one match using the campaign list. A map that is in no campaign of the list, such as a custom map you did not add, is an unknown map.\nOn, the default: unknown maps are kept. Consecutive unknown maps become one match when the round number goes up by one and less than 2 hours passed between them.\nOff: unknown maps are ignored, so they make no match and count for nothing.\nThe change applies to the files that arrive from now on. To apply it to the matches already built, use Reprocess all matches in the overview of the administration area."])
+                            </label>
+                        </div>
+                        <span class="help-block" style="margin-bottom: 0">@L["Points apply to every season right away. The option about unknown maps applies to new matches, or to all of them after a reprocess."]</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.SettingsPrivacyTab)" id="@AdminTabs.PaneId(AppConsts.SettingsPrivacyTab)">
+            <div class="row">
+                <div class="col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="Privacy_RelatedAccounts">@L["Who can see related accounts"]</label> @FieldHelp.More(L["Who sees the Related accounts panel on the player pages: every visitor or only administrators."], L["Who can see related accounts"], L["Related accounts are other Steam accounts that connected to a game server from the same IP address as the player, which often means a second account. The address itself is never shown.\nEveryone, the default, shows the panel to every visitor, as on the old site. Administrators only hides it from visitors and from players who are not administrators.\nThis covers the site only. The l4d2_gameinfo_sync plugin still announces related accounts in the game chat while gameinfo_related_accounts_chat is 1; set it to 0 in cfg/playstats.cfg to keep them out of the chat too.\nAdministrators always see the connections in Player connections. With the live server module off, the panel is not shown to anyone."])
+                            <select class="form-control" id="Privacy_RelatedAccounts" name="Privacy.RelatedAccounts">
+                                <option value="@RelatedAccountsVisibility.Everyone" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Everyone)">@L["Everyone"]</option>
+                                <option value="@RelatedAccountsVisibility.Administrators" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Administrators)">@L["Administrators only"]</option>
+                            </select>
+                            <span class="help-block">@L["Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.", AppConsts.RelatedAccountsChatCvar]</span>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="Privacy_ConnectionRetentionInMonths">@L["Months to keep the player connections"] @FieldHelp.More(L["Connections older than this, with the IP addresses of the players, are deleted every day."], L["Months to keep the player connections"], L["When a player joins a game server, the site records the Steam account, the name and the IP address. These records feed Player connections and the related accounts.\nEvery day the site deletes the connections not seen for longer than this. A shorter period keeps less personal data, as data protection laws ask; a longer one finds more related accounts.\nThe default is 3 months. From 1 to 60."])</label>
+                            <input class="form-control" id="Privacy_ConnectionRetentionInMonths" name="Privacy.ConnectionRetentionInMonths" type="number" min="@CoreConsts.PlayerConnectionMinRetentionInMonths" max="@CoreConsts.PlayerConnectionMaxRetentionInMonths" value="@Model.Privacy.ConnectionRetentionInMonths">
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="col-md-6">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">@L["Seasons"]</h3>
-        </div>
-        <div class="panel-body">
-            <div class="form-group" style="margin-bottom: 0">
-                <label for="Season_LengthInMonths">@L["Season length, in months"] @FieldHelp.More(L["How long each season lasts, from 1 to 24 months. The ranking starts again from zero at each season."], L["Season length, in months"], L["The ranking is played in seasons. At the start of each season everybody starts again from zero experience; past seasons stay available in the period selectors and in the history.\nSeasons are blocks counted from the start of the year. With 2 months, the default, seasons start in January, March, May, July, September and November. With 3 months, in January, April, July and October.\nA change applies from the next season: the seasons that already exist keep their dates. The start and the end of a season follow the time zone of the site.\nWith the skin shop on, bought skins are refunded when a season ends, unless that is turned off in the shop settings."])</label>
-                <input class="form-control" id="Season_LengthInMonths" name="Season.LengthInMonths" type="number" min="1" max="24" value="@Model.Season.LengthInMonths" style="max-width: 120px">
-                <span class="help-block">@L["A change applies from the next season. Seasons that already exist keep their dates."]</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">@L["Ranking points"]</h3>
-        </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-xs-6 col-sm-4">
-                    <div class="form-group">
-                        <label for="Ranking_Win">@L["Win"] @FieldHelp.Tip(L["Experience a player gets for each ranked match won. 85 by default. A change applies to every season at once, past ones included."])</label>
-                        <input class="form-control" id="Ranking_Win" name="Ranking.Win" type="number" value="@Model.Ranking.Win">
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-4">
-                    <div class="form-group">
-                        <label for="Ranking_Loss">@L["Loss"] @FieldHelp.Tip(L["Experience for each ranked match lost, usually a negative number. -80 by default. The experience of a player never goes below zero."])</label>
-                        <input class="form-control" id="Ranking_Loss" name="Ranking.Loss" type="number" value="@Model.Ranking.Loss">
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-4">
-                    <div class="form-group">
-                        <label for="Ranking_RageQuit">@L["Rage quit"] @FieldHelp.More(L["Experience for leaving a ranked match before the end. -150 by default."], L["Rage quit"], L["A player who was in the first map of a ranked match but not in the last one left before the end. That counts as a loss, and the player gets this experience instead of everything else from that match, MVP points included.\nUse a negative number, usually lower than the one for a loss, so that leaving costs more than losing. The default is -150.\nA player who joined after the first map and stayed to the end gets no win and no loss, only the MVP points."])</label>
-                        <input class="form-control" id="Ranking_RageQuit" name="Ranking.RageQuit" type="number" value="@Model.Ranking.RageQuit">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="Ranking_Mvp">@L["MVP in special infected damage, per round"] @FieldHelp.Tip(L["Experience for each round half in which the player was the MVP in damage to special infected. 8 by default. Each award also gives one star in the skin shop."])</label>
-                <input class="form-control" id="Ranking_Mvp" name="Ranking.Mvp" type="number" value="@Model.Ranking.Mvp">
-            </div>
-            <div class="form-group">
-                <label for="Ranking_MvpCommon">@L["MVP in common infected, per round"] @FieldHelp.Tip(L["Experience for each round half in which the player killed the most common infected. 6 by default. Each award also gives one star in the skin shop."])</label>
-                <input class="form-control" id="Ranking_MvpCommon" name="Ranking.MvpCommon" type="number" value="@Model.Ranking.MvpCommon">
-            </div>
-            <div class="form-group">
-                <label for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"] @FieldHelp.More(L["Games (wins plus losses) a player needs in the period shown to be listed in the ranking. 0 lists everyone."], L["Minimum matches to appear in the ranking"], L["A player with fewer games than this, in the season or period shown, is left out of the ranking. Their matches still count for everybody else.\nOnly wins and losses count as games: draws and casual matches do not.\n0, the default, lists every player with at least one ranked match. A value such as 5 keeps players with a single lucky match out of the top positions."])</label>
-                <input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches">
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_HomeListedPlayers">@L["Players in the ranking of the home page"] @FieldHelp.Tip(L["How many players the ranking of the home page and of previous seasons lists at most."])</label>
-                        <input class="form-control" id="Ranking_HomeListedPlayers" name="Ranking.HomeListedPlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeListedPlayers">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_HomeVisiblePlayers">@L["Players shown before Show more"] @FieldHelp.Tip(L["The home page shows this many players at first; Show more reveals the rest of the list."])</label>
-                        <input class="form-control" id="Ranking_HomeVisiblePlayers" name="Ranking.HomeVisiblePlayers" type="number" min="1" max="@CoreConsts.RankingMaxListedPlayers" value="@Model.Ranking.HomeVisiblePlayers">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_MatchesPerPage">@L["Matches per page in Last matches"] @FieldHelp.Tip(L["How many matches each page of Last matches shows."])</label>
-                        <input class="form-control" id="Ranking_MatchesPerPage" name="Ranking.MatchesPerPage" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.MatchesPerPage">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_PlayerRecentMatches">@L["Recent matches on the player page"] @FieldHelp.Tip(L["How many of the most recent matches the player page lists, in the season or period shown."])</label>
-                        <input class="form-control" id="Ranking_PlayerRecentMatches" name="Ranking.PlayerRecentMatches" type="number" min="@CoreConsts.MatchListMinSize" max="@CoreConsts.MatchListMaxSize" value="@Model.Ranking.PlayerRecentMatches">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_DefaultPunishment">@L["Default punishment, in points"] @FieldHelp.Tip(L["The value already filled in when an administrator punishes a player from the player page. It can still be changed for each punishment."])</label>
-                        <input class="form-control" id="Ranking_DefaultPunishment" name="Ranking.DefaultPunishment" type="number" min="1" max="@CoreConsts.MaxScore" value="@Model.Ranking.DefaultPunishment">
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="Ranking_MatchGapInHours">@L["Hours without files that split two matches"] @FieldHelp.More(L["Statistics files of a game server that are further apart than this belong to different matches."], L["Hours without files that split two matches"], L["The site joins the statistics files of a game server into matches. When more than this many hours pass between two files, the next file starts a new match, even on the same campaign.\nThe default, 6, keeps a match that was paused for a while in one piece and separates the matches of different nights.\nThe change applies to the files that arrive from now on. To apply it to the matches already built, use Reprocess all matches in the overview of the administration area."])</label>
-                        <input class="form-control" id="Ranking_MatchGapInHours" name="Ranking.MatchGapInHours" type="number" min="@CoreConsts.MatchMinGapInHours" max="@CoreConsts.MatchMaxGapInHours" value="@Model.Ranking.MatchGapInHours">
-                    </div>
-                </div>
-            </div>
-            <div class="checkbox">
-                <label for="Ranking_IncludeUnknownCampaigns">
-                    <input type="checkbox" id="Ranking_IncludeUnknownCampaigns" name="Ranking.IncludeUnknownCampaigns" value="true" checked="@Model.Ranking.IncludeUnknownCampaigns">
-                    <input type="hidden" name="Ranking.IncludeUnknownCampaigns" value="false">
-                    @L["Keep matches played on maps that are not in the campaign list"] @FieldHelp.More(L["Whether maps that are in no campaign of the list still make matches."], L["Maps that are not in the campaign list"], L["The site joins the maps of a campaign into one match using the campaign list. A map that is in no campaign of the list, such as a custom map you did not add, is an unknown map.\nOn, the default: unknown maps are kept. Consecutive unknown maps become one match when the round number goes up by one and less than 2 hours passed between them.\nOff: unknown maps are ignored, so they make no match and count for nothing.\nThe change applies to the files that arrive from now on. To apply it to the matches already built, use Reprocess all matches in the overview of the administration area."])
-                </label>
-            </div>
-            <span class="help-block" style="margin-bottom: 0">@L["Points apply to every season right away. The option about unknown maps applies to new matches, or to all of them after a reprocess."]</span>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">@L["Privacy"]</h3>
-        </div>
-        <div class="panel-body">
-            <div class="form-group" style="margin-bottom: 0">
-                <label for="Privacy_RelatedAccounts">@L["Who can see related accounts"]</label> @FieldHelp.More(L["Who sees the Related accounts panel on the player pages: every visitor or only administrators."], L["Who can see related accounts"], L["Related accounts are other Steam accounts that connected to a game server from the same IP address as the player, which often means a second account. The address itself is never shown.\nEveryone, the default, shows the panel to every visitor, as on the old site. Administrators only hides it from visitors and from players who are not administrators.\nThis covers the site only. The l4d2_gameinfo_sync plugin still announces related accounts in the game chat while gameinfo_related_accounts_chat is 1; set it to 0 in cfg/playstats.cfg to keep them out of the chat too.\nAdministrators always see the connections in Player connections. With the live server module off, the panel is not shown to anyone."])
-                <select class="form-control" id="Privacy_RelatedAccounts" name="Privacy.RelatedAccounts">
-                    <option value="@RelatedAccountsVisibility.Everyone" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Everyone)">@L["Everyone"]</option>
-                    <option value="@RelatedAccountsVisibility.Administrators" selected="@(Model.Privacy.RelatedAccounts == RelatedAccountsVisibility.Administrators)">@L["Administrators only"]</option>
-                </select>
-                <span class="help-block">@L["Related accounts are other Steam accounts that connected to a game server from the same IP address. They appear on the player pages, as on the old site. The game plugin still announces them in the game chat while {0} is on, whatever you choose here.", AppConsts.RelatedAccountsChatCvar]</span>
-            </div>
-            <div class="form-group" style="margin-bottom: 0">
-                <label for="Privacy_ConnectionRetentionInMonths">@L["Months to keep the player connections"] @FieldHelp.More(L["Connections older than this, with the IP addresses of the players, are deleted every day."], L["Months to keep the player connections"], L["When a player joins a game server, the site records the Steam account, the name and the IP address. These records feed Player connections and the related accounts.\nEvery day the site deletes the connections not seen for longer than this. A shorter period keeps less personal data, as data protection laws ask; a longer one finds more related accounts.\nThe default is 3 months. From 1 to 60."])</label>
-                <input class="form-control" id="Privacy_ConnectionRetentionInMonths" name="Privacy.ConnectionRetentionInMonths" type="number" min="@CoreConsts.PlayerConnectionMinRetentionInMonths" max="@CoreConsts.PlayerConnectionMaxRetentionInMonths" value="@Model.Privacy.ConnectionRetentionInMonths">
-            </div>
-        </div>
-    </div>
-</div>
-</div>
 
 <button class="btn btn-primary" type="submit">
     <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]

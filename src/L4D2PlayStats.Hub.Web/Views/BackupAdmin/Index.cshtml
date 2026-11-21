@@ -28,6 +28,14 @@
     }
 }
 
+@{
+    var tabs = new AdminTabsModel(
+    [
+        new AdminTab(AppConsts.BackupStatusTab, L["Status"].Value, "dashboard"),
+        new AdminTab(AppConsts.BackupStorageTab, L["Azure Storage"].Value, "cloud")
+    ], AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], AppConsts.BackupStatusTab, AppConsts.BackupStorageTab));
+}
+
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
@@ -87,193 +95,203 @@ else
     <div class="alert alert-danger backup-secrets-key-error">@L["The secrets key from {0} could not be loaded, so the Steam API key and the backup destination can be neither read nor saved. The log of the site says why.", Model.SecretsKeyLocation]</div>
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@L["Status"]</h3>
+@await Html.PartialAsync("_AdminTabs", tabs)
+
+<div class="tab-content">
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BackupStatusTab)" id="@AdminTabs.PaneId(AppConsts.BackupStatusTab)">
+        <div class="row">
+            <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Status"]</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal backup-status">
+                        <dt>@L["Automatic backup"]</dt>
+                        <dd>@(settings.Enabled ? L["On"] : L["Off"])</dd>
+                        <dt>@L["Last backup"]</dt>
+                        <dd>@(Model.LastSuccess == null ? L["None yet"].Value : Model.Local(Model.LastSuccess.StartedAtUtc).ToString("g"))</dd>
+                        <dt>@L["Next backup"]</dt>
+                        <dd>@(Model.NextAtUtc == null ? "-" : Model.NextAtUtc.Value == DateTime.MinValue ? L["Within a minute"].Value : Model.Local(Model.NextAtUtc.Value).ToString("g"))</dd>
+                        <dt>@L["Last verification"]</dt>
+                        <dd class="backup-last-verification">
+                            @{ VerificationBadge(Model.LastVerification); }
+                            @if (Model.LastVerification != null)
+                            {
+                                <small class="text-muted">@Model.Local(Model.LastVerification.VerifiedAtUtc).ToString("g")</small>
+                            }
+                        </dd>
+                    </dl>
+
+                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupRunUrl" style="display: inline-block">
+                        <button class="btn btn-success" type="submit" disabled="@(!Model.IsConfigured || Model.IsRunning)">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> @L["Back up now"]
+                        </button>
+                    </form>
+                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupTestUrl" style="display: inline-block">
+                        <button class="btn btn-default" type="submit" disabled="@(!Model.IsConfigured)">
+                            <span class="glyphicon glyphicon-transfer"></span> @L["Test connection"]
+                        </button>
+                    </form>
+                    <form class="backup-action backup-verify" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupVerifyUrl" style="display: inline-block">
+                        <button class="btn btn-default" type="submit" disabled="@(!Model.CanVerify)">
+                            <span class="glyphicon glyphicon-check"></span> @L["Verify now"]
+                        </button>
+                    </form>
+                    @FieldHelp.Tip(L["Downloads the newest backup from the destination, opens the zip in a temporary folder, checks the manifest, runs the SQLite integrity check on the database copy and compares the number of matches, statistics files, players and settings with the site at backup time. The temporary files are deleted afterwards. The same check runs after every backup."])
+                    @if (Model.IsRunning)
+                    {
+                        <p class="help-block">@L["A backup is running now."]</p>
+                    }
+                    @if (!Model.IncludesDatabase)
+                    {
+                        <p class="help-block backup-verify-unavailable">@L["The verification is not available: it needs SQLite."]</p>
+                    }
+                </div>
             </div>
-            <div class="panel-body">
-                <dl class="dl-horizontal backup-status">
-                    <dt>@L["Automatic backup"]</dt>
-                    <dd>@(settings.Enabled ? L["On"] : L["Off"])</dd>
-                    <dt>@L["Last backup"]</dt>
-                    <dd>@(Model.LastSuccess == null ? L["None yet"].Value : Model.Local(Model.LastSuccess.StartedAtUtc).ToString("g"))</dd>
-                    <dt>@L["Next backup"]</dt>
-                    <dd>@(Model.NextAtUtc == null ? "-" : Model.NextAtUtc.Value == DateTime.MinValue ? L["Within a minute"].Value : Model.Local(Model.NextAtUtc.Value).ToString("g"))</dd>
-                    <dt>@L["Last verification"]</dt>
-                    <dd class="backup-last-verification">
-                        @{ VerificationBadge(Model.LastVerification); }
-                        @if (Model.LastVerification != null)
+
+            </div>
+            <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["What the backup contains"]</h3>
+                </div>
+                <div class="panel-body">
+                    <p>@L["Each backup is one zip file with:"]</p>
+                    <ul>
+                        <li><code>@AppConsts.BackupDatabaseEntry</code>: @L["a copy of the database, taken while the site runs"]</li>
+                        <li><code>@AppConsts.KeysFolder/</code>: @L["the keys that protect the sign-in cookies; without them everyone has to sign in again"]</li>
+                        <li><code>@AppConsts.BrandingFolder/</code>: @L["the logo of the site"]</li>
+                        <li><code>@AppConsts.BackupManifestEntry</code>: @L["the version of the site, the date and the list of files"]</li>
+                    </ul>
+                    <p class="help-block">@L["The avatars are not included: the site downloads them again. The configuration file of the installation (hub.env, or the environment variables of Docker) is not in the data folder and is not included either: keep a copy of it yourself."]</p>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    <h4>@L["Recent backups"]</h4>
+
+    @if (Model.Runs.Count == 0)
+    {
+        <p class="text-muted backup-empty">@L["No backup was made yet."]</p>
+    }
+    else
+    {
+        <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table backup-runs">
+            <thead>
+            <tr>
+                <th>@L["When"]</th>
+                <th>@L["File"]</th>
+                <th class="text-center">@L["Size"]</th>
+                <th class="text-center">@L["Duration"]</th>
+                <th>@L["Result"]</th>
+                <th>@L["Verified"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var run in Model.Runs)
+            {
+                <tr class="@(run.Succeeded ? "backup-ok" : "backup-failed")">
+                    <td class="vertical-align-middle" data-label="@L["When"]">
+                        @Model.Local(run.StartedAtUtc).ToString("g")
+                        <small class="text-muted">@(run.Trigger == BackupTrigger.Manual ? L["manual"] : L["scheduled"])</small>
+                    </td>
+                    <td class="vertical-align-middle admin-mono" data-label="@L["File"]">@run.BlobName</td>
+                    <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Size"]">@(run.Succeeded && run.SizeInBytes > 0 ? (run.SizeInBytes / 1024d / 1024d).ToString("0.0") + " MB" : "-")</td>
+                    <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Duration"]">@((run.DurationInMilliseconds / 1000d).ToString("0.0")) s</td>
+                    <td class="vertical-align-middle" data-label="@L["Result"]">
+                        @if (run.Succeeded)
                         {
-                            <small class="text-muted">@Model.Local(Model.LastVerification.VerifiedAtUtc).ToString("g")</small>
+                            <span class="label label-success">@L["Done"]</span>
                         }
-                    </dd>
-                </dl>
+                        else
+                        {
+                            <span class="label label-danger">@L["Failed"]</span>
+                            @if (!string.IsNullOrEmpty(run.Error))
+                            {
+                                <small>@L[run.Error]</small>
+                            }
+                        }
+                    </td>
+                    <td class="vertical-align-middle backup-verification" data-label="@L["Verified"]">
+                        @{ VerificationBadge(run.Verification); }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
 
-                <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupRunUrl" style="display: inline-block">
-                    <button class="btn btn-success" type="submit" disabled="@(!Model.IsConfigured || Model.IsRunning)">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Back up now"]
-                    </button>
-                </form>
-                <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupTestUrl" style="display: inline-block">
-                    <button class="btn btn-default" type="submit" disabled="@(!Model.IsConfigured)">
-                        <span class="glyphicon glyphicon-transfer"></span> @L["Test connection"]
-                    </button>
-                </form>
-                <form class="backup-action backup-verify" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupVerifyUrl" style="display: inline-block">
-                    <button class="btn btn-default" type="submit" disabled="@(!Model.CanVerify)">
-                        <span class="glyphicon glyphicon-check"></span> @L["Verify now"]
-                    </button>
-                </form>
-                @FieldHelp.Tip(L["Downloads the newest backup from the destination, opens the zip in a temporary folder, checks the manifest, runs the SQLite integrity check on the database copy and compares the number of matches, statistics files, players and settings with the site at backup time. The temporary files are deleted afterwards. The same check runs after every backup."])
-                @if (Model.IsRunning)
-                {
-                    <p class="help-block">@L["A backup is running now."]</p>
-                }
-                @if (!Model.IncludesDatabase)
-                {
-                    <p class="help-block backup-verify-unavailable">@L["The verification is not available: it needs SQLite."]</p>
-                }
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@L["What the backup contains"]</h3>
-            </div>
-            <div class="panel-body">
-                <p>@L["Each backup is one zip file with:"]</p>
-                <ul>
-                    <li><code>@AppConsts.BackupDatabaseEntry</code>: @L["a copy of the database, taken while the site runs"]</li>
-                    <li><code>@AppConsts.KeysFolder/</code>: @L["the keys that protect the sign-in cookies; without them everyone has to sign in again"]</li>
-                    <li><code>@AppConsts.BrandingFolder/</code>: @L["the logo of the site"]</li>
-                    <li><code>@AppConsts.BackupManifestEntry</code>: @L["the version of the site, the date and the list of files"]</li>
-                </ul>
-                <p class="help-block">@L["The avatars are not included: the site downloads them again. The configuration file of the installation (hub.env, or the environment variables of Docker) is not in the data folder and is not included either: keep a copy of it yourself."]</p>
-            </div>
-        </div>
     </div>
 
-    <div class="col-md-6">
-        <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl" class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@L["Azure Storage"]</h3>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BackupStorageTab)" id="@AdminTabs.PaneId(AppConsts.BackupStorageTab)">
+        <div class="row">
+            <div class="col-lg-8">
+                <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl" class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="checkbox">
+                            <label for="Enabled">
+                                <input type="checkbox" id="Enabled" name="Enabled" value="true" checked="@settings.Enabled">
+                                <input type="hidden" name="Enabled" value="false">
+                                <strong>@L["Back up automatically"]</strong> @FieldHelp.Tip(L["Turns the schedule on: a backup runs at the interval set below. Back up now works with it off too."])
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>@L["Destination"] @FieldHelp.More(L["How the site reaches the Azure Storage container: a container address with a SAS token, or a connection string."], L["Destination"], L["Container address with a SAS token, the recommended one: the address of one container with a shared access signature. It gives access to that container only, and the signature has an expiry date.\nConnection string: the connection string of the storage account, from Access keys in the Azure portal, plus the name of a container. It gives access to the whole storage account, so prefer the SAS when you can.\nOnly the fields of the chosen destination are used. The manual, in Backups and updates, explains how to create the container and the SAS and how to restore a backup."])</label>
+                            <div class="radio">
+                                <label for="Destination_ContainerUrl">
+                                    <input type="radio" id="Destination_ContainerUrl" name="Destination" value="@BackupDestination.ContainerUrl" checked="@usesContainerUrl">
+                                    @L["Container address with a SAS token (recommended)"]
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="Destination_ConnectionString">
+                                    <input type="radio" id="Destination_ConnectionString" name="Destination" value="@BackupDestination.ConnectionString" checked="@(!usesContainerUrl)">
+                                    @L["Connection string of the storage account and a container"]
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ContainerUrl">@L["Container address with a SAS token"] @FieldHelp.More(L["The address of the container with a SAS token, as the Azure portal gives it in Blob SAS URL."], L["Container address with a SAS token"], L["In the Azure portal, open the container, choose Shared access tokens, tick the Read, Add, Create, Write, Delete and List permissions, choose an expiry date and generate the SAS. Paste the Blob SAS URL here.\nThe address must start with https:// and include the signature of the SAS.\nIt is a secret: after it is saved the page shows it only masked, and it is never written to the log. Leave the field empty to keep the saved one, or type a new one to replace it.\nWhen the SAS expires, the backups fail until you paste a new one."])</label>
+                            <input class="form-control admin-mono" id="ContainerUrl" name="ContainerUrl" type="password" autocomplete="off" placeholder="@(Model.MaskedContainerUrl ?? "https://account.blob.core.windows.net/backups?sv=...&sig=...")">
+                            <p class="help-block">@L["A SAS for one container, with the Read, Add, Create, Write, Delete and List permissions. The page never shows it again: leave the field empty to keep the saved one."]</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ConnectionString">@L["Connection string"] @FieldHelp.Tip(L["The connection string of the storage account, from Access keys in the Azure portal. It is a secret: the page shows it only masked, and an empty field keeps the saved one."])</label>
+                            <input class="form-control admin-mono" id="ConnectionString" name="ConnectionString" type="password" autocomplete="off" placeholder="@(Model.MaskedConnectionString ?? "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...")">
+                            <p class="help-block">@L["Gives access to the whole storage account. Leave the field empty to keep the saved one."]</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ContainerName">@L["Container"] @FieldHelp.Tip(L["The name of the container, used only with a connection string, such as backups: 3 to 63 lowercase letters, numbers and hyphens. It is created when it does not exist."])</label>
+                            <input class="form-control admin-mono" id="ContainerName" name="ContainerName" value="@settings.ContainerName" placeholder="backups">
+                            <p class="help-block">@L["Only with a connection string. The container is created when it does not exist."]</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-4 form-group">
+                                <label for="IntervalInHours">@L["Every, in hours"] @FieldHelp.Tip(L["Hours between two automatic backups, from 1 to 168, which is one week. 8 by default. A backup that fails is tried again 30 minutes later."])</label>
+                                <input class="form-control" id="IntervalInHours" name="IntervalInHours" type="number" min="@CoreConsts.BackupMinIntervalInHours" max="@CoreConsts.BackupMaxIntervalInHours" value="@settings.IntervalInHours" required>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <label for="Keep">@L["Backups to keep"] @FieldHelp.Tip(L["How many backup files to keep, from 1 to 1000. 30 by default. After each backup, the oldest files with the same prefix beyond this number are deleted."])</label>
+                                <input class="form-control" id="Keep" name="Keep" type="number" min="@CoreConsts.BackupMinKeep" max="@CoreConsts.BackupMaxKeep" value="@settings.Keep" required>
+                            </div>
+                            <div class="col-sm-4 form-group">
+                                <label for="Prefix">@L["File name prefix"] @FieldHelp.Tip(L["The start of the file names, hub-backup by default: letters, numbers, dots, hyphens and underscores, up to 60 characters. Only files with this prefix are counted and deleted, so other files in the container are left alone."])</label>
+                                <input class="form-control admin-mono" id="Prefix" name="Prefix" value="@settings.Prefix" maxlength="@CoreConsts.BackupPrefixMaxLength">
+                            </div>
+                        </div>
+                        <p class="help-block">@L["Files are named prefix-yyyyMMdd-HHmmss.zip, in UTC. After each backup, the oldest files with the same prefix are deleted beyond the number to keep."]</p>
+
+                        <button class="btn btn-primary" type="submit">@L["Save"]</button>
+                    </div>
+                </form>
             </div>
-            <div class="panel-body">
-                <div class="checkbox">
-                    <label for="Enabled">
-                        <input type="checkbox" id="Enabled" name="Enabled" value="true" checked="@settings.Enabled">
-                        <input type="hidden" name="Enabled" value="false">
-                        <strong>@L["Back up automatically"]</strong> @FieldHelp.Tip(L["Turns the schedule on: a backup runs at the interval set below. Back up now works with it off too."])
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label>@L["Destination"] @FieldHelp.More(L["How the site reaches the Azure Storage container: a container address with a SAS token, or a connection string."], L["Destination"], L["Container address with a SAS token, the recommended one: the address of one container with a shared access signature. It gives access to that container only, and the signature has an expiry date.\nConnection string: the connection string of the storage account, from Access keys in the Azure portal, plus the name of a container. It gives access to the whole storage account, so prefer the SAS when you can.\nOnly the fields of the chosen destination are used. The manual, in Backups and updates, explains how to create the container and the SAS and how to restore a backup."])</label>
-                    <div class="radio">
-                        <label for="Destination_ContainerUrl">
-                            <input type="radio" id="Destination_ContainerUrl" name="Destination" value="@BackupDestination.ContainerUrl" checked="@usesContainerUrl">
-                            @L["Container address with a SAS token (recommended)"]
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label for="Destination_ConnectionString">
-                            <input type="radio" id="Destination_ConnectionString" name="Destination" value="@BackupDestination.ConnectionString" checked="@(!usesContainerUrl)">
-                            @L["Connection string of the storage account and a container"]
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="ContainerUrl">@L["Container address with a SAS token"] @FieldHelp.More(L["The address of the container with a SAS token, as the Azure portal gives it in Blob SAS URL."], L["Container address with a SAS token"], L["In the Azure portal, open the container, choose Shared access tokens, tick the Read, Add, Create, Write, Delete and List permissions, choose an expiry date and generate the SAS. Paste the Blob SAS URL here.\nThe address must start with https:// and include the signature of the SAS.\nIt is a secret: after it is saved the page shows it only masked, and it is never written to the log. Leave the field empty to keep the saved one, or type a new one to replace it.\nWhen the SAS expires, the backups fail until you paste a new one."])</label>
-                    <input class="form-control admin-mono" id="ContainerUrl" name="ContainerUrl" type="password" autocomplete="off" placeholder="@(Model.MaskedContainerUrl ?? "https://account.blob.core.windows.net/backups?sv=...&sig=...")">
-                    <p class="help-block">@L["A SAS for one container, with the Read, Add, Create, Write, Delete and List permissions. The page never shows it again: leave the field empty to keep the saved one."]</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="ConnectionString">@L["Connection string"] @FieldHelp.Tip(L["The connection string of the storage account, from Access keys in the Azure portal. It is a secret: the page shows it only masked, and an empty field keeps the saved one."])</label>
-                    <input class="form-control admin-mono" id="ConnectionString" name="ConnectionString" type="password" autocomplete="off" placeholder="@(Model.MaskedConnectionString ?? "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...")">
-                    <p class="help-block">@L["Gives access to the whole storage account. Leave the field empty to keep the saved one."]</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="ContainerName">@L["Container"] @FieldHelp.Tip(L["The name of the container, used only with a connection string, such as backups: 3 to 63 lowercase letters, numbers and hyphens. It is created when it does not exist."])</label>
-                    <input class="form-control admin-mono" id="ContainerName" name="ContainerName" value="@settings.ContainerName" placeholder="backups">
-                    <p class="help-block">@L["Only with a connection string. The container is created when it does not exist."]</p>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-4 form-group">
-                        <label for="IntervalInHours">@L["Every, in hours"] @FieldHelp.Tip(L["Hours between two automatic backups, from 1 to 168, which is one week. 8 by default. A backup that fails is tried again 30 minutes later."])</label>
-                        <input class="form-control" id="IntervalInHours" name="IntervalInHours" type="number" min="@CoreConsts.BackupMinIntervalInHours" max="@CoreConsts.BackupMaxIntervalInHours" value="@settings.IntervalInHours" required>
-                    </div>
-                    <div class="col-sm-4 form-group">
-                        <label for="Keep">@L["Backups to keep"] @FieldHelp.Tip(L["How many backup files to keep, from 1 to 1000. 30 by default. After each backup, the oldest files with the same prefix beyond this number are deleted."])</label>
-                        <input class="form-control" id="Keep" name="Keep" type="number" min="@CoreConsts.BackupMinKeep" max="@CoreConsts.BackupMaxKeep" value="@settings.Keep" required>
-                    </div>
-                    <div class="col-sm-4 form-group">
-                        <label for="Prefix">@L["File name prefix"] @FieldHelp.Tip(L["The start of the file names, hub-backup by default: letters, numbers, dots, hyphens and underscores, up to 60 characters. Only files with this prefix are counted and deleted, so other files in the container are left alone."])</label>
-                        <input class="form-control admin-mono" id="Prefix" name="Prefix" value="@settings.Prefix" maxlength="@CoreConsts.BackupPrefixMaxLength">
-                    </div>
-                </div>
-                <p class="help-block">@L["Files are named prefix-yyyyMMdd-HHmmss.zip, in UTC. After each backup, the oldest files with the same prefix are deleted beyond the number to keep."]</p>
-
-                <button class="btn btn-primary" type="submit">@L["Save"]</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<h4>@L["Recent backups"]</h4>
-
-@if (Model.Runs.Count == 0)
-{
-    <p class="text-muted backup-empty">@L["No backup was made yet."]</p>
-}
-else
-{
-    <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table backup-runs">
-        <thead>
-        <tr>
-            <th>@L["When"]</th>
-            <th>@L["File"]</th>
-            <th class="text-center">@L["Size"]</th>
-            <th class="text-center">@L["Duration"]</th>
-            <th>@L["Result"]</th>
-            <th>@L["Verified"]</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var run in Model.Runs)
-        {
-            <tr class="@(run.Succeeded ? "backup-ok" : "backup-failed")">
-                <td class="vertical-align-middle" data-label="@L["When"]">
-                    @Model.Local(run.StartedAtUtc).ToString("g")
-                    <small class="text-muted">@(run.Trigger == BackupTrigger.Manual ? L["manual"] : L["scheduled"])</small>
-                </td>
-                <td class="vertical-align-middle admin-mono" data-label="@L["File"]">@run.BlobName</td>
-                <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Size"]">@(run.Succeeded && run.SizeInBytes > 0 ? (run.SizeInBytes / 1024d / 1024d).ToString("0.0") + " MB" : "-")</td>
-                <td class="text-center text-nowrap vertical-align-middle" data-label="@L["Duration"]">@((run.DurationInMilliseconds / 1000d).ToString("0.0")) s</td>
-                <td class="vertical-align-middle" data-label="@L["Result"]">
-                    @if (run.Succeeded)
-                    {
-                        <span class="label label-success">@L["Done"]</span>
-                    }
-                    else
-                    {
-                        <span class="label label-danger">@L["Failed"]</span>
-                        @if (!string.IsNullOrEmpty(run.Error))
-                        {
-                            <small>@L[run.Error]</small>
-                        }
-                    }
-                </td>
-                <td class="vertical-align-middle backup-verification" data-label="@L["Verified"]">
-                    @{ VerificationBadge(run.Verification); }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}

@@ -1,0 +1,54 @@
+@model L4D2PlayStats.Hub.Web.Models.Admin.AdminTabsModel
+
+<ul class="nav nav-tabs admin-tabs" role="tablist">
+    @foreach (var tab in Model.Tabs)
+    {
+        <li role="presentation" class="@(Model.Active == tab.Key ? "active" : "")">
+            <a href="#@AdminTabs.PaneId(tab.Key)" role="tab" data-toggle="tab" data-admin-tab="@tab.Key">
+                <span class="glyphicon glyphicon-@tab.Icon"></span> @tab.Label
+                @if (tab.Badge != null)
+                {
+                    <span class="badge">@Display.Number(tab.Badge.Value)</span>
+                }
+            </a>
+        </li>
+    }
+</ul>
+
+@if (!Context.Items.ContainsKey(AppConsts.AdminTabsScriptItem))
+{
+    Context.Items[AppConsts.AdminTabsScriptItem] = true;
+
+    <style>
+        .admin-tabs {
+            margin-bottom: 15px;
+        }
+
+            .admin-tabs .badge {
+                margin-left: 4px;
+            }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function current(key) {
+                document.querySelectorAll('input[name="@AppConsts.AdminTabQuery"][data-admin-tab-field]').forEach(function (field) {
+                    field.value = key;
+                });
+            }
+
+            $('.admin-tabs a[data-toggle="tab"]').on('shown.bs.tab', function () {
+                var key = $(this).attr('data-admin-tab');
+
+                current(key);
+
+                try {
+                    var params = new URLSearchParams(window.location.search);
+                    params.set('@AppConsts.AdminTabQuery', key);
+                    history.replaceState(null, '', window.location.pathname + '?' + params.toString() + window.location.hash.replace(/^#@AppConsts.AdminTabPanePrefix.*$/, ''));
+                } catch (e) {
+                }
+            });
+        });
+    </script>
+}

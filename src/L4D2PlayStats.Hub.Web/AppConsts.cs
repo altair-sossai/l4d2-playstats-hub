@@ -121,6 +121,7 @@ public static partial class AppConsts
     public const string CommunityBlockedTab = "blocked";
     public const string CommunityMaintenanceTab = "maintenance";
     public const string CommunityBlockModalItem = "community-block-modal";
+    public const string ReturnHashScriptItem = "return-hash-script";
     public const string CommunityRemoveVoteUrl = "/admin/community/votes/delete";
     public const string CommunityBlockVoterUrl = "/admin/community/voters/block";
     public const string CommunityUnblockVoterUrl = "/admin/community/voters/unblock";

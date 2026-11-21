@@ -12,6 +12,7 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
@@ -89,7 +90,7 @@ public class AdminController(
         liveSettings.Set(settings);
         TempData["LiveSaved"] = true;
 
-        return RedirectToAction(nameof(Servers));
+        return Redirect(AdminTabs.Url(AppConsts.AdminServersUrl, AppConsts.ServersLiveTab));
     }
 
     [HttpPost("servers")]
@@ -179,7 +180,7 @@ public class AdminController(
 
     [HttpPost("settings")]
     [RequestSizeLimit(AppConsts.SettingsFormMaxBytes)]
-    public async Task<IActionResult> SaveSettings(SettingsViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> SaveSettings(SettingsViewModel model, string? tab, CancellationToken cancellationToken)
     {
         var problems = await adminViewService.SaveAsync(model, cancellationToken);
 
@@ -188,7 +189,7 @@ public class AdminController(
         if (problems.Count > 0)
             TempData[AppConsts.SettingsProblemsTempData] = problems.ToArray();
 
-        return RedirectToAction(nameof(Settings));
+        return Redirect(AdminTabs.Url(AppConsts.AdminSettingsUrl, AdminTabs.Active(tab, AppConsts.SettingsSiteTab, AppConsts.SettingsAppearanceTab, AppConsts.SettingsSeasonsTab, AppConsts.SettingsRankingTab, AppConsts.SettingsPrivacyTab)));
     }
 
     [HttpGet("modules")]

@@ -51,7 +51,7 @@
                 <div class="vf-mod">
                     <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityRemoveVoteUrl" onsubmit="return confirm('@L["Delete this vote? The ratings are calculated again without it."]')">
                         <input type="hidden" name="voteId" value="@vote.Id">
-                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                        <input type="hidden" name="returnUrl" value="@returnUrl" data-return-hash>
                         <button class="btn btn-xs btn-danger" type="submit" title="@L["Delete this vote"]" aria-label="@L["Delete this vote"]">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
@@ -68,4 +68,5 @@
 @if (Model.Moderate)
 {
     @await Html.PartialAsync("~/Views/CommunityAdmin/_BlockVoterModal.cshtml")
+    @await Html.PartialAsync("~/Views/CommunityAdmin/_ReturnHashScript.cshtml")
 }
