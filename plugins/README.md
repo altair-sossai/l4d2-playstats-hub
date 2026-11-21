@@ -177,7 +177,7 @@ The skins plugin keeps two cache files in `addons/sourcemod/data/` (`weapon_skin
 |---|---|---|
 | `models/l4d2br/weapons/<weapon>/` (one combined model per weapon) | Yes, in the game folder | Yes |
 | `materials/models/l4d2br/weapons/<weapon>_<id>/` (the textures of each skin) | Yes, in the game folder | Yes |
-| `fastdl/materials/sprites/patent_<level>_v02.vmt` and `.vtf` (patent icons) | No | Yes, as `materials/sprites/` |
+| `materials/sprites/patent_<level>_v02.vmt` and `.vtf` (patent icons), also included in this plugins package | Yes, in the game folder | Yes |
 
 1. Copy `models/` and `materials/` of the assets repository into the `left4dead2` folder of the server. Every `view_model`, `world_model`, `models` and `materials` path in `addons/sourcemod/configs/weapon_skins.cfg` must exist there; when one does not, the plugin skips that weapon or skin and, with the skins on, logs `models were not found on the server` or `materials were not found on the server`.
 2. Put `models/`, `materials/` and the contents of `fastdl/` on a web server that players can reach, in a folder laid out like the game folder. Files are served as they are, without `.bz2`.

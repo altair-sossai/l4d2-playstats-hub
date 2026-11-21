@@ -39,7 +39,7 @@ A patent is a level from 1 to 15 given by the experience a player has in the cur
 | 14 | Gold #4 | 2,150 |
 | 15 | Global | 2,500 |
 
-The steps grow as the level rises: the experience needed is 2,500 × ((level − 1) ÷ 14)², rounded down to a multiple of 10. The levels are fixed and cannot be changed in the settings. What can be changed is how much experience each result gives; see [Ranking](ranking.md#how-experience-is-calculated).
+The steps grow as the level rises: the experience needed is 2,500 × ((level − 1) ÷ 14)², rounded down to a multiple of 10. The 15 levels and their names are fixed, but the experience of the highest level, 2,500 by default, can be changed in **Administration > Patents**: the whole curve follows it, the page shows a preview of every level as you type, and every page of the site uses the new values right away. Also what can be changed is how much experience each result gives; see [Ranking](ranking.md#how-experience-is-calculated).
 
 Patents belong to a season. They start again from level 1 with the season, and they are not shown in the rankings of a year or of all time.
 
@@ -49,4 +49,4 @@ When the most recent ranked match moves a player to another patent, the ranking 
 
 ## Patents inside the game
 
-With the `l4d2_show_patent_icon` plugin, the game server asks the site for the patents of the players and shows each player's icon above the head before a match starts. The plugin needs the patent sprites on the game server. The icons are off until `patent_icon_enabled` is `1`. [The plugins guide](../../plugins/README.md) lists its settings.
+With the `l4d2_show_patent_icon` plugin, the game server asks the site for the patents of the players and shows each player's icon above the head before a match starts. The patent sprites come with the plugins package, in `materials/sprites`; they must be in the `left4dead2` folder of the game server and on the FastDL. The icons are turned on and off only on the game server: they are off until `patent_icon_enabled` is `1` in its configuration files. [The plugins guide](../../plugins/README.md) lists its settings.

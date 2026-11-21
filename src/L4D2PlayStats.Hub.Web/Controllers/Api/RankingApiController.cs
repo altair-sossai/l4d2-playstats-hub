@@ -1,4 +1,3 @@
-using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
@@ -26,7 +25,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
             experience = player.Experience,
             wins = player.Wins,
             loss = player.Loss,
-            level = PatentCatalog.For(player.Experience).Level
+            level = player.Patents.For(player.Experience).Level
         }));
     }
 
@@ -38,7 +37,7 @@ public class RankingApiController(IRankingService rankingService) : ControllerBa
         return Ok(ranking.Take(Math.Clamp(count, 1, 5000)).Select(player => new
         {
             communityId = player.CommunityId.ToString(),
-            level = PatentCatalog.For(player.Experience).Level
+            level = player.Patents.For(player.Experience).Level
         }));
     }
 

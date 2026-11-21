@@ -9,7 +9,7 @@ namespace L4D2PlayStats.Hub.Web.Models.Ranking;
 
 public class PatentProgressModel(IStringLocalizer<SharedResource> localizer, RankingPlayer player)
 {
-    private readonly PatentProgress _progress = new(player.Experience, player.PreviousExperience);
+    private readonly PatentProgress _progress = new(player.Experience, player.PreviousExperience, player.Patents);
 
     public Patent Patent => _progress.Patent;
     public Patent? NextPatent => _progress.NextPatent;

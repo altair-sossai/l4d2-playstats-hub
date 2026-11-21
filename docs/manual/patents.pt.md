@@ -39,7 +39,7 @@ Uma patente é um nível de 1 a 15 dado pela experiência que um jogador tem na 
 | 14 | Gold #4 | 2.150 |
 | 15 | Global | 2.500 |
 
-Os degraus crescem conforme o nível sobe: a experiência necessária é 2.500 × ((nível − 1) ÷ 14)², arredondada para baixo até um múltiplo de 10. Os níveis são fixos e não podem ser alterados nas configurações. O que pode ser alterado é quanta experiência cada resultado dá; veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada).
+Os degraus crescem conforme o nível sobe: a experiência necessária é 2.500 × ((nível − 1) ÷ 14)², arredondada para baixo até um múltiplo de 10. Os 15 níveis e seus nomes são fixos, mas a experiência do nível mais alto, 2.500 por padrão, pode ser alterada em **Administração > Patentes**: a curva inteira acompanha, a página mostra uma prévia de cada nível enquanto você digita, e todas as páginas do site passam a usar os novos valores na hora. Também pode ser alterado é quanta experiência cada resultado dá; veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada).
 
 As patentes pertencem a uma temporada. Elas recomeçam do nível 1 com a temporada e não aparecem nos rankings de um ano ou de todo o período.
 
@@ -49,4 +49,4 @@ Quando a partida ranqueada mais recente leva um jogador para outra patente, o ra
 
 ## Patentes dentro do jogo
 
-Com o plugin `l4d2_show_patent_icon`, o servidor de jogo pede ao site as patentes dos jogadores e mostra o ícone de cada jogador acima da cabeça antes de uma partida começar. O plugin precisa dos sprites das patentes no servidor de jogo. Os ícones ficam desligados até que `patent_icon_enabled` seja `1`. [O guia dos plugins](../../plugins/README.pt.md) lista as configurações dele.
+Com o plugin `l4d2_show_patent_icon`, o servidor de jogo pede ao site as patentes dos jogadores e mostra o ícone de cada jogador acima da cabeça antes de uma partida começar. Os sprites das patentes vêm no pacote dos plugins, em `materials/sprites`; eles precisam estar na pasta `left4dead2` do servidor de jogo e no FastDL. Os ícones são ligados e desligados só no servidor de jogo: ficam desligados até que `patent_icon_enabled` seja `1` nos arquivos de configuração dele. [O guia dos plugins](../../plugins/README.pt.md) lista as configurações dele.

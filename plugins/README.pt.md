@@ -177,7 +177,7 @@ O `l4d2_show_patent_icon` e o `l4d2_weapon_skins` mostram arquivos que não faze
 |---|---|---|
 | `models/l4d2br/weapons/<weapon>/` (um modelo combinado por arma) | Sim, na pasta do jogo | Sim |
 | `materials/models/l4d2br/weapons/<weapon>_<id>/` (as texturas de cada skin) | Sim, na pasta do jogo | Sim |
-| `fastdl/materials/sprites/patent_<level>_v02.vmt` e `.vtf` (ícones das patentes) | Não | Sim, como `materials/sprites/` |
+| `materials/sprites/patent_<level>_v02.vmt` e `.vtf` (ícones das patentes), que também vêm neste pacote de plugins | Sim, na pasta do jogo | Sim |
 
 1. Copie `models/` e `materials/` do repositório de assets para a pasta `left4dead2` do servidor. Todo caminho `view_model`, `world_model`, `models` e `materials` em `addons/sourcemod/configs/weapon_skins.cfg` precisa existir ali; quando um não existe, o plugin pula aquela arma ou skin e, com as skins ligadas, registra `models were not found on the server` ou `materials were not found on the server`.
 2. Coloque `models/`, `materials/` e o conteúdo de `fastdl/` em um servidor web que os jogadores consigam acessar, em uma pasta com a mesma estrutura da pasta do jogo. Os arquivos são servidos como estão, sem `.bz2`.

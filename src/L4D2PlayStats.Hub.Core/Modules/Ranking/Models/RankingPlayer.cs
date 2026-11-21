@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Enums;
@@ -38,6 +40,7 @@ public class RankingPlayer(long communityId) : MatchPlayerStatistics
     }
 
     public string? ForcedName { get; set; }
+    public PatentScale Patents { get; set; } = PatentCatalog.Default;
     public string MainName => ForcedName ?? PreviousNames.FirstOrDefault()?.Name ?? Name ?? AppConsts.UnknownPlayerName;
     public string MostUsedNames => string.Join(" | ", PreviousNames.Take(AppConsts.MostUsedNames).Select(pn => pn.Name));
     public List<PreviousName> PreviousNames { get; } = [];

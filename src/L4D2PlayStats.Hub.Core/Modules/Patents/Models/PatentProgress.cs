@@ -1,5 +1,3 @@
-using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
-
 namespace L4D2PlayStats.Hub.Core.Modules.Patents.Models;
 
 public class PatentProgress
@@ -7,16 +5,16 @@ public class PatentProgress
     private readonly decimal _experience;
     private readonly decimal? _experienceDifference;
 
-    public PatentProgress(decimal experience, decimal? previousExperience)
+    public PatentProgress(decimal experience, decimal? previousExperience, PatentScale scale)
     {
         _experience = experience;
         _experienceDifference = previousExperience == null ? null : experience - previousExperience;
 
-        Patent = PatentCatalog.For(experience);
-        NextPatent = PatentCatalog.Next(experience);
+        Patent = scale.For(experience);
+        NextPatent = scale.Next(experience);
 
         if (previousExperience != null)
-            PreviousPatent = PatentCatalog.For(previousExperience.Value);
+            PreviousPatent = scale.For(previousExperience.Value);
     }
 
     public Patent Patent { get; }

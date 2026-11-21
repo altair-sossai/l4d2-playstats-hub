@@ -2,7 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
-using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
@@ -33,7 +33,8 @@ public class CommunityController(
     ICommunityPlayerService communityPlayerService,
     ILiveViewService liveViewService,
     IStringLocalizer<SharedResource> localizer,
-    ICurrentUser currentUser) : Controller
+    ICurrentUser currentUser,
+    IPatentService patentService) : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -51,7 +52,8 @@ public class CommunityController(
         var entries = await communityRankingService.ListAsync(cancellationToken);
         var experience = patents ? await ExperienceAsync(cancellationToken) : null;
         var listed = new PagedListModel<CommunityRankingEntry>(entries, page, AppConsts.CommunityRankingPageSize);
-        var rows = listed.Items.Select(entry => new CommunityRankingRow(entry, experience == null ? null : PatentCatalog.For(experience.GetValueOrDefault(entry.CommunityId)))).ToList();
+        var scale = await patentService.ScaleAsync(cancellationToken);
+        var rows = listed.Items.Select(entry => new CommunityRankingRow(entry, experience == null ? null : scale.For(experience.GetValueOrDefault(entry.CommunityId)))).ToList();
 
         var model = new CommunityRankingViewModel
         {

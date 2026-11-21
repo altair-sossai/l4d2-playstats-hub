@@ -1465,5 +1465,12 @@
   "Edit the rule": "Editar la regla",
   "Add a chat ban": "Añadir un baneo del chat",
   "Also delete the votes they already gave": "Eliminar también los votos que ya dio",
-  "The votes of the player are deleted and the ratings are calculated again without them. Without this, the votes stay in the ranking.": "Los votos del jugador se eliminan y las puntuaciones se calculan de nuevo sin ellos. Sin esta opción, los votos siguen en el ranking."
+  "The votes of the player are deleted and the ratings are calculated again without them. Without this, the votes stay in the ranking.": "Los votos del jugador se eliminan y las puntuaciones se calculan de nuevo sin ellos. Sin esta opción, los votos siguen en el ranking.",
+  "Patents page": "Página de patentes",
+  "The 15 levels and their names are fixed. Here you set the experience the highest level, Global, needs; the other levels follow the same curve, and every page of the site uses the new values right away.": "Los 15 niveles y sus nombres son fijos. Aquí defines la experiencia que exige el nivel más alto, Global; los demás niveles siguen la misma curva, y todas las páginas del sitio usan los nuevos valores al instante.",
+  "The patent icons inside the game are turned on and off on the game server, with patent_icon_enabled in its configuration files.": "Los íconos de patente dentro del juego se activan y desactivan en el servidor de juego, con patent_icon_enabled en sus archivos de configuración.",
+  "Experience of the highest level": "Experiencia del nivel más alto",
+  "The experience a player needs to reach level 15, Global. The default is 2,500.": "La experiencia que un jugador necesita para llegar al nivel 15, Global. El valor predeterminado es 2.500.",
+  "Each level needs the experience of the highest level times ((level - 1) / 14)², rounded down to a multiple of 10. Level 1 always starts at 0.\nRaising the value makes every level harder to reach; lowering it makes them easier. The patents of the players change at once on every page, also for the matches already played.\nThe preview below shows the experience of each level with the value you type.": "Cada nivel exige la experiencia del nivel más alto por ((nivel - 1) / 14)², redondeada hacia abajo a múltiplos de 10. El nivel 1 siempre empieza en 0.\nAumentar el valor hace que todos los niveles sean más difíciles de alcanzar; reducirlo los hace más fáciles. Las patentes de los jugadores cambian al instante en todas las páginas, también por las partidas ya jugadas.\nLa vista previa de abajo muestra la experiencia de cada nivel con el valor que escribas.",
+  "Default: {0}.": "Predeterminado: {0}."
 }

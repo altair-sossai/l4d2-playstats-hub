@@ -12,7 +12,7 @@ public partial class AdminMenuTests
     [
         "/admin", "/admin/settings", "/admin/modules", "/admin/administrators", "/admin/backup",
         "/admin/servers", "/admin/remote-commands", "/admin/player-connections", "/admin/forced-names", "/admin/chat-bans",
-        "/admin/game-modes", "/admin/campaigns", "/admin/community",
+        "/admin/game-modes", "/admin/campaigns", "/admin/patents", "/admin/community",
         "/admin/skins", "/admin/skins/prices", "/admin/skins/catalog", "/admin/skins/settings",
         "/admin/anti-cheat"
     ];
@@ -50,6 +50,7 @@ public partial class AdminMenuTests
             ["/admin/chat-bans"] = "/admin/chat-bans",
             ["/admin/game-modes"] = "/admin/game-modes",
             ["/admin/campaigns"] = "/admin/campaigns",
+            ["/admin/patents"] = "/admin/patents",
             ["/admin/community"] = "/admin/community",
             ["/admin/skins"] = "/admin/skins",
             ["/admin/skins/prices"] = "/admin/skins/prices",

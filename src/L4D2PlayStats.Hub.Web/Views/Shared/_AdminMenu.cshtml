@@ -31,7 +31,8 @@
     var ranking = new List<(string Url, string Title, string Page, string Icon)>
     {
         (AppConsts.AdminGameModesUrl, L["Game modes"].Value, L["Game modes"].Value, "flag"),
-        (AppConsts.AdminCampaignsUrl, L["Campaigns"].Value, L["Campaigns"].Value, "map-marker")
+        (AppConsts.AdminCampaignsUrl, L["Campaigns"].Value, L["Campaigns"].Value, "map-marker"),
+        (AppConsts.AdminPatentsUrl, L["Patents"].Value, L["Patents"].Value, "star")
     };
 
     if (modules.IsEnabled(HubModule.CommunityRanking))

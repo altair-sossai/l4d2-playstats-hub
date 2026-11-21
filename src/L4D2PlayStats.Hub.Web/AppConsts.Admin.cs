@@ -50,6 +50,7 @@ public static partial class AppConsts
     public const string AdminSettingsUrl = "/admin/settings";
     public const string AdminGameModesUrl = "/admin/game-modes";
     public const string AdminCampaignsUrl = "/admin/campaigns";
+    public const string AdminPatentsUrl = "/admin/patents";
     public const string AdminAdministratorsUrl = "/admin/administrators";
     public const string AdminCommunityUrl = "/admin/community";
     public const string RemoteCommandsUrl = "/admin/remote-commands";

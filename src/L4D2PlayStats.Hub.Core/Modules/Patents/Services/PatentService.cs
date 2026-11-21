@@ -1,0 +1,19 @@
+using L4D2PlayStats.Hub.Core.Modules.Patents.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Models;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Patents.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+
+namespace L4D2PlayStats.Hub.Core.Modules.Patents.Services;
+
+public class PatentService(ISettingsService settingsService) : IPatentService
+{
+    public async Task<PatentScale> ScaleAsync(CancellationToken cancellationToken = default)
+    {
+        var settings = await settingsService.GetAsync<PatentSettings>(cancellationToken);
+
+        settings.Normalize();
+
+        return settings.MaxExperience == AppConsts.PatentMaxExperience ? PatentCatalog.Default : PatentCatalog.Scale(settings.MaxExperience);
+    }
+}

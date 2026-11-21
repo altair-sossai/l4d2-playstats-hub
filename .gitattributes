@@ -6,3 +6,4 @@
 tools/screenshots/terminal/*.log -text
 *.webp binary
 *.gif binary
+*.vtf binary

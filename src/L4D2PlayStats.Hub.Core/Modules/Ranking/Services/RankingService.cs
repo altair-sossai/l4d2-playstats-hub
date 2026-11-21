@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Patents.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
@@ -22,7 +23,8 @@ public class RankingService(
     ISeasonService seasonService,
     IPunishmentService punishmentService,
     ISettingsService settingsService,
-    IForcedNameStore forcedNames) : IRankingService
+    IForcedNameStore forcedNames,
+    IPatentService patentService) : IRankingService
 {
     public Task<IReadOnlyList<RankingPlayer>> SeasonAsync(int seasonId, CancellationToken cancellationToken = default)
     {
@@ -94,9 +96,13 @@ public class RankingService(
     {
         var settings = await settingsService.GetAsync<RankingSettings>(cancellationToken);
         var players = RankingCalculator.Calculate(matches, punishments, settings);
+        var patents = await patentService.ScaleAsync(cancellationToken);
 
         foreach (var player in players)
+        {
             player.ForcedName = forcedNames.Find(player.CommunityId);
+            player.Patents = patents;
+        }
 
         return players;
     }
