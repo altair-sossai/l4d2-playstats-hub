@@ -42,13 +42,7 @@ Choosing a period changes every number on the page: positions, wins, MVPs and th
 
 ## History
 
-**More > History** shows the final ranking of a finished period.
-
-![The history page](../images/en/history.webp)
-
-The selector of this page lists all time, every year, and the seasons of the current year that are already finished. It opens on the current year. The ranking of a past season of an earlier year is reached from the period selector of the ranking page.
-
-The players are in the order of the ranking of that period, by experience, although the experience itself is not a column here. The table shows, for each player: wins, losses, games, SI MVP and CI MVP awards, win rate and rage quits. The top three have a medal.
+The final ranking of a past season, of a year or of all time is in the [players list](players.md#the-players-list): choose the period and keep the **Overview**, which shows the wins, losses, games, MVP awards, win rate and rage quits of each player in the order of the ranking. The players list replaced the old History page; its addresses, such as `/history/all-time` or `/history/2025`, open the players list of the same period.
 
 ## Years and all time
 

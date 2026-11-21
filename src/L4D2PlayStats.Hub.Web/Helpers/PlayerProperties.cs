@@ -13,6 +13,7 @@ public static class PlayerProperties
             PlayerResultProperty.Games => player.Games,
             PlayerResultProperty.Wins => player.Wins,
             PlayerResultProperty.Loss => player.Loss,
+            PlayerResultProperty.WinRate => player.WinRate,
             PlayerResultProperty.RageQuit => player.RageQuit,
             PlayerResultProperty.MvpSiDamage => player.MvpSiDamage,
             PlayerResultProperty.MvpCommon => player.MvpCommon,
@@ -46,6 +47,7 @@ public static class PlayerProperties
             PlayerResultProperty.Games => "Games",
             PlayerResultProperty.Wins => "Wins",
             PlayerResultProperty.Loss => "Loss",
+            PlayerResultProperty.WinRate => "Win rate",
             PlayerResultProperty.RageQuit => "Rage quit",
             PlayerResultProperty.MvpSiDamage => "SI MVP awards",
             PlayerResultProperty.MvpCommon => "CI MVP awards",
@@ -80,6 +82,36 @@ public static class PlayerProperties
             PlayerResultProperty.HunterDpDmg => "Sum of damage from all recorded high pounces.",
             _ => null
         };
+    }
+
+    public static readonly IReadOnlyList<PlayerResultProperty> SummaryColumns =
+    [
+        PlayerResultProperty.Wins,
+        PlayerResultProperty.Loss,
+        PlayerResultProperty.Games,
+        PlayerResultProperty.MvpSiDamage,
+        PlayerResultProperty.MvpCommon,
+        PlayerResultProperty.WinRate,
+        PlayerResultProperty.RageQuit
+    ];
+
+    public static string Format(PlayerResultProperty property, decimal value)
+    {
+        return property == PlayerResultProperty.WinRate ? value.ToString("P0") : value.ToString("N0");
+    }
+
+    public static bool HasPerGame(PlayerResultProperty property)
+    {
+        return property is not (PlayerResultProperty.Games or PlayerResultProperty.WinRate);
+    }
+
+    public static List<PlayerListRow> Ranked(IEnumerable<RankingPlayer> players, bool asc)
+    {
+        var rows = players.Select(player => new PlayerListRow(player, PlayerResultProperty.Experience));
+
+        return asc
+            ? [.. rows.OrderByDescending(row => row.Player.Position).ThenBy(row => row.CommunityId)]
+            : [.. rows.OrderBy(row => row.Player.Position).ThenBy(row => row.CommunityId)];
     }
 
     public static List<PlayerListRow> Sort(IEnumerable<RankingPlayer> players, PlayerResultProperty property, bool asc)

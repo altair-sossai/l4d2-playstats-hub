@@ -6,6 +6,7 @@ public enum PlayerResultProperty
     Games,
     Wins,
     Loss,
+    WinRate,
     RageQuit,
     MvpSiDamage,
     MvpCommon,

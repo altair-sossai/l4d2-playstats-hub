@@ -242,7 +242,7 @@ public class WebTests
 
         string[] pages =
         [
-            "/", "/matches", $"/matches/{match.Id}", "/players", "/patents", "/history", "/history/all-time", $"/history/{now.Year}",
+            "/", "/matches", $"/matches/{match.Id}", "/players", "/patents", "/players?period=all-time", $"/players?year={now.Year}", "/players?sort=WinRate", "/players?orderBy=WinRate",
             $"/player/{StatisticsBuilder.PlayerA1}", "/ingame", $"/ingame?steamid={StatisticsBuilder.PlayerA1}",
             $"/ingame/player?steamid={StatisticsBuilder.PlayerA1}", "/ingame/matches"
         ];

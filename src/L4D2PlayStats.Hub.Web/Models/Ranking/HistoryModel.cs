@@ -6,5 +6,4 @@ public class HistoryModel
 {
     public RankingPeriod History { get; init; } = null!;
     public IReadOnlyList<RankingPlayer> Players { get; init; } = [];
-    public IReadOnlyList<RankingPeriod> AllHistory { get; init; } = [];
 }

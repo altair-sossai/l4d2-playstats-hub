@@ -93,6 +93,8 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 
 ## History (`/history/{id?}`)
 
+> **Merged into the players list (November 2026, at the request of the site owner).** The history table is now the **Overview** of `/players`, which keeps every column below (position with medals, avatar, name, wins with the win rate tooltip, losses, games, SI and CI MVP awards, win rate, rage quits) for every player instead of the top 100, and whose period selector lists every season of every year. `/history`, `/history/{id}` and the `/ranking/...` addresses redirect permanently to `/players` with the same period, and the History entry left the More menu. The rows below describe the page as it was ported.
+
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
 | Page metadata: "History - period", description, image and name of the winner | PageMetadata/HistoryPageMetadata.cs | done | |

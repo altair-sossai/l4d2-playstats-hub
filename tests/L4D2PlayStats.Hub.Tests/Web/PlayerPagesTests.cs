@@ -30,17 +30,17 @@ public partial class PlayerPagesTests
 
         await StartAsync(factory);
 
-        var byExperience = await client.GetStringAsync("/players");
+        var byExperience = await client.GetStringAsync("/players?orderBy=Experience");
         var byWins = await client.GetStringAsync("/players?orderBy=Wins&asc=True");
         var byGames = await client.GetStringAsync("/players?orderBy=Games");
 
         Assert.AreEqual(8, PlayerRow().Count(byExperience));
-        Assert.Contains("Order by: <b>Experience</b>", byExperience);
+        Assert.Contains("Statistic: <b>Experience</b>", byExperience);
         Assert.Contains("Per game", byExperience);
         Assert.Contains("/players?orderBy=Experience&amp;asc=True", byExperience);
         Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}\"", byExperience);
         Assert.Contains($"/avatar/{StatisticsBuilder.PlayerA1}", byExperience);
-        Assert.Contains("Order by: <b>Wins</b>", byWins);
+        Assert.Contains("Statistic: <b>Wins</b>", byWins);
         Assert.Contains("/players?orderBy=Wins&amp;asc=False", byWins);
         Assert.Contains("&#x2191;", byWins);
         Assert.Contains("&#x2193;", byExperience);

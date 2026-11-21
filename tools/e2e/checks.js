@@ -186,6 +186,29 @@ function checks(context) {
             }
         },
         {
+            name: 'players',
+            run: async browser => {
+                await at(browser, null, desktop, '/players');
+                await pageOk(browser, 'The players page');
+
+                const rows = await browser.eval(`document.querySelectorAll('#table-players-summary tbody tr').length`);
+
+                expect(rows === fixtures.players.length, `The players overview lists ${rows} players, expected ${fixtures.players.length}`);
+                expect(await browser.eval(`document.querySelectorAll('#table-players-summary thead th').length`) === 9, 'The players overview does not have the history columns');
+
+                await browser.click('#table-players-summary thead a[href="/players?sort=Games"]');
+                await browser.until(`location.search === '?sort=Games'`, 'sorting the overview by games');
+                expect(await browser.eval(`(() => { const games = Array.from(document.querySelectorAll('#table-players-summary tbody tr')).map(row => Number(row.cells[5].textContent.replace(/\D/g, ''))); return games.every((value, index) => index === 0 || games[index - 1] >= value); })()`), 'The overview is not ordered by games');
+
+                await browser.open('/players?orderBy=MvpSiDamage&asc=False');
+                await pageOk(browser, 'The players page with one statistic');
+                expect(await browser.eval(`!document.querySelector('#table-players-summary') && document.querySelectorAll('table tbody tr').length > 0`), 'Choosing a statistic does not show its table');
+
+                await browser.open('/history');
+                expect(await browser.eval(`location.pathname === '/players' && !!document.querySelector('#table-players-summary')`), 'The old history address does not open the players overview');
+            }
+        },
+        {
             name: 'phone-layout',
             run: async browser => {
                 await at(browser, fixtures.players[0].id, phone);

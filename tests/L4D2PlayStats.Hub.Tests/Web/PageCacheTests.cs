@@ -29,7 +29,7 @@ public class PageCacheTests
 
         await StartAsync(factory);
 
-        foreach (var path in new[] { "/", "/players", $"/player/{StatisticsBuilder.PlayerA1}", "/matches", "/history", "/ingame" })
+        foreach (var path in new[] { "/", "/players", $"/player/{StatisticsBuilder.PlayerA1}", "/matches", "/players?period=all-time", "/ingame" })
         {
             var first = await GetAsync(client, path);
             var second = await GetAsync(client, path);

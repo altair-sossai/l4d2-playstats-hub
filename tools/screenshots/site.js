@@ -132,7 +132,6 @@ function shots(vars) {
     return [
         { name: 'ranking', path: '/', full: true, maxHeight: 1100 },
         { name: 'ranking-period', path: '/', before: [hideFloating, openDropdown('.period-selector .dropdown-toggle')], clip: '.period-selector, .period-selector .dropdown-menu, table', padding: 12, maxHeight: 400 },
-        { name: 'history', path: '/history', full: true, maxHeight: 1000 },
         { name: 'patents', path: '/patents', full: true },
         { name: 'matches', path: '/matches', full: true, maxHeight: 1250 },
         { name: 'match', path: vars.match, full: true, maxHeight: 960 },

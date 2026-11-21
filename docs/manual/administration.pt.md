@@ -96,7 +96,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 
 | Módulo | O que contém | Requer | Padrão | Quando está desligado |
 |---|---|---|---|---|
-| Ranking e estatísticas | Ranking, partidas, jogadores, patentes, histórico, punições e as páginas dentro do jogo. | | Ligado | A primeira página mostra um texto curto de boas-vindas. As partidas continuam sendo montadas a partir dos arquivos, sem aparecer. Os links de jogador continuam abrindo a [página básica do jogador](players.pt.md#um-jogador-sem-estatísticas), com o perfil Steam, mas sem estatísticas. |
+| Ranking e estatísticas | Ranking, partidas, jogadores, patentes, punições e as páginas dentro do jogo. | | Ligado | A primeira página mostra um texto curto de boas-vindas. As partidas continuam sendo montadas a partir dos arquivos, sem aparecer. Os links de jogador continuam abrindo a [página básica do jogador](players.pt.md#um-jogador-sem-estatísticas), com o perfil Steam, mas sem estatísticas. |
 | Servidor ao vivo | A partida em andamento em cada servidor. | | Ligado | Sem o item **Servidor** no menu. Os dados ao vivo dos plugins são recusados. As contas relacionadas e as conexões de jogadores não aparecem, seja qual for a escolha em [Privacidade](#privacidade). |
 | Chat do site | Escrever no chat do jogo pela página ao vivo, e os banimentos do chat. | Servidor ao vivo | Desligado | Sem caixa de chat na página ao vivo e sem a página **Bans de chat**. |
 | Comandos remotos | Comandos enviados pelos administradores do site para um servidor de jogo. | Servidor ao vivo | Desligado | Sem a página **Comandos remotos** e sem terminal na página ao vivo. |

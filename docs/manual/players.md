@@ -24,15 +24,15 @@ Every player who played on your game servers has a page with their results, thei
 
 ## The players list
 
-**More > Players** lists every player of the chosen period, ordered by one statistic.
+**More > Players** lists every player of the chosen period. It replaces the old History page: past seasons, years and all time are all here.
 
 ![The players list](../images/en/players.webp)
 
-- **Order by** chooses the statistic: experience, games, wins, losses, rage quits, MVP awards, deaths, damage, skeets, levels, crowns, friendly fire and the infected numbers.
-- The column of the chosen statistic shows each player's total, and **Per game** shows the average per game. Hover the ⓘ icon to see the number of games. Click the column header to reverse the order.
-- The [period selector](seasons-and-history.md#the-period-selector) chooses a season, a year or all time.
+- **Statistic** chooses what the table shows. **Overview**, the default, shows for each player the wins, losses, games, SI MVP and CI MVP awards, win rate and rage quits, in the order of the ranking of the period, with a medal for the top three. Click a column header to order by it; click it again to reverse the order, and click **#** to go back to the ranking order.
+- Any other choice shows one statistic: experience, games, wins, losses, win rate, rage quits, MVP awards, deaths, damage, skeets, levels, crowns, friendly fire and the infected numbers. Its column shows each player's total, and **Per game** shows the average per game. Hover the ⓘ icon to see the number of games. Click the column header to reverse the order.
+- The [period selector](seasons-and-history.md#the-period-selector) chooses a season, a year or all time. On this page it lists every season of every year, so the final ranking of any past season is one click away.
 
-The list has the same players as the ranking of the period, all of them and not only the top 100. It shows 100 players per page, and the page links under the table keep the order and the period you chose.
+The list has the same players as the ranking of the period, all of them and not only the top 100. It shows 100 players per page, and the page links under the table keep the statistic, the order and the period you chose.
 
 ## The player page
 

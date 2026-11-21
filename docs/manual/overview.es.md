@@ -30,9 +30,8 @@ El menú de arriba de cada página lleva a las funciones. Una función que el ad
 | Servidor | La partida en curso en tus servidores de juego. | [Servidor en vivo](live-server.es.md) |
 | Skins | La tienda de skins de armas. | [Tienda de skins de armas](skin-shop.es.md) |
 | Anti-Cheat | La página que ofrece el programa Anti-Cheat y le dice a un jugador que inició sesión si debe usarlo. | [Anti-Cheat](anti-cheat.es.md) |
-| Más > Jugadores | Todos los jugadores del período, con los totales de cualquier estadística. | [Jugadores](players.es.md) |
+| Más > Jugadores | Todos los jugadores del período, con una vista general o los totales de cualquier estadística, para cualquier temporada, año o todo el tiempo. | [Jugadores](players.es.md) |
 | Más > Patentes | Los niveles de patente. | [Patentes](patents.es.md) |
-| Más > Historial | El ranking final de temporadas y años pasados. | [Temporadas e historia](seasons-and-history.es.md) |
 | Admin | El área de administración, solo para administradores. | [Administración](administration.es.md) |
 | Estrellas | Cuántas estrellas puede gastar en la tienda el jugador conectado. | [Tienda de skins de armas](skin-shop.es.md) |
 | Avatar | La página del jugador conectado. | [Jugadores](players.es.md) |
@@ -82,7 +81,7 @@ El servidor de juego siempre llama al sitio. El sitio nunca se conecta al servid
 
 | Quién | Puede |
 |---|---|
-| Cualquier visitante | Ver el ranking, la historia, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda y la página del Anti-Cheat. |
+| Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda y la página del Anti-Cheat. |
 | Un jugador conectado | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas) y escribir en el chat del sitio. |
 | Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, regalar skins, los reembolsos, los baneos del chat y los comandos remotos. |
 

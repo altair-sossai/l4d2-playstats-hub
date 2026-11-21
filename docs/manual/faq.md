@@ -27,7 +27,7 @@ Wins and losses go to the players who were in the first map. Players who joined 
 A draw gives no win or loss, only the MVP points.
 
 **Why did my experience reset?**
-A new season started. The past season is in **More > History** and in the period selector.
+A new season started. The past season is in the period selector of the ranking and of **More > Players**.
 
 **My name is old or wrong.**
 The site shows the name you used most often in the period. Your other names are under **Previous names** on your page.
@@ -80,7 +80,7 @@ No. The live match is kept in the memory of one process. Run one copy.
 Everyone, by default, as on the old site. [Settings > Privacy](administration.md#privacy) can limit them to administrators. The game chat announcement is a separate setting of the plugin, `gameinfo_related_accounts_chat`.
 
 **Visitors still see the old page for a moment.**
-Pages for visitors who are not signed in (ranking, players, matches, history, community ranking and the in-game panel) are kept for up to 60 seconds, so many visitors and search engines cost little. New statistics files, settings, punishments and reprocessing refresh them at once; other changes, such as community votes, avatars or player names, show up within a minute. Signed-in players and administrators always see the current page.
+Pages for visitors who are not signed in (ranking, players, matches, community ranking and the in-game panel) are kept for up to 60 seconds, so many visitors and search engines cost little. New statistics files, settings, punishments and reprocessing refresh them at once; other changes, such as community votes, avatars or player names, show up within a minute. Signed-in players and administrators always see the current page.
 
 ## Troubleshooting
 

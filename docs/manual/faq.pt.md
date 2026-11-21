@@ -27,7 +27,7 @@ Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem e
 Um empate não dá vitória nem derrota, só os pontos de MVP.
 
 **Por que a minha experiência zerou?**
-Começou uma nova temporada. A temporada passada fica em **Mais > Histórico** e no seletor de período.
+Começou uma nova temporada. A temporada passada fica no seletor de período do ranking e de **Mais > Jogadores**.
 
 **Meu nome está antigo ou errado.**
 O site mostra o nome que você mais usou no período. Os seus outros nomes ficam em **Nomes anteriores**, na sua página.
@@ -80,7 +80,7 @@ Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.
 Todo mundo, por padrão, como no site antigo. [Configurações > Privacidade](administration.pt.md#privacidade) pode restringi-las aos administradores. O aviso no chat do jogo é uma configuração separada do plugin, `gameinfo_related_accounts_chat`.
 
 **Os visitantes ainda veem a página antiga por um momento.**
-As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, histórico, ranking da comunidade e o painel do jogo) ficam guardadas por até 60 segundos, para que muitos visitantes e buscadores custem pouco. Novos arquivos de estatísticas, configurações, punições e o reprocessamento as atualizam na hora; outras mudanças, como votos da comunidade, avatares ou nomes de jogadores, aparecem em até um minuto. Jogadores conectados e administradores sempre veem a página atual.
+As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranking da comunidade e o painel do jogo) ficam guardadas por até 60 segundos, para que muitos visitantes e buscadores custem pouco. Novos arquivos de estatísticas, configurações, punições e o reprocessamento as atualizam na hora; outras mudanças, como votos da comunidade, avatares ou nomes de jogadores, aparecem em até um minuto. Jogadores conectados e administradores sempre veem a página atual.
 
 ## Resolvendo problemas
 

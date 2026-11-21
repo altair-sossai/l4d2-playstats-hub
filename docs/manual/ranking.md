@@ -41,7 +41,7 @@ Above the table:
 
 - **Displayed period** opens the [period selector](#choosing-the-period).
 - **Next reset in N day(s)** says when the current season ends and the ranking starts again.
-- **View previous rankings** opens the [History](seasons-and-history.md#history).
+- **View previous rankings** opens the [players list](players.md#the-players-list) of the same period, where any past season, year or all time can be chosen.
 
 The first 50 players are shown; **Show more...** shows the rest of the top 100. The full list of players of the period is on the [Players](players.md) page.
 

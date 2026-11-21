@@ -89,7 +89,7 @@ else
                     @string.Format(L["Next reset in {0} day(s)"].Value, Model.NextResetIn)
                     <text>|</text>
                 }
-                <a href="/history">@L["View previous rankings"]</a>
+                <a href="@PlayerUrls.Summary(null, false, Model.Period.Query)">@L["View previous rankings"]</a>
             </small>
         </div>
     </div>

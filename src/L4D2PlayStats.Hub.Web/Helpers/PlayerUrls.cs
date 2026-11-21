@@ -26,6 +26,25 @@ public static class PlayerUrls
         return $"{List(orderBy, asc, period)}&page={page}";
     }
 
+    public static string Summary(PlayerResultProperty? sort, bool asc, string? period, int? page = null)
+    {
+        var query = new List<string>();
+
+        if (sort != null)
+            query.Add($"{AppConsts.PlayerSortParameter}={sort}");
+
+        if (asc)
+            query.Add("asc=True");
+
+        if (!string.IsNullOrEmpty(period))
+            query.Add(period);
+
+        if (page is > 1)
+            query.Add($"page={page}");
+
+        return query.Count == 0 ? AppConsts.PlayersUrl : $"{AppConsts.PlayersUrl}?{string.Join('&', query)}";
+    }
+
     public static string Avatar(long communityId)
     {
         return $"{AppConsts.AvatarUrl}{communityId}";

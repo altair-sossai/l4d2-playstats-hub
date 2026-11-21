@@ -96,7 +96,7 @@ public class PeriodGroupingTests
     }
 
     [TestMethod]
-    public async Task TheHistoryListsOnlyTheSeasonsOfThisYearButStillOpensAnOlderOne()
+    public async Task ThePlayersPageListsTheSeasonsOfEveryYearAndTheOldHistoryAddressOpensOne()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
@@ -104,16 +104,19 @@ public class PeriodGroupingTests
         var (_, before, oldSeason) = await TwoYearsAsync(factory);
 
         var oldStart = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().Seasons.Where(season => season.Id == oldSeason).Select(season => season.StartsAt).SingleAsync());
-        var oldId = $"{oldStart:yyyy-MM}";
 
-        var history = await client.GetStringAsync("/history");
-        var old = await client.GetStringAsync($"/history/{oldId}");
+        var players = await client.GetStringAsync("/players");
+        var history = await client.GetAsync($"/history/{oldStart:yyyy-MM}");
+        var old = await client.GetStringAsync($"/players?season={oldSeason}");
+        var player = await client.GetStringAsync($"/player/{StatisticsBuilder.PlayerA1}");
 
-        Assert.Contains($"/history/{before.Year}\"", history);
-        Assert.Contains("/history/all-time\"", history);
-        Assert.DoesNotContain($"/history/{oldId}\"", history);
-        Assert.Contains("table-ranking", old);
-        Assert.DoesNotContain("History not found", old);
+        Assert.Contains($"/players?year={before.Year}\"", players);
+        Assert.Contains("/players?period=all-time\"", players);
+        Assert.Contains($"/players?season={oldSeason}\"", players);
+        Assert.AreEqual($"/players?season={oldSeason}", history.Headers.Location?.ToString());
+        Assert.Contains("id=\"table-players-summary\"", old);
+        Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?season={oldSeason}", old);
+        Assert.DoesNotContain($"?season={oldSeason}\"", player);
     }
 
     [TestMethod]

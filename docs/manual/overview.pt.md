@@ -30,9 +30,8 @@ O menu no topo de cada página leva aos recursos. Um recurso que o administrador
 | Servidor | A partida em andamento nos seus servidores de jogo. | [Servidor ao vivo](live-server.pt.md) |
 | Skins | A loja de skins de armas. | [Loja de skins de armas](skin-shop.pt.md) |
 | Anti-Cheat | A página que oferece o programa Anti-Cheat e diz a um jogador logado se ele precisa usá-lo. | [Anti-Cheat](anti-cheat.pt.md) |
-| Mais > Jogadores | Todos os jogadores do período, com os totais de qualquer estatística. | [Jogadores](players.pt.md) |
+| Mais > Jogadores | Todos os jogadores do período, com uma visão geral ou os totais de qualquer estatística, para qualquer temporada, ano ou todo o período. | [Jogadores](players.pt.md) |
 | Mais > Patentes | Os níveis de patente. | [Patentes](patents.pt.md) |
-| Mais > Histórico | O ranking final de temporadas e anos passados. | [Temporadas e histórico](seasons-and-history.pt.md) |
 | Admin | A área de administração, só para administradores. | [Administração](administration.pt.md) |
 | Estrelas | Quantas estrelas o jogador logado pode gastar na loja. | [Loja de skins de armas](skin-shop.pt.md) |
 | Avatar | A página do jogador logado. | [Jogadores](players.pt.md) |
@@ -82,7 +81,7 @@ O login é feito com a Steam. Os visitantes não precisam fazer login para ver o
 
 | Quem | Pode |
 |---|---|
-| Qualquer visitante | Ver o ranking, o histórico, as partidas, os jogadores, as patentes, o servidor ao vivo, o ranking da comunidade, o catálogo da loja e a página do Anti-Cheat. |
+| Qualquer visitante | Ver o ranking, as partidas, os jogadores, as patentes, o servidor ao vivo, o ranking da comunidade, o catálogo da loja e a página do Anti-Cheat. |
 | Um jogador logado | Tudo o que está acima, e também: comprar e equipar skins, votar no ranking da comunidade (depois de partidas suficientes) e escrever no chat do site. |
 | Um administrador | Tudo o que está acima, e também: a área de administração, punições, edição do placar de um mapa, skins de presente, reembolsos, banimentos do chat e comandos remotos. |
 

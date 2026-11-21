@@ -42,13 +42,7 @@ Elegir un período cambia todos los números de la página: posiciones, victoria
 
 ## Historial
 
-**Más > Historial** muestra el ranking final de un período terminado.
-
-![La página de historia](../images/es/history.webp)
-
-El selector de esta página lista todo el tiempo, cada año y las temporadas del año actual que ya terminaron. Se abre en el año actual. El ranking de una temporada pasada de un año anterior se consulta desde el selector de período de la página del ranking.
-
-Los jugadores están en el orden del ranking de ese período, por experiencia, aunque la experiencia en sí no es una columna aquí. La tabla muestra, para cada jugador: victorias, derrotas, juegos, premios de MVP de SI y de MVP de CI, porcentaje de victorias y rage quits. Los tres primeros tienen una medalla.
+El ranking final de una temporada pasada, de un año o de todo el tiempo está en la [lista de jugadores](players.es.md#la-lista-de-jugadores): elige el período y deja la **Vista general**, que muestra las victorias, derrotas, juegos, premios de MVP, porcentaje de victorias y rage quits de cada jugador en el orden del ranking. La lista de jugadores reemplazó la antigua página Historial; sus direcciones, como `/history/all-time` o `/history/2025`, abren la lista de jugadores del mismo período.
 
 ## Años y todo el tiempo
 

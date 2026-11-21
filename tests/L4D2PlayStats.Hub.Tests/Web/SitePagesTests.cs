@@ -79,7 +79,7 @@ public class SitePagesTests
     }
 
     [TestMethod]
-    public async Task TheHistoryListsAllTimeAndTheYears()
+    public async Task ThePlayersPageOpensOnTheOverviewOfEveryPeriod()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
@@ -94,29 +94,55 @@ public class SitePagesTests
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", now, 1, 300, 200));
         await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", now.AddMinutes(15), 2, 600, 500));
 
-        var history = await client.GetStringAsync("/history");
-        var allTime = await client.GetStringAsync("/history/all-time");
-        var unknown = await client.GetStringAsync("/history/1900");
+        var overview = WebUtility.HtmlDecode(await client.GetStringAsync("/players"));
+        var allTime = await client.GetStringAsync("/players?period=all-time");
+        var sorted = WebUtility.HtmlDecode(await client.GetStringAsync("/players?sort=Loss&asc=True"));
+        var winRate = await client.GetStringAsync("/players?orderBy=WinRate&asc=False");
+        var unknown = await client.GetAsync("/players?year=1900");
 
-        Assert.Contains("/history/all-time", history);
-        Assert.Contains($"/history/{now.Year}", history);
-        Assert.Contains("table-ranking", allTime);
-        Assert.Contains("History not found", unknown);
+        Assert.Contains("id=\"table-players-summary\"", overview);
+        Assert.Contains("Win rate", overview);
+        Assert.Contains("SI MVP awards", overview);
+        Assert.Contains("Rage quit", overview);
+        Assert.Contains("/players?period=all-time\"", overview);
+        Assert.Contains($"/players?year={now.Year}\"", overview);
+        Assert.Contains("/players?sort=Wins\"", overview);
+        Assert.Contains("/players?orderBy=FfGiven&asc=False\"", overview);
+        Assert.Contains("id=\"table-players-summary\"", allTime);
+        Assert.Contains("Loss ↑", sorted);
+        Assert.Contains("/players?sort=Loss\"", sorted);
+        Assert.DoesNotContain("id=\"table-players-summary\"", winRate);
+        Assert.Contains("%", winRate);
+        Assert.DoesNotContain("Per game", winRate);
+        Assert.AreEqual(HttpStatusCode.NotFound, unknown.StatusCode);
     }
 
     [TestMethod]
-    public async Task TheOldRankingAddressesLeadToTheHistory()
+    public async Task TheOldHistoryAndRankingAddressesLeadToThePlayers()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
 
         await factory.CompleteSetupAsync();
 
-        var allTime = await client.GetAsync("/ranking/all-time");
-        var year = await client.GetAsync("/ranking/year/2026");
+        var expected = new Dictionary<string, string>
+        {
+            ["/ranking/all-time"] = "/players?period=all-time",
+            ["/ranking/year/2026"] = "/players?year=2026",
+            ["/ranking/season/7"] = "/players?season=7",
+            ["/history"] = "/players",
+            ["/history/all-time"] = "/players?period=all-time",
+            ["/history/2025"] = "/players?year=2025",
+            ["/history/unknown"] = "/players"
+        };
 
-        Assert.AreEqual("/history/all-time", allTime.Headers.Location?.ToString());
-        Assert.AreEqual("/history/2026", year.Headers.Location?.ToString());
+        foreach (var (path, location) in expected)
+        {
+            var response = await client.GetAsync(path);
+
+            Assert.AreEqual(HttpStatusCode.MovedPermanently, response.StatusCode, path);
+            Assert.AreEqual(location, response.Headers.Location?.ToString(), path);
+        }
     }
 
     [TestMethod]

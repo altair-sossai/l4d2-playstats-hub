@@ -41,7 +41,7 @@ Acima da tabela:
 
 - **Período exibido** abre o [seletor de período](#escolhendo-o-período).
 - **Próximo reset em N dia(s)** diz quando a temporada atual termina e o ranking recomeça.
-- **Ver rankings anteriores** abre o [Histórico](seasons-and-history.pt.md#histórico).
+- **Ver rankings anteriores** abre a [lista de jogadores](players.pt.md#a-lista-de-jogadores) do mesmo período, onde dá para escolher qualquer temporada passada, ano ou todo o período.
 
 Os primeiros 50 jogadores aparecem; **Mostrar mais...** mostra o resto dos 100 melhores. A lista completa de jogadores do período está na página [Jogadores](players.pt.md).
 

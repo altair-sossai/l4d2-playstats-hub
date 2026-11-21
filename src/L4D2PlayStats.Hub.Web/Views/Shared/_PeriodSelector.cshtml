@@ -37,15 +37,15 @@
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" style="max-height: 60vh; overflow-y: auto">
-            @{ var yearsStarted = false; }
+            @{ var previousSeason = true; }
             @foreach (var option in Model.Period.Options)
             {
-                if ((option.Year != null || option.AllTime) && !yearsStarted)
+                if ((option.Year != null || option.AllTime) && previousSeason)
                 {
-                    yearsStarted = true;
-
                     <li role="separator" class="divider"></li>
                 }
+
+                previousSeason = option.Season != null;
 
                 <li>
                     <a href="@Model.Url(option.Query)">@OptionLabel(option)</a>

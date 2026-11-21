@@ -27,7 +27,7 @@ Las victorias y las derrotas van para los jugadores que estaban en el primer map
 Un empate no da victoria ni derrota, solo los puntos de MVP.
 
 **¿Por qué se reinició mi experiencia?**
-Empezó una temporada nueva. La temporada pasada está en **Más > Historial** y en el selector de período.
+Empezó una temporada nueva. La temporada pasada está en el selector de período del ranking y de **Más > Jugadores**.
 
 **Mi nombre es viejo o está mal.**
 El sitio muestra el nombre que más usaste en el período. Tus otros nombres están en **Nombres anteriores**, en tu página.
@@ -80,7 +80,7 @@ No. La partida en vivo se guarda en la memoria de un solo proceso. Ejecuta una s
 Todos, de forma predeterminada, como en el sitio antiguo. [Configuración > Privacidad](administration.es.md#privacidad) puede limitarlas a los administradores. El aviso en el chat del juego es un ajuste aparte del plugin, `gameinfo_related_accounts_chat`.
 
 **Los visitantes todavía ven la página antigua por un momento.**
-Las páginas de quienes no iniciaron sesión con Steam (ranking, jugadores, partidas, historial, ranking de la comunidad y el panel del juego) se guardan hasta 60 segundos, para que muchos visitantes y buscadores cuesten poco. Los nuevos archivos de estadísticas, la configuración, los castigos y el reprocesamiento las actualizan al instante; otros cambios, como los votos de la comunidad, los avatares o los nombres de los jugadores, aparecen en menos de un minuto. Los jugadores conectados y los administradores siempre ven la página actual.
+Las páginas de quienes no iniciaron sesión con Steam (ranking, jugadores, partidas, ranking de la comunidad y el panel del juego) se guardan hasta 60 segundos, para que muchos visitantes y buscadores cuesten poco. Los nuevos archivos de estadísticas, la configuración, los castigos y el reprocesamiento las actualizan al instante; otros cambios, como los votos de la comunidad, los avatares o los nombres de los jugadores, aparecen en menos de un minuto. Los jugadores conectados y los administradores siempre ven la página actual.
 
 ## Solución de problemas
 
