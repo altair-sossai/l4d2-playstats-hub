@@ -5,7 +5,6 @@ using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Seasons;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
@@ -43,7 +42,7 @@ public class PlayerViewService(
     IStringLocalizer<SharedResource> localizer,
     SkinThumbnailStore skinThumbnailStore) : IPlayerViewService
 {
-    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, bool everySeason = false, CancellationToken cancellationToken = default)
+    public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default)
     {
         var current = await seasonService.GetCurrentAsync(cancellationToken);
         var now = await seasonService.SiteNowAsync(cancellationToken);
@@ -51,13 +50,10 @@ public class PlayerViewService(
         var started = seasons.Where(season => season.StartsAt <= current.StartsAt).ToList();
         var years = started.Select(season => season.StartsAt.Year).Distinct().OrderByDescending(value => value).ToList();
 
-        PlayerPeriodOption SeasonOption(Season season) => new() { Season = season, Query = season.Id == current.Id ? null : PlayerUrls.SeasonQuery(season.Id) };
-
-        var recent = started.Where(season => season.StartsAt.Year == now.Year || season.Id == current.Id).ToList();
-        var options = recent
-            .Select(SeasonOption)
-            .Concat(years.SelectMany(value => new[] { new PlayerPeriodOption { Year = value, Query = PlayerUrls.YearQuery(value) } }
-                .Concat(everySeason ? started.Where(season => season.StartsAt.Year == value && !recent.Contains(season)).OrderByDescending(season => season.StartsAt).Select(SeasonOption) : [])))
+        var options = started
+            .Where(season => season.StartsAt.Year == now.Year || season.Id == current.Id)
+            .Select(season => new PlayerPeriodOption { Season = season, Query = season.Id == current.Id ? null : PlayerUrls.SeasonQuery(season.Id) })
+            .Concat(years.Select(value => new PlayerPeriodOption { Year = value, Query = PlayerUrls.YearQuery(value) }))
             .Append(new PlayerPeriodOption { AllTime = true, Query = PlayerUrls.AllTimeQuery() })
             .ToList();
 

@@ -30,7 +30,7 @@ Todo jogador que jogou nos seus servidores de jogo tem uma página com os result
 
 - **Estatística** escolhe o que a tabela mostra. **Visão geral**, o padrão, mostra para cada jogador as vitórias, derrotas, jogos, MVPs de SI e de CI, taxa de vitória e rage quits, na ordem do ranking do período, com uma medalha para os três primeiros. Clique no cabeçalho de uma coluna para ordenar por ela; clique de novo para inverter a ordem, e clique em **#** para voltar à ordem do ranking.
 - Qualquer outra escolha mostra uma estatística: experiência, jogos, vitórias, derrotas, taxa de vitória, rage quits, prêmios de MVP, mortes, dano, skeets, levels, crowns, fogo amigo e os números de infectado. A coluna mostra o total de cada jogador, e **Por jogo** mostra a média por jogo. Passe o mouse sobre o ícone ⓘ para ver o número de jogos. Clique no cabeçalho da coluna para inverter a ordem.
-- O [seletor de período](seasons-and-history.pt.md#o-seletor-de-período) escolhe uma temporada, um ano ou todo o período. Nesta página ele lista todas as temporadas de todos os anos, então o ranking final de qualquer temporada passada fica a um clique.
+- O [seletor de período](seasons-and-history.pt.md#o-seletor-de-período) escolhe uma temporada, um ano ou todo o período. Como no ranking, ele lista as temporadas do ano atual, cada ano e todo o período.
 
 A lista tem os mesmos jogadores do ranking do período, todos eles e não só os 100 melhores. Ela mostra 100 jogadores por página, e os links das páginas embaixo da tabela mantêm a estatística, a ordem e o período escolhidos.
 

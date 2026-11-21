@@ -93,7 +93,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 
 ## Historial (`/history/{id?}`)
 
-> **Unido a la lista de jugadores (noviembre de 2026, a pedido del dueño del sitio).** La tabla del historial ahora es la **Vista general** de `/players`, que mantiene todas las columnas de abajo (posición con medallas, avatar, nombre, victorias con la ayuda del porcentaje de victorias, derrotas, juegos, premios de MVP de SI y de CI, porcentaje de victorias, rage quits) para todos los jugadores en lugar del top 100, y cuyo selector de período lista todas las temporadas de todos los años. `/history`, `/history/{id}` y las direcciones `/ranking/...` redirigen permanentemente a `/players` con el mismo período, y la entrada Historial salió del menú Más. Las filas de abajo describen la página como fue portada.
+> **Unido a la lista de jugadores (noviembre de 2026, a pedido del dueño del sitio).** La tabla del historial ahora es la **Vista general** de `/players`, que mantiene todas las columnas de abajo (posición con medallas, avatar, nombre, victorias con la ayuda del porcentaje de victorias, derrotas, juegos, premios de MVP de SI y de CI, porcentaje de victorias, rage quits) para todos los jugadores en lugar del top 100, con el mismo selector de período que el ranking (las temporadas del año actual, cada año y todo el tiempo). `/history`, `/history/{id}` y las direcciones `/ranking/...` redirigen permanentemente a `/players` con el mismo período, y la entrada Historial salió del menú Más. Las filas de abajo describen la página como fue portada.
 
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|

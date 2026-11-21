@@ -96,7 +96,7 @@ public class PeriodGroupingTests
     }
 
     [TestMethod]
-    public async Task ThePlayersPageListsTheSeasonsOfEveryYearAndTheOldHistoryAddressOpensOne()
+    public async Task ThePlayersPageOffersTheSeasonsOfThisYearLikeTheRankingAndAnOldSeasonStillOpens()
     {
         using var factory = new HubWebFactory();
         using var client = factory.Client();
@@ -112,7 +112,7 @@ public class PeriodGroupingTests
 
         Assert.Contains($"/players?year={before.Year}\"", players);
         Assert.Contains("/players?period=all-time\"", players);
-        Assert.Contains($"/players?season={oldSeason}\"", players);
+        Assert.DoesNotContain($"/players?season={oldSeason}\"", players);
         Assert.AreEqual($"/players?season={oldSeason}", history.Headers.Location?.ToString());
         Assert.Contains("id=\"table-players-summary\"", old);
         Assert.Contains($"/player/{StatisticsBuilder.PlayerA1}?season={oldSeason}", old);
