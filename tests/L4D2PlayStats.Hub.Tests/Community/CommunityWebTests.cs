@@ -541,6 +541,8 @@ public class CommunityWebTests
         var ofVoter = await visitor.GetStringAsync($"/community/votes?voter={site.Voter}");
         var ofOther = await visitor.GetStringAsync($"/community/votes?voter={pair.Left}");
 
+        Assert.Contains("class=\"admin-pagination\"", page);
+        Assert.Contains("Showing 1", page);
         Assert.Contains($"/avatar/{site.Voter}", page);
         Assert.Contains($"href=\"/community/votes?player={pair.Left}\"", page);
         Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", page);

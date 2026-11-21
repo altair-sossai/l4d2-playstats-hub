@@ -211,17 +211,20 @@ public class CommunityRankingServiceTests
         var same = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.SameLevel))!;
         var right = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Right))!;
 
-        var latest = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, null, 0, 10));
-        var paged = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, null, 1, 1));
-        var ofPlayer = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().LatestVotesAsync(null, left.Left, 0, 10));
+        var latest = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().VotesPageAsync(null, null, 1, 10));
+        var paged = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().VotesPageAsync(null, null, 2, 1));
+        var ofPlayer = await community.Hub.RunAsync(services => services.GetRequiredService<ICommunityRankingService>().VotesPageAsync(null, left.Left, 1, 10));
 
-        CollectionAssert.AreEqual(new[] { CommunityVoteOutcome.Right, CommunityVoteOutcome.SameLevel, CommunityVoteOutcome.Left }, latest.Select(vote => vote.Outcome).ToArray());
-        Assert.AreEqual(right.Left, latest[0].LeftPlayerId);
-        Assert.AreEqual(same.Right, latest[1].RightPlayerId);
-        Assert.IsTrue(latest.All(vote => vote.VoterId == community.Voter && !string.IsNullOrEmpty(vote.VoterName) && !string.IsNullOrEmpty(vote.LeftName)));
-        Assert.HasCount(1, paged);
-        Assert.AreEqual(CommunityVoteOutcome.SameLevel, paged[0].Outcome);
-        Assert.IsTrue(ofPlayer.Count >= 1 && ofPlayer.All(vote => vote.LeftPlayerId == left.Left || vote.RightPlayerId == left.Left));
+        CollectionAssert.AreEqual(new[] { CommunityVoteOutcome.Right, CommunityVoteOutcome.SameLevel, CommunityVoteOutcome.Left }, latest.Items.Select(vote => vote.Outcome).ToArray());
+        Assert.AreEqual(3, latest.Total);
+        Assert.AreEqual(right.Left, latest.Items[0].LeftPlayerId);
+        Assert.AreEqual(same.Right, latest.Items[1].RightPlayerId);
+        Assert.IsTrue(latest.Items.All(vote => vote.VoterId == community.Voter && !string.IsNullOrEmpty(vote.VoterName) && !string.IsNullOrEmpty(vote.LeftName)));
+        Assert.HasCount(1, paged.Items);
+        Assert.AreEqual(2, paged.Number);
+        Assert.AreEqual(3, paged.TotalPages);
+        Assert.AreEqual(CommunityVoteOutcome.SameLevel, paged.Items[0].Outcome);
+        Assert.IsTrue(ofPlayer.Total >= 1 && ofPlayer.Items.All(vote => vote.LeftPlayerId == left.Left || vote.RightPlayerId == left.Left));
     }
 
     [TestMethod]

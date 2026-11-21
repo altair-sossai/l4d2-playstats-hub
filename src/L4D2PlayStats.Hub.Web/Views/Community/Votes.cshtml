@@ -12,6 +12,7 @@
 
 @section Styles {
     @await Html.PartialAsync("_VoteStyles")
+    @await Html.PartialAsync("_PaginationStyles")
 }
 
 <h4 class="text-center">
@@ -120,7 +121,7 @@
     </div>
 }
 
-@if (Model.Votes.Count == 0)
+@if (Model.Votes.Total == 0)
 {
     <div class="jumbotron text-center">
         <p>@L["There are no votes to show yet."]</p>
@@ -131,22 +132,9 @@
 }
 else
 {
-    @await Html.PartialAsync("_VoteRows", new CommunityVoteRowsModel(Model.Votes, Model.ShowVoters, Model.TimeZone, Model.VoterId, Model.PlayerId, Model.Moderate))
+    @await Html.PartialAsync("_VoteRows", new CommunityVoteRowsModel(Model.Votes.Items, Model.ShowVoters, Model.TimeZone, Model.VoterId, Model.PlayerId, Model.Moderate))
 
-    <div class="vf-pages">
-        @if (Model.Page > 1)
-        {
-            <a class="btn btn-default" href="@CommunityVoteUrls.Votes(Model.VoterId, Model.PlayerId, Model.Page - 1)">
-                <span class="glyphicon glyphicon-chevron-left"></span> @L["Newer"]
-            </a>
-        }
-        @if (Model.HasMore)
-        {
-            <a class="btn btn-default" href="@CommunityVoteUrls.Votes(Model.VoterId, Model.PlayerId, Model.Page + 1)">
-                @L["Older"] <span class="glyphicon glyphicon-chevron-right"></span>
-            </a>
-        }
-    </div>
+    @await Html.PartialAsync("_Pagination", PaginationModel.Of(Model.Votes, number => CommunityVoteUrls.Votes(Model.VoterId, Model.PlayerId, number)))
 }
 
 <script>

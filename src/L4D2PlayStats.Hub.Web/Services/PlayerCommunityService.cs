@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
@@ -27,17 +28,17 @@ public class PlayerCommunityService(
         var showVoters = settings.ShowVoterNames || moderate;
         var entries = await communityRankingService.ListAsync(cancellationToken);
         var size = AppConsts.PlayerCommunityVotes;
-        var received = compareWith == null ? await communityRankingService.LatestVotesAsync(null, communityId, 0, size + 1, cancellationToken) : [];
-        var cast = compareWith == null && showVoters ? await communityRankingService.LatestVotesAsync(communityId, null, 0, size + 1, cancellationToken) : [];
+        var received = compareWith == null ? await communityRankingService.VotesPageAsync(null, communityId, 1, size, cancellationToken) : Page<CommunityVoteFeedItem>.Empty(size);
+        var cast = compareWith == null && showVoters ? await communityRankingService.VotesPageAsync(communityId, null, 1, size, cancellationToken) : Page<CommunityVoteFeedItem>.Empty(size);
 
         return new PlayerCommunityModel
         {
             First = await StandingAsync(communityId, entries, cancellationToken),
             Second = compareWith == null ? null : await StandingAsync(compareWith.Value, entries, cancellationToken),
-            Received = [.. received.Take(size)],
-            Cast = [.. cast.Take(size)],
-            HasMoreReceived = received.Count > size,
-            HasMoreCast = cast.Count > size,
+            Received = received.Items,
+            Cast = cast.Items,
+            ReceivedTotal = received.Total,
+            CastTotal = cast.Total,
             ShowVoters = showVoters,
             Moderate = moderate,
             TimeZone = await siteClock.ZoneAsync(cancellationToken)

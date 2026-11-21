@@ -394,14 +394,14 @@
     {
         <li role="presentation">
             <a href="#votes-received" role="tab" data-toggle="tab">
-                @L["Votes received"] <span class="badge">@(Model.Community.Received.Count.ToString("N0") + (Model.Community.HasMoreReceived ? "+" : ""))</span>
+                @L["Votes received"] <span class="badge">@Model.Community.ReceivedTotal.ToString("N0")</span>
             </a>
         </li>
         @if (Model.Community.ShowVoters)
         {
             <li role="presentation">
                 <a href="#votes-cast" role="tab" data-toggle="tab">
-                    @L["Votes cast"] <span class="badge">@(Model.Community.Cast.Count.ToString("N0") + (Model.Community.HasMoreCast ? "+" : ""))</span>
+                    @L["Votes cast"] <span class="badge">@Model.Community.CastTotal.ToString("N0")</span>
                 </a>
             </li>
         }

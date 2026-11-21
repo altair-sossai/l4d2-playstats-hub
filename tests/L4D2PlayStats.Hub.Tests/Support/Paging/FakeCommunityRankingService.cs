@@ -52,9 +52,9 @@ public class FakeCommunityRankingService(int count) : ICommunityRankingService
         return Task.FromResult(0);
     }
 
-    public Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? voterId, long? playerId, int skip, int take, CancellationToken cancellationToken = default)
+    public Task<Page<CommunityVoteFeedItem>> VotesPageAsync(long? voterId, long? playerId, int page, int size, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult<IReadOnlyList<CommunityVoteFeedItem>>([]);
+        return Task.FromResult(Page<CommunityVoteFeedItem>.Empty(size));
     }
 
     public Task<IReadOnlyList<CommunityVoteParticipant>> VoteParticipantsAsync(CancellationToken cancellationToken = default)

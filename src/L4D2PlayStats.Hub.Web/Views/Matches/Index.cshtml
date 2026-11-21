@@ -78,7 +78,4 @@
     }
 </div>
 
-@if (Model.Pagination.TotalPages > 1)
-{
-    @await Html.PartialAsync("_Pagination", Model.Pagination)
-}
+@await Html.PartialAsync("_Pagination", Model.Pagination)

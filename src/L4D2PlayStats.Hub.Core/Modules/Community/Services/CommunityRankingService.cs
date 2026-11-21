@@ -60,16 +60,24 @@ public class CommunityRankingService(
         return [.. ratings.Select((r, index) => new CommunityRankingEntry(skip + index + 1, r.CommunityId, names[r.CommunityId], r.Rating, r.Deviation, r.Comparisons, r.Wins, r.Draws, r.Losses))];
     }
 
-    public async Task<IReadOnlyList<CommunityVoteFeedItem>> LatestVotesAsync(long? voterId, long? playerId, int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<Page<CommunityVoteFeedItem>> VotesPageAsync(long? voterId, long? playerId, int page, int size, CancellationToken cancellationToken = default)
     {
-        var votes = await JudgingVotes()
+        var votes = await FilteredVotes(voterId, playerId).ToPageAsync(page, size, cancellationToken);
+        var feed = await FeedAsync(votes.Items, cancellationToken);
+
+        return new Page<CommunityVoteFeedItem>(feed, votes.Number, votes.Size, votes.Total);
+    }
+
+    private IQueryable<CommunityVote> FilteredVotes(long? voterId, long? playerId)
+    {
+        return JudgingVotes()
             .Where(v => voterId == null || v.VoterId == voterId)
             .Where(v => playerId == null || v.LeftPlayerId == playerId || v.RightPlayerId == playerId)
-            .OrderByDescending(v => v.Id)
-            .Skip(Math.Max(0, skip))
-            .Take(Math.Max(0, take))
-            .ToListAsync(cancellationToken);
+            .OrderByDescending(v => v.Id);
+    }
 
+    private async Task<IReadOnlyList<CommunityVoteFeedItem>> FeedAsync(IReadOnlyList<CommunityVote> votes, CancellationToken cancellationToken)
+    {
         var names = await playerService.NamesAsync([.. votes.SelectMany(v => new[] { v.VoterId, v.LeftPlayerId, v.RightPlayerId })], cancellationToken);
 
         return [.. votes.Select(v => new CommunityVoteFeedItem(v.Id, v.VoterId, names[v.VoterId], v.LeftPlayerId, names[v.LeftPlayerId], v.RightPlayerId, names[v.RightPlayerId], v.Outcome, v.CreatedAtUtc))];

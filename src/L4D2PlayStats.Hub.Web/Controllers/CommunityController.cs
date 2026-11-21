@@ -74,9 +74,7 @@ public class CommunityController(
         var moderate = await currentUser.IsAdministratorAsync();
         var showVoters = settings.ShowVoterNames || moderate;
         var voterId = showVoters ? voter : null;
-        var current = Math.Max(1, page);
-        var size = CoreConsts.CommunityVotesPageSize;
-        var votes = await communityRankingService.LatestVotesAsync(voterId, player, (current - 1) * size, size + 1, cancellationToken);
+        var votes = await communityRankingService.VotesPageAsync(voterId, player, page, CoreConsts.CommunityVotesPageSize, cancellationToken);
         var participants = await communityRankingService.VoteParticipantsAsync(cancellationToken);
         var filtered = new[] { voterId, player }.Where(id => id != null).Select(id => id!.Value).ToList();
         var names = await communityPlayerService.NamesAsync(filtered, cancellationToken);
@@ -84,15 +82,13 @@ public class CommunityController(
 
         var model = new CommunityVotesViewModel
         {
-            Votes = [.. votes.Take(size)],
+            Votes = votes,
             VoterId = voterId,
             VoterName = voterId == null ? null : names[voterId.Value],
             PlayerId = player,
             PlayerName = player == null ? null : names[player.Value],
             PlayerRating = rating,
             Participants = participants,
-            Page = current,
-            HasMore = votes.Count > size,
             ShowVoters = showVoters,
             Moderate = moderate,
             TimeZone = await siteClock.ZoneAsync(cancellationToken)

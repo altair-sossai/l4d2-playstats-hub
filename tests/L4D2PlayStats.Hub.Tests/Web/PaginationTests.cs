@@ -93,7 +93,9 @@ public partial class PaginationTests
         var page = WebUtility.HtmlDecode(await client.GetStringAsync("/players?orderBy=Wins&asc=False"));
 
         Assert.AreEqual(8, PlayerPosition().Count(page));
-        Assert.DoesNotContain("class=\"admin-pagination\"", page);
+        Assert.Contains("class=\"admin-pagination\"", page);
+        Assert.Contains("Showing 1–8 of 8", page);
+        Assert.DoesNotContain("class=\"pagination pagination-sm\"", page);
     }
 
     [TestMethod]

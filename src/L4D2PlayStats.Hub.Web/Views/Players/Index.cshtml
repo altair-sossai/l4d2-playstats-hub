@@ -211,7 +211,4 @@ else
     </table>
 }
 
-@if (pagination.TotalPages > 1)
-{
-    @await Html.PartialAsync("_Pagination", pagination)
-}
+@await Html.PartialAsync("_Pagination", pagination)

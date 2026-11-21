@@ -185,10 +185,7 @@ else
         </tbody>
     </table>
 
-    @if (pagination.TotalPages > 1)
-    {
-        @await Html.PartialAsync("_Pagination", pagination)
-    }
+    @await Html.PartialAsync("_Pagination", pagination)
 
     <div class="text-center" style="margin-top: 12px">
         <a class="btn btn-info" href="@AppConsts.CommunityVotesPage">

@@ -9,8 +9,8 @@ public class PlayerCommunityModel
     public PlayerCommunityStanding? Second { get; init; }
     public IReadOnlyList<CommunityVoteFeedItem> Received { get; init; } = [];
     public IReadOnlyList<CommunityVoteFeedItem> Cast { get; init; } = [];
-    public bool HasMoreReceived { get; init; }
-    public bool HasMoreCast { get; init; }
+    public int ReceivedTotal { get; init; }
+    public int CastTotal { get; init; }
     public bool ShowVoters { get; init; }
     public bool Moderate { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
