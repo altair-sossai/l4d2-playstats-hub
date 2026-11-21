@@ -19,6 +19,8 @@ Each command is a card with its names and aliases, how to type it, who can use i
 
 The page follows the [modules](administration.md#modules): commands that need a module that is off are hidden. For example, `!rmix` shows only with the community ranking, `!skin` only with the skin shop, `!ranking` only with the ranking, and the Anti-Cheat section only with the Anti-Cheat module.
 
+![The commands page](../images/en/commands.webp)
+
 ## Where the content lives
 
 The text of the page is not in the HTML. It is in one catalog per language, in `src/L4D2PlayStats.Hub.Web/Resources/Commands`:

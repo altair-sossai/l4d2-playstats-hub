@@ -140,6 +140,7 @@ function shots(vars) {
         { name: 'match-team-statistics', path: vars.match, before: [hideFloating, markPanelWithTable(2)], clip: '#shot-target', padding: 0 },
         { name: 'match-map-statistics', path: vars.mapStatistics, full: true, maxHeight: 1300 },
         { name: 'players', path: '/players', full: true, maxHeight: 1100 },
+        { name: 'commands', path: '/commands', height: 900 },
         { name: 'servers', path: '/servers', before: [{ run: feedLive }, { go: '/servers' }], full: true, maxHeight: 900 },
         { name: 'server-live', path: '/servers', before: [{ eval: firstLiveServer, navigates: true, settle: 2500 }], full: true, maxHeight: 1500 },
         { before: [{ run: refundPlayer }], always: true },

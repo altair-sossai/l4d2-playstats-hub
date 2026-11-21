@@ -19,6 +19,8 @@ Cada comando é um cartão com os seus nomes e apelidos, como digitá-lo, quem p
 
 A página segue os [módulos](administration.pt.md#módulos): os comandos que precisam de um módulo desligado ficam ocultos. Por exemplo, o `!rmix` só aparece com o ranking da comunidade, o `!skin` só com a loja de skins, o `!ranking` só com o ranking, e a seção do Anti-Cheat só com o módulo Anti-Cheat.
 
+![A página de comandos](../images/pt/commands.webp)
+
 ## Onde fica o conteúdo
 
 O texto da página não está no HTML. Ele fica num catálogo por idioma, em `src/L4D2PlayStats.Hub.Web/Resources/Commands`:
