@@ -54,5 +54,10 @@ public static partial class AppConsts
     public const string AdminCommunityUrl = "/admin/community";
     public const string RemoteCommandsUrl = "/admin/remote-commands";
     public const string PlayerConnectionsUrl = "/admin/player-connections";
+    public const string ForcedNamesUrl = "/admin/forced-names";
+    public const string ForcedNamesApiRoute = "api/forced-names";
+    public const int ForcedNamesPageSize = 20;
+    public const string ForcedNameInvalidPlayerMessage = "That is not a valid SteamID64.";
+    public const string ForcedNameInvalidNameMessage = "Write the name the player must use.";
     public const string AdminMenuId = "admin-menu-items";
 }

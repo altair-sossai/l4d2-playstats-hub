@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
@@ -20,7 +21,8 @@ public class RankingService(
     IMemoryCache memoryCache,
     ISeasonService seasonService,
     IPunishmentService punishmentService,
-    ISettingsService settingsService) : IRankingService
+    ISettingsService settingsService,
+    IForcedNameStore forcedNames) : IRankingService
 {
     public Task<IReadOnlyList<RankingPlayer>> SeasonAsync(int seasonId, CancellationToken cancellationToken = default)
     {
@@ -91,8 +93,12 @@ public class RankingService(
     private async Task<IReadOnlyList<RankingPlayer>> CalculateAsync(List<RankingMatch> matches, IReadOnlyDictionary<long, int> punishments, CancellationToken cancellationToken)
     {
         var settings = await settingsService.GetAsync<RankingSettings>(cancellationToken);
+        var players = RankingCalculator.Calculate(matches, punishments, settings);
 
-        return RankingCalculator.Calculate(matches, punishments, settings);
+        foreach (var player in players)
+            player.ForcedName = forcedNames.Find(player.CommunityId);
+
+        return players;
     }
 
     private async Task<T> CachedAsync<T>(string scope, Func<Task<T>> factory, CancellationToken cancellationToken)

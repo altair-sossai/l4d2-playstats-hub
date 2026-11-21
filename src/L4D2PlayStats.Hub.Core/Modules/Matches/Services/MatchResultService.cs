@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
@@ -7,7 +8,7 @@ using ParsedStatistics = L4D2PlayStats.Statistics;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Matches.Services;
 
-public class MatchResultService(HubDbContext dbContext, IMatchQueryService matchQueryService) : IMatchResultService
+public class MatchResultService(HubDbContext dbContext, IMatchQueryService matchQueryService, IForcedNameStore forcedNames) : IMatchResultService
 {
     public async Task<MatchResultPage> ListAsync(MatchFilter filter, CancellationToken cancellationToken = default)
     {
@@ -39,7 +40,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
             .ToDictionary(group => group.Key, group => group.First().Content);
 
         var matches = page.Matches
-            .Select(match => MatchResultFactory.Create(match, maps.GetValueOrDefault(match.Id) ?? [], Parse(contents.GetValueOrDefault(match.Id))))
+            .Select(match => MatchResultFactory.Create(match, maps.GetValueOrDefault(match.Id) ?? [], Parse(contents.GetValueOrDefault(match.Id)), forcedNames))
             .ToList();
 
         return new MatchResultPage(matches, page.Total, page.Page, page.PageSize);
@@ -60,7 +61,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
             .Select(file => new MatchMapResult(file.Id, file.MapName, file.TeamAScore, file.TeamBScore))
             .ToList();
 
-        return MatchResultFactory.Create(match, maps, Parse(files.LastOrDefault()?.Content));
+        return MatchResultFactory.Create(match, maps, Parse(files.LastOrDefault()?.Content), forcedNames);
     }
 
     public async Task<IReadOnlyList<MatchStatisticsResult>> StatisticsAsync(MatchResult match, CancellationToken cancellationToken = default)

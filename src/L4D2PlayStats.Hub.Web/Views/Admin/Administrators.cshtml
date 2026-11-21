@@ -28,7 +28,7 @@
             <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
                 <img src="/avatar/@administrator.CommunityId" alt="@administrator.Name" style="width: 40px; border-radius: 5px" onerror="imgOnError(this)"/>
             </td>
-            <td class="vertical-align-middle" data-label="@L["Name"]">@(administrator.Name ?? "-")</td>
+            <td class="vertical-align-middle" data-label="@L["Name"]">@(ForcedNames.Apply(administrator.CommunityId, administrator.Name) ?? "-")</td>
             <td class="vertical-align-middle" data-label="SteamID64">
                 <a href="@PlayerUrls.Details(administrator.CommunityId)" target="_blank">
                     <span class="text-underline">@administrator.CommunityId</span>

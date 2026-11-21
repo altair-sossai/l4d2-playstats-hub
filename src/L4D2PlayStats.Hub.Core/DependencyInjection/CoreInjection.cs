@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services;
@@ -23,6 +25,7 @@ public static class CoreInjection
         services.AddSingleton<ILiveSettings, LiveSettings>();
         services.AddSingleton<ILiveServerStore, LiveServerStore>();
         services.AddSingleton<ISecretProtector, SecretProtector>();
+        services.AddSingleton<IForcedNameStore, ForcedNameStore>();
 
         services.Scan(scan => scan
             .FromAssemblyOf<HubState>()

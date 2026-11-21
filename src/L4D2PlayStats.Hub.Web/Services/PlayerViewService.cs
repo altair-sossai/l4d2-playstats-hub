@@ -40,7 +40,8 @@ public class PlayerViewService(
     ISkinShopService skinShopService,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> localizer,
-    SkinThumbnailStore skinThumbnailStore) : IPlayerViewService
+    SkinThumbnailStore skinThumbnailStore,
+    IForcedNameStore forcedNames) : IPlayerViewService
 {
     public async Task<PlayerPeriodModel?> PeriodAsync(int? seasonId, int? year, bool allTime, CancellationToken cancellationToken = default)
     {
@@ -189,7 +190,7 @@ public class PlayerViewService(
             .Select(profile => new { profile.CommunityId, profile.Name })
             .ToListAsync(cancellationToken);
 
-        return profiles.ToDictionary(profile => profile.CommunityId, profile => profile.Name!);
+        return profiles.ToDictionary(profile => profile.CommunityId, profile => forcedNames.Find(profile.CommunityId) ?? profile.Name!);
     }
 
     private static TimeZoneInfo TimeZone(SiteSettings site)

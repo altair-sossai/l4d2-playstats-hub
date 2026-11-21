@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
@@ -52,6 +53,8 @@ public static class Hosting
 
         if (encrypted > 0)
             app.Logger.LogInformation("Encrypted the secrets of {Count} settings that were stored in plain text by an older version.", encrypted);
+
+        await services.GetRequiredService<IForcedNameService>().LoadAsync();
 
         var ratings = services.GetRequiredService<ICommunityRatingService>();
 

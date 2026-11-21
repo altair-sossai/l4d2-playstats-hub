@@ -12,6 +12,7 @@ The tools an administrator has to deal with players: punishments in the ranking,
 - [Chat bans](#chat-bans)
 - [Remote commands](#remote-commands)
 - [Player connections](#player-connections)
+- [Forced names](#forced-names)
 
 ## Punishments
 
@@ -76,3 +77,14 @@ Type the Steam ID or the profile link of the player and click **Search**, or cli
 The address itself is never shown. Connections older than three months are deleted.
 
 The same accounts are shown on the player page as [Related accounts](players.md#related-accounts), to every visitor or only to administrators depending on [Settings > Privacy](administration.md#privacy).
+
+## Forced names
+
+**Administration > Forced names** keeps a list of players who must always use a fixed name.
+
+- On the site, the forced name replaces the name of the player everywhere: the rankings, the player page, the matches and their statistics, the live server, the chat, the community ranking, the in-game pages and the administration. The player search also finds the player by the forced name. The names the player used before still appear in the list of previous names.
+- On the game servers, the `l4d2_forced_names` plugin renames the player when they join and every time they change their name. With `l4d2_forced_names_hub 1`, the plugin reads this list at the start of each round and joins it to its `configs/forced_names.cfg` file; when both have the same player, the name from the site wins.
+
+The list has 20 players per page and a search by name or Steam ID. **Add** opens a window with the player (in any Steam ID format, or chosen with the player search) and the name; **Edit** changes the name of a player already on the list, and **Remove** takes them off after a confirmation. **Import** takes the contents of a `forced_names.cfg` file: each line with a Steam ID and a name between quotes is added, or updates the name already on the list, and a message says how many were added, updated and left out.
+
+The game servers read the list from `GET <site>/api/forced-names` with their token, as described in [Connecting a game server](../game-server.md).

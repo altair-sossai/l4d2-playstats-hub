@@ -1,10 +1,12 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Security.Claims;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Authentication;
 
-public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministratorService administratorService) : ICurrentUser
+public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministratorService administratorService, IForcedNameStore forcedNames) : ICurrentUser
 {
     private bool? _administrator;
 
@@ -14,7 +16,7 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor, IAdministrato
 
     public long? CommunityId => SteamClaims.CommunityId(Principal);
 
-    public string? Name => Principal?.FindFirstValue(ClaimTypes.Name);
+    public string? Name => forcedNames.Apply(CommunityId, Principal?.FindFirstValue(ClaimTypes.Name));
 
     public bool ItIsMe(long? communityId)
     {

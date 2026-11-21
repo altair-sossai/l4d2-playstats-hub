@@ -37,7 +37,8 @@ public class RankingPlayer(long communityId) : MatchPlayerStatistics
         }
     }
 
-    public string MainName => PreviousNames.FirstOrDefault()?.Name ?? Name ?? AppConsts.UnknownPlayerName;
+    public string? ForcedName { get; set; }
+    public string MainName => ForcedName ?? PreviousNames.FirstOrDefault()?.Name ?? Name ?? AppConsts.UnknownPlayerName;
     public string MostUsedNames => string.Join(" | ", PreviousNames.Take(AppConsts.MostUsedNames).Select(pn => pn.Name));
     public List<PreviousName> PreviousNames { get; } = [];
     public Dictionary<long, PlayerRelation> Relations { get; } = [];

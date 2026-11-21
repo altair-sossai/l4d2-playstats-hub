@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rankingService) : IPlayerDirectoryService
+public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rankingService, IForcedNameStore forcedNames) : IPlayerDirectoryService
 {
     public async Task<PlayerDirectoryPage> SearchAsync(string? term, int page, CancellationToken cancellationToken = default)
     {
@@ -48,6 +48,9 @@ public class PlayerDirectoryService(HubDbContext dbContext, IRankingService rank
             .ToListAsync(cancellationToken);
 
         var entries = new Dictionary<long, PlayerDirectoryEntry>();
+
+        foreach (var (communityId, name) in forcedNames.All.Where(entry => SteamIds.IsValid(entry.Key)))
+            AddName(Entry(entries, communityId), name);
 
         foreach (var player in current.Where(player => SteamIds.IsValid(player.CommunityId)))
         {

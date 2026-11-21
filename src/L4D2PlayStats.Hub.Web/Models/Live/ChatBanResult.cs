@@ -14,5 +14,6 @@ public class ChatBanResult(ChatBan ban)
     public DateTime CreatedAtUtc { get; } = ban.CreatedAtUtc;
     public DateTime? UpdatedAtUtc { get; } = ban.UpdatedAtUtc;
     public string? CreatedByName { get; } = ban.CreatedByName;
+    public string? CreatedByCommunityId { get; } = ban.CreatedByCommunityId?.ToString();
     public string AvatarUrl { get; } = $"{AppConsts.AvatarUrl}{ban.CommunityId}";
 }

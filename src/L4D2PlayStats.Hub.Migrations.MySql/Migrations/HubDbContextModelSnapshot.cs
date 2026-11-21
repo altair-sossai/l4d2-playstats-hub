@@ -600,6 +600,27 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.ToTable("MatchPlayers");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.ForcedName", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CommunityId");
+
+                    b.ToTable("ForcedName");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.PlayerProfile", b =>
                 {
                     b.Property<long>("CommunityId")

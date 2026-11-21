@@ -5,10 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class PlayerNameService(HubDbContext dbContext) : IPlayerNameService
+public class PlayerNameService(HubDbContext dbContext, IForcedNameStore forcedNames) : IPlayerNameService
 {
     public async Task<string?> KnownNameAsync(long communityId, CancellationToken cancellationToken = default)
     {
+        var forced = forcedNames.Find(communityId);
+
+        if (forced != null)
+            return forced;
+
         var profile = await dbContext.PlayerProfiles
             .AsNoTracking()
             .Where(p => p.CommunityId == communityId && p.Name != null)

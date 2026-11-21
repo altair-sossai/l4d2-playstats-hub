@@ -1438,5 +1438,21 @@
   "Remove the punishments of this player in this season?": "¿Quitar los castigos de este jugador en esta temporada?",
   "Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later.": "¿Quitar la skin de esta arma? Vuelve al aspecto predeterminado, y puedes equipar la skin de nuevo después.",
   "Go back to the catalog price for this skin?": "¿Volver al precio del catálogo para esta skin?",
-  "Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own.": "¿Importar el catálogo? Las skins que no están en él salen de la tienda; los jugadores conservan las que tienen."
+  "Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own.": "¿Importar el catálogo? Las skins que no están en él salen de la tienda; los jugadores conservan las que tienen.",
+  "Forced names": "Nombres forzados",
+  "Forced name": "Nombre forzado",
+  "A player on this list always plays with the name written here: the game servers rename them when they join or change the name, and the site shows this name on every page. The servers read the list at the start of each round.": "Un jugador de esta lista siempre juega con el nombre escrito aquí: los servidores de juego le cambian el nombre cuando entra o cuando lo cambia, y el sitio muestra ese nombre en todas las páginas. Los servidores leen la lista al comienzo de cada ronda.",
+  "The forced name was removed.": "El nombre forzado fue quitado.",
+  "Import finished: {0} added, {1} updated, {2} already up to date, {3} lines left out.": "Importación terminada: {0} añadidos, {1} actualizados, {2} ya estaban iguales, {3} líneas omitidas.",
+  "Name or Steam ID": "Nombre o Steam ID",
+  "No forced names yet.": "Todavía no hay nombres forzados.",
+  "No forced name matches the search.": "Ningún nombre forzado coincide con la búsqueda.",
+  "Changed on": "Cambiado el",
+  "Remove the forced name of this player? They will be able to change the name again.": "¿Quitar el nombre forzado de este jugador? Podrá cambiarse el nombre de nuevo.",
+  "Add a forced name": "Añadir un nombre forzado",
+  "Edit the forced name": "Editar el nombre forzado",
+  "The name the player always uses on the game servers and on the site.": "El nombre que el jugador siempre usa en los servidores de juego y en el sitio.",
+  "Import from forced_names.cfg": "Importar desde forced_names.cfg",
+  "Paste the contents of the forced_names.cfg file of the l4d2_forced_names plugin. Each line with a Steam ID and a name between quotes is added, or updates the name already on the list.": "Pega el contenido del archivo forced_names.cfg del plugin l4d2_forced_names. Cada línea con un Steam ID y un nombre entre comillas se añade, o actualiza el nombre que ya está en la lista.",
+  "Write the name the player must use.": "Escribe el nombre que el jugador debe usar."
 }

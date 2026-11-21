@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Net;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISettingsService settingsService) : IPlayerConnectionService
+public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISettingsService settingsService, IForcedNameStore forcedNames) : IPlayerConnectionService
 {
     public async Task<List<PlayerConnectionResult>?> RegisterAsync(PlayerConnectionCommand? command, CancellationToken cancellationToken = default)
     {
@@ -105,7 +106,7 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
             .ToListAsync(cancellationToken);
     }
 
-    private static List<PlayerConnectionResult> Group(IEnumerable<PlayerConnection> connections)
+    private List<PlayerConnectionResult> Group(IEnumerable<PlayerConnection> connections)
     {
         return
         [
@@ -118,7 +119,7 @@ public class PlayerConnectionService(HubDbContext dbContext, IClock clock, ISett
                     return new PlayerConnectionResult
                     {
                         CommunityId = latest.CommunityId.ToString(),
-                        Name = latest.Name,
+                        Name = forcedNames.Find(latest.CommunityId) ?? latest.Name,
                         SteamId = SteamIds.SteamId(latest.CommunityId),
                         Steam3 = SteamIds.Steam3(latest.CommunityId),
                         ProfileUrl = SteamIds.ProfileUrl(latest.CommunityId),

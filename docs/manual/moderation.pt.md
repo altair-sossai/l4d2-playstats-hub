@@ -12,6 +12,7 @@ As ferramentas que um administrador tem para lidar com os jogadores: punições 
 - [Banimentos do chat](#banimentos-do-chat)
 - [Comandos remotos](#comandos-remotos)
 - [Conexões de jogadores](#conexões-de-jogadores)
+- [Nomes forçados](#nomes-forçados)
 
 ## Punições
 
@@ -76,3 +77,14 @@ Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**, ou cliq
 O endereço em si nunca aparece. Conexões com mais de três meses são excluídas.
 
 As mesmas contas aparecem na página do jogador como [Contas relacionadas](players.pt.md#contas-relacionadas), para todo visitante ou só para administradores, conforme [Configurações > Privacidade](administration.pt.md#privacidade).
+
+## Nomes forçados
+
+**Administração > Nomes forçados** guarda uma lista de jogadores que sempre devem usar um nome fixo.
+
+- No site, o nome forçado substitui o nome do jogador em todos os lugares: os rankings, a página do jogador, as partidas e suas estatísticas, o servidor ao vivo, o chat, o ranking da comunidade, as páginas do jogo e a administração. A busca de jogadores também encontra o jogador pelo nome forçado. Os nomes usados antes continuam na lista de nomes anteriores.
+- Nos servidores de jogo, o plugin `l4d2_forced_names` troca o nome do jogador quando ele entra e toda vez que ele muda de nome. Com `l4d2_forced_names_hub 1`, o plugin lê esta lista no começo de cada round e junta com o arquivo `configs/forced_names.cfg`; quando os dois têm o mesmo jogador, vale o nome do site.
+
+A lista mostra 20 jogadores por página e tem busca por nome ou Steam ID. **Adicionar** abre uma janela com o jogador (em qualquer formato de Steam ID, ou escolhido na busca de jogadores) e o nome; **Editar** muda o nome de um jogador que já está na lista, e **Remover** tira o jogador depois de uma confirmação. **Importar** recebe o conteúdo de um arquivo `forced_names.cfg`: cada linha com um Steam ID e um nome entre aspas é adicionada, ou atualiza o nome que já está na lista, e uma mensagem diz quantos foram adicionados, atualizados e ignorados.
+
+Os servidores de jogo leem a lista em `GET <site>/api/forced-names` com o token deles, como descrito em [Conectando um servidor de jogo](../game-server.pt.md).

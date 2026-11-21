@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
@@ -19,7 +20,8 @@ public class AntiCheatAccessService(
     IRemoteCommandService remoteCommandService,
     IPlayerNameService playerNameService,
     IClock clock,
-    ILogger<AntiCheatAccessService> logger) : IAntiCheatAccessService
+    ILogger<AntiCheatAccessService> logger,
+    IForcedNameStore forcedNames) : IAntiCheatAccessService
 {
     public async Task<AntiCheatAccessSnapshot> GetAsync(CancellationToken cancellationToken = default)
     {
@@ -31,7 +33,7 @@ public class AntiCheatAccessService(
         {
             Mode = setting?.Mode ?? AppConsts.AntiCheatDefaultMode,
             ModeSaved = setting != null,
-            UpdatedByName = setting?.UpdatedByName,
+            UpdatedByName = forcedNames.Apply(setting?.UpdatedByCommunityId, setting?.UpdatedByName),
             UpdatedFrom = setting?.UpdatedFrom,
             UpdatedAtUtc = setting?.UpdatedAtUtc,
             Whitelist = whitelist,
@@ -153,6 +155,12 @@ public class AntiCheatAccessService(
             .OrderByDescending(player => player.CreatedAtUtc)
             .ThenBy(player => player.CommunityId)
             .ToListAsync(cancellationToken);
+
+        foreach (var player in players)
+        {
+            player.Name = forcedNames.Find(player.CommunityId) ?? player.Name;
+            player.AddedByName = forcedNames.Apply(player.AddedByCommunityId, player.AddedByName);
+        }
 
         return [.. players];
     }

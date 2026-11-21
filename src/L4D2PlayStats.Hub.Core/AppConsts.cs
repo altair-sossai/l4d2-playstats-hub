@@ -23,6 +23,8 @@ public static class AppConsts
     public const int GameServerKeyHashMaxLength = 100;
     public const int SettingKeyMaxLength = 100;
     public const int PlayerNameColumnMaxLength = 100;
+    public const int ForcedNameMaxLength = 64;
+    public const string ForcedNameImportPattern = "^\\s*\"([^\"]+)\"\\s+\"([^\"]*)\"";
     public const int CampaignNameMaxLength = 100;
     public const int MapNameMaxLength = 100;
     public const int GameModeNameMaxLength = 100;

@@ -89,14 +89,14 @@
             }
             @foreach (var ban in Model.Bans.Items)
             {
-                var name = string.IsNullOrWhiteSpace(ban.Name) ? ban.CommunityId : ban.Name;
+                var name = ForcedNames.Apply(ban.CommunityId, string.IsNullOrWhiteSpace(ban.Name) ? ban.CommunityId : ban.Name);
                 var bannedAt = LiveDisplay.ShortDateTime(ban.CreatedAtUtc, Model.TimeZone);
                 var updatedAt = ban.UpdatedAtUtc == null ? null : LiveDisplay.ShortDateTime(ban.UpdatedAtUtc.Value, Model.TimeZone);
 
                 <div class="admin-item cb-ban"
                      data-community-id="@ban.CommunityId" data-name="@name" data-avatar="@ban.AvatarUrl" data-steam-id="@ban.SteamId"
                      data-profile-url="@ban.ProfileUrl" data-reason="@ban.Reason" data-banned-at="@bannedAt" data-updated-at="@updatedAt"
-                     data-banned-by="@ban.CreatedByName">
+                     data-banned-by="@ForcedNames.Apply(ban.CreatedByCommunityId, ban.CreatedByName)">
                     <img class="admin-avatar" src="@ban.AvatarUrl" alt="@name" onerror="imgOnError(this)"/>
                     <div class="admin-main">
                         <div class="admin-title">@name</div>
@@ -107,7 +107,7 @@
                         <strong>@bannedAt</strong>
                         @if (!string.IsNullOrWhiteSpace(ban.CreatedByName))
                         {
-                            <small>@string.Format(L["by {0}"].Value, ban.CreatedByName)</small>
+                            <small>@string.Format(L["by {0}"].Value, ForcedNames.Apply(ban.CreatedByCommunityId, ban.CreatedByName))</small>
                         }
                     </div>
                 </div>

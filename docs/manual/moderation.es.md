@@ -12,6 +12,7 @@ Las herramientas que tiene un administrador para tratar con los jugadores: casti
 - [Baneos del chat](#baneos-del-chat)
 - [Comandos remotos](#comandos-remotos)
 - [Conexiones de jugadores](#conexiones-de-jugadores)
+- [Nombres forzados](#nombres-forzados)
 
 ## Castigos
 
@@ -76,3 +77,14 @@ Escribe el Steam ID o el enlace del perfil del jugador y haz clic en **Buscar**,
 La dirección en sí nunca se muestra. Las conexiones de más de tres meses se borran.
 
 Las mismas cuentas se muestran en la página del jugador como [Cuentas relacionadas](players.es.md#cuentas-relacionadas), a todos los visitantes o solo a los administradores, según [Configuración > Privacidad](administration.es.md#privacidad).
+
+## Nombres forzados
+
+**Administración > Nombres forzados** guarda una lista de jugadores que siempre deben usar un nombre fijo.
+
+- En el sitio, el nombre forzado reemplaza el nombre del jugador en todas partes: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo, el chat, el ranking de la comunidad, las páginas del juego y la administración. La búsqueda de jugadores también encuentra al jugador por el nombre forzado. Los nombres usados antes siguen en la lista de nombres anteriores.
+- En los servidores de juego, el plugin `l4d2_forced_names` le cambia el nombre al jugador cuando entra y cada vez que se lo cambia. Con `l4d2_forced_names_hub 1`, el plugin lee esta lista al comienzo de cada ronda y la junta con su archivo `configs/forced_names.cfg`; cuando los dos tienen el mismo jugador, vale el nombre del sitio.
+
+La lista muestra 20 jugadores por página y tiene búsqueda por nombre o Steam ID. **Añadir** abre una ventana con el jugador (en cualquier formato de Steam ID, o elegido con la búsqueda de jugadores) y el nombre; **Editar** cambia el nombre de un jugador que ya está en la lista, y **Quitar** lo saca después de una confirmación. **Importar** recibe el contenido de un archivo `forced_names.cfg`: cada línea con un Steam ID y un nombre entre comillas se añade, o actualiza el nombre que ya está en la lista, y un mensaje dice cuántos se añadieron, actualizaron y omitieron.
+
+Los servidores de juego leen la lista en `GET <sitio>/api/forced-names` con su token, como se describe en [Conectar un servidor de juego](../game-server.es.md).

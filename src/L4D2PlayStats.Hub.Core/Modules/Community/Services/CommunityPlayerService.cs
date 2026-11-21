@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Linq.Expressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
 
-public class CommunityPlayerService(HubDbContext dbContext) : ICommunityPlayerService
+public class CommunityPlayerService(HubDbContext dbContext, IForcedNameStore forcedNames) : ICommunityPlayerService
 {
     private static readonly Expression<Func<MatchPlayer, bool>> TookPart = p => p.TeamA || p.TeamB || p.Win || p.Loss || p.Draws > 0 || p.RageQuits > 0;
 
@@ -58,7 +59,7 @@ public class CommunityPlayerService(HubDbContext dbContext) : ICommunityPlayerSe
             .Where(p => ids.Contains(p.CommunityId) && p.Name != null && p.Name != string.Empty)
             .ToDictionaryAsync(p => p.CommunityId, p => p.Name!, cancellationToken);
 
-        return ids.ToDictionary(id => id, id => names.GetValueOrDefault(id) ?? id.ToString());
+        return ids.ToDictionary(id => id, id => forcedNames.Find(id) ?? names.GetValueOrDefault(id) ?? id.ToString());
     }
 
     public async Task<Dictionary<long, List<string>>> MostUsedNamesAsync(IReadOnlyCollection<long> communityIds, int count, CancellationToken cancellationToken = default)

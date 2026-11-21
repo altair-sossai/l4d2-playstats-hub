@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
@@ -27,7 +28,8 @@ public class SkinViewService(
     ISettingsService settingsService,
     ISkinAuthorService skinAuthorService,
     ICurrentUser currentUser,
-    SkinThumbnailStore skinThumbnailStore) : ISkinViewService
+    SkinThumbnailStore skinThumbnailStore,
+    IForcedNameStore forcedNames) : ISkinViewService
 {
     public async Task<SkinsModel> ShopAsync(CancellationToken cancellationToken = default)
     {
@@ -68,6 +70,9 @@ public class SkinViewService(
             .AsNoTracking()
             .Where(profile => profile.Name != null && ids.Contains(profile.CommunityId))
             .ToDictionaryAsync(profile => profile.CommunityId, profile => profile.Name!, cancellationToken);
+
+        foreach (var id in ids.Where(id => forcedNames.Find(id) != null))
+            names[id] = forcedNames.Find(id)!;
 
         var rows = purchases
             .Where(purchase => playerId == null || purchase.CommunityId == playerId)

@@ -23,6 +23,8 @@
     if (modules.IsEnabled(HubModule.LiveServer))
         servers.Add((AppConsts.PlayerConnectionsUrl, L["Player connections"].Value, L["Player connections"].Value, "transfer"));
 
+    servers.Add((AppConsts.ForcedNamesUrl, L["Forced names"].Value, L["Forced names"].Value, "tag"));
+
     if (modules.IsEnabled(HubModule.SiteChat))
         servers.Add((AppConsts.ChatBansUrl, L["Chat bans"].Value, L["Chat bans"].Value, "~/imgs/menu/chat-bans.svg"));
 

@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Core.Modules.Players.Extensions;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
@@ -6,7 +8,7 @@ using L4D2PlayStats.Hub.Core.Modules.Servers.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class LiveDataService(ILiveServerStore store, IGameServerPresence presence) : ILiveDataService
+public class LiveDataService(ILiveServerStore store, IGameServerPresence presence, IForcedNameStore forcedNames) : ILiveDataService
 {
     public void UpdateConfiguration(GameServer server, LiveConfiguration? configuration)
     {
@@ -32,24 +34,42 @@ public class LiveDataService(ILiveServerStore store, IGameServerPresence presenc
     public void UpdatePlayers(GameServer server, PlayersCommand? command)
     {
         var state = Received(server);
+        var players = command ?? new PlayersCommand();
 
-        state.Update(command ?? new PlayersCommand());
+        foreach (var player in (players.Survivors ?? []).Cast<LivePlayer?>().Concat(players.Infecteds ?? []).Concat(players.Spectators ?? []))
+            Rename(player);
+
+        state.Update(players);
     }
 
     public void AddMessage(GameServer server, ChatMessageCommand? command)
     {
         var state = Received(server);
 
-        if (command != null)
-            state.AddMessage(command);
+        if (command == null)
+            return;
+
+        command.Name = forcedNames.Apply(command.CommunityId, command.Name);
+        state.AddMessage(command);
     }
 
     public void AddEvent(GameServer server, GameEvent? gameEvent)
     {
         var state = Received(server);
 
-        if (gameEvent != null)
-            state.AddEvent(gameEvent);
+        if (gameEvent == null)
+            return;
+
+        foreach (var property in gameEvent.GetType().GetProperties().Where(property => property.CanRead && typeof(LivePlayer).IsAssignableFrom(property.PropertyType)))
+            Rename(property.GetValue(gameEvent) as LivePlayer);
+
+        state.AddEvent(gameEvent);
+    }
+
+    private void Rename(LivePlayer? player)
+    {
+        if (player?.Id != null)
+            player.Name = forcedNames.Find(player.Id.Value) ?? player.Name;
     }
 
     public LiveSnapshot Snapshot(GameServer server)
