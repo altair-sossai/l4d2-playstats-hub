@@ -4,6 +4,7 @@ namespace L4D2PlayStats.Hub.Web.Models;
 
 public class GameModesViewModel
 {
-    public IReadOnlyList<GameModeRule> Rules { get; init; } = [];
-    public IReadOnlyList<SeenConfiguration> Configurations { get; init; } = [];
+    public PagedListModel<GameModeRule> Rules { get; init; } = null!;
+    public PagedListModel<SeenConfiguration> Configurations { get; init; } = null!;
+    public string ReturnUrl { get; init; } = AppConsts.AdminGameModesUrl;
 }

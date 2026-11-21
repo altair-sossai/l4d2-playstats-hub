@@ -7,24 +7,6 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     <style>
-        .fn-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-            .fn-toolbar .admin-filters {
-                margin-bottom: 0;
-            }
-
-        .fn-actions form {
-            display: inline-block;
-            margin: 2px;
-        }
-
         .fn-current {
             display: block;
             font-size: 12px;
@@ -48,7 +30,7 @@
     <div class="alert @(imported[3] > 0 ? "alert-warning" : "alert-success")">@L["Import finished: {0} added, {1} updated, {2} already up to date, {3} lines left out.", imported[0], imported[1], imported[2], imported[3]]</div>
 }
 
-<div class="fn-toolbar">
+<div class="admin-toolbar">
     <form method="get" class="admin-filters" action="@AppConsts.ForcedNamesUrl">
         <div class="input-group admin-search">
             <input class="form-control" name="q" type="search" value="@Model.Search" placeholder="@L["Name or Steam ID"]" aria-label="@L["Name or Steam ID"]">
@@ -59,7 +41,7 @@
             </span>
         </div>
     </form>
-    <div>
+    <div class="admin-toolbar-actions">
         <button class="btn btn-default" type="button" data-toggle="modal" data-target="#fn-import-modal">
             <span class="glyphicon glyphicon-import"></span> @L["Import"]
         </button>
@@ -97,7 +79,7 @@ else
                 </td>
                 <td class="vertical-align-middle" data-label="@L["Forced name"]"><strong>@entry.Name</strong></td>
                 <td class="text-center vertical-align-middle" data-label="@L["Changed on"]">@entry.UpdatedAtUtc.ToString("d")</td>
-                <td class="text-center vertical-align-middle slim admin-actions fn-actions">
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                     <button class="btn btn-xs btn-default" type="button" data-fn-edit="@entry.CommunityId" data-fn-name="@entry.Name">
                         <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
                     </button>

@@ -35,9 +35,9 @@ With the site chat module on, signed-in players can write in the chat of a game 
 
 ![The chat bans](../images/en/admin-chat-bans.webp)
 
-The page lists every ban, with the player, the date, the reason and who banned. Search by name, Steam ID or reason. Click a ban to see its details, change the reason or remove it.
+The page lists every ban, with the player, the date, the reason and who banned. Search by name, Steam ID or reason. Click a ban to see its details, change the reason and **Save** it, or remove it.
 
-**Add ban** asks for the player and a reason:
+**Add**, on the right of the search, opens a window that asks for the player and a reason:
 
 ![Adding a chat ban](../images/en/admin-chat-bans-add.webp)
 

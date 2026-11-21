@@ -40,7 +40,7 @@ On a server without Competitive Rework, install SourceMod 1.12 and Left 4 DHooks
 
 1. Sign in to the site as an administrator.
 2. Open **Administration → Game servers**.
-3. Type a name and click **Create**.
+3. Click **Add**, type a name and click **Save**.
 
 The site shows two lines with the address of the site and the token of this server:
 

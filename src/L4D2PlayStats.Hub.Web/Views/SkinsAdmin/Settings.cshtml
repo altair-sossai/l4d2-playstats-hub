@@ -72,7 +72,5 @@
         </div>
     </div>
 
-    <button class="btn btn-primary" type="submit">
-        <span class="glyphicon glyphicon-ok"></span> @L["Save"]
-    </button>
+    @await Html.PartialAsync("_FormSaveButton")
 </form>

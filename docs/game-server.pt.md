@@ -40,7 +40,7 @@ Em um servidor sem o Competitive Rework, instale antes o SourceMod 1.12 e o Left
 
 1. Faça login no site como administrador.
 2. Abra **Administração → Servidores de jogo**.
-3. Digite um nome e clique em **Criar**.
+3. Clique em **Adicionar**, digite um nome e clique em **Salvar**.
 
 O site mostra duas linhas com o endereço do site e o token deste servidor:
 

@@ -30,6 +30,16 @@ public class CampaignService(HubDbContext dbContext, IMemoryCache memoryCache, H
         return dbContext.Campaigns.AsNoTracking().Include(c => c.Maps).OrderBy(c => c.Id).ToListAsync(cancellationToken);
     }
 
+    public Task<List<Campaign>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Campaigns.AsNoTracking().Include(c => c.Maps).OrderBy(c => c.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.Campaigns.CountAsync(cancellationToken);
+    }
+
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
         if (await dbContext.Campaigns.AnyAsync(cancellationToken))

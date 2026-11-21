@@ -42,7 +42,7 @@ The texts of the page are part of the site and are translated with it.
 
 - **Usage mode**: choose one of the two modes and click **Save mode**. Under the choices the page says who changed the mode last, on the site or in the game, and when. Until a mode is saved, it says that the game server uses the `anti_cheat_mode` of its config file.
 - **The list**: the page shows the list the current mode uses, with the number of players, a search by name or Steam ID, and 20 players per page. The link next to its title opens the other list, which stays saved for when the mode changes.
-- **Add player**: type a Steam ID in any format or a profile link, or **Pick a player** from the players of the site. While you type, the page shows the name and the photo of the player, and whether they played here or only have a Steam profile. A player who is already on the list cannot be added again.
+- **Add**, on the right of the search: type a Steam ID in any format or a profile link, or **Pick a player** from the players of the site. While you type, the page shows the name and the photo of the player, and whether they played here or only have a Steam profile. A player who is already on the list cannot be added again. **Save** adds the player.
 - **Remove**: click a player to see their IDs, their Steam profile, and when and by whom they were added, on the site or in the game. **Remove from the list** asks for a second confirmation.
 
 | Setting | What it does |

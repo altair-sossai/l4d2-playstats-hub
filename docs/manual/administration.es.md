@@ -59,7 +59,7 @@ En el teléfono, el menú queda plegado en una barra encima de la página, que m
 
 ![La lista de servidores de juego](../images/es/admin-servers.webp)
 
-La lista muestra cada servidor con su identificador, su estado y la cantidad de archivos de estadísticas. **Añadir un servidor de juego** pide:
+La pestaña **Servidores de juego** lista los servidores, 20 por página, con su identificador, su estado y la cantidad de archivos de estadísticas. **Editar** en una fila abre la [página del servidor](#la-página-de-un-servidor), y **Eliminar** lo borra después de una confirmación; un servidor que ya envió archivos de estadísticas solo se puede desactivar. El botón **Añadir**, encima de la lista a la derecha, abre la ventana **Añadir un servidor de juego**, que pide:
 
 | Campo | Para qué sirve |
 |---|---|
@@ -67,9 +67,9 @@ La lista muestra cada servidor con su identificador, su estado y la cantidad de 
 | Dirección a la que se conectan los jugadores (opcional) | Se muestra en la página del servidor en vivo con un botón para copiar, y la usa el botón `connect`. Por ejemplo `play.example.com:27015` o una IP y un puerto. |
 | Dirección alternativa, como un nombre DNS (opcional) | Se muestra junto a la dirección, como una segunda forma de conectarse. |
 
-El panel **Página del servidor en vivo**, al lado, define para todos los servidores: el retraso de la página en vivo (15 segundos), cada cuánto se actualiza una página en vivo abierta (2600 ms), los segundos sin señal hasta que el servidor aparece offline (90) y los minutos que un comando remoto espera al servidor (5).
+La pestaña **Página del servidor en vivo** define para todos los servidores, con **Guardar** al final: el retraso de la página en vivo (15 segundos), cada cuánto se actualiza una página en vivo abierta (2600 ms), los segundos sin señal hasta que el servidor aparece offline (90) y los minutos que un comando remoto espera al servidor (5).
 
-Después de **Crear**, la página del servidor nuevo muestra el token una sola vez, con las instrucciones. Cópialo en ese momento: consulta [Configuración inicial > Paso 4](first-run.es.md#paso-4-el-servidor-de-juego).
+Después de **Guardar**, la página del servidor nuevo muestra el token una sola vez, con las instrucciones. Cópialo en ese momento: consulta [Configuración inicial > Paso 4](first-run.es.md#paso-4-el-servidor-de-juego).
 
 ### La página de un servidor
 
@@ -166,7 +166,7 @@ Este ajuste solo afecta al sitio. El plugin `l4d2_gameinfo_sync` sigue anunciand
 
 ![Los administradores](../images/es/admin-administrators.webp)
 
-La lista muestra a cada administrador y desde cuándo lo es. Para agregar uno, indica la cuenta como SteamID64, como Steam ID con el formato `STEAM_1:0:123` o `[U:1:123]`, o como enlace del perfil, y, si quieres, un nombre. El botón de búsqueda junto al campo abre la [búsqueda de jugadores](#la-búsqueda-de-jugadores); el jugador elegido también completa el nombre cuando está vacío. **Quitar** le retira los permisos. No puedes quitarte a ti mismo, y el último administrador no se puede quitar.
+La lista muestra a cada administrador y desde cuándo lo es, 20 por página. El botón **Añadir**, encima de la lista a la derecha, abre una ventana que pide la cuenta, como SteamID64, como Steam ID con el formato `STEAM_1:0:123` o `[U:1:123]`, o como enlace del perfil, y, si quieres, un nombre; **Guardar** la añade. El botón de búsqueda junto al campo abre la [búsqueda de jugadores](#la-búsqueda-de-jugadores); el jugador elegido también completa el nombre cuando está vacío. **Editar**, en cada fila, abre la misma ventana para cambiar el nombre. **Quitar** le retira los permisos después de una confirmación. No puedes quitarte a ti mismo, y el último administrador no se puede quitar.
 
 Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la máquina donde se ejecuta el sitio:
 

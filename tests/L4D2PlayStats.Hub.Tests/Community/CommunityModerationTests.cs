@@ -245,7 +245,8 @@ public class CommunityModerationTests
         var admin = await administrator.GetStringAsync("/admin/community?tab=blocked");
 
         Assert.Contains("data-player-picker=\"#ca-block-player\"", tab);
-        Assert.Contains("data-block-return=\"/admin/community?tab=blocked\"", tab);
+        Assert.Contains("id=\"ca-block-add-modal\"", tab);
+        Assert.Contains("name=\"returnUrl\" value=\"/admin/community?tab=blocked\"", tab);
         Assert.AreEqual("/admin/community?tab=blocked", response.Headers.Location?.OriginalString);
         Assert.Contains("The voter was blocked and can no longer vote.", admin);
         Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", admin);

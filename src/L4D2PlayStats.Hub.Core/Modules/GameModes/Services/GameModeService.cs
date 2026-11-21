@@ -34,6 +34,26 @@ public class GameModeService(HubDbContext dbContext, IMemoryCache memoryCache, H
         return dbContext.GameConfigurations.AsNoTracking().OrderByDescending(c => c.LastSeenAtUtc).ToListAsync(cancellationToken);
     }
 
+    public Task<List<GameModeRule>> ListRulesAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameModeRules.AsNoTracking().OrderBy(r => r.Priority).ThenBy(r => r.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountRulesAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameModeRules.CountAsync(cancellationToken);
+    }
+
+    public Task<List<GameConfiguration>> ListConfigurationsAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameConfigurations.AsNoTracking().OrderByDescending(c => c.LastSeenAtUtc).ThenBy(c => c.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountConfigurationsAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameConfigurations.CountAsync(cancellationToken);
+    }
+
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
         if (await dbContext.GameModeRules.AnyAsync(cancellationToken))

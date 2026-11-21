@@ -40,7 +40,7 @@ En un servidor sin Competitive Rework, instala primero SourceMod 1.12 y Left 4 D
 
 1. Inicia sesión en el sitio como administrador.
 2. Abre **Administración → Servidores de juego**.
-3. Escribe un nombre y haz clic en **Crear**.
+3. Haz clic en **Añadir**, escribe un nombre y haz clic en **Guardar**.
 
 El sitio muestra dos líneas con la dirección del sitio y el token de este servidor:
 

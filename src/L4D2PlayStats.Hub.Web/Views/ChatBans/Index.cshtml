@@ -48,9 +48,6 @@
 
 <div class="admin-header">
     <h3>@L["Chat Bans"]</h3>
-    <button type="button" class="btn btn-primary cb-add">
-        <span class="glyphicon glyphicon-plus"></span> @L["Add ban"]
-    </button>
 </div>
 
 <p class="text-muted">@L["Players banned from the chat cannot send messages from the site to the game servers. Click a ban to see its details, edit the reason or remove it."]</p>
@@ -71,16 +68,23 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChatBansListTab)" id="@AdminTabs.PaneId(AppConsts.ChatBansListTab)">
-        <form method="get" class="admin-filters">
-            <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name, Steam ID or reason..."]"/>
-            <button type="submit" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> @L["Search"]
-            </button>
-            @if (!string.IsNullOrEmpty(Model.Query))
-            {
-                <a class="btn btn-link" href="@AppConsts.ChatBansUrl">@L["Clear filters"]</a>
-            }
-        </form>
+        <div class="admin-toolbar">
+            <form method="get" class="admin-filters">
+                <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by name, Steam ID or reason..."]"/>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span> @L["Search"]
+                </button>
+                @if (!string.IsNullOrEmpty(Model.Query))
+                {
+                    <a class="btn btn-link" href="@AppConsts.ChatBansUrl">@L["Clear filters"]</a>
+                }
+            </form>
+            <div class="admin-toolbar-actions">
+                <button type="button" class="btn btn-primary cb-add">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                </button>
+            </div>
+        </div>
 
         <div class="admin-list">
             @if (Model.Bans.Items.Count == 0)
@@ -120,38 +124,38 @@
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChatBansLimitsTab)" id="@AdminTabs.PaneId(AppConsts.ChatBansLimitsTab)">
         <div class="row">
             <div class="col-lg-8">
-                <form method="post" action="/admin/chat-bans/limits" class="panel panel-default">
+                <form method="post" action="/admin/chat-bans/limits">
                     @Html.AntiForgeryToken()
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            <span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="row cb-limits">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label for="GlobalCooldownInSeconds">@L["Seconds between any two messages"] @FieldHelp.More(L["After any message from the site, nobody can send another one to the same game server for this many seconds."], L["Seconds between any two messages"], L["It is a pause shared by everyone on the same game server, so the game chat is not flooded when many people write at once. Each game server has its own pause.\nAdministrators are not held by it.\n0 turns it off."])</label>
-                                    <input class="form-control" id="GlobalCooldownInSeconds" name="GlobalCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.GlobalCooldownInSeconds">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="glyphicon glyphicon-time"></span> @L["Limits of the messages sent from the site"]
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row cb-limits">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="GlobalCooldownInSeconds">@L["Seconds between any two messages"] @FieldHelp.More(L["After any message from the site, nobody can send another one to the same game server for this many seconds."], L["Seconds between any two messages"], L["It is a pause shared by everyone on the same game server, so the game chat is not flooded when many people write at once. Each game server has its own pause.\nAdministrators are not held by it.\n0 turns it off."])</label>
+                                        <input class="form-control" id="GlobalCooldownInSeconds" name="GlobalCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.GlobalCooldownInSeconds">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label for="UserCooldownInSeconds">@L["Seconds between two messages of the same player"] @FieldHelp.More(L["After sending a message, the same player waits this many seconds before sending another one to that game server."], L["Seconds between two messages of the same player"], L["It stops one player from sending a message after another. It works together with the pause between any two messages: a message goes out only when both pauses are over.\nAdministrators are not held by it.\n0 turns it off."])</label>
-                                    <input class="form-control" id="UserCooldownInSeconds" name="UserCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.UserCooldownInSeconds">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="UserCooldownInSeconds">@L["Seconds between two messages of the same player"] @FieldHelp.More(L["After sending a message, the same player waits this many seconds before sending another one to that game server."], L["Seconds between two messages of the same player"], L["It stops one player from sending a message after another. It works together with the pause between any two messages: a message goes out only when both pauses are over.\nAdministrators are not held by it.\n0 turns it off."])</label>
+                                        <input class="form-control" id="UserCooldownInSeconds" name="UserCooldownInSeconds" type="number" min="0" max="@CoreConsts.SiteChatMaxCooldownInSeconds" value="@Model.Limits.UserCooldownInSeconds">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label for="MaxMessageLength">@L["Maximum characters per message"] @FieldHelp.Tip(L["Longer messages are refused. The game chat does not take more than 200 characters."])</label>
-                                    <input class="form-control" id="MaxMessageLength" name="MaxMessageLength" type="number" min="@CoreConsts.SiteChatMinMessageLength" max="@CoreConsts.SiteChatMaxMessageLength" value="@Model.Limits.MaxMessageLength">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="MaxMessageLength">@L["Maximum characters per message"] @FieldHelp.Tip(L["Longer messages are refused. The game chat does not take more than 200 characters."])</label>
+                                        <input class="form-control" id="MaxMessageLength" name="MaxMessageLength" type="number" min="@CoreConsts.SiteChatMinMessageLength" max="@CoreConsts.SiteChatMaxMessageLength" value="@Model.Limits.MaxMessageLength">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary" type="submit">
-                            <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
-                        </button>
                     </div>
+                    @await Html.PartialAsync("_FormSaveButton")
                 </form>
             </div>
         </div>
@@ -193,12 +197,14 @@
                 <div class="cb-message"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
-                <button type="button" class="btn btn-danger cb-remove">
+                <button type="button" class="btn btn-danger pull-left cb-remove">
                     <span class="glyphicon glyphicon-trash"></span> @L["Remove ban"]
                 </button>
-                <button type="button" class="btn btn-danger cb-remove-yes" style="display: none">@L["Confirm removal"]</button>
-                <button type="button" class="btn btn-primary cb-save-reason">@L["Save reason"]</button>
+                <button type="button" class="btn btn-danger pull-left cb-remove-yes" style="display: none">@L["Confirm removal"]</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-primary cb-save-reason">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
             </div>
         </div>
     </div>
@@ -211,7 +217,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">@L["Add ban"]</h4>
+                <h4 class="modal-title">@L["Add a chat ban"]</h4>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="cb-add-name"/>
@@ -237,7 +243,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                <button type="button" class="btn btn-primary cb-add-save">@L["Save"]</button>
+                <button type="button" class="btn btn-primary cb-add-save">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
             </div>
         </div>
     </div>

@@ -16,13 +16,13 @@
 
 <div class="row">
     <div class="col-md-8">
-        <form class="panel panel-default" method="post" asp-antiforgery="true" action="/admin/modules">
-            <div class="panel-body">
-                <partial name="_ModuleSwitches" model="Model"/>
+        <form method="post" asp-antiforgery="true" action="/admin/modules">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <partial name="_ModuleSwitches" model="Model"/>
+                </div>
             </div>
-            <div class="panel-footer">
-                <button class="btn btn-primary" type="submit">@L["Save"]</button>
-            </div>
+            @await Html.PartialAsync("_FormSaveButton")
         </form>
     </div>
 </div>

@@ -1,12 +1,13 @@
-@model List<ServerStatusViewModel>
+@model ServersViewModel
 @inject ISettingsService Settings
 @using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
 @{
     var live = await Settings.GetAsync<LiveServerSettings>();
     ViewData["Title"] = L["Game servers"].Value;
+    var pagination = PaginationModel.Of(Model.Servers, number => AdminListUrls.TabPage(AppConsts.AdminServersUrl, AppConsts.ServersListTab, AppConsts.AdminPageQuery, number));
     var tabs = new AdminTabsModel(
     [
-        new AdminTab(AppConsts.ServersListTab, L["Game servers"].Value, "hdd", Model.Count),
+        new AdminTab(AppConsts.ServersListTab, L["Game servers"].Value, "hdd", Model.Servers.TotalItems),
         new AdminTab(AppConsts.ServersLiveTab, L["Live server page"].Value, "time")
     ], AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], AppConsts.ServersListTab, AppConsts.ServersLiveTab));
 }
@@ -24,19 +25,34 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ServersListTab)" id="@AdminTabs.PaneId(AppConsts.ServersListTab)">
-        @if (Model.Count > 0)
+        <div class="admin-toolbar">
+            <div class="admin-toolbar-actions">
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#server-add-modal">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                </button>
+            </div>
+        </div>
+
+        @if (Model.Servers.TotalItems == 0)
         {
-            <table class="table table-striped table-hover table-bordered table-condensed table-responsive">
+            <div class="admin-list">
+                <div class="admin-empty">@L["No game server yet."]</div>
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
                 <thead>
                 <tr>
                     <th>@L["Server"]</th>
                     <th>@L["Identifier"]</th>
                     <th>@L["Status"]</th>
                     <th class="text-center">@L["Statistics files"]</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var server in Model)
+                @foreach (var server in Model.Servers.Items)
                 {
                     <tr>
                         <td class="vertical-align-middle" data-label="@L["Server"]">
@@ -55,57 +71,41 @@
                             <span class="status-dot status-@server.Status.State"></span>@L[server.Status.State.ToString()]
                         </td>
                         <td class="text-center vertical-align-middle" data-label="@L["Statistics files"]">@Display.Number(server.Files)</td>
+                        <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                            <a class="btn btn-xs btn-default" href="/admin/servers/@server.Server.Id">
+                                <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                            </a>
+                            <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Server.Id/delete" onsubmit="return confirm('@L["Delete this server?"]')">
+                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                                <button class="btn btn-xs btn-danger" type="submit">
+                                    <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 }
                 </tbody>
             </table>
-        }
 
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">@L["Add a game server"]</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form method="post" asp-antiforgery="true" action="/admin/servers">
-                            <div class="form-group">
-                                <label for="Name">@L["Server name"] @FieldHelp.Tip(L["The name shown on the site, as players know the server. The identifier is made from the name when the server is created and does not change when you rename it."])</label>
-                                <input class="form-control" id="Name" name="Name" required maxlength="100">
-                            </div>
-                            <div class="form-group">
-                                <label for="Address">@L["Address players connect to (optional)"] @FieldHelp.Tip(L["Where players connect, such as play.example.com:27015 or an IP and port. The live server page shows it with a copy button and uses it for the connect button."])</label>
-                                <input class="form-control" id="Address" name="Address" placeholder="@AppConsts.AdminServerAddressPlaceholder" maxlength="200">
-                            </div>
-                            <div class="form-group">
-                                <label for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"] @FieldHelp.Tip(L["A second way to connect, such as a DNS name when the main address is an IP. Shown next to the address on the live server page."])</label>
-                                <input class="form-control" id="AlternativeAddress" name="AlternativeAddress" maxlength="200">
-                            </div>
-                            <button class="btn btn-primary" type="submit">
-                                <span class="glyphicon glyphicon-plus"></span> @L["Create"]
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+            @await Html.PartialAsync("_Pagination", pagination)
+        }
     </div>
 
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ServersLiveTab)" id="@AdminTabs.PaneId(AppConsts.ServersLiveTab)">
         <div class="row">
             <div class="col-lg-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            <span class="glyphicon glyphicon-time"></span> @L["Live server page"]
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        @if (TempData["LiveSaved"] != null)
-                        {
-                            <div class="alert alert-success">@L["Saved."]</div>
-                        }
-                        <form method="post" asp-antiforgery="true" action="/admin/servers/live">
+                @if (TempData["LiveSaved"] != null)
+                {
+                    <div class="alert alert-success">@L["Saved."]</div>
+                }
+                <form method="post" asp-antiforgery="true" action="/admin/servers/live">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="glyphicon glyphicon-time"></span> @L["Live server page"]
+                            </h3>
+                        </div>
+                        <div class="panel-body">
                             <div class="form-group">
                                 <label for="DelayInSeconds">@L["Delay of the live page, in seconds"] @FieldHelp.More(L["How far behind the game the live page shows the score, the players and the events."], L["Delay of the live page, in seconds"], L["The live page waits this many seconds before showing what the game server sends: the score, the players, their health, the game chat and the events of the feed. It stops someone who is watching the site from telling a team where the other team is.\nMessages sent from the site appear at once.\nThe change applies to what the game server sends from then on, without a restart. 0 shows everything right away."])</label>
                                 <input class="form-control" id="DelayInSeconds" name="DelayInSeconds" type="number" min="0" max="@CoreConsts.LiveMaxDelayInSeconds" value="@live.DelayInSeconds">
@@ -118,17 +118,57 @@
                                 <label for="OnlineWindowInSeconds">@L["Seconds without a signal before a server is offline"] @FieldHelp.Tip(L["A game server that sent nothing for longer than this shows as offline on the site and in the administration. The plugins send a sign of life every few seconds, so 90 is safe; raise it if the server shows offline while it is running."])</label>
                                 <input class="form-control" id="OnlineWindowInSeconds" name="OnlineWindowInSeconds" type="number" min="@CoreConsts.ServerMinOnlineWindowInSeconds" max="@CoreConsts.ServerMaxOnlineWindowInSeconds" value="@live.OnlineWindowInSeconds">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-bottom: 0">
                                 <label for="RemoteCommandExpirationInMinutes">@L["Minutes a remote command waits for the server"] @FieldHelp.Tip(L["A command sent from Remote commands or the live page is dropped if the game server does not pick it up in this time, so an old command is not run when the server comes back much later."])</label>
                                 <input class="form-control" id="RemoteCommandExpirationInMinutes" name="RemoteCommandExpirationInMinutes" type="number" min="@CoreConsts.RemoteCommandMinExpirationInMinutes" max="@CoreConsts.RemoteCommandMaxExpirationInMinutes" value="@live.RemoteCommandExpirationInMinutes">
                             </div>
-                            <button class="btn btn-primary" type="submit">
-                                <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
-                            </button>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                    @await Html.PartialAsync("_FormSaveButton")
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="server-add-modal" tabindex="-1" role="dialog" aria-labelledby="server-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/servers">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="server-add-title">@L["Add a game server"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="Name">@L["Server name"] @FieldHelp.Tip(L["The name shown on the site, as players know the server. The identifier is made from the name when the server is created and does not change when you rename it."])</label>
+                    <input class="form-control" id="Name" name="Name" required maxlength="100" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="Address">@L["Address players connect to (optional)"] @FieldHelp.Tip(L["Where players connect, such as play.example.com:27015 or an IP and port. The live server page shows it with a copy button and uses it for the connect button."])</label>
+                    <input class="form-control" id="Address" name="Address" placeholder="@AppConsts.AdminServerAddressPlaceholder" maxlength="200" autocomplete="off">
+                </div>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="AlternativeAddress">@L["Alternative address, such as a DNS name (optional)"] @FieldHelp.Tip(L["A second way to connect, such as a DNS name when the main address is an IP. Shown next to the address on the live server page."])</label>
+                    <input class="form-control" id="AlternativeAddress" name="AlternativeAddress" maxlength="200" autocomplete="off">
+                </div>
+                <p class="help-block" style="margin: 10px 0 0">@L["After saving, the page of the new server shows its token once, with the instructions to connect it."]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#server-add-modal').on('shown.bs.modal', function () {
+            $('#Name').trigger('focus');
+        });
+    </script>
+}

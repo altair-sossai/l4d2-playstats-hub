@@ -1,6 +1,7 @@
 @model AdministratorsViewModel
 @{
     ViewData["Title"] = L["Administrators"].Value;
+    var pagination = PaginationModel.Of(Model.Administrators, number => AdminListUrls.Page(AppConsts.AdminAdministratorsUrl, number));
 }
 
 @section Styles {
@@ -12,7 +13,15 @@
     <h3>@L["Administrators"]</h3>
 </div>
 
-<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-admin-edit="">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+    </div>
+</div>
+
+<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
     <thead>
     <tr>
         <th colspan="2">@L["Name"]</th>
@@ -22,7 +31,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var administrator in Model.Administrators)
+    @foreach (var administrator in Model.Administrators.Items)
     {
         <tr class="@(administrator.CommunityId == Model.Current ? "it-is-me" : string.Empty)">
             <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
@@ -35,10 +44,14 @@
                 </a>
             </td>
             <td class="text-center vertical-align-middle" data-label="@L["Since"]">@administrator.AddedAtUtc.ToString("d")</td>
-            <td class="text-center vertical-align-middle slim admin-actions">
+            <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                <button class="btn btn-xs btn-default" type="button" data-admin-edit="@administrator.CommunityId" data-admin-name="@administrator.Name">
+                    <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                </button>
                 @if (administrator.CommunityId != Model.Current)
                 {
                     <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" onsubmit="return confirm('@L["Remove this administrator?"]')">
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
                         <button class="btn btn-xs btn-danger" type="submit">
                             <span class="glyphicon glyphicon-trash"></span> @L["Remove"]
                         </button>
@@ -54,36 +67,63 @@
     </tbody>
 </table>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@L["Add an administrator"]</h3>
+@await Html.PartialAsync("_Pagination", pagination)
+
+<div class="modal fade" id="admin-edit-modal" tabindex="-1" role="dialog" aria-labelledby="admin-edit-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/administrators">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="admin-edit-title" data-add="@L["Add an administrator"]" data-edit="@L["Edit the administrator"]">@L["Add an administrator"]</h4>
             </div>
-            <div class="panel-body">
-                <form method="post" asp-antiforgery="true" action="/admin/administrators">
-                    <div class="form-group">
-                        <label for="communityId">@L["Steam ID or profile URL"] @FieldHelp.More(L["The Steam account that becomes an administrator, in any Steam ID format or as a profile link."], L["Steam ID or profile URL"], L["A SteamID64 such as 76561198000000000, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000. The search button next to the field lists the players who played or connected, most recent first.\nThat account gets full access to the administration area as soon as it signs in with Steam: settings, game servers, bans, commands and everything else. Add only people you trust.\nYou cannot remove yourself, and the last administrator cannot be removed."])</label>
-                        <div class="input-group">
-                            <input class="form-control" id="communityId" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder">
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" data-player-picker="#communityId" data-player-picker-name="#name" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </span>
-                        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="communityId">@L["Steam ID or profile URL"] @FieldHelp.More(L["The Steam account that becomes an administrator, in any Steam ID format or as a profile link."], L["Steam ID or profile URL"], L["A SteamID64 such as 76561198000000000, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000. The search button next to the field lists the players who played or connected, most recent first.\nThat account gets full access to the administration area as soon as it signs in with Steam: settings, game servers, bans, commands and everything else. Add only people you trust.\nYou cannot remove yourself, and the last administrator cannot be removed."])</label>
+                    <div class="input-group">
+                        <input class="form-control" id="communityId" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default admin-picker" data-player-picker="#communityId" data-player-picker-name="#name" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
                     </div>
-                    <div class="form-group">
-                        <label for="name">@L["Name"] @FieldHelp.Tip(L["Optional. A name to recognize the administrator in this list. It does not change the Steam name."])</label>
-                        <input class="form-control" id="name" name="name" maxlength="100">
-                    </div>
-                    <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-plus"></span> @L["Add"]
-                    </button>
-                </form>
+                </div>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="name">@L["Name"] @FieldHelp.Tip(L["Optional. A name to recognize the administrator in this list. It does not change the Steam name."])</label>
+                    <input class="form-control" id="name" name="name" maxlength="100" autocomplete="off">
+                </div>
             </div>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 @await Html.PartialAsync("_PlayerPickerModal")
+
+@section Scripts {
+    <script>
+        $(document).on('click', '[data-admin-edit]', function () {
+            var id = $(this).attr('data-admin-edit');
+            var $title = $('#admin-edit-title');
+            var editing = id !== '';
+
+            $title.text(editing ? $title.attr('data-edit') : $title.attr('data-add'));
+            $('#communityId').val(id).prop('readonly', editing);
+            $('#admin-edit-modal .admin-picker').prop('disabled', editing);
+            $('#name').val(editing ? $(this).attr('data-admin-name') : '');
+            $('#admin-edit-modal').modal('show');
+        });
+
+        $('#admin-edit-modal').on('shown.bs.modal', function () {
+            $($('#communityId').prop('readonly') ? '#name' : '#communityId').trigger('focus');
+        });
+    </script>
+}

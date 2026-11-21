@@ -57,6 +57,14 @@ public static partial class AppConsts
     public const string ForcedNamesUrl = "/admin/forced-names";
     public const string ForcedNamesApiRoute = "api/forced-names";
     public const int ForcedNamesPageSize = 20;
+    public const string AdminPageQuery = "page";
+    public const string GameModesSeenPageQuery = "seenPage";
+    public const int AdministratorsPageSize = 20;
+    public const int GameServersPageSize = 20;
+    public const int CampaignsPageSize = 20;
+    public const int GameModeRulesPageSize = 20;
+    public const int GameConfigurationsPageSize = 20;
+    public const int GameModeNewRulePriority = 50;
     public const string ForcedNameInvalidPlayerMessage = "That is not a valid SteamID64.";
     public const string ForcedNameInvalidNameMessage = "Write the name the player must use.";
     public const string AdminMenuId = "admin-menu-items";

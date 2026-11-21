@@ -17,6 +17,16 @@ public class GameServerService(HubDbContext dbContext, HubState hubState, IGameS
         return dbContext.GameServers.AsNoTracking().OrderBy(s => s.Name).ToListAsync(cancellationToken);
     }
 
+    public Task<List<GameServer>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameServers.AsNoTracking().OrderBy(s => s.Name).ThenBy(s => s.Id).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.GameServers.CountAsync(cancellationToken);
+    }
+
     public Task<GameServer?> FindAsync(int id, CancellationToken cancellationToken = default)
     {
         return dbContext.GameServers.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);

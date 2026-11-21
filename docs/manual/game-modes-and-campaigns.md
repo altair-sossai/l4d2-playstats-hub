@@ -19,11 +19,11 @@ Two administration pages decide how statistics files become ranked matches:
 
 ## Game modes
 
-Every statistics file carries the name of the configuration the server was running, such as `ZoneMod v2.9.2b`, and the team size. The site records every configuration it receives and lists them at the bottom of the page, with the rule that applies to each one.
+Every statistics file carries the name of the configuration the server was running, such as `ZoneMod v2.9.2b`, and the team size. The site records every configuration it receives and lists them in the **Configurations seen on your servers** tab, 20 per page, with the rule that applies to each one.
 
 ![The game modes page](../images/en/admin-game-modes.webp)
 
-A rule has:
+The **Rules** tab lists the rules, 20 per page, in order of priority. The **Add** button, above the list on the right, opens a window with the fields of a new rule; **Edit**, on each row, opens the same window filled in with that rule, and **Save** keeps the changes. **Delete** removes a rule after a confirmation. A rule has:
 
 | Field | Meaning |
 |---|---|
@@ -63,13 +63,14 @@ A new site has one rule: **4v4**, pattern `*`, team size 4, minimum 2 maps, coun
 
 The campaign list gives, for each campaign, its maps in the order they are played. Maps of the same campaign played in that order make one match; see [Matches > How files become matches](matches.md#how-files-become-matches).
 
-A new site comes with 35 campaigns: the official ones and well-known custom ones such as Open Road, Detour Ahead and Suicide Blitz 2. To add a custom campaign:
+The list shows each campaign, 20 per page, with the number of maps and the first and the last one. A new site comes with 35 campaigns: the official ones and well-known custom ones such as Open Road, Detour Ahead and Suicide Blitz 2. To add a custom campaign:
 
-1. Under **New campaign**, write its name as players know it.
-2. Write its maps, one per line, in play order, with the map names the server uses (such as `c1m1_hotel`).
-3. Click **Add**.
+1. Click **Add**, above the list on the right. A window opens.
+2. Write the name of the campaign as players know it.
+3. Click **Add a map** for each map and write it with the name the server uses (such as `c1m1_hotel`). The arrows move a map up or down, so the list follows the play order, and the trash button removes it.
+4. Click **Save**.
 
-Each campaign can be edited or deleted on the same page. The name of the campaign is what the match list and the player pages show.
+**Edit**, on each row, opens the same window with the name and the maps of that campaign. **Delete** removes it after a confirmation. The name of the campaign is what the match list and the player pages show.
 
 Maps that are in no campaign are kept as unknown maps by default. The option is in [Settings > Ranking points](administration.md#ranking-points).
 

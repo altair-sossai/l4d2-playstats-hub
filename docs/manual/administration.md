@@ -59,7 +59,7 @@ On a phone the menu is folded into a bar above the page that names the page you 
 
 ![The list of game servers](../images/en/admin-servers.webp)
 
-The list shows each server with its identifier, its state and the number of statistics files. **Add a game server** asks for:
+The **Game servers** tab lists the servers, 20 per page, with the identifier, the state and the number of statistics files. **Edit** on a row opens the [page of the server](#the-page-of-a-server), and **Delete** removes it after a confirmation; a server that already sent statistics files can only be disabled. The **Add** button, above the list on the right, opens the window **Add a game server**, which asks for:
 
 | Field | What it is for |
 |---|---|
@@ -67,9 +67,9 @@ The list shows each server with its identifier, its state and the number of stat
 | Address players connect to (optional) | Shown on the live server page with a copy button, and used by the `connect` button. For example `play.example.com:27015` or an IP and port. |
 | Alternative address, such as a DNS name (optional) | Shown next to the address, as a second way to connect. |
 
-The panel **Live server page**, next to it, sets for every server: the delay of the live page (15 seconds), how often an open live page refreshes (2600 ms), the seconds without a signal before a server shows offline (90) and the minutes a remote command waits for the server (5).
+The **Live server page** tab sets for every server, with **Save** at the bottom: the delay of the live page (15 seconds), how often an open live page refreshes (2600 ms), the seconds without a signal before a server shows offline (90) and the minutes a remote command waits for the server (5).
 
-After **Create**, the page of the new server shows the token once, with the instructions. Copy it then: see [First-run setup > Step 4](first-run.md#step-4-the-game-server).
+After **Save**, the page of the new server shows the token once, with the instructions. Copy it then: see [First-run setup > Step 4](first-run.md#step-4-the-game-server).
 
 ### The page of a server
 
@@ -79,7 +79,7 @@ After **Create**, the page of the new server shows the token once, with the inst
 |---|---|
 | How to connect this server | The download of the plugins, the two lines for `cfg/playstats.cfg` (with `exec playstats.cfg` in `cfg/server.cfg`), the `sm plugins load` lines for `cfg/sharedplugins.cfg`, and what to do next. After the first time, the key part of the token is shown as `YOUR-KEY`, because the site does not keep it. |
 | Status | The [connection status](first-run.md#the-connection-status) and the checklist, updated every 3 seconds, and the last hostname, map, configuration and SourceMod version the server reported. |
-| Details | The name, the two addresses, **Enabled**, and the identifier. A disabled server is not shown on the live server page, and the site refuses what it sends. |
+| Details | The name, the two addresses, **Enabled**, and the identifier, with **Save** under the panel. A disabled server is not shown on the live server page, and the site refuses what it sends. |
 | Key | **Generate a new key** creates a new token and shows it once. The game server is disconnected until its configuration has the new token. **Delete** removes a server that never sent a statistics file; a server with files can only be disabled. |
 
 The identifier is made from the name when the server is created and never changes. Renaming a server does not change its token.
@@ -166,7 +166,7 @@ This setting covers the site only. The `l4d2_gameinfo_sync` plugin still announc
 
 ![The administrators](../images/en/admin-administrators.webp)
 
-The list shows every administrator and since when. To add one, give the account as a SteamID64, a Steam ID such as `STEAM_1:0:123` or `[U:1:123]`, or a profile link, and, optionally, a name. The search button next to the field opens the [player search](#the-player-search); the chosen player also fills in the name when it is empty. **Remove** takes the rights away. You cannot remove yourself, and the last administrator cannot be removed.
+The list shows every administrator and since when, 20 per page. The **Add** button, above the list on the right, opens a window that asks for the account, as a SteamID64, a Steam ID such as `STEAM_1:0:123` or `[U:1:123]`, or a profile link, and, optionally, a name; **Save** adds it. The search button next to the field opens the [player search](#the-player-search); the chosen player also fills in the name when it is empty. **Edit**, on each row, opens the same window to change the name. **Remove** takes the rights away after a confirmation. You cannot remove yourself, and the last administrator cannot be removed.
 
 If you lose access to every administrator account, add one from the machine that runs the site:
 

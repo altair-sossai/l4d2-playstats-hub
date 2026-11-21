@@ -35,9 +35,9 @@ Con el módulo del chat del sitio activado, los jugadores que iniciaron sesión 
 
 ![Los baneos del chat](../images/es/admin-chat-bans.webp)
 
-La página lista todos los baneos, con el jugador, la fecha, el motivo y quién baneó. Busca por nombre, Steam ID o motivo. Haz clic en un baneo para ver sus detalles, cambiar el motivo o quitarlo.
+La página lista todos los baneos, con el jugador, la fecha, el motivo y quién baneó. Busca por nombre, Steam ID o motivo. Haz clic en un baneo para ver sus detalles, cambiar el motivo y **Guardar**, o quitarlo.
 
-**Agregar baneo** pide el jugador y un motivo:
+**Añadir**, a la derecha de la búsqueda, abre una ventana que pide el jugador y un motivo:
 
 ![Agregar un baneo del chat](../images/es/admin-chat-bans-add.webp)
 

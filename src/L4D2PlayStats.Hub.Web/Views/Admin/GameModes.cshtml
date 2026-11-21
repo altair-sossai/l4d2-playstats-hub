@@ -1,11 +1,12 @@
 @model GameModesViewModel
 @{
     ViewData["Title"] = L["Game modes"].Value;
-    const string newRuleForm = "rule-new";
+    var rulesPagination = PaginationModel.Of(Model.Rules, number => AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesRulesTab, AppConsts.AdminPageQuery, number));
+    var seenPagination = PaginationModel.Of(Model.Configurations, number => AdminListUrls.TabPage(AppConsts.AdminGameModesUrl, AppConsts.GameModesSeenTab, AppConsts.GameModesSeenPageQuery, number));
     var tabs = new AdminTabsModel(
     [
-        new AdminTab(AppConsts.GameModesRulesTab, L["Rules"].Value, "list-alt"),
-        new AdminTab(AppConsts.GameModesSeenTab, L["Configurations seen on your servers"].Value, "eye-open", Model.Configurations.Count)
+        new AdminTab(AppConsts.GameModesRulesTab, L["Rules"].Value, "list-alt", Model.Rules.TotalItems),
+        new AdminTab(AppConsts.GameModesSeenTab, L["Configurations seen on your servers"].Value, "eye-open", Model.Configurations.TotalItems)
     ], AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], AppConsts.GameModesRulesTab, AppConsts.GameModesSeenTab));
 }
 
@@ -26,94 +27,77 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.GameModesRulesTab)" id="@AdminTabs.PaneId(AppConsts.GameModesRulesTab)">
-        <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
-            <thead>
-            <tr>
-                <th>@L["Name"] @FieldHelp.Tip(L["A label for you, such as 4v4 or 1v1 practice. It shows in the list of configurations seen on your servers."])</th>
-                <th>@L["Configuration pattern"] @FieldHelp.More(L["The configuration names the rule covers. * stands for any text and ? for one character."], L["Configuration pattern"], L["Every statistics file carries the name of the configuration the server was running, such as ZoneMod v2.9.2b. The rule covers a configuration when its name fits this pattern.\n* stands for any text and ? for exactly one character. Upper and lower case do not matter. * alone covers every configuration.\nExamples: ZoneMod* covers every version of ZoneMod; *Practice* covers any name that contains Practice; ZoneMod v2.9.2b covers only that exact name.\nThe list Configurations seen on your servers, below, shows which rule applies to each configuration."])</th>
-                <th class="text-center">@L["Team size"] @FieldHelp.Tip(L["Players per team the rule covers, from 1 to 8. Empty means any team size."])</th>
-                <th class="text-center">@L["Minimum maps"] @FieldHelp.Tip(L["How many maps a match needs to be ranked under this rule. A shorter match is casual. At least 1."])</th>
-                <th class="text-center">@L["Priority"] @FieldHelp.More(L["The order in which the rules are checked, lowest number first. The first rule that fits is the one used."], L["Priority"], L["For each match, the site checks the rules from the lowest priority number to the highest and uses only the first one that fits its configuration and team size. The other rules are ignored for that match.\nGive specific rules a low number and general ones a high number. For example: a rule Practice, pattern *Practice*, priority 10, that does not count, and then the rule 4v4, pattern *, priority 100, that counts. Practice matches stay casual and every other 4v4 match is ranked.\nThe default rule 4v4 has priority 100."])</th>
-                <th class="text-center">@L["Counts for the ranking"] @FieldHelp.Tip(L["Yes: the matches the rule covers that have enough maps are ranked and give experience, wins, losses and stars. No: they are casual."])</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var rule in Model.Rules)
-            {
-                var form = $"rule-{rule.Id}";
+        <div class="admin-toolbar">
+            <div class="admin-toolbar-actions">
+                <button class="btn btn-primary" type="button" data-rule-edit="">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                </button>
+            </div>
+        </div>
 
+        @if (Model.Rules.TotalItems == 0)
+        {
+            <div class="admin-list">
+                <div class="admin-empty">@L["No rules yet: no match counts for the ranking."]</div>
+            </div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
+                <thead>
                 <tr>
-                    <td class="vertical-align-middle" data-label="@L["Name"]">
-                        <input class="form-control input-sm" form="@form" name="Name" value="@rule.Name" required aria-label="@L["Name"]">
-                    </td>
-                    <td class="vertical-align-middle" data-label="@L["Configuration pattern"]">
-                        <input class="form-control input-sm admin-mono" form="@form" name="ConfigurationPattern" value="@rule.ConfigurationPattern" required aria-label="@L["Configuration pattern"]">
-                    </td>
-                    <td class="vertical-align-middle slim" data-label="@L["Team size"]">
-                        <input class="form-control input-sm text-center" form="@form" name="TeamSize" type="number" min="1" max="8" value="@rule.TeamSize" placeholder="@L["Any"]" aria-label="@L["Team size"]">
-                    </td>
-                    <td class="vertical-align-middle slim" data-label="@L["Minimum maps"]">
-                        <input class="form-control input-sm text-center" form="@form" name="MinimumMaps" type="number" min="1" value="@rule.MinimumMaps" aria-label="@L["Minimum maps"]">
-                    </td>
-                    <td class="vertical-align-middle slim" data-label="@L["Priority"]">
-                        <input class="form-control input-sm text-center" form="@form" name="Priority" type="number" value="@rule.Priority" aria-label="@L["Priority"]">
-                    </td>
-                    <td class="vertical-align-middle slim" data-label="@L["Counts for the ranking"]">
-                        <select class="form-control input-sm" form="@form" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
-                            <option value="true" selected="@rule.CountsForRanking">@L["Yes"]</option>
-                            <option value="false" selected="@(!rule.CountsForRanking)">@L["No"]</option>
-                        </select>
-                    </td>
-                    <td class="text-center vertical-align-middle slim admin-actions">
-                        <form id="@form" method="post" asp-antiforgery="true" action="/admin/game-modes">
-                            <input type="hidden" name="Id" value="@rule.Id">
-                            <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
-                            <button class="btn btn-sm btn-danger" type="submit" formaction="/admin/game-modes/@rule.Id/delete" onclick="return confirm('@L["Delete this rule?"]')">
-                                <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
-                            </button>
-                        </form>
-                    </td>
+                    <th>@L["Name"]</th>
+                    <th>@L["Configuration pattern"]</th>
+                    <th class="text-center">@L["Team size"]</th>
+                    <th class="text-center">@L["Minimum maps"]</th>
+                    <th class="text-center">@L["Priority"]</th>
+                    <th class="text-center">@L["Counts for the ranking"]</th>
+                    <th></th>
                 </tr>
-            }
-            <tr>
-                <td class="vertical-align-middle" data-label="@L["Name"]">
-                    <input class="form-control input-sm" form="@newRuleForm" name="Name" placeholder="@L["New rule"]" required aria-label="@L["Name"]">
-                </td>
-                <td class="vertical-align-middle" data-label="@L["Configuration pattern"]">
-                    <input class="form-control input-sm admin-mono" form="@newRuleForm" name="ConfigurationPattern" value="*" required aria-label="@L["Configuration pattern"]">
-                </td>
-                <td class="vertical-align-middle slim" data-label="@L["Team size"]">
-                    <input class="form-control input-sm text-center" form="@newRuleForm" name="TeamSize" type="number" min="1" max="8" placeholder="@L["Any"]" aria-label="@L["Team size"]">
-                </td>
-                <td class="vertical-align-middle slim" data-label="@L["Minimum maps"]">
-                    <input class="form-control input-sm text-center" form="@newRuleForm" name="MinimumMaps" type="number" min="1" value="2" aria-label="@L["Minimum maps"]">
-                </td>
-                <td class="vertical-align-middle slim" data-label="@L["Priority"]">
-                    <input class="form-control input-sm text-center" form="@newRuleForm" name="Priority" type="number" value="50" aria-label="@L["Priority"]">
-                </td>
-                <td class="vertical-align-middle slim" data-label="@L["Counts for the ranking"]">
-                    <select class="form-control input-sm" form="@newRuleForm" name="CountsForRanking" aria-label="@L["Counts for the ranking"]">
-                        <option value="true">@L["Yes"]</option>
-                        <option value="false">@L["No"]</option>
-                    </select>
-                </td>
-                <td class="text-center vertical-align-middle slim admin-actions">
-                    <form id="@newRuleForm" method="post" asp-antiforgery="true" action="/admin/game-modes">
-                        <button class="btn btn-sm btn-success" type="submit">
-                            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var rule in Model.Rules.Items)
+                {
+                    <tr>
+                        <td class="vertical-align-middle" data-label="@L["Name"]"><strong>@rule.Name</strong></td>
+                        <td class="vertical-align-middle" data-label="@L["Configuration pattern"]"><code>@rule.ConfigurationPattern</code></td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Team size"]">@(rule.TeamSize?.ToString() ?? L["Any"].Value)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Minimum maps"]">@rule.MinimumMaps</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Priority"]">@rule.Priority</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Counts for the ranking"]">
+                            @if (rule.CountsForRanking)
+                            {
+                                <span class="label label-success">@L["Yes"]</span>
+                            }
+                            else
+                            {
+                                <span class="label label-default">@L["No"]</span>
+                            }
+                        </td>
+                        <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                            <button class="btn btn-xs btn-default" type="button" data-rule-edit="@rule.Id" data-rule-name="@rule.Name" data-rule-pattern="@rule.ConfigurationPattern"
+                                    data-rule-team-size="@rule.TeamSize" data-rule-minimum-maps="@rule.MinimumMaps" data-rule-priority="@rule.Priority" data-rule-counts="@(rule.CountsForRanking ? "true" : "false")">
+                                <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                            </button>
+                            <form method="post" asp-antiforgery="true" action="/admin/game-modes/@rule.Id/delete" onsubmit="return confirm('@L["Delete this rule?"]')">
+                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                                <button class="btn btn-xs btn-danger" type="submit">
+                                    <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
 
+            @await Html.PartialAsync("_Pagination", rulesPagination)
+        }
     </div>
 
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.GameModesSeenTab)" id="@AdminTabs.PaneId(AppConsts.GameModesSeenTab)">
 
-        @if (Model.Configurations.Count == 0)
+        @if (Model.Configurations.TotalItems == 0)
         {
             <div class="admin-list">
                 <div class="admin-empty">@L["Nothing yet. Configurations appear here when the first statistics files arrive."]</div>
@@ -121,7 +105,7 @@
         }
         else
         {
-            <table class="table table-striped table-hover table-bordered table-condensed table-responsive">
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
                 <thead>
                 <tr>
                     <th>@L["Configuration"]</th>
@@ -131,7 +115,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var seen in Model.Configurations)
+                @foreach (var seen in Model.Configurations.Items)
                 {
                     <tr>
                         <td class="vertical-align-middle" data-label="@L["Configuration"]">@seen.Configuration.Name</td>
@@ -155,6 +139,91 @@
                 }
                 </tbody>
             </table>
+
+            @await Html.PartialAsync("_Pagination", seenPagination)
         }
     </div>
 </div>
+
+<div class="modal fade" id="rule-edit-modal" tabindex="-1" role="dialog" aria-labelledby="rule-edit-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/game-modes">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <input type="hidden" id="rule-id" name="Id" value="0">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="rule-edit-title" data-add="@L["Add a rule"]" data-edit="@L["Edit the rule"]">@L["Add a rule"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rule-name">@L["Name"] @FieldHelp.Tip(L["A label for you, such as 4v4 or 1v1 practice. It shows in the list of configurations seen on your servers."])</label>
+                    <input class="form-control" id="rule-name" name="Name" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.GameModeNameMaxLength" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="rule-pattern">@L["Configuration pattern"] @FieldHelp.More(L["The configuration names the rule covers. * stands for any text and ? for one character."], L["Configuration pattern"], L["Every statistics file carries the name of the configuration the server was running, such as ZoneMod v2.9.2b. The rule covers a configuration when its name fits this pattern.\n* stands for any text and ? for exactly one character. Upper and lower case do not matter. * alone covers every configuration.\nExamples: ZoneMod* covers every version of ZoneMod; *Practice* covers any name that contains Practice; ZoneMod v2.9.2b covers only that exact name.\nThe list Configurations seen on your servers, below, shows which rule applies to each configuration."])</label>
+                    <input class="form-control admin-mono" id="rule-pattern" name="ConfigurationPattern" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ConfigurationNameMaxLength" autocomplete="off">
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="rule-team-size">@L["Team size"] @FieldHelp.Tip(L["Players per team the rule covers, from 1 to 8. Empty means any team size."])</label>
+                            <input class="form-control" id="rule-team-size" name="TeamSize" type="number" min="1" max="8" placeholder="@L["Any"]">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="rule-minimum-maps">@L["Minimum maps"] @FieldHelp.Tip(L["How many maps a match needs to be ranked under this rule. A shorter match is casual. At least 1."])</label>
+                            <input class="form-control" id="rule-minimum-maps" name="MinimumMaps" type="number" min="1" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="rule-priority">@L["Priority"] @FieldHelp.More(L["The order in which the rules are checked, lowest number first. The first rule that fits is the one used."], L["Priority"], L["For each match, the site checks the rules from the lowest priority number to the highest and uses only the first one that fits its configuration and team size. The other rules are ignored for that match.\nGive specific rules a low number and general ones a high number. For example: a rule Practice, pattern *Practice*, priority 10, that does not count, and then the rule 4v4, pattern *, priority 100, that counts. Practice matches stay casual and every other 4v4 match is ranked.\nThe default rule 4v4 has priority 100."])</label>
+                            <input class="form-control" id="rule-priority" name="Priority" type="number" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="rule-counts">@L["Counts for the ranking"] @FieldHelp.Tip(L["Yes: the matches the rule covers that have enough maps are ranked and give experience, wins, losses and stars. No: they are casual."])</label>
+                    <select class="form-control" id="rule-counts" name="CountsForRanking">
+                        <option value="true">@L["Yes"]</option>
+                        <option value="false">@L["No"]</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on('click', '[data-rule-edit]', function () {
+            var $button = $(this);
+            var id = $button.attr('data-rule-edit');
+            var $title = $('#rule-edit-title');
+            var editing = id !== '';
+
+            $title.text(editing ? $title.attr('data-edit') : $title.attr('data-add'));
+            $('#rule-id').val(editing ? id : '0');
+            $('#rule-name').val(editing ? $button.attr('data-rule-name') : '');
+            $('#rule-pattern').val(editing ? $button.attr('data-rule-pattern') : @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.AnyConfigurationPattern));
+            $('#rule-team-size').val(editing ? $button.attr('data-rule-team-size') : '');
+            $('#rule-minimum-maps').val(editing ? $button.attr('data-rule-minimum-maps') : @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.DefaultMinimumMaps));
+            $('#rule-priority').val(editing ? $button.attr('data-rule-priority') : @Json.Serialize(AppConsts.GameModeNewRulePriority));
+            $('#rule-counts').val(editing ? $button.attr('data-rule-counts') : 'true');
+            $('#rule-edit-modal').modal('show');
+        });
+
+        $('#rule-edit-modal').on('shown.bs.modal', function () {
+            $('#rule-name').trigger('focus');
+        });
+    </script>
+}

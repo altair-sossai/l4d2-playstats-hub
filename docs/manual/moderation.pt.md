@@ -35,9 +35,9 @@ Com o módulo de chat do site ligado, os jogadores logados podem escrever no cha
 
 ![Os banimentos do chat](../images/pt/admin-chat-bans.webp)
 
-A página lista todos os banimentos, com o jogador, a data, o motivo e quem baniu. Busque por nome, Steam ID ou motivo. Clique em um banimento para ver os detalhes, mudar o motivo ou removê-lo.
+A página lista todos os banimentos, com o jogador, a data, o motivo e quem baniu. Busque por nome, Steam ID ou motivo. Clique em um banimento para ver os detalhes, mudar o motivo e **Salvar**, ou removê-lo.
 
-**Adicionar ban** pede o jogador e um motivo:
+**Adicionar**, à direita da busca, abre uma janela que pede o jogador e um motivo:
 
 ![Adicionando um banimento do chat](../images/pt/admin-chat-bans-add.webp)
 

@@ -19,11 +19,11 @@ Dos páginas de administración deciden cómo los archivos de estadísticas se c
 
 ## Modos de juego
 
-Cada archivo de estadísticas lleva el nombre de la configuración que ejecutaba el servidor, como `ZoneMod v2.9.2b`, y el tamaño del equipo. El sitio registra cada configuración que recibe y las lista al final de la página, con la regla que se aplica a cada una.
+Cada archivo de estadísticas lleva el nombre de la configuración que ejecutaba el servidor, como `ZoneMod v2.9.2b`, y el tamaño del equipo. El sitio registra cada configuración que recibe y las lista en la pestaña **Configuraciones vistas en tus servidores**, 20 por página, con la regla que se aplica a cada una.
 
 ![La página de modos de juego](../images/es/admin-game-modes.webp)
 
-Una regla tiene:
+La pestaña **Reglas** lista las reglas, 20 por página, en orden de prioridad. El botón **Añadir**, encima de la lista a la derecha, abre una ventana con los campos de una regla nueva; **Editar**, en cada fila, abre la misma ventana con esa regla, y **Guardar** guarda los cambios. **Eliminar** borra una regla después de una confirmación. Una regla tiene:
 
 | Campo | Significado |
 |---|---|
@@ -63,13 +63,14 @@ Un sitio nuevo tiene una regla: **4v4**, patrón `*`, tamaño de equipo 4, míni
 
 La lista de campañas da, para cada campaña, sus mapas en el orden en que se juegan. Los mapas de una misma campaña jugados en ese orden forman una partida; consulta [Partidas > Cómo los archivos se convierten en partidas](matches.es.md#cómo-los-archivos-se-convierten-en-partidas).
 
-Un sitio nuevo viene con 35 campañas: las oficiales y algunas personalizadas conocidas, como Open Road, Detour Ahead y Suicide Blitz 2. Para agregar una campaña personalizada:
+La lista muestra cada campaña, 20 por página, con la cantidad de mapas y el primero y el último. Un sitio nuevo viene con 35 campañas: las oficiales y algunas personalizadas conocidas, como Open Road, Detour Ahead y Suicide Blitz 2. Para agregar una campaña personalizada:
 
-1. En **Nueva campaña**, escribe su nombre tal como lo conocen los jugadores.
-2. Escribe sus mapas, uno por línea, en el orden de juego, con los nombres de mapa que usa el servidor (como `c1m1_hotel`).
-3. Haz clic en **Añadir**.
+1. Haz clic en **Añadir**, encima de la lista a la derecha. Se abre una ventana.
+2. Escribe el nombre de la campaña tal como lo conocen los jugadores.
+3. Haz clic en **Añadir un mapa** por cada mapa y escríbelo con el nombre que usa el servidor (como `c1m1_hotel`). Las flechas suben o bajan un mapa, para que la lista siga el orden de juego, y el botón de la papelera lo quita.
+4. Haz clic en **Guardar**.
 
-Cada campaña se puede editar o eliminar en la misma página. El nombre de la campaña es lo que muestran la lista de partidas y las páginas de los jugadores.
+**Editar**, en cada fila, abre la misma ventana con el nombre y los mapas de esa campaña. **Eliminar** la borra después de una confirmación. El nombre de la campaña es lo que muestran la lista de partidas y las páginas de los jugadores.
 
 Los mapas que no están en ninguna campaña se conservan como mapas desconocidos de forma predeterminada. La opción está en [Configuración > Puntos del ranking](administration.es.md#puntos-del-ranking).
 

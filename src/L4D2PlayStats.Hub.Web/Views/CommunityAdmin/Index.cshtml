@@ -100,7 +100,7 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunitySettingsTab ? " active" : "")" id="@AppConsts.CommunitySettingsAnchor">
-        <form method="post" asp-antiforgery="true" action="/admin/community" style="margin-bottom: 20px">
+        <form method="post" asp-antiforgery="true" action="/admin/community">
             <div class="row">
                 <div class="col-md-6">
                     <div class="panel panel-default">
@@ -164,9 +164,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" type="submit">
-                <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
-            </button>
+            @await Html.PartialAsync("_FormSaveButton")
         </form>
     </div>
 
@@ -261,20 +259,13 @@
 
     <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunityBlockedTab ? " active" : "")" id="@AppConsts.CommunityBlockedAnchor">
         <p>@L["Blocked voters cannot vote. Unblocking lets them vote again; the votes deleted when they were blocked do not come back."]</p>
-        <div class="admin-filters">
-            <div class="input-group admin-search">
-                <input class="form-control" id="ca-block-player" type="text" autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="@L["Steam ID or profile URL"]">
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-player-picker="#ca-block-player" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                </span>
+        <div class="admin-toolbar">
+            <div class="admin-toolbar-actions">
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#ca-block-add-modal">
+                    <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+                </button>
             </div>
-            <button class="btn btn-warning" type="button" data-block-source="#ca-block-player" data-block-return="@blockedUrl">
-                <span class="glyphicon glyphicon-ban-circle"></span> @L["Block a player"]
-            </button>
         </div>
-        <p class="help-block">@L["Choose any player, even one who has not voted yet, to stop them from voting."]</p>
         @if (Model.Blocked.TotalItems == 0)
         {
             <div class="admin-empty">@L["Nobody is blocked from voting."]</div>
@@ -371,6 +362,47 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
                 <button type="submit" class="btn btn-danger">
                     <span class="glyphicon glyphicon-trash"></span> @L["Yes, delete everything"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="ca-block-add-modal" tabindex="-1" role="dialog" aria-labelledby="ca-block-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl">
+            <input type="hidden" name="returnUrl" value="@blockedUrl">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="ca-block-add-title">@L["Block a player"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ca-block-player">@L["Steam ID or profile URL"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
+                    <div class="input-group">
+                        <input class="form-control" id="ca-block-player" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" data-player-picker="#ca-block-player" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                    <span class="help-block">@L["Choose any player, even one who has not voted yet, to stop them from voting."]</span>
+                </div>
+                <div class="checkbox" style="margin-bottom: 0">
+                    <label for="ca-block-remove-votes">
+                        <input type="checkbox" id="ca-block-remove-votes" name="removeVotes" value="true">
+                        <input type="hidden" name="removeVotes" value="false">
+                        @L["Also delete the votes they already gave"] @FieldHelp.Tip(L["The votes of the player are deleted and the ratings are calculated again without them. Without this, the votes stay in the ranking."])
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                 </button>
             </div>
         </form>

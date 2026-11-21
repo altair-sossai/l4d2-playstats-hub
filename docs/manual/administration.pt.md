@@ -59,7 +59,7 @@ No celular, o menu fica recolhido em uma barra acima da página, que mostra a p�
 
 ![A lista de servidores de jogo](../images/pt/admin-servers.webp)
 
-A lista mostra cada servidor com o identificador, o estado e o número de arquivos de estatísticas. **Adicionar um servidor de jogo** pede:
+A aba **Servidores de jogo** lista os servidores, 20 por página, com o identificador, o estado e o número de arquivos de estatísticas. **Editar** numa linha abre a [página do servidor](#a-página-de-um-servidor), e **Excluir** o remove depois de uma confirmação; um servidor que já enviou arquivos de estatísticas só pode ser desativado. O botão **Adicionar**, acima da lista, à direita, abre a janela **Adicionar um servidor de jogo**, que pede:
 
 | Campo | Para que serve |
 |---|---|
@@ -67,9 +67,9 @@ A lista mostra cada servidor com o identificador, o estado e o número de arquiv
 | Endereço em que os jogadores se conectam (opcional) | Mostrado na página do servidor ao vivo com um botão de copiar, e usado pelo botão `connect`. Por exemplo `play.example.com:27015` ou um IP e porta. |
 | Endereço alternativo, como um nome DNS (opcional) | Mostrado ao lado do endereço, como uma segunda forma de conectar. |
 
-O painel **Página do servidor ao vivo**, ao lado, define para todos os servidores: o atraso da página ao vivo (15 segundos), de quanto em quanto tempo uma página ao vivo aberta se atualiza (2600 ms), os segundos sem sinal até o servidor aparecer offline (90) e os minutos que um comando remoto espera o servidor (5).
+A aba **Página do servidor ao vivo** define para todos os servidores, com **Salvar** no fim: o atraso da página ao vivo (15 segundos), de quanto em quanto tempo uma página ao vivo aberta se atualiza (2600 ms), os segundos sem sinal até o servidor aparecer offline (90) e os minutos que um comando remoto espera o servidor (5).
 
-Depois de **Criar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
+Depois de **Salvar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
 
 ### A página de um servidor
 
@@ -79,7 +79,7 @@ Depois de **Criar**, a página do novo servidor mostra o token uma única vez, c
 |---|---|
 | Como conectar este servidor | O download dos plugins, as duas linhas para o `cfg/playstats.cfg` (com `exec playstats.cfg` no `cfg/server.cfg`), as linhas `sm plugins load` para o `cfg/sharedplugins.cfg` e o que fazer em seguida. Depois da primeira vez, a parte da chave do token aparece como `SUA-CHAVE`, porque o site não a guarda. |
 | Status | O [status da conexão](first-run.pt.md#o-status-da-conexão) e a lista de verificação, atualizados a cada 3 segundos, e o último hostname, mapa, configuração e versão do SourceMod que o servidor informou. |
-| Detalhes | O nome, os dois endereços, **Ativado** e o identificador. Um servidor desativado não aparece na página do servidor ao vivo, e o site recusa o que ele envia. |
+| Detalhes | O nome, os dois endereços, **Ativado** e o identificador, com **Salvar** abaixo do painel. Um servidor desativado não aparece na página do servidor ao vivo, e o site recusa o que ele envia. |
 | Chave | **Gerar uma nova chave** cria um novo token e mostra uma única vez. O servidor de jogo fica desconectado até que a configuração dele tenha o novo token. **Excluir** remove um servidor que nunca enviou um arquivo de estatísticas; um servidor com arquivos só pode ser desativado. |
 
 O identificador é gerado a partir do nome quando o servidor é criado e nunca muda. Renomear um servidor não muda o token dele.
@@ -166,7 +166,7 @@ Esta configuração vale só para o site. O plugin `l4d2_gameinfo_sync` continua
 
 ![Os administradores](../images/pt/admin-administrators.webp)
 
-A lista mostra todos os administradores e desde quando. Para adicionar um, informe a conta como SteamID64, como Steam ID no formato `STEAM_1:0:123` ou `[U:1:123]`, ou pelo link do perfil, e, se quiser, um nome. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Remover** tira os direitos. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
+A lista mostra todos os administradores e desde quando, 20 por página. O botão **Adicionar**, acima da lista, à direita, abre uma janela que pede a conta, como SteamID64, como Steam ID no formato `STEAM_1:0:123` ou `[U:1:123]`, ou pelo link do perfil, e, se quiser, um nome; **Salvar** a adiciona. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Editar**, em cada linha, abre a mesma janela para mudar o nome. **Remover** tira os direitos depois de uma confirmação. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
 
 Se você perder o acesso a todas as contas de administrador, adicione uma pela máquina que roda o site:
 

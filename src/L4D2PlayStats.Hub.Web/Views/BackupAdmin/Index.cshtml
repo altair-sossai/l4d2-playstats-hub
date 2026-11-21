@@ -228,68 +228,69 @@ else
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BackupStorageTab)" id="@AdminTabs.PaneId(AppConsts.BackupStorageTab)">
         <div class="row">
             <div class="col-lg-8">
-                <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl" class="panel panel-default">
-                    <div class="panel-body">
-                        <div class="checkbox">
-                            <label for="Enabled">
-                                <input type="checkbox" id="Enabled" name="Enabled" value="true" checked="@settings.Enabled">
-                                <input type="hidden" name="Enabled" value="false">
-                                <strong>@L["Back up automatically"]</strong> @FieldHelp.Tip(L["Turns the schedule on: a backup runs at the interval set below. Back up now works with it off too."])
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label>@L["Destination"] @FieldHelp.More(L["How the site reaches the Azure Storage container: a container address with a SAS token, or a connection string."], L["Destination"], L["Container address with a SAS token, the recommended one: the address of one container with a shared access signature. It gives access to that container only, and the signature has an expiry date.\nConnection string: the connection string of the storage account, from Access keys in the Azure portal, plus the name of a container. It gives access to the whole storage account, so prefer the SAS when you can.\nOnly the fields of the chosen destination are used. The manual, in Backups and updates, explains how to create the container and the SAS and how to restore a backup."])</label>
-                            <div class="radio">
-                                <label for="Destination_ContainerUrl">
-                                    <input type="radio" id="Destination_ContainerUrl" name="Destination" value="@BackupDestination.ContainerUrl" checked="@usesContainerUrl">
-                                    @L["Container address with a SAS token (recommended)"]
+                <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="checkbox">
+                                <label for="Enabled">
+                                    <input type="checkbox" id="Enabled" name="Enabled" value="true" checked="@settings.Enabled">
+                                    <input type="hidden" name="Enabled" value="false">
+                                    <strong>@L["Back up automatically"]</strong> @FieldHelp.Tip(L["Turns the schedule on: a backup runs at the interval set below. Back up now works with it off too."])
                                 </label>
                             </div>
-                            <div class="radio">
-                                <label for="Destination_ConnectionString">
-                                    <input type="radio" id="Destination_ConnectionString" name="Destination" value="@BackupDestination.ConnectionString" checked="@(!usesContainerUrl)">
-                                    @L["Connection string of the storage account and a container"]
-                                </label>
+
+                            <div class="form-group">
+                                <label>@L["Destination"] @FieldHelp.More(L["How the site reaches the Azure Storage container: a container address with a SAS token, or a connection string."], L["Destination"], L["Container address with a SAS token, the recommended one: the address of one container with a shared access signature. It gives access to that container only, and the signature has an expiry date.\nConnection string: the connection string of the storage account, from Access keys in the Azure portal, plus the name of a container. It gives access to the whole storage account, so prefer the SAS when you can.\nOnly the fields of the chosen destination are used. The manual, in Backups and updates, explains how to create the container and the SAS and how to restore a backup."])</label>
+                                <div class="radio">
+                                    <label for="Destination_ContainerUrl">
+                                        <input type="radio" id="Destination_ContainerUrl" name="Destination" value="@BackupDestination.ContainerUrl" checked="@usesContainerUrl">
+                                        @L["Container address with a SAS token (recommended)"]
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label for="Destination_ConnectionString">
+                                        <input type="radio" id="Destination_ConnectionString" name="Destination" value="@BackupDestination.ConnectionString" checked="@(!usesContainerUrl)">
+                                        @L["Connection string of the storage account and a container"]
+                                    </label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="ContainerUrl">@L["Container address with a SAS token"] @FieldHelp.More(L["The address of the container with a SAS token, as the Azure portal gives it in Blob SAS URL."], L["Container address with a SAS token"], L["In the Azure portal, open the container, choose Shared access tokens, tick the Read, Add, Create, Write, Delete and List permissions, choose an expiry date and generate the SAS. Paste the Blob SAS URL here.\nThe address must start with https:// and include the signature of the SAS.\nIt is a secret: after it is saved the page shows it only masked, and it is never written to the log. Leave the field empty to keep the saved one, or type a new one to replace it.\nWhen the SAS expires, the backups fail until you paste a new one."])</label>
-                            <input class="form-control admin-mono" id="ContainerUrl" name="ContainerUrl" type="password" autocomplete="off" placeholder="@(Model.MaskedContainerUrl ?? "https://account.blob.core.windows.net/backups?sv=...&sig=...")">
-                            <p class="help-block">@L["A SAS for one container, with the Read, Add, Create, Write, Delete and List permissions. The page never shows it again: leave the field empty to keep the saved one."]</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ConnectionString">@L["Connection string"] @FieldHelp.Tip(L["The connection string of the storage account, from Access keys in the Azure portal. It is a secret: the page shows it only masked, and an empty field keeps the saved one."])</label>
-                            <input class="form-control admin-mono" id="ConnectionString" name="ConnectionString" type="password" autocomplete="off" placeholder="@(Model.MaskedConnectionString ?? "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...")">
-                            <p class="help-block">@L["Gives access to the whole storage account. Leave the field empty to keep the saved one."]</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ContainerName">@L["Container"] @FieldHelp.Tip(L["The name of the container, used only with a connection string, such as backups: 3 to 63 lowercase letters, numbers and hyphens. It is created when it does not exist."])</label>
-                            <input class="form-control admin-mono" id="ContainerName" name="ContainerName" value="@settings.ContainerName" placeholder="backups">
-                            <p class="help-block">@L["Only with a connection string. The container is created when it does not exist."]</p>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-4 form-group">
-                                <label for="IntervalInHours">@L["Every, in hours"] @FieldHelp.Tip(L["Hours between two automatic backups, from 1 to 168, which is one week. 8 by default. A backup that fails is tried again 30 minutes later."])</label>
-                                <input class="form-control" id="IntervalInHours" name="IntervalInHours" type="number" min="@CoreConsts.BackupMinIntervalInHours" max="@CoreConsts.BackupMaxIntervalInHours" value="@settings.IntervalInHours" required>
+                            <div class="form-group">
+                                <label for="ContainerUrl">@L["Container address with a SAS token"] @FieldHelp.More(L["The address of the container with a SAS token, as the Azure portal gives it in Blob SAS URL."], L["Container address with a SAS token"], L["In the Azure portal, open the container, choose Shared access tokens, tick the Read, Add, Create, Write, Delete and List permissions, choose an expiry date and generate the SAS. Paste the Blob SAS URL here.\nThe address must start with https:// and include the signature of the SAS.\nIt is a secret: after it is saved the page shows it only masked, and it is never written to the log. Leave the field empty to keep the saved one, or type a new one to replace it.\nWhen the SAS expires, the backups fail until you paste a new one."])</label>
+                                <input class="form-control admin-mono" id="ContainerUrl" name="ContainerUrl" type="password" autocomplete="off" placeholder="@(Model.MaskedContainerUrl ?? "https://account.blob.core.windows.net/backups?sv=...&sig=...")">
+                                <p class="help-block">@L["A SAS for one container, with the Read, Add, Create, Write, Delete and List permissions. The page never shows it again: leave the field empty to keep the saved one."]</p>
                             </div>
-                            <div class="col-sm-4 form-group">
-                                <label for="Keep">@L["Backups to keep"] @FieldHelp.Tip(L["How many backup files to keep, from 1 to 1000. 30 by default. After each backup, the oldest files with the same prefix beyond this number are deleted."])</label>
-                                <input class="form-control" id="Keep" name="Keep" type="number" min="@CoreConsts.BackupMinKeep" max="@CoreConsts.BackupMaxKeep" value="@settings.Keep" required>
-                            </div>
-                            <div class="col-sm-4 form-group">
-                                <label for="Prefix">@L["File name prefix"] @FieldHelp.Tip(L["The start of the file names, hub-backup by default: letters, numbers, dots, hyphens and underscores, up to 60 characters. Only files with this prefix are counted and deleted, so other files in the container are left alone."])</label>
-                                <input class="form-control admin-mono" id="Prefix" name="Prefix" value="@settings.Prefix" maxlength="@CoreConsts.BackupPrefixMaxLength">
-                            </div>
-                        </div>
-                        <p class="help-block">@L["Files are named prefix-yyyyMMdd-HHmmss.zip, in UTC. After each backup, the oldest files with the same prefix are deleted beyond the number to keep."]</p>
 
-                        <button class="btn btn-primary" type="submit">@L["Save"]</button>
+                            <div class="form-group">
+                                <label for="ConnectionString">@L["Connection string"] @FieldHelp.Tip(L["The connection string of the storage account, from Access keys in the Azure portal. It is a secret: the page shows it only masked, and an empty field keeps the saved one."])</label>
+                                <input class="form-control admin-mono" id="ConnectionString" name="ConnectionString" type="password" autocomplete="off" placeholder="@(Model.MaskedConnectionString ?? "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...")">
+                                <p class="help-block">@L["Gives access to the whole storage account. Leave the field empty to keep the saved one."]</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ContainerName">@L["Container"] @FieldHelp.Tip(L["The name of the container, used only with a connection string, such as backups: 3 to 63 lowercase letters, numbers and hyphens. It is created when it does not exist."])</label>
+                                <input class="form-control admin-mono" id="ContainerName" name="ContainerName" value="@settings.ContainerName" placeholder="backups">
+                                <p class="help-block">@L["Only with a connection string. The container is created when it does not exist."]</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4 form-group">
+                                    <label for="IntervalInHours">@L["Every, in hours"] @FieldHelp.Tip(L["Hours between two automatic backups, from 1 to 168, which is one week. 8 by default. A backup that fails is tried again 30 minutes later."])</label>
+                                    <input class="form-control" id="IntervalInHours" name="IntervalInHours" type="number" min="@CoreConsts.BackupMinIntervalInHours" max="@CoreConsts.BackupMaxIntervalInHours" value="@settings.IntervalInHours" required>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <label for="Keep">@L["Backups to keep"] @FieldHelp.Tip(L["How many backup files to keep, from 1 to 1000. 30 by default. After each backup, the oldest files with the same prefix beyond this number are deleted."])</label>
+                                    <input class="form-control" id="Keep" name="Keep" type="number" min="@CoreConsts.BackupMinKeep" max="@CoreConsts.BackupMaxKeep" value="@settings.Keep" required>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <label for="Prefix">@L["File name prefix"] @FieldHelp.Tip(L["The start of the file names, hub-backup by default: letters, numbers, dots, hyphens and underscores, up to 60 characters. Only files with this prefix are counted and deleted, so other files in the container are left alone."])</label>
+                                    <input class="form-control admin-mono" id="Prefix" name="Prefix" value="@settings.Prefix" maxlength="@CoreConsts.BackupPrefixMaxLength">
+                                </div>
+                            </div>
+                            <p class="help-block" style="margin-bottom: 0">@L["Files are named prefix-yyyyMMdd-HHmmss.zip, in UTC. After each backup, the oldest files with the same prefix are deleted beyond the number to keep."]</p>
+                        </div>
                     </div>
+                    @await Html.PartialAsync("_FormSaveButton")
                 </form>
             </div>
         </div>

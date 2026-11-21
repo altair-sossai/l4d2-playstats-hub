@@ -17,6 +17,16 @@ public class AdministratorService(HubDbContext dbContext, IClock clock) : IAdmin
         return dbContext.Administrators.AsNoTracking().OrderBy(a => a.AddedAtUtc).ToListAsync(cancellationToken);
     }
 
+    public Task<List<Administrator>> ListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Administrators.AsNoTracking().OrderBy(a => a.AddedAtUtc).ThenBy(a => a.CommunityId).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.Administrators.CountAsync(cancellationToken);
+    }
+
     public async Task AddAsync(long communityId, string? name, CancellationToken cancellationToken = default)
     {
         var administrator = await dbContext.Administrators.FirstOrDefaultAsync(a => a.CommunityId == communityId, cancellationToken);

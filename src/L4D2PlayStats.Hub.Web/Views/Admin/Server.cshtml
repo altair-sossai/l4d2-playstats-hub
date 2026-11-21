@@ -40,12 +40,12 @@
         </div>
     </div>
     <div class="col-md-5">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@L["Details"]</h3>
-            </div>
-            <div class="panel-body">
-                <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Id">
+        <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Id">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@L["Details"]</h3>
+                </div>
+                <div class="panel-body">
                     <div class="form-group">
                         <label for="Name">@L["Server name"] @FieldHelp.Tip(L["The name shown on the site, as players know the server. The identifier is made from the name when the server is created and does not change when you rename it."])</label>
                         <input class="form-control" id="Name" name="Name" value="@server.Name" required maxlength="100">
@@ -65,13 +65,13 @@
                             @L["Enabled"] @FieldHelp.Tip(L["A disabled server is not shown on the live server page, and the site refuses what it sends. Its files and matches are kept."])
                         </label>
                     </div>
-                    <p class="text-muted">
+                    <p class="text-muted" style="margin-bottom: 0">
                         <small>@L["Identifier"]: <code>@server.PublicId</code></small>
                     </p>
-                    <button class="btn btn-primary" type="submit">@L["Save"]</button>
-                </form>
+                </div>
             </div>
-        </div>
+            @await Html.PartialAsync("_FormSaveButton")
+        </form>
         <div class="panel panel-warning">
             <div class="panel-heading">
                 <h3 class="panel-title">@L["Key"]</h3>

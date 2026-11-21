@@ -196,6 +196,42 @@
         margin-top: 12px;
     }
 
+    .admin-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+        .admin-toolbar .admin-filters {
+            flex: 1 1 320px;
+            max-width: 640px;
+            margin-bottom: 0;
+        }
+
+        .admin-toolbar .admin-toolbar-actions {
+            margin-left: auto;
+        }
+
+    .admin-form-actions {
+        clear: both;
+        margin: 4px 0 20px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(128, 128, 128, .25);
+        text-align: left;
+    }
+
+    .admin-row-actions form {
+        display: inline-block;
+        margin: 2px;
+    }
+
+    .admin-row-actions > .btn {
+        margin: 2px;
+    }
+
     @@media screen and (max-width: 700px) {
         .admin-item {
             flex-wrap: wrap;

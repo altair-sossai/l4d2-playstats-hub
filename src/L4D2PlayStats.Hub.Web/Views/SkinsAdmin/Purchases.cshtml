@@ -265,9 +265,6 @@
             <span class="glyphicon glyphicon-repeat"></span> @L["Refund everything"]
         </button>
     }
-    <button type="button" class="btn btn-success" onclick="GiftModal.open()">
-        <span class="glyphicon glyphicon-gift"></span> @L["Give a skin"]
-    </button>
 </div>
 
 <div class="admin-stats">
@@ -293,37 +290,44 @@
     </div>
 }
 
-<form method="get" class="admin-filters">
-    <input type="hidden" name="player" value="@Model.Player"/>
-    <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by player, Steam ID or skin..."]"/>
-    <span style="align-self: center">@FieldHelp.Tip(L["Finds purchases by part of the player's name, the SteamID64, the skin id or the skin name. Filter by player shows the purchases of one player only."])</span>
-    <button type="submit" class="btn btn-default">
-        <span class="glyphicon glyphicon-search"></span> @L["Search"]
-    </button>
-    @if (Model.Player == null)
-    {
-        <button type="button" class="btn btn-default ska-pick-player">
-            <span class="glyphicon glyphicon-user"></span> @L["Filter by player"]
+<div class="admin-toolbar">
+    <form method="get" class="admin-filters">
+        <input type="hidden" name="player" value="@Model.Player"/>
+        <input type="text" name="q" value="@Model.Query" class="form-control admin-search" placeholder="@L["Search by player, Steam ID or skin..."]"/>
+        <span style="align-self: center">@FieldHelp.Tip(L["Finds purchases by part of the player's name, the SteamID64, the skin id or the skin name. Filter by player shows the purchases of one player only."])</span>
+        <button type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-search"></span> @L["Search"]
         </button>
-    }
-    else
-    {
-        <div class="ska-filter-player" title="@Model.Player">
-            <img src="/avatar/@Model.Player" alt="@Model.PlayerName" onerror="imgOnError(this)"/>
-            <span>@Model.PlayerName</span>
-            <a href="#" class="ska-pick-player" title="@L["Change player"]">
-                <span class="glyphicon glyphicon-pencil"></span>
-            </a>
-            <a href="@Url.Action("Purchases", "SkinsAdmin", new { q = Model.Query })" title="@L["Show every player"]">
-                <span class="glyphicon glyphicon-remove"></span>
-            </a>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.Query) || Model.Player != null)
-    {
-        <a class="btn btn-link" href="@Url.Action("Purchases", "SkinsAdmin")">@L["Clear filters"]</a>
-    }
-</form>
+        @if (Model.Player == null)
+        {
+            <button type="button" class="btn btn-default ska-pick-player">
+                <span class="glyphicon glyphicon-user"></span> @L["Filter by player"]
+            </button>
+        }
+        else
+        {
+            <div class="ska-filter-player" title="@Model.Player">
+                <img src="/avatar/@Model.Player" alt="@Model.PlayerName" onerror="imgOnError(this)"/>
+                <span>@Model.PlayerName</span>
+                <a href="#" class="ska-pick-player" title="@L["Change player"]">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a href="@Url.Action("Purchases", "SkinsAdmin", new { q = Model.Query })" title="@L["Show every player"]">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Query) || Model.Player != null)
+        {
+            <a class="btn btn-link" href="@Url.Action("Purchases", "SkinsAdmin")">@L["Clear filters"]</a>
+        }
+    </form>
+    <div class="admin-toolbar-actions">
+        <button type="button" class="btn btn-primary" onclick="GiftModal.open()">
+            <span class="glyphicon glyphicon-gift"></span> @L["Give a skin"]
+        </button>
+    </div>
+</div>
 
 <div class="admin-list">
     @if (Model.Purchases.Items.Count == 0)

@@ -1,51 +1,268 @@
 @model CampaignsViewModel
 @{
     ViewData["Title"] = L["Campaigns"].Value;
+    var pagination = PaginationModel.Of(Model.Campaigns, number => AdminListUrls.Page(AppConsts.AdminCampaignsUrl, number));
 }
 
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
+    <style>
+        .cm-route {
+            display: block;
+            font-size: 12px;
+            opacity: .75;
+        }
+
+        .cm-table {
+            margin-bottom: 6px;
+        }
+
+            .cm-table > tbody > tr > td {
+                vertical-align: middle;
+                border-top: 0;
+            }
+
+            .cm-table .cm-order {
+                width: 1%;
+                opacity: .65;
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            .cm-table .cm-actions {
+                width: 1%;
+                white-space: nowrap;
+            }
+
+        .cm-editor .cm-empty {
+            display: none;
+        }
+
+        .cm-editor.cm-none .cm-empty {
+            display: block;
+        }
+
+        .cm-editor.cm-none .cm-table {
+            display: none;
+        }
+
+        .cm-editor .cm-required {
+            display: none;
+        }
+
+        .cm-editor.cm-invalid .cm-required {
+            display: block;
+        }
+    </style>
 }
 
 <div class="admin-header">
     <h3>@L["Campaigns"]</h3>
 </div>
 
-<p class="admin-lead">@L["Maps played one after the other in the order below form a single match. Add your custom campaigns here, one map per line, in play order."]</p>
+<p class="admin-lead">@L["Maps of a campaign played one after the other, in its order, form a single match. Add your custom campaigns with the Add button, with their maps in play order."]</p>
 
-<div class="admin-columns">
-    @foreach (var campaign in Model.Campaigns)
-    {
-        <form class="panel panel-default admin-card" method="post" asp-antiforgery="true" action="/admin/campaigns">
-            <div class="panel-body">
-                <input type="hidden" name="Id" value="@campaign.Id">
-                <div class="form-group">
-                    <input class="form-control input-sm bold" name="Name" value="@campaign.Name" required aria-label="@L["Name"]">
-                </div>
-                <textarea class="form-control input-sm admin-mono" name="Maps" rows="@Math.Max(4, campaign.Maps.Count)" aria-label="@L["Maps"]">@string.Join("\n", campaign.Maps.OrderBy(m => m.Order).Select(m => m.MapName))</textarea>
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-campaign-edit="">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+    </div>
+</div>
+
+@if (Model.Campaigns.TotalItems == 0)
+{
+    <div class="admin-list">
+        <div class="admin-empty">@L["No campaigns yet."]</div>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
+        <thead>
+        <tr>
+            <th>@L["Name"]</th>
+            <th>@L["Maps"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var campaign in Model.Campaigns.Items)
+        {
+            var maps = campaign.Maps.OrderBy(m => m.Order).Select(m => m.MapName).ToList();
+            var route = maps.Count > 1 ? $"{maps[0]} → {maps[^1]}" : maps.FirstOrDefault();
+
+            <tr>
+                <td class="vertical-align-middle" data-label="@L["Name"]"><strong>@campaign.Name</strong></td>
+                <td class="vertical-align-middle" data-label="@L["Maps"]">
+                    <span class="badge" title="@L["Maps"]">@maps.Count</span>
+                    <span class="cm-route admin-mono">@route</span>
+                </td>
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    <button class="btn btn-xs btn-default" type="button" data-campaign-edit="@campaign.Id" data-campaign-name="@campaign.Name" data-campaign-maps="@string.Join("\n", maps)">
+                        <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                    </button>
+                    <form method="post" asp-antiforgery="true" action="/admin/campaigns/@campaign.Id/delete" onsubmit="return confirm('@L["Delete this campaign?"]')">
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                        <button class="btn btn-xs btn-danger" type="submit">
+                            <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pagination", pagination)
+}
+
+<div class="modal fade" id="campaign-edit-modal" tabindex="-1" role="dialog" aria-labelledby="campaign-edit-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" id="campaign-form" method="post" asp-antiforgery="true" action="/admin/campaigns">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <input type="hidden" id="campaign-id" name="Id" value="">
+            <input type="hidden" id="campaign-maps" name="Maps" value="">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="campaign-edit-title" data-add="@L["Add a campaign"]" data-edit="@L["Edit the campaign"]">@L["Add a campaign"]</h4>
             </div>
-            <div class="panel-footer">
-                <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
-                <button class="btn btn-sm btn-danger pull-right" type="submit" formaction="/admin/campaigns/@campaign.Id/delete" onclick="return confirm('@L["Delete this campaign?"]')">
-                    <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="campaign-name">@L["Name"] @FieldHelp.Tip(L["The name of the campaign as players know it. It is what the match list and the player pages show."])</label>
+                    <input class="form-control" id="campaign-name" name="Name" required maxlength="@L4D2PlayStats.Hub.Core.AppConsts.CampaignNameMaxLength" autocomplete="off">
+                </div>
+                <div class="form-group cm-editor" id="campaign-map-editor" style="margin-bottom: 0">
+                    <label>@L["Maps"] @FieldHelp.More(L["The map names the game server uses, in play order."], L["Maps of the campaign"], L["Add one row for each map and write it as the game server names it, such as c1m1_hotel. The arrows change the order: the maps must be in the order they are played.\nMaps of the same campaign played one after the other, in this order, make one match. If the next map is from another campaign, or out of order, a new match starts.\nA map that is in no campaign is an unknown map: the option about unknown maps in the settings decides whether it still makes matches.\nA change applies to the files that arrive from now on. To rebuild the matches that already exist, use Reprocess all matches in the overview of the administration area."])</label>
+                    <table class="table table-condensed cm-table">
+                        <tbody class="cm-rows"></tbody>
+                    </table>
+                    <p class="help-block cm-empty">@L["No maps yet: add the maps in the order they are played."]</p>
+                    <p class="text-danger cm-required">@L["Add at least one map."]</p>
+                    <button type="button" class="btn btn-default btn-sm cm-add">
+                        <span class="glyphicon glyphicon-plus"></span> @L["Add a map"]
+                    </button>
+                    <template class="cm-template">
+                        <tr class="cm-row">
+                            <td class="cm-order"></td>
+                            <td><input class="form-control input-sm admin-mono cm-map" type="text" value="" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.MapNameMaxLength" placeholder="c1m1_hotel" autocomplete="off" aria-label="@L["Map"]"></td>
+                            <td class="cm-actions">
+                                <button type="button" class="btn btn-default btn-xs cm-up" title="@L["Move up"]" aria-label="@L["Move up"]"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                                <button type="button" class="btn btn-default btn-xs cm-down" title="@L["Move down"]" aria-label="@L["Move down"]"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                                <button type="button" class="btn btn-danger btn-xs cm-remove" title="@L["Remove"]" aria-label="@L["Remove"]"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                        </tr>
+                    </template>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                 </button>
             </div>
         </form>
-    }
-    <form class="panel panel-success admin-card" method="post" asp-antiforgery="true" action="/admin/campaigns">
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="small">@L["Name"] @FieldHelp.Tip(L["The name of the campaign as players know it. It is what the match list and the player pages show."])</label>
-                <input class="form-control input-sm" name="Name" placeholder="@L["New campaign"]" required aria-label="@L["Name"]">
-            </div>
-            <label class="small">@L["Maps"] @FieldHelp.More(L["The map names the game server uses, one per line, in play order."], L["Maps of the campaign"], L["Write the maps as the game server names them, such as c1m1_hotel, one per line, in the order they are played. Commas and semicolons also separate maps.\nMaps of the same campaign played one after the other, in this order, make one match. If the next map is from another campaign, or out of order, a new match starts.\nA map that is in no campaign is an unknown map: the option about unknown maps in the settings decides whether it still makes matches.\nA change applies to the files that arrive from now on. To rebuild the matches that already exist, use Reprocess all matches in the overview of the administration area."])</label>
-            <textarea class="form-control input-sm admin-mono" name="Maps" rows="5" placeholder="map_1&#10;map_2" required aria-label="@L["Maps"]"></textarea>
-        </div>
-        <div class="panel-footer">
-            <button class="btn btn-sm btn-success" type="submit">
-                <span class="glyphicon glyphicon-plus"></span> @L["Add"]
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var editor = document.getElementById('campaign-map-editor');
+            var rows = editor.querySelector('.cm-rows');
+            var hidden = document.getElementById('campaign-maps');
+            var template = editor.querySelector('.cm-template');
+            var form = document.getElementById('campaign-form');
+
+            function refresh() {
+                var maps = [];
+                var all = rows.querySelectorAll('.cm-row');
+
+                all.forEach(function (row, index) {
+                    var map = row.querySelector('.cm-map').value.trim();
+
+                    row.querySelector('.cm-order').textContent = (index + 1) + '.';
+                    row.querySelector('.cm-up').disabled = index === 0;
+                    row.querySelector('.cm-down').disabled = index === all.length - 1;
+
+                    if (map)
+                        maps.push(map);
+                });
+
+                hidden.value = maps.join('\n');
+                editor.classList.toggle('cm-none', all.length === 0);
+
+                return maps;
+            }
+
+            function addRow(map) {
+                var row = template.content.firstElementChild.cloneNode(true);
+
+                row.querySelector('.cm-map').value = map || '';
+                rows.appendChild(row);
+
+                return row;
+            }
+
+            editor.querySelector('.cm-add').addEventListener('click', function () {
+                addRow('').querySelector('.cm-map').focus();
+                editor.classList.remove('cm-invalid');
+                refresh();
+            });
+
+            rows.addEventListener('click', function (event) {
+                var button = event.target.closest('button');
+
+                if (!button)
+                    return;
+
+                var row = button.closest('.cm-row');
+
+                if (button.classList.contains('cm-remove'))
+                    row.remove();
+                else if (button.classList.contains('cm-up') && row.previousElementSibling)
+                    rows.insertBefore(row, row.previousElementSibling);
+                else if (button.classList.contains('cm-down') && row.nextElementSibling)
+                    rows.insertBefore(row.nextElementSibling, row);
+
+                refresh();
+            });
+
+            rows.addEventListener('input', function () {
+                editor.classList.remove('cm-invalid');
+                refresh();
+            });
+
+            form.addEventListener('submit', function (event) {
+                if (refresh().length > 0)
+                    return;
+
+                event.preventDefault();
+                editor.classList.add('cm-invalid');
+            });
+
+            $(document).on('click', '[data-campaign-edit]', function () {
+                var id = $(this).attr('data-campaign-edit');
+                var $title = $('#campaign-edit-title');
+                var editing = id !== '';
+                var maps = editing ? ($(this).attr('data-campaign-maps') || '').split('\n') : [''];
+
+                $title.text(editing ? $title.attr('data-edit') : $title.attr('data-add'));
+                $('#campaign-id').val(id);
+                $('#campaign-name').val(editing ? $(this).attr('data-campaign-name') : '');
+                rows.innerHTML = '';
+                maps.forEach(addRow);
+                editor.classList.remove('cm-invalid');
+                refresh();
+                $('#campaign-edit-modal').modal('show');
+            });
+
+            $('#campaign-edit-modal').on('shown.bs.modal', function () {
+                $('#campaign-name').trigger('focus');
+            });
+        })();
+    </script>
+}

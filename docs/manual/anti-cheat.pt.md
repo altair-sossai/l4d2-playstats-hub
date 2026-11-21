@@ -42,7 +42,7 @@ Os textos da página fazem parte do site e são traduzidos junto com ele.
 
 - **Modo de uso**: escolha um dos dois modos e clique em **Salvar modo**. Abaixo das opções a página diz quem mudou o modo por último, no site ou no jogo, e quando. Enquanto nenhum modo foi salvo, ela diz que o servidor de jogo usa o `anti_cheat_mode` do seu arquivo de configuração.
 - **A lista**: a página mostra a lista que o modo atual usa, com o número de jogadores, uma busca por nome ou Steam ID e 20 jogadores por página. O link ao lado do título abre a outra lista, que fica guardada para quando o modo mudar.
-- **Adicionar jogador**: digite um Steam ID em qualquer formato ou um link de perfil, ou use **Escolher jogador** entre os jogadores do site. Enquanto você digita, a página mostra o nome e a foto do jogador, e se ele jogou aqui ou só tem um perfil Steam. Um jogador que já está na lista não pode ser adicionado de novo.
+- **Adicionar**, à direita da busca: digite um Steam ID em qualquer formato ou um link de perfil, ou use **Escolher jogador** entre os jogadores do site. Enquanto você digita, a página mostra o nome e a foto do jogador, e se ele jogou aqui ou só tem um perfil Steam. Um jogador que já está na lista não pode ser adicionado de novo. **Salvar** adiciona o jogador.
 - **Remover**: clique em um jogador para ver os IDs, o perfil Steam, e quando e por quem ele foi adicionado, no site ou no jogo. **Remover da lista** pede uma segunda confirmação.
 
 | Configuração | O que faz |
