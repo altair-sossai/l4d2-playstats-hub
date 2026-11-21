@@ -32,6 +32,8 @@ The community ranking is a second ranking, built from what the players think of 
 
 **See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. The filters **Votes made by** and **Votes about** take a name, or the search button next to each opens a window with the players of the voting, the most recent first. An administrator can hide who voted.
 
+![The latest votes, as an administrator sees them](../images/en/community-votes.webp)
+
 On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
 
 Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. When more players are listed, the table shows 100 per page, with page links under it. **How does it work?**, in the box, opens a window that explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same link, also when the votes of the day are used up. Clicking a player's row opens a window with their rating, comparisons and a bar of wins, draws and losses, with links to their comparisons and profile. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days. The box shows only to visitors who are not signed in and to players who can still vote today; a player who used all the votes of the day, does not have enough matches or is blocked does not see it.
@@ -62,6 +64,8 @@ Under each name the card shows up to 4 other names the player has used in matche
 | You are never asked about yourself, and never asked about the same pair twice. | |
 
 When you cannot vote, the page says why: you need to sign in, you need more matches (with your count), you used all the votes of the day, there is nobody left for you to compare, or the administrators blocked your votes.
+
+![The voting page of a blocked voter](../images/en/community-vote-blocked.webp)
 
 ## How the pair is chosen
 
@@ -110,7 +114,13 @@ The ratings are calculated again from every vote after each new vote. **Rebuild 
 
 **Voters** lists everybody who voted, with their number of votes and their last vote, 20 per page, the most votes first; **See votes** opens, in a new tab, the latest votes of that voter. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
 
+![The Voters tab](../images/en/admin-community-voters.webp)
+
 **Block** stops a voter from voting, from the same field or from the voter's row. It opens a window with two choices: **Only block** keeps the votes already given, and **Block and delete the votes** also deletes them and calculates the ratings again without them. The voting page of a blocked voter then says they can no longer vote because the administrators reviewed the votes and blocked theirs, and any answer they send is refused. **Blocked voters** lists everybody who is blocked, since when, 20 per page, with **Unblock** to let them vote again; the votes deleted when blocking do not come back. **Add**, on that tab, opens the window **Block a player**: it blocks anyone chosen in the field or with the player search, also someone who has not voted yet, and **Also delete the votes they already gave** deletes their votes too. **Save** blocks the player.
+
+![Blocking a voter](../images/en/admin-community-block.webp)
+
+![The Blocked voters tab](../images/en/admin-community-blocked.webp)
 
 To delete a single vote, open **Latest votes** or the **Votes received** and **Votes cast** tabs of a player page while signed in as an administrator. Each vote then has a red button that deletes it, and the ratings are calculated again without it, and a yellow button that blocks the player who gave it. Administrators always see who voted, even when **Show who voted in the latest votes** is off.
 

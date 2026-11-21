@@ -35,6 +35,8 @@ With the site chat module on, signed-in players can write in the chat of a game 
 
 ![The chat bans](../images/en/admin-chat-bans.webp)
 
+![The limits of the messages sent from the site](../images/en/admin-chat-bans-limits.webp)
+
 The page lists every ban, with the player, the date, the reason and who banned. Search by name, Steam ID or reason. Click a ban to see its details, change the reason and **Save** it, or remove it.
 
 **Add**, on the right of the search, opens a window that asks for the player and a reason:
@@ -85,6 +87,12 @@ The same accounts are shown on the player page as [Related accounts](players.md#
 - On the site, the forced name replaces the name of the player everywhere: the rankings, the player page, the matches and their statistics, the live server, the chat, the community ranking, the in-game pages and the administration. The player search also finds the player by the forced name. The names the player used before still appear in the list of previous names.
 - On the game servers, the `l4d2_forced_names` plugin renames the player when they join and every time they change their name. With `l4d2_forced_names_hub 1`, the plugin reads this list at the start of each round and joins it to its `configs/forced_names.cfg` file; when both have the same player, the name from the site wins.
 
+![The forced names](../images/en/admin-forced-names.webp)
+
 The list has 20 players per page and a search by name or Steam ID. **Add** opens a window with the player (in any Steam ID format, or chosen with the player search) and the name; **Edit** changes the name of a player already on the list, and **Remove** takes them off after a confirmation. **Import** takes the contents of a `forced_names.cfg` file: each line with a Steam ID and a name between quotes is added, or updates the name already on the list, and a message says how many were added, updated and left out.
+
+![Adding a forced name](../images/en/admin-forced-names-add.webp)
+
+![Importing a forced_names.cfg file](../images/en/admin-forced-names-import.webp)
 
 The game servers read the list from `GET <site>/api/forced-names` with their token, as described in [Connecting a game server](../game-server.md).

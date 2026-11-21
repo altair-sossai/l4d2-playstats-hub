@@ -67,7 +67,11 @@ The **Game servers** tab lists the servers, 20 per page, with the identifier, th
 | Address players connect to (optional) | Shown on the live server page with a copy button, and used by the `connect` button. For example `play.example.com:27015` or an IP and port. |
 | Alternative address, such as a DNS name (optional) | Shown next to the address, as a second way to connect. |
 
+![Adding a game server](../images/en/admin-servers-add.webp)
+
 The **Live server page** tab sets for every server, with **Save** at the bottom: the delay of the live page (15 seconds), how often an open live page refreshes (2600 ms), the seconds without a signal before a server shows offline (90) and the minutes a remote command waits for the server (5).
+
+![The Live server page tab](../images/en/admin-servers-live.webp)
 
 After **Save**, the page of the new server shows the token once, with the instructions. Copy it then: see [First-run setup > Step 4](first-run.md#step-4-the-game-server).
 
@@ -125,6 +129,8 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Keywords for search engines (optional) | Separated by commas. They go in the keywords tag of every page. |
 | Google Analytics ID (optional) | With an ID such as `G-XXXXXXXXXX`, every page loads the Google Analytics script. Empty loads nothing. |
 
+![The Appearance tab, with the footer links](../images/en/admin-settings-appearance.webp)
+
 ### Seasons
 
 | Setting | What it does |
@@ -149,6 +155,8 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Hours without files that split two matches | 6 | Files of a game server further apart than this belong to different matches. Applies to new matches, or to all of them after **Reprocess all matches**. |
 | Keep matches played on maps that are not in the campaign list | On | See [Matches > How files become matches](matches.md#how-files-become-matches). |
 
+![The Ranking points tab](../images/en/admin-settings-ranking.webp)
+
 The points apply to every season right away, past seasons included, because the rankings are calculated from the matches. The option about unknown maps applies to new matches, or to all of them after **Reprocess all matches**.
 
 [Ranking](ranking.md#how-experience-is-calculated) explains how these values are used.
@@ -167,6 +175,8 @@ This setting covers the site only. The `l4d2_gameinfo_sync` plugin still announc
 ![The administrators](../images/en/admin-administrators.webp)
 
 The list shows every administrator and since when, 20 per page. The **Add** button, above the list on the right, opens a window that asks for the account, as a SteamID64, a Steam ID such as `STEAM_1:0:123` or `[U:1:123]`, or a profile link, and, optionally, a name; **Save** adds it. The search button next to the field opens the [player search](#the-player-search); the chosen player also fills in the name when it is empty. **Edit**, on each row, opens the same window to change the name. **Remove** takes the rights away after a confirmation. You cannot remove yourself, and the last administrator cannot be removed.
+
+![Adding an administrator](../images/en/admin-administrators-add.webp)
 
 If you lose access to every administrator account, add one from the machine that runs the site:
 
@@ -195,6 +205,8 @@ The site uploads a zip of its data to an Azure Storage container every few hours
 | Every, in hours | From 1 to 168. 8 by default. |
 | Backups to keep | From 1 to 1000. 30 by default. After each backup the oldest files beyond this number are deleted. |
 | File name prefix | The start of the file names, `hub-backup` by default. Only files with this prefix are counted and deleted. |
+
+![The Azure Storage tab](../images/en/admin-backup-storage.webp)
 
 The address and the connection string are secrets. After they are saved the page shows them only masked, such as `https://<account>.blob.core.windows.net/<container>?••••••••`; leave the field empty to keep the saved one, or type a new one to replace it. They are never written to the log either.
 

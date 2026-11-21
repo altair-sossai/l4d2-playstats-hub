@@ -35,6 +35,8 @@ Con el módulo del chat del sitio activado, los jugadores que iniciaron sesión 
 
 ![Los baneos del chat](../images/es/admin-chat-bans.webp)
 
+![Los límites de los mensajes enviados desde el sitio](../images/es/admin-chat-bans-limits.webp)
+
 La página lista todos los baneos, con el jugador, la fecha, el motivo y quién baneó. Busca por nombre, Steam ID o motivo. Haz clic en un baneo para ver sus detalles, cambiar el motivo y **Guardar**, o quitarlo.
 
 **Añadir**, a la derecha de la búsqueda, abre una ventana que pide el jugador y un motivo:
@@ -85,6 +87,12 @@ Las mismas cuentas se muestran en la página del jugador como [Cuentas relaciona
 - En el sitio, el nombre forzado reemplaza el nombre del jugador en todas partes: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo, el chat, el ranking de la comunidad, las páginas del juego y la administración. La búsqueda de jugadores también encuentra al jugador por el nombre forzado. Los nombres usados antes siguen en la lista de nombres anteriores.
 - En los servidores de juego, el plugin `l4d2_forced_names` le cambia el nombre al jugador cuando entra y cada vez que se lo cambia. Con `l4d2_forced_names_hub 1`, el plugin lee esta lista al comienzo de cada ronda y la junta con su archivo `configs/forced_names.cfg`; cuando los dos tienen el mismo jugador, vale el nombre del sitio.
 
+![Los nombres forzados](../images/es/admin-forced-names.webp)
+
 La lista muestra 20 jugadores por página y tiene búsqueda por nombre o Steam ID. **Añadir** abre una ventana con el jugador (en cualquier formato de Steam ID, o elegido con la búsqueda de jugadores) y el nombre; **Editar** cambia el nombre de un jugador que ya está en la lista, y **Quitar** lo saca después de una confirmación. **Importar** recibe el contenido de un archivo `forced_names.cfg`: cada línea con un Steam ID y un nombre entre comillas se añade, o actualiza el nombre que ya está en la lista, y un mensaje dice cuántos se añadieron, actualizaron y omitieron.
+
+![Añadir un nombre forzado](../images/es/admin-forced-names-add.webp)
+
+![Importar un archivo forced_names.cfg](../images/es/admin-forced-names-import.webp)
 
 Los servidores de juego leen la lista en `GET <sitio>/api/forced-names` con su token, como se describe en [Conectar un servidor de juego](../game-server.es.md).

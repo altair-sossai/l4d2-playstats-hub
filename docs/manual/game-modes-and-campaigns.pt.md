@@ -34,6 +34,8 @@ A aba **Regras** lista as regras, 20 por página, por ordem de prioridade. O bot
 | Prioridade | A ordem em que as regras são verificadas, da menor para a maior. |
 | Conta para o ranking | Se as partidas cobertas pela regra são ranqueadas. |
 
+![Editando uma regra](../images/pt/admin-game-modes-rule.webp)
+
 Para cada partida, o site pega a **primeira regra que se encaixa** na configuração e no tamanho do time dela, por ordem de prioridade:
 
 - se essa regra conta para o ranking e a partida tem pelo menos o mínimo de mapas dela, a partida é **Competitiva** e conta;
@@ -47,6 +49,8 @@ Um site novo tem uma regra: **4v4**, padrão `*`, tamanho do time 4, mínimo de 
 - Coloque as regras específicas primeiro (número de prioridade baixo) e as gerais por último.
 - Uma regra que **não** conta serve para excluir algo que uma regra geral cobriria, como uma configuração de treino.
 - A lista **Configurações vistas nos seus servidores** mostra, para cada nome de configuração e tamanho de time, quando ela foi vista por último e qual regra vale, ou **Sem regra: fora do ranking**. Use-a para conferir as suas regras depois de uma mudança.
+
+![A aba Configurações vistas nos seus servidores](../images/pt/admin-game-modes-seen.webp)
 
 ## Exemplos
 
@@ -69,6 +73,8 @@ A lista mostra cada campanha, 20 por página, com o número de mapas e o primeir
 2. Escreva o nome da campanha como os jogadores a conhecem.
 3. Clique em **Adicionar um mapa** para cada mapa e escreva-o com o nome que o servidor usa (como `c1m1_hotel`). As setas sobem ou descem um mapa, para a lista seguir a ordem de jogo, e o botão da lixeira o remove.
 4. Clique em **Salvar**.
+
+![Editando uma campanha e os mapas dela](../images/pt/admin-campaigns-edit.webp)
 
 **Editar**, em cada linha, abre a mesma janela com o nome e os mapas daquela campanha. **Excluir** a remove depois de uma confirmação. O nome da campanha é o que a lista de partidas e as páginas dos jogadores mostram.
 

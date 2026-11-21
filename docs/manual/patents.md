@@ -41,6 +41,8 @@ A patent is a level from 1 to 15 given by the experience a player has in the cur
 
 The steps grow as the level rises: the experience needed is 2,500 × ((level − 1) ÷ 14)², rounded down to a multiple of 10. The 15 levels and their names are fixed, but the experience of the highest level, 2,500 by default, can be changed in **Administration > Patents**, together with the curve between the levels, the exponent of the formula (2 by default, from 1 to 3: with 1 every step costs the same, with higher values the first levels are easier and the last ones harder). The whole scale follows them, the page shows a preview of every level as you type, and every page of the site uses the new values right away. Also what can be changed is how much experience each result gives; see [Ranking](ranking.md#how-experience-is-calculated).
 
+![The patents in the administration, with the preview of the levels](../images/en/admin-patents.webp)
+
 Patents belong to a season. They start again from level 1 with the season, and they are not shown in the rankings of a year or of all time.
 
 ## Level up and level drop

@@ -67,7 +67,11 @@ La pestaña **Servidores de juego** lista los servidores, 20 por página, con su
 | Dirección a la que se conectan los jugadores (opcional) | Se muestra en la página del servidor en vivo con un botón para copiar, y la usa el botón `connect`. Por ejemplo `play.example.com:27015` o una IP y un puerto. |
 | Dirección alternativa, como un nombre DNS (opcional) | Se muestra junto a la dirección, como una segunda forma de conectarse. |
 
+![Añadir un servidor de juego](../images/es/admin-servers-add.webp)
+
 La pestaña **Página del servidor en vivo** define para todos los servidores, con **Guardar** al final: el retraso de la página en vivo (15 segundos), cada cuánto se actualiza una página en vivo abierta (2600 ms), los segundos sin señal hasta que el servidor aparece offline (90) y los minutos que un comando remoto espera al servidor (5).
+
+![La pestaña Página del servidor en vivo](../images/es/admin-servers-live.webp)
 
 Después de **Guardar**, la página del servidor nuevo muestra el token una sola vez, con las instrucciones. Cópialo en ese momento: consulta [Configuración inicial > Paso 4](first-run.es.md#paso-4-el-servidor-de-juego).
 
@@ -125,6 +129,8 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Palabras clave para buscadores (opcional) | Separadas por comas. Van en la etiqueta de palabras clave de todas las páginas. |
 | ID de Google Analytics (opcional) | Con un ID como `G-XXXXXXXXXX`, todas las páginas cargan el script de Google Analytics. Vacío no carga nada. |
 
+![La pestaña Apariencia, con los enlaces del pie de página](../images/es/admin-settings-appearance.webp)
+
 ### Temporadas
 
 | Ajuste | Qué hace |
@@ -149,6 +155,8 @@ Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque
 | Horas sin archivos que separan dos partidas | 6 | Los archivos de un servidor de juego más separados que esto pertenecen a partidas distintas. Vale para las partidas nuevas, o para todas después de **Reprocesar todas las partidas**. |
 | Conservar las partidas jugadas en mapas que no están en la lista de campañas | Activado | Consulta [Partidas > Cómo los archivos se convierten en partidas](matches.es.md#cómo-los-archivos-se-convierten-en-partidas). |
 
+![La pestaña Puntos del ranking](../images/es/admin-settings-ranking.webp)
+
 Los puntos se aplican a todas las temporadas de inmediato, incluidas las pasadas, porque los rankings se calculan a partir de las partidas. La opción sobre mapas desconocidos se aplica a las partidas nuevas, o a todas después de **Reprocesar todas las partidas**.
 
 [Ranking](ranking.es.md#cómo-se-calcula-la-experiencia) explica cómo se usan estos valores.
@@ -167,6 +175,8 @@ Este ajuste solo afecta al sitio. El plugin `l4d2_gameinfo_sync` sigue anunciand
 ![Los administradores](../images/es/admin-administrators.webp)
 
 La lista muestra a cada administrador y desde cuándo lo es, 20 por página. El botón **Añadir**, encima de la lista a la derecha, abre una ventana que pide la cuenta, como SteamID64, como Steam ID con el formato `STEAM_1:0:123` o `[U:1:123]`, o como enlace del perfil, y, si quieres, un nombre; **Guardar** la añade. El botón de búsqueda junto al campo abre la [búsqueda de jugadores](#la-búsqueda-de-jugadores); el jugador elegido también completa el nombre cuando está vacío. **Editar**, en cada fila, abre la misma ventana para cambiar el nombre. **Quitar** le retira los permisos después de una confirmación. No puedes quitarte a ti mismo, y el último administrador no se puede quitar.
+
+![Añadir un administrador](../images/es/admin-administrators-add.webp)
 
 Si pierdes el acceso a todas las cuentas de administrador, agrega una desde la máquina donde se ejecuta el sitio:
 
@@ -195,6 +205,8 @@ El sitio sube un zip de sus datos a un contenedor de Azure Storage cada pocas ho
 | Cada, en horas | De 1 a 168. 8 por defecto. |
 | Copias a conservar | De 1 a 1000. 30 por defecto. Después de cada copia se borran los archivos más antiguos que pasen de este número. |
 | Prefijo del nombre del archivo | El comienzo del nombre de los archivos, `hub-backup` por defecto. Solo se cuentan y se borran los archivos con este prefijo. |
+
+![La pestaña Azure Storage](../images/es/admin-backup-storage.webp)
 
 La dirección y la cadena de conexión son secretos. Una vez guardadas, la página solo las muestra enmascaradas, como `https://<cuenta>.blob.core.windows.net/<contenedor>?••••••••`; deja el campo vacío para conservar la guardada, o escribe una nueva para reemplazarla. Tampoco se escriben nunca en el registro.
 

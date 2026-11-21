@@ -28,10 +28,9 @@ const json = value => JSON.stringify(value);
 const hideDevelopmentSignIn = `(() => { const field = document.querySelector('#developmentCommunityId'); if (field) field.closest('.form-group').style.display = 'none'; })()`;
 const submit = selector => ({ eval: `document.querySelector(${json(selector)}).closest('form').querySelector('[type=submit]').click()`, navigates: true });
 const fill = values => Object.entries(values).map(([selector, value]) => `document.querySelector(${json(selector)}).value = ${json(String(value))}`).join('; ');
-const newRuleForm = `[...document.querySelectorAll('form[action="/admin/game-modes"]')].find(form => !form.querySelector('[name=Id]'))`;
 const hideKey = `document.querySelectorAll('pre.server-config').forEach(pre => pre.innerHTML = pre.innerHTML.replace(/(playstats_token "[^:"]+:)[^"]+/, '$1YOUR-KEY'))`;
 const showAddress = address => `document.querySelectorAll('pre.server-config').forEach(pre => pre.innerHTML = pre.innerHTML.split(location.origin).join(${json(address)}))`;
-const ruleField = (form, name) => `document.querySelector('[form="' + ${form}.id + '"][name=${name}]')`;
+const footerLinks = links => `(() => { const editor = document.getElementById('footer-links'); const rows = editor.querySelector('.fl-rows'); rows.querySelectorAll('.fl-remove').forEach(button => button.click()); for (const [text, url] of ${json(links)}) { editor.querySelector('.fl-add').click(); rows.lastElementChild.querySelector('.fl-text').value = text; rows.lastElementChild.querySelector('.fl-url').value = url; } rows.dispatchEvent(new Event('input', { bubbles: true })); })()`;
 
 async function upload(runner, selector, file) {
     const { root } = await runner.page.send('DOM.getDocument', { depth: -1 });
@@ -48,17 +47,16 @@ async function readToken(runner) {
         fs.writeFileSync(runner.context.tokenFile, token, { mode: 0o600 });
 }
 
-function addRule(rule) {
-    const values = { Name: rule.Name, ConfigurationPattern: rule.ConfigurationPattern, TeamSize: 4, MinimumMaps: 2, Priority: rule.Priority, CountsForRanking: 'true' };
-    const assignments = Object.entries(values).map(([name, value]) => `${ruleField('form', name)}.value = ${json(String(value))}`).join('; ');
+function saveRule(open, values) {
+    return { eval: `(() => { ${open}; ${fill(values)}; document.querySelector('#rule-edit-modal form').submit(); })()`, navigates: true };
+}
 
-    return { eval: `(() => { const form = ${newRuleForm}; ${assignments}; form.querySelector('[type=submit]').click(); })()`, navigates: true };
+function addRule(rule) {
+    return saveRule(`$('[data-rule-edit=""]').first().click()`, { '#rule-name': rule.Name, '#rule-pattern': rule.ConfigurationPattern, '#rule-team-size': 4, '#rule-minimum-maps': 2, '#rule-priority': rule.Priority, '#rule-counts': 'true' });
 }
 
 function otherRule(name) {
-    const form = `[...document.querySelectorAll('form[action="/admin/game-modes"]')].find(form => form.querySelector('[name=Id]') && document.querySelector('[form="' + form.id + '"][name=ConfigurationPattern]').value === '*')`;
-
-    return { eval: `(() => { const form = ${form}; ${ruleField('form', 'Name')}.value = ${json(name)}; ${ruleField('form', 'CountsForRanking')}.value = 'false'; ${ruleField('form', 'Priority')}.value = '100'; form.querySelector('[type=submit]').click(); })()`, navigates: true };
+    return saveRule(`$('[data-rule-edit][data-rule-pattern="*"]').not('[data-rule-edit=""]').first().click()`, { '#rule-name': name, '#rule-counts': 'false', '#rule-priority': 100 });
 }
 
 function shots(context) {
@@ -116,10 +114,11 @@ function shots(context) {
             name: 'switch-settings',
             user: null,
             before: [
-                { go: '/admin/settings' },
-                fill({ '#Site_FooterLinks': community.footer.join('\n'), '#Site_MetaKeywords': community.keywords, '#Site_GoogleAnalyticsId': community.googleAnalytics }),
+                { go: '/admin/settings?tab=appearance' },
+                footerLinks(community.footer.map(link => link.split(' | '))),
+                fill({ '#Site_MetaKeywords': community.keywords, '#Site_GoogleAnalyticsId': community.googleAnalytics }),
                 submit('#Site_Name'),
-                { wait: '#Site_Name' }
+                { go: '/admin/settings?tab=appearance' }
             ],
             full: true,
             always: true
@@ -153,7 +152,7 @@ function shots(context) {
         {
             name: 'switch-anti-cheat-settings',
             user: null,
-            before: [{ go: '/admin/anti-cheat' }, fill({ '#serviceUrl': community.antiCheatService, '#downloadUrl': community.antiCheatDownload }), submit('#serviceUrl'), { wait: '#serviceUrl' }],
+            before: [{ go: '/admin/anti-cheat?tab=page' }, fill({ '#serviceUrl': community.antiCheatService, '#downloadUrl': community.antiCheatDownload }), submit('#serviceUrl'), { go: '/admin/anti-cheat?tab=page' }],
             full: true,
             always: true
         }

@@ -34,6 +34,8 @@ The **Rules** tab lists the rules, 20 per page, in order of priority. The **Add*
 | Priority | The order in which rules are checked, lowest first. |
 | Counts for the ranking | Whether matches covered by the rule are ranked. |
 
+![Editing a rule](../images/en/admin-game-modes-rule.webp)
+
 For each match, the site takes the **first rule that fits** its configuration and team size, in order of priority:
 
 - if that rule counts for the ranking and the match has at least its minimum maps, the match is **Competitive** and counts;
@@ -47,6 +49,8 @@ A new site has one rule: **4v4**, pattern `*`, team size 4, minimum 2 maps, coun
 - Put the specific rules first (low priority number) and the general ones last.
 - A rule that does **not** count is useful to exclude something a general rule would cover, such as a practice configuration.
 - The list **Configurations seen on your servers** shows, for each configuration name and team size, when it was last seen and which rule applies, or **No rule: not ranked**. Use it to check your rules after a change.
+
+![The Configurations seen on your servers tab](../images/en/admin-game-modes-seen.webp)
 
 ## Examples
 
@@ -69,6 +73,8 @@ The list shows each campaign, 20 per page, with the number of maps and the first
 2. Write the name of the campaign as players know it.
 3. Click **Add a map** for each map and write it with the name the server uses (such as `c1m1_hotel`). The arrows move a map up or down, so the list follows the play order, and the trash button removes it.
 4. Click **Save**.
+
+![Editing a campaign and its maps](../images/en/admin-campaigns-edit.webp)
 
 **Edit**, on each row, opens the same window with the name and the maps of that campaign. **Delete** removes it after a confirmation. The name of the campaign is what the match list and the player pages show.
 

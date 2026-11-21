@@ -32,6 +32,8 @@ El ranking de la comunidad es un segundo ranking, construido a partir de lo que 
 
 **Ver los últimos votos**, encima y debajo de la tabla, abre **Últimos votos**: una tarjeta por voto con quién votó, los dos jugadores lado a lado, el elegido en verde (o los dos en amarillo si están al mismo nivel) y cuándo. Las respuestas "No lo conozco" no aparecen. Hacer clic en un jugador, o en el icono de flechas junto a un nombre en la tabla, muestra solo sus comparaciones. Los filtros **Votos hechos por** y **Votos sobre** aceptan un nombre, o el botón de búsqueda junto a cada uno abre una ventana con los jugadores de la votación, de los más recientes a los más antiguos. Un administrador puede ocultar quién votó.
 
+![Los últimos votos, como los ve un administrador](../images/es/community-votes.webp)
+
 En el teléfono la tabla muestra solo la posición, el jugador y la puntuación. El **?** junto a **Puntuación** abre una ventana que explica cada columna.
 
 Solo aparecen los jugadores con suficientes comparaciones: 5 de forma predeterminada. El jugador también tiene que haber jugado el mínimo de partidas para ser comparado, 1 de forma predeterminada. Los dos mínimos están escritos debajo de la tabla, y la lista se detiene en los primeros 100 jugadores de forma predeterminada. Cuando hay más jugadores en la lista, la tabla muestra 100 por página, con los enlaces de las páginas debajo. **¿Cómo funciona?**, en el recuadro, abre una ventana que explica en cuatro pasos cómo los votos se convierten en la lista, con los números de los ajustes actuales. La página de votación tiene el mismo enlace, también cuando se acabaron los votos del día. Hacer clic en la fila de un jugador abre una ventana con su puntuación, sus comparaciones y una barra de victorias, empates y derrotas, con enlaces a sus comparaciones y su perfil. **Votar ahora**, en el recuadro encima de la tabla, abre la página de votación. El mismo recuadro aparece encima del ranking de estadísticas en la página de inicio; allí el jugador puede cerrarlo, y vuelve después de 7 días. El recuadro solo aparece para quien no inició sesión y para los jugadores que todavía pueden votar hoy; quien ya usó todos los votos del día, no tiene suficientes partidas o está bloqueado no lo ve.
@@ -62,6 +64,8 @@ Debajo de cada nombre la tarjeta muestra hasta 4 nombres más que el jugador us�
 | Nunca se te pregunta por ti mismo, ni dos veces por la misma pareja. | |
 
 Cuando no puedes votar, la página dice por qué: tienes que iniciar sesión, necesitas más partidas (con tu cantidad), usaste todos los votos del día, no queda nadie para que compares o los administradores bloquearon tus votos.
+
+![La página de votación de un votante bloqueado](../images/es/community-vote-blocked.webp)
 
 ## Cómo se elige la pareja
 
@@ -110,7 +114,13 @@ Las puntuaciones se calculan de nuevo con todos los votos en cada voto nuevo. **
 
 **Votantes** lista a todos los que votaron, con su cantidad de votos y su último voto, 20 por página, los que tienen más votos primero; **Ver votos** abre, en una pestaña nueva, los últimos votos de ese votante. **Quitar votos** elimina todos los votos de un votante y reconstruye las puntuaciones sin ellos, por ejemplo cuando alguien votó de mala fe. El campo acepta al votante en cualquier formato de Steam ID o como enlace del perfil, y el botón de búsqueda junto a él abre la [búsqueda de jugadores](administration.es.md#la-búsqueda-de-jugadores).
 
+![La pestaña Votantes](../images/es/admin-community-voters.webp)
+
 **Bloquear** impide votar a un votante, desde el mismo campo o desde la fila del votante. Abre una ventana con dos opciones: **Solo bloquear** mantiene los votos ya dados, y **Bloquear y eliminar los votos** también los elimina y calcula las puntuaciones de nuevo sin ellos. La página de votación de un votante bloqueado pasa a decir que ya no puede votar porque los administradores revisaron las votaciones y bloquearon sus votos, y cualquier respuesta que envíe es rechazada. **Votantes bloqueados** lista a todos los que están bloqueados, desde cuándo, 20 por página, con **Desbloquear** para dejarlos votar de nuevo; los votos eliminados al bloquear no vuelven. **Añadir**, en esa pestaña, abre la ventana **Bloquear a un jugador**: bloquea a cualquiera elegido en el campo o con la búsqueda de jugadores, también a quien todavía no votó, y **Eliminar también los votos que ya dio** borra también sus votos. **Guardar** bloquea al jugador.
+
+![Bloquear a un votante](../images/es/admin-community-block.webp)
+
+![La pestaña Votantes bloqueados](../images/es/admin-community-blocked.webp)
 
 Para eliminar un solo voto, abre **Últimos votos** o las pestañas **Votos recibidos** y **Votos hechos** de la página de un jugador con la sesión iniciada como administrador. Cada voto pasa a tener un botón rojo que lo elimina, y las puntuaciones se calculan de nuevo sin él, y un botón amarillo que bloquea al jugador que lo dio. Los administradores siempre ven quién votó, incluso con **Mostrar quién votó en los últimos votos** desactivado.
 

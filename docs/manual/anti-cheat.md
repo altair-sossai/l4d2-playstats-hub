@@ -45,6 +45,8 @@ The texts of the page are part of the site and are translated with it.
 - **Add**, on the right of the search: type a Steam ID in any format or a profile link, or **Pick a player** from the players of the site. While you type, the page shows the name and the photo of the player, and whether they played here or only have a Steam profile. A player who is already on the list cannot be added again. **Save** adds the player.
 - **Remove**: click a player to see their IDs, their Steam profile, and when and by whom they were added, on the site or in the game. **Remove from the list** asks for a second confirmation.
 
+![The Anti-Cheat page tab](../images/en/admin-anti-cheat-page.webp)
+
 | Setting | What it does |
 |---|---|
 | Anti-Cheat service address | Optional. The page asks this service for the latest version, its size, its date and its checksum. Must start with `https://`. |

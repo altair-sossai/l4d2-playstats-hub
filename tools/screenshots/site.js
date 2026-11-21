@@ -3,6 +3,8 @@ const live = require('./live');
 const { sleep } = require('./cdp');
 
 const phone = 390;
+const adminHeight = 1000;
+const modalHeight = 900;
 
 async function discover(runner) {
     const page = runner.page;
@@ -17,7 +19,11 @@ async function discover(runner) {
     const vars = {};
 
     await page.goto(runner.url('/'), 300);
-    runner.context.livePlayers = await page.evaluate(`Array.from(new Map(Array.from(document.querySelectorAll('table a[href^="/player/"]')).filter(a => a.textContent.trim()).map(a => [a.getAttribute('href').split('/').pop(), a.textContent.trim()])).entries())`);
+    runner.context.livePlayers = await page.evaluate(`(() => {
+        const titles = new Map(Array.from(document.querySelectorAll('table a[href^="/player/"][title]')).map(a => [a.getAttribute('href'), a.getAttribute('title')]));
+
+        return Array.from(new Map(Array.from(document.querySelectorAll('table a[href^="/player/"]')).filter(a => a.textContent.trim()).map(a => [a.getAttribute('href').split('/').pop(), titles.get(a.getAttribute('href')) || a.textContent.trim()])).entries());
+    })()`);
     runner.context.player = runner.context.player || (runner.context.livePlayers[0] || [])[0];
 
     const matches = await links('/matches', /^\/matches\/\d+$/);
@@ -30,7 +36,34 @@ async function discover(runner) {
     vars.voter = runner.context.voter || vars.player;
     vars.banned = runner.context.banned || vars.player;
 
+    await page.goto(runner.url('/admin/community?tab=voters'), 300);
+
+    const voters = await page.evaluate(`Array.from(document.querySelectorAll('[data-block-voter]')).map(button => button.getAttribute('data-block-voter'))`);
+
+    vars.blocked = voters.filter(id => ![vars.player, vars.voter, vars.admin].includes(id)).slice(2, 4);
+    vars.forced = runner.context.livePlayers.slice(10, 17);
+    vars.newAdmin = runner.context.livePlayers[5] || [vars.player, ''];
+
     return vars;
+}
+
+function steam2(id) {
+    const account = BigInt(id) - 76561197960265728n;
+
+    return `STEAM_1:${account % 2n}:${account / 2n}`;
+}
+
+async function blockVoters(runner, players) {
+    await runner.signIn(runner.context.admin);
+    await runner.page.goto(runner.url('/admin/community?tab=voters'), 300);
+    await runner.page.evaluate(`(async () => {
+        const token = $('input[name="__RequestVerificationToken"]').first().val();
+
+        for (const id of ${JSON.stringify(players)})
+            await $.post('/admin/community/voters/block', { communityId: id, removeVotes: 'false', returnUrl: '/admin/community?tab=blocked', __RequestVerificationToken: token });
+
+        return true;
+    })()`);
 }
 
 async function refundPlayer(runner) {
@@ -89,6 +122,12 @@ function shots(vars) {
     const hideFloating = `$('#connect-icon').remove()`;
     const fillBackup = `$('#Enabled').prop('checked', true); $('#Destination_ContainerUrl').prop('checked', true); $('#ContainerUrl').val('https://example.blob.core.windows.net/hub-backups?sv=2025-01-05&sp=racwdl&sig=example'); $('#ConnectionString').attr('placeholder', 'DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...'); $('.alert').each(function () { this.innerHTML = this.innerHTML.split(' ').map(word => word.endsWith('secrets.key.') ? '/etc/l4d2-playstats-hub/secrets.key.' : word).join(' '); })`;
     const firstLiveServer = `location.href = document.querySelector('a[href^="/servers/"]').getAttribute('href')`;
+    const adminPage = (name, path, extra = {}) => ({ name, path, height: adminHeight, full: true, ...extra, before: [hideFloating, ...(extra.before || [])] });
+    const adminModal = (name, path, open, extra = {}) => ({ name, path, height: modalHeight, ...extra, before: [hideFloating, open, { sleep: 800 }, ...(extra.before || [])] });
+    const editFirst = attribute => `$('[${attribute}]').not('[${attribute}=""]').first().click()`;
+    const forcedImport = vars.forced.slice(0, -1).map(([id, name]) => `"${steam2(id)}" "${name.replace(/"/g, '')}"`).join('\n');
+    const [forcedId, forcedName] = vars.forced[vars.forced.length - 1] || [player, 'Player'];
+    const [newAdminId, newAdminName] = vars.newAdmin;
 
     return [
         { name: 'ranking', path: '/', full: true, maxHeight: 1100 },
@@ -120,6 +159,9 @@ function shots(vars) {
         { name: 'player-compare', path: `/player/${player}/${admin}`, full: true, maxHeight: 1080 },
         { name: 'community', path: '/community', full: true, maxHeight: 1000 },
         { name: 'community-vote', user: vars.voter, path: '/community/vote', full: true, maxHeight: 640 },
+        { name: 'community-votes', path: '/community/votes', before: [hideFloating], full: true, maxHeight: 1200 },
+        { before: [{ run: runner => blockVoters(runner, vars.blocked) }], always: true },
+        { name: 'community-vote-blocked', user: vars.blocked[0], path: '/community/vote', full: true, maxHeight: 640 },
         { name: 'anti-cheat', path: '/anti-cheat', full: true, maxHeight: 1500 },
         { name: 'ingame-ranking', path: `/ingame?steamid=${player}`, width: 900, height: 450 },
         { name: 'ingame-player', path: `/ingame/player?steamid=${player}`, width: 900, height: 450 },
@@ -132,32 +174,56 @@ function shots(vars) {
         { name: 'phone-server-live', width: phone, path: '/servers', before: [{ run: feedLive }, { go: '/servers' }, { eval: firstLiveServer, navigates: true, settle: 2500 }], full: true, maxHeight: 1400 },
         { name: 'phone-skins', width: phone, user: player, path: '/skins' },
         { name: 'admin-menu', path: '/admin', before: [hideFloating], clip: '.navbar', padding: 0 },
-        { name: 'admin-overview', path: '/admin', full: true },
-        { name: 'admin-servers', path: '/admin/servers', full: true },
-        { name: 'admin-server', path: vars.servers[0], full: true },
-        { name: 'admin-modules', path: '/admin/modules', full: true },
-        { name: 'admin-settings', path: '/admin/settings', full: true },
-        { name: 'admin-game-modes', path: '/admin/game-modes', full: true, maxHeight: 1400 },
-        { name: 'admin-campaigns', path: '/admin/campaigns', full: true, maxHeight: 1100 },
-        { name: 'admin-administrators', path: '/admin/administrators', full: true },
-        { name: 'admin-skins-purchases', path: '/admin/skins', full: true, maxHeight: 1100 },
-        { name: 'admin-skins-catalog', path: '/admin/skins/catalog', full: true },
-        { name: 'admin-skins-settings', path: '/admin/skins/settings', full: true },
-        { name: 'admin-skins-prices', path: '/admin/skins/prices', full: true, maxHeight: 1100 },
-        { name: 'admin-community', path: '/admin/community', full: true, maxHeight: 1400 },
-        {
-            name: 'admin-chat-bans-add',
-            path: '/admin/chat-bans',
-            height: 900,
-            before: [`$('.cb-add').click()`, { sleep: 800 }, `$('#cb-add-player').val(${JSON.stringify(vars.banned)}).trigger('input'); $('#cb-add-reason').val('Spam in the chat during matches')`, { sleep: 600 }],
+        adminPage('admin-overview', '/admin'),
+        adminPage('admin-servers', '/admin/servers'),
+        adminModal('admin-servers-add', '/admin/servers', `$('#server-add-modal').modal('show')`, { before: [`$('#server-add-modal #Name').val('L4D2 Competitive #3'); $('#server-add-modal #Address').val('203.0.113.10:27017')`] }),
+        adminPage('admin-servers-live', '/admin/servers?tab=live'),
+        adminPage('admin-server', vars.servers[0]),
+        adminPage('admin-modules', '/admin/modules'),
+        adminPage('admin-settings', '/admin/settings'),
+        adminPage('admin-settings-appearance', '/admin/settings?tab=appearance'),
+        adminPage('admin-settings-ranking', '/admin/settings?tab=ranking'),
+        adminPage('admin-game-modes', '/admin/game-modes', { maxHeight: 1400 }),
+        adminModal('admin-game-modes-rule', '/admin/game-modes', editFirst('data-rule-edit')),
+        adminPage('admin-game-modes-seen', '/admin/game-modes?tab=seen', { maxHeight: 1400 }),
+        adminPage('admin-campaigns', '/admin/campaigns', { maxHeight: 1100 }),
+        adminModal('admin-campaigns-edit', '/admin/campaigns', editFirst('data-campaign-edit')),
+        adminModal('admin-administrators-add', '/admin/administrators', `$('[data-admin-edit=""]').first().click()`, {
+            before: [`$('#communityId').val(${JSON.stringify(newAdminId)}); $('#name').val(${JSON.stringify(newAdminName)})`],
+            after: [{ eval: `$('#admin-edit-modal form').submit()`, navigates: true }]
+        }),
+        adminPage('admin-administrators', '/admin/administrators'),
+        adminPage('admin-skins-purchases', '/admin/skins', { maxHeight: 1100 }),
+        adminPage('admin-skins-catalog', '/admin/skins/catalog'),
+        adminPage('admin-skins-settings', '/admin/skins/settings'),
+        adminPage('admin-skins-prices', '/admin/skins/prices', { maxHeight: 1100 }),
+        adminPage('admin-community', '/admin/community', { maxHeight: 1400 }),
+        adminPage('admin-community-voters', '/admin/community?tab=voters', { maxHeight: 1500 }),
+        adminModal('admin-community-block', '/admin/community?tab=voters', `$('[data-block-voter]').first().click()`),
+        adminPage('admin-community-blocked', '/admin/community?tab=blocked'),
+        adminModal('admin-chat-bans-add', '/admin/chat-bans', `$('.cb-add').click()`, {
+            before: [`$('#cb-add-player').val(${JSON.stringify(vars.banned)}).trigger('input'); $('#cb-add-reason').val('Spam in the chat during matches')`, { sleep: 600 }],
             after: [`$('.cb-add-save').click()`, { sleep: 1500 }]
-        },
-        { name: 'admin-chat-bans', path: '/admin/chat-bans', full: true },
-        { name: 'admin-remote-commands', path: '/admin/remote-commands', full: true },
-        { name: 'admin-player-connections', path: `/admin/player-connections?communityId=${player}`, full: true },
-        { name: 'admin-anti-cheat', path: '/admin/anti-cheat', before: [{ run: fillAntiCheat }, { go: '/admin/anti-cheat' }, hideFloating], full: true },
-        { name: 'admin-backup', path: '/admin/backup', before: [hideFloating, fillBackup], full: true },
-        { name: 'admin-phone-menu', width: phone, path: '/admin/servers', before: [`$('.admin-menu-toggle').click()`, { sleep: 800 }], full: true, maxHeight: 1100 }
+        }),
+        adminPage('admin-chat-bans', '/admin/chat-bans'),
+        adminPage('admin-chat-bans-limits', '/admin/chat-bans?tab=limits'),
+        adminPage('admin-remote-commands', '/admin/remote-commands'),
+        adminPage('admin-player-connections', `/admin/player-connections?communityId=${player}`),
+        adminPage('admin-anti-cheat', '/admin/anti-cheat', { before: [{ run: fillAntiCheat }, { go: '/admin/anti-cheat' }, hideFloating] }),
+        adminPage('admin-anti-cheat-page', '/admin/anti-cheat?tab=page'),
+        adminPage('admin-backup', '/admin/backup', { before: [fillBackup] }),
+        adminPage('admin-backup-storage', '/admin/backup?tab=storage', { before: [fillBackup] }),
+        adminPage('admin-patents', '/admin/patents'),
+        { name: 'admin-phone-menu', width: phone, path: '/admin/servers', before: [`$('.admin-menu-toggle').click()`, { sleep: 800 }], full: true, maxHeight: 1100 },
+        adminModal('admin-forced-names-import', '/admin/forced-names', `$('#fn-import-modal').modal('show')`, {
+            before: [`$('#fn-import-modal textarea').val(${JSON.stringify(forcedImport)})`],
+            after: [{ eval: `$('#fn-import-modal form').submit()`, navigates: true }]
+        }),
+        adminModal('admin-forced-names-add', '/admin/forced-names', `$('[data-fn-edit=""]').first().click()`, {
+            before: [`$('#fn-player').val(${JSON.stringify(forcedId)}); $('#fn-name').val(${JSON.stringify(forcedName)})`],
+            after: [{ eval: `$('#fn-edit-modal form').submit()`, navigates: true }]
+        }),
+        adminPage('admin-forced-names', '/admin/forced-names')
     ];
 }
 

@@ -67,7 +67,11 @@ A aba **Servidores de jogo** lista os servidores, 20 por página, com o identifi
 | Endereço em que os jogadores se conectam (opcional) | Mostrado na página do servidor ao vivo com um botão de copiar, e usado pelo botão `connect`. Por exemplo `play.example.com:27015` ou um IP e porta. |
 | Endereço alternativo, como um nome DNS (opcional) | Mostrado ao lado do endereço, como uma segunda forma de conectar. |
 
+![Adicionando um servidor de jogo](../images/pt/admin-servers-add.webp)
+
 A aba **Página do servidor ao vivo** define para todos os servidores, com **Salvar** no fim: o atraso da página ao vivo (15 segundos), de quanto em quanto tempo uma página ao vivo aberta se atualiza (2600 ms), os segundos sem sinal até o servidor aparecer offline (90) e os minutos que um comando remoto espera o servidor (5).
+
+![A aba Página do servidor ao vivo](../images/pt/admin-servers-live.webp)
 
 Depois de **Salvar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
 
@@ -125,6 +129,8 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | Palavras-chave para buscadores (opcional) | Separadas por vírgulas. Elas vão na tag de palavras-chave de todas as páginas. |
 | ID do Google Analytics (opcional) | Com um ID como `G-XXXXXXXXXX`, todas as páginas carregam o script do Google Analytics. Vazio não carrega nada. |
 
+![A aba Aparência, com os links do rodapé](../images/pt/admin-settings-appearance.webp)
+
 ### Temporadas
 
 | Configuração | O que faz |
@@ -149,6 +155,8 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | Horas sem arquivos que separam duas partidas | 6 | Arquivos de um servidor de jogo mais distantes que isso pertencem a partidas diferentes. Vale para as novas partidas, ou para todas depois de **Reprocessar todas as partidas**. |
 | Manter partidas jogadas em mapas que não estão na lista de campanhas | Ligado | Veja [Partidas > Como os arquivos viram partidas](matches.pt.md#como-os-arquivos-viram-partidas). |
 
+![A aba Pontos do ranking](../images/pt/admin-settings-ranking.webp)
+
 Os pontos valem para todas as temporadas na hora, inclusive as passadas, porque os rankings são calculados a partir das partidas. A opção sobre mapas desconhecidos vale para as novas partidas, ou para todas depois de **Reprocessar todas as partidas**.
 
 O [Ranking](ranking.pt.md#como-a-experiência-é-calculada) explica como esses valores são usados.
@@ -167,6 +175,8 @@ Esta configuração vale só para o site. O plugin `l4d2_gameinfo_sync` continua
 ![Os administradores](../images/pt/admin-administrators.webp)
 
 A lista mostra todos os administradores e desde quando, 20 por página. O botão **Adicionar**, acima da lista, à direita, abre uma janela que pede a conta, como SteamID64, como Steam ID no formato `STEAM_1:0:123` ou `[U:1:123]`, ou pelo link do perfil, e, se quiser, um nome; **Salvar** a adiciona. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Editar**, em cada linha, abre a mesma janela para mudar o nome. **Remover** tira os direitos depois de uma confirmação. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
+
+![Adicionando um administrador](../images/pt/admin-administrators-add.webp)
 
 Se você perder o acesso a todas as contas de administrador, adicione uma pela máquina que roda o site:
 
@@ -195,6 +205,8 @@ O site envia um zip dos dados dele para um contêiner do Azure Storage a cada al
 | A cada, em horas | De 1 a 168. 8 por padrão. |
 | Backups a manter | De 1 a 1000. 30 por padrão. Depois de cada backup, os arquivos mais antigos além desse número são apagados. |
 | Prefixo do nome do arquivo | O começo do nome dos arquivos, `hub-backup` por padrão. Só os arquivos com esse prefixo são contados e apagados. |
+
+![A aba Azure Storage](../images/pt/admin-backup-storage.webp)
 
 O endereço e a string de conexão são segredos. Depois de salvos, a página só os mostra mascarados, como `https://<conta>.blob.core.windows.net/<contêiner>?••••••••`; deixe o campo vazio para manter o que está salvo, ou digite um novo para trocar. Eles também nunca vão para o log.
 

@@ -45,6 +45,8 @@ Os textos da página fazem parte do site e são traduzidos junto com ele.
 - **Adicionar**, à direita da busca: digite um Steam ID em qualquer formato ou um link de perfil, ou use **Escolher jogador** entre os jogadores do site. Enquanto você digita, a página mostra o nome e a foto do jogador, e se ele jogou aqui ou só tem um perfil Steam. Um jogador que já está na lista não pode ser adicionado de novo. **Salvar** adiciona o jogador.
 - **Remover**: clique em um jogador para ver os IDs, o perfil Steam, e quando e por quem ele foi adicionado, no site ou no jogo. **Remover da lista** pede uma segunda confirmação.
 
+![A aba Página do Anti-Cheat](../images/pt/admin-anti-cheat-page.webp)
+
 | Configuração | O que faz |
 |---|---|
 | Endereço do serviço do Anti-Cheat | Opcional. A página pede a esse serviço a versão mais recente, o tamanho, a data e o checksum. Precisa começar com `https://`. |

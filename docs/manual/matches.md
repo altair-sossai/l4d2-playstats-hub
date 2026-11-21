@@ -44,6 +44,8 @@ The details page has:
 - **Map results**: one row per map with the start, the end, the time it took and the score. Click a map to open its statistics;
 - one table per team and side: team A and team B as survivors, then as infected.
 
+![The map results](../images/en/match-map-results.webp)
+
 ![Statistics of one team playing as survivors](../images/en/match-team-statistics.webp)
 
 The survivor tables show, for each player, the value and the share of the team (Team %): SI and CI MVP awards, FF LVP awards, deaths, times incapacitated, damage taken from special infected, commons killed, special infected killed, damage dealt to special infected, to the Tank and to the Witch, Tank rocks taken, skeets, melee skeets, levels, crowns and friendly fire. The infected tables show the damage done to survivors, the damage done as Tank, the spitter damage and the pounce damage. The ⓘ icons explain the less obvious columns.

@@ -34,6 +34,8 @@ La pestaña **Reglas** lista las reglas, 20 por página, en orden de prioridad. 
 | Prioridad | El orden en que se revisan las reglas, de menor a mayor. |
 | Cuenta para el ranking | Si las partidas que cubre la regla entran en el ranking. |
 
+![Editar una regla](../images/es/admin-game-modes-rule.webp)
+
 Para cada partida, el sitio toma la **primera regla que encaja** con su configuración y su tamaño de equipo, en orden de prioridad:
 
 - si esa regla cuenta para el ranking y la partida tiene al menos su mínimo de mapas, la partida es **Competitiva** y cuenta;
@@ -47,6 +49,8 @@ Un sitio nuevo tiene una regla: **4v4**, patrón `*`, tamaño de equipo 4, míni
 - Pon primero las reglas específicas (número de prioridad bajo) y al final las generales.
 - Una regla que **no** cuenta sirve para excluir algo que una regla general cubriría, como una configuración de práctica.
 - La lista **Configuraciones vistas en tus servidores** muestra, para cada nombre de configuración y tamaño de equipo, cuándo se vio por última vez y qué regla se aplica, o **Sin regla: fuera del ranking**. Úsala para revisar tus reglas después de un cambio.
+
+![La pestaña Configuraciones vistas en tus servidores](../images/es/admin-game-modes-seen.webp)
 
 ## Ejemplos
 
@@ -69,6 +73,8 @@ La lista muestra cada campaña, 20 por página, con la cantidad de mapas y el pr
 2. Escribe el nombre de la campaña tal como lo conocen los jugadores.
 3. Haz clic en **Añadir un mapa** por cada mapa y escríbelo con el nombre que usa el servidor (como `c1m1_hotel`). Las flechas suben o bajan un mapa, para que la lista siga el orden de juego, y el botón de la papelera lo quita.
 4. Haz clic en **Guardar**.
+
+![Editar una campaña y sus mapas](../images/es/admin-campaigns-edit.webp)
 
 **Editar**, en cada fila, abre la misma ventana con el nombre y los mapas de esa campaña. **Eliminar** la borra después de una confirmación. El nombre de la campaña es lo que muestran la lista de partidas y las páginas de los jugadores.
 

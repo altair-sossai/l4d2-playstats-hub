@@ -44,6 +44,8 @@ La página de detalles tiene:
 - **Resultados del mapa**: una fila por mapa con el inicio, el fin, el tiempo que llevó y el marcador. Haz clic en un mapa para abrir sus estadísticas;
 - una tabla por equipo y lado: el equipo A y el equipo B como supervivientes, y después como infectados.
 
+![Los resultados de los mapas](../images/es/match-map-results.webp)
+
 ![Estadísticas de un equipo jugando como supervivientes](../images/es/match-team-statistics.webp)
 
 Las tablas de supervivientes muestran, para cada jugador, el valor y la parte del equipo (% del equipo): premios de MVP de SI y de CI, premios de LVP de FF, muertes, veces incapacitado, daño recibido de infectados especiales, comunes eliminados, infectados especiales eliminados, daño hecho a infectados especiales, al Tank y a la Bruja, rocas del Tank recibidas, skeets, melee skeets, levels, crowns y fuego amigo. Las tablas de infectados muestran el daño hecho a los supervivientes, el daño hecho como Tank, el daño de spitter y el daño de pounce. Los íconos ⓘ explican las columnas menos obvias.
