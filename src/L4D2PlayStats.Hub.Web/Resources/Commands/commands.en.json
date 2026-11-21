@@ -1,59 +1,30 @@
 {
   "sections": [
     {
-      "id": "typing",
-      "icon": "console",
-      "title": "How to type commands",
-      "intro": "Commands are typed in the game chat (Y for everyone, U for your team) or in the console (~). These basics work for every command on this page.",
+      "id": "anticheat",
+      "icon": "lock",
+      "title": "Anti-Cheat",
+      "intro": "Some players, or everyone, must run the Anti-Cheat to play. Download it on the Anti-Cheat page of this site.",
+      "module": "AntiCheat",
       "commands": [
         {
-          "id": "typing-chat",
-          "names": ["!command"],
+          "id": "anticheat-check",
+          "names": ["!aac"],
           "who": ["Everyone"],
-          "description": "Start the command with an exclamation mark in the chat. The command runs and everyone sees what you typed.",
-          "examples": [{ "code": "!ready", "text": "Marks you as ready." }]
+          "description": "Tells you, privately, whether you must run the Anti-Cheat and whether yours is working, with the download link."
         },
         {
-          "id": "typing-silent",
-          "names": ["/command"],
-          "who": ["Everyone"],
-          "description": "The same command with a slash instead runs silently: nothing of what you typed shows in the chat.",
-          "examples": [{ "code": "/ready" }]
-        },
-        {
-          "id": "typing-console",
-          "names": ["sm_command"],
-          "who": ["Everyone"],
-          "description": "In the console (~), type the command with `sm_` in front instead of the exclamation mark. Handy for binding a command to a key.",
-          "examples": [{ "code": "sm_ready" }, { "code": "bind F3 sm_spectate", "text": "F3 moves you to spectators." }]
-        },
-        {
-          "id": "typing-quotes",
-          "title": "Names with spaces",
-          "who": ["Everyone"],
-          "description": "When a player name has spaces or symbols, put it between double quotes so the server reads it as one name.",
-          "examples": [{ "code": "!mix \"(LoD) Adeilson\" Feeh", "text": "(LoD) Adeilson and Feeh are the captains." }]
-        },
-        {
-          "id": "typing-keys",
-          "title": "Ready keys",
-          "names": ["F1", "F2"],
-          "who": ["Everyone"],
-          "description": "When no vote is running, F1 marks you as ready and F2 takes it back. While a vote is running, the same keys answer Yes and No."
-        },
-        {
-          "id": "typing-help",
-          "names": ["!help"],
-          "who": ["Everyone"],
-          "description": "Lists the commands you are allowed to use on the server, in the console."
-        },
-        {
-          "id": "typing-admins",
-          "title": "Talk to the admins",
-          "names": ["@"],
-          "who": ["Everyone"],
-          "description": "In the team chat (U), start the message with `@` and it goes to the admins who are online, even if they are in another team.",
-          "examples": [{ "code": "@ a player is AFK and blocking the game" }]
+          "id": "anticheat-vote",
+          "names": ["!aac vote"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Votes to require the Anti-Cheat for everyone in this match.",
+          "notes": [
+            "Only in the ready-up of the first round of the first map, with both teams full and no mix running.",
+            "The vote lasts 20 s and passes with more than half of the team players.",
+            "If it passes, it stays on for the whole match.",
+            "After a failed vote, wait 60 s before trying again."
+          ]
         }
       ]
     },
@@ -134,37 +105,11 @@
       ]
     },
     {
-      "id": "match",
-      "icon": "flag",
-      "title": "Match, configs and votes",
-      "intro": "Load a competitive config, change the campaign, give up a lost game or set where the bosses spawn. Most of these start a vote.",
+      "id": "endgame",
+      "icon": "road",
+      "title": "Campaigns and ending a game",
+      "intro": "Choose the next campaign or end a game that is already decided.",
       "commands": [
-        {
-          "id": "match-load",
-          "names": ["!match"],
-          "syntax": ["!match", "!match <config>"],
-          "who": ["Team players"],
-          "description": "Votes to load a match config. Without a name, a menu with the configs opens.",
-          "examples": [{ "code": "!match zonemod", "text": "Votes to load ZoneMod." }],
-          "notes": [
-            "Spectators cannot start it. The vote lasts 20 s, and it cannot start while players are still connecting.",
-            "Common configs: zonemod, zoneretro, zm3v3, zm2v2, zm1v1, neomod and others."
-          ]
-        },
-        {
-          "id": "match-change",
-          "names": ["!chmatch"],
-          "syntax": ["!chmatch <config>"],
-          "who": ["Team players"],
-          "description": "Votes to switch the loaded config to another one. Same rules as `!match`.",
-          "examples": [{ "code": "!chmatch zm3v3" }]
-        },
-        {
-          "id": "match-reset",
-          "names": ["!rmatch"],
-          "who": ["Team players"],
-          "description": "Votes to unload the current config. Same rules as `!match`."
-        },
         {
           "id": "match-campaign",
           "names": ["!votecamp", "!votecampaign"],
@@ -194,6 +139,221 @@
           "who": ["Everyone"],
           "when": ["Automatic"],
           "description": "On the 4th map, 2nd round, when the score difference is 15 points or more, the server asks everyone by itself whether the game is decided or should go on."
+        }
+      ]
+    },
+    {
+      "id": "listen",
+      "icon": "headphones",
+      "title": "Voice while spectating",
+      "intro": "Choose whose voice you hear while you watch.",
+      "commands": [
+        {
+          "id": "teams-hear",
+          "names": ["!hear"],
+          "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
+          "who": ["Spectators"],
+          "description": "Chooses whose voice you hear while you watch. Without an option, a menu opens.",
+          "examples": [{ "code": "!hear infected", "text": "You hear only the Infected team." }],
+          "notes": ["Short forms of the options also work.", "It has no effect while all-talk is on."]
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "icon": "globe",
+      "title": "Site, ranking and skins",
+      "intro": "The game server talks to this site: open the ranking without leaving the game and use the skins you bought.",
+      "commands": [
+        {
+          "id": "site-ranking",
+          "names": ["!ranking"],
+          "who": ["Everyone"],
+          "module": "Ranking",
+          "description": "Opens the ranking of this site inside the game.",
+          "notes": ["It also opens by itself 60 s after you join a new game.", "A reminder shows in the chat every 200 s."]
+        },
+        {
+          "id": "site-skins",
+          "names": ["!skin", "!skins"],
+          "syntax": ["!skin", "!skin <id>", "!skin next [weapon]", "!skin prev [weapon]", "!skin default [weapon]", "!skin status"],
+          "who": ["Survivors"],
+          "when": ["Ready-up only"],
+          "module": "SkinShop",
+          "description": "Equips the weapon skins you own. Buy them on the Skins page of this site with the stars you earn as MVP. Alone, `!skin` shows the help.",
+          "examples": [
+            { "code": "!skin next", "text": "The next of your skins for the weapon in your hands." },
+            { "code": "!skin default pump", "text": "The pump shotgun goes back to the default look." },
+            { "code": "!skin status", "text": "Your stars and skins." }
+          ],
+          "notes": [
+            "Works only while the server has the skins turned on.",
+            "You must own the skin.",
+            "Weapons: smg, mac, mp5, pump, chrome, magnum (or deagle), axe, katana, machete, bat, cricket, guitar, crowbar, golf, pan.",
+            "Downloads of server content must be allowed in your game. A skin you buy shows up from the next map change."
+          ]
+        },
+        {
+          "id": "site-patents",
+          "title": "Patents above the heads",
+          "who": ["Everyone"],
+          "when": ["Automatic"],
+          "module": "Ranking",
+          "description": "When the server turns them on, each player's patent (rank) shows above their head. There is no command for it."
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "icon": "alert",
+      "title": "Automatic server rules",
+      "intro": "No command for these, but every player should know them.",
+      "commands": [
+        {
+          "id": "rules-ff",
+          "title": "Friendly fire control",
+          "when": ["Automatic"],
+          "description": "Shooting your teammates over and over gets you kicked and pauses the game. Damage is not counted when the teammate is low on health, incapacitated or pinned."
+        },
+        {
+          "id": "rules-afk",
+          "title": "AFK in the ready-up",
+          "when": ["Automatic"],
+          "description": "A player who is AFK in the ready-up goes to the spectators: after 180 s in a new game, or 360 s in a game in progress. This only happens when someone is waiting for a slot."
+        },
+        {
+          "id": "rules-tank-spec",
+          "title": "No spectating while the Tank is alive",
+          "when": ["Automatic"],
+          "description": "While the Tank is alive you cannot go to the spectators, unless the game is paused. The server reminds you: \"use !pause to change team\"."
+        },
+        {
+          "id": "rules-damage-spec",
+          "title": "No spectating right after damage",
+          "when": ["Automatic"],
+          "description": "If you took damage in the last 5 s, you cannot go to the spectators."
+        },
+        {
+          "id": "rules-lerp",
+          "title": "Invalid lerp",
+          "when": ["Automatic"],
+          "description": "If your lerp is out of the allowed range, the server warns you. Paste this line in the console (~) to fix it:",
+          "examples": [{ "code": "cl_interp 0; cl_interp_ratio 0; rate 100000; cl_cmdrate 100; cl_updaterate 100" }]
+        },
+        {
+          "id": "rules-names",
+          "title": "Fixed names",
+          "when": ["Automatic"],
+          "description": "Some players have a name set by the admins, and the server keeps that name in the game."
+        },
+        {
+          "id": "rules-alltalk",
+          "title": "All-talk in the first ready-up",
+          "when": ["Automatic"],
+          "description": "During the first ready-up of a game, everyone hears everyone, so the teams can be arranged."
+        },
+        {
+          "id": "rules-tank-warning",
+          "title": "\"Tank in N%\"",
+          "when": ["Automatic"],
+          "description": "The chat warns when the Tank is getting close, with the % of the map where it spawns."
+        },
+        {
+          "id": "rules-spoof",
+          "title": "No fake chat",
+          "when": ["Automatic"],
+          "description": "Messages made to look like they came from the server or from another player are blocked."
+        }
+      ]
+    },
+    {
+      "id": "typing",
+      "icon": "console",
+      "title": "How to type commands",
+      "intro": "Commands are typed in the game chat (Y for everyone, U for your team) or in the console (~). These basics work for every command on this page.",
+      "commands": [
+        {
+          "id": "typing-chat",
+          "names": ["!command"],
+          "who": ["Everyone"],
+          "description": "Start the command with an exclamation mark in the chat. The command runs and everyone sees what you typed.",
+          "examples": [{ "code": "!ready", "text": "Marks you as ready." }]
+        },
+        {
+          "id": "typing-silent",
+          "names": ["/command"],
+          "who": ["Everyone"],
+          "description": "The same command with a slash instead runs silently: nothing of what you typed shows in the chat.",
+          "examples": [{ "code": "/ready" }]
+        },
+        {
+          "id": "typing-console",
+          "names": ["sm_command"],
+          "who": ["Everyone"],
+          "description": "In the console (~), type the command with `sm_` in front instead of the exclamation mark. Handy for binding a command to a key.",
+          "examples": [{ "code": "sm_ready" }, { "code": "bind F3 sm_spectate", "text": "F3 moves you to spectators." }]
+        },
+        {
+          "id": "typing-quotes",
+          "title": "Names with spaces",
+          "who": ["Everyone"],
+          "description": "When a player name has spaces or symbols, put it between double quotes so the server reads it as one name.",
+          "examples": [{ "code": "!mix \"(LoD) Adeilson\" Feeh", "text": "(LoD) Adeilson and Feeh are the captains." }]
+        },
+        {
+          "id": "typing-keys",
+          "title": "Ready keys",
+          "names": ["F1", "F2"],
+          "who": ["Everyone"],
+          "description": "When no vote is running, F1 marks you as ready and F2 takes it back. While a vote is running, the same keys answer Yes and No."
+        },
+        {
+          "id": "typing-help",
+          "names": ["!help"],
+          "who": ["Everyone"],
+          "description": "Lists the commands you are allowed to use on the server, in the console."
+        },
+        {
+          "id": "typing-admins",
+          "title": "Talk to the admins",
+          "names": ["@"],
+          "who": ["Everyone"],
+          "description": "In the team chat (U), start the message with `@` and it goes to the admins who are online, even if they are in another team.",
+          "examples": [{ "code": "@ a player is AFK and blocking the game" }]
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "icon": "flag",
+      "title": "Match, configs and votes",
+      "intro": "Load a competitive config, set where the bosses spawn or set the score. Most of these start a vote.",
+      "commands": [
+        {
+          "id": "match-load",
+          "names": ["!match"],
+          "syntax": ["!match", "!match <config>"],
+          "who": ["Team players"],
+          "description": "Votes to load a match config. Without a name, a menu with the configs opens.",
+          "examples": [{ "code": "!match zonemod", "text": "Votes to load ZoneMod." }],
+          "notes": [
+            "Spectators cannot start it. The vote lasts 20 s, and it cannot start while players are still connecting.",
+            "Common configs: zonemod, zoneretro, zm3v3, zm2v2, zm1v1, neomod and others."
+          ]
+        },
+        {
+          "id": "match-change",
+          "names": ["!chmatch"],
+          "syntax": ["!chmatch <config>"],
+          "who": ["Team players"],
+          "description": "Votes to switch the loaded config to another one. Same rules as `!match`.",
+          "examples": [{ "code": "!chmatch zm3v3" }]
+        },
+        {
+          "id": "match-reset",
+          "names": ["!rmatch"],
+          "who": ["Team players"],
+          "description": "Votes to unload the current config. Same rules as `!match`."
         },
         {
           "id": "match-boss",
@@ -309,7 +469,7 @@
       "id": "teams",
       "icon": "transfer",
       "title": "Teams and spectators",
-      "intro": "Change team, watch the game and choose what you hear as a spectator.",
+      "intro": "Change team and watch the game.",
       "commands": [
         {
           "id": "teams-spectate",
@@ -329,15 +489,6 @@
           "syntax": ["jointeam 2", "jointeam 3"],
           "who": ["Spectators"],
           "description": "Press M to open the team menu, or type in the console `jointeam 2` for the Survivors or `jointeam 3` for the Infected."
-        },
-        {
-          "id": "teams-hear",
-          "names": ["!hear"],
-          "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
-          "who": ["Spectators"],
-          "description": "Chooses whose voice you hear while you watch. Without an option, a menu opens.",
-          "examples": [{ "code": "!hear infected", "text": "You hear only the Infected team." }],
-          "notes": ["Short forms of the options also work.", "It has no effect while all-talk is on."]
         },
         {
           "id": "teams-cast",
@@ -499,78 +650,6 @@
       ]
     },
     {
-      "id": "site",
-      "icon": "globe",
-      "title": "Site, ranking and skins",
-      "intro": "The game server talks to this site: open the ranking without leaving the game and use the skins you bought.",
-      "commands": [
-        {
-          "id": "site-ranking",
-          "names": ["!ranking"],
-          "who": ["Everyone"],
-          "module": "Ranking",
-          "description": "Opens the ranking of this site inside the game.",
-          "notes": ["It also opens by itself 60 s after you join a new game.", "A reminder shows in the chat every 200 s."]
-        },
-        {
-          "id": "site-skins",
-          "names": ["!skin", "!skins"],
-          "syntax": ["!skin", "!skin <id>", "!skin next [weapon]", "!skin prev [weapon]", "!skin default [weapon]", "!skin status"],
-          "who": ["Survivors"],
-          "when": ["Ready-up only"],
-          "module": "SkinShop",
-          "description": "Equips the weapon skins you own. Buy them on the Skins page of this site with the stars you earn as MVP. Alone, `!skin` shows the help.",
-          "examples": [
-            { "code": "!skin next", "text": "The next of your skins for the weapon in your hands." },
-            { "code": "!skin default pump", "text": "The pump shotgun goes back to the default look." },
-            { "code": "!skin status", "text": "Your stars and skins." }
-          ],
-          "notes": [
-            "Works only while the server has the skins turned on.",
-            "You must own the skin.",
-            "Weapons: smg, mac, mp5, pump, chrome, magnum (or deagle), axe, katana, machete, bat, cricket, guitar, crowbar, golf, pan.",
-            "Downloads of server content must be allowed in your game. A skin you buy shows up from the next map change."
-          ]
-        },
-        {
-          "id": "site-patents",
-          "title": "Patents above the heads",
-          "who": ["Everyone"],
-          "when": ["Automatic"],
-          "module": "Ranking",
-          "description": "When the server turns them on, each player's patent (rank) shows above their head. There is no command for it."
-        }
-      ]
-    },
-    {
-      "id": "anticheat",
-      "icon": "lock",
-      "title": "Anti-Cheat",
-      "intro": "Some players, or everyone, must run the Anti-Cheat to play. Download it on the Anti-Cheat page of this site.",
-      "module": "AntiCheat",
-      "commands": [
-        {
-          "id": "anticheat-check",
-          "names": ["!aac"],
-          "who": ["Everyone"],
-          "description": "Tells you, privately, whether you must run the Anti-Cheat and whether yours is working, with the download link."
-        },
-        {
-          "id": "anticheat-vote",
-          "names": ["!aac vote"],
-          "who": ["Team players"],
-          "when": ["Ready-up only"],
-          "description": "Votes to require the Anti-Cheat for everyone in this match.",
-          "notes": [
-            "Only in the ready-up of the first round of the first map, with both teams full and no mix running.",
-            "The vote lasts 20 s and passes with more than half of the team players.",
-            "If it passes, it stays on for the whole match.",
-            "After a failed vote, wait 60 s before trying again."
-          ]
-        }
-      ]
-    },
-    {
       "id": "fun",
       "icon": "sunglasses",
       "title": "Fun",
@@ -605,60 +684,11 @@
       ]
     },
     {
-      "id": "rules",
-      "icon": "alert",
-      "title": "Automatic server rules",
-      "intro": "No command for these, but every player should know them.",
+      "id": "more-rules",
+      "icon": "eye-open",
+      "title": "Other server rules",
+      "intro": "Smaller things the server does by itself.",
       "commands": [
-        {
-          "id": "rules-ff",
-          "title": "Friendly fire control",
-          "when": ["Automatic"],
-          "description": "Shooting your teammates over and over gets you kicked and pauses the game. Damage is not counted when the teammate is low on health, incapacitated or pinned."
-        },
-        {
-          "id": "rules-afk",
-          "title": "AFK in the ready-up",
-          "when": ["Automatic"],
-          "description": "A player who is AFK in the ready-up goes to the spectators: after 180 s in a new game, or 360 s in a game in progress. This only happens when someone is waiting for a slot."
-        },
-        {
-          "id": "rules-tank-spec",
-          "title": "No spectating while the Tank is alive",
-          "when": ["Automatic"],
-          "description": "While the Tank is alive you cannot go to the spectators, unless the game is paused. The server reminds you: \"use !pause to change team\"."
-        },
-        {
-          "id": "rules-damage-spec",
-          "title": "No spectating right after damage",
-          "when": ["Automatic"],
-          "description": "If you took damage in the last 5 s, you cannot go to the spectators."
-        },
-        {
-          "id": "rules-lerp",
-          "title": "Invalid lerp",
-          "when": ["Automatic"],
-          "description": "If your lerp is out of the allowed range, the server warns you. Paste this line in the console (~) to fix it:",
-          "examples": [{ "code": "cl_interp 0; cl_interp_ratio 0; rate 100000; cl_cmdrate 100; cl_updaterate 100" }]
-        },
-        {
-          "id": "rules-names",
-          "title": "Fixed names",
-          "when": ["Automatic"],
-          "description": "Some players have a name set by the admins, and the server keeps that name in the game."
-        },
-        {
-          "id": "rules-alltalk",
-          "title": "All-talk in the first ready-up",
-          "when": ["Automatic"],
-          "description": "During the first ready-up of a game, everyone hears everyone, so the teams can be arranged."
-        },
-        {
-          "id": "rules-tank-warning",
-          "title": "\"Tank in N%\"",
-          "when": ["Automatic"],
-          "description": "The chat warns when the Tank is getting close, with the % of the map where it spawns."
-        },
         {
           "id": "rules-connect",
           "title": "Connection messages",
@@ -670,12 +700,6 @@
           "title": "Dropped items glow",
           "when": ["Automatic"],
           "description": "Weapons and items dropped on the ground glow, so they are easy to find."
-        },
-        {
-          "id": "rules-spoof",
-          "title": "No fake chat",
-          "when": ["Automatic"],
-          "description": "Messages made to look like they came from the server or from another player are blocked."
         }
       ]
     },
@@ -686,6 +710,13 @@
       "intro": "Commands that only the server admins can use. Players do not need them.",
       "admin": true,
       "commands": [
+        {
+          "id": "admin-anticheat",
+          "names": ["!aac on", "!aac off", "!aac config"],
+          "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <player>", "!aac remove <player>", "!aac list"],
+          "module": "AntiCheat",
+          "description": "`!aac on` and `!aac off` require the Anti-Cheat or not in this match. `!aac config`, `mode`, `add`, `remove` and `list` show and change who must use it; the site's Anti-Cheat settings follow the change."
+        },
         {
           "id": "admin-stopmix",
           "names": ["!stopmix"],
@@ -709,6 +740,22 @@
           "description": "Opens a menu to queue the next campaigns, or clear the queue, instead of a random draw."
         },
         {
+          "id": "admin-campaigns",
+          "names": ["!listcampaigns", "!refreshcampaigns"],
+          "description": "`!listcampaigns` lists in the console every installed campaign; `!refreshcampaigns` reads the list again after a campaign is added."
+        },
+        {
+          "id": "admin-broadcast",
+          "names": ["!broadcast"],
+          "description": "Turns broadcast mode on or off: while it is on, everyone hears your voice."
+        },
+        {
+          "id": "admin-skins",
+          "names": ["!skin on", "!skin off"],
+          "module": "SkinShop",
+          "description": "Turns the weapon skins on or off on this server."
+        },
+        {
           "id": "admin-givetank",
           "names": ["!givetank"],
           "syntax": ["!givetank <player>"],
@@ -730,16 +777,6 @@
           "names": ["!slots"],
           "syntax": ["!slots <number>"],
           "description": "Changes the number of player slots on the server. Players cannot change it on this server."
-        },
-        {
-          "id": "admin-campaigns",
-          "names": ["!listcampaigns", "!refreshcampaigns"],
-          "description": "`!listcampaigns` lists in the console every installed campaign; `!refreshcampaigns` reads the list again after a campaign is added."
-        },
-        {
-          "id": "admin-broadcast",
-          "names": ["!broadcast"],
-          "description": "Turns broadcast mode on or off: while it is on, everyone hears your voice."
         },
         {
           "id": "admin-swap",
@@ -771,19 +808,6 @@
           "syntax": ["!forcematch <config>", "!resetmatch"],
           "description": "`!forcematch` loads a config with no vote; `!resetmatch` unloads it.",
           "examples": [{ "code": "!fm zonemod" }]
-        },
-        {
-          "id": "admin-skins",
-          "names": ["!skin on", "!skin off"],
-          "module": "SkinShop",
-          "description": "Turns the weapon skins on or off on this server."
-        },
-        {
-          "id": "admin-anticheat",
-          "names": ["!aac on", "!aac off", "!aac config"],
-          "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <player>", "!aac remove <player>", "!aac list"],
-          "module": "AntiCheat",
-          "description": "`!aac on` and `!aac off` require the Anti-Cheat or not in this match. `!aac config`, `mode`, `add`, `remove` and `list` show and change who must use it; the site's Anti-Cheat settings follow the change."
         },
         {
           "id": "admin-casters",

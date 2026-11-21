@@ -15,7 +15,7 @@ The **Commands** page teaches players every command of the game server, with exa
 
 **More > Commands** (`/commands`) starts with a search box and a row of links, one per section. The search filters the commands as you type, by name, alias or any word of the explanation, and ignores accents. Each link jumps to its section.
 
-Each command is a card with its names and aliases, how to type it, who can use it and when, an explanation, examples and notes. The sections follow the order a player needs them: how to type commands, the queue, the mix, configs and votes, ready-up and pause, teams and spectators, information, help while playing, the site and skins, the Anti-Cheat, fun commands and the automatic rules of the server. The administrator commands come last, folded.
+Each command is a card with its names and aliases, how to type it, who can use it and when, an explanation, examples and notes. The Anti-Cheat comes first, then the plugins written for this community (the queue, the mix, campaigns and ending a game, voice while spectating, the site and skins, and the automatic rules of those plugins), and then the competitive plugins the server uses: how to type commands, configs and votes, ready-up and pause, teams and spectators, information, help while playing, fun commands and other server rules. The administrator commands come last, folded.
 
 The page follows the [modules](administration.md#modules): commands that need a module that is off are hidden. For example, `!rmix` shows only with the community ranking, `!skin` only with the skin shop, `!ranking` only with the ranking, and the Anti-Cheat section only with the Anti-Cheat module.
 

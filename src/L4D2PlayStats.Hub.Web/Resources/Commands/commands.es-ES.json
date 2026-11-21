@@ -1,59 +1,30 @@
 {
   "sections": [
     {
-      "id": "typing",
-      "icon": "console",
-      "title": "Cómo escribir los comandos",
-      "intro": "Los comandos se escriben en el chat del juego (Y para todos, U para tu equipo) o en la consola (~). Esto básico sirve para todos los comandos de esta página.",
+      "id": "anticheat",
+      "icon": "lock",
+      "title": "Anti-Cheat",
+      "intro": "Algunos jugadores, o todos, deben usar el Anti-Cheat para jugar. Descárgalo en la página Anti-Cheat de este sitio.",
+      "module": "AntiCheat",
       "commands": [
         {
-          "id": "typing-chat",
-          "names": ["!comando"],
+          "id": "anticheat-check",
+          "names": ["!aac"],
           "who": ["Todos"],
-          "description": "Empieza el comando con un signo de exclamación en el chat. El comando se ejecuta y todos ven lo que escribiste.",
-          "examples": [{ "code": "!ready", "text": "Te marca como listo." }]
+          "description": "Te dice, en privado, si debes usar el Anti-Cheat y si el tuyo funciona, con el enlace de descarga."
         },
         {
-          "id": "typing-silent",
-          "names": ["/comando"],
-          "who": ["Todos"],
-          "description": "El mismo comando con una barra en su lugar se ejecuta en silencio: nada de lo que escribiste aparece en el chat.",
-          "examples": [{ "code": "/ready" }]
-        },
-        {
-          "id": "typing-console",
-          "names": ["sm_comando"],
-          "who": ["Todos"],
-          "description": "En la consola (~), escribe el comando con `sm_` delante en vez del signo de exclamación. Útil para asignar un comando a una tecla.",
-          "examples": [{ "code": "sm_ready" }, { "code": "bind F3 sm_spectate", "text": "La tecla F3 te lleva a los espectadores." }]
-        },
-        {
-          "id": "typing-quotes",
-          "title": "Nombres con espacios",
-          "who": ["Todos"],
-          "description": "Cuando el nombre de un jugador tiene espacios o símbolos, ponlo entre comillas dobles para que el servidor lo lea como un solo nombre.",
-          "examples": [{ "code": "!mix \"(LoD) Adeilson\" Feeh", "text": "(LoD) Adeilson y Feeh son los capitanes." }]
-        },
-        {
-          "id": "typing-keys",
-          "title": "Teclas de listo",
-          "names": ["F1", "F2"],
-          "who": ["Todos"],
-          "description": "Cuando no hay una votación en curso, F1 te marca como listo y F2 lo deshace. Durante una votación, las mismas teclas responden Sí y No."
-        },
-        {
-          "id": "typing-help",
-          "names": ["!help"],
-          "who": ["Todos"],
-          "description": "Lista en la consola los comandos que puedes usar en el servidor."
-        },
-        {
-          "id": "typing-admins",
-          "title": "Hablar con los admins",
-          "names": ["@"],
-          "who": ["Todos"],
-          "description": "En el chat del equipo (U), empieza el mensaje con `@` y llega a los admins conectados, aunque estén en otro equipo.",
-          "examples": [{ "code": "@ hay un jugador AFK trabando la partida" }]
+          "id": "anticheat-vote",
+          "names": ["!aac vote"],
+          "who": ["Jugadores de los equipos"],
+          "when": ["Solo en el ready-up"],
+          "description": "Vota para exigir el Anti-Cheat a todos en esta partida.",
+          "notes": [
+            "Solo en el ready-up de la primera ronda del primer mapa, con los dos equipos completos y sin mix en curso.",
+            "La votación dura 20 s y pasa con más de la mitad de los jugadores de los equipos.",
+            "Si pasa, queda activado toda la partida.",
+            "Tras una votación que no pasó, espera 60 s para intentarlo de nuevo."
+          ]
         }
       ]
     },
@@ -134,37 +105,11 @@
       ]
     },
     {
-      "id": "match",
-      "icon": "flag",
-      "title": "Partida, configs y votaciones",
-      "intro": "Carga una config competitiva, cambia la campaña, ríndete en una partida perdida o define dónde aparecen los jefes. La mayoría empieza una votación.",
+      "id": "endgame",
+      "icon": "road",
+      "title": "Campañas y fin de la partida",
+      "intro": "Elige la próxima campaña o termina una partida que ya está decidida.",
       "commands": [
-        {
-          "id": "match-load",
-          "names": ["!match"],
-          "syntax": ["!match", "!match <config>"],
-          "who": ["Jugadores de los equipos"],
-          "description": "Vota para cargar una config de partida. Sin el nombre, se abre un menú con las configs.",
-          "examples": [{ "code": "!match zonemod", "text": "Vota para cargar ZoneMod." }],
-          "notes": [
-            "Los espectadores no pueden empezarla. La votación dura 20 s y no empieza mientras haya jugadores conectándose.",
-            "Configs habituales: zonemod, zoneretro, zm3v3, zm2v2, zm1v1, neomod y otras."
-          ]
-        },
-        {
-          "id": "match-change",
-          "names": ["!chmatch"],
-          "syntax": ["!chmatch <config>"],
-          "who": ["Jugadores de los equipos"],
-          "description": "Vota para cambiar la config cargada por otra. Mismas reglas que `!match`.",
-          "examples": [{ "code": "!chmatch zm3v3" }]
-        },
-        {
-          "id": "match-reset",
-          "names": ["!rmatch"],
-          "who": ["Jugadores de los equipos"],
-          "description": "Vota para descargar la config actual. Mismas reglas que `!match`."
-        },
         {
           "id": "match-campaign",
           "names": ["!votecamp", "!votecampaign"],
@@ -194,6 +139,221 @@
           "who": ["Todos"],
           "when": ["Automático"],
           "description": "En el 4.º mapa, 2.ª ronda, cuando la diferencia en el marcador es de 15 puntos o más, el servidor pregunta solo a todos si la partida está decidida o si debe seguir."
+        }
+      ]
+    },
+    {
+      "id": "listen",
+      "icon": "headphones",
+      "title": "Voz como espectador",
+      "intro": "Elige de quién escuchas la voz mientras miras.",
+      "commands": [
+        {
+          "id": "teams-hear",
+          "names": ["!hear"],
+          "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
+          "who": ["Espectadores"],
+          "description": "Elige de quién escuchas la voz mientras miras. Sin opción, se abre un menú.",
+          "examples": [{ "code": "!hear infected", "text": "Escuchas solo al equipo de los Infectados." }],
+          "notes": ["Las formas cortas de las opciones también funcionan.", "No tiene efecto con el all-talk activado."]
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "icon": "globe",
+      "title": "Sitio, ranking y skins",
+      "intro": "El servidor del juego habla con este sitio: abre el ranking sin salir del juego y usa las skins que compraste.",
+      "commands": [
+        {
+          "id": "site-ranking",
+          "names": ["!ranking"],
+          "who": ["Todos"],
+          "module": "Ranking",
+          "description": "Abre el ranking de este sitio dentro del juego.",
+          "notes": ["También se abre solo 60 s después de que entres en una partida nueva.", "Un recordatorio aparece en el chat cada 200 s."]
+        },
+        {
+          "id": "site-skins",
+          "names": ["!skin", "!skins"],
+          "syntax": ["!skin", "!skin <id>", "!skin next [arma]", "!skin prev [arma]", "!skin default [arma]", "!skin status"],
+          "who": ["Supervivientes"],
+          "when": ["Solo en el ready-up"],
+          "module": "SkinShop",
+          "description": "Equipa las skins de arma que tienes. Cómpralas en la página Skins de este sitio con las estrellas que ganas como MVP. Solo, `!skin` muestra la ayuda.",
+          "examples": [
+            { "code": "!skin next", "text": "La siguiente de tus skins para el arma que tienes en la mano." },
+            { "code": "!skin default pump", "text": "La escopeta de bombeo vuelve al aspecto por defecto." },
+            { "code": "!skin status", "text": "Tus estrellas y skins." }
+          ],
+          "notes": [
+            "Solo funciona mientras el servidor tiene las skins activadas.",
+            "Debes tener la skin.",
+            "Armas: smg, mac, mp5, pump, chrome, magnum (o deagle), axe, katana, machete, bat, cricket, guitar, crowbar, golf, pan.",
+            "Las descargas de contenido del servidor deben estar permitidas en tu juego. Una skin comprada aparece a partir del siguiente cambio de mapa."
+          ]
+        },
+        {
+          "id": "site-patents",
+          "title": "Patentes sobre las cabezas",
+          "who": ["Todos"],
+          "when": ["Automático"],
+          "module": "Ranking",
+          "description": "Cuando el servidor las activa, la patente de cada jugador aparece sobre su cabeza. No hay comando para esto."
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "icon": "alert",
+      "title": "Reglas automáticas del servidor",
+      "intro": "No tienen comando, pero todo jugador debería conocerlas.",
+      "commands": [
+        {
+          "id": "rules-ff",
+          "title": "Control del fuego amigo",
+          "when": ["Automático"],
+          "description": "Disparar a tus compañeros una y otra vez te expulsa y pausa la partida. El daño no cuenta cuando el compañero tiene poca vida, está caído o atrapado."
+        },
+        {
+          "id": "rules-afk",
+          "title": "AFK en el ready-up",
+          "when": ["Automático"],
+          "description": "Un jugador AFK en el ready-up pasa a los espectadores: tras 180 s en una partida nueva, o 360 s en una partida en curso. Solo ocurre cuando alguien espera una plaza."
+        },
+        {
+          "id": "rules-tank-spec",
+          "title": "Sin espectador con el Tank vivo",
+          "when": ["Automático"],
+          "description": "Mientras el Tank está vivo no puedes pasar a los espectadores, salvo con la partida en pausa. El servidor lo recuerda: \"usa !pause para cambiar de equipo\"."
+        },
+        {
+          "id": "rules-damage-spec",
+          "title": "Sin espectador justo después de recibir daño",
+          "when": ["Automático"],
+          "description": "Si recibiste daño en los últimos 5 s, no puedes pasar a los espectadores."
+        },
+        {
+          "id": "rules-lerp",
+          "title": "Lerp no válido",
+          "when": ["Automático"],
+          "description": "Si tu lerp está fuera del rango permitido, el servidor te avisa. Pega esta línea en la consola (~) para corregirlo:",
+          "examples": [{ "code": "cl_interp 0; cl_interp_ratio 0; rate 100000; cl_cmdrate 100; cl_updaterate 100" }]
+        },
+        {
+          "id": "rules-names",
+          "title": "Nombres fijos",
+          "when": ["Automático"],
+          "description": "Algunos jugadores tienen un nombre fijado por los admins, y el servidor mantiene ese nombre en el juego."
+        },
+        {
+          "id": "rules-alltalk",
+          "title": "All-talk en el primer ready-up",
+          "when": ["Automático"],
+          "description": "Durante el primer ready-up de una partida, todos escuchan a todos, para poder armar los equipos."
+        },
+        {
+          "id": "rules-tank-warning",
+          "title": "\"Tank en N%\"",
+          "when": ["Automático"],
+          "description": "El chat avisa cuando el Tank se acerca, con el % del mapa donde aparece."
+        },
+        {
+          "id": "rules-spoof",
+          "title": "Sin chat falso",
+          "when": ["Automático"],
+          "description": "Se bloquean los mensajes hechos para parecer que vienen del servidor o de otro jugador."
+        }
+      ]
+    },
+    {
+      "id": "typing",
+      "icon": "console",
+      "title": "Cómo escribir los comandos",
+      "intro": "Los comandos se escriben en el chat del juego (Y para todos, U para tu equipo) o en la consola (~). Esto básico sirve para todos los comandos de esta página.",
+      "commands": [
+        {
+          "id": "typing-chat",
+          "names": ["!comando"],
+          "who": ["Todos"],
+          "description": "Empieza el comando con un signo de exclamación en el chat. El comando se ejecuta y todos ven lo que escribiste.",
+          "examples": [{ "code": "!ready", "text": "Te marca como listo." }]
+        },
+        {
+          "id": "typing-silent",
+          "names": ["/comando"],
+          "who": ["Todos"],
+          "description": "El mismo comando con una barra en su lugar se ejecuta en silencio: nada de lo que escribiste aparece en el chat.",
+          "examples": [{ "code": "/ready" }]
+        },
+        {
+          "id": "typing-console",
+          "names": ["sm_comando"],
+          "who": ["Todos"],
+          "description": "En la consola (~), escribe el comando con `sm_` delante en vez del signo de exclamación. Útil para asignar un comando a una tecla.",
+          "examples": [{ "code": "sm_ready" }, { "code": "bind F3 sm_spectate", "text": "La tecla F3 te lleva a los espectadores." }]
+        },
+        {
+          "id": "typing-quotes",
+          "title": "Nombres con espacios",
+          "who": ["Todos"],
+          "description": "Cuando el nombre de un jugador tiene espacios o símbolos, ponlo entre comillas dobles para que el servidor lo lea como un solo nombre.",
+          "examples": [{ "code": "!mix \"(LoD) Adeilson\" Feeh", "text": "(LoD) Adeilson y Feeh son los capitanes." }]
+        },
+        {
+          "id": "typing-keys",
+          "title": "Teclas de listo",
+          "names": ["F1", "F2"],
+          "who": ["Todos"],
+          "description": "Cuando no hay una votación en curso, F1 te marca como listo y F2 lo deshace. Durante una votación, las mismas teclas responden Sí y No."
+        },
+        {
+          "id": "typing-help",
+          "names": ["!help"],
+          "who": ["Todos"],
+          "description": "Lista en la consola los comandos que puedes usar en el servidor."
+        },
+        {
+          "id": "typing-admins",
+          "title": "Hablar con los admins",
+          "names": ["@"],
+          "who": ["Todos"],
+          "description": "En el chat del equipo (U), empieza el mensaje con `@` y llega a los admins conectados, aunque estén en otro equipo.",
+          "examples": [{ "code": "@ hay un jugador AFK trabando la partida" }]
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "icon": "flag",
+      "title": "Partida, configs y votaciones",
+      "intro": "Carga una config competitiva, define dónde aparecen los jefes o el marcador. La mayoría empieza una votación.",
+      "commands": [
+        {
+          "id": "match-load",
+          "names": ["!match"],
+          "syntax": ["!match", "!match <config>"],
+          "who": ["Jugadores de los equipos"],
+          "description": "Vota para cargar una config de partida. Sin el nombre, se abre un menú con las configs.",
+          "examples": [{ "code": "!match zonemod", "text": "Vota para cargar ZoneMod." }],
+          "notes": [
+            "Los espectadores no pueden empezarla. La votación dura 20 s y no empieza mientras haya jugadores conectándose.",
+            "Configs habituales: zonemod, zoneretro, zm3v3, zm2v2, zm1v1, neomod y otras."
+          ]
+        },
+        {
+          "id": "match-change",
+          "names": ["!chmatch"],
+          "syntax": ["!chmatch <config>"],
+          "who": ["Jugadores de los equipos"],
+          "description": "Vota para cambiar la config cargada por otra. Mismas reglas que `!match`.",
+          "examples": [{ "code": "!chmatch zm3v3" }]
+        },
+        {
+          "id": "match-reset",
+          "names": ["!rmatch"],
+          "who": ["Jugadores de los equipos"],
+          "description": "Vota para descargar la config actual. Mismas reglas que `!match`."
         },
         {
           "id": "match-boss",
@@ -309,7 +469,7 @@
       "id": "teams",
       "icon": "transfer",
       "title": "Equipos y espectadores",
-      "intro": "Cambia de equipo, mira la partida y elige qué escuchas como espectador.",
+      "intro": "Cambia de equipo y mira la partida.",
       "commands": [
         {
           "id": "teams-spectate",
@@ -329,15 +489,6 @@
           "syntax": ["jointeam 2", "jointeam 3"],
           "who": ["Espectadores"],
           "description": "Pulsa M para abrir el menú de equipos, o escribe en la consola `jointeam 2` para los Supervivientes o `jointeam 3` para los Infectados."
-        },
-        {
-          "id": "teams-hear",
-          "names": ["!hear"],
-          "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
-          "who": ["Espectadores"],
-          "description": "Elige de quién escuchas la voz mientras miras. Sin opción, se abre un menú.",
-          "examples": [{ "code": "!hear infected", "text": "Escuchas solo al equipo de los Infectados." }],
-          "notes": ["Las formas cortas de las opciones también funcionan.", "No tiene efecto con el all-talk activado."]
         },
         {
           "id": "teams-cast",
@@ -499,78 +650,6 @@
       ]
     },
     {
-      "id": "site",
-      "icon": "globe",
-      "title": "Sitio, ranking y skins",
-      "intro": "El servidor del juego habla con este sitio: abre el ranking sin salir del juego y usa las skins que compraste.",
-      "commands": [
-        {
-          "id": "site-ranking",
-          "names": ["!ranking"],
-          "who": ["Todos"],
-          "module": "Ranking",
-          "description": "Abre el ranking de este sitio dentro del juego.",
-          "notes": ["También se abre solo 60 s después de que entres en una partida nueva.", "Un recordatorio aparece en el chat cada 200 s."]
-        },
-        {
-          "id": "site-skins",
-          "names": ["!skin", "!skins"],
-          "syntax": ["!skin", "!skin <id>", "!skin next [arma]", "!skin prev [arma]", "!skin default [arma]", "!skin status"],
-          "who": ["Supervivientes"],
-          "when": ["Solo en el ready-up"],
-          "module": "SkinShop",
-          "description": "Equipa las skins de arma que tienes. Cómpralas en la página Skins de este sitio con las estrellas que ganas como MVP. Solo, `!skin` muestra la ayuda.",
-          "examples": [
-            { "code": "!skin next", "text": "La siguiente de tus skins para el arma que tienes en la mano." },
-            { "code": "!skin default pump", "text": "La escopeta de bombeo vuelve al aspecto por defecto." },
-            { "code": "!skin status", "text": "Tus estrellas y skins." }
-          ],
-          "notes": [
-            "Solo funciona mientras el servidor tiene las skins activadas.",
-            "Debes tener la skin.",
-            "Armas: smg, mac, mp5, pump, chrome, magnum (o deagle), axe, katana, machete, bat, cricket, guitar, crowbar, golf, pan.",
-            "Las descargas de contenido del servidor deben estar permitidas en tu juego. Una skin comprada aparece a partir del siguiente cambio de mapa."
-          ]
-        },
-        {
-          "id": "site-patents",
-          "title": "Patentes sobre las cabezas",
-          "who": ["Todos"],
-          "when": ["Automático"],
-          "module": "Ranking",
-          "description": "Cuando el servidor las activa, la patente de cada jugador aparece sobre su cabeza. No hay comando para esto."
-        }
-      ]
-    },
-    {
-      "id": "anticheat",
-      "icon": "lock",
-      "title": "Anti-Cheat",
-      "intro": "Algunos jugadores, o todos, deben usar el Anti-Cheat para jugar. Descárgalo en la página Anti-Cheat de este sitio.",
-      "module": "AntiCheat",
-      "commands": [
-        {
-          "id": "anticheat-check",
-          "names": ["!aac"],
-          "who": ["Todos"],
-          "description": "Te dice, en privado, si debes usar el Anti-Cheat y si el tuyo funciona, con el enlace de descarga."
-        },
-        {
-          "id": "anticheat-vote",
-          "names": ["!aac vote"],
-          "who": ["Jugadores de los equipos"],
-          "when": ["Solo en el ready-up"],
-          "description": "Vota para exigir el Anti-Cheat a todos en esta partida.",
-          "notes": [
-            "Solo en el ready-up de la primera ronda del primer mapa, con los dos equipos completos y sin mix en curso.",
-            "La votación dura 20 s y pasa con más de la mitad de los jugadores de los equipos.",
-            "Si pasa, queda activado toda la partida.",
-            "Tras una votación que no pasó, espera 60 s para intentarlo de nuevo."
-          ]
-        }
-      ]
-    },
-    {
       "id": "fun",
       "icon": "sunglasses",
       "title": "Diversión",
@@ -605,60 +684,11 @@
       ]
     },
     {
-      "id": "rules",
-      "icon": "alert",
-      "title": "Reglas automáticas del servidor",
-      "intro": "No tienen comando, pero todo jugador debería conocerlas.",
+      "id": "more-rules",
+      "icon": "eye-open",
+      "title": "Otras reglas del servidor",
+      "intro": "Pequeñas cosas que el servidor hace solo.",
       "commands": [
-        {
-          "id": "rules-ff",
-          "title": "Control del fuego amigo",
-          "when": ["Automático"],
-          "description": "Disparar a tus compañeros una y otra vez te expulsa y pausa la partida. El daño no cuenta cuando el compañero tiene poca vida, está caído o atrapado."
-        },
-        {
-          "id": "rules-afk",
-          "title": "AFK en el ready-up",
-          "when": ["Automático"],
-          "description": "Un jugador AFK en el ready-up pasa a los espectadores: tras 180 s en una partida nueva, o 360 s en una partida en curso. Solo ocurre cuando alguien espera una plaza."
-        },
-        {
-          "id": "rules-tank-spec",
-          "title": "Sin espectador con el Tank vivo",
-          "when": ["Automático"],
-          "description": "Mientras el Tank está vivo no puedes pasar a los espectadores, salvo con la partida en pausa. El servidor lo recuerda: \"usa !pause para cambiar de equipo\"."
-        },
-        {
-          "id": "rules-damage-spec",
-          "title": "Sin espectador justo después de recibir daño",
-          "when": ["Automático"],
-          "description": "Si recibiste daño en los últimos 5 s, no puedes pasar a los espectadores."
-        },
-        {
-          "id": "rules-lerp",
-          "title": "Lerp no válido",
-          "when": ["Automático"],
-          "description": "Si tu lerp está fuera del rango permitido, el servidor te avisa. Pega esta línea en la consola (~) para corregirlo:",
-          "examples": [{ "code": "cl_interp 0; cl_interp_ratio 0; rate 100000; cl_cmdrate 100; cl_updaterate 100" }]
-        },
-        {
-          "id": "rules-names",
-          "title": "Nombres fijos",
-          "when": ["Automático"],
-          "description": "Algunos jugadores tienen un nombre fijado por los admins, y el servidor mantiene ese nombre en el juego."
-        },
-        {
-          "id": "rules-alltalk",
-          "title": "All-talk en el primer ready-up",
-          "when": ["Automático"],
-          "description": "Durante el primer ready-up de una partida, todos escuchan a todos, para poder armar los equipos."
-        },
-        {
-          "id": "rules-tank-warning",
-          "title": "\"Tank en N%\"",
-          "when": ["Automático"],
-          "description": "El chat avisa cuando el Tank se acerca, con el % del mapa donde aparece."
-        },
         {
           "id": "rules-connect",
           "title": "Mensajes de conexión",
@@ -670,12 +700,6 @@
           "title": "Los objetos en el suelo brillan",
           "when": ["Automático"],
           "description": "Las armas y los objetos tirados en el suelo brillan, para que sean fáciles de encontrar."
-        },
-        {
-          "id": "rules-spoof",
-          "title": "Sin chat falso",
-          "when": ["Automático"],
-          "description": "Se bloquean los mensajes hechos para parecer que vienen del servidor o de otro jugador."
         }
       ]
     },
@@ -686,6 +710,13 @@
       "intro": "Comandos que solo pueden usar los admins del servidor. Los jugadores no los necesitan.",
       "admin": true,
       "commands": [
+        {
+          "id": "admin-anticheat",
+          "names": ["!aac on", "!aac off", "!aac config"],
+          "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <jugador>", "!aac remove <jugador>", "!aac list"],
+          "module": "AntiCheat",
+          "description": "`!aac on` y `!aac off` exigen o no el Anti-Cheat en esta partida. `!aac config`, `mode`, `add`, `remove` y `list` muestran y cambian quién debe usarlo; la configuración de Anti-Cheat del sitio sigue el cambio."
+        },
         {
           "id": "admin-stopmix",
           "names": ["!stopmix"],
@@ -709,6 +740,22 @@
           "description": "Abre un menú para poner en cola las siguientes campañas, o vaciar la cola, en vez de un sorteo."
         },
         {
+          "id": "admin-campaigns",
+          "names": ["!listcampaigns", "!refreshcampaigns"],
+          "description": "`!listcampaigns` lista en la consola todas las campañas instaladas; `!refreshcampaigns` vuelve a leer la lista después de añadir una campaña."
+        },
+        {
+          "id": "admin-broadcast",
+          "names": ["!broadcast"],
+          "description": "Activa o desactiva el modo difusión: mientras está activado, todos escuchan tu voz."
+        },
+        {
+          "id": "admin-skins",
+          "names": ["!skin on", "!skin off"],
+          "module": "SkinShop",
+          "description": "Activa o desactiva las skins de arma en este servidor."
+        },
+        {
           "id": "admin-givetank",
           "names": ["!givetank"],
           "syntax": ["!givetank <jugador>"],
@@ -730,16 +777,6 @@
           "names": ["!slots"],
           "syntax": ["!slots <número>"],
           "description": "Cambia el número de plazas de jugadores en el servidor. Los jugadores no pueden cambiarlo en este servidor."
-        },
-        {
-          "id": "admin-campaigns",
-          "names": ["!listcampaigns", "!refreshcampaigns"],
-          "description": "`!listcampaigns` lista en la consola todas las campañas instaladas; `!refreshcampaigns` vuelve a leer la lista después de añadir una campaña."
-        },
-        {
-          "id": "admin-broadcast",
-          "names": ["!broadcast"],
-          "description": "Activa o desactiva el modo difusión: mientras está activado, todos escuchan tu voz."
         },
         {
           "id": "admin-swap",
@@ -771,19 +808,6 @@
           "syntax": ["!forcematch <config>", "!resetmatch"],
           "description": "`!forcematch` carga una config sin votación; `!resetmatch` la descarga.",
           "examples": [{ "code": "!fm zonemod" }]
-        },
-        {
-          "id": "admin-skins",
-          "names": ["!skin on", "!skin off"],
-          "module": "SkinShop",
-          "description": "Activa o desactiva las skins de arma en este servidor."
-        },
-        {
-          "id": "admin-anticheat",
-          "names": ["!aac on", "!aac off", "!aac config"],
-          "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <jugador>", "!aac remove <jugador>", "!aac list"],
-          "module": "AntiCheat",
-          "description": "`!aac on` y `!aac off` exigen o no el Anti-Cheat en esta partida. `!aac config`, `mode`, `add`, `remove` y `list` muestran y cambian quién debe usarlo; la configuración de Anti-Cheat del sitio sigue el cambio."
         },
         {
           "id": "admin-casters",

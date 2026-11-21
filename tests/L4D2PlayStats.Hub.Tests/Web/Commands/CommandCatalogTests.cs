@@ -89,11 +89,12 @@ public class CommandCatalogTests
 
         var catalog = factory.Services.GetRequiredService<ICommandCatalog>();
 
-        Assert.AreEqual("How to type commands", catalog.All(new CultureInfo("en-US"))[0].Title);
-        Assert.AreEqual("Como digitar os comandos", catalog.All(new CultureInfo("pt-BR"))[0].Title);
-        Assert.AreEqual("Cómo escribir los comandos", catalog.All(new CultureInfo("es-ES"))[0].Title);
-        Assert.AreEqual("How to type commands", catalog.All(new CultureInfo("fr-FR"))[0].Title);
-        Assert.AreEqual("How to type commands", catalog.All(CultureInfo.InvariantCulture)[0].Title);
+        Assert.AreEqual("How to type commands", catalog.All(new CultureInfo("en-US")).Single(section => section.Id == TypingSection).Title);
+        Assert.AreEqual("Como digitar os comandos", catalog.All(new CultureInfo("pt-BR")).Single(section => section.Id == TypingSection).Title);
+        Assert.AreEqual("Cómo escribir los comandos", catalog.All(new CultureInfo("es-ES")).Single(section => section.Id == TypingSection).Title);
+        Assert.AreEqual("How to type commands", catalog.All(new CultureInfo("fr-FR")).Single(section => section.Id == TypingSection).Title);
+        Assert.AreEqual("How to type commands", catalog.All(CultureInfo.InvariantCulture).Single(section => section.Id == TypingSection).Title);
+        Assert.AreEqual("anticheat", catalog.All(new CultureInfo("pt-BR"))[0].Id);
     }
 
     [TestMethod]
