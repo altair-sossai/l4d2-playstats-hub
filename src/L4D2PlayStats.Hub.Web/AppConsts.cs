@@ -103,6 +103,9 @@ public static partial class AppConsts
     public const string CommunityPlayerQuery = "player";
     public const string CommunityPageQuery = "page";
     public const int PlayerCommunityVotes = 20;
+    public const string CommunityMixRoute = "api/community/mix";
+    public const string CommunityMixInvalidError = "invalid";
+    public const string CommunityMixUnrankedError = "unranked";
     public const string CommunityPlayersSearchUrl = "/api/community/players";
     public const string CommunityVoterRole = "voter";
     public const int VoteInviteHiddenDays = 7;
@@ -110,6 +113,10 @@ public static partial class AppConsts
     public const int CommunityRankingPageSize = 100;
     public const int CommunityVotersPageSize = 20;
     public const string CommunityVotersAnchor = "ca-voters";
+    public const string CommunityBlockedAnchor = "ca-blocked";
+    public const string CommunityRemoveVoteUrl = "/admin/community/votes/delete";
+    public const string CommunityBlockVoterUrl = "/admin/community/voters/block";
+    public const string CommunityUnblockVoterUrl = "/admin/community/voters/unblock";
     public const int RemoteCommandsPageSize = 50;
     public const int PlayerConnectionCleanupIntervalInHours = 24;
     public const string SteamConnectUrl = "steam://connect/";

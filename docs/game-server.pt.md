@@ -16,6 +16,7 @@ Como fazer um servidor de Left 4 Dead 2 enviar as partidas dele para o seu site,
 - [Opcional: skins de armas e ícones de patente](#opcional-skins-de-armas-e-ícones-de-patente)
 - [Opcional: o plugin do Anti-Cheat](#opcional-o-plugin-do-anti-cheat)
 - [O ranking dentro do jogo](#o-ranking-dentro-do-jogo)
+- [O mix pelo ranking da comunidade](#o-mix-pelo-ranking-da-comunidade)
 - [O que cada status significa](#o-que-cada-status-significa)
 - [Atualizando os plugins](#atualizando-os-plugins)
 - [Vindo da configuração antiga](#vindo-da-configuração-antiga)
@@ -202,6 +203,25 @@ O endereço que os jogadores leem no chat, na dica do ranking e no link da loja 
 ```text
 playstats_public_url "https://stats.example.com"
 ```
+
+## O mix pelo ranking da comunidade
+
+Com o módulo do ranking da comunidade ligado, um servidor de jogo pode pedir ao site que divida os jogadores em dois times equilibrados pela pontuação da comunidade. O comando `!rmix` do plugin de mix usa isso.
+
+```text
+POST <playstats_url>/api/community/mix
+Authorization: <o token do servidor>
+{ "players": ["76561198000000001", "76561198000000002", ...] }
+```
+
+| Resposta | Quando |
+|---|---|
+| `200` com `survivors`, `infected` e `survivorsChance` | Todos os jogadores estão no ranking da comunidade. |
+| `409` com `error: "unranked"` e `players` | Alguns jogadores não estão no ranking da comunidade: têm menos comparações que **Mínimo de comparações para aparecer na lista**. O mix não começa. |
+| `400` | A lista está vazia, é ímpar, tem mais de 16, repete um jogador ou tem um SteamID64 inválido. |
+| `404` | O módulo do ranking da comunidade está desligado. |
+
+O site testa todas as divisões, fica com as que deixam os times mais próximos em pontuação média, melhor jogador, dispersão e incerteza, e sorteia uma delas, para que os mesmos jogadores não caiam sempre nos mesmos times. Qual time começa como sobrevivente também é sorteado.
 
 ## O que cada status significa
 

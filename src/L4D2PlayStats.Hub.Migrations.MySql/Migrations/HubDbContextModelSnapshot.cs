@@ -242,6 +242,22 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.ToTable("CommunityVote");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Community.CommunityVoterBlock", b =>
+                {
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("BlockedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("BlockedBy")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CommunityId");
+
+                    b.ToTable("CommunityVoterBlock");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.GameModes.GameConfiguration", b =>
                 {
                     b.Property<int>("Id")

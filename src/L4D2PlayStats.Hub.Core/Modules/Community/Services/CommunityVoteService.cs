@@ -26,6 +26,10 @@ public class CommunityVoteService(
     public async Task<CommunityBallot> BallotAsync(long voterId, CancellationToken cancellationToken = default)
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+
+        if (await IsBlockedAsync(voterId, cancellationToken))
+            return Ballot(CommunityBallotStatus.Blocked, settings, 0, 0);
+
         var matches = await playerService.MatchesAsync(voterId, cancellationToken);
 
         if (matches < settings.MinimumMatchesToVote)
@@ -61,6 +65,9 @@ public class CommunityVoteService(
 
         try
         {
+            if (await IsBlockedAsync(voterId, cancellationToken))
+                return CommunityVoteResult.Blocked;
+
             if (await playerService.MatchesAsync(voterId, cancellationToken) < settings.MinimumMatchesToVote)
                 return CommunityVoteResult.TooFewMatches;
 
@@ -179,6 +186,11 @@ public class CommunityVoteService(
             && (v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel), cancellationToken);
 
         return Math.Max(0, settings.VotesPerDay - used);
+    }
+
+    private Task<bool> IsBlockedAsync(long voterId, CancellationToken cancellationToken)
+    {
+        return dbContext.Set<CommunityVoterBlock>().AnyAsync(b => b.CommunityId == voterId, cancellationToken);
     }
 
     private async Task<DateTime> TodayAsync(CancellationToken cancellationToken)

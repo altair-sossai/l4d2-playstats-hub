@@ -12,13 +12,14 @@ public class PlayerCommunityModel
     public bool HasMoreReceived { get; init; }
     public bool HasMoreCast { get; init; }
     public bool ShowVoters { get; init; }
+    public bool Moderate { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 
     public bool ShowsVotes => Second == null;
 
     public bool HasActivity => First.Rating != null || Received.Count > 0 || Cast.Count > 0;
 
-    public CommunityVoteRowsModel ReceivedRows => new(Received, ShowVoters, TimeZone, null, First.CommunityId);
+    public CommunityVoteRowsModel ReceivedRows => new(Received, ShowVoters, TimeZone, null, First.CommunityId, Moderate);
 
-    public CommunityVoteRowsModel CastRows => new(Cast, ShowVoters, TimeZone, First.CommunityId, null);
+    public CommunityVoteRowsModel CastRows => new(Cast, ShowVoters, TimeZone, First.CommunityId, null, Moderate);
 }

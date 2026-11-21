@@ -6,5 +6,6 @@ public enum CommunityVoteResult
     InvalidOutcome,
     TooFewMatches,
     LimitReached,
-    NotOffered
+    NotOffered,
+    Blocked
 }

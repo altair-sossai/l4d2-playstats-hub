@@ -102,9 +102,16 @@ public class CommunityRankingService(
             .Take(Math.Max(0, take))
             .ToListAsync(cancellationToken);
 
-        var names = await playerService.NamesAsync([.. voters.Select(voter => voter.VoterId)], cancellationToken);
+        List<long> ids = [.. voters.Select(voter => voter.VoterId)];
+        var names = await playerService.NamesAsync(ids, cancellationToken);
 
-        return [.. voters.Select(voter => new CommunityVoter(voter.VoterId, names[voter.VoterId], voter.Votes, voter.LastVoteAtUtc))];
+        var blocked = await dbContext.Set<CommunityVoterBlock>()
+            .AsNoTracking()
+            .Where(b => ids.Contains(b.CommunityId))
+            .Select(b => b.CommunityId)
+            .ToListAsync(cancellationToken);
+
+        return [.. voters.Select(voter => new CommunityVoter(voter.VoterId, names[voter.VoterId], voter.Votes, voter.LastVoteAtUtc, blocked.Contains(voter.VoterId)))];
     }
 
     public Task<int> VoterCountAsync(CancellationToken cancellationToken = default)

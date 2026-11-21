@@ -4,6 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Models.Players;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 
@@ -12,7 +13,8 @@ namespace L4D2PlayStats.Hub.Web.Services;
 public class PlayerCommunityService(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService,
-    ILiveViewService liveViewService) : IPlayerCommunityService
+    ILiveViewService liveViewService,
+    ICurrentUser currentUser) : IPlayerCommunityService
 {
     public async Task<PlayerCommunityModel?> BuildAsync(long communityId, long? compareWith, CancellationToken cancellationToken = default)
     {
@@ -21,10 +23,12 @@ public class PlayerCommunityService(
             return null;
 
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+        var moderate = await currentUser.IsAdministratorAsync();
+        var showVoters = settings.ShowVoterNames || moderate;
         var entries = await communityRankingService.ListAsync(cancellationToken);
         var size = AppConsts.PlayerCommunityVotes;
         var received = compareWith == null ? await communityRankingService.LatestVotesAsync(null, communityId, 0, size + 1, cancellationToken) : [];
-        var cast = compareWith == null && settings.ShowVoterNames ? await communityRankingService.LatestVotesAsync(communityId, null, 0, size + 1, cancellationToken) : [];
+        var cast = compareWith == null && showVoters ? await communityRankingService.LatestVotesAsync(communityId, null, 0, size + 1, cancellationToken) : [];
 
         return new PlayerCommunityModel
         {
@@ -34,7 +38,8 @@ public class PlayerCommunityService(
             Cast = [.. cast.Take(size)],
             HasMoreReceived = received.Count > size,
             HasMoreCast = cast.Count > size,
-            ShowVoters = settings.ShowVoterNames,
+            ShowVoters = showVoters,
+            Moderate = moderate,
             TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
     }

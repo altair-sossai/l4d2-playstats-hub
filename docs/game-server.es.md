@@ -16,6 +16,7 @@ Cómo hacer que un servidor de Left 4 Dead 2 envíe sus partidas a tu sitio, pas
 - [Opcional: skins de armas e íconos de patente](#opcional-skins-de-armas-e-íconos-de-patente)
 - [Opcional: el plugin del Anti-Cheat](#opcional-el-plugin-del-anti-cheat)
 - [El ranking dentro del juego](#el-ranking-dentro-del-juego)
+- [El mix por el ranking de la comunidad](#el-mix-por-el-ranking-de-la-comunidad)
 - [Qué significa cada estado](#qué-significa-cada-estado)
 - [Actualizar los plugins](#actualizar-los-plugins)
 - [Si vienes de la configuración anterior](#si-vienes-de-la-configuración-anterior)
@@ -202,6 +203,25 @@ La dirección que los jugadores leen en el chat, en el aviso del ranking y en el
 ```text
 playstats_public_url "https://stats.example.com"
 ```
+
+## El mix por el ranking de la comunidad
+
+Con el módulo del ranking de la comunidad activado, un servidor de juego puede pedirle al sitio que divida a los jugadores en dos equipos equilibrados según su puntuación de la comunidad. El comando `!rmix` del plugin de mix lo usa.
+
+```text
+POST <playstats_url>/api/community/mix
+Authorization: <el token del servidor>
+{ "players": ["76561198000000001", "76561198000000002", ...] }
+```
+
+| Respuesta | Cuándo |
+|---|---|
+| `200` con `survivors`, `infected` y `survivorsChance` | Todos los jugadores están en el ranking de la comunidad. |
+| `409` con `error: "unranked"` y `players` | Algunos jugadores no están en el ranking de la comunidad: tienen menos comparaciones que **Mínimo de comparaciones para aparecer en la lista**. El mix no empieza. |
+| `400` | La lista está vacía, es impar, tiene más de 16, repite un jugador o tiene un SteamID64 inválido. |
+| `404` | El módulo del ranking de la comunidad está desactivado. |
+
+El sitio prueba todas las divisiones, se queda con las que dejan los equipos más cercanos en puntuación media, mejor jugador, dispersión e incertidumbre, y sortea una de ellas, para que los mismos jugadores no caigan siempre en los mismos equipos. Qué equipo empieza como superviviente también se sortea.
 
 ## Qué significa cada estado
 

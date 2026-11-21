@@ -16,6 +16,7 @@ How to make a Left 4 Dead 2 server send its matches to your site, step by step. 
 - [Optional: weapon skins and patent icons](#optional-weapon-skins-and-patent-icons)
 - [Optional: the Anti-Cheat plugin](#optional-the-anti-cheat-plugin)
 - [The ranking inside the game](#the-ranking-inside-the-game)
+- [The community ranking mix](#the-community-ranking-mix)
 - [What each status means](#what-each-status-means)
 - [Updating the plugins](#updating-the-plugins)
 - [Coming from the old setup](#coming-from-the-old-setup)
@@ -202,6 +203,25 @@ The address players read in chat, in the ranking hint and in the skin shop link,
 ```text
 playstats_public_url "https://stats.example.com"
 ```
+
+## The community ranking mix
+
+With the community ranking module on, a game server can ask the site to split the players into two balanced teams from their community rating. The `!rmix` command of the mix plugin uses it.
+
+```text
+POST <playstats_url>/api/community/mix
+Authorization: <the server token>
+{ "players": ["76561198000000001", "76561198000000002", ...] }
+```
+
+| Answer | When |
+|---|---|
+| `200` with `survivors`, `infected` and `survivorsChance` | Every player is in the community ranking. |
+| `409` with `error: "unranked"` and `players` | Some players are not in the community ranking: they have fewer comparisons than **Minimum comparisons to be listed**. The mix does not start. |
+| `400` | The list is empty, odd, larger than 16, repeats a player or has an invalid SteamID64. |
+| `404` | The community ranking module is off. |
+
+The site tries every split, keeps those whose teams are closest in average rating, best player, spread and uncertainty, and picks one of them at random, so the same players do not always get the same teams. Which team starts as survivors is also random.
 
 ## What each status means
 

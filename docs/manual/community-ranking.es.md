@@ -61,7 +61,7 @@ Debajo de cada nombre la tarjeta muestra hasta 4 nombres más que el jugador us�
 | Un jugador se ofrece solo si su última partida fue dentro de un número de días. Con 0, sin importar cuánto hace. | 0 |
 | Nunca se te pregunta por ti mismo, ni dos veces por la misma pareja. | |
 
-Cuando no puedes votar, la página dice por qué: tienes que iniciar sesión, necesitas más partidas (con tu cantidad), usaste todos los votos del día o no queda nadie para que compares.
+Cuando no puedes votar, la página dice por qué: tienes que iniciar sesión, necesitas más partidas (con tu cantidad), usaste todos los votos del día, no queda nadie para que compares o los administradores bloquearon tus votos.
 
 ## Cómo se elige la pareja
 
@@ -109,5 +109,9 @@ Las puntuaciones se calculan de nuevo con todos los votos en cada voto nuevo. **
 **Reiniciar el ranking de la comunidad**, en un panel rojo, borra todos los votos y todas las puntuaciones, y el ranking de la comunidad vuelve a empezar desde cero; los ajustes se conservan. Una ventana muestra cuántos votos y jugadores se borrarán y pide confirmación, ya que no se puede deshacer.
 
 **Votantes** lista a todos los que votaron, con su cantidad de votos y su último voto, 20 por página, los que tienen más votos primero. **Quitar votos** elimina todos los votos de un votante y reconstruye las puntuaciones sin ellos, por ejemplo cuando alguien votó de mala fe. El campo acepta al votante en cualquier formato de Steam ID o como enlace del perfil, y el botón de búsqueda junto a él abre la [búsqueda de jugadores](administration.es.md#la-búsqueda-de-jugadores).
+
+**Bloquear** impide votar a un votante, desde el mismo campo o desde la fila del votante. Su página de votación pasa a decir que ya no puede votar porque los administradores revisaron las votaciones y bloquearon sus votos, y cualquier respuesta que envíe es rechazada. Bloquear mantiene los votos ya dados; usa también **Quitar votos** para eliminarlos. **Votantes bloqueados** lista a todos los que están bloqueados, desde cuándo, con **Desbloquear** para dejarlos votar de nuevo.
+
+Para eliminar un solo voto, abre **Últimos votos** o las pestañas **Votos recibidos** y **Votos hechos** de la página de un jugador con la sesión iniciada como administrador. Cada voto pasa a tener un botón rojo que lo elimina, y las puntuaciones se calculan de nuevo sin él, y un botón amarillo que bloquea al jugador que lo dio. Los administradores siempre ven quién votó, incluso con **Mostrar quién votó en los últimos votos** desactivado.
 
 Desactivar el módulo del ranking de la comunidad en [Módulos](administration.es.md#módulos) quita **Comunidad** del menú. Los votos se conservan.

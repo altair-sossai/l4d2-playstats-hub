@@ -69,7 +69,9 @@ public class CommunityController(
     public async Task<IActionResult> Votes(long? voter, long? player, int page, CancellationToken cancellationToken)
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
-        var voterId = settings.ShowVoterNames ? voter : null;
+        var moderate = await currentUser.IsAdministratorAsync();
+        var showVoters = settings.ShowVoterNames || moderate;
+        var voterId = showVoters ? voter : null;
         var current = Math.Max(1, page);
         var size = CoreConsts.CommunityVotesPageSize;
         var votes = await communityRankingService.LatestVotesAsync(voterId, player, (current - 1) * size, size + 1, cancellationToken);
@@ -89,7 +91,8 @@ public class CommunityController(
             Participants = participants,
             Page = current,
             HasMore = votes.Count > size,
-            ShowVoters = settings.ShowVoterNames,
+            ShowVoters = showVoters,
+            Moderate = moderate,
             TimeZone = await liveViewService.TimeZoneAsync(cancellationToken)
         };
 
@@ -101,7 +104,7 @@ public class CommunityController(
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
         var voters = string.Equals(role, AppConsts.CommunityVoterRole, StringComparison.OrdinalIgnoreCase);
-        var participants = voters && !settings.ShowVoterNames ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
+        var participants = voters && !settings.ShowVoterNames && !await currentUser.IsAdministratorAsync() ? [] : await communityRankingService.VoteParticipantsAsync(cancellationToken);
         var timeZone = await liveViewService.TimeZoneAsync(cancellationToken);
         var term = q?.Trim();
         var steamId = SteamIdParser.Parse(term);

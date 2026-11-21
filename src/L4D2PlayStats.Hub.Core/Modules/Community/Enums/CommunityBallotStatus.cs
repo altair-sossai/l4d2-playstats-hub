@@ -5,5 +5,6 @@ public enum CommunityBallotStatus
     Ready,
     TooFewMatches,
     LimitReached,
-    NobodyLeft
+    NobodyLeft,
+    Blocked
 }

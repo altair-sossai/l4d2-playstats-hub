@@ -131,7 +131,7 @@
 }
 else
 {
-    @await Html.PartialAsync("_VoteRows", new CommunityVoteRowsModel(Model.Votes, Model.ShowVoters, Model.TimeZone, Model.VoterId, Model.PlayerId))
+    @await Html.PartialAsync("_VoteRows", new CommunityVoteRowsModel(Model.Votes, Model.ShowVoters, Model.TimeZone, Model.VoterId, Model.PlayerId, Model.Moderate))
 
     <div class="vf-pages">
         @if (Model.Page > 1)

@@ -104,6 +104,12 @@ public static class AppConsts
     public const double CommunityFitTolerance = 0.000001;
     public const double CommunityFitMaxStep = 1;
     public const double CommunityConservativeDeviations = 2;
+    public const int CommunityMixMinPlayers = 2;
+    public const int CommunityMixMaxPlayers = 16;
+    public const double CommunityMixStarWeight = 0.25;
+    public const double CommunityMixSpreadWeight = 0.25;
+    public const double CommunityMixUncertaintyWeight = 0.1;
+    public const double CommunityMixCostTolerance = 15;
     public const double CommunityWinScore = 1;
     public const double CommunityDrawScore = 0.5;
     public const double CommunityLossScore = 0;

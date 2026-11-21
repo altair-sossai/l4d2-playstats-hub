@@ -43,6 +43,20 @@
             </a>
         </div>
     }
+    else if (ballot.Status == CommunityBallotStatus.Blocked)
+    {
+        <div class="jumbotron text-center">
+            <p>
+                <span class="glyphicon glyphicon-ban-circle text-danger"></span> @L["You can no longer vote in the community ranking."]
+            </p>
+            <p>
+                <small>@L["The administrators reviewed the votes and blocked your votes."]</small>
+            </p>
+            <a class="btn btn-default" href="/community">
+                <span class="glyphicon glyphicon-list"></span> @L["See the community ranking"]
+            </a>
+        </div>
+    }
     else if (ballot.Status == CommunityBallotStatus.NobodyLeft)
     {
         <div class="jumbotron text-center">

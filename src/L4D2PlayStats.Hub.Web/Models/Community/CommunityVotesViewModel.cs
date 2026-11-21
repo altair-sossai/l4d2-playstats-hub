@@ -15,5 +15,6 @@ public class CommunityVotesViewModel
     public int Page { get; init; }
     public bool HasMore { get; init; }
     public bool ShowVoters { get; init; }
+    public bool Moderate { get; init; }
     public TimeZoneInfo TimeZone { get; init; } = TimeZoneInfo.Utc;
 }

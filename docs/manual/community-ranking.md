@@ -61,7 +61,7 @@ Under each name the card shows up to 4 other names the player has used in matche
 | A player can be offered only if their last match was within a number of days. With 0, however long ago it was. | 0 |
 | You are never asked about yourself, and never asked about the same pair twice. | |
 
-When you cannot vote, the page says why: you need to sign in, you need more matches (with your count), you used all the votes of the day, or there is nobody left for you to compare.
+When you cannot vote, the page says why: you need to sign in, you need more matches (with your count), you used all the votes of the day, there is nobody left for you to compare, or the administrators blocked your votes.
 
 ## How the pair is chosen
 
@@ -109,5 +109,9 @@ The ratings are calculated again from every vote after each new vote. **Rebuild 
 **Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
 
 **Voters** lists everybody who voted, with their number of votes and their last vote, 20 per page, the most votes first. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
+
+**Block** stops a voter from voting, from the same field or from the voter's row. Their voting page then says they can no longer vote because the administrators reviewed the votes and blocked theirs, and any answer they send is refused. Blocking keeps the votes already given; use **Remove votes** as well to delete them. **Blocked voters** lists everybody who is blocked, since when, with **Unblock** to let them vote again.
+
+To delete a single vote, open **Latest votes** or the **Votes received** and **Votes cast** tabs of a player page while signed in as an administrator. Each vote then has a red button that deletes it, and the ratings are calculated again without it, and a yellow button that blocks the player who gave it. Administrators always see who voted, even when **Show who voted in the latest votes** is off.
 
 Turning off the community ranking module in [Modules](administration.md#modules) removes **Community** from the menu. The votes are kept.
