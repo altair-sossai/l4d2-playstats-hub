@@ -80,7 +80,7 @@
         <strong>@L["Import the bundled catalog"]</strong>
     </div>
     <div class="panel-body">
-        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/bundled">
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/bundled" onsubmit="return confirm('@L["Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own."]')">
             <p>@L["The catalog that comes with this version of the hub, with {0} skins and their thumbnails.", Model.Bundled.ToString("N0", culture)]</p>
             <button class="btn btn-primary" type="submit">
                 <span class="glyphicon glyphicon-import"></span> @L["Import the bundled catalog"]
@@ -94,7 +94,7 @@
         <strong>@L["Import from a file"]</strong>
     </div>
     <div class="panel-body">
-        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/upload" enctype="multipart/form-data">
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/upload" enctype="multipart/form-data" onsubmit="return confirm('@L["Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own."]')">
             <div class="form-group">
                 <label for="file">@L["Catalog file"] @FieldHelp.More(L["A skins.json file in the same format as the catalog that comes with the hub."], L["Catalog file"], L["Importing updates the skins that already exist and adds the new ones.\nSkins that are not in the file are taken off sale; players keep the ones they own.\nThe prices changed on the Prices page and the author names read from Steam are kept."])</label>
                 <input id="file" name="file" type="file" accept=".json,application/json" required/>
@@ -122,7 +122,7 @@
         }
         else
         {
-            <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/fetch">
+            <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/fetch" onsubmit="return confirm('@L["Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own."]')">
                 <p>
                     <code>@Model.Settings.CatalogUrl</code>
                 </p>

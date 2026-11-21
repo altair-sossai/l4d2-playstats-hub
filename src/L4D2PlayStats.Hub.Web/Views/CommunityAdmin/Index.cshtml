@@ -235,7 +235,7 @@
                             </form>
                             @if (voter.Blocked)
                             {
-                                <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl">
+                                <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" onsubmit="return confirm('@L["Unblock this voter? They will be able to vote again."]')">
                                     <input type="hidden" name="communityId" value="@voter.CommunityId">
                                     <input type="hidden" name="returnUrl" value="@votersUrl">
                                     <button class="btn btn-xs btn-default" type="submit">
@@ -304,7 +304,7 @@
                             <a class="btn btn-xs btn-info" href="@CommunityVoteUrls.Votes(blocked.CommunityId, null)" target="_blank" title="@L["See the votes made by this player"]">
                                 <span class="glyphicon glyphicon-eye-open"></span> @L["See votes"]
                             </a>
-                            <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl">
+                            <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" onsubmit="return confirm('@L["Unblock this voter? They will be able to vote again."]')">
                                 <input type="hidden" name="communityId" value="@blocked.CommunityId">
                                 <input type="hidden" name="returnUrl" value="@blockedUrl">
                                 <button class="btn btn-xs btn-default" type="submit">

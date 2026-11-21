@@ -1792,6 +1792,9 @@
                 var $button = $(this);
                 var weaponName = escapeHtml($button.data('weapon-name'));
 
+                if (!confirm(@Json.Serialize(L["Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later."].Value)))
+                    return;
+
                 post('/api/shop/weapons/' + encodeURIComponent($button.data('weapon')) + '/unequip', null, $button, function () {
                     var html = '<p>' + format(texts.unequipSuccess, weaponName) + '</p>'
                         + '<p class="sk-notice">' + texts.nextMap + '</p>';

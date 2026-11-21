@@ -584,7 +584,7 @@
             else if (lostExperiencePoints > 0)
                 addPunishments(communityId, lostExperiencePoints);
 
-            else if (lostExperiencePoints === 0)
+            else if (lostExperiencePoints === 0 && confirm(@Json.Serialize(L["Remove the punishments of this player in this season?"].Value)))
                 deletePunishments(communityId);
         }
 

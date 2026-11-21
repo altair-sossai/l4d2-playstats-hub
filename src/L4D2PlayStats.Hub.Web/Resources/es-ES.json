@@ -1433,5 +1433,10 @@
   "Move up": "Subir",
   "Move down": "Bajar",
   "Bans": "Bloqueos",
-  "Limits": "Límites"
+  "Limits": "Límites",
+  "Unblock this voter? They will be able to vote again.": "¿Desbloquear a este votante? Podrá votar de nuevo.",
+  "Remove the punishments of this player in this season?": "¿Quitar los castigos de este jugador en esta temporada?",
+  "Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later.": "¿Quitar la skin de esta arma? Vuelve al aspecto predeterminado, y puedes equipar la skin de nuevo después.",
+  "Go back to the catalog price for this skin?": "¿Volver al precio del catálogo para esta skin?",
+  "Import the catalog? Skins that are not in it are taken off sale; players keep the ones they own.": "¿Importar el catálogo? Las skins que no están en él salen de la tienda; los jugadores conservan las que tienen."
 }

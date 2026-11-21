@@ -215,7 +215,8 @@
             });
 
             $('.ska-reset').on('click', function () {
-                save(null);
+                if (confirm(@Json.Serialize(L["Go back to the catalog price for this skin?"].Value)))
+                    save(null);
             });
 
             $('#ska-price-modal').on('shown.bs.modal', function () {
