@@ -15,6 +15,7 @@ The page and the settings are a module, off by default.
 - [What players see](#what-players-see)
 - [For administrators](#for-administrators)
 - [Who must use the Anti-Cheat](#who-must-use-the-anti-cheat)
+- [Turned on by the players](#turned-on-by-the-players)
 - [Changes made in the game](#changes-made-in-the-game)
 
 ## What players see
@@ -62,7 +63,19 @@ The texts of the page are part of the site and are translated with it.
 - The mode saved on the site wins over the `anti_cheat_mode` of the game server. Until a mode is saved, each game server uses its own value, `1` by default. See [Connecting a game server](../game-server.md#optional-the-anti-cheat-plugin).
 - The mode and the lists are the same for every game server of the site.
 - After each change on the site, the site queues `sm_aac sync` for every enabled game server, so the plugin reads the lists again within seconds. A command already waiting for a server is not queued twice. `l4d2_gameinfo_sync` fetches the command, so this needs the live server module, but not the remote commands module. Each one shows in the audit log of [Remote commands](moderation.md#remote-commands). Without the live server module, the plugin still reads the lists by itself every minute.
-- The settings only decide who must use the program. Whether a game server enforces it at all is the `anti_cheat_enabled` setting of the plugin.
+- The settings only decide who must use the program. Whether a game server enforces it at all is the `anti_cheat_enabled` setting of the plugin, or a vote of the players (see below).
+
+## Turned on by the players
+
+When the game server runs the anti-cheat plugin with enforcement off (`anti_cheat_enabled 0`), the players can turn it on for the match with a vote. This needs version 1.6.0 of the plugin, and nothing on the site changes.
+
+- **The notice**: about 30 seconds after joining, while a vote can start, each player reads once in the chat that the Anti-Cheat is off and that they can type `!aac vote` to play the match with it.
+- **When the vote can start**: only before the match begins, in the ready-up of the first map, with both teams full, by a player of one of the teams, and not while a mix is running or another vote is open.
+- **The vote**: Yes or No, shown to the players of the two teams. It passes with more than half of them (5 of 8); a player who does not vote counts as no.
+- **When it passes**: the Anti-Cheat turns on for the match, and the usage mode and the lists above still decide who must use it. A player who must and does not have the program open goes to the spectators, and must close the game and open it through the Anti-Cheat. The live server shows the **Anti-Cheat on** badge.
+- **How long it lasts**: until the match ends, until an administrator types `!aac off`, or until the game server stays empty for 10 minutes. It survives the restart of the game server when everyone leaves to reopen the game.
+
+The vote only turns the Anti-Cheat on; no vote turns it off. The plugin documents its settings (`anti_cheat_vote_enabled` and the others).
 
 ## Changes made in the game
 

@@ -15,6 +15,7 @@ La página y los ajustes son un módulo, desactivado de forma predeterminada.
 - [Lo que ven los jugadores](#lo-que-ven-los-jugadores)
 - [Para administradores](#para-administradores)
 - [Quién debe usar el Anti-Cheat](#quién-debe-usar-el-anti-cheat)
+- [Activado por los jugadores](#activado-por-los-jugadores)
 - [Cambios hechos en el juego](#cambios-hechos-en-el-juego)
 
 ## Lo que ven los jugadores
@@ -62,7 +63,19 @@ Los textos de la página son parte del sitio y se traducen con él.
 - El modo guardado en el sitio prevalece sobre el `anti_cheat_mode` del servidor de juego. Mientras no se guarde ningún modo, cada servidor de juego usa su propio valor, `1` de forma predeterminada. Consulta [Conectar un servidor de juego](../game-server.es.md#opcional-el-plugin-del-anti-cheat).
 - El modo y las listas son los mismos para todos los servidores de juego del sitio.
 - Después de cada cambio en el sitio, el sitio pone en cola `sm_aac sync` para cada servidor de juego habilitado, y el plugin vuelve a leer las listas en segundos. Un comando que todavía espera a un servidor no se pone en cola dos veces. Quien busca el comando es `l4d2_gameinfo_sync`, así que esto necesita el módulo del servidor en vivo, pero no el de comandos remotos. Cada uno aparece en el registro de auditoría de [Comandos remotos](moderation.es.md#comandos-remotos). Sin el módulo del servidor en vivo, el plugin sigue leyendo las listas por sí mismo cada minuto.
-- Los ajustes solo deciden quién debe usar el programa. Si un servidor de juego lo exige o no es el ajuste `anti_cheat_enabled` del plugin.
+- Los ajustes solo deciden quién debe usar el programa. Si un servidor de juego lo exige o no es el ajuste `anti_cheat_enabled` del plugin, o una votación de los jugadores (ver abajo).
+
+## Activado por los jugadores
+
+Cuando el servidor de juego ejecuta el plugin del anti-cheat con la exigencia desactivada (`anti_cheat_enabled 0`), los jugadores pueden activarla en la partida con una votación. Esto necesita la versión 1.6.0 del plugin, y nada cambia en el sitio.
+
+- **El aviso**: unos 30 segundos después de entrar, mientras una votación es posible, cada jugador lee una vez en el chat que el Anti-Cheat está desactivado y que puede escribir `!aac vote` para jugar la partida con él.
+- **Cuándo puede empezar la votación**: solo antes de que empiece la partida, en el ready-up del primer mapa, con los dos equipos completos, por un jugador de uno de los equipos, y no durante un mix ni con otra votación abierta.
+- **La votación**: Sí o No, mostrada a los jugadores de los dos equipos. Pasa con más de la mitad de ellos (5 de 8); quien no vota cuenta como no.
+- **Cuando pasa**: el Anti-Cheat se activa en la partida, y el modo de uso y las listas de arriba siguen decidiendo quién debe usarlo. Quien debe y no tiene el programa abierto pasa a espectador, y debe cerrar el juego y abrirlo desde el Anti-Cheat. El servidor en vivo muestra la insignia **Anti-Cheat activado**.
+- **Cuánto dura**: hasta que termina la partida, hasta que un administrador escribe `!aac off` o hasta que el servidor de juego queda vacío durante 10 minutos. Sobrevive al reinicio del servidor de juego cuando todos salen para abrir el juego de nuevo.
+
+La votación solo activa el Anti-Cheat; ninguna votación lo desactiva. El plugin documenta sus ajustes (`anti_cheat_vote_enabled` y los demás).
 
 ## Cambios hechos en el juego
 

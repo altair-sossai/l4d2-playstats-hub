@@ -175,6 +175,8 @@ O plugin de anti-cheat (`l4d2-anti-cheat.smx`, versão 1.5.0 ou mais nova) não 
 | `l4d2_web_secret` | O token deste servidor de jogo, o mesmo valor de `playstats_token`. Cada servidor de jogo tem o seu. |
 | `anti_cheat_mode` | `0`: todos precisam usar o Anti-Cheat, exceto os jogadores da whitelist. `1`: só os jogadores da lista obrigatória precisam usá-lo (o padrão do plugin). O modo salvo em **Administração → Configurações do Anti-Cheat** vale mais; este valor só conta até que um modo seja salvo lá. |
 
+Com `anti_cheat_enabled 0` nos modos de partida, a versão 1.6.0 do plugin deixa os jogadores ligarem o Anti-Cheat na partida com `!aac vote`; veja [Ligado pelos jogadores](manual/anti-cheat.pt.md#ligado-pelos-jogadores).
+
 Nunca defina `l4d2_web_secret` com `confogl_addcvar`, pelo mesmo motivo do `playstats_token`. As outras configurações do plugin, como o endereço e o token do serviço próprio dele, não mudam.
 
 Depois de uma alteração no site, o `l4d2_gameinfo_sync` roda `sm_aac sync` no servidor de jogo em segundos. Sem o módulo de servidor ao vivo, o plugin lê o site sozinho a cada minuto. Para verificar a conexão, digite `sm_aac sync` e depois `sm_aac list` no console do servidor de jogo, ou pergunte ao site a partir dessa máquina:
