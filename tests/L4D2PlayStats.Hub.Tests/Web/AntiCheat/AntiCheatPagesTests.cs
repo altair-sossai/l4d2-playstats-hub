@@ -265,9 +265,11 @@ public class AntiCheatPagesTests
         await factory.EnableAsync();
 
         var page = await client.GetStringAsync("/admin/chat-bans");
+        var script = await client.GetStringAsync("/js/pages/chat-bans.js");
 
-        Assert.Contains("var lookupUrl = \"/api/admin/players/lookup\";", page);
-        Assert.Contains("$.getJSON(lookupUrl, { id: value })", page);
+        Assert.Contains("lookupUrl: \"/api/admin/players/lookup\"", page);
+        Assert.Contains("<script src=\"/js/pages/chat-bans.js", page);
+        Assert.Contains("$.getJSON(lookupUrl, { id: value })", script);
     }
 
     private static WebApplicationFactory<Program> WithSteam(HubWebFactory factory, Func<Uri, HttpResponseMessage> route)

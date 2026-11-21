@@ -1,0 +1,504 @@
+@model CommandsViewModel
+@inject ISettingsService Settings
+
+@{
+    var site = await Settings.GetAsync<SiteSettings>();
+    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Commands"],
+        Description = L["Every command of the {0} game server, explained with examples.", site.Name]
+    };
+}
+
+@section Styles {
+    <style>
+        .cmd-page {
+            --cmd-accent: @(light ? "#008cba" : "#5bc0de");
+            --cmd-name: @(light ? "#0b5f80" : "#9fdcf0");
+            --cmd-name-bg: @(light ? "rgba(0, 140, 186, .08)" : "rgba(91, 192, 222, .12)");
+            --cmd-name-border: @(light ? "rgba(0, 140, 186, .35)" : "rgba(91, 192, 222, .4)");
+            --cmd-who: @(light ? "#2b6f45" : "#8fd88f");
+            --cmd-who-bg: @(light ? "rgba(67, 172, 106, .12)" : "rgba(98, 196, 98, .14)");
+            --cmd-when: @(light ? "#8a5300" : "#f5c27a");
+            --cmd-when-bg: @(light ? "rgba(233, 144, 2, .13)" : "rgba(240, 173, 78, .14)");
+            --cmd-admin: @(light ? "#b3260f" : "#f28b88");
+            --cmd-admin-bg: @(light ? "rgba(240, 65, 36, .1)" : "rgba(238, 95, 91, .15)");
+            --cmd-card-bg: @(light ? "#ffffff" : "rgba(255, 255, 255, .03)");
+            --cmd-border: @(light ? "#dddddd" : "rgba(0, 0, 0, .45)");
+            --cmd-code-bg: @(light ? "#f3f5f7" : "rgba(0, 0, 0, .28)");
+            --cmd-muted: @(light ? "#6f6f6f" : "#9aa0a8");
+        }
+
+        .cmd-page code {
+            padding: 2px 6px;
+            border: 1px solid var(--cmd-border);
+            border-radius: 4px;
+            background: var(--cmd-code-bg);
+            color: inherit;
+            font-size: 90%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .cmd-hero {
+            margin: 10px 0 18px;
+            padding: 24px 24px 20px;
+            border: 1px solid var(--cmd-border);
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(91, 192, 222, .12), rgba(98, 196, 98, .05) 60%, rgba(128, 128, 128, .03));
+        }
+
+        .cmd-hero h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .cmd-hero h1 .glyphicon {
+            margin-right: 8px;
+            color: var(--cmd-accent);
+            font-size: 26px;
+        }
+
+        .cmd-hero .lead {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .cmd-search {
+            position: relative;
+            max-width: 560px;
+        }
+
+        .cmd-search .glyphicon {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            color: #8a8f98;
+            pointer-events: none;
+        }
+
+        .cmd-search .form-control {
+            height: 42px;
+            padding-left: 36px;
+            font-size: 15px;
+        }
+
+        .cmd-count {
+            min-height: 20px;
+            margin-top: 8px;
+            color: var(--cmd-muted);
+            font-size: 13px;
+        }
+
+        .cmd-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 0 0 22px;
+        }
+
+        .cmd-chips a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border: 1px solid var(--cmd-border);
+            border-radius: 16px;
+            background: var(--cmd-card-bg);
+            font-size: 13px;
+            line-height: 20px;
+            text-decoration: none;
+            transition: border-color .15s, background-color .15s;
+        }
+
+        .cmd-chips a:hover,
+        .cmd-chips a:focus {
+            border-color: var(--cmd-accent);
+            background: var(--cmd-name-bg);
+            text-decoration: none;
+        }
+
+        .cmd-chips a .glyphicon {
+            color: var(--cmd-accent);
+            font-size: 12px;
+        }
+
+        .cmd-chips a.cmd-chip-admin .glyphicon {
+            color: var(--cmd-admin);
+        }
+
+        .cmd-chips a.cmd-hidden {
+            display: none;
+        }
+
+        .cmd-section {
+            margin-bottom: 26px;
+            scroll-margin-top: 10px;
+        }
+
+        .cmd-section-title {
+            margin: 0 0 4px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--cmd-border);
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .cmd-section-title .glyphicon {
+            margin-right: 8px;
+            color: var(--cmd-accent);
+            font-size: 18px;
+        }
+
+        .cmd-section-intro {
+            margin: 8px 0 14px;
+            color: var(--cmd-muted);
+        }
+
+        .cmd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+            gap: 14px;
+        }
+
+        .cmd-card {
+            min-width: 0;
+            padding: 14px 16px;
+            border: 1px solid var(--cmd-border);
+            border-radius: 6px;
+            background: var(--cmd-card-bg);
+        }
+
+        .cmd-card-title {
+            margin: 0 0 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .cmd-names {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .cmd-page .cmd-names code {
+            padding: 3px 9px;
+            border-color: var(--cmd-name-border);
+            border-radius: 14px;
+            background: var(--cmd-name-bg);
+            color: var(--cmd-name);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .cmd-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .cmd-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 18px;
+        }
+
+        .cmd-badge .glyphicon {
+            font-size: 10px;
+        }
+
+        .cmd-badge-who {
+            background: var(--cmd-who-bg);
+            color: var(--cmd-who);
+        }
+
+        .cmd-badge-when {
+            background: var(--cmd-when-bg);
+            color: var(--cmd-when);
+        }
+
+        .cmd-badge-admin {
+            background: var(--cmd-admin-bg);
+            color: var(--cmd-admin);
+        }
+
+        .cmd-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--cmd-muted);
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .cmd-syntax {
+            margin-bottom: 10px;
+        }
+
+        .cmd-syntax code {
+            display: inline-block;
+            margin: 0 4px 4px 0;
+        }
+
+        .cmd-description {
+            margin-bottom: 10px;
+        }
+
+        .cmd-examples {
+            margin-bottom: 10px;
+        }
+
+        .cmd-examples ul,
+        .cmd-notes {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .cmd-examples li {
+            margin-bottom: 6px;
+        }
+
+        .cmd-examples li code {
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .cmd-examples li span {
+            color: var(--cmd-muted);
+        }
+
+        .cmd-notes li {
+            position: relative;
+            margin-bottom: 5px;
+            padding-left: 18px;
+            font-size: 13px;
+        }
+
+        .cmd-notes li .glyphicon {
+            position: absolute;
+            top: 3px;
+            left: 0;
+            color: var(--cmd-accent);
+            font-size: 11px;
+        }
+
+        .cmd-card > :last-child,
+        .cmd-notes li:last-child,
+        .cmd-examples li:last-child {
+            margin-bottom: 0;
+        }
+
+        .cmd-admin .panel {
+            margin-bottom: 0;
+        }
+
+        .cmd-admin .panel-heading a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .cmd-admin .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .cmd-admin .panel-title .glyphicon {
+            margin-right: 8px;
+            color: var(--cmd-admin);
+        }
+
+        .cmd-admin .cmd-toggle {
+            transition: transform .2s;
+        }
+
+        .cmd-admin .collapsed .cmd-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .cmd-admin .cmd-section-intro {
+            margin-top: 0;
+        }
+
+        .cmd-hidden {
+            display: none !important;
+        }
+
+        @@media screen and (max-width: 700px) {
+            .cmd-hero {
+                padding: 18px 16px 14px;
+            }
+
+            .cmd-hero h1 {
+                font-size: 26px;
+            }
+
+            .cmd-hero h1 .glyphicon {
+                font-size: 21px;
+            }
+
+            .cmd-section-title {
+                font-size: 19px;
+            }
+
+            .cmd-card {
+                padding: 12px 13px;
+            }
+        }
+    </style>
+}
+
+<div class="cmd-page" id="cmd-page">
+    <div class="cmd-hero">
+        <h1><span class="glyphicon glyphicon-console" aria-hidden="true"></span>@L["Commands"]</h1>
+        <p class="lead">@L["Every command you can use on the game server, explained with examples."]</p>
+        <div class="cmd-search">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            <input type="search" id="cmd-search" class="form-control" autocomplete="off" spellcheck="false" placeholder="@L["Search a command: mix, pause, tank..."]" aria-label="@L["Search commands"]">
+        </div>
+        <div class="cmd-count" id="cmd-count" aria-live="polite" data-found="@L["{0} command(s) found"]"></div>
+    </div>
+
+    <nav class="cmd-chips" id="cmd-chips" aria-label="@L["Sections"]">
+        @foreach (var group in Model.Sections)
+        {
+            <a href="#@group.Anchor" data-section="@group.Anchor" class="@(group.Admin ? "cmd-chip-admin" : null)">
+                <span class="glyphicon @(AppConsts.CommandsGlyphiconPrefix + group.Icon)" aria-hidden="true"></span>@group.Title
+            </a>
+        }
+    </nav>
+
+    <div class="alert alert-info cmd-hidden" id="cmd-empty">@L["No command matches your search."]</div>
+
+    @foreach (var group in Model.PlayerSections)
+    {
+        <section class="cmd-section" id="@group.Anchor">
+            <h2 class="cmd-section-title"><span class="glyphicon @(AppConsts.CommandsGlyphiconPrefix + group.Icon)" aria-hidden="true"></span>@group.Title</h2>
+            <p class="cmd-section-intro">@CommandText.Format(group.Intro)</p>
+            <div class="cmd-grid">
+                @foreach (var command in group.Commands)
+                {
+                    <partial name="_CommandCard" model="(command, group.Admin)"/>
+                }
+            </div>
+        </section>
+    }
+
+    @foreach (var group in Model.AdminSections)
+    {
+        var body = $"{group.Anchor}-body";
+
+        <section class="cmd-section cmd-admin" id="@group.Anchor">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#@body" class="collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="@body">
+                        <h2 class="panel-title"><span class="glyphicon @(AppConsts.CommandsGlyphiconPrefix + group.Icon)" aria-hidden="true"></span>@group.Title</h2>
+                        <span class="glyphicon glyphicon-chevron-down cmd-toggle" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="@body" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p class="cmd-section-intro">@CommandText.Format(group.Intro)</p>
+                        <div class="cmd-grid">
+                            @foreach (var command in group.Commands)
+                            {
+                                <partial name="_CommandCard" model="(command, group.Admin)"/>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var input = document.getElementById('cmd-search');
+            var count = document.getElementById('cmd-count');
+            var empty = document.getElementById('cmd-empty');
+            var cards = Array.prototype.slice.call(document.querySelectorAll('#cmd-page .cmd-card'));
+            var sections = Array.prototype.slice.call(document.querySelectorAll('#cmd-page .cmd-section'));
+            var chips = Array.prototype.slice.call(document.querySelectorAll('#cmd-chips a'));
+
+            function normalize(text) {
+                return (text || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+            }
+
+            cards.forEach(function (card) {
+                card.setAttribute('data-search', normalize(card.textContent));
+            });
+
+            function openAdmin(section) {
+                var body = section.querySelector('.panel-collapse');
+
+                if (body && !body.classList.contains('in'))
+                    $(body).collapse('show');
+            }
+
+            function filter() {
+                var terms = normalize(input.value).split(' ').filter(function (term) { return term.length > 0; });
+                var total = 0;
+
+                cards.forEach(function (card) {
+                    var text = card.getAttribute('data-search');
+                    var match = terms.every(function (term) { return text.indexOf(term) >= 0; });
+
+                    card.classList.toggle('cmd-hidden', !match);
+
+                    if (match)
+                        total++;
+                });
+
+                sections.forEach(function (section) {
+                    var visible = section.querySelector('.cmd-card:not(.cmd-hidden)') !== null;
+                    var chip = document.querySelector('#cmd-chips a[data-section="' + section.id + '"]');
+
+                    section.classList.toggle('cmd-hidden', !visible);
+
+                    if (chip)
+                        chip.classList.toggle('cmd-hidden', !visible);
+
+                    if (visible && terms.length > 0 && section.classList.contains('cmd-admin'))
+                        openAdmin(section);
+                });
+
+                empty.classList.toggle('cmd-hidden', terms.length === 0 || total > 0);
+                count.textContent = terms.length === 0 ? '' : count.getAttribute('data-found').replace('{0}', total);
+            }
+
+            input.addEventListener('input', filter);
+
+            chips.forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    var section = document.getElementById(chip.getAttribute('data-section'));
+
+                    if (section && section.classList.contains('cmd-admin'))
+                        openAdmin(section);
+                });
+            });
+
+            if (window.location.hash) {
+                var target = document.getElementById(window.location.hash.substring(1));
+
+                if (target && target.classList.contains('cmd-admin'))
+                    openAdmin(target);
+            }
+        })();
+    </script>
+}

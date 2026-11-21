@@ -1479,5 +1479,16 @@
   "The 15 levels and their names are fixed. Here you set the experience the highest level, Global, needs and the curve that spreads it between the levels; every page of the site uses the new values right away.": "Os 15 níveis e seus nomes são fixos. Aqui você define a experiência que o nível mais alto, Global, exige e a curva que a distribui entre os níveis; todas as páginas do site passam a usar os novos valores na hora.",
   "Write the name of the campaign and at least one map.": "Escreva o nome da campanha e pelo menos um mapa.",
   "The price is invalid.": "O preço é inválido.",
-  "The experience points to remove must be greater than zero.": "Os pontos de experiência a remover devem ser maiores que zero."
+  "The experience points to remove must be greater than zero.": "Os pontos de experiência a remover devem ser maiores que zero.",
+  "Commands": "Comandos",
+  "Every command of the {0} game server, explained with examples.": "Todos os comandos do servidor de jogo do {0}, explicados com exemplos.",
+  "Every command you can use on the game server, explained with examples.": "Todos os comandos que você pode usar no servidor de jogo, explicados com exemplos.",
+  "Search a command: mix, pause, tank...": "Busque um comando: mix, pause, tank...",
+  "Search commands": "Buscar comandos",
+  "{0} command(s) found": "{0} comando(s) encontrado(s)",
+  "Sections": "Seções",
+  "No command matches your search.": "Nenhum comando corresponde à sua busca.",
+  "How to use": "Como usar",
+  "Example": "Exemplo",
+  "Examples": "Exemplos"
 }

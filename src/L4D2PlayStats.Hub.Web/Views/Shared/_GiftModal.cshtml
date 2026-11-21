@@ -119,24 +119,20 @@
         var $modal = $('#gm-modal');
         var skin = null;
 
-        function escapeHtml(text) {
-            return $('<div/>').text(text == null ? '' : text).html();
-        }
-
         function message(success, text) {
-            $modal.find('.gm-message').html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + escapeHtml(text) + '</div>');
+            Hub.alert($modal.find('.gm-message'), success, text);
         }
 
         function showPlayer(player) {
             var $choice = $modal.find('.gm-player');
 
             if (!player) {
-                $choice.html('<span class="gm-empty">' + escapeHtml(texts.noPlayer) + '</span>');
+                $choice.html('<span class="gm-empty">' + Hub.escapeHtml(texts.noPlayer) + '</span>');
                 return;
             }
 
-            $choice.html('<img class="gm-avatar" src="' + escapeHtml(player.avatarUrl) + '" alt="" onerror="imgOnError(this)"/>'
-                + '<div><strong>' + escapeHtml(player.name) + '</strong><small>' + escapeHtml(player.steamId || '') + ' · ' + escapeHtml(player.communityId) + '</small></div>');
+            $choice.html('<img class="gm-avatar" src="' + Hub.escapeHtml(player.avatarUrl) + '" alt="" onerror="imgOnError(this)"/>'
+                + '<div><strong>' + Hub.escapeHtml(player.name) + '</strong><small>' + Hub.escapeHtml(player.steamId || '') + ' · ' + Hub.escapeHtml(player.communityId) + '</small></div>');
         }
 
         function showSkin(selected) {
@@ -145,12 +141,12 @@
             var $choice = $modal.find('.gm-skin');
 
             if (!skin) {
-                $choice.html('<span class="gm-empty">' + escapeHtml(texts.noSkin) + '</span>');
+                $choice.html('<span class="gm-empty">' + Hub.escapeHtml(texts.noSkin) + '</span>');
                 return;
             }
 
-            $choice.html('<img class="gm-thumb" src="' + escapeHtml(skin.image) + '" alt=""/>'
-                + '<div><strong>' + escapeHtml(skin.title) + '</strong><small>' + escapeHtml(skin.weaponName) + ' · ' + escapeHtml(skin.rarityName) + ' · ' + Number(skin.price).toLocaleString() + ' ⭐</small></div>');
+            $choice.html('<img class="gm-thumb" src="' + Hub.escapeHtml(skin.image) + '" alt=""/>'
+                + '<div><strong>' + Hub.escapeHtml(skin.title) + '</strong><small>' + Hub.escapeHtml(skin.weaponName) + ' · ' + Hub.escapeHtml(skin.rarityName) + ' · ' + Number(skin.price).toLocaleString() + ' ⭐</small></div>');
         }
 
         function swap(openPicker) {
@@ -158,22 +154,16 @@
         }
 
         $modal.find('.gm-pick-player').on('click', function () {
-            swap(function () {
-                window.PlayerPicker.open(function (player) {
-                    if (player) {
-                        $modal.find('.gm-player-id').val(player.communityId);
-                        showPlayer(player);
-                    }
-
-                    $modal.modal('show');
-                });
+            window.PlayerPicker.swap($modal, function (player) {
+                $modal.find('.gm-player-id').val(player.communityId);
+                showPlayer(player);
             });
         });
 
         $modal.find('.gm-player-id').on('input', function () {
             var value = $.trim($(this).val());
 
-            $modal.find('.gm-player').html('<span class="gm-empty">' + escapeHtml(value === '' ? texts.noPlayer : texts.typed) + '</span>');
+            $modal.find('.gm-player').html('<span class="gm-empty">' + Hub.escapeHtml(value === '' ? texts.noPlayer : texts.typed) + '</span>');
         });
 
         $modal.find('.gm-pick-skin').on('click', function () {

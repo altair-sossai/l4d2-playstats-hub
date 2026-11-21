@@ -1,0 +1,77 @@
+@model (CommandEntry Command, bool AdminSection)
+
+@{
+    var command = Model.Command;
+    var admin = Model.AdminSection || command.Admin;
+}
+
+<article class="cmd-card" id="command-@command.Id">
+    @if (!string.IsNullOrEmpty(command.Title))
+    {
+        <h3 class="cmd-card-title">@command.Title</h3>
+    }
+    @if (command.Names.Count > 0)
+    {
+        <div class="cmd-names">
+            @foreach (var name in command.Names)
+            {
+                <code>@name</code>
+            }
+        </div>
+    }
+    @if (admin || command.Who.Count > 0 || command.When.Count > 0)
+    {
+        <div class="cmd-badges">
+            @if (admin)
+            {
+                <span class="cmd-badge cmd-badge-admin"><span class="glyphicon glyphicon-king" aria-hidden="true"></span>@L["Admin"]</span>
+            }
+            @foreach (var who in command.Who)
+            {
+                <span class="cmd-badge cmd-badge-who"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>@who</span>
+            }
+            @foreach (var when in command.When)
+            {
+                <span class="cmd-badge cmd-badge-when"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>@when</span>
+            }
+        </div>
+    }
+    @if (command.Syntax.Count > 0)
+    {
+        <div class="cmd-syntax">
+            <span class="cmd-label">@L["How to use"]</span>
+            @foreach (var syntax in command.Syntax)
+            {
+                <code>@syntax</code>
+            }
+        </div>
+    }
+    <p class="cmd-description">@CommandText.Format(command.Description)</p>
+    @if (command.Examples.Count > 0)
+    {
+        <div class="cmd-examples">
+            <span class="cmd-label">@(command.Examples.Count == 1 ? L["Example"] : L["Examples"])</span>
+            <ul>
+                @foreach (var example in command.Examples)
+                {
+                    <li>
+                        <code>@example.Code</code>
+                        @if (!string.IsNullOrEmpty(example.Text))
+                        {
+                            <span>@example.Text</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    @if (command.Notes.Count > 0)
+    {
+        <ul class="cmd-notes">
+            @foreach (var note in command.Notes)
+            {
+                <li><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>@CommandText.Format(note)</li>
+            }
+        </ul>
+    }
+</article>

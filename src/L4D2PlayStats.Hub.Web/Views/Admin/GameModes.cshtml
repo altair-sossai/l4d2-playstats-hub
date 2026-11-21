@@ -81,7 +81,7 @@
                                     data-rule-team-size="@rule.TeamSize" data-rule-minimum-maps="@rule.MinimumMaps" data-rule-priority="@rule.Priority" data-rule-counts="@(rule.CountsForRanking ? "true" : "false")">
                                 <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
                             </button>
-                            <form method="post" asp-antiforgery="true" action="/admin/game-modes/@rule.Id/delete" onsubmit="return confirm('@L["Delete this rule?"]')">
+                            <form method="post" asp-antiforgery="true" action="/admin/game-modes/@rule.Id/delete" data-confirm="@L["Delete this rule?"]">
                                 <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
                                 <button class="btn btn-xs btn-danger" type="submit">
                                     <span class="glyphicon glyphicon-trash"></span> @L["Delete"]

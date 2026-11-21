@@ -11,7 +11,7 @@ const languages = [
     { culture: 'es-ES', matches: 'Últimas partidas' },
     { culture: 'en-US', matches: 'Last matches' }
 ];
-const phonePages = ['/', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat'];
+const phonePages = ['/', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat', '/commands'];
 const adminPages = [
     { path: '/admin', help: false },
     { path: '/admin/servers' },
@@ -204,6 +204,45 @@ function checks(context) {
                 }
 
                 expect(problems.length === 0, problems.join('\n'));
+            }
+        },
+        {
+            name: 'commands',
+            run: async browser => {
+                await at(browser, null, desktop, '/commands');
+                await pageOk(browser, 'The commands page');
+
+                const visible = `Array.from(document.querySelectorAll('#cmd-page .cmd-card')).filter(card => card.getClientRects().length > 0).length`;
+                const total = await browser.eval(`document.querySelectorAll('#cmd-page .cmd-card').length`);
+
+                expect(total > 50, `The commands page has only ${total} commands`);
+
+                await browser.fill({ '#cmd-search': 'PAUSÉ' });
+                await sleep(200);
+
+                const found = await browser.eval(visible);
+
+                expect(found > 0 && found < 15, `Searching "pausé" shows ${found} commands`);
+                expect(await browser.eval(`document.querySelector('#cmd-count').innerText.trim().length > 0`), 'The search does not say how many commands it found');
+
+                await browser.fill({ '#cmd-search': 'stopmix' });
+                await sleep(600);
+                expect(await browser.eval(`document.querySelector('#commands-admin .panel-collapse').classList.contains('in') && document.querySelector('#command-admin-stopmix').getClientRects().length > 0`), 'Searching an administrator command does not open that section');
+
+                await browser.fill({ '#cmd-search': 'zzzz-nothing' });
+                await sleep(200);
+                expect(await browser.eval(`document.querySelector('#cmd-empty').getClientRects().length > 0`), 'A search with no result does not say so');
+
+                await browser.fill({ '#cmd-search': '' });
+                await sleep(200);
+                expect(await browser.eval(visible) === total, 'Clearing the search does not show every command again');
+
+                await browser.click('#cmd-chips a[data-section="commands-mix"]');
+                expect(await browser.eval(`Math.abs(document.querySelector('#commands-mix').getBoundingClientRect().top) < 60`), 'The Mix chip does not jump to its section');
+
+                await browser.page.viewport(phone, 844);
+                await browser.open('/commands');
+                await noHorizontalScroll(browser, 'The commands page');
             }
         },
         {

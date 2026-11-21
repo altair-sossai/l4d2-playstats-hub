@@ -183,7 +183,7 @@
                     </button>
                 </span>
             </div>
-            <button class="btn btn-danger" type="submit" onclick="return confirm('@L["Remove all votes of this voter?"]')">
+            <button class="btn btn-danger" type="submit" data-confirm="@L["Remove all votes of this voter?"]">
                 <span class="glyphicon glyphicon-trash"></span> @L["Remove votes"]
             </button>
             <button class="btn btn-warning" type="button" data-block-source="#ca-voter-id">
@@ -226,7 +226,7 @@
                             <a class="btn btn-xs btn-info" href="@CommunityVoteUrls.Votes(voter.CommunityId, null)" target="_blank" title="@L["See the votes made by this player"]">
                                 <span class="glyphicon glyphicon-eye-open"></span> @L["See votes"]
                             </a>
-                            <form method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
+                            <form method="post" asp-antiforgery="true" action="/admin/community/voters/delete" data-confirm="@L["Remove all votes of this voter?"]">
                                 <input type="hidden" name="communityId" value="@voter.CommunityId">
                                 <input type="hidden" name="returnUrl" value="@votersUrl">
                                 <button class="btn btn-xs btn-danger" type="submit">
@@ -235,7 +235,7 @@
                             </form>
                             @if (voter.Blocked)
                             {
-                                <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" onsubmit="return confirm('@L["Unblock this voter? They will be able to vote again."]')">
+                                <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" data-confirm="@L["Unblock this voter? They will be able to vote again."]">
                                     <input type="hidden" name="communityId" value="@voter.CommunityId">
                                     <input type="hidden" name="returnUrl" value="@votersUrl">
                                     <button class="btn btn-xs btn-default" type="submit">
@@ -297,7 +297,7 @@
                             <a class="btn btn-xs btn-info" href="@CommunityVoteUrls.Votes(blocked.CommunityId, null)" target="_blank" title="@L["See the votes made by this player"]">
                                 <span class="glyphicon glyphicon-eye-open"></span> @L["See votes"]
                             </a>
-                            <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" onsubmit="return confirm('@L["Unblock this voter? They will be able to vote again."]')">
+                            <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl" data-confirm="@L["Unblock this voter? They will be able to vote again."]">
                                 <input type="hidden" name="communityId" value="@blocked.CommunityId">
                                 <input type="hidden" name="returnUrl" value="@blockedUrl">
                                 <button class="btn btn-xs btn-default" type="submit">
@@ -321,7 +321,7 @@
             </div>
             <div class="panel-body">
                 <p>@L["Rebuilding calculates every rating again from all the stored votes with the current settings."]</p>
-                <form method="post" asp-antiforgery="true" action="/admin/community/rebuild" onsubmit="return confirm('@L["Rebuild every rating now?"]')">
+                <form method="post" asp-antiforgery="true" action="/admin/community/rebuild" data-confirm="@L["Rebuild every rating now?"]">
                     <button class="btn btn-warning" type="submit">
                         <span class="glyphicon glyphicon-refresh"></span> @L["Rebuild the ratings"]
                     </button>

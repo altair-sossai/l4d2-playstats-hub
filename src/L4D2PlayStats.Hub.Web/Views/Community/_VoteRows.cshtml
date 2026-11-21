@@ -49,7 +49,7 @@
             @if (Model.Moderate)
             {
                 <div class="vf-mod">
-                    <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityRemoveVoteUrl" onsubmit="return confirm('@L["Delete this vote? The ratings are calculated again without it."]')">
+                    <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityRemoveVoteUrl" data-confirm="@L["Delete this vote? The ratings are calculated again without it."]">
                         <input type="hidden" name="voteId" value="@vote.Id">
                         <input type="hidden" name="returnUrl" value="@returnUrl" data-return-hash>
                         <button class="btn btn-xs btn-danger" type="submit" title="@L["Delete this vote"]" aria-label="@L["Delete this vote"]">

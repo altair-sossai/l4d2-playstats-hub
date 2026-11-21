@@ -52,7 +52,7 @@ public partial class AdminListsTests
         Assert.Contains(CancelButton, first);
         Assert.Contains(SaveButton, first);
         Assert.Contains("data-player-picker=\"#communityId\" data-player-picker-name=\"#name\"", first);
-        Assert.Contains("onsubmit=\"return confirm('Remove this administrator?')\"", first);
+        Assert.Contains("data-confirm=\"Remove this administrator?\"", first);
         Assert.DoesNotContain("panel-title\">Add an administrator", first);
         Assert.AreEqual("/admin/administrators?page=2", back.Headers.Location?.OriginalString);
         Assert.AreEqual("/admin/administrators", outside.Headers.Location?.OriginalString);
@@ -109,7 +109,7 @@ public partial class AdminListsTests
         Assert.Contains(AddButton, first);
         Assert.Contains(CancelButton, first);
         Assert.Contains(SaveButton, first);
-        Assert.Contains("onsubmit=\"return confirm('Delete this campaign?')\"", first);
+        Assert.Contains("data-confirm=\"Delete this campaign?\"", first);
         Assert.AreEqual("/admin/campaigns?page=2", saved.Headers.Location?.OriginalString);
         CollectionAssert.AreEqual(new[] { "custom_m1", "custom_m2", "custom_m3" }, custom.Maps.OrderBy(map => map.Order).Select(map => map.MapName).ToList());
         Assert.Contains($"data-campaign-edit=\"{custom.Id}\" data-campaign-name=\"Custom Run\" data-campaign-maps=\"custom_m1\ncustom_m2\ncustom_m3\"", after);
@@ -166,7 +166,7 @@ public partial class AdminListsTests
         Assert.Contains(AddButton, first);
         Assert.Contains(CancelButton, first);
         Assert.Contains(SaveButton, first);
-        Assert.Contains("onsubmit=\"return confirm('Delete this rule?')\"", first);
+        Assert.Contains("data-confirm=\"Delete this rule?\"", first);
         Assert.AreEqual("/admin/game-modes?tab=rules&page=2", saved.Headers.Location?.OriginalString);
         Assert.IsNull(practice.TeamSize);
         Assert.IsFalse(practice.CountsForRanking);
@@ -198,7 +198,7 @@ public partial class AdminListsTests
         Assert.Contains(AddButton, first);
         Assert.Contains(CancelButton, first);
         Assert.Contains(SaveButton, first);
-        Assert.Contains("onsubmit=\"return confirm('Delete this server?')\"", first);
+        Assert.Contains("data-confirm=\"Delete this server?\"", first);
         Assert.Contains("name=\"returnUrl\" value=\"/admin/servers?tab=servers&page=2\"", second);
     }
 

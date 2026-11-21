@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Content Update="Resources\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Resources\Commands\*.json" CopyToOutputDirectory="PreserveNewest" />
     <InternalsVisibleTo Include="L4D2PlayStats.Hub.Tests" />
   </ItemGroup>
 

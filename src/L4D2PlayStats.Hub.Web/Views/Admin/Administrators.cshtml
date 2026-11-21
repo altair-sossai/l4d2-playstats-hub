@@ -52,7 +52,7 @@
                 </button>
                 @if (administrator.CommunityId != Model.Current)
                 {
-                    <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" onsubmit="return confirm('@L["Remove this administrator?"]')">
+                    <form method="post" asp-antiforgery="true" action="/admin/administrators/@administrator.CommunityId/delete" data-confirm="@L["Remove this administrator?"]">
                         <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
                         <button class="btn btn-xs btn-danger" type="submit">
                             <span class="glyphicon glyphicon-trash"></span> @L["Remove"]

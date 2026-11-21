@@ -34,6 +34,7 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 | [Ranking de la comunidad](community-ranking.es.md) | Todos | La votación entre pares de jugadores, la calificación, los límites de votos y sus ajustes. |
 | [Anti-Cheat](anti-cheat.es.md) | Todos | La página que ofrece la descarga del Anti-Cheat, quién debe usar el Anti-Cheat en los servidores de juego, y sus ajustes. |
 | [Páginas dentro del juego](in-game-pages.es.md) | Todos | Lo que abre `!ranking` dentro de Left 4 Dead 2. |
+| [Comandos del servidor de juego](commands.es.md) | Todos | La página Comandos: todos los comandos del servidor de juego con ejemplos, y los catálogos de los que sale su texto. |
 | [Idiomas, temas y teléfonos](languages-and-themes.es.md) | Todos | Los tres idiomas, los temas oscuro y claro, y el diseño en el teléfono. |
 
 ### Administrar el sitio

@@ -1,0 +1,808 @@
+{
+  "sections": [
+    {
+      "id": "typing",
+      "icon": "console",
+      "title": "How to type commands",
+      "intro": "Commands are typed in the game chat (Y for everyone, U for your team) or in the console (~). These basics work for every command on this page.",
+      "commands": [
+        {
+          "id": "typing-chat",
+          "names": ["!command"],
+          "who": ["Everyone"],
+          "description": "Start the command with an exclamation mark in the chat. The command runs and everyone sees what you typed.",
+          "examples": [{ "code": "!ready", "text": "Marks you as ready." }]
+        },
+        {
+          "id": "typing-silent",
+          "names": ["/command"],
+          "who": ["Everyone"],
+          "description": "The same command with a slash instead runs silently: nothing of what you typed shows in the chat.",
+          "examples": [{ "code": "/ready" }]
+        },
+        {
+          "id": "typing-console",
+          "names": ["sm_command"],
+          "who": ["Everyone"],
+          "description": "In the console (~), type the command with `sm_` in front instead of the exclamation mark. Handy for binding a command to a key.",
+          "examples": [{ "code": "sm_ready" }, { "code": "bind F3 sm_spectate", "text": "F3 moves you to spectators." }]
+        },
+        {
+          "id": "typing-quotes",
+          "title": "Names with spaces",
+          "who": ["Everyone"],
+          "description": "When a player name has spaces or symbols, put it between double quotes so the server reads it as one name.",
+          "examples": [{ "code": "!mix \"(LoD) Adeilson\" Feeh", "text": "(LoD) Adeilson and Feeh are the captains." }]
+        },
+        {
+          "id": "typing-keys",
+          "title": "Ready keys",
+          "names": ["F1", "F2"],
+          "who": ["Everyone"],
+          "description": "When no vote is running, F1 marks you as ready and F2 takes it back. While a vote is running, the same keys answer Yes and No."
+        },
+        {
+          "id": "typing-help",
+          "names": ["!help"],
+          "who": ["Everyone"],
+          "description": "Lists the commands you are allowed to use on the server, in the console."
+        },
+        {
+          "id": "typing-admins",
+          "title": "Talk to the admins",
+          "names": ["@"],
+          "who": ["Everyone"],
+          "description": "In the team chat (U), start the message with `@` and it goes to the admins who are online, even if they are in another team.",
+          "examples": [{ "code": "@ a player is AFK and blocking the game" }]
+        }
+      ]
+    },
+    {
+      "id": "queue",
+      "icon": "sort-by-order",
+      "title": "Queue and slots",
+      "intro": "When the server is full, spectators wait in a queue for a slot in the teams. The queue is fair: whoever arrived first plays first.",
+      "commands": [
+        {
+          "id": "queue-list",
+          "names": ["!fila", "!queue"],
+          "who": ["Everyone"],
+          "description": "Shows the queue: who is waiting for a slot, in order."
+        },
+        {
+          "id": "queue-slot",
+          "names": ["!vaga", "!slot"],
+          "who": ["Spectators"],
+          "description": "Claims a free slot in a team for you.",
+          "notes": [
+            "In the ready-up of a new game (score 0x0), any spectator can claim a slot.",
+            "During a game, only players from the teams that started it can claim one, to come back in place of a substitute. If the substitute is the Tank at that moment, wait until the Tank is over.",
+            "It does not work when the round is over, for about 60 s while the teams are arranged after a new game, during a mix, or while your lerp is invalid.",
+            "The same player can claim a slot at most 2 times before the game goes live.",
+            "If you disconnect, you keep your place for 300 s (5 minutes)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mix",
+      "icon": "random",
+      "title": "Mix",
+      "intro": "A mix makes two new teams: two captains pick the players one by one. There are a few ways to start one.",
+      "commands": [
+        {
+          "id": "mix-rules",
+          "title": "Rules for every mix",
+          "when": ["New game only", "Ready-up only"],
+          "description": "These rules apply to every way of starting a mix on this page.",
+          "notes": [
+            "Only in the ready-up of a new game (score 0x0).",
+            "Both teams must be full, and it cannot be 1v1.",
+            "Spectators cannot start a mix, and no other mix or vote can be running.",
+            "During the mix nobody can join a team without being picked.",
+            "Leaving during a mix gives a warning the first time and then a 60-minute ban.",
+            "`!kickspecs` is blocked during a mix and for 40 s after it."
+          ]
+        },
+        {
+          "id": "mix-vote",
+          "names": ["!mix"],
+          "syntax": ["!mix"],
+          "who": ["Team players"],
+          "description": "Votes to start a mix with elected captains. It starts after 2 votes; each later mix in the same ready-up needs 2 more votes. First everyone votes for the captains in a menu, then the captains pick their players in turns, also in a menu."
+        },
+        {
+          "id": "mix-captains",
+          "names": ["!mix"],
+          "syntax": ["!mix <captain1> <captain2>"],
+          "who": ["Team players"],
+          "description": "Proposes a mix with the two captains you name. A 20 s Yes/No vote starts and passes with more than half of the votes. Captain 1 goes to the Survivors and captain 2 to the Infected.",
+          "examples": [{ "code": "!mix vorkyss Feeh", "text": "vorkyss is the Survivors captain and Feeh the Infected captain." }],
+          "notes": ["Type the exact name or the start of it. Names with spaces go between quotes."]
+        },
+        {
+          "id": "mix-ranked",
+          "names": ["!rmix"],
+          "who": ["Team players"],
+          "module": "CommunityRanking",
+          "description": "A balanced mix: same rules and votes as `!mix`, but the site splits the players into two even teams using the community ranking. The result shows in the chat as \"Survivors: …\" and \"Infected: …\".",
+          "notes": [
+            "If someone is not ranked yet, the server says who and suggests `!mix` instead.",
+            "If the site cannot be reached, the server suggests `!mix`."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "icon": "flag",
+      "title": "Match, configs and votes",
+      "intro": "Load a competitive config, change the campaign, give up a lost game or set where the bosses spawn. Most of these start a vote.",
+      "commands": [
+        {
+          "id": "match-load",
+          "names": ["!match"],
+          "syntax": ["!match", "!match <config>"],
+          "who": ["Team players"],
+          "description": "Votes to load a match config. Without a name, a menu with the configs opens.",
+          "examples": [{ "code": "!match zonemod", "text": "Votes to load ZoneMod." }],
+          "notes": [
+            "Spectators cannot start it. The vote lasts 20 s, and it cannot start while players are still connecting.",
+            "Common configs: zonemod, zoneretro, zm3v3, zm2v2, zm1v1, neomod and others."
+          ]
+        },
+        {
+          "id": "match-change",
+          "names": ["!chmatch"],
+          "syntax": ["!chmatch <config>"],
+          "who": ["Team players"],
+          "description": "Votes to switch the loaded config to another one. Same rules as `!match`.",
+          "examples": [{ "code": "!chmatch zm3v3" }]
+        },
+        {
+          "id": "match-reset",
+          "names": ["!rmatch"],
+          "who": ["Team players"],
+          "description": "Votes to unload the current config. Same rules as `!match`."
+        },
+        {
+          "id": "match-campaign",
+          "names": ["!votecamp", "!votecampaign"],
+          "who": ["Team players"],
+          "description": "Opens a menu with the campaigns installed on the server, in alphabetical order, and starts a vote to change to the one you choose.",
+          "notes": [
+            "It uses the game's own vote, so there is a 30 s wait between votes.",
+            "Spectators cannot vote while the game is paused."
+          ]
+        },
+        {
+          "id": "match-surrender",
+          "names": ["!surrender", "!render"],
+          "who": ["Team players"],
+          "when": ["Live round"],
+          "description": "Votes for your team to give up the game.",
+          "notes": [
+            "From the 2nd map on, with the round live for at least 10 s. Not in the ready-up.",
+            "It needs a strict majority of your team. Not voting counts as No.",
+            "If it fails, wait 60 s before trying again.",
+            "If it passes, the other team gets the higher score plus 250, the rounds are finished automatically so the result reaches the ranking, and the next campaign starts."
+          ]
+        },
+        {
+          "id": "match-decided",
+          "title": "\"Game decided, keep playing?\"",
+          "who": ["Everyone"],
+          "when": ["Automatic"],
+          "description": "On the 4th map, 2nd round, when the score difference is 15 points or more, the server asks everyone by itself whether the game is decided or should go on."
+        },
+        {
+          "id": "match-boss",
+          "names": ["!voteboss", "!bossvote"],
+          "syntax": ["!voteboss <tank> <witch>"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Votes to change where the Tank and the Witch spawn on this map, in % of the map.",
+          "examples": [
+            { "code": "!voteboss 50 -1", "text": "Tank at 50%, the Witch stays where it is." },
+            { "code": "!voteboss 0 -1", "text": "No Tank on this map." }
+          ],
+          "notes": [
+            "Only in the ready-up of the first round of a map.",
+            "0 means no spawn, -1 keeps the current one.",
+            "Maps with fixed boss spawns refuse the change.",
+            "In ZoneMod the Witch value is ignored."
+          ]
+        },
+        {
+          "id": "match-scores",
+          "names": ["!setscores"],
+          "syntax": ["!setscores <survivors> <infected>"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Votes to set the score of each team, for example to continue a game that was interrupted.",
+          "examples": [{ "code": "!setscores 1200 950" }],
+          "notes": ["Needs at least 2 players."]
+        },
+        {
+          "id": "match-kickspecs",
+          "names": ["!kickspecs"],
+          "who": ["Team players"],
+          "description": "Votes to kick the spectators from the server.",
+          "notes": ["Blocked during a mix and for 40 s after it."]
+        },
+        {
+          "id": "match-votekick",
+          "title": "Vote kick",
+          "who": ["Everyone"],
+          "description": "The game's vote kick is turned off on this server. If someone is causing trouble, tell the admins: team chat starting with `@`."
+        }
+      ]
+    },
+    {
+      "id": "ready",
+      "icon": "pause",
+      "title": "Ready-up and pause",
+      "intro": "Before each round everyone gets ready; during the round any team can pause the game.",
+      "commands": [
+        {
+          "id": "ready-ready",
+          "names": ["!ready", "!r"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Marks you as ready. When everyone is ready, a 3 s countdown starts the round.",
+          "notes": ["F1 does the same when no vote is running."]
+        },
+        {
+          "id": "ready-unready",
+          "names": ["!unready", "!nr"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Takes your ready back. During the countdown it cancels it.",
+          "notes": ["F2 does the same when no vote is running."]
+        },
+        {
+          "id": "ready-toggle",
+          "names": ["!toggleready"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Switches between ready and not ready. Good for binding to a single key."
+        },
+        {
+          "id": "ready-hide",
+          "names": ["!hide", "!show"],
+          "who": ["Everyone"],
+          "when": ["Ready-up only"],
+          "description": "Hides or shows the ready-up panel on your screen."
+        },
+        {
+          "id": "ready-return",
+          "names": ["!return"],
+          "who": ["Survivors"],
+          "when": ["Ready-up only"],
+          "description": "Takes you back to the start area if you got stuck during the ready-up."
+        },
+        {
+          "id": "ready-pause",
+          "names": ["!pause"],
+          "who": ["Team players"],
+          "when": ["Live round"],
+          "description": "Pauses the game. There is no limit of pauses.",
+          "notes": ["Spectators cannot vote while the game is paused."]
+        },
+        {
+          "id": "ready-unpause",
+          "names": ["!unpause", "!ready", "!r"],
+          "who": ["Team players"],
+          "when": ["While paused"],
+          "description": "Marks your team as ready to go on. When both teams are ready, a 3 s countdown resumes the game; `!unready` cancels it."
+        },
+        {
+          "id": "ready-crash",
+          "title": "Automatic pause",
+          "who": ["Everyone"],
+          "when": ["Automatic"],
+          "description": "If a player crashes during a live round, the game pauses by itself so they can come back."
+        }
+      ]
+    },
+    {
+      "id": "teams",
+      "icon": "transfer",
+      "title": "Teams and spectators",
+      "intro": "Change team, watch the game and choose what you hear as a spectator.",
+      "commands": [
+        {
+          "id": "teams-spectate",
+          "names": ["!spectate", "!spec", "!s"],
+          "who": ["Team players"],
+          "description": "Moves you to the spectators.",
+          "notes": [
+            "Not while you are pinned by an infected.",
+            "The Tank cannot go to spectators.",
+            "A living infected is killed first.",
+            "See also the automatic rules below: not while the Tank is alive, and not if you took damage in the last 5 s."
+          ]
+        },
+        {
+          "id": "teams-join",
+          "title": "Join a team",
+          "syntax": ["jointeam 2", "jointeam 3"],
+          "who": ["Spectators"],
+          "description": "Press M to open the team menu, or type in the console `jointeam 2` for the Survivors or `jointeam 3` for the Infected."
+        },
+        {
+          "id": "teams-hear",
+          "names": ["!hear"],
+          "syntax": ["!hear", "!hear <survivors|infected|spectators|all>"],
+          "who": ["Spectators"],
+          "description": "Chooses whose voice you hear while you watch. Without an option, a menu opens.",
+          "examples": [{ "code": "!hear infected", "text": "You hear only the Infected team." }],
+          "notes": ["Short forms of the options also work.", "It has no effect while all-talk is on."]
+        },
+        {
+          "id": "teams-cast",
+          "names": ["!cast"],
+          "who": ["Everyone"],
+          "description": "Registers you as a caster, someone who narrates or streams the game. Anyone can register.",
+          "notes": ["Reconnect after registering to be able to use your addons.", "Casters cannot join a team until they unregister."]
+        },
+        {
+          "id": "teams-uncast",
+          "names": ["!notcasting", "!uncast"],
+          "who": ["Everyone"],
+          "description": "Removes your caster registration, so you can play again."
+        },
+        {
+          "id": "teams-spechud",
+          "names": ["!spechud"],
+          "who": ["Spectators"],
+          "description": "Turns the spectator panel on or off, with the health and status of every player."
+        },
+        {
+          "id": "teams-tankhud",
+          "names": ["!tankhud"],
+          "who": ["Infected", "Spectators"],
+          "description": "Turns the Tank panel on or off: who controls the Tank, its health and its frustration."
+        },
+        {
+          "id": "teams-specspeed",
+          "title": "Spectator fly speed",
+          "names": ["sm_set_specspeed_multi", "sm_increase_specspeed", "sm_decrease_specspeed"],
+          "syntax": ["sm_set_specspeed_multi <0-2>", "sm_set_specspeed_increment <step>", "sm_set_vertical_increment <speed>"],
+          "who": ["Spectators"],
+          "description": "Console commands that change how fast the free camera flies. 1.0 is the normal speed and 2 the fastest. While flying, Use (E) goes up and Reload (R) goes down.",
+          "examples": [
+            { "code": "sm_set_specspeed_multi 1.5", "text": "Flies 50% faster." },
+            { "code": "bind KP_PLUS sm_increase_specspeed", "text": "A key that speeds up by the step (0.1 by default)." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "info",
+      "icon": "info-sign",
+      "title": "In-game information",
+      "intro": "Ask the server about the bosses, the score, the network settings and the statistics of the round.",
+      "commands": [
+        {
+          "id": "info-tank",
+          "names": ["!tank", "!boss", "!witch"],
+          "who": ["Everyone"],
+          "description": "Shows who will be the Tank (everyone sees it), at what % of the map the Tank and the Witch spawn, and the current %.",
+          "notes": ["There is no Witch in ZoneMod."]
+        },
+        {
+          "id": "info-current",
+          "names": ["!cur", "!current"],
+          "who": ["Everyone"],
+          "description": "Shows how far the survivors have gone on the map, in %."
+        },
+        {
+          "id": "info-bonus",
+          "names": ["!health", "!bonus", "!damage"],
+          "who": ["Everyone"],
+          "description": "Shows the bonus the survivors are earning in this round and the damage they took."
+        },
+        {
+          "id": "info-mapinfo",
+          "names": ["!mapinfo"],
+          "who": ["Everyone"],
+          "description": "Shows the points of the map: distance and maximum bonus."
+        },
+        {
+          "id": "info-lerps",
+          "names": ["!lerps"],
+          "who": ["Everyone"],
+          "description": "Lists the lerp of every player.",
+          "notes": [
+            "Allowed lerp: 0 to 67 ms.",
+            "You can change it at most 3 times per round; in the ready-up changes are free.",
+            "Out of range, you are moved to the spectators."
+          ]
+        },
+        {
+          "id": "info-rates",
+          "names": ["!rates"],
+          "who": ["Everyone"],
+          "description": "Lists the network settings (rates) of every player."
+        },
+        {
+          "id": "info-cfg",
+          "names": ["!cfg", "!changelog"],
+          "who": ["Everyone"],
+          "description": "Shows which config is loaded and what changed in it."
+        },
+        {
+          "id": "info-weapons",
+          "names": ["!weaponstats", "!weapon_attributes"],
+          "syntax": ["!weaponstats", "!weaponstats <weapon>"],
+          "who": ["Everyone"],
+          "description": "Shows the attributes of the weapons in this config, such as damage and spread."
+        },
+        {
+          "id": "info-stats",
+          "names": ["!stats"],
+          "syntax": ["!stats [mvp|skill|ff|acc|inf] [round|game|team|all|other]", "!stats help"],
+          "who": ["Everyone"],
+          "description": "Shows the statistics of the round or of the whole game: MVP, skill, friendly fire, accuracy and infected.",
+          "examples": [
+            { "code": "!stats mvp game", "text": "The MVP of the whole game." },
+            { "code": "!stats acc round", "text": "The accuracy in this round." },
+            { "code": "!stats help", "text": "Every option explained." }
+          ]
+        },
+        {
+          "id": "info-stats-shortcuts",
+          "names": ["!mvp", "!mvpme", "!skill", "!ff", "!acc"],
+          "who": ["Everyone"],
+          "description": "Shortcuts for `!stats`: `!mvp` the MVP, `!mvpme` only your own line, `!skill` the skill, `!ff` the friendly fire and `!acc` the accuracy."
+        },
+        {
+          "id": "info-stats-auto",
+          "names": ["!stats_auto"],
+          "who": ["Everyone"],
+          "description": "Chooses which statistics are shown to you by themselves at the end of each round."
+        }
+      ]
+    },
+    {
+      "id": "playing",
+      "icon": "screenshot",
+      "title": "While playing",
+      "intro": "Helpers for the infected, the Tank and the survivors during the round.",
+      "commands": [
+        {
+          "id": "playing-warp",
+          "names": ["!warp", "!warpto", "!warptosurvivor"],
+          "syntax": ["!warp <1-4>", "!warp <character>"],
+          "who": ["Infected ghosts"],
+          "description": "While you are an infected ghost, teleports you to a survivor. 1 is the survivor furthest ahead.",
+          "examples": [
+            { "code": "!warp 1", "text": "Goes to the survivor furthest ahead." },
+            { "code": "!warp ellis", "text": "Goes to Ellis." }
+          ],
+          "notes": ["Characters: nick, rochelle, coach, ellis, bill, zoey, louis, francis."]
+        },
+        {
+          "id": "playing-throws",
+          "names": ["!overhand", "!underhand", "!overonehand"],
+          "who": ["Tank"],
+          "description": "Chooses the Tank's rock throw. You can also hold a key while throwing: Reload for the two-handed overhand, Use for the underhand and M2 for the one-handed overhand.",
+          "notes": ["Punch-rock and jump-rock are blocked."]
+        },
+        {
+          "id": "playing-secondary",
+          "names": ["!secondary"],
+          "who": ["Survivors"],
+          "description": "Turns on or off switching to the melee weapon by itself when you pick one up."
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "icon": "globe",
+      "title": "Site, ranking and skins",
+      "intro": "The game server talks to this site: open the ranking without leaving the game and use the skins you bought.",
+      "commands": [
+        {
+          "id": "site-ranking",
+          "names": ["!ranking"],
+          "who": ["Everyone"],
+          "module": "Ranking",
+          "description": "Opens the ranking of this site inside the game.",
+          "notes": ["It also opens by itself 60 s after you join a new game.", "A reminder shows in the chat every 200 s."]
+        },
+        {
+          "id": "site-skins",
+          "names": ["!skin", "!skins"],
+          "syntax": ["!skin", "!skin <id>", "!skin next [weapon]", "!skin prev [weapon]", "!skin default [weapon]", "!skin status"],
+          "who": ["Survivors"],
+          "when": ["Ready-up only"],
+          "module": "SkinShop",
+          "description": "Equips the weapon skins you own. Buy them on the Skins page of this site with the stars you earn as MVP. Alone, `!skin` shows the help.",
+          "examples": [
+            { "code": "!skin next", "text": "The next of your skins for the weapon in your hands." },
+            { "code": "!skin default pump", "text": "The pump shotgun goes back to the default look." },
+            { "code": "!skin status", "text": "Your stars and skins." }
+          ],
+          "notes": [
+            "Works only while the server has the skins turned on.",
+            "You must own the skin.",
+            "Weapons: smg, mac, mp5, pump, chrome, magnum (or deagle), axe, katana, machete, bat, cricket, guitar, crowbar, golf, pan.",
+            "Downloads of server content must be allowed in your game. A skin you buy shows up from the next map change."
+          ]
+        },
+        {
+          "id": "site-patents",
+          "title": "Patents above the heads",
+          "who": ["Everyone"],
+          "when": ["Automatic"],
+          "module": "Ranking",
+          "description": "When the server turns them on, each player's patent (rank) shows above their head. There is no command for it."
+        }
+      ]
+    },
+    {
+      "id": "anticheat",
+      "icon": "lock",
+      "title": "Anti-Cheat",
+      "intro": "Some players, or everyone, must run the Anti-Cheat to play. Download it on the Anti-Cheat page of this site.",
+      "module": "AntiCheat",
+      "commands": [
+        {
+          "id": "anticheat-check",
+          "names": ["!aac"],
+          "who": ["Everyone"],
+          "description": "Tells you, privately, whether you must run the Anti-Cheat and whether yours is working, with the download link."
+        },
+        {
+          "id": "anticheat-vote",
+          "names": ["!aac vote"],
+          "who": ["Team players"],
+          "when": ["Ready-up only"],
+          "description": "Votes to require the Anti-Cheat for everyone in this match.",
+          "notes": [
+            "Only in the ready-up of the first round of the first map, with both teams full and no mix running.",
+            "The vote lasts 20 s and passes with more than half of the team players.",
+            "If it passes, it stays on for the whole match.",
+            "After a failed vote, wait 60 s before trying again."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fun",
+      "icon": "sunglasses",
+      "title": "Fun",
+      "intro": "Settle a discussion, draw a number or pick a side.",
+      "commands": [
+        {
+          "id": "fun-coin",
+          "names": ["!coinflip", "!cf", "!flip"],
+          "who": ["Everyone"],
+          "description": "Flips a coin: heads or tails, for everyone to see."
+        },
+        {
+          "id": "fun-roll",
+          "names": ["!roll", "!picknumber"],
+          "syntax": ["!roll", "!roll <sides>"],
+          "who": ["Everyone"],
+          "description": "Rolls a die. It has 20 sides unless you say otherwise.",
+          "examples": [{ "code": "!roll 6", "text": "A number from 1 to 6." }]
+        },
+        {
+          "id": "fun-team",
+          "names": ["!teamflip", "!tf"],
+          "who": ["Everyone"],
+          "description": "Draws a team for you: Survivors or Infected."
+        },
+        {
+          "id": "fun-settings",
+          "names": ["!settings"],
+          "who": ["Everyone"],
+          "description": "Opens the menu of your personal preferences on the server. They are saved for your account."
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "icon": "alert",
+      "title": "Automatic server rules",
+      "intro": "No command for these, but every player should know them.",
+      "commands": [
+        {
+          "id": "rules-ff",
+          "title": "Friendly fire control",
+          "when": ["Automatic"],
+          "description": "Shooting your teammates over and over gets you kicked and pauses the game. Damage is not counted when the teammate is low on health, incapacitated or pinned."
+        },
+        {
+          "id": "rules-afk",
+          "title": "AFK in the ready-up",
+          "when": ["Automatic"],
+          "description": "A player who is AFK in the ready-up goes to the spectators: after 180 s in a new game, or 360 s in a game in progress. This only happens when someone is waiting for a slot."
+        },
+        {
+          "id": "rules-tank-spec",
+          "title": "No spectating while the Tank is alive",
+          "when": ["Automatic"],
+          "description": "While the Tank is alive you cannot go to the spectators, unless the game is paused. The server reminds you: \"use !pause to change team\"."
+        },
+        {
+          "id": "rules-damage-spec",
+          "title": "No spectating right after damage",
+          "when": ["Automatic"],
+          "description": "If you took damage in the last 5 s, you cannot go to the spectators."
+        },
+        {
+          "id": "rules-lerp",
+          "title": "Invalid lerp",
+          "when": ["Automatic"],
+          "description": "If your lerp is out of the allowed range, the server warns you. Paste this line in the console (~) to fix it:",
+          "examples": [{ "code": "cl_interp 0; cl_interp_ratio 0; rate 100000; cl_cmdrate 100; cl_updaterate 100" }]
+        },
+        {
+          "id": "rules-names",
+          "title": "Fixed names",
+          "when": ["Automatic"],
+          "description": "Some players have a name set by the admins, and the server keeps that name in the game."
+        },
+        {
+          "id": "rules-alltalk",
+          "title": "All-talk in the first ready-up",
+          "when": ["Automatic"],
+          "description": "During the first ready-up of a game, everyone hears everyone, so the teams can be arranged."
+        },
+        {
+          "id": "rules-tank-warning",
+          "title": "\"Tank in N%\"",
+          "when": ["Automatic"],
+          "description": "The chat warns when the Tank is getting close, with the % of the map where it spawns."
+        },
+        {
+          "id": "rules-connect",
+          "title": "Connection messages",
+          "when": ["Automatic"],
+          "description": "The chat announces who is connecting to the server and who left."
+        },
+        {
+          "id": "rules-glow",
+          "title": "Dropped items glow",
+          "when": ["Automatic"],
+          "description": "Weapons and items dropped on the ground glow, so they are easy to find."
+        },
+        {
+          "id": "rules-spoof",
+          "title": "No fake chat",
+          "when": ["Automatic"],
+          "description": "Messages made to look like they came from the server or from another player are blocked."
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "icon": "king",
+      "title": "For administrators",
+      "intro": "Commands that only the server admins can use. Players do not need them.",
+      "admin": true,
+      "commands": [
+        {
+          "id": "admin-stopmix",
+          "names": ["!stopmix"],
+          "description": "Stops the mix in progress."
+        },
+        {
+          "id": "admin-mix",
+          "names": ["!mix"],
+          "syntax": ["!mix", "!mix <captain1>", "!mix <captain1> <captain2>"],
+          "description": "When an admin uses it, the mix starts at once with no vote, even from the spectators. With one name, that player is the Survivors captain and the other is chosen by vote; with two names, both captains are set."
+        },
+        {
+          "id": "admin-rmix",
+          "names": ["!rmix"],
+          "module": "CommunityRanking",
+          "description": "When an admin uses it, the balanced mix starts at once with no vote, even from the spectators."
+        },
+        {
+          "id": "admin-nextcampaign",
+          "names": ["!setnextcampaign"],
+          "description": "Opens a menu to queue the next campaigns, or clear the queue, instead of a random draw."
+        },
+        {
+          "id": "admin-givetank",
+          "names": ["!givetank"],
+          "syntax": ["!givetank <player>"],
+          "description": "Gives the Tank to the chosen player."
+        },
+        {
+          "id": "admin-tankshuffle",
+          "names": ["!tankshuffle"],
+          "description": "Draws again, at random, who will be the Tank."
+        },
+        {
+          "id": "admin-hp",
+          "names": ["!hp"],
+          "syntax": ["!hp", "!hp <1-100>"],
+          "description": "Gives health to every living survivor: 100 unless you say otherwise, never above 100."
+        },
+        {
+          "id": "admin-slots",
+          "names": ["!slots"],
+          "syntax": ["!slots <number>"],
+          "description": "Changes the number of player slots on the server. Players cannot change it on this server."
+        },
+        {
+          "id": "admin-campaigns",
+          "names": ["!listcampaigns", "!refreshcampaigns"],
+          "description": "`!listcampaigns` lists in the console every installed campaign; `!refreshcampaigns` reads the list again after a campaign is added."
+        },
+        {
+          "id": "admin-broadcast",
+          "names": ["!broadcast"],
+          "description": "Turns broadcast mode on or off: while it is on, everyone hears your voice."
+        },
+        {
+          "id": "admin-swap",
+          "names": ["!swap", "!swapto", "!swapteams"],
+          "syntax": ["!swap <player>", "!swapto <team> <player>", "!swapteams"],
+          "description": "`!swap` moves players to the other team, `!swapto` moves them to a team (1 spectators, 2 Survivors, 3 Infected) and `!swapteams` swaps the two teams.",
+          "examples": [{ "code": "!swapto 1 Feeh", "text": "Feeh goes to the spectators." }],
+          "notes": ["A player sent to the spectators with `!swapto 1` cannot join a team for 60 s."]
+        },
+        {
+          "id": "admin-forcestart",
+          "names": ["!forcestart", "!fs"],
+          "description": "Starts the round without waiting for everyone to be ready."
+        },
+        {
+          "id": "admin-forcepause",
+          "names": ["!forcepause", "!forceunpause"],
+          "description": "Pauses or resumes the game at once, without the teams."
+        },
+        {
+          "id": "admin-bosses",
+          "names": ["!ftank", "!fwitch"],
+          "syntax": ["!ftank <percent>", "!fwitch <percent>"],
+          "description": "Sets where the Tank or the Witch spawns, with no vote."
+        },
+        {
+          "id": "admin-forcematch",
+          "names": ["!forcematch", "!fm", "!resetmatch"],
+          "syntax": ["!forcematch <config>", "!resetmatch"],
+          "description": "`!forcematch` loads a config with no vote; `!resetmatch` unloads it.",
+          "examples": [{ "code": "!fm zonemod" }]
+        },
+        {
+          "id": "admin-skins",
+          "names": ["!skin on", "!skin off"],
+          "module": "SkinShop",
+          "description": "Turns the weapon skins on or off on this server."
+        },
+        {
+          "id": "admin-anticheat",
+          "names": ["!aac on", "!aac off", "!aac config"],
+          "syntax": ["!aac on", "!aac off", "!aac config", "!aac mode", "!aac add <player>", "!aac remove <player>", "!aac list"],
+          "module": "AntiCheat",
+          "description": "`!aac on` and `!aac off` require the Anti-Cheat or not in this match. `!aac config`, `mode`, `add`, `remove` and `list` show and change who must use it; the site's Anti-Cheat settings follow the change."
+        },
+        {
+          "id": "admin-casters",
+          "names": ["!caster", "!resetcasters"],
+          "syntax": ["!caster <player>", "!resetcasters"],
+          "description": "`!caster` registers a player as a caster; `!resetcasters` clears every caster."
+        },
+        {
+          "id": "admin-fun",
+          "names": ["!cchelp"],
+          "description": "Lists in the console the fun admin commands of the server."
+        },
+        {
+          "id": "admin-sourcemod",
+          "names": ["!kick", "!ban", "!mute", "!gag", "!slay", "!map"],
+          "syntax": ["!kick <player> [reason]", "!ban <player> <minutes> [reason]", "!mute <player>", "!gag <player>", "!slay <player>", "!map <map>"],
+          "description": "The usual SourceMod commands: kick, ban, mute the voice, block the chat, kill a player and change the map. `!admin` opens all of them in a menu."
+        }
+      ]
+    }
+  ]
+}

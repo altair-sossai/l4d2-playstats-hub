@@ -90,7 +90,7 @@
     </div>
     <div class="panel-body">
         <p>@L["Reprocessing rebuilds every match from the stored statistics files, applying the current game mode rules and campaigns. Use it after changing those rules if old matches should follow them."]</p>
-        <form method="post" asp-antiforgery="true" action="/admin/reprocess" onsubmit="return confirm('@L["Rebuild every match now?"]')">
+        <form method="post" asp-antiforgery="true" action="/admin/reprocess" data-confirm="@L["Rebuild every match now?"]">
             <button class="btn btn-warning" type="submit">
                 <span class="glyphicon glyphicon-refresh"></span> @L["Reprocess all matches"]
             </button>

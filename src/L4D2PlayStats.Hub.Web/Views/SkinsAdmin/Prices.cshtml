@@ -155,7 +155,7 @@
             var selected = null;
 
             function message(success, text) {
-                $('#ska-price-modal .ska-message').html('<div class="alert ' + (success ? 'alert-success' : 'alert-danger') + '">' + $('<div/>').text(text).html() + '</div>');
+                Hub.alert($('#ska-price-modal .ska-message'), success, text);
             }
 
             function save(price) {

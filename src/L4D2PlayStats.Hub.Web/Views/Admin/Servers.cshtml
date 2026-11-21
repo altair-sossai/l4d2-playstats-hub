@@ -75,7 +75,7 @@
                             <a class="btn btn-xs btn-default" href="/admin/servers/@server.Server.Id">
                                 <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
                             </a>
-                            <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Server.Id/delete" onsubmit="return confirm('@L["Delete this server?"]')">
+                            <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Server.Id/delete" data-confirm="@L["Delete this server?"]">
                                 <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
                                 <button class="btn btn-xs btn-danger" type="submit">
                                     <span class="glyphicon glyphicon-trash"></span> @L["Delete"]

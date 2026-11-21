@@ -37,7 +37,7 @@ public class ForcedNamesTests
         Assert.AreEqual(HttpStatusCode.Redirect, added.StatusCode);
         Assert.Contains($"<strong>{Forced}</strong>", list);
         Assert.Contains($"data-fn-edit=\"{StatisticsBuilder.PlayerA1}\"", list);
-        Assert.Contains("onsubmit=\"return confirm(", list);
+        Assert.Contains("data-confirm=\"", list);
         Assert.AreEqual(HttpStatusCode.Redirect, edited.StatusCode);
         Assert.AreEqual("Renamed", afterEdit[StatisticsBuilder.PlayerA1]);
         Assert.AreEqual(HttpStatusCode.Redirect, removed.StatusCode);

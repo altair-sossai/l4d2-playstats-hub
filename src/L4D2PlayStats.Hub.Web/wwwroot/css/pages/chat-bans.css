@@ -1,0 +1,25 @@
+.cb-reason {
+    display: -webkit-box !important;
+    overflow: hidden;
+    white-space: normal !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.cb-details-avatar {
+    width: 96px !important;
+    height: 96px !important;
+    border-radius: 50% !important;
+}
+
+@media (min-width: 768px) {
+    .cb-limits {
+        display: flex;
+    }
+
+        .cb-limits > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+}

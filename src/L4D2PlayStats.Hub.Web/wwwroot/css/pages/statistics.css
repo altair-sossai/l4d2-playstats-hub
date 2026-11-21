@@ -1,0 +1,21 @@
+    @media screen and (min-width: 992px) {
+    .round-details .left-side {
+        padding-right: 3px;
+    }
+
+    .round-details .right-side {
+        padding-left: 3px;
+    }
+    }
+
+    .player-name {
+overflow-wrap: break-word;
+white-space: wrap;
+    }
+
+    @media screen and (max-width: 700px) {
+.player-name {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+    }
