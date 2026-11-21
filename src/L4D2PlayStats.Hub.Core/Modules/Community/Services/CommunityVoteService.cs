@@ -23,6 +23,19 @@ public class CommunityVoteService(
     ICommunityRatingService ratingService,
     ICommunityRandomService random) : ICommunityVoteService
 {
+    public async Task<bool> CanVoteAsync(long voterId, CancellationToken cancellationToken = default)
+    {
+        if (await IsBlockedAsync(voterId, cancellationToken))
+            return false;
+
+        var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);
+
+        if (await playerService.MatchesAsync(voterId, cancellationToken) < settings.MinimumMatchesToVote)
+            return false;
+
+        return await VotesLeftAsync(voterId, settings, cancellationToken) > 0;
+    }
+
     public async Task<CommunityBallot> BallotAsync(long voterId, CancellationToken cancellationToken = default)
     {
         var settings = await settingsService.GetAsync<CommunityRankingSettings>(cancellationToken);

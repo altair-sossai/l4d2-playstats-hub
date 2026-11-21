@@ -1,7 +1,12 @@
 @using L4D2PlayStats.Hub.Web.Infrastructure.InGame
 @model VoteInviteModel
+@inject ICurrentUser CurrentUser
+@inject L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts.ICommunityVoteService CommunityVotes
 @{
     if (InGameBrowser.IsInGame(Context))
+        return;
+
+    if (CurrentUser.CommunityId is { } voterId && !await CommunityVotes.CanVoteAsync(voterId))
         return;
 }
 

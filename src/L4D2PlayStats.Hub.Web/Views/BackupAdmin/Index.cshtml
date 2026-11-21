@@ -39,6 +39,12 @@
 @section Styles {
     @await Html.PartialAsync("_AdminStyles")
     @await Html.PartialAsync("_AdministrationStyles")
+    <style>
+        .backup-secrets-key,
+        .backup-secrets-key-error {
+            overflow-wrap: anywhere;
+        }
+    </style>
 }
 
 <div class="admin-header">
