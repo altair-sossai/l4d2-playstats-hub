@@ -223,6 +223,9 @@
                         <td class="text-center vertical-align-middle" data-label="@L["Votes"]">@voter.Votes</td>
                         <td class="text-center vertical-align-middle" data-label="@L["Last vote"]">@voter.LastVoteAtUtc.ToString("d")</td>
                         <td class="text-center vertical-align-middle slim admin-actions ca-actions">
+                            <a class="btn btn-xs btn-info" href="@CommunityVoteUrls.Votes(voter.CommunityId, null)" target="_blank" title="@L["See the votes made by this player"]">
+                                <span class="glyphicon glyphicon-eye-open"></span> @L["See votes"]
+                            </a>
                             <form method="post" asp-antiforgery="true" action="/admin/community/voters/delete" onsubmit="return confirm('@L["Remove all votes of this voter?"]')">
                                 <input type="hidden" name="communityId" value="@voter.CommunityId">
                                 <input type="hidden" name="returnUrl" value="@votersUrl">
@@ -258,6 +261,20 @@
 
     <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunityBlockedTab ? " active" : "")" id="@AppConsts.CommunityBlockedAnchor">
         <p>@L["Blocked voters cannot vote. Unblocking lets them vote again; the votes deleted when they were blocked do not come back."]</p>
+        <div class="admin-filters">
+            <div class="input-group admin-search">
+                <input class="form-control" id="ca-block-player" type="text" autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="@L["Steam ID or profile URL"]">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-player-picker="#ca-block-player" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <button class="btn btn-warning" type="button" data-block-source="#ca-block-player" data-block-return="@blockedUrl">
+                <span class="glyphicon glyphicon-ban-circle"></span> @L["Block a player"]
+            </button>
+        </div>
+        <p class="help-block">@L["Choose any player, even one who has not voted yet, to stop them from voting."]</p>
         @if (Model.Blocked.TotalItems == 0)
         {
             <div class="admin-empty">@L["Nobody is blocked from voting."]</div>
@@ -283,7 +300,10 @@
                             <a href="@PlayerUrls.Details(blocked.CommunityId)" target="_blank">@blocked.Name</a>
                         </td>
                         <td class="text-center vertical-align-middle" data-label="@L["Blocked since"]">@blocked.BlockedAtUtc.ToString("d")</td>
-                        <td class="text-center vertical-align-middle slim admin-actions">
+                        <td class="text-center vertical-align-middle slim admin-actions ca-actions">
+                            <a class="btn btn-xs btn-info" href="@CommunityVoteUrls.Votes(blocked.CommunityId, null)" target="_blank" title="@L["See the votes made by this player"]">
+                                <span class="glyphicon glyphicon-eye-open"></span> @L["See votes"]
+                            </a>
                             <form method="post" asp-antiforgery="true" action="@AppConsts.CommunityUnblockVoterUrl">
                                 <input type="hidden" name="communityId" value="@blocked.CommunityId">
                                 <input type="hidden" name="returnUrl" value="@blockedUrl">

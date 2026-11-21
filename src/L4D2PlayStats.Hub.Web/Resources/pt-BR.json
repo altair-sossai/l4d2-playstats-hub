@@ -1423,5 +1423,8 @@
   "The player will no longer be able to vote: the voting page tells them the administrators blocked their votes.": "O jogador não vai mais conseguir votar: a página de votação avisa que os administradores bloquearam os votos dele.",
   "Their votes can stay in the ranking, or be deleted now, with the ratings calculated again without them.": "Os votos dele podem continuar no ranking ou ser excluídos agora, com as pontuações calculadas de novo sem eles.",
   "Only block": "Apenas bloquear",
-  "Block and delete the votes": "Bloquear e excluir os votos"
+  "Block and delete the votes": "Bloquear e excluir os votos",
+  "See votes": "Ver votos",
+  "Block a player": "Bloquear um jogador",
+  "Choose any player, even one who has not voted yet, to stop them from voting.": "Escolha qualquer jogador, mesmo um que ainda não votou, para impedir que ele vote."
 }

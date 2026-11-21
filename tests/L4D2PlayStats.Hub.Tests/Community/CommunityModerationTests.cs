@@ -201,6 +201,7 @@ public class CommunityModerationTests
 
         Assert.Contains("id=\"ca-block-modal\"", page);
         Assert.Contains($"data-block-voter=\"{site.Voter}\"", page);
+        Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", page);
         Assert.AreEqual("/admin/community?tab=voters", response.Headers.Location?.OriginalString);
         Assert.Contains("The voter was blocked and can no longer vote.", admin);
         Assert.Contains("Votes removed: 1", admin);
@@ -227,6 +228,28 @@ public class CommunityModerationTests
 
         Assert.Contains($"class=\"tab-pane active\" id=\"{pane}\"", page);
         Assert.AreEqual(1, Regex.Matches(page, "class=\"tab-pane active\"").Count);
+    }
+
+    [TestMethod]
+    public async Task APlayerWhoNeverVotedCanBeBlockedFromTheBlockedTab()
+    {
+        using var site = new CommunityWebSite();
+
+        await site.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1 });
+
+        using var voter = site.Factory.Client(site.Voter);
+        using var administrator = site.Factory.Client(HubWebFactory.Administrator);
+
+        var tab = await administrator.GetStringAsync("/admin/community?tab=blocked");
+        var response = await HubWebFactory.PostFormAsync(administrator, AdminPage, "/admin/community/voters/block", new Dictionary<string, string> { ["communityId"] = site.Voter.ToString(), ["removeVotes"] = "false", ["returnUrl"] = "/admin/community?tab=blocked" });
+        var admin = await administrator.GetStringAsync("/admin/community?tab=blocked");
+
+        Assert.Contains("data-player-picker=\"#ca-block-player\"", tab);
+        Assert.Contains("data-block-return=\"/admin/community?tab=blocked\"", tab);
+        Assert.AreEqual("/admin/community?tab=blocked", response.Headers.Location?.OriginalString);
+        Assert.Contains("The voter was blocked and can no longer vote.", admin);
+        Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", admin);
+        Assert.Contains(BlockedMessage, await voter.GetStringAsync(CommunityWebSite.VotePage));
     }
 
     private static Task<HttpResponseMessage> PostWithTokenAsync(HttpClient client, string html, CommunityPair pair, string outcome)

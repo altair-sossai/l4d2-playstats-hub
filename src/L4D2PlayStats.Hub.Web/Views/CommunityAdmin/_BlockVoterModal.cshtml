@@ -12,7 +12,7 @@
     <div class="modal-dialog" role="document">
         <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl">
             <input type="hidden" id="ca-block-id" name="communityId" value="">
-            <input type="hidden" name="returnUrl" value="@returnUrl">
+            <input type="hidden" id="ca-block-return" name="returnUrl" value="@returnUrl" data-default="@returnUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -59,6 +59,7 @@
             var numeric = /^\d+$/.test(id);
 
             $('#ca-block-id').val(id);
+            $('#ca-block-return').val($button.attr('data-block-return') || $('#ca-block-return').attr('data-default'));
             $('#ca-block-name').text($button.attr('data-block-name') || id);
             $('#ca-block-avatar').attr('src', numeric ? '/avatar/' + id : '').toggle(numeric);
             $('#ca-block-modal').modal('show');
