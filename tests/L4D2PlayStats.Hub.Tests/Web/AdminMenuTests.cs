@@ -11,7 +11,7 @@ public partial class AdminMenuTests
     private static readonly string[] EveryItem =
     [
         "/admin", "/admin/settings", "/admin/modules", "/admin/administrators", "/admin/backup",
-        "/admin/servers", "/admin/remote-commands", "/admin/player-connections", "/admin/chat-bans",
+        "/admin/servers", "/admin/remote-commands", "/admin/player-connections", "/admin/forced-names", "/admin/chat-bans",
         "/admin/game-modes", "/admin/campaigns", "/admin/community",
         "/admin/skins", "/admin/skins/prices", "/admin/skins/catalog", "/admin/skins/settings",
         "/admin/anti-cheat"
@@ -46,6 +46,7 @@ public partial class AdminMenuTests
             [$"/admin/servers/{credentials.Server.Id}"] = "/admin/servers",
             ["/admin/remote-commands"] = "/admin/remote-commands",
             ["/admin/player-connections"] = "/admin/player-connections",
+            ["/admin/forced-names"] = "/admin/forced-names",
             ["/admin/chat-bans"] = "/admin/chat-bans",
             ["/admin/game-modes"] = "/admin/game-modes",
             ["/admin/campaigns"] = "/admin/campaigns",
