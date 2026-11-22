@@ -6,7 +6,7 @@ namespace L4D2PlayStats.Hub.Web.Models.Players;
 
 public class PlayerSteamModel(PlayerSteamDetails? details, TimeZoneInfo timeZone, DateTime nowUtc)
 {
-    public string? TotalHours { get; } = Hours(details?.Left4Dead2Minutes);
+    public string? TotalHours { get; } = details?.Left4Dead2Minutes > 0 ? Hours(details.Left4Dead2Minutes) : null;
     public string? RecentHours { get; } = Hours(details?.Left4Dead2RecentMinutes);
     public string? AccountCreated { get; } = details?.AccountCreatedAtUtc == null ? null : Display.Date(details.AccountCreatedAtUtc.Value, timeZone);
     public int? AccountAgeInYears { get; } = details?.AccountCreatedAtUtc == null ? null : Years(details.AccountCreatedAtUtc.Value, nowUtc);
