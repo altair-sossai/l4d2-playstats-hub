@@ -31,7 +31,7 @@ const matches = [
 
 const community = {
     MinimumMatchesToVote: 1,
-    VotesPerDay: 3,
+    VotesPerDay: 4,
     MinimumComparisonsToBeListed: 1,
     OtherNamesShown: 4
 };

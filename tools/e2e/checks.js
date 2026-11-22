@@ -346,7 +346,7 @@ function checks(context) {
                 expect(await browser.eval('location.pathname') === '/community', 'The limit reached button does not open the community ranking');
 
                 await browser.open(`/community/votes?voter=${fixtures.voter}`);
-                expect(await browser.eval(`document.querySelectorAll('.vf-row').length`) >= fixtures.community.VotesPerDay, 'The latest votes do not list the votes just made');
+                expect(await browser.eval(`document.querySelectorAll('.vf-row').length`) >= fixtures.community.VotesPerDay - 1, 'The latest votes do not list the votes just made (every answer but "I do not know")');
             }
         },
         {
