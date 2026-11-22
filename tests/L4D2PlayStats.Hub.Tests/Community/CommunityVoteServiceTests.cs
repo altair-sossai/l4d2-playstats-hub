@@ -113,7 +113,7 @@ public class CommunityVoteServiceTests
     {
         using var community = new CommunityTestHub();
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
         var ballot = await community.BallotAsync(community.Voter);
@@ -392,7 +392,7 @@ public class CommunityVoteServiceTests
     {
         using var community = new CommunityTestHub();
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var skipped = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownOne))!;
         var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
@@ -408,7 +408,7 @@ public class CommunityVoteServiceTests
     {
         using var community = new CommunityTestHub();
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var unknown = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownBoth))!;
         var other = community.Everyone.First(id => id != community.Voter && !unknown.Contains(id));
@@ -464,18 +464,78 @@ public class CommunityVoteServiceTests
     }
 
     [TestMethod]
-    public async Task NotKnowingAPlayerDoesNotUseUpAVoteOfTheDay()
+    public async Task NotKnowingAPlayerUsesUpAVoteOfTheDay()
     {
         using var community = new CommunityTestHub();
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = 2 });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = 3 });
         await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownLeft);
-        await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownBoth);
+        await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownOne);
 
         var ballot = await community.BallotAsync(community.Voter);
 
+        await community.AnswerAsync(community.Voter, CommunityVoteOutcome.UnknownBoth);
+
+        var last = await community.BallotAsync(community.Voter);
+
         Assert.AreEqual(CommunityBallotStatus.Ready, ballot.Status);
-        Assert.AreEqual(2, ballot.VotesLeft);
+        Assert.AreEqual(1, ballot.VotesLeft);
+        Assert.AreEqual(CommunityBallotStatus.LimitReached, last.Status);
+    }
+
+    [TestMethod]
+    public async Task AVoterJudgesTheSamePlayerOnlyUpToTheLimit()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 2 });
+
+        var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.Left);
+        var appearances = pairs.SelectMany(pair => new[] { pair.Left, pair.Right }).GroupBy(id => id).ToList();
+        var other = await community.BallotAsync(community.TeamB[0]);
+
+        Assert.IsNotEmpty(pairs);
+        Assert.IsTrue(appearances.All(group => group.Count() <= 2));
+        Assert.AreEqual(CommunityBallotStatus.NobodyLeft, (await community.BallotAsync(community.Voter)).Status);
+        Assert.AreEqual(CommunityBallotStatus.Ready, other.Status);
+    }
+
+    [TestMethod]
+    public async Task NotKnowingAPlayerDoesNotCountTowardsTheLimitOfThatPlayer()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 1 });
+
+        var skipped = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.UnknownOne);
+
+        Assert.HasCount(21, skipped);
+    }
+
+    [TestMethod]
+    public async Task AJudgedPlayerAtTheLimitIsNotOfferedAgain()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 1 });
+
+        var judged = (await community.AnswerAsync(community.Voter, CommunityVoteOutcome.Left))!;
+        var rest = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.UnknownOne);
+
+        Assert.IsNotEmpty(rest);
+        Assert.IsFalse(rest.Any(pair => pair.Contains(judged.Left) || pair.Contains(judged.Right)));
+    }
+
+    [TestMethod]
+    public async Task WithZeroTheSamePlayerCanBeJudgedWithoutLimit()
+    {
+        using var community = new CommunityTestHub();
+
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
+
+        var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.Left);
+
+        Assert.HasCount(21, pairs);
     }
 
     [TestMethod]
@@ -522,7 +582,7 @@ public class CommunityVoteServiceTests
 
         await community.PlayAsync(CommunityTestHub.Night, strangers);
         await community.PlayAsync(CommunityTestHub.Night.AddDays(-1), community.Voter);
-        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
         var first = pairs.Take(6).ToList();
@@ -577,7 +637,7 @@ public class CommunityVoteServiceTests
 
         await community.PlayAsync(CommunityTestHub.Night.AddDays(-200));
         await community.PlayAsync(CommunityTestHub.Night, veterans);
-        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, CandidatePlayedWithinDays = 0, VotesPerDay = EnoughVotes });
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, CandidatePlayedWithinDays = 0, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
 

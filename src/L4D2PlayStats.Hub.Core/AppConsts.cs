@@ -100,6 +100,7 @@ public static class AppConsts
     public const int DefaultCommunityVotesPerDay = 20;
     public const int DefaultCommunityMinimumMatchesToBeCandidate = 1;
     public const int DefaultCommunityCandidatePlayedWithinDays = 0;
+    public const int DefaultCommunityMaximumComparisonsPerPlayer = 5;
     public const int DefaultCommunityMinimumComparisonsToBeListed = 5;
     public const int DefaultCommunityMaximumPlayersListed = 100;
     public const int CommunityBallotNames = 4;

@@ -102,8 +102,12 @@
                                 <input class="form-control" id="MinimumMatchesToVote" name="MinimumMatchesToVote" type="number" min="0" value="@settings.MinimumMatchesToVote">
                             </div>
                             <div class="form-group">
-                                <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many judging answers each player can give per day."], L["Votes per day"], L["Only the answers that judge use a vote: \"This one is better\" and \"They are at the same level\".\nThe answer \"I don't know one of them\" is free and has no limit, so a player can skip many pairs in one day. That is why the Votes column of the voters list can be much higher than this number: it counts every answer.\nThe day follows the time zone of the site and starts again at midnight."])</label>
+                                <label for="VotesPerDay">@L["Votes per day"] @FieldHelp.More(L["How many answers each player can give per day, \"I don't know\" included."], L["Votes per day"], L["Every answer uses a vote: \"This one is better\", \"They are at the same level\" and also \"I don't know one of them\".\nSo nobody can skip pair after pair until the player they want to judge comes up.\nThe day follows the time zone of the site and starts again at midnight."])</label>
                                 <input class="form-control" id="VotesPerDay" name="VotesPerDay" type="number" min="@CoreConsts.CommunityMinVotesPerDay" value="@settings.VotesPerDay">
+                            </div>
+                            <div class="form-group">
+                                <label for="MaximumComparisonsPerPlayer">@L["Maximum comparisons of the same player per voter"] @FieldHelp.More(L["Each voter can judge the same player at most this many times. 0 means no limit."], L["Maximum comparisons of the same player per voter"], L["It keeps a single voter from deciding the rating of someone they like or dislike: with 5, one voter moves that rating only a little.\nOnly the answers that judge count. When a voter reaches the limit, that player stops appearing in their pairs; the other voters still see them.\nVotes given before the limit are kept."])</label>
+                                <input class="form-control" id="MaximumComparisonsPerPlayer" name="MaximumComparisonsPerPlayer" type="number" min="0" value="@settings.MaximumComparisonsPerPlayer">
                             </div>
                             <div class="form-group">
                                 <label for="MinimumMatchesToBeCandidate">@L["Minimum matches to be compared and listed"] @FieldHelp.More(L["Players with fewer matches are never offered in the voting and do not appear in the community ranking."], L["Minimum matches to be compared and listed"], L["Matches are counted over all seasons, ranked or not.\nUse it to leave out players who played only one or two matches: few voters know them, so the votes about them would be random.\nRaising it takes players out of the ranking right away. Their votes and ratings are kept, and they come back when they reach the minimum."])</label>
@@ -117,7 +121,7 @@
                                 <label for="OtherNamesShown">@L["Other names shown on each voting card"] @FieldHelp.Tip(L["Up to this many other names the player used in matches appear under the name on the voting card, the most used first, so voters recognize who changed names. 0 hides them."])</label>
                                 <input class="form-control" id="OtherNamesShown" name="OtherNamesShown" type="number" min="0" max="@CoreConsts.CommunityMaxBallotNames" value="@settings.OtherNamesShown">
                             </div>
-                            <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" do not use up the votes of the day."]</span>
+                            <span class="help-block" style="margin-bottom: 0">@L["Matches are counted over all seasons. With 0 days, players are compared however long ago they last played. Answers of the kind \"I don't know\" also use up the votes of the day."]</span>
                         </div>
                     </div>
                 </div>
