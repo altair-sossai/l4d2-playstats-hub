@@ -58,10 +58,11 @@ Embaixo de cada nome o cartão mostra até 4 outros nomes que o jogador já usou
 |---|---|
 | Você precisa estar logado com o Steam. | |
 | Você precisa ter jogado um número mínimo de partidas, contadas em todas as temporadas, ranqueadas ou não. | 10 |
-| Você tem um número de votos por dia. O dia segue o fuso horário do site. Só as respostas que avaliam (melhor ou mesmo nível) gastam um voto; "Não conheço" não gasta. | 20 |
+| Você tem um número de votos por dia. O dia segue o fuso horário do site. Toda resposta gasta um voto, inclusive "Não conheço". | 20 |
 | Um jogador só é oferecido para comparação depois de um número mínimo de partidas. | 1 |
 | Um jogador só é oferecido se a última partida dele foi dentro de um número de dias. Com 0, não importa há quanto tempo. | 0 |
 | Você nunca é perguntado sobre você mesmo, nem sobre a mesma dupla duas vezes. | |
+| Você avalia o mesmo jogador só até um número de vezes; depois disso ele não aparece mais nas suas duplas. As respostas "Não conheço" não contam. | 5 |
 
 Quando você não pode votar, a página diz o motivo: você precisa fazer login, precisa de mais partidas (com a sua contagem), já usou todos os votos do dia, não há mais ninguém para você comparar ou os administradores bloquearam os seus votos.
 
@@ -100,7 +101,8 @@ Cada campo tem um **?** ao lado do nome: passar o mouse mostra uma explicação 
 | Configuração | O que faz | Padrão |
 |---|---|---|
 | Mínimo de partidas para votar | Partidas que um jogador precisa ter jogado, em todas as temporadas, para votar. | 10 |
-| Votos por dia | Respostas que avaliam que cada votante pode dar por dia. No mínimo 1. | 20 |
+| Votos por dia | Respostas que cada votante pode dar por dia, inclusive "Não conheço". No mínimo 1. | 20 |
+| Máximo de comparações do mesmo jogador por votante | Quantas vezes cada votante pode avaliar o mesmo jogador. Depois disso esse jogador não é mais oferecido a esse votante, então um votante não consegue decidir a pontuação de alguém de quem gosta ou não gosta. Os votos dados antes são mantidos. 0 é sem limite. | 5 |
 | Mínimo de partidas para ser comparado e aparecer na lista | Partidas que um jogador precisa ter jogado, em todas as temporadas, para ser oferecido para comparação e para aparecer no ranking da comunidade. | 1 |
 | Máximo de dias desde a última partida para ser comparado | Um jogador cuja última partida é mais antiga que isso deixa de ser oferecido para comparação, mas continua no ranking da comunidade. 0 é sem limite. | 0 |
 | Mínimo de comparações para aparecer na lista | Comparações de que um jogador precisa para aparecer no ranking da comunidade. | 5 |

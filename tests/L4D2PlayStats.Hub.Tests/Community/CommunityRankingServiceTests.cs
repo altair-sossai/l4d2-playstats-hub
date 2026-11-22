@@ -98,7 +98,7 @@ public class CommunityRankingServiceTests
         var honest = community.TeamA.Take(2).ToList();
         var abuser = community.TeamB[0];
 
-        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.StartAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
         await VoteAsync(community, honest);
 
         var before = CommunityTestHub.Snapshot(await community.RatingsAsync());
@@ -187,7 +187,7 @@ public class CommunityRankingServiceTests
         using var community = new CommunityTestHub();
 
         await community.PlayAsync(CommunityTestHub.Night);
-        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes });
+        await community.SaveAsync(new CommunityRankingSettings { MinimumMatchesToVote = 1, VotesPerDay = EnoughVotes, MaximumComparisonsPerPlayer = 0 });
 
         var pairs = await community.AnswerEverythingAsync(community.Voter, CommunityVoteOutcome.SameLevel);
         var ranking = await community.RankingAsync();

@@ -58,10 +58,11 @@ Under each name the card shows up to 4 other names the player has used in matche
 |---|---|
 | You must be signed in with Steam. | |
 | You must have played a minimum number of matches, counted over all seasons, ranked or not. | 10 |
-| You have a number of votes per day. A day follows the time zone of the site. Only answers that judge (better or same level) use a vote; "I don't know" does not. | 20 |
+| You have a number of votes per day. A day follows the time zone of the site. Every answer uses a vote, "I don't know" included. | 20 |
 | A player is offered for comparison only after a minimum number of matches. | 1 |
 | A player can be offered only if their last match was within a number of days. With 0, however long ago it was. | 0 |
 | You are never asked about yourself, and never asked about the same pair twice. | |
+| You judge the same player only up to a number of times; after that they no longer come up in your pairs. "I don't know" answers do not count. | 5 |
 
 When you cannot vote, the page says why: you need to sign in, you need more matches (with your count), you used all the votes of the day, there is nobody left for you to compare, or the administrators blocked your votes.
 
@@ -100,7 +101,8 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 | Setting | What it does | Default |
 |---|---|---|
 | Minimum matches to vote | Matches a player must have played, over all seasons, to vote. | 10 |
-| Votes per day | Judging answers each voter can give per day. At least 1. | 20 |
+| Votes per day | Answers each voter can give per day, "I don't know" included. At least 1. | 20 |
+| Maximum comparisons of the same player per voter | How many times each voter can judge the same player. Then that player is no longer offered to that voter, so one voter cannot decide the rating of someone they like or dislike. Votes given before are kept. 0 means no limit. | 5 |
 | Minimum matches to be compared and listed | Matches a player must have played, over all seasons, to be offered for comparison and to appear in the community ranking. | 1 |
 | Maximum days since the last match to be compared | A player whose last match is older than this is no longer offered for comparison, but stays in the community ranking. 0 means no limit. | 0 |
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |

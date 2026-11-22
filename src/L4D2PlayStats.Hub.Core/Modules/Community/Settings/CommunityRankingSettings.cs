@@ -8,6 +8,7 @@ public class CommunityRankingSettings : INormalizable
     public int VotesPerDay { get; set; } = AppConsts.DefaultCommunityVotesPerDay;
     public int MinimumMatchesToBeCandidate { get; set; } = AppConsts.DefaultCommunityMinimumMatchesToBeCandidate;
     public int CandidatePlayedWithinDays { get; set; } = AppConsts.DefaultCommunityCandidatePlayedWithinDays;
+    public int MaximumComparisonsPerPlayer { get; set; } = AppConsts.DefaultCommunityMaximumComparisonsPerPlayer;
     public int MinimumComparisonsToBeListed { get; set; } = AppConsts.DefaultCommunityMinimumComparisonsToBeListed;
     public int MaximumPlayersListed { get; set; } = AppConsts.DefaultCommunityMaximumPlayersListed;
     public bool ShowVoterNames { get; set; } = true;
@@ -20,6 +21,7 @@ public class CommunityRankingSettings : INormalizable
         VotesPerDay = Math.Max(AppConsts.CommunityMinVotesPerDay, VotesPerDay);
         MinimumMatchesToBeCandidate = Math.Max(0, MinimumMatchesToBeCandidate);
         CandidatePlayedWithinDays = Math.Max(0, CandidatePlayedWithinDays);
+        MaximumComparisonsPerPlayer = Math.Max(0, MaximumComparisonsPerPlayer);
         MinimumComparisonsToBeListed = Math.Max(0, MinimumComparisonsToBeListed);
         MaximumPlayersListed = Math.Max(0, MaximumPlayersListed);
         OtherNamesShown = Math.Clamp(OtherNamesShown, 0, AppConsts.CommunityMaxBallotNames);

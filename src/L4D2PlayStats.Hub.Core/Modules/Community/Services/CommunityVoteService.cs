@@ -167,9 +167,10 @@ public class CommunityVoteService(
             .ToHashSet();
 
         var judged = votes.Select(v => new CommunityPair(v.LeftPlayerId, v.RightPlayerId).Normalized).ToHashSet();
+        var exhausted = Exhausted(votes.Where(v => v.Outcome.IsJudgement()).SelectMany(v => new[] { v.LeftPlayerId, v.RightPlayerId }), settings.MaximumComparisonsPerPlayer);
 
         var candidates = eligible
-            .Where(id => id != voterId && !hidden.Contains(id))
+            .Where(id => id != voterId && !hidden.Contains(id) && !exhausted.Contains(id))
             .OrderBy(id => id)
             .Select(id => Candidate(id, ratings.GetValueOrDefault(id), settings, familiar))
             .ToList();
@@ -181,10 +182,7 @@ public class CommunityVoteService(
     {
         var today = await TodayAsync(cancellationToken);
 
-        var used = await dbContext.Set<CommunityVote>().CountAsync(v =>
-            v.VoterId == voterId
-            && v.SiteDay == today
-            && (v.Outcome == CommunityVoteOutcome.Left || v.Outcome == CommunityVoteOutcome.Right || v.Outcome == CommunityVoteOutcome.SameLevel), cancellationToken);
+        var used = await dbContext.Set<CommunityVote>().CountAsync(v => v.VoterId == voterId && v.SiteDay == today, cancellationToken);
 
         return Math.Max(0, settings.VotesPerDay - used);
     }
@@ -199,6 +197,18 @@ public class CommunityVoteService(
         var now = await seasonService.SiteNowAsync(cancellationToken);
 
         return now.Date;
+    }
+
+    private static HashSet<long> Exhausted(IEnumerable<long> judgedPlayers, int maximum)
+    {
+        if (maximum <= 0)
+            return [];
+
+        return judgedPlayers
+            .GroupBy(id => id)
+            .Where(group => group.Count() >= maximum)
+            .Select(group => group.Key)
+            .ToHashSet();
     }
 
     private static CommunityBallotPlayer BallotPlayer(long communityId, Dictionary<long, string> names, Dictionary<long, List<string>> used, int count)
