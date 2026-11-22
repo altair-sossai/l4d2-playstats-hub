@@ -255,6 +255,34 @@ public class LiveParityPageTests
     }
 
     [TestMethod]
+    public async Task TheLayoutRendersThePlayersOnlineBadgeWithoutWaitingForTheBrowser()
+    {
+        using var factory = new LiveWebFactory();
+        using var client = factory.Client();
+
+        await factory.CompleteSetupAsync();
+
+        var credentials = await factory.RunAsync(services => services.GetRequiredService<IGameServerService>().CreateAsync("Test Server", "200.100.50.1:27015"));
+        using var server = factory.ServerClient(credentials);
+
+        var empty = await client.GetStringAsync("/servers");
+
+        await server.PostAsJsonAsync("/api/servers/heartbeat", new { hostname = "Zone | Competitive", map = "c2m1_highway", maxPlayers = 30 });
+        await server.PutAsync("/api/game-info/players", LiveWebFactory.Json($$"""{"survivors":[{"communityId":"{{Alice}}","name":"AliceTheSurvivor","isPlayerAlive":true}]}"""));
+
+        factory.PassTheDelay();
+
+        var playing = await client.GetStringAsync("/servers");
+
+        Assert.Contains("id=\"server-info\" class=\"navbar-brand server-info pulsate\" href=\"/servers\" title=\"Server\" style=\"display:none;\"", empty);
+        Assert.Contains("<span id=\"server-status\" class=\"label label-success\"></span>", empty);
+        Assert.Contains("id=\"server-info\" class=\"navbar-brand server-info pulsate\" href=\"/servers\" title=\"Server\">", playing);
+        Assert.Contains("<span id=\"server-status\" class=\"label label-success\">● 1/30</span>", playing);
+        Assert.Contains("id=\"connect-icon\" href=\"/connect\" class=\"float-icon hide-mobile\">", playing);
+        Assert.Contains("title=\"connect 200.100.50.1:27015\"", playing);
+    }
+
+    [TestMethod]
     public async Task TheCampaignsOfTheTerminalComeFromTheCatalog()
     {
         using var factory = new LiveWebFactory();

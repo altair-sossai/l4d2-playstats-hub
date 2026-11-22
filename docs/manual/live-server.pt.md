@@ -22,7 +22,7 @@ Com um único servidor de jogo, **Servidor** abre direto a página ao vivo dele.
 
 ![A escolha de servidor com dois servidores de jogo](../images/pt/servers.webp)
 
-Enquanto um servidor está online, a barra do menu mostra um pequeno selo verde com o número de jogadores ao lado do nome do site. Ele leva à página do servidor. Ele aparece depois do primeiro movimento do mouse, rolagem, toque ou tecla na página, e não é atualizado enquanto a aba está em segundo plano.
+Enquanto um servidor está online, a barra do menu mostra um pequeno selo verde com o número de jogadores ao lado do nome do site. Ele leva à página do servidor. Ele já vem preenchido com a página, então o visitante vê na hora que tem gente jogando (páginas guardadas no cache curto de páginas podem mostrar um número de até um minuto atrás). Depois do primeiro movimento do mouse, rolagem, toque ou tecla na página, ele é atualizado a cada poucos segundos, e não enquanto a aba está em segundo plano.
 
 Só os servidores ativados aparecem. Um servidor é ativado ou desativado na página dele em [Administração > Servidores de jogo](administration.pt.md#servidores-de-jogo).
 

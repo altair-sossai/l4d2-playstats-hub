@@ -34,7 +34,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | `copyTextToClipboard` with popover and failure message | _Layout.cshtml:290-304 | done | |
 | Navbar toggle button for phones | _Layout.cshtml:313-318 | done | |
 | Logo linking to the home page | _Layout.cshtml:319-321 | adapted | The logo is uploaded by the administrator (it was a fixed file with the old site's name). Without one, the site name is shown as text. |
-| Players online badge next to the logo, pulsating, linking to the server page | _Layout.cshtml:322-324 | done | Shown only when the live server module is on. |
+| Players online badge next to the logo, pulsating, linking to the server page | _Layout.cshtml:322-324 | done | Shown only when the live server module is on. Rendered on the server with the page (count and connect icon), then refreshed by the polling. |
 | Menu: Ranking, Last matches, Server, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Each item follows its module. Community (new) comes right after Ranking. When the items do not fit in one line, the last ones move into "More" by themselves. |
 | Menu "More": Players, Patents, History, with icons and a divider | _Layout.cshtml:344-369 | adapted | History was merged into the players list and left the menu (November 2026); Commands, new here, was added. |
 | Menu "Admin" for administrators: Chat bans, Skin purchases, Skin prices, with icons | _Layout.cshtml:370-398 | done | Plus the hub's Administration area and the Anti-Cheat settings. |

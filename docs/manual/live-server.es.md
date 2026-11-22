@@ -22,7 +22,7 @@ Con un solo servidor de juego, **Servidor** abre directamente su página en vivo
 
 ![El selector de servidores con dos servidores de juego](../images/es/servers.webp)
 
-Mientras un servidor está en línea, la barra del menú muestra junto al nombre del sitio una pequeña insignia verde con la cantidad de jugadores. Enlaza a la página del servidor. Aparece después del primer movimiento del ratón, desplazamiento, toque o tecla en la página, y no se actualiza mientras la pestaña está en segundo plano.
+Mientras un servidor está en línea, la barra del menú muestra junto al nombre del sitio una pequeña insignia verde con la cantidad de jugadores. Enlaza a la página del servidor. Ya viene completada con la página, así que el visitante ve enseguida que hay gente jugando (las páginas guardadas en la caché corta de páginas pueden mostrar una cantidad de hasta un minuto atrás). Después del primer movimiento del ratón, desplazamiento, toque o tecla en la página, se actualiza cada pocos segundos, y no mientras la pestaña está en segundo plano.
 
 Solo aparecen los servidores habilitados. Un servidor se habilita o deshabilita en su página en [Administración > Servidores de juego](administration.es.md#servidores-de-juego).
 

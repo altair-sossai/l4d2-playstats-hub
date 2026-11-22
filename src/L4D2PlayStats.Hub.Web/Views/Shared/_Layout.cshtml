@@ -1,6 +1,7 @@
 @inject ISettingsService Settings
 @inject ICurrentUser CurrentUser
 @inject BrandingStore Branding
+@inject ILiveViewService LiveView
 @{
     var site = await Settings.GetAsync<SiteSettings>();
     var modules = await Settings.GetAsync<ModuleSettings>();
@@ -10,6 +11,9 @@
     var returnUrl = Uri.EscapeDataString(ErrorPages.OriginalPathAndQuery(Context));
     var ranking = modules.IsEnabled(HubModule.Ranking);
     var liveServer = modules.IsEnabled(HubModule.LiveServer);
+    var mainServer = liveServer ? await LiveView.MainServerAsync(Context.RequestAborted) : null;
+    var playersOnline = mainServer is { Players: > 0 };
+    var connectAddress = mainServer?.Server.Address;
     var skinShop = modules.IsEnabled(HubModule.SkinShop);
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
     var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
@@ -122,8 +126,11 @@
             }
             @if (liveServer)
             {
-                <a id="server-info" class="navbar-brand server-info pulsate" href="/servers" title="@L["Server"]" style="display:none;">
-                    <span id="server-status" class="label label-success"></span>
+                <a id="server-info" class="navbar-brand server-info pulsate" href="/servers" title="@L["Server"]" style="@(playersOnline ? null : "display:none;")">
+                    <span id="server-status" class="label label-success">@if (playersOnline)
+                        {
+                            <text>● @mainServer!.Players/@mainServer.MaxPlayers</text>
+                        }</span>
                 </a>
             }
         </div>
@@ -336,8 +343,8 @@
 
 @if (liveServer)
 {
-    <a id="connect-icon" href="/connect" class="float-icon hide-mobile" style="display: none">
-        <img src="~/imgs/icons/l4d2.png" alt="connect" data-toggle="tooltip" data-placement="top" title="connect"/>
+    <a id="connect-icon" href="/connect" class="float-icon hide-mobile" style="@(string.IsNullOrEmpty(connectAddress) ? "display: none" : null)">
+        <img src="~/imgs/icons/l4d2.png" alt="connect @connectAddress" data-toggle="tooltip" data-placement="top" title="connect @connectAddress"/>
     </a>
 }
 

@@ -22,7 +22,7 @@ With one game server, **Server** opens its live page directly. With two or more,
 
 ![The server picker with two game servers](../images/en/servers.webp)
 
-While a server is online, the menu bar shows a small green badge with the number of players next to the site name. It links to the server page. It appears after the first mouse move, scroll, tap or key on the page, and is not refreshed while the tab is in the background.
+While a server is online, the menu bar shows a small green badge with the number of players next to the site name. It links to the server page. It comes already filled in with the page, so visitors see at once that people are playing (pages kept in the short page cache can show a count up to a minute old). After the first mouse move, scroll, tap or key on the page it is refreshed every few seconds, and not while the tab is in the background.
 
 Only enabled servers appear. A server is enabled or disabled on its page in [Administration > Game servers](administration.md#game-servers).
 

@@ -34,7 +34,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | `copyTextToClipboard` com popover e mensagem de falha | _Layout.cshtml:290-304 | done | |
 | Botão que abre a navbar no celular | _Layout.cshtml:313-318 | done | |
 | Logo com link para a página inicial | _Layout.cshtml:319-321 | adapted | A logo é enviada pelo administrador (era um arquivo fixo com o nome do site antigo). Sem logo, o nome do site aparece como texto. |
-| Badge de jogadores online ao lado da logo, pulsando, com link para a página do servidor | _Layout.cshtml:322-324 | done | Só aparece quando o módulo de servidor ao vivo está ligado. |
+| Badge de jogadores online ao lado da logo, pulsando, com link para a página do servidor | _Layout.cshtml:322-324 | done | Só aparece quando o módulo de servidor ao vivo está ligado. Renderizado no servidor junto com a página (número e ícone de conectar), depois atualizado pela consulta periódica. |
 | Menu: Ranking, Últimos jogos, Servidor, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Cada item segue o seu módulo. Comunidade (novo) vem logo depois de Ranking. Quando os itens não cabem em uma linha, os últimos vão sozinhos para dentro de "Mais". |
 | Menu "Mais": Jogadores, Patentes, Histórico, com ícones e um divisor | _Layout.cshtml:344-369 | adapted | O Histórico foi juntado à lista de jogadores e saiu do menu (novembro de 2026); Comandos, novo aqui, foi adicionado. |
 | Menu "Admin" para administradores: Bans de chat, Compras de skins, Preços das skins, com ícones | _Layout.cshtml:370-398 | done | Mais a área de Administração do hub e as configurações do Anti-Cheat. |
