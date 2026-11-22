@@ -203,7 +203,7 @@ A separate console program, outside this repository, moves the production data o
 | 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |
 | 7. Community ranking | Voting page, rating, limits and admin page. | Done |
 | 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; published since v0.1.1, installer and image tried from the published version; scheduled backup to Azure Storage from v0.9.0 |
-| 9. Migration | Import of the production data, switch of the production site, archiving of the old repositories. | Production data imported and l4d2.com.br switched to the new site on 19 November 2026 ([Switching from the old site](switch-from-old-site.md)); the old repositories are not archived yet |
+| 9. Migration | Import of the production data, switch of the production site, archiving of the old repositories. | Production data imported and l4d2.com.br switched to the new site on 19 November 2026 ([Switching from the old site](switch-from-old-site.md)); l4d2-playstats-api and l4d2-playstats-web archived on 22 November 2026, pointing to this repository |
 
 ## Open questions
 
