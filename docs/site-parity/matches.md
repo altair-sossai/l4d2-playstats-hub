@@ -98,7 +98,7 @@ The card is `Views/Matches/_Match.cshtml` with the model `MatchCardModel`; `IMat
 | One blue star per MVP (CI) with tooltip "MVP (CI)" | _Match.cshtml:264-267 | done | |
 | Horizontal rule between teams and charts | _Match.cshtml:281 | done | |
 | "Scoreboard" line chart: one series per team ("Team A", "Team B"), score after each map, green for the winner and red for the loser, map names cut at 16 characters, legend at the bottom, axis starting at zero | _Match.cshtml:26-79, :284-294 | done | |
-| "Points earned per map" bar chart: one series per team with the points of each map (difference from the previous map) | _Match.cshtml:81-157, :296-306 | done | |
+| "Points earned per map" bar chart: one series per team with the points of each map (difference from the previous map) | _Match.cshtml:81-157, :296-306 | done | Tank wipes were added after it. |
 | Chart text colour follows the theme (`#222222` light, `#c8c8c8` dark) | _Match.cshtml:18-24 | done | The theme cookie is the hub's (`hub_theme`). |
 | Charts drawn only when they come into view (`canvas.app-chart` with `data-chart`), 200px high | _Match.cshtml:285-304 | done | |
 | Mobile: image column and teams column take the full width (`left-side`, `right-side`); charts stacked (`col-sm-6 col-xs-12`) | _Match.cshtml:211, :220, :284, :296 | done | |

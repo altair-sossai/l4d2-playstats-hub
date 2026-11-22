@@ -18,6 +18,7 @@ public class MatchResult
     public string? Campaign { get; init; }
     public IReadOnlyList<MatchTeamResult> Teams { get; init; } = [];
     public IReadOnlyList<MatchMapResult> Maps { get; init; } = [];
+    public IReadOnlyDictionary<long, string> PlayerNames { get; init; } = new Dictionary<long, string>();
 
     public MatchTeamResult? Winner => Teams.MaxBy(team => team.Score);
     public MatchTeamResult? TeamA => Teams.FirstOrDefault();

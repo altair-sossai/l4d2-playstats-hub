@@ -40,7 +40,7 @@ A página de detalhes tem:
 
 - as equipes e o resultado, como na lista;
 - **Placar**: um gráfico do placar de cada equipe depois de cada mapa;
-- **Pontos ganhos por mapa**: um gráfico de barras com os pontos que cada equipe fez em cada mapa;
+- **Pontos ganhos por mapa**: um gráfico de barras com os pontos que cada equipe fez em cada mapa. Um Tank em cima de uma barra marca um mapa em que aquela equipe fez um [tank wipe](ranking.pt.md#tank-wipes); passe o mouse na barra para ver quem fez;
 - **Resultados por mapa**: uma linha por mapa com o início, o fim, o tempo que levou e o placar. Clique em um mapa para abrir as estatísticas dele;
 - uma tabela por equipe e lado: equipe A e equipe B como sobreviventes, depois como infectados.
 

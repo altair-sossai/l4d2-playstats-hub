@@ -120,6 +120,69 @@ public class TankWipeTests
         Assert.IsTrue((await RowsAsync(hub)).All(row => row.TankWipes == 0));
     }
 
+    [TestMethod]
+    public async Task EachMapKeepsWhoWipedTheSurvivorsOfEachTeam()
+    {
+        using var hub = new TestHub();
+
+        var server = (await hub.CreateServerAsync()).Server;
+
+        await UploadTwoMapsAsync(hub, server);
+
+        var (byA, byB) = SampleWipers();
+        var files = await FilesAsync(hub);
+        var match = await hub.RunAsync(services => services.GetRequiredService<IMatchResultService>().FindAsync(files[0].MatchId!.Value));
+
+        Assert.HasCount(2, files);
+
+        foreach (var file in files)
+        {
+            Assert.AreEqual(byA, file.TankWipeByTeamA);
+            Assert.AreEqual(byB, file.TankWipeByTeamB);
+        }
+
+        foreach (var map in match!.Maps)
+        {
+            Assert.AreEqual(byA, map.TankWipeBy('A'));
+            Assert.AreEqual(byB, map.TankWipeBy('B'));
+        }
+
+        Assert.IsTrue(match.PlayerNames.ContainsKey(byA));
+        Assert.IsTrue(match.PlayerNames.ContainsKey(byB));
+    }
+
+    [TestMethod]
+    public async Task TheBackfillFillsInWhoWipedOnTheStoredFiles()
+    {
+        using var hub = new TestHub();
+
+        var server = (await hub.CreateServerAsync()).Server;
+
+        await UploadTwoMapsAsync(hub, server);
+        await hub.RunAsync(services => services.GetRequiredService<HubDbContext>().StatisticsFiles.ExecuteUpdateAsync(setters => setters.SetProperty(f => f.TankWipeByTeamA, (long?)null).SetProperty(f => f.TankWipeByTeamB, (long?)null)));
+
+        var changed = await hub.RunAsync(services => services.GetRequiredService<IMatchBuildService>().BackfillTankWipesAsync());
+        var (byA, byB) = SampleWipers();
+        var files = await FilesAsync(hub);
+
+        Assert.AreEqual(files.Count, changed);
+        Assert.IsTrue(files.All(file => file.TankWipeByTeamA == byA && file.TankWipeByTeamB == byB));
+    }
+
+    private static (long ByA, long ByB) SampleWipers()
+    {
+        var halves = StatisticsBuilder.Sample().Statistics.Halves;
+        var byB = long.Parse(TankWipes.Player(halves.First(half => half.RoundHalf!.Team == 'A'))!);
+        var byA = long.Parse(TankWipes.Player(halves.First(half => half.RoundHalf!.Team == 'B'))!);
+
+        return (byA, byB);
+    }
+
+    private static Task<List<L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.StatisticsFile>> FilesAsync(TestHub hub)
+    {
+        return hub.RunAsync(services => services.GetRequiredService<HubDbContext>().StatisticsFiles.AsNoTracking().OrderBy(f => f.FileDate).ToListAsync());
+    }
+
     private static ParsedStatistics.Half SampleHalf()
     {
         return StatisticsBuilder.Sample().Statistics.Halves[0];

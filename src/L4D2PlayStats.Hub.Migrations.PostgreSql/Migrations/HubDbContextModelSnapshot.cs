@@ -1085,6 +1085,12 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.Property<DateTime?>("StartedAtUtc")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<long?>("TankWipeByTeamA")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TankWipeByTeamB")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TeamAScore")
                         .HasColumnType("integer");
 

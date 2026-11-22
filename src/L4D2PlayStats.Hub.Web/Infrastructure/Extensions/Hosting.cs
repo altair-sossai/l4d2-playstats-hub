@@ -68,7 +68,7 @@ public static class Hosting
         var tankWipes = await services.GetRequiredService<IMatchBuildService>().BackfillTankWipesAsync();
 
         if (tankWipes > 0)
-            app.Logger.LogInformation("Counted the tank wipes of {Count} match players from their statistics files in {Elapsed} ms.", tankWipes, (long)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            app.Logger.LogInformation("Filled in the tank wipes of {Count} match players and statistics files in {Elapsed} ms.", tankWipes, (long)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
 
         var ratings = services.GetRequiredService<ICommunityRatingService>();
 

@@ -91,9 +91,26 @@ public class MatchBuildService(
     public async Task<int> BackfillTankWipesAsync(CancellationToken cancellationToken = default)
     {
         var state = await settingsService.GetAsync<MatchBackfillState>(cancellationToken);
-        if (state.TankWipes)
+        if (state.TankWipes && state.TankWipeFiles)
             return 0;
 
+        var changed = 0;
+
+        if (!state.TankWipes)
+            changed += await BackfillMatchPlayerTankWipesAsync(cancellationToken);
+
+        if (!state.TankWipeFiles)
+            changed += await BackfillFileTankWipesAsync(cancellationToken);
+
+        state.TankWipes = true;
+        state.TankWipeFiles = true;
+        await settingsService.SaveAsync(state, cancellationToken);
+
+        return changed;
+    }
+
+    private async Task<int> BackfillMatchPlayerTankWipesAsync(CancellationToken cancellationToken)
+    {
         var matchIds = await dbContext.Matches.OrderBy(m => m.Id).Select(m => m.Id).ToListAsync(cancellationToken);
         var players = 0;
 
@@ -124,10 +141,38 @@ public class MatchBuildService(
             dbContext.ChangeTracker.Clear();
         }
 
-        state.TankWipes = true;
-        await settingsService.SaveAsync(state, cancellationToken);
-
         return players;
+    }
+
+    private async Task<int> BackfillFileTankWipesAsync(CancellationToken cancellationToken)
+    {
+        var fileIds = await dbContext.StatisticsFiles.OrderBy(f => f.Id).Select(f => f.Id).ToListAsync(cancellationToken);
+        var changed = 0;
+
+        foreach (var chunk in fileIds.Chunk(AppConsts.MatchBackfillBatchSize))
+        {
+            var ids = chunk.ToList();
+            var files = await dbContext.StatisticsFiles.Where(f => ids.Contains(f.Id)).ToListAsync(cancellationToken);
+
+            foreach (var file in files)
+            {
+                var statistics = Parse(file.Content);
+                if (statistics == null)
+                    continue;
+
+                var (teamA, teamB) = (file.TankWipeByTeamA, file.TankWipeByTeamB);
+
+                file.ApplyTankWipes(statistics);
+
+                if (file.TankWipeByTeamA != teamA || file.TankWipeByTeamB != teamB)
+                    changed++;
+            }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+            dbContext.ChangeTracker.Clear();
+        }
+
+        return changed;
     }
 
     private async Task<int> RebuildAsync(int gameServerId, int seasonId, List<StatisticsFile> files, CancellationToken cancellationToken)

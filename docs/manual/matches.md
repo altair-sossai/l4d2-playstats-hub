@@ -40,7 +40,7 @@ The details page has:
 
 - the teams and the result, as in the list;
 - **Scoreboard**: a chart of the score of each team after each map;
-- **Points earned per map**: a bar chart of the points each team made in each map;
+- **Points earned per map**: a bar chart of the points each team made in each map. A Tank above a bar marks a map where that team got a [tank wipe](ranking.md#tank-wipes); hover the bar to see who did it;
 - **Map results**: one row per map with the start, the end, the time it took and the score. Click a map to open its statistics;
 - one table per team and side: team A and team B as survivors, then as infected.
 

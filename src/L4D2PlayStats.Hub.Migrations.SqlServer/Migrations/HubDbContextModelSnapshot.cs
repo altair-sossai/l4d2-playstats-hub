@@ -1085,6 +1085,12 @@ namespace L4D2PlayStats.Hub.Migrations.SqlServer.Migrations
                     b.Property<DateTime?>("StartedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<long?>("TankWipeByTeamA")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TankWipeByTeamB")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TeamAScore")
                         .HasColumnType("int");
 

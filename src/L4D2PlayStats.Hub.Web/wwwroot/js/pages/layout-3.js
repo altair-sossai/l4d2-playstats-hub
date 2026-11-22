@@ -119,8 +119,86 @@ function createChart(canvas) {
     var ctx = canvas.getContext('2d');
     var chartData = $(canvas).data('chart');
 
+    if (chartData.options && chartData.options.tankWipe)
+        addTankWipeTooltip(chartData.options);
+
     new Chart(ctx, chartData);
 }
+
+function addTankWipeTooltip(options) {
+    var label = options.tankWipe.label;
+
+    options.tooltips = options.tooltips || {};
+    options.tooltips.callbacks = options.tooltips.callbacks || {};
+    options.tooltips.callbacks.afterLabel = function (item, data) {
+        var wipes = data.datasets[item.datasetIndex].tankWipes || [];
+        var name = wipes[item.index];
+
+        return name ? label + ': ' + name : '';
+    };
+}
+
+var tankWipeImages = {};
+
+function tankWipeImage(chart, url) {
+    var image = tankWipeImages[url];
+
+    if (!image) {
+        image = new Image();
+        image.src = url;
+        tankWipeImages[url] = image;
+    }
+
+    if (!image.complete)
+        $(image).one('load', function () { chart.draw(); });
+
+    return image;
+}
+
+if (window.Chart) Chart.plugins.register({
+    afterDatasetsDraw: function (chart) {
+        var tankWipe = chart.options.tankWipe;
+        if (!tankWipe)
+            return;
+
+        var image = tankWipeImage(chart, tankWipe.image);
+        if (!image.complete || !image.naturalWidth)
+            return;
+
+        var ctx = chart.ctx;
+        var size = 16;
+
+        chart.data.datasets.forEach(function (dataset, datasetIndex) {
+            var meta = chart.getDatasetMeta(datasetIndex);
+            if (!dataset.tankWipes || meta.hidden)
+                return;
+
+            meta.data.forEach(function (bar, index) {
+                if (!dataset.tankWipes[index])
+                    return;
+
+                var model = bar._model;
+                var top = Math.min(model.y, model.base);
+                var x = model.x - size / 2;
+                var y = top - size - 3;
+
+                if (y < chart.chartArea.top)
+                    y = top + 3;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(x + size / 2, y + size / 2, size / 2 + 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#d9534f';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(image, x, y, size, size);
+                ctx.restore();
+            });
+        });
+    }
+});
 
 function isElementInViewport(el, margin) {
     margin = margin || 150;

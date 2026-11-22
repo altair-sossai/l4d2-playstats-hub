@@ -98,7 +98,7 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 | Una estrella azul por cada MVP (CI) con el tooltip "MVP (CI)" | _Match.cshtml:264-267 | done | |
 | Línea horizontal entre los equipos y los gráficos | _Match.cshtml:281 | done | |
 | Gráfico de líneas "Marcador": una serie por equipo ("Equipo A", "Equipo B"), puntuación después de cada mapa, verde para el ganador y rojo para el perdedor, nombres de los mapas cortados a 16 caracteres, leyenda abajo, eje que empieza en cero | _Match.cshtml:26-79, :284-294 | done | |
-| Gráfico de barras "Puntos ganados por mapa": una serie por equipo con los puntos de cada mapa (diferencia respecto al mapa anterior) | _Match.cshtml:81-157, :296-306 | done | |
+| Gráfico de barras "Puntos ganados por mapa": una serie por equipo con los puntos de cada mapa (diferencia respecto al mapa anterior) | _Match.cshtml:81-157, :296-306 | done | Los tank wipes se añadieron después. |
 | El color del texto de los gráficos sigue el tema (`#222222` claro, `#c8c8c8` oscuro) | _Match.cshtml:18-24 | done | La cookie del tema es la del hub (`hub_theme`). |
 | Gráficos dibujados solo cuando entran en la vista (`canvas.app-chart` con `data-chart`), de 200px de alto | _Match.cshtml:285-304 | done | |
 | Móvil: la columna de la imagen y la columna de los equipos ocupan todo el ancho (`left-side`, `right-side`); gráficos apilados (`col-sm-6 col-xs-12`) | _Match.cshtml:211, :220, :284, :296 | done | |

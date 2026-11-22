@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using ParsedStatistics = L4D2PlayStats.Statistics;
 
@@ -25,6 +26,8 @@ public class StatisticsFile
     public int? MatchId { get; set; }
     public Match? Match { get; set; }
     public int? MatchOrder { get; set; }
+    public long? TankWipeByTeamA { get; set; }
+    public long? TankWipeByTeamB { get; set; }
 
     public void Apply(ParsedStatistics statistics)
     {
@@ -36,5 +39,20 @@ public class StatisticsFile
         TeamBScore = statistics.Scoring?.TeamB?.Score ?? 0;
         StartedAtUtc = statistics.MapStart;
         EndedAtUtc = statistics.MapEnd;
+
+        ApplyTankWipes(statistics);
+    }
+
+    public void ApplyTankWipes(ParsedStatistics statistics)
+    {
+        TankWipeByTeamA = TankWipeBy(statistics, AppConsts.TeamBCode);
+        TankWipeByTeamB = TankWipeBy(statistics, AppConsts.TeamACode);
+    }
+
+    private static long? TankWipeBy(ParsedStatistics statistics, char survivors)
+    {
+        var half = statistics.Halves.FirstOrDefault(h => h.RoundHalf?.Team == survivors);
+
+        return half != null && long.TryParse(TankWipes.Player(half), out var communityId) ? communityId : null;
     }
 }

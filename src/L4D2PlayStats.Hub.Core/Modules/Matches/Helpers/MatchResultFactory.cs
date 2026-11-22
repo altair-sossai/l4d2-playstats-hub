@@ -37,8 +37,27 @@ public static class MatchResultFactory
             MatchEnd = match.EndedAtUtc,
             Campaign = match.Campaign,
             Teams = [teamA, teamB],
-            Maps = maps
+            Maps = maps,
+            PlayerNames = PlayerNames(match, [teamA, teamB], displayNames)
         };
+    }
+
+    private static Dictionary<long, string> PlayerNames(Match match, MatchTeamResult[] teams, IDisplayNameStore displayNames)
+    {
+        var names = new Dictionary<long, string>();
+
+        foreach (var player in teams.SelectMany(team => team.Players).Where(player => !string.IsNullOrEmpty(player.Name)))
+            names.TryAdd(player.CommunityId, player.Name!);
+
+        foreach (var player in match.Players)
+        {
+            var name = displayNames.Apply(player.CommunityId, player.Name);
+
+            if (!string.IsNullOrEmpty(name))
+                names.TryAdd(player.CommunityId, name);
+        }
+
+        return names;
     }
 
     private static bool AddPlayers(MatchTeamResult team, ParsedStatistics? newest, Dictionary<long, MatchPlayer> rows, IDisplayNameStore displayNames)

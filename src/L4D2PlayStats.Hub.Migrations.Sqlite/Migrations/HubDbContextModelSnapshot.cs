@@ -1048,6 +1048,12 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.Property<DateTime?>("StartedAtUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<long?>("TankWipeByTeamA")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("TankWipeByTeamB")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TeamAScore")
                         .HasColumnType("INTEGER");
 

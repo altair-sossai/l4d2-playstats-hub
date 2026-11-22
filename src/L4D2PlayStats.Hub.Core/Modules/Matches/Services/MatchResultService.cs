@@ -19,7 +19,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
         var files = await dbContext.StatisticsFiles
             .AsNoTracking()
             .Where(file => file.MatchId != null && ids.Contains(file.MatchId.Value))
-            .Select(file => new { file.Id, MatchId = file.MatchId!.Value, file.MatchOrder, file.FileDate, file.MapName, file.TeamAScore, file.TeamBScore })
+            .Select(file => new { file.Id, MatchId = file.MatchId!.Value, file.MatchOrder, file.FileDate, file.MapName, file.TeamAScore, file.TeamBScore, file.TankWipeByTeamA, file.TankWipeByTeamB })
             .ToListAsync(cancellationToken);
 
         var newest = await dbContext.StatisticsFiles
@@ -33,7 +33,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
             .ToDictionary(group => group.Key, group => group
                 .OrderBy(file => file.MatchOrder)
                 .ThenBy(file => file.FileDate)
-                .Select(file => new MatchMapResult(file.Id, file.MapName, file.TeamAScore, file.TeamBScore))
+                .Select(file => new MatchMapResult(file.Id, file.MapName, file.TeamAScore, file.TeamBScore, file.TankWipeByTeamA, file.TankWipeByTeamB))
                 .ToList());
 
         var contents = newest
@@ -55,7 +55,7 @@ public class MatchResultService(HubDbContext dbContext, IMatchQueryService match
             .ToList();
 
         var maps = files
-            .Select(file => new MatchMapResult(file.Id, file.MapName, file.TeamAScore, file.TeamBScore))
+            .Select(file => new MatchMapResult(file.Id, file.MapName, file.TeamAScore, file.TeamBScore, file.TankWipeByTeamA, file.TankWipeByTeamB))
             .ToList();
 
         return MatchResultFactory.Create(match, maps, Parse(files.LastOrDefault()?.Content), displayNames);

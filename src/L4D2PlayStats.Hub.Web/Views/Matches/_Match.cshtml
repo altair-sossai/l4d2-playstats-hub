@@ -79,6 +79,11 @@
                 text = L["Points earned per map"].Value,
                 fontColor
             },
+            tankWipe = new
+            {
+                image = Url.Content("~/imgs/infected-type/tank.jpg"),
+                label = L["Tank wipe"].Value
+            },
             legend = new
             {
                 display = true,
@@ -134,7 +139,8 @@
             label = $"{L["Team"].Value} {team.Code}",
             data = team.Code == 'A' ? teamA : teamB,
             borderColor = color,
-            backgroundColor = color
+            backgroundColor = color,
+            tankWipes = match.Maps.Select(map => map.TankWipeBy(team.Code) is { } wiper ? match.PlayerNames.GetValueOrDefault(wiper) ?? L["Unknown player"].Value : null)
         });
     }
 }

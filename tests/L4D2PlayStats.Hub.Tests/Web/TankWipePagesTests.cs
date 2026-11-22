@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
@@ -60,7 +61,21 @@ public class TankWipePagesTests
         var list = await client.GetStringAsync("/matches");
 
         Assert.IsGreaterThan(0, total);
-        Assert.AreEqual(total, Regex.Count(list, Regex.Escape(TankIcon)));
+        Assert.AreEqual(total, Regex.Count(list, Regex.Escape($"<img src=\"{TankIcon}\"")));
+    }
+
+    [TestMethod]
+    public async Task ThePointsPerMapChartMarksTheMapsWithATankWipeAndWhoDidIt()
+    {
+        using var factory = new HubWebFactory();
+        using var client = factory.Client();
+
+        var (wiper, _) = await UploadMatchAsync(factory);
+        var name = await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().MatchPlayers.Where(p => p.CommunityId == wiper).Select(p => p.Name).FirstAsync());
+        var list = WebUtility.HtmlDecode(await client.GetStringAsync("/matches"));
+
+        Assert.Contains("\"tankWipe\":{\"image\":\"/imgs/infected-type/tank.jpg\",\"label\":\"Tank wipe\"}", list);
+        Assert.Contains($"\"tankWipes\":[{JsonSerializer.Serialize(name)},{JsonSerializer.Serialize(name)}]", list);
     }
 
     [TestMethod]
