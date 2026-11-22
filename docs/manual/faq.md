@@ -27,10 +27,10 @@ Wins and losses go to the players who were in the first map. Players who joined 
 A draw gives no win or loss, only the MVP and tank wipe points.
 
 **Why did my experience reset?**
-A new season started. The past season is in the period selector of the ranking and of **More > Players**.
+A new season started. The past season is in the period selector of the ranking and of **More > Players** while it is from the current year; for an earlier year, choose that year, or open the season from its address.
 
 **My name is old or wrong.**
-The site shows the name you used most often in the period. Your other names are under **Previous names** on your page.
+The site shows one name everywhere: the name an administrator forced, otherwise the name you used most often in all your matches, of every season, otherwise your Steam name. Your other names are under **Previous names** on your page. See [Players > The player name](players.md#the-player-name).
 
 **How do I get stars?**
 One star for each SI MVP and each CI MVP award in a ranked match. See [Weapon skin shop > Stars](skin-shop.md#stars).

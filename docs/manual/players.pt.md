@@ -61,8 +61,8 @@ Um jogador que não tem estatísticas no período escolhido, ou que nunca jogou 
 - **Jogador fora do ranking**, com o seletor de período, para escolher outra temporada ou todo o período. Com o módulo de ranking desligado, ela diz **Ainda sem estatísticas**.
 - O avatar e um botão **Abrir perfil na Steam**.
 - O [nome do jogador](#o-nome-do-jogador).
-- Os [dados da Steam](#dados-da-steam).
 - O SteamID64 (Community ID), o Steam ID nas formas `STEAM_0` e `STEAM_1` e o Steam3 ID (`[U:1:n]`), cada um com botão de copiar, e o endereço do perfil.
+- Os [dados da Steam](#dados-da-steam).
 - O último login e o número de conexões, e as [contas relacionadas](#contas-relacionadas), quando o módulo do servidor ao vivo está ligado.
 - O quadro do ranking da comunidade e as [abas de votos da comunidade](#abas-de-votos-da-comunidade), quando o jogador já participou da votação.
 
@@ -149,7 +149,7 @@ Aparecem quando o módulo do ranking da comunidade está ligado, e só para um j
 
 Quando o módulo do servidor ao vivo está ligado, os servidores de jogo informam o endereço de onde cada jogador se conecta. Se outras contas se conectaram do mesmo endereço, a página do jogador mostra um painel **Contas relacionadas** com essas contas, o último login delas e quantas conexões elas têm. O endereço em si nunca é mostrado.
 
-Por padrão todo visitante vê o painel, como no site antigo. Um administrador pode restringir o painel aos administradores em [Configurações > Privacidade](administration.pt.md#privacidade). Essa configuração não muda o jogo: o plugin `l4d2_gameinfo_sync` anuncia as contas relacionadas no chat do jogo quando um jogador se conecta, a não ser que `gameinfo_related_accounts_chat` esteja em `0`.
+Por padrão todo visitante vê o painel, como no site antigo. Um administrador pode restringir o painel aos administradores em [Configurações > Privacidade](administration.pt.md#privacidade). Essa configuração não afeta o jogo: o plugin `l4d2_gameinfo_sync` anuncia as contas relacionadas no chat do jogo quando um jogador se conecta, a não ser que `gameinfo_related_accounts_chat` esteja em `0`.
 
 Os administradores têm uma busca sobre os mesmos dados em [Moderação > Conexões de jogadores](moderation.pt.md#conexões-de-jogadores). As conexões com mais de três meses são apagadas.
 

@@ -29,7 +29,7 @@ Cada jugador que jugó en tus servidores de juego tiene una página con sus resu
 ![La lista de jugadores](../images/es/players.webp)
 
 - **Estadística** elige lo que muestra la tabla. **Vista general**, la predeterminada, muestra para cada jugador las victorias, derrotas, juegos, premios de MVP de SI y de CI, tank wipes, porcentaje de victorias y rage quits, en el orden del ranking del período, con una medalla para los tres primeros. Haz clic en el encabezado de una columna para ordenar por ella; haz clic de nuevo para invertir el orden, y haz clic en **#** para volver al orden del ranking.
-- Cualquier otra elección muestra una estadística: experiencia, juegos, victorias, derrotas, porcentaje de victorias, rage quits, premios de MVP, tank wipes, muertes, daño, skeets, levels, crowns, fuego amigo y los números como infectado. Su columna muestra el total de cada jugador, y **Por juego** muestra el promedio por juego. Pasa el mouse sobre el ícono ⓘ para ver la cantidad de juegos. Haz clic en el encabezado de la columna para invertir el orden.
+- Cualquier otra elección muestra una estadística: experiencia, juegos, victorias, derrotas, porcentaje de victorias, rage quits, premios de MVP, tank wipes, muertes, daño, skeets, levels, crowns, fuego amigo y los números como infectado. Su columna muestra el total de cada jugador, y **Por juego** muestra el promedio por juego. Pasa el ratón sobre el ícono ⓘ para ver la cantidad de juegos. Haz clic en el encabezado de la columna para invertir el orden.
 - El [selector de período](seasons-and-history.es.md#el-selector-de-período) elige una temporada, un año o todo el tiempo. Como en el ranking, lista las temporadas del año actual, cada año y todo el tiempo.
 
 La lista tiene los mismos jugadores que el ranking del período, todos y no solo el top 100. Muestra 100 jugadores por página, y los enlaces de las páginas debajo de la tabla mantienen la estadística, el orden y el período elegidos.
@@ -44,7 +44,7 @@ Cuando el módulo del ranking de la comunidad está activado, un cuadro debajo d
 
 ## El nombre del jugador
 
-El sitio muestra un nombre para cada jugador, el mismo en todas las páginas: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo y su chat, el ranking de la comunidad, las páginas del juego, las búsquedas, las APIs y la administración. Se elige en este orden:
+El sitio muestra un nombre para cada jugador, el mismo en todas las páginas: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo y su chat, el ranking de la comunidad, las páginas dentro del juego, las búsquedas, las APIs y la administración. Se elige en este orden:
 
 1. El [nombre forzado](moderation.es.md#nombres-forzados), cuando un administrador definió uno.
 2. El nombre que el jugador más usó en todas las partidas del sitio, de todas las temporadas.
@@ -56,13 +56,13 @@ El nombre se actualiza cuando se sube una partida, cuando cambia un nombre forza
 
 ## Un jugador sin estadísticas
 
-Un jugador que no tiene estadísticas en el período elegido, o que nunca jugó una partida rankeada, también tiene una página. Muestra:
+Un jugador que no tiene estadísticas en el período elegido, o que nunca jugó una partida de ranking, también tiene una página. Muestra:
 
-- **Jugador fuera del ranking**, con el selector de período, para elegir otra temporada o todo el período. Con el módulo de ranking desactivado dice **Aún sin estadísticas**.
+- **Jugador fuera del ranking**, con el selector de período, para elegir otra temporada o todo el tiempo. Con el módulo de ranking desactivado dice **Aún sin estadísticas**.
 - El avatar y un botón **Abrir perfil de Steam**.
 - El [nombre del jugador](#el-nombre-del-jugador).
-- Los [datos de Steam](#datos-de-steam).
 - El SteamID64 (Community ID), el Steam ID en las formas `STEAM_0` y `STEAM_1` y el Steam3 ID (`[U:1:n]`), cada uno con botón de copiar, y la dirección del perfil.
+- Los [datos de Steam](#datos-de-steam).
 - El último inicio de sesión y la cantidad de conexiones, y las [cuentas relacionadas](#cuentas-relacionadas), cuando el módulo del servidor en vivo está activado.
 - El cuadro del ranking de la comunidad y las [pestañas de votos de la comunidad](#pestañas-de-votos-de-la-comunidad), cuando el jugador ya participó en la votación.
 

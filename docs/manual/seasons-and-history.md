@@ -34,7 +34,7 @@ The ranking page says how many days are left: **Next reset in N day(s)**.
 
 The ranking, the players list and the player page have this selector. It lists:
 
-- every season, grouped by year, newest first, with the current one marked;
+- the seasons of the current year, newest first, with the current one marked (an older season still opens from its address, such as a shared link);
 - each calendar year;
 - all time.
 
@@ -42,7 +42,7 @@ Choosing a period changes every number on the page: positions, wins, MVPs and th
 
 ## History
 
-The final ranking of a past season, of a year or of all time is in the [players list](players.md#the-players-list): choose the period and keep the **Overview**, which shows the wins, losses, games, MVP awards, win rate and rage quits of each player in the order of the ranking. The players list replaced the old History page; its addresses, such as `/history/all-time` or `/history/2025`, open the players list of the same period.
+The final ranking of a past season, of a year or of all time is in the [players list](players.md#the-players-list): choose the period (a season of the current year, any year or all time; an older season opens from its address) and keep the **Overview**, which shows the wins, losses, games, MVP awards, tank wipes, win rate and rage quits of each player in the order of the ranking. The players list replaced the old History page; its addresses, such as `/history/all-time` or `/history/2025`, open the players list of the same period.
 
 ## Years and all time
 

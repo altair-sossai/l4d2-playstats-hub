@@ -32,7 +32,7 @@ The ranking is the first page of the site. It lists the top 100 players of the c
 | XP | A bar with the progress towards the next patent. Hover it to see the experience, the next level and how much the last match changed. Green means the last match added experience, red means it took experience away. |
 | Wins, Loss | Ranked matches won and lost. A rage quit counts as a loss. |
 | SI MVP awards, CI MVP awards | How many times the player was MVP. See [MVPs](#mvps). |
-| Tank wipes | Round halves the player ended as Tank. See [Tank wipes](#tank-wipes). |
+| Tank wipes | Round halves in which the player, as Tank, took down all the survivors and was still alive at the end. See [Tank wipes](#tank-wipes). |
 | Win rate | Wins divided by wins plus losses. |
 | Games | Wins plus losses. Draws are not included. |
 | Rage quit | Matches the player left before the end. |
@@ -43,7 +43,7 @@ Above the table:
 
 - **Displayed period** opens the [period selector](#choosing-the-period).
 - **Next reset in N day(s)** says when the current season ends and the ranking starts again.
-- **View previous rankings** opens the [players list](players.md#the-players-list) of the same period, where any past season, year or all time can be chosen.
+- **View previous rankings** opens the [players list](players.md#the-players-list): of the current year when the current season is shown, otherwise of the period shown. There you can choose a season of the current year, any year or all time.
 
 The first 50 players are shown; **Show more...** shows the rest of the top 100. The full list of players of the period is on the [Players](players.md) page.
 
@@ -51,7 +51,7 @@ At the start of a season, before the first ranked match, the page shows the top 
 
 ## Choosing the period
 
-![The period selector, with the seasons grouped by year](../images/en/ranking-period.webp)
+![The period selector: the seasons of the current year, each year and all time](../images/en/ranking-period.webp)
 
 The ranking can show any season, a whole calendar year, or all time. The current season is the default. [Seasons and history](seasons-and-history.md) explains how the periods are calculated. Patents and level changes are shown only when a season is selected, since patents belong to a season.
 

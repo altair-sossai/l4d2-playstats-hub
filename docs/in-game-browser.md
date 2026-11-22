@@ -99,7 +99,7 @@ The test game build closed by itself before the page reached these two groups, f
 
 ## What this means for the front end
 
-**Known to work in game:** Bootstrap 3.4.1 and jQuery 1.12.4, which the current site uses in production for this reason.
+**Known to work in game:** Bootstrap 3.4.1 and jQuery 1.12.4, which the old site used in production for this reason, and this site uses too.
 
 **Expected to fail in game**, based on the measurements:
 
@@ -124,6 +124,6 @@ The test game build closed by itself before the page reached these two groups, f
 **The approach taken:** two layers instead of holding the whole site to 2012.
 
 - The main site keeps the stack of the site it replaces: Bootstrap 3 and jQuery, which are known to work in game, with Chart.js and diffDOM.
-- Three pages for the game live under `/ingame`: the season ranking, the summary of the player who opened the panel, and the latest matches. They follow the rules above and are what the game plugin opens.
+- Four pages for the game live under `/ingame`: the season ranking, the summary of the player who opened the panel, the latest matches and the commands of the server. They follow the rules above. `!comandos` and `!commands` open the commands page, and `!ranking` opens the ranking page when `ranking_motd_path` is `/ingame`.
 
 The pages available in game exist twice, so that set stays small. A test fails if one of them starts using something this browser lacks. The [roadmap](roadmap.md#front-end) has the rest of the front-end decisions.

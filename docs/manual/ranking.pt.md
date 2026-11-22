@@ -32,7 +32,7 @@ O ranking é a primeira página do site. Ele lista os 100 melhores jogadores da 
 | XP | Uma barra com o progresso até a próxima patente. Passe o mouse sobre ela para ver a experiência, o próximo nível e quanto a última partida mudou. Verde quer dizer que a última partida somou experiência; vermelho, que ela tirou experiência. |
 | Vitórias, Derrotas | Partidas ranqueadas ganhas e perdidas. Um rage quit conta como derrota. |
 | MVP de SI (vezes), MVP de CI (vezes) | Quantas vezes o jogador foi MVP. Veja [MVPs](#mvps). |
-| Tank wipes | Metades de rodada que o jogador encerrou como Tank. Veja [Tank wipes](#tank-wipes). |
+| Tank wipes | Metades de rodada em que o jogador, como Tank, derrubou todos os sobreviventes e ainda estava vivo no fim. Veja [Tank wipes](#tank-wipes). |
 | Taxa de vitória | Vitórias divididas por vitórias mais derrotas. |
 | Jogos | Vitórias mais derrotas. Os empates não entram. |
 | Rage quit | Partidas que o jogador abandonou antes do fim. |
@@ -43,15 +43,15 @@ Acima da tabela:
 
 - **Período exibido** abre o [seletor de período](#escolhendo-o-período).
 - **Próximo reset em N dia(s)** diz quando a temporada atual termina e o ranking recomeça.
-- **Ver rankings anteriores** abre a [lista de jogadores](players.pt.md#a-lista-de-jogadores) do mesmo período, onde dá para escolher qualquer temporada passada, ano ou todo o período.
+- **Ver rankings anteriores** abre a [lista de jogadores](players.pt.md#a-lista-de-jogadores): do ano atual quando a temporada atual está sendo mostrada; se não, do período mostrado. Lá dá para escolher uma temporada do ano atual, qualquer ano ou todo o período.
 
 Os primeiros 50 jogadores aparecem; **Mostrar mais...** mostra o resto dos 100 melhores. A lista completa de jogadores do período está na página [Jogadores](players.pt.md).
 
-No início de uma temporada, antes da primeira partida ranqueada, a página mostra no lugar dela os 6 melhores da última temporada encerrada.
+No início de uma temporada, antes da primeira partida ranqueada, a página mostra, em vez disso, os 6 melhores da última temporada encerrada.
 
 ## Escolhendo o período
 
-![O seletor de período, com as temporadas agrupadas por ano](../images/pt/ranking-period.webp)
+![O seletor de período: as temporadas do ano atual, cada ano e todo o período](../images/pt/ranking-period.webp)
 
 O ranking pode mostrar qualquer temporada, um ano inteiro ou todo o período. A temporada atual é o padrão. [Temporadas e histórico](seasons-and-history.pt.md) explica como os períodos são calculados. As patentes e as mudanças de nível só aparecem quando uma temporada está selecionada, já que as patentes pertencem a uma temporada.
 
@@ -68,7 +68,7 @@ Cada partida ranqueada muda a experiência dos jogadores que estavam nela. Com a
 | Cada MVP de CI na partida | +6 |
 | Cada tank wipe na partida | +50 |
 
-Por exemplo, um jogador que ganha uma partida e foi MVP de SI em duas metades de rodada e MVP de CI em uma recebe 85 + 2 × 8 + 6 = 107 XP. Um jogador que perde com um MVP de SI recebe −80 + 8 = −72 XP, e um jogador que perde mas derrubou os sobreviventes duas vezes como Tank recebe −80 + 2 × 50 = 20 XP.
+Por exemplo, um jogador que ganha uma partida e foi MVP de SI em duas metades de rodada e MVP de CI em uma recebe 85 + 2 × 8 + 6 = 107 XP. Um jogador que perde com um MVP de SI recebe −80 + 8 = −72 XP, e um jogador que perde, mas derrubou os sobreviventes duas vezes como Tank recebe −80 + 2 × 50 = 20 XP.
 
 - As partidas são aplicadas na ordem em que foram jogadas.
 - A experiência nunca fica abaixo de zero. Um jogador com 30 XP que perde uma partida termina com 0, não com −50.
@@ -121,15 +121,15 @@ O administrador pode exigir um número mínimo de jogos (vitórias mais derrotas
 
 ## A ordem do ranking
 
-Os jogadores são ordenados por experiência. Quando dois jogadores têm a mesma experiência, a ordem é decidida por, nesta ordem: mais vitórias, menos derrotas, mais MVPs de SI, mais MVPs de CI.
+Os jogadores são ordenados por experiência. Quando dois jogadores têm a mesma experiência, o desempate segue esta ordem: mais vitórias, menos derrotas, mais MVPs de SI, mais MVPs de CI.
 
 ## Configurações
 
 | Configuração | Onde | Padrão |
 |---|---|---|
 | Pontos por vitória, derrota e rage quit | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 85, −80, −150 |
-| Pontos por cada MVP de SI e cada MVP de CI | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 8, 6 |
-| Pontos por cada tank wipe | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 50 |
+| Pontos para cada MVP de SI e cada MVP de CI | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 8, 6 |
+| Pontos para cada tank wipe | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 50 |
 | Mínimo de partidas para aparecer no ranking | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 0 |
 | Quais modos de jogo contam, e de quantos mapas uma partida precisa | [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo) | 4v4 com pelo menos 2 mapas |
 | Duração da temporada | [Configurações > Temporadas](administration.pt.md#temporadas) | 2 meses |

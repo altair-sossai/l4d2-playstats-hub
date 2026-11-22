@@ -24,7 +24,7 @@ Como fazer um servidor de Left 4 Dead 2 enviar as partidas dele para o seu site,
 
 ## O que o servidor de jogo precisa
 
-Os plugins são feitos para servidores baseados no [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework), como os servidores ZoneMod. O Competitive Rework já traz quase tudo o que eles precisam:
+Os plugins são feitos para servidores baseados no [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework), como os servidores ZoneMod. O Competitive Rework já traz quase tudo de que eles precisam:
 
 | Requisito | Por quê | Vem com o Competitive Rework |
 |---|---|---|
@@ -54,7 +54,7 @@ Copie-as agora. A chave dentro do token aparece só uma vez. Se você perdê-la,
 ## Passo 2: instale o REST in Pawn
 
 1. Baixe o `sm-ripext-<version>-linux.zip` (servidor Linux) ou o `sm-ripext-<version>-windows.zip` (servidor Windows) mais recente nas [releases do REST in Pawn](https://github.com/ErikMinekus/sm-ripext/releases).
-2. Extraia na pasta `left4dead2` do servidor, a que tem o `gameinfo.txt`. Ele adiciona `addons/sourcemod/extensions/rip.ext.so` (ou `.dll`) e `addons/sourcemod/configs/ripext/ca-bundle.crt`.
+2. Extraia o zip na pasta `left4dead2` do servidor, a que tem o `gameinfo.txt`. Ele adiciona `addons/sourcemod/extensions/rip.ext.so` (ou `.dll`) e `addons/sourcemod/configs/ripext/ca-bundle.crt`.
 
 Pule este passo se o `sm exts list`, no console do servidor, já mostrar `REST in Pawn`.
 
@@ -71,7 +71,7 @@ Os dois têm uma pasta chamada `left4dead2` com a mesma estrutura da pasta do jo
 |---|---|
 | `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` e `l4d2_weapon_skins`. |
 | `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` e `l4d2_show_patent_icon`, que os modos de partida carregam. |
-| `addons/sourcemod/scripting/` | Os fontes deles, só para compilar. |
+| `addons/sourcemod/scripting/` | O código-fonte deles, só para compilar. |
 | `addons/sourcemod/translations/` | Os textos do chat. |
 | `addons/sourcemod/configs/weapon_skins.cfg` | As armas e skins do plugin de skins. |
 | `cfg/playstats.cfg` | Suas configurações. Você o edita no próximo passo. |
@@ -82,9 +82,9 @@ O `l4d2_playstats_sync.smx` é o único de que todo servidor precisa. Apague o `
 
 | Plugin | O que faz | Módulo do site |
 |---|---|---|
-| `l4d2_playstats_sync` | Envia os arquivos de estatísticas e avisa o site que o servidor está no ar. | Sempre necessário |
+| `l4d2_playstats_sync` | Envia os arquivos de estatísticas e avisa o site de que o servidor está no ar. | Sempre necessário |
 | `l4d2_gameinfo_sync` | Envia a partida ao vivo: placar, jogadores, eventos e chat. | Servidor ao vivo |
-| `l4d2_ranking` | Abre o ranking dentro do jogo com `!ranking`. | Ranking |
+| `l4d2_ranking` | Abre o ranking dentro do jogo com `!ranking`, e os comandos do servidor com `!comandos` ou `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Mostra o ícone da patente de cada jogador no jogo. | Ranking |
 | `l4d2_weapon_skins` | Aplica as skins de armas que os jogadores têm. | Loja de skins de armas |
 
@@ -103,7 +103,7 @@ Isso é tudo o que você precisa mudar. O resto do `cfg/playstats.cfg` lista tod
 
 O `cfg/playstats.cfg` também liga `sm_stats_writestats 1`, que faz o `l4d2_playstats` gravar os arquivos de estatísticas. O padrão é `0`, e os modos de partida ZoneMod do Competitive Rework não o mudam. Se os seus modos de partida já o definem com `confogl_addcvar`, apague essa linha do `cfg/playstats.cfg`.
 
-Cada configuração fica em um lugar só: no `cfg/playstats.cfg` as que são iguais em todos os modos de partida, ou com `confogl_addcvar` em um modo de partida a que precisa ser diferente. Nunca defina `playstats_url` ou `playstats_token` com `confogl_addcvar`: o Confogl mostra no chat o valor antigo e o novo das configurações que ele acompanha, e os jogadores veriam o token.
+Cada configuração fica em um lugar só: no `cfg/playstats.cfg`, se ela for igual em todos os modos de partida, ou com `confogl_addcvar` em um modo de partida, se ela precisar ser diferente nele. Nunca defina `playstats_url` ou `playstats_token` com `confogl_addcvar`: o Confogl mostra no chat o valor antigo e o novo das configurações que ele acompanha, e os jogadores veriam o token.
 
 ## Passo 5: carregue os plugins nos seus modos de partida
 
@@ -127,7 +127,7 @@ No site, a página do servidor de jogo se atualiza sozinha. Em alguns segundos e
 
 - Conexão com este site
 - Plugin de envio de estatísticas carregado
-- Gravação de estatísticas ativada (ela liga quando um modo de partida carrega o `l4d2_playstats`)
+- Gravação de estatísticas ativada (fica ativa quando um modo de partida carrega o `l4d2_playstats`)
 - Primeiro arquivo de estatísticas recebido (depois do primeiro mapa completo)
 - Dados da partida ao vivo chegando (quando o módulo de servidor ao vivo está ligado)
 - Plugin de skins de armas carregado (quando o módulo da loja de skins está ligado)
@@ -149,9 +149,9 @@ Os ícones de patente e as skins de armas são arquivos que não fazem parte do 
 1. Copie as pastas `models/` e `materials/` dele para a pasta `left4dead2` do servidor.
 2. Coloque `models/`, `materials/` e o conteúdo de `fastdl/` em um servidor web que os jogadores consigam acessar (um FastDL), com a mesma estrutura da pasta do jogo.
 3. No `cfg/server.cfg`, defina `sm_cvar sv_allowdownload 1` e `sm_cvar sv_downloadurl "<address of that folder>"`.
-4. No `cfg/playstats.cfg`, ligue as skins: apague o `//` na frente de `weapon_skins_enabled` e mude para `"1"`.
+4. No `cfg/playstats.cfg`, ligue as skins: apague o `//` na frente de `weapon_skins_enabled` e defina como `"1"`.
 5. Para mostrar também os ícones das patentes, faça o mesmo com `patent_icon_enabled`.
-6. Reinicie o servidor enquanto ele está vazio.
+6. Reinicie o servidor enquanto ele estiver vazio.
 
 Os detalhes, e como verificar se os arquivos foram encontrados, estão em [Arquivos de skins de armas e de patentes](../plugins/README.pt.md#arquivos-de-skins-de-armas-e-de-patentes).
 
@@ -168,19 +168,19 @@ O plugin de anti-cheat (`l4d2-anti-cheat.smx`, versão 1.5.0 ou mais nova) não 
    ```
 
 3. Escolha o modo que o servidor de jogo usa até que um seja salvo no site, com `anti_cheat_mode` no `shared_cvars.cfg` dos seus modos de partida, por exemplo `confogl_addcvar anti_cheat_mode 1`.
-4. Reinicie o servidor enquanto ele está vazio.
+4. Reinicie o servidor enquanto ele estiver vazio.
 
 | Configuração | O que significa |
 |---|---|
 | `l4d2_web_url` | O endereço deste site. O plugin chama `<endereço>/api/anti-cheat-access/server`. |
 | `l4d2_web_secret` | O token deste servidor de jogo, o mesmo valor de `playstats_token`. Cada servidor de jogo tem o seu. |
-| `anti_cheat_mode` | `0`: todos precisam usar o Anti-Cheat, exceto os jogadores da whitelist. `1`: só os jogadores da lista obrigatória precisam usá-lo (o padrão do plugin). O modo salvo em **Administração → Configurações do Anti-Cheat** vale mais; este valor só conta até que um modo seja salvo lá. |
+| `anti_cheat_mode` | `0`: todos precisam usar o Anti-Cheat, exceto os jogadores da whitelist. `1`: só os jogadores da lista obrigatória precisam usá-lo (o padrão do plugin). O modo salvo em **Administração → Configurações do Anti-Cheat** prevalece; este valor só conta até que um modo seja salvo lá. |
 
 Com `anti_cheat_enabled 0` nos modos de partida, a versão 1.6.0 do plugin deixa os jogadores ligarem o Anti-Cheat na partida com `!aac vote`; veja [Ligado pelos jogadores](manual/anti-cheat.pt.md#ligado-pelos-jogadores).
 
 Nunca defina `l4d2_web_secret` com `confogl_addcvar`, pelo mesmo motivo do `playstats_token`. As outras configurações do plugin, como o endereço e o token do serviço próprio dele, não mudam.
 
-Depois de uma alteração no site, o `l4d2_gameinfo_sync` roda `sm_aac sync` no servidor de jogo em segundos. Sem o módulo de servidor ao vivo, o plugin lê o site sozinho a cada minuto. Para verificar a conexão, digite `sm_aac sync` e depois `sm_aac list` no console do servidor de jogo, ou pergunte ao site a partir dessa máquina:
+Depois de uma alteração no site, o `l4d2_gameinfo_sync` roda `sm_aac sync` no servidor de jogo em poucos segundos. Sem o módulo de servidor ao vivo, o plugin lê o site sozinho a cada minuto. Para verificar a conexão, digite `sm_aac sync` e depois `sm_aac list` no console do servidor de jogo, ou consulte o site a partir dessa máquina:
 
 ```text
 curl -H "Authorization: my-server:3f9c…" https://stats.example.com/api/anti-cheat-access/server
@@ -190,7 +190,7 @@ A resposta traz o modo (`null` até que um seja salvo) e as duas listas. `401` q
 
 ## O ranking dentro do jogo
 
-O `!ranking` abre o ranking da página inicial do site no navegador do próprio jogo; com `ranking_motd_path "/ingame"` ele abre uma versão mais simples e compacta. As páginas abertas pelo jogo não mostram o convite para votar no ranking da comunidade. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
+O `!ranking` abre o ranking da página inicial do site no navegador do próprio jogo; com `ranking_motd_path "/ingame"` ele abre uma versão mais simples e compacta. O `!comandos` e o `!commands` abrem a página de comandos dessa versão compacta, `/ingame/commands` (`ranking_commands_path`). As páginas abertas pelo jogo não mostram o convite para votar no ranking da comunidade. Esse navegador é de 2012 e não se espera que ele abra sites HTTPS atuais, então dê a ele um endereço HTTP simples do seu site no `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"
@@ -198,7 +198,7 @@ playstats_ingame_url "http://203.0.113.10:5080"
 
 Quando `playstats_ingame_url` está vazio, o plugin usa `playstats_url`. Não use um endereço HTTPS nem um que redirecione para HTTPS: o painel fica vazio. [Instalando em uma VPS Linux](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica qual endereço usar.
 
-O endereço que os jogadores leem no chat, na dica do ranking e no link da loja de skins, é o `playstats_public_url`; quando ele está vazio, os plugins mostram o `playstats_url`. Defina quando os plugins chegam ao site por um endereço IP mas os jogadores o conhecem por um nome:
+O endereço que os jogadores leem no chat, na dica do ranking e no link da loja de skins, é o `playstats_public_url`; quando ele está vazio, os plugins mostram o `playstats_url`. Defina-o quando os plugins acessam o site por um endereço IP, mas os jogadores o conhecem por um nome:
 
 ```text
 playstats_public_url "https://stats.example.com"
@@ -221,20 +221,20 @@ Authorization: <o token do servidor>
 | `400` | A lista está vazia, é ímpar, tem mais de 16, repete um jogador ou tem um SteamID64 inválido. |
 | `404` | O módulo do ranking da comunidade está desligado. |
 
-O site testa todas as divisões, fica com as que deixam os times mais próximos em pontuação média, melhor jogador, dispersão e incerteza, e sorteia uma delas, para que os mesmos jogadores não caiam sempre nos mesmos times. Qual time começa como sobrevivente também é sorteado.
+O site testa todas as divisões, fica com as que deixam os times mais próximos em pontuação média, melhor jogador, dispersão e incerteza, e sorteia uma delas, para que os mesmos jogadores não caiam sempre nos mesmos times. Qual time começa como sobreviventes também é sorteado.
 
 ## O que cada status significa
 
 | Status | Significado | O que fazer |
 |---|---|---|
-| Aguardando a primeira conexão | O servidor nunca chegou ao site. | Confira o `cfg/playstats.cfg` e a linha `exec playstats.cfg`, e se o `l4d2_playstats_sync.smx` está carregado. Rode `sm_playstats_test`. |
+| Aguardando a primeira conexão | O servidor nunca se conectou ao site. | Confira o `cfg/playstats.cfg` e a linha `exec playstats.cfg`, e se o `l4d2_playstats_sync.smx` está carregado. Rode `sm_playstats_test`. |
 | Conectado | Um heartbeat chegou nos últimos segundos. | Nada. |
 | Offline | O servidor já foi visto, mas não agora. | Normal enquanto o servidor de jogo está desligado, ou vazio e hibernando. |
 | Chave inválida | O identificador chegou com a chave errada. | Cole o token de novo, ou gere uma nova chave no site. |
 
 ## Atualizando os plugins
 
-Copie a nova pasta `left4dead2` por cima da antiga, **exceto o `cfg/playstats.cfg`**, que tem o seu endereço e o seu token. Todos os outros arquivos podem ser substituídos; veja [Atualização](../plugins/README.pt.md#atualização) para as exceções e um comando que pula esse arquivo. Depois reinicie o servidor enquanto ele está vazio.
+Copie a nova pasta `left4dead2` por cima da antiga, **exceto o `cfg/playstats.cfg`**, que tem o seu endereço e o seu token. Todos os outros arquivos podem ser substituídos; veja [Atualização](../plugins/README.pt.md#atualização) para as exceções e um comando que pula esse arquivo. Depois reinicie o servidor enquanto ele estiver vazio.
 
 ## Vindo da configuração antiga
 
@@ -248,7 +248,7 @@ Se o servidor de jogo usava os plugins anteriores, remova as configurações del
 | `ranking_url` | `playstats_ingame_url`, só se o jogo precisar de outro endereço |
 | O nome do site na dica do ranking e o endereço no link da loja de skins (`l4d2_web_url`) | `playstats_public_url`, só se os jogadores conhecerem o site por outro endereço |
 
-Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Copie os novos arquivos `.smx` por cima dos antigos: os três de `addons/sourcemod/plugins/optional/` substituem os anteriores ali, então os modos de partida continuam carregando os plugins com as linhas que já têm. Se uma cópia antiga de algum deles estiver na própria `addons/sourcemod/plugins/`, apague-a, para que exista só uma cópia de cada plugin.
+Procure por elas no `cfg/server.cfg`, no seu arquivo de segredos e no `shared_cvars.cfg` de cada modo de partida. As configurações antigas definidas com `confogl_addcvar playstats_url` também precisam sair, para que o `cfg/playstats.cfg` seja o único lugar do endereço e do token. Copie os novos arquivos `.smx` por cima dos antigos: os três de `addons/sourcemod/plugins/optional/` substituem os anteriores ali, então os modos de partida continuam carregando os plugins com as linhas que já têm. Se uma cópia antiga de algum deles estiver na própria pasta `addons/sourcemod/plugins/`, apague-a, para que exista só uma cópia de cada plugin.
 
 Para a mudança completa do site anterior para este, com a ordem dos passos e como voltar atrás, veja [Trocando o site antigo](switch-from-old-site.pt.md).
 
@@ -263,5 +263,5 @@ Para a mudança completa do site anterior para este, com a ordem dos passos e co
 | "Cannot reach ..." | O servidor de jogo não consegue abrir o site. Teste o endereço naquela máquina com `curl -I`, confira o firewall, e veja a [Solução de problemas](../plugins/README.pt.md#solução-de-problemas) para erros de HTTPS. |
 | Funciona fora das partidas, para quando um modo de partida carrega | Faça o passo 5. |
 | Conectado, mas nenhum arquivo de estatísticas chega | Jogue um mapa completo em versus. Confira se o `sm_playstats_test` diz que a gravação de estatísticas está ligada durante a partida. |
-| As partidas chegam mas não contam para o ranking | No site, abra **Administração → Modos de jogo** e veja em qual regra a configuração se encaixa. |
+| As partidas chegam, mas não contam para o ranking | No site, abra **Administração → Modos de jogo** e veja em qual regra a configuração se encaixa. |
 | `!ranking` abre um painel vazio | Defina `playstats_ingame_url` com um endereço HTTP simples do site. |

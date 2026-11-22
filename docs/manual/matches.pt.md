@@ -40,7 +40,7 @@ A página de detalhes tem:
 
 - as equipes e o resultado, como na lista;
 - **Placar**: um gráfico do placar de cada equipe depois de cada mapa;
-- **Pontos ganhos por mapa**: um gráfico de barras com os pontos que cada equipe fez em cada mapa. Um Tank em cima de uma barra marca um mapa em que aquela equipe fez um [tank wipe](ranking.pt.md#tank-wipes); passe o mouse na barra para ver quem fez;
+- **Pontos ganhos por mapa**: um gráfico de barras com os pontos que cada equipe fez em cada mapa. Um Tank em cima de uma barra marca um mapa em que aquela equipe fez um [tank wipe](ranking.pt.md#tank-wipes); passe o mouse sobre a barra para ver quem fez;
 - **Resultados por mapa**: uma linha por mapa com o início, o fim, o tempo que levou e o placar. Clique em um mapa para abrir as estatísticas dele;
 - uma tabela por equipe e lado: equipe A e equipe B como sobreviventes, depois como infectados.
 
@@ -66,7 +66,7 @@ Depois da alteração, o site reconstrói as partidas em volta daquele mapa, ent
 
 O servidor de jogo envia um arquivo de estatísticas por mapa. O site junta os arquivos em partidas com estas regras:
 
-1. Os arquivos são separados por servidor de jogo, por temporada e por configuração e tamanho de equipe. Uma partida nunca mistura dois servidores, duas temporadas ou duas configurações.
+1. Os arquivos são separados por servidor de jogo, por temporada e por configuração e tamanho de equipe. Uma partida nunca mistura dois servidores, duas temporadas ou duas configurações. Arquivos de um servidor de jogo com mais de 6 horas de intervalo (a configuração **Horas sem arquivos que separam duas partidas**, em [Configurações](administration.pt.md#pontos-do-ranking)) também começam uma nova partida.
 2. Mapas da mesma campanha jogados em ordem formam uma partida. `c2m1_highway` seguido de `c2m2_fairgrounds` é uma partida. Se o próximo arquivo for um mapa de outra campanha, ou da mesma campanha fora de ordem, começa uma nova partida.
 3. Quais mapas pertencem a qual campanha, e em que ordem, vem da [lista de campanhas](game-modes-and-campaigns.pt.md#campanhas). Campanhas personalizadas podem ser adicionadas lá.
 4. Um mapa que terminou 0 a 0 é ignorado. Um mapa que aparece duas vezes seguidas é contado uma vez.

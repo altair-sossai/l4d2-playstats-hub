@@ -4,7 +4,7 @@
 
 Use esta opção se você já roda os seus serviços em contêineres. Se você tem apenas uma VPS Linux, o [instalador](install-linux.pt.md) é mais simples.
 
-As capturas de tela desta página são a saída real dos comandos, gravada em uma máquina Ubuntu 24.04 limpa, com Docker 29 e Compose 5.8, em uma pasta chamada `playstats`. Os seus horários e código de configuração vão ser diferentes.
+As capturas de tela desta página são a saída real dos comandos, gravada em uma máquina Ubuntu 24.04 limpa, com Docker 29 e Compose 5.8, em uma pasta chamada `playstats`. Os seus horários e o seu código de configuração vão ser diferentes.
 
 ## Conteúdo
 
@@ -49,7 +49,7 @@ Depois inicie:
 docker compose up -d
 ```
 
-Na primeira vez, o Docker baixa a imagem e depois cria a rede, o volume e o contêiner:
+Na primeira vez, o Docker baixa a imagem e depois cria a rede, os volumes e o contêiner:
 
 ![docker compose up -d, na primeira vez](images/pt/install-docker-up.webp)
 
@@ -59,7 +59,7 @@ A chave de segredos, que criptografa os segredos salvos nas configurações, fic
 
 Rode apenas um contêiner da aplicação. A partida ao vivo fica guardada na memória, e dois contêineres teriam cada um a sua.
 
-A aplicação roda com o usuário sem privilégios `app` da imagem do .NET, e não como root. Quando o contêiner inicia, ele primeiro passa a posse da pasta de dados para esse usuário e depois inicia o site.
+A aplicação roda com o usuário sem privilégios `app` da imagem do .NET, e não como root. Quando o contêiner inicia, ele primeiro passa a posse da pasta de dados e da pasta de segredos para esse usuário e depois inicia o site.
 
 ## O código de configuração
 
@@ -71,7 +71,7 @@ docker compose logs hub | grep "setup code"
 
 ![O código de configuração no log, e o contêiner rodando](images/pt/install-docker-setup-code.webp)
 
-O `docker compose ps` mostra o contêiner e a porta dele. Abra o site, cole o código, faça login com o Steam e siga as páginas. A [Configuração inicial](manual/first-run.pt.md) mostra cada uma delas.
+O `docker compose ps` mostra o contêiner e a porta dele. Abra o site, cole o código, entre com a Steam e siga as páginas. A [Configuração inicial](manual/first-run.pt.md) mostra cada uma delas.
 
 ![A primeira página do site pede o código de configuração](images/pt/wizard-setup-code.webp)
 
@@ -83,7 +83,7 @@ A imagem tem uma verificação de saúde que não precisa de nenhuma ferramenta 
 docker compose exec hub dotnet L4D2PlayStats.Hub.Web.dll health
 ```
 
-Ela mostra a resposta e termina com 0 quando o site está no ar, ou 1 quando não está.
+Ela mostra a resposta e termina com o código 0 quando o site está no ar, ou 1 quando não está.
 
 ## Atualizando
 
@@ -101,7 +101,7 @@ O `pull` baixa a imagem mais nova, e o `up -d` recria o contêiner quando a imag
 
 Para ficar em uma versão específica, troque `latest` no arquivo do compose pela versão, como `v1.2.0`.
 
-As imagens até a v0.3.0 rodavam a aplicação como root, então os arquivos de um volume existente pertencem ao root. Um contêiner mais novo passa a posse deles para `app` quando inicia, então a atualização não precisa de mais nada. Se você inicia o contêiner com um `user:` fixo no arquivo do compose, ele não consegue mudar a posse; corrija uma vez com `docker run --rm -v hub-data:/data alpine chown -R 1654:1654 /data` (1654 é o usuário `app` da imagem).
+As imagens até a v0.3.0 rodavam a aplicação como root, então os arquivos de um volume existente pertencem ao root. Um contêiner mais novo passa a posse deles para `app` quando inicia, então a atualização não precisa de mais nada. Se você iniciar o contêiner com um `user:` fixo no arquivo do compose, ele não consegue mudar a posse; corrija uma vez com `docker run --rm -v hub-data:/data alpine chown -R 1654:1654 /data` (1654 é o usuário `app` da imagem).
 
 Se o seu arquivo do compose foi escrito antes de existir a chave de segredos, adicione a ele o volume `hub-secrets`, como em [Iniciando](#iniciando), antes de atualizar. A primeira inicialização da nova imagem cria a chave ali e criptografa os segredos salvos pela versão anterior. Sem esse volume a chave vai para um volume anônimo, que o `docker compose up` mantém quando recria o contêiner, mas que é fácil de perder, por exemplo com `docker compose down -v`.
 
@@ -161,7 +161,7 @@ O backup automático para o Azure Storage não inclui a chave. Guarde uma cópia
 docker compose exec hub cat /secrets/secrets.key
 ```
 
-Para levar o site para outra máquina com um zip do backup automático, coloque a chave no volume `hub-secrets` da nova máquina antes de iniciá-la: restaure o segundo arquivo como mostra [Backup](#backup), ou escreva a chave que você copiou em `/secrets/secrets.key`. Sem a chave original o site inicia e todos os dados estão lá, mas os segredos salvos nas configurações ficam vazios: o log avisa, e você digita de novo a chave da API da Steam e o destino do backup na área de administração.
+Para levar o site para outra máquina com um zip do backup automático, coloque a chave no volume `hub-secrets` da nova máquina antes de iniciar o site: restaure o segundo arquivo como mostra [Backup](#backup), ou escreva a chave que você copiou em `/secrets/secrets.key`. Sem a chave original o site inicia e todos os dados estão lá, mas os segredos salvos nas configurações ficam vazios: o log avisa, e você digita de novo a chave da API da Steam e o destino do backup na área de administração.
 
 No lugar do volume, você pode passar a chave na variável `Hub__SecretsKey`, 32 bytes aleatórios em base64 (`openssl rand -base64 32`), ou apontar `Hub__SecretsKeyFile` para um secret do Docker, como `/run/secrets/hub_secrets_key`.
 
@@ -185,7 +185,7 @@ As configurações são variáveis de ambiente. Adicione-as em `environment:` no
 | `Hub__SecretsKeyFile` | O arquivo da chave de segredos. Veja [A chave de segredos](#a-chave-de-segredos). | `/secrets/secrets.key` |
 | `Hub__SecretsKey` | Opcional. A própria chave de segredos, 32 bytes aleatórios em base64, no lugar do arquivo. | vazio |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` ou `MySql`. | `Sqlite` |
-| `Database__ConnectionString` | Como chegar ao banco de dados. | `Data Source=hub.db` |
+| `Database__ConnectionString` | Como acessar o banco de dados. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Proxies reversos cujos cabeçalhos `X-Forwarded-For`, `X-Forwarded-Proto` e `X-Forwarded-Host` o site aceita: endereços IP ou redes como `172.16.0.0/12`, separados por vírgulas. O próprio contêiner (`127.0.0.1` e `::1`) é sempre confiável. | vazio |
 
 Se você colocar um proxy reverso com HTTPS na frente do contêiner, mantenha um endereço HTTP simples acessível para o jogo. [O endereço usado dentro do jogo](install-linux.pt.md#o-endereço-usado-dentro-do-jogo) explica o motivo.

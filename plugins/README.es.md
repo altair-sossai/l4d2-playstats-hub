@@ -35,6 +35,7 @@ plugins/
 │   │   ├── scripting/               sus fuentes (.sp) y los archivos include para compilarlos
 │   │   ├── translations/            textos del chat: inglés, pt, es, chi y zho
 │   │   └── configs/weapon_skins.cfg las armas y skins que conoce el plugin de skins
+│   ├── materials/sprites/           los íconos de las patentes (patent_<level>_v02.vmt y .vtf)
 │   └── cfg/playstats.cfg            tu configuración: el único archivo que editas
 ├── build.ps1, build.sh              compilan los plugins en left4dead2/addons/sourcemod/plugins y en su carpeta optional
 ├── README.md, LICENSE, NOTICE.md    esta guía y la licencia (no van al servidor)
@@ -50,7 +51,7 @@ Los archivos `.smx` del repositorio son siempre el resultado de compilar las fue
 |---|---|---|---|
 | `l4d2_playstats_sync` | Le avisa al sitio cada 30 segundos que el servidor está activo y sube los archivos de estadísticas que escribe `l4d2_playstats`. Tiene el comando `sm_playstats_test`. Todo servidor lo necesita. | Siempre activo | REST in Pawn |
 | `l4d2_gameinfo_sync` | Envía la partida en vivo: configuración, ronda, marcador, jugadores, eventos y chat. Lleva el chat del sitio al juego y ejecuta los comandos enviados desde el sitio. | Servidor en vivo, Chat del sitio, Comandos remotos | REST in Pawn, left4dhooks |
-| `l4d2_ranking` | Abre la página del ranking dentro del juego con `!ranking` y la página de comandos con `!comandos` o `!commands`, y el ranking por sí solo para los jugadores que entran antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks |
+| `l4d2_ranking` | Abre la página del ranking dentro del juego con `!ranking` y la página de comandos con `!comandos` o `!commands`, y abre el ranking automáticamente para los jugadores que entran antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks |
 | `l4d2_show_patent_icon` | Muestra el ícono de patente de cada jugador sobre su cabeza antes de que empiece una partida. | Ranking | REST in Pawn, left4dhooks, los sprites de patentes |
 | `l4d2_weapon_skins` | Aplica las skins de armas que los jugadores compraron en la tienda. | Tienda de skins de armas | REST in Pawn, los modelos y materiales de las skins |
 
@@ -67,7 +68,7 @@ Solo `l4d2_playstats_sync` es obligatorio. Cada uno de los demás funciona sin l
 | `l4d2_playstats` | Los archivos de estadísticas que sube `l4d2_playstats_sync` | Sí, en `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
 | `readyup`, `pause`, `l4d_boss_percent`, `l4d2_hybrid_scoremod` o `l4d2_hybrid_scoremod_zone`, `l4d2_skill_detect` | Opcional: más datos en vivo en `l4d2_gameinfo_sync` (ready-up, pausas, porcentajes de los jefes, bonus, skeets y otros eventos) | Sí, en `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
 | `l4d2_mix`, `l4d2_anti_cheat` | Opcional: el evento "mix started" y el estado del anti-cheat en `l4d2_gameinfo_sync` | No | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) |
-| Sprites de patentes, modelos y materiales de skins, y un FastDL | `l4d2_show_patent_icon`, `l4d2_weapon_skins` | No | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets), consulta [Archivos de skins de armas y de patentes](#archivos-de-skins-de-armas-y-de-patentes) |
+| Modelos y materiales de skins, y un FastDL para ellos y para los sprites de patentes (los sprites vienen en este paquete) | `l4d2_show_patent_icon`, `l4d2_weapon_skins` | No | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets), consulta [Archivos de skins de armas y de patentes](#archivos-de-skins-de-armas-y-de-patentes) |
 | Un servidor de juego registrado en el sitio | Todos | No | El sitio: **Administración → Servidores de juego** |
 
 Los plugins se compilan con SourceMod 1.12.0.7260 y necesitan SourceMod 1.12 o más reciente. Los plugins opcionales se buscan por nombre mientras el servidor funciona: cuando uno de ellos no está cargado, `l4d2_gameinfo_sync` sigue funcionando y solo deja fuera esa parte. Los archivos include de `scripting/include` solo se necesitan para compilar; `l4d2util` y `colors` quedan compilados dentro de los plugins y no necesitan nada en el servidor.
@@ -85,7 +86,7 @@ Para instalar REST in Pawn, descarga `sm-ripext-<version>-linux.zip` o `-windows
 7. Reinicia el servidor de juego.
 8. Ejecuta `sm_playstats_test` en la consola del servidor (consulta [Verificar la instalación](#verificar-la-instalación)).
 
-Copia la carpeta tal como está: `l4d2_gameinfo_sync` y `l4d2_weapon_skins` van en `addons/sourcemod/plugins/`, que SourceMod carga cuando arranca el servidor, y los otros tres en `addons/sourcemod/plugins/optional/`, que solo carga un modo de partida (consulta [Modos de partida de L4D2 Competitive Rework](#modos-de-partida-de-l4d2-competitive-rework)). Es donde los servidores con L4D2 Competitive Rework ya los guardan, así que un servidor que usaba las versiones anteriores sigue cargándolos con las líneas que ya tiene. Mientras no haya un modo de partida cargado, `l4d2_playstats_sync` no funciona y el sitio muestra el servidor como desconectado; para mantenerlo conectado, agrega `sm plugins load optional/l4d2_playstats_sync.smx` al final de `cfg/server.cfg`.
+Copia la carpeta tal como está: `l4d2_gameinfo_sync` y `l4d2_weapon_skins` van en `addons/sourcemod/plugins/`, que SourceMod carga cuando arranca el servidor, y los otros tres en `addons/sourcemod/plugins/optional/`, que solo carga un modo de partida (consulta [Modos de partida de L4D2 Competitive Rework](#modos-de-partida-de-l4d2-competitive-rework)). Es donde los servidores con L4D2 Competitive Rework ya los guardan, así que un servidor que usaba las versiones anteriores sigue cargándolos con las líneas que ya tiene. Mientras no haya un modo de partida cargado, `l4d2_playstats_sync` no funciona y el sitio muestra el servidor como fuera de línea; para mantenerlo conectado, agrega `sm plugins load optional/l4d2_playstats_sync.smx` al final de `cfg/server.cfg`.
 
 ## Ajustes
 
@@ -127,7 +128,7 @@ Dónde definirlos:
 
 La cvar del token está protegida: el juego nunca envía su valor a los jugadores, y el `sm_cvar` de SourceMod solo lo muestra a los admins con el flag de contraseña. Los plugins nunca lo muestran.
 
-La página que abre `l4d2_ranking` es `<address>/ingame?steamid=<SteamID64 of the player>`. El navegador del juego es Chromium 18, de 2012, y no se espera que abra sitios HTTPS actuales. Si el panel se queda en blanco, sirve el sitio por HTTP simple en otra dirección o puerto y pon esa dirección en `playstats_ingame_url`. Consulta [docs/in-game-browser.es.md](../docs/in-game-browser.es.md).
+La página que abre `l4d2_ranking` es `<address><ranking_motd_path>?steamid=<SteamID64 of the player>`: la página de inicio de forma predeterminada, `/ingame` para las páginas compactas. `!comandos` y `!commands` abren `<address>/ingame/commands?steamid=...` (`ranking_commands_path`). El navegador del juego es Chromium 18, de 2012, y no se espera que abra sitios HTTPS actuales. Si el panel se queda en blanco, sirve el sitio por HTTP simple en otra dirección o puerto y pon esa dirección en `playstats_ingame_url`. Consulta [docs/in-game-browser.es.md](../docs/in-game-browser.es.md).
 
 `l4d2_gameinfo_sync` envía al sitio la dirección IP de cada jugador que se conecta, y el sitio la usa para encontrar cuentas que comparten una dirección. También ejecuta, como comandos del servidor, los comandos que los administradores del sitio envían desde la página **Comandos remotos**: quien controle una cuenta de administrador del sitio puede ejecutar cualquier comando del servidor, como con RCON. También ejecuta el `sm_aac sync` que el sitio pone en cola después de un cambio en los ajustes del Anti-Cheat, incluso con el módulo de comandos remotos desactivado.
 
@@ -196,7 +197,7 @@ Sin `sv_downloadurl`, el propio juego envía los archivos, muy despacio; con mod
 
 Los jugadores necesitan `cl_allowdownload 1` y `cl_downloadfilter all` (o `nosounds`) en su juego para descargar los archivos. `weapon_skins_kick_no_downloads 1` expulsa a quienes se niegan, con un mensaje que les dice qué cambiar.
 
-Las skins que un jugador puede elegir vienen del sitio: `weapon_skins.cfg` asocia el nombre de cada skin con su arma, su familia del modelo y su carpeta de materiales, y la tienda del sitio vende las skins con los mismos nombres.
+Las skins que un jugador puede elegir vienen del sitio: `weapon_skins.cfg` asocia el nombre de cada skin con su arma, su familia de modelos y su carpeta de materiales, y la tienda del sitio vende las skins con los mismos nombres.
 
 ## Comandos
 
@@ -206,7 +207,7 @@ Las skins que un jugador puede elegir vienen del sitio: `weapon_skins.cfg` asoci
 | `sm_ranking` (`!ranking`) | Todos | Abre la página del ranking dentro del juego. |
 | `sm_comandos`, `sm_commands` (`!comandos`, `!commands`) | Todos | Abre la página con los comandos del servidor dentro del juego. |
 | `sm_skin`, `sm_skins` (`!skin`) | Todos | `!skin` muestra la ayuda; `!skin next`, `!skin prev`, `!skin <name>` y `!skin default` eligen la skin del arma en la mano, o del arma indicada después; `!skin status` muestra las monedas y las skins que tienes. Los supervivientes cambian de skin durante el ready-up. |
-| `sm_skin on`, `sm_skin off`, `sm_skin test <skin\|default> [weapon]` | Admins con el flag root; `on` y `off` también desde la consola del servidor | `on` y `off` reemplazan `weapon_skins_enabled` hasta que el plugin se carga de nuevo (un reinicio, o un modo de partida que recarga los plugins). `test` prueba una skin en ti mismo hasta que cambia el mapa, sin comprarla. El acceso se puede cambiar con el override `sm_weaponskins_admin` en `addons/sourcemod/configs/admin_overrides.cfg`. |
+| `sm_skin on`, `sm_skin off`, `sm_skin test <skin\|default> [weapon]` | Admins con el flag root; `on` y `off` también desde la consola del servidor | `on` y `off` tienen prioridad sobre `weapon_skins_enabled` hasta que el plugin se carga de nuevo (un reinicio, o un modo de partida que recarga los plugins). `test` prueba una skin en ti mismo hasta que cambia el mapa, sin comprarla. El acceso se puede cambiar con el override `sm_weaponskins_admin` en `addons/sourcemod/configs/admin_overrides.cfg`. |
 
 ## Verificar la instalación
 
@@ -260,7 +261,7 @@ Cada solicitud lleva el encabezado `Authorization: <playstats_token>`. Los valor
 |---|---|
 | `l4d2_playstats_sync` | `POST /api/servers/heartbeat`, `POST /api/statistics` |
 | `l4d2_gameinfo_sync` | `PUT /api/game-info/configuration`, `PUT /api/game-info/round`, `PUT /api/game-info/scoreboard`, `PUT /api/game-info/players`, `PUT /api/game-info/messages`, `POST /api/game-info/events`, `POST /api/game-info/player-connection-info`, `GET /api/game-info/server-command/dequeue`, `GET /api/external-chat` |
-| `l4d2_ranking` | Ninguna. Abre `/ingame?steamid=...` y `/ingame/commands?steamid=...` en el juego del jugador. |
+| `l4d2_ranking` | Ninguna. Abre `ranking_motd_path` (`/` de forma predeterminada) y `ranking_commands_path` (`/ingame/commands`), cada uno con `?steamid=...`, en el juego del jugador. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
 | `l4d2-anti-cheat` (aparte, 1.5.0 o posterior, con `l4d2_web_url` y `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |

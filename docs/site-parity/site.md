@@ -36,7 +36,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Logo linking to the home page | _Layout.cshtml:319-321 | adapted | The logo is uploaded by the administrator (it was a fixed file with the old site's name). Without one, the site name is shown as text. |
 | Players online badge next to the logo, pulsating, linking to the server page | _Layout.cshtml:322-324 | done | Shown only when the live server module is on. |
 | Menu: Ranking, Last matches, Server, Skins, Anti-Cheat | _Layout.cshtml:329-343 | done | Each item follows its module. Community (new) comes right after Ranking. When the items do not fit in one line, the last ones move into "More" by themselves. |
-| Menu "More": Players, Patents, History, with icons and a divider | _Layout.cshtml:344-369 | done | |
+| Menu "More": Players, Patents, History, with icons and a divider | _Layout.cshtml:344-369 | adapted | History was merged into the players list and left the menu (November 2026); Commands, new here, was added. |
 | Menu "Admin" for administrators: Chat bans, Skin purchases, Skin prices, with icons | _Layout.cshtml:370-398 | done | Plus the hub's Administration area and the Anti-Cheat settings. |
 | Stars pill with the signed-in player's balance, tooltip and label | _Layout.cshtml:403-411, 647-681 | done | Reads `GET /api/shop/wallet`, cached in the session storage as before. |
 | Signed-in player's avatar linking to the player page, with the name on phones | _Layout.cshtml:412-419 | done | |
@@ -46,7 +46,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Footer links (server repository, GitHub, Steam) | _Layout.cshtml:507-521 | adapted | The three fixed links became the setting `SiteSettings.FooterLinks` (one per line). The default is a link to the project. |
 | Floating "connect" icon with the server address in the tooltip, hidden on phones | _Layout.cshtml:524-529, Controllers/ConnectController.cs | adapted | The address comes from the registered game server with the most players (`/connect`), not from a fixed setting. Hidden when no server has an address. |
 | jQuery, Bootstrap, diffDOM, Chart.js and lity scripts | _Layout.cshtml:531-535 | done | |
-| Players online in the browser tab title ("🟢 5/8 \| ...") and the 4 second refresh | _Layout.cshtml:539-543, 585-608 | done | `GET /api/server` with the same fields (`players`, `max_players`). |
+| Players online in the browser tab title ("🟢 5/8 \| ...") and the 4 second refresh | _Layout.cshtml:539-543, 585-608 | adapted | `GET /api/server` with the same fields (`players`, `max_players`), every 4 seconds, starting only after the visitor first moves the mouse, scrolls, taps or types, and paused while the tab is in the background. |
 | `pulsate` animation | _Layout.cshtml:556-583, 705-707 | done | |
 | Charts created from `data-chart` when they scroll into view | _Layout.cshtml:610-641, 683-685, 713 | done | |
 | `isObject` helper | _Layout.cshtml:643-645 | done | |
@@ -57,7 +57,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Error page for unhandled exceptions and for status codes such as 404 | (new) | adapted | Hub addition: the old site answered an empty 500 in production. Pages now show a translated error page in the site layout; the exception is still logged as above. The API, the pages inside the game, static files and requests made by scripts keep a bare status, and the pages inside the game get a plain text line for an exception. |
 | JSON without nulls and with enums as text | Program.cs:21-25 | done | |
 | Steam sign-in with a 30 day sliding cookie | Program.cs:28-39 | done | |
-| Conventional addresses such as `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | The hub uses explicit addresses (`/theme/...`, `/language`, `/login`, `POST /logout`). Addresses people actually open (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) are the same. |
+| Conventional addresses such as `/Home/SetTheme`, `/Language/Change`, `/Account/Login` | Program.cs:67 | adapted | The hub uses explicit addresses (`/theme/...`, `/language`, `/login`, `POST /logout`). Addresses people actually open (`/`, `/history`, `/patents`, `/players`, `/skins`, `/anti-cheat`) are the same; `/history` now redirects to the players list. |
 | `POST /api/cache/clear` | Controllers/Api/CacheController.cs | not ported | The old site cached what it read from a separate API and had to be told to forget it. In the hub the site and the API are one application, and every upload refreshes the ranking by itself. |
 
 ## Home: ranking (`/`)
@@ -72,7 +72,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Table with stripes, hover, borders, condensed | Index.cshtml:83 | done | |
 | Columns: #, Patent, Player (avatar and name), XP, Wins, Loss, SI MVP awards, CI MVP awards, Win rate, Games, Rage quit | Index.cshtml:85-97 | done | Tank wipes were added after it. |
 | Columns hidden on phones (XP, Loss, MVPs, Win rate, Games, Rage quit) | Index.cshtml:89-96 | done | |
-| Top 100 listed, first 50 visible, "Show more" button for the rest | Index.cshtml:103, 109, 198-207, 50-57 | done | |
+| Top 100 listed, first 50 visible, "Show more..." button for the rest | Index.cshtml:103, 109, 198-207, 50-57 | done | |
 | Signed-in player's row highlighted | Index.cshtml:109 | done | |
 | Medals for the first three places with tooltip; "#N" for the others | Index.cshtml:111-125 | done | |
 | Patent image with "Level NN - Name" tooltip | Index.cshtml:127-129 | done | |
@@ -87,7 +87,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | With no ranking and no history: the message "There is no ranking data at the moment..." | Index.cshtml:66-71 | done | |
 | Top six: trophy, header, reference period | _LastRankingTopSix.cshtml:36-61 | adapted | The period text covers a season of any length. |
 | Top six: one panel per player (highlighted if it is the signed-in player), place label by colour, name, round avatar, wins and losses, labels for win rate, SI MVP, CI MVP, games and rage quit | _LastRankingTopSix.cshtml:63-111 | done | Tank wipes were added after it. |
-| Top six: "View full ranking" button | _LastRankingTopSix.cshtml:113-115 | done | Opens that period in the history. |
+| Top six: "View full ranking" button | _LastRankingTopSix.cshtml:113-115 | done | Opens that season in the overview of the players list. |
 | With the ranking module off | (new) | adapted | A short welcome page; the old site had no modules. |
 | Period selector | (new) | adapted | Hub addition above the table, in the style of the history page. The current season is the default; it also offers the other seasons of the current year, one entry per year and all time. A year and all time show the same table without the patent and XP columns, which belong to a season. |
 
@@ -107,7 +107,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Columns hidden on phones | Index.cshtml:93-99 | done | |
 | Top 100, signed-in player's row highlighted, medals, avatar, shortened name, tooltips on every number | Index.cshtml:103-171 | done | |
 | Unknown period: "History not found" with a button back to the ranking, not indexed | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |
-| Addresses `/ranking/season/{id}`, `/ranking/year/{year}`, `/ranking/all-time` | (hub's first version) | adapted | Redirect to the history. |
+| Addresses `/ranking/season/{id}`, `/ranking/year/{year}`, `/ranking/all-time` | (hub's first version) | adapted | Redirect permanently to the players list, with the same period. |
 
 ## Patents (`/patents`)
 
@@ -151,7 +151,7 @@ The old site added this page with the usage modes of the anti-cheat plugin 1.5.0
 | Administrators only | Controllers/AntiCheatAdminController.cs:11-12 | adapted | Also needs the Anti-Cheat module. |
 | Address `/anti-cheat-admin` | Controllers/AntiCheatAdminController.cs:17 | adapted | The page is at `/admin/anti-cheat`; the old address redirects to it, keeping the list and the search. |
 | Menu item "Anti-Cheat settings" | Views/Shared/_Layout.cshtml:383-388 | adapted | In the Anti-Cheat group of the administration side menu instead of the Admin dropdown. |
-| Header with the "Add player" button | Views/AntiCheatAdmin/Index.cshtml:121-126 | done | |
+| Header with the "Add" button | Views/AntiCheatAdmin/Index.cshtml:121-126 | done | |
 | Lead text | Index.cshtml:128 | done | |
 | "Usage mode": the two choices with their help, the chosen one highlighted | Index.cshtml:130-146 | done | |
 | Who changed the mode last, on the site or in the game, and when; or "Not saved on the site yet" | Index.cshtml:147-157 | done | Dates in the time zone of the site settings. |

@@ -17,7 +17,7 @@ Como substituir uma cópia em funcionamento do site anterior (`l4d2-playstats-we
 
 | Parte | O que muda | O que os jogadores percebem |
 |---|---|---|
-| 1 | O site novo roda na porta `5090`, ao lado do antigo. O nginx e o site antigo não são mexidos. | Nada. |
+| 1 | O site novo roda na porta `5090`, ao lado do antigo. O nginx e o site antigo não são alterados. | Nada. |
 | 2 | Um servidor de jogo envia as partidas dele para o site novo. | As partidas desse servidor deixam de chegar ao site antigo. |
 | 3 | O site antigo para e o novo assume a porta dele, a `5000`. O nginx continua repassando `https://l4d2.com.br` para ela. | As páginas novas, nos mesmos endereços. |
 | 4 | Só se algo der errado: o site antigo volta. | As páginas antigas de novo. |
@@ -45,7 +45,7 @@ O instalador só acrescenta a aplicação: `/opt/l4d2-playstats-hub`, os dados e
 
 ![O site antigo na 5000, a API do anti-cheat na 5080, o nginx na 80 e na 443, e o site novo na 5090](images/pt/switch-ports.webp)
 
-[Instalação em uma VPS Linux](install-linux.pt.md) explica cada passo do instalador e os comandos `playstats-hub`.
+[Instalando em uma VPS Linux](install-linux.pt.md) explica cada passo do instalador e os comandos `playstats-hub`.
 
 ### O assistente de configuração
 
@@ -76,7 +76,7 @@ Abra `http://124.198.128.43:5090`. O assistente é explicado em [Configuração 
 
    ![O passo do servidor de jogo](images/pt/switch-server.webp)
 
-5. **Criar** mostra as duas linhas para o servidor de jogo. Copie o token agora: ele aparece só uma vez. No l4d2.com.br ele foi guardado na VPS em `/root/l4d2-playstats-hub-server-token.txt`, que só o `root` lê. Ele é usado para trazer os dados antigos, logo abaixo, e na [Parte 2](#parte-2-teste-com-um-servidor-de-jogo).
+5. **Criar** mostra as duas linhas para o servidor de jogo. Copie o token agora: ele aparece só uma vez. No l4d2.com.br ele foi guardado na VPS em `/root/l4d2-playstats-hub-server-token.txt`, que só o `root` pode ler. Ele é usado para trazer os dados antigos, logo abaixo, e na [Parte 2](#parte-2-teste-com-um-servidor-de-jogo).
 
    ![As linhas para o servidor de jogo](images/pt/switch-server-token.webp)
 
@@ -120,7 +120,7 @@ O `dump` pega a string de conexão do armazenamento em `Values:AzureWebJobsStora
 
 Rode os dois comandos de novo logo antes da [Parte 3](#parte-3-a-troca). Um arquivo que o site já tem é substituído, não entra duas vezes, então só as partidas jogadas desde o último envio são novas.
 
-Nada mais do site antigo é copiado: as compras de skins, os presentes e as skins equipadas, os bans de chat e as listas do Anti-Cheat começam vazios. Cadastre de novo os bans de chat e os jogadores do Anti-Cheat no site novo.
+Nada mais do site antigo é copiado: as compras de skins, os presentes e as skins equipadas, os banimentos do chat e as listas do Anti-Cheat começam vazios. Cadastre de novo os banimentos do chat e os jogadores do Anti-Cheat no site novo.
 
 ### Confira
 
@@ -201,7 +201,7 @@ sm_cvar l4d2_web_url "http://124.198.128.43:5090"
 
 No l4d2.com.br a troca foi feita em 19 de novembro de 2026. Os pipelines `l4d2-playstats-web` e `l4d2-playstats-api` e a release `l4d2-playstats-api` foram apagados do Azure DevOps, então nada publica de novo o site antigo ou a API antiga.
 
-Faça enquanto ninguém está jogando. Depois disso os dois sites escutam na porta `5000`, então o antigo para primeiro.
+Faça isso enquanto ninguém estiver jogando. Depois disso os dois sites escutam na porta `5000`, então o antigo para primeiro.
 
 1. Traga as partidas jogadas desde a importação: rode de novo os dois comandos de [Traga os dados do site antigo](#traga-os-dados-do-site-antigo).
 2. Pare o site antigo, mantendo os arquivos dele: `sudo screen -S l4d2-playstats-web -X quit`. Ele roda num `screen` do `root`, então `sudo screen -ls` o mostra ao lado do `l4d2-anticheat-api`, que continua.
@@ -220,7 +220,7 @@ Faça enquanto ninguém está jogando. Depois disso os dois sites escutam na por
 
 9. Feche a porta `5090`, que não é mais usada: `sudo ufw delete allow 5090/tcp` com o UFW ativo, e no firewall do provedor se você a abriu lá.
 
-Os plugins também poderiam usar `https://l4d2.com.br`; o endereço simples os mantém funcionando aconteça o que acontecer com o certificado. O nginx não precisa de mudança: ele continua repassando `https://l4d2.com.br` para a porta `5000`, e o site novo acredita nos cabeçalhos `X-Forwarded-*` de um proxy na mesma máquina. Se o login com a Steam voltar para um endereço `http://` ou para o endereço IP, o `location` do nginx precisa repassar estes cabeçalhos:
+Os plugins também poderiam usar `https://l4d2.com.br`; o endereço simples os mantém funcionando aconteça o que acontecer com o certificado. O nginx não precisa de mudança: ele continua repassando `https://l4d2.com.br` para a porta `5000`, e o site novo confia nos cabeçalhos `X-Forwarded-*` de um proxy na mesma máquina. Se o login com a Steam voltar para um endereço `http://` ou para o endereço IP, o `location` do nginx precisa repassar estes cabeçalhos:
 
 ```nginx
 proxy_set_header Host $host;
@@ -228,7 +228,7 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
 
-A [página do servidor ao vivo](manual/live-server.pt.md) recebe as atualizações por um WebSocket em `/hubs/live`. O nginx só repassa WebSockets com estas linhas no mesmo `location`; as outras páginas continuam funcionando como antes com elas. Sem elas a página passa para Server-Sent Events ou long polling, que funcionam mas pesam mais:
+A [página do servidor ao vivo](manual/live-server.pt.md) recebe as atualizações por um WebSocket em `/hubs/live`. O nginx só repassa WebSockets com estas linhas no mesmo `location`; as outras páginas continuam funcionando como antes com elas. Sem elas a página passa a usar Server-Sent Events ou long polling, que funcionam mas pesam mais:
 
 ```nginx
 proxy_http_version 1.1;

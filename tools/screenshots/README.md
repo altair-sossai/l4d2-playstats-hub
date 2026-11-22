@@ -11,7 +11,7 @@ Takes the screenshots used by the documentation and saves them in `docs/images/<
 | `switch` | The installation of l4d2.com.br for [Switching from the old site](../../docs/switch-from-old-site.md): the wizard and the administration pages with the values of that site, and the overview after the import. | A site started on an empty data folder, its setup code and the logo of the site. For the overview, the data folder after the import. |
 | `site` | Every public page, the skin shop, the community ranking, the in-game pages, the phone layout, both themes and every administration page. | A site with data, signed in through the development sign-in. |
 
-The lists of shots are in [site.js](site.js), [wizard.js](wizard.js) and [terminal-shots.json](terminal-shots.json). Each shot has a name, a page, a width (1280 for desktop, 390 for phone, 900x450 for the in-game pages), the actions done before the capture, and what to keep: the full page, the visible part, or one element. Images are WebP at quality 80.
+The lists of shots are in [site.js](site.js), [wizard.js](wizard.js) and [terminal-shots.json](terminal-shots.json). Each shot has a name, a page, a width (1280 for desktop, 390 for phone, 900x450 for the in-game pages), the actions done before the capture, and what to keep: the full page, the visible part, or one element. Images are WebP at quality 80. After opening a page the tool moves the pointer once, as a visitor would, since the site asks for the players online, shown in the menu bar, only after the first interaction.
 
 ## Running the site for it
 

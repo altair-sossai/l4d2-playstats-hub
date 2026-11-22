@@ -84,7 +84,7 @@ The three plugins in `optional/` load only with a match mode (step 5), where Com
 |---|---|---|
 | `l4d2_playstats_sync` | Sends the statistics files and tells the site the server is alive. | Always needed |
 | `l4d2_gameinfo_sync` | Sends the live match: scoreboard, players, events and chat. | Live server |
-| `l4d2_ranking` | Opens the ranking inside the game with `!ranking`. | Ranking |
+| `l4d2_ranking` | Opens the ranking inside the game with `!ranking`, and the commands of the server with `!comandos` or `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Shows each player's patent icon in game. | Ranking |
 | `l4d2_weapon_skins` | Applies the weapon skins players own. | Weapon skin shop |
 
@@ -190,7 +190,7 @@ The answer has the mode (`null` until one is saved) and the two lists. `401` mea
 
 ## The ranking inside the game
 
-`!ranking` opens the ranking of the home page of the site in the game's own browser; `ranking_motd_path "/ingame"` opens a simpler, compact version instead. Pages opened from the game do not show the invitation to vote in the community ranking. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
+`!ranking` opens the ranking of the home page of the site in the game's own browser; `ranking_motd_path "/ingame"` opens a simpler, compact version instead. `!comandos` and `!commands` open the commands page of that compact version, `/ingame/commands` (`ranking_commands_path`). Pages opened from the game do not show the invitation to vote in the community ranking. That browser is from 2012 and is not expected to open current HTTPS sites, so give it a plain HTTP address of your site in `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"

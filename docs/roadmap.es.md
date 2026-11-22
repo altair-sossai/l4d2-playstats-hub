@@ -71,17 +71,17 @@ Una sola aplicación ASP.NET Core que es el sitio web, la API para los plugins, 
 | Back-end | Una sola instancia, sea cual sea el número de servidores de juego. |
 | Partida en vivo | Solo en memoria, separada por servidor de juego. |
 | Reembolso de skins | Reembolsar las skins al final de una temporada es un ajuste, activado de forma predeterminada. |
-| Catálogo de skins | El hub ya trae el catálogo y las miniaturas del sitio actual, e importa el catálogo la primera vez que se activa la tienda. Las fotos se leen de la dirección de los assets, por defecto la del sitio actual. |
+| Catálogo de skins | El hub ya trae el catálogo y las miniaturas del sitio antiguo, e importa el catálogo la primera vez que se activa la tienda. Las fotos se leen de la dirección de los assets, por defecto la del sitio antiguo. |
 | Plugins | Están pensados para servidores basados en L4D2 Competitive Rework. Una sola dirección y un solo token para todos. |
 | Comandos remotos | Enviar comandos desde el sitio a un servidor de juego es un módulo, desactivado de forma predeterminada, con un registro de auditoría. |
 | Anti-cheat | Un módulo, desactivado de forma predeterminada, que muestra la página del Anti-Cheat con la descarga y las instrucciones. El programa Anti-Cheat y su servicio son proyectos aparte. |
 | Front-end | Dos capas: el sitio principal para navegadores actuales, y unas pocas páginas hechas para el navegador que está dentro del juego. |
-| Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. |
+| Páginas dentro del juego | Solo lo esencial: el ranking de la temporada, el resumen del jugador que abrió el panel, las últimas partidas y los comandos del servidor. |
 | Área de administración | Renderizada en el servidor, como el resto del sitio. Se permite un framework de página única como Angular si una pantalla lo necesita, pero no se usa. |
 | Docker | Se ofrece como alternativa al script de instalación. El contenedor ejecuta el sitio con un usuario sin privilegios y tiene comprobación de estado. |
 | Datos antiguos | Se importan y se recalculan. No hay compatibilidad hacia atrás con el almacenamiento antiguo. |
 | Idiomas | El inglés es el predeterminado. Las versiones en portugués y en español se derivan de él. |
-| Organización del código | Un tipo por archivo, agrupados por módulo y luego por tipo. |
+| Organización del código | Un tipo por archivo, agrupados por módulo y luego por categoría. |
 | Pruebas | Extensas en el back-end. Pruebas de front-end solo donde valgan la pena. |
 | Licencia | MIT para la aplicación. Los plugins son GPL-3.0, como exige SourceMod. |
 
@@ -112,7 +112,7 @@ Un módulo desactivado desaparece del menú y sus páginas responden como no enc
 
 - Las temporadas son filas en la base de datos, creadas a partir de la duración configurada. Una temporada de dos meses empieza en enero, marzo, mayo y así sucesivamente.
 - Un archivo con fecha anterior a la primera temporada crea las temporadas anteriores que necesita.
-- La puntuación conserva los valores antiguos como predeterminados que el administrador puede editar: 85 por una victoria, -80 por una derrota, -150 por un rage quit, 8 y 6 por cada MVP. La experiencia nunca baja de cero.
+- La puntuación conserva los valores antiguos como predeterminados que el administrador puede editar: 85 por una victoria, -80 por una derrota, -150 por un rage quit, 8 y 6 por cada MVP. Los tank wipes, nuevos aquí, suman 50 cada uno de forma predeterminada. La experiencia nunca baja de cero.
 - Las sanciones pertenecen a una temporada.
 - Las partidas nunca cruzan un límite de temporada, un cambio de configuración ni un cambio de servidor de juego.
 
@@ -127,17 +127,17 @@ El archivo de estadísticas trae el nombre visible de la configuración, como `Z
 
 ## Ranking de la comunidad
 
-- El votante ve a dos jugadores con sus avatares y responde cuál es mejor: izquierda, derecha, mismo nivel, o "no conozco" a uno o a los dos.
-- Mismo nivel cuenta como empate. "No conozco" no cambia nada y, de ahí en adelante, oculta a ese jugador para ese votante.
+- El votante ve a dos jugadores con sus avatares y responde cuál es mejor: izquierda, derecha, mismo nivel, o "No lo conozco" sobre uno o los dos.
+- Mismo nivel cuenta como empate. "No lo conozco" no cambia ninguna puntuación pero usa un voto del día, y ese par no se le vuelve a ofrecer a ese votante.
 - La puntuación es un ajuste de Bradley–Terry con todos los votos, con un margen de incertidumbre, y no se reinicia con la temporada.
 - Para votar se necesita un número mínimo de partidas jugadas, contadas entre todas las temporadas: 10 de forma predeterminada.
-- Los votos por día están limitados: 20 de forma predeterminada. Los jugadores no pueden votar por sí mismos ni dos veces por el mismo par.
+- Los votos por día están limitados: 20 de forma predeterminada. Los jugadores no pueden votar por sí mismos ni dos veces por el mismo par, y un votante juzga al mismo jugador como máximo 5 veces de forma predeterminada (0 es sin límite).
 - El sitio elige el par, prefiriendo a jugadores con los que el votante ha jugado o contra los que ha jugado, y acepta una respuesta solo para el par que ofreció.
 
 ## Tienda de skins de armas
 
 - Los jugadores ganan una estrella por cada MVP en partidas clasificatorias, a lo largo de todo su historial, y gastan las estrellas en skins.
-- El catálogo y las miniaturas del sitio actual vienen con el hub, y el catálogo se importa solo la primera vez que se activa la tienda. Un administrador puede importar otro catálogo desde un archivo o una dirección. Las fotos se cargan desde una dirección que define el administrador, por defecto la del sitio actual.
+- El catálogo y las miniaturas del sitio antiguo vienen con el hub, y el catálogo se importa solo la primera vez que se activa la tienda. Un administrador puede importar otro catálogo desde un archivo o una dirección. Las fotos se cargan desde una dirección que define el administrador, por defecto la del sitio antiguo.
 - Al inicio de una temporada, las skins compradas antes se reembolsan y los regalos se conservan. El administrador puede desactivar el reembolso.
 - Los modelos, los materiales y las fotos se quedan en [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
@@ -167,7 +167,7 @@ Una lista de verificación muestra qué se encontró: conexión, plugin de subid
 El navegador que está dentro del juego es Chromium 18, de 2012. Solo ejecuta ES5 y no tiene flexbox, grid ni propiedades personalizadas. Las mediciones están en [in-game-browser.es.md](in-game-browser.es.md).
 
 - **Sitio principal.** Páginas renderizadas en el servidor que mantienen el aspecto y el contenido del sitio que este proyecto reemplaza: Bootstrap 3 con sus temas oscuro y claro, jQuery, Chart.js y diffDOM, sin ningún paso de compilación con Node. Cada página del sitio antiguo se portó elemento por elemento; las listas de comprobación están en [site-parity](site-parity/README.es.md). Las páginas que son nuevas aquí (asistente, administración, ranking de la comunidad) siguen el mismo aspecto.
-- **Páginas dentro del juego.** Tres páginas de solo lectura bajo `/ingame`, sin scripts, que caben en el panel del juego. Una prueba falla si empiezan a usar algo que ese navegador no tiene.
+- **Páginas dentro del juego.** Cuatro páginas de solo lectura bajo `/ingame`, sin scripts, que caben en el panel del juego. Una prueba falla si empiezan a usar algo que ese navegador no tiene.
 
 ## Pruebas
 
@@ -210,5 +210,5 @@ Un programa de consola aparte, fuera de este repositorio, mueve los datos de pro
 - **Plugins en un servidor en vivo.** Compilan, y el sitio acepta lo que envían, pero no se han ejecutado en una partida real.
 - **HTTPS dentro del juego.** No se ha medido. Consulta [in-game-browser.es.md](in-game-browser.es.md#aún-no-medido).
 - **Repositorio de assets.** Resuelto: el catálogo y las 196 miniaturas del sitio actual vienen con el hub, como en el sitio antiguo, y las fotos se leen de `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` por defecto.
-- **Íconos de patente dentro del juego.** Los sprites que usa `l4d2_show_patent_icon` no están en este repositorio.
+- **Íconos de patente dentro del juego.** Resuelto: los sprites que usa `l4d2_show_patent_icon` vienen en el paquete de plugins (`materials/sprites`); los jugadores todavía los descargan por el FastDL.
 - **Azure App Service.** La guía se escribió a partir de la documentación de Azure y no se ha ejecutado de principio a fin.

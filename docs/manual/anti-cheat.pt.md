@@ -40,7 +40,7 @@ Os textos da página fazem parte do site e são traduzidos junto com ele.
 
 ![As configurações do Anti-Cheat](../images/pt/admin-anti-cheat.webp)
 
-- **Modo de uso**: escolha um dos dois modos e clique em **Salvar modo**. Abaixo das opções a página diz quem mudou o modo por último, no site ou no jogo, e quando. Enquanto nenhum modo foi salvo, ela diz que o servidor de jogo usa o `anti_cheat_mode` do seu arquivo de configuração.
+- **Modo de uso**: escolha um dos dois modos e clique em **Salvar modo**. Abaixo das opções a página diz quem mudou o modo por último, no site ou no jogo, e quando. Enquanto nenhum modo for salvo, ela diz que o servidor de jogo usa o `anti_cheat_mode` do seu arquivo de configuração.
 - **A lista**: a página mostra a lista que o modo atual usa, com o número de jogadores, uma busca por nome ou Steam ID e 20 jogadores por página. O link ao lado do título abre a outra lista, que fica guardada para quando o modo mudar.
 - **Adicionar**, à direita da busca: digite um Steam ID em qualquer formato ou um link de perfil, ou use **Escolher jogador** entre os jogadores do site. Enquanto você digita, a página mostra o nome e a foto do jogador, e se ele jogou aqui ou só tem um perfil Steam. Um jogador que já está na lista não pode ser adicionado de novo. **Salvar** adiciona o jogador.
 - **Remover**: clique em um jogador para ver os IDs, o perfil Steam, e quando e por quem ele foi adicionado, no site ou no jogo. **Remover da lista** pede uma segunda confirmação.
@@ -62,19 +62,19 @@ Os textos da página fazem parte do site e são traduzidos junto com ele.
 | Só a lista | **Ninguém, exceto estes jogadores** | `1` | Só os jogadores da lista obrigatória. Os demais jogam sem ele. | Lista obrigatória ("Apenas estes jogadores") |
 
 - Cada lista tem a sua própria tabela, então mudar o modo não apaga nenhuma das duas.
-- O modo salvo no site vale mais que o `anti_cheat_mode` do servidor de jogo. Enquanto nenhum modo foi salvo, cada servidor de jogo usa o seu próprio valor, `1` por padrão. Veja [Conectando um servidor de jogo](../game-server.pt.md#opcional-o-plugin-do-anti-cheat).
+- O modo salvo no site vale mais que o `anti_cheat_mode` do servidor de jogo. Enquanto nenhum modo for salvo, cada servidor de jogo usa o seu próprio valor, `1` por padrão. Veja [Conectando um servidor de jogo](../game-server.pt.md#opcional-o-plugin-do-anti-cheat).
 - O modo e as listas são os mesmos para todos os servidores de jogo do site.
 - Depois de cada alteração no site, o site enfileira `sm_aac sync` para cada servidor de jogo habilitado, e o plugin relê as listas em segundos. Um comando que ainda espera por um servidor não é enfileirado duas vezes. Quem busca o comando é o `l4d2_gameinfo_sync`, então isso precisa do módulo do servidor ao vivo, mas não do módulo de comandos remotos. Cada um aparece no registro de auditoria de [Comandos remotos](moderation.pt.md#comandos-remotos). Sem o módulo do servidor ao vivo, o plugin continua relendo as listas sozinho a cada minuto.
-- As configurações só decidem quem precisa usar o programa. Se um servidor de jogo exige o programa ou não é a configuração `anti_cheat_enabled` do plugin, ou uma votação dos jogadores (veja abaixo).
+- As configurações só decidem quem precisa usar o programa. Quem decide se um servidor de jogo exige o programa é a configuração `anti_cheat_enabled` do plugin, ou uma votação dos jogadores (veja abaixo).
 
 ## Ligado pelos jogadores
 
-Quando o servidor de jogo roda o plugin do anti-cheat com a exigência desligada (`anti_cheat_enabled 0`), os jogadores podem ligá-la na partida com uma votação. Isso precisa da versão 1.6.0 do plugin, e nada muda no site.
+Quando o servidor de jogo roda o plugin do anti-cheat com a exigência desligada (`anti_cheat_enabled 0`), os jogadores podem ligá-la na partida com uma votação. Isso requer a versão 1.6.0 do plugin, e nada muda no site.
 
 - **O aviso**: uns 30 segundos depois de entrar, enquanto uma votação é possível, cada jogador lê uma vez no chat que o Anti-Cheat está desligado e que pode digitar `!aac vote` para jogar a partida com ele.
 - **Quando a votação pode começar**: só antes do início da partida, no ready-up do primeiro mapa, com os dois times completos, por um jogador de um dos times, e não durante um mix ou com outra votação aberta.
 - **A votação**: Sim ou Não, mostrada aos jogadores dos dois times. Passa com mais da metade deles (5 de 8); quem não vota conta como não.
-- **Quando passa**: o Anti-Cheat liga na partida, e o modo de uso e as listas acima continuam decidindo quem precisa usá-lo. Quem precisa e não está com o programa aberto vai para o espectador, e precisa fechar o jogo e abri-lo pelo Anti-Cheat. O servidor ao vivo mostra o selo **Anti-Cheat ligado**.
+- **Quando passa**: o Anti-Cheat liga na partida, e o modo de uso e as listas acima continuam decidindo quem precisa usá-lo. Quem precisa e não está com o programa aberto vai para os espectadores e precisa fechar o jogo e abri-lo pelo Anti-Cheat. O servidor ao vivo mostra o selo **Anti-Cheat ligado**.
 - **Quanto tempo dura**: até a partida terminar, até um administrador digitar `!aac off` ou até o servidor de jogo ficar vazio por 10 minutos. Sobrevive à reinicialização do servidor de jogo quando todos saem para reabrir o jogo.
 
 A votação só liga o Anti-Cheat; nenhuma votação o desliga. O plugin documenta as configurações dele (`anti_cheat_vote_enabled` e as outras).

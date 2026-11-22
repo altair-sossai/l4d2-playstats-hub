@@ -93,7 +93,7 @@ Abre `http://124.198.128.43:5090`. El asistente se explica en [Configuración in
 | **Configuración → Privacidad** | Cuentas relacionadas visibles para todos, el valor por defecto. | El sitio antiguo las mostraba a todos. |
 | **Administradores** | Las tres cuentas de `ServerAdmins`. | `/home/l4d2-playstats-web/appsettings.json`. |
 | **Servidores de juego → l4d2.com.br \| Competitive** | Dirección alternativa `server.l4d2.com.br`. | El `ServerDns` del sitio antiguo. La página del servidor en vivo muestra las dos direcciones, como la antigua. |
-| **Modos de juego** | Una regla para cada uno de `ZoneMod v*`, `NeoMod Tourney *` y `VanillaMod *`: 4 jugadores por equipo, al menos 2 mapas, cuenta para el ranking. La regla `*` de un sitio nuevo queda como **Otras configuraciones**, sin contar. | El `ConfigurationName` del servidor antiguo, `^(NeoMod Tourney\|ZoneMod\|VanillaMod) v?\d+\.\d+(?:\.\d+)?[a-z]?$`: solo esas tres configuraciones entraban en el ranking. |
+| **Modos de juego** | Una regla para cada uno de `ZoneMod v*`, `NeoMod Tourney *` y `VanillaMod *`: 4 jugadores por equipo, al menos 2 mapas, cuenta para el ranking. La regla `*` de un sitio nuevo queda como **Otras configuraciones**, que no cuenta. | El `ConfigurationName` del servidor antiguo, `^(NeoMod Tourney\|ZoneMod\|VanillaMod) v?\d+\.\d+(?:\.\d+)?[a-z]?$`: solo esas tres configuraciones entraban en el ranking. |
 | **Ajustes del Anti-Cheat** | Servicio `https://aac.l4d2.com.br` y descarga `https://l4d2playstats.blob.core.windows.net/anti-cheat/L4D2AntiCheat.exe`. | Las direcciones que usaba el sitio antiguo. |
 | **Catálogo** de la tienda de skins | Nada que hacer: las 196 skins del sitio antiguo se importaron al activar la tienda. | |
 
@@ -132,7 +132,7 @@ playstats-hub status
 
 ## Parte 2: prueba con un servidor de juego
 
-Un servidor de juego envía sus partidas a un solo sitio. Mientras apunta al sitio nuevo, sus partidas ya no llegan al antiguo, y no van ahí después. Prueba con un segundo servidor de juego si tienes uno, o en un momento tranquilo con el principal.
+Un servidor de juego envía sus partidas a un solo sitio. Mientras apunta al sitio nuevo, sus partidas ya no llegan al antiguo, y tampoco llegan ahí después. Prueba con un segundo servidor de juego si tienes uno, o en un momento tranquilo con el principal.
 
 ### Haz una copia de lo que reemplazan los plugins
 
@@ -143,7 +143,7 @@ cd /path/to/the/server/left4dead2
 tar -czf ~/playstats-plugins-backup.tar.gz addons/sourcemod/plugins addons/sourcemod/translations addons/sourcemod/configs/weapon_skins.cfg cfg
 ```
 
-Si el servidor de juego se instala desde un repositorio, como `l4d2-zone-server`, haz los cambios de abajo también en el repositorio, o la próxima instalación traerá de vuelta los plugins y los ajustes antiguos.
+Si el servidor de juego se despliega desde un repositorio, como `l4d2-zone-server`, haz los cambios de abajo también en el repositorio, o el próximo despliegue traerá de vuelta los plugins y los ajustes antiguos.
 
 ### Copia los plugins
 
@@ -158,7 +158,7 @@ Copia todo lo que hay dentro de la carpeta `left4dead2` de los plugins (en el zi
 | `addons/sourcemod/scripting/**` | Las fuentes, que solo se usan para compilar. |
 | `cfg/playstats.cfg` | Nada: es nuevo. |
 
-Debe haber una sola copia de cada plugin. Ninguno de los cinco puede quedar en otra carpeta, como un `l4d2_playstats_sync.smx` antiguo en `addons/sourcemod/plugins/` mismo.
+Debe haber una sola copia de cada plugin. Ninguno de los cinco puede quedar en otra carpeta, como un `l4d2_playstats_sync.smx` antiguo directamente en `addons/sourcemod/plugins/`.
 
 ### Cambia los ajustes
 
@@ -184,10 +184,10 @@ sm_cvar l4d2_web_url "http://124.198.128.43:5090"
 ```
 
 - `playstats_url` es una dirección HTTP simple, así que el navegador del juego también la abre y `playstats_ingame_url` puede quedar vacío.
-- `l4d2_web_url` y `l4d2_web_secret` solo los lee el plugin de anti-cheat (1.5.0 o más nuevo), para las listas de [Quién debe usar el Anti-Cheat](manual/anti-cheat.es.md#quién-debe-usar-el-anti-cheat). Las listas antiguas no se copian: agrega los jugadores otra vez en el sitio nuevo antes de activar el anti-cheat.
-- Deja `playstats_public_url` desactivado por ahora. Se define en la Parte 3; antes de eso, el chat mandaría a los jugadores a la tienda del sitio antiguo.
+- `l4d2_web_url` y `l4d2_web_secret` solo los lee el plugin de anti-cheat (1.5.0 o más nuevo), para las listas de [Quién debe usar el Anti-Cheat](manual/anti-cheat.es.md#quién-debe-usar-el-anti-cheat). Las listas antiguas no se copian: agrega a los jugadores otra vez en el sitio nuevo antes de activar el anti-cheat.
+- Deja `playstats_public_url` sin definir por ahora. Se define en la Parte 3; antes de eso, el chat mandaría a los jugadores a la tienda del sitio antiguo.
 - Con estas líneas en el archivo de secretos no necesitas `exec playstats.cfg`: el resto de `cfg/playstats.cfg` solo muestra los valores por defecto, y los modos de partida de `l4d2-zone-server` ya definen `sm_stats_writestats`.
-- Nunca definas `playstats_token` ni `l4d2_web_secret` con `confogl_addcvar`: Confogl muestra en el chat los valores que sigue.
+- Nunca definas `playstats_token` ni `l4d2_web_secret` con `confogl_addcvar`: Confogl muestra en el chat los valores que vigila.
 
 ### Comprueba
 
@@ -204,9 +204,9 @@ En l4d2.com.br el cambio se hizo el 19 de noviembre de 2026. Los pipelines `l4d2
 Hazlo cuando no esté jugando nadie. Después de esto los dos sitios escuchan en el puerto `5000`, así que el antiguo se detiene primero.
 
 1. Trae las partidas jugadas desde la importación: ejecuta otra vez los dos comandos de [Trae los datos del sitio antiguo](#trae-los-datos-del-sitio-antiguo).
-2. Detén el sitio antiguo, conservando sus archivos: `sudo screen -S l4d2-playstats-web -X quit`. Funciona en un `screen` de `root`, así que `sudo screen -ls` lo muestra junto a `l4d2-anticheat-api`, que sigue.
+2. Detén el sitio antiguo, conservando sus archivos: `sudo screen -S l4d2-playstats-web -X quit`. Funciona en un `screen` de `root`, así que `sudo screen -ls` lo muestra junto a `l4d2-anticheat-api`, que se mantiene.
 3. Evita que arranque con el sistema: ejecuta `sudo crontab -e` y pon `#` delante de `@reboot /home/l4d2-playstats-web/bash/bootstrap.sh`. Conserva la línea de `l4d2-anticheat-api`.
-4. Desactiva la publicación automática del sitio antiguo, el pipeline de Azure Pipelines de `l4d2-playstats-web`. Si no, un push lo vuelve a iniciar en el puerto `5000`.
+4. Desactiva el despliegue automático del sitio antiguo, el pipeline de Azure Pipelines de `l4d2-playstats-web`. Si no, un push lo vuelve a iniciar en el puerto `5000`.
 5. Pasa el sitio nuevo al puerto `5000`: en `/etc/l4d2-playstats-hub/hub.env`, cambia `ASPNETCORE_URLS=http://0.0.0.0:5090` por `ASPNETCORE_URLS=http://0.0.0.0:5000`, y luego ejecuta `sudo playstats-hub restart` y `playstats-hub status`.
 6. Compruébalo: `curl -s http://127.0.0.1:5000/api/ping` responde, `https://l4d2.com.br` y `http://124.198.128.43:5000` muestran el sitio nuevo, y el inicio de sesión con Steam funciona en `https://l4d2.com.br`.
 7. En **Administración → Configuración → Sitio**, pon la **Dirección pública del sitio** en `https://l4d2.com.br`.
@@ -228,7 +228,7 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
 
-La [página del servidor en vivo](manual/live-server.es.md) recibe sus actualizaciones por un WebSocket en `/hubs/live`. nginx solo pasa WebSockets con estas líneas en el mismo `location`; las otras páginas siguen funcionando como antes con ellas. Sin ellas la página pasa a Server-Sent Events o long polling, que funcionan pero pesan más:
+La [página del servidor en vivo](manual/live-server.es.md) recibe sus actualizaciones por un WebSocket en `/hubs/live`. nginx solo pasa WebSockets con estas líneas en el mismo `location`; las otras páginas siguen funcionando como antes con ellas. Sin ellas la página recurre a Server-Sent Events o long polling, que funcionan pero pesan más:
 
 ```nginx
 proxy_http_version 1.1;
@@ -251,9 +251,9 @@ En l4d2.com.br una release de este repositorio actualiza el sitio y los plugins 
 
 | Qué | Cómo |
 |---|---|
-| La release | Cada push a `main` que pasa sus verificaciones (Build and test, Browser tests, Databases y Plugins, las que se ejecuten para él) se publica con el workflow [Auto release](../.github/workflows/auto-release.yml) de GitHub: etiqueta el commit con la siguiente versión de corrección (`v0.10.1` pasa a `v0.10.2`) y ejecuta el workflow [Release](../.github/workflows/release.yml) para él. Un push que solo cambia documentación no ejecuta verificaciones y no se publica. Solo se publica el commit más reciente de `main`, y una tag creada a mano sigue funcionando como antes, por ejemplo para empezar una nueva versión menor. |
+| La release | Cada push a `main` que pasa sus verificaciones (Build and test, Browser tests, Databases y Plugins, las que se ejecuten para él) se publica con el workflow [Auto release](../.github/workflows/auto-release.yml) de GitHub: etiqueta el commit con la siguiente versión de corrección (`v0.10.1` pasa a `v0.10.2`) y ejecuta el workflow [Release](../.github/workflows/release.yml) para él. Un push que solo cambia documentación no ejecuta verificaciones y no se publica. Solo se publica el commit más reciente de `main`, y una tag subida a mano sigue funcionando como antes, por ejemplo para empezar una nueva versión menor. |
 | El sitio | El pipeline `l4d2-playstats-hub` de Azure Pipelines, de [deploy/azure-pipelines.yml](../deploy/azure-pipelines.yml), se ejecuta con cada tag `v*`. Por la conexión SSH del VPS espera el paquete Linux de la release y ejecuta el instalador con esa versión. Los datos y `/etc/l4d2-playstats-hub/hub.env` se conservan, así que el sitio sigue en el puerto `5000`. |
-| Los plugins | El pipeline de `l4d2-zone-server` se ejecuta después, y con cada push a su `master`. Descarga `l4d2-playstats-hub-plugins.zip` de la misma release (la más reciente, en un push), copia sus carpetas `plugins`, `translations` y `configs` sobre el `addons` del repositorio, escribe `cfg/playstats_token.cfg` desde la variable secreta `PLAYSTATS_TOKEN` del pipeline y publica. Los cinco plugins ya no están en `l4d2-zone-server`. |
+| Los plugins | El pipeline de `l4d2-zone-server` se ejecuta después, y con cada push a su `master`. Descarga `l4d2-playstats-hub-plugins.zip` de la misma release (la más reciente, en un push), copia sus carpetas `plugins`, `translations` y `configs` sobre el `addons` del repositorio, escribe `cfg/playstats_token.cfg` desde la variable secreta `PLAYSTATS_TOKEN` del pipeline y despliega. Los cinco plugins ya no están en `l4d2-zone-server`. |
 
 El servidor de juego lee el token en `cfg/playstats_token.cfg`, que `cfg/server.cfg` ejecuta justo después de `server_secrets.cfg`, y las direcciones en `cfg/server.cfg`:
 

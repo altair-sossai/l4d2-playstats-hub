@@ -18,12 +18,12 @@ Cada lista de verificación enumera todos los elementos de las pantallas antigua
 
 | Lista de verificación | Pantallas | Hechos | Adaptados | No portados |
 |---|---|---|---|---|
-| [site.es.md](site.es.md) | Layout, ranking, historial, patentes, Anti-Cheat, ajustes del Anti-Cheat | 104 | 37 | 1 |
-| [players.es.md](players.es.md) | Lista de jugadores, página del jugador, comparación, jugador fuera del ranking | 150 | 23 | 0 |
-| [matches.es.md](matches.es.md) | Últimas partidas, detalles de la partida, estadísticas del mapa | 128 | 18 | 1 |
-| [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 151 | 28 | 1 |
+| [site.es.md](site.es.md) | Layout, ranking, historial, patentes, Anti-Cheat, ajustes del Anti-Cheat | 101 | 41 | 1 |
+| [players.es.md](players.es.md) | Lista de jugadores, página del jugador, comparación, jugador fuera del ranking | 146 | 30 | 0 |
+| [matches.es.md](matches.es.md) | Últimas partidas, detalles de la partida, estadísticas del mapa | 127 | 19 | 1 |
+| [server.es.md](server.es.md) | Servidor en vivo, chat, eventos del juego, baneos de chat | 149 | 30 | 1 |
 | [skins.es.md](skins.es.md) | Tienda de skins, regalos, precios, compras | 146 | 11 | 0 |
-| [admin.es.md](admin.es.md) | Páginas que solo existen aquí: asistente, administración, ranking de la comunidad | 182 | 12 | 1 |
+| [admin.es.md](admin.es.md) | Páginas que solo existen aquí: asistente, administración, ranking de la comunidad | 178 | 17 | 1 |
 
 Las cinco primeras comparan el hub con el sitio antiguo. La última compara las páginas que son nuevas aquí con su primera versión, que usaba otro aspecto, para que no se perdiera nada al convertirlas.
 
@@ -60,6 +60,6 @@ La mayoría de las líneas `adapted` caen en unos pocos grupos:
 
 ## Cuando cambies una página
 
-- Mantén cierto el elemento de la lista de verificación: si cambias algo que una línea describe, actualiza la línea.
+- Haz que el elemento de la lista de verificación siga siendo cierto: si cambias algo que una línea describe, actualiza la línea.
 - Una página nueva sigue el mismo aspecto: el layout, los temas y los patrones de las páginas que la rodean.
 - No quites un campo, una columna ni un dato de una página que vino del sitio antiguo.

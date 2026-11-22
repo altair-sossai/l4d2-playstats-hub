@@ -71,12 +71,12 @@ One ASP.NET Core application that is the website, the API for the plugins, the a
 | Back end | A single instance, whatever the number of game servers. |
 | Live match | In memory only, separated by game server. |
 | Skin refund | Refunding skins at the end of a season is a setting, on by default. |
-| Skin catalog | The hub comes with the catalog and the thumbnails of the current site, and imports the catalog the first time the shop is turned on. The photos are read from the assets address, by default the one of the current site. |
+| Skin catalog | The hub comes with the catalog and the thumbnails of the old site, and imports the catalog the first time the shop is turned on. The photos are read from the assets address, by default the one of the old site. |
 | Plugins | Target servers based on L4D2 Competitive Rework. One address and one token for all of them. |
 | Remote commands | Sending commands from the site to a game server is a module, off by default, with an audit log. |
 | Anti-cheat | A module, off by default, that shows the Anti-Cheat page with the download and the instructions. The Anti-Cheat program and its service are separate projects. |
 | Front end | Two layers: the main site for current browsers, and a few pages made for the browser inside the game. |
-| In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, and the latest matches. |
+| In-game pages | Only the essentials: the season ranking, the summary of the player who opened the panel, the latest matches and the commands of the server. |
 | Admin area | Server-rendered like the rest of the site. A single-page framework such as Angular is allowed if a screen needs it, and is not used. |
 | Docker | Offered as an alternative to the install script. The container runs the site as an unprivileged user and has a health check. |
 | Old data | Imported and recalculated. There is no backward compatibility with the old storage. |
@@ -112,7 +112,7 @@ A module that is off disappears from the menu and its pages answer as not found.
 
 - Seasons are rows in the database, created from the configured length. A two-month season starts in January, March, May and so on.
 - A file dated before the first season creates the earlier seasons it needs.
-- The scoring keeps the old values as defaults the administrator can edit: 85 for a win, -80 for a loss, -150 for a rage quit, 8 and 6 for each MVP. Experience never goes below zero.
+- The scoring keeps the old values as defaults the administrator can edit: 85 for a win, -80 for a loss, -150 for a rage quit, 8 and 6 for each MVP. Tank wipes, new here, add 50 each by default. Experience never goes below zero.
 - Punishments belong to a season.
 - Matches never cross a season boundary, a change of configuration or a change of game server.
 
@@ -128,16 +128,16 @@ The statistics file carries the display name of the configuration, such as `Zone
 ## Community ranking
 
 - The voter sees two players with their avatars and answers which one is better: left, right, same level, or "I don't know" one or both of them.
-- Same level counts as a draw. "I don't know" changes nothing and hides that player from that voter afterwards.
+- Same level counts as a draw. "I don't know" changes no rating but uses a vote of the day, and that pair is not offered to that voter again.
 - The rating is a Bradley–Terry fit of all the votes, with a margin of uncertainty, and it does not reset with the season.
 - Voting needs a minimum number of matches played, counted over all seasons: 10 by default.
-- Votes per day are limited: 20 by default. Players cannot vote on themselves or on the same pair twice.
+- Votes per day are limited: 20 by default. Players cannot vote on themselves or on the same pair twice, and a voter judges the same player at most 5 times by default (0 means no limit).
 - The site chooses the pair, preferring players the voter has played with or against, and accepts an answer only for the pair it offered.
 
 ## Weapon skin shop
 
 - Players earn one star for each MVP in ranked matches, over their whole history, and spend stars on skins.
-- The catalog and the thumbnails of the current site come with the hub, and the catalog is imported by itself the first time the shop is turned on. An administrator can import another catalog from a file or an address. The photos are loaded from an address the administrator sets, by default the one of the current site.
+- The catalog and the thumbnails of the old site come with the hub, and the catalog is imported by itself the first time the shop is turned on. An administrator can import another catalog from a file or an address. The photos are loaded from an address the administrator sets, by default the one of the old site.
 - At the start of a season, skins bought earlier are refunded and gifts are kept. The administrator can turn the refund off.
 - Models, materials and photos stay in [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
@@ -167,7 +167,7 @@ A checklist shows what was found: connection, upload plugin, statistics writing,
 The browser inside the game is Chromium 18 from 2012. It runs ES5 only and has no flexbox, grid or custom properties. The measurements are in [in-game-browser.md](in-game-browser.md).
 
 - **Main site.** Server-rendered pages that keep the look and the content of the site this project replaces: Bootstrap 3 with its dark and light themes, jQuery, Chart.js and diffDOM, with no Node build step. Every page of the old site was ported item by item; the checklists are in [site-parity](site-parity/README.md). The pages that are new here (wizard, administration, community ranking) follow the same look.
-- **In-game pages.** Three read-only pages under `/ingame`, with no script, that fit the game's panel. A test fails if they start using something that browser lacks.
+- **In-game pages.** Four read-only pages under `/ingame`, with no script, that fit the game's panel. A test fails if they start using something that browser lacks.
 
 ## Tests
 
@@ -210,5 +210,5 @@ A separate console program, outside this repository, moves the production data o
 - **Plugins on a live server.** They compile, and the site accepts what they send, but they have not been run in a real match.
 - **HTTPS inside the game.** Not measured. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
 - **Assets repository.** Resolved: the catalog and the 196 thumbnails of the current site come with the hub, as in the old site, and the photos are read from `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` by default.
-- **Patent icons in game.** The sprites used by `l4d2_show_patent_icon` are not in this repository.
+- **Patent icons in game.** Resolved: the sprites used by `l4d2_show_patent_icon` come in the plugins package (`materials/sprites`); players still download them through the FastDL.
 - **Azure App Service.** The guide was written from the Azure documentation and not run end to end.

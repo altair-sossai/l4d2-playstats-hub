@@ -2,7 +2,7 @@
 
 🌐 **English** | [Português](README.pt.md) | [Español](README.es.md)
 
-This project replaces an existing website, [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) (in production at [l4d2.com.br](https://l4d2.com.br/)). The rule for the pages is strict: everything a visitor sees on the old site must be on the new one, with the same look. Each page was therefore ported from the old view, not redesigned, and checked item by item.
+This project replaces an existing website, [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) (archived; it ran [l4d2.com.br](https://l4d2.com.br/) until 19 November 2026). The rule for the pages is strict: everything a visitor sees on the old site must be on the new one, with the same look. Each page was therefore ported from the old view, not redesigned, and checked item by item.
 
 ## Contents
 
@@ -18,12 +18,12 @@ Each checklist lists every item of the old screens of one area: columns, fields,
 
 | Checklist | Screens | Done | Adapted | Not ported |
 |---|---|---|---|---|
-| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat, Anti-Cheat settings | 104 | 37 | 1 |
-| [players.md](players.md) | Players list, player page, comparison, player not ranked | 150 | 23 | 0 |
-| [matches.md](matches.md) | Last matches, match details, map statistics | 128 | 18 | 1 |
-| [server.md](server.md) | Live server, chat, game events, chat bans | 151 | 28 | 1 |
+| [site.md](site.md) | Layout, ranking, history, patents, Anti-Cheat, Anti-Cheat settings | 101 | 41 | 1 |
+| [players.md](players.md) | Players list, player page, comparison, player not ranked | 146 | 30 | 0 |
+| [matches.md](matches.md) | Last matches, match details, map statistics | 127 | 19 | 1 |
+| [server.md](server.md) | Live server, chat, game events, chat bans | 149 | 30 | 1 |
 | [skins.md](skins.md) | Skin shop, gifts, prices, purchases | 146 | 11 | 0 |
-| [admin.md](admin.md) | Pages that exist only here: wizard, administration, community ranking | 182 | 12 | 1 |
+| [admin.md](admin.md) | Pages that exist only here: wizard, administration, community ranking | 178 | 17 | 1 |
 
 The first five compare the hub with the old site. The last one compares the pages that are new here with their first version, which used another look, so that nothing was lost when they were converted.
 

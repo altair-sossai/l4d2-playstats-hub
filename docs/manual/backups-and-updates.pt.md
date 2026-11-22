@@ -45,13 +45,13 @@ A chave da API da Steam, o endereço ou a string de conexão do destino do backu
 | Qualquer outra | `secrets.key` ao lado da pasta de dados, ou o arquivo indicado em `Hub__SecretsKeyFile` |
 
 - Quando não há chave, o site cria uma na primeira vez que inicia (o instalador para Linux a cria ele mesmo) e escreve no log onde ela está, nunca o valor.
-- Versões antigas salvavam esses segredos em texto puro. A primeira inicialização de uma versão que os criptografa criptografa o que foi salvo antes, e um segredo ainda em texto puro é lido como está.
-- O zip de backup não contém a chave, e a pasta de dados também não: quem conseguir um backup não consegue ler os segredos. A página **Backup** da administração mostra onde a chave está. O `playstats-hub backup` do Linux inclui a chave.
+- Versões antigas salvavam esses segredos em texto puro. A primeira inicialização de uma versão com criptografia criptografa o que foi salvo antes, e um segredo ainda em texto puro é lido como está.
+- O zip de backup não contém a chave, e a pasta de dados também não: quem conseguir um backup não consegue ler os segredos. A página **Backup** da administração mostra onde a chave está. O `playstats-hub backup` do Linux inclui, sim, a chave.
 - Guarde uma cópia da chave em um lugar seguro, separada dos backups. Para restaurar em outra máquina, coloque a chave de volta antes de iniciar o site. Sem ela o site inicia e todos os dados estão lá, mas esses segredos ficam vazios: o log avisa, e você os digita de novo na área de administração.
 
 ## Backup automático no Azure Storage
 
-O site pode fazer o próprio backup. Em [Administração > Backup](administration.pt.md#backup) você informa um contêiner do Azure Storage e, a cada algumas horas, 8 por padrão, ele envia um arquivo zip para lá. O site continua no ar: o banco é copiado enquanto ele funciona.
+O site pode fazer o próprio backup. Em [Administração > Backup](administration.pt.md#backup) você informa um contêiner do Azure Storage e, a cada poucas horas, 8 por padrão, ele envia um arquivo zip para lá. O site continua no ar: o banco é copiado enquanto ele funciona.
 
 ### O que o zip contém
 
@@ -77,7 +77,7 @@ Logo depois de cada envio, o site baixa o zip de novo do contêiner, o mesmo arq
 - o `hub.db` abre somente leitura e passa no `PRAGMA integrity_check`, a verificação completa de consistência do SQLite;
 - o `hub.db` tem o mesmo número de partidas, arquivos de estatísticas, jogadores e configurações que o site tinha quando a cópia foi feita, como o manifesto registra.
 
-A pasta temporária é apagada depois, qualquer que seja o resultado. O resultado vai para a coluna **Verificado** de **Backups recentes**: uma falha mostra o motivo, e vai para o log sem segredos. Quando a conferência do zip novo falha, os arquivos antigos não são apagados, então as últimas cópias boas continuam no contêiner. **Verificar agora**, na mesma página, roda a conferência de novo no zip mais recente do contêiner.
+A pasta temporária é apagada depois, qualquer que seja o resultado. O resultado vai para a coluna **Verificado** de **Backups recentes**: uma falha mostra o motivo e também é registrada no log, sem segredos. Quando a conferência do zip novo falha, os arquivos antigos não são apagados, então as últimas cópias boas continuam no contêiner. **Verificar agora**, na mesma página, roda a conferência de novo no zip mais recente do contêiner.
 
 A conferência precisa do SQLite: com SQL Server, PostgreSQL ou MySQL a página mostra **Não disponível**. Cada backup leva alguns segundos a mais, e a pasta temporária precisa, por um instante, de espaço livre para o zip mais o banco.
 
@@ -111,7 +111,7 @@ Uma string de conexão da conta de armazenamento também funciona, junto com o n
 
 Baixe o zip do contêiner: no portal, abra o arquivo e clique em **Baixar**; com a CLI, `az storage blob download`.
 
-No Linux, pare o site, coloque os arquivos do zip na pasta de dados e inicie o site de novo. O `unzip` pode precisar de `sudo apt install unzip`.
+No Linux, pare o site, coloque os arquivos do zip na pasta de dados e inicie o site de novo. Talvez seja preciso instalar o `unzip` com `sudo apt install unzip`.
 
 ```bash
 sudo systemctl stop l4d2-playstats-hub
@@ -135,7 +135,7 @@ sudo systemctl start l4d2-playstats-hub
 
 Apague os arquivos `-wal` e `-shm` antes de extrair: eles são do banco que está sendo substituído. Numa máquina nova, rode o instalador antes, coloque a sua chave de segredos em `/etc/l4d2-playstats-hub/secrets.key` (veja [A chave de segredos](#a-chave-de-segredos)), depois restaure, e coloque o seu `hub.env` de volta se você o alterou.
 
-Com Docker, pare o contêiner, extraia o zip no volume e inicie de novo. O contêiner entrega os arquivos ao usuário dele quando inicia. Numa máquina nova, coloque também a chave de segredos no volume `hub-secrets`, como mostra [Instalando com Docker](../install-docker.pt.md#a-chave-de-segredos).
+Com Docker, pare o contêiner, extraia o zip no volume e inicie de novo. O contêiner passa a posse dos arquivos para o usuário dele quando inicia. Numa máquina nova, coloque também a chave de segredos no volume `hub-secrets`, como mostra [Instalando com Docker](../install-docker.pt.md#a-chave-de-segredos).
 
 ```bash
 docker compose stop hub
@@ -228,5 +228,5 @@ Os plugins dos servidores de jogo são lançados junto com o site. Confira as no
 Reiniciar, atualizar ou restaurar mantém tudo o que está armazenado. Só o que fica na memória começa vazio:
 
 - a partida em andamento na página do servidor ao vivo, até os servidores de jogo enviarem a próxima atualização;
-- as mensagens do chat do site e os comandos esperando para ser entregues;
+- as mensagens do chat do site e os comandos esperando para serem entregues;
 - o status da conexão dos servidores de jogo, até cada um enviar o próximo sinal.

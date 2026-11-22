@@ -24,7 +24,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 
 | Página | Para | O que explica |
 |---|---|---|
-| [Ranking](ranking.pt.md) | Todos | O ranking principal, como a experiência é calculada, MVPs, rage quits, punições e o número mínimo de partidas. |
+| [Ranking](ranking.pt.md) | Todos | O ranking principal, como a experiência é calculada, MVPs, tank wipes, rage quits, punições e o número mínimo de partidas. |
 | [Temporadas e histórico](seasons-and-history.pt.md) | Todos | Como as temporadas funcionam, o seletor de período e os rankings de temporadas passadas, de anos e de todo o período. |
 | [Patentes](patents.pt.md) | Todos | Os 15 níveis de patente e a experiência que cada um exige. |
 | [Partidas](matches.pt.md) | Todos | A lista de partidas, os detalhes da partida, as estatísticas de cada mapa e como os arquivos viram partidas. |
@@ -33,7 +33,7 @@ As páginas para jogadores e para administradores estão indicadas na lista abai
 | [Loja de skins de armas](skin-shop.pt.md) | Todos | Estrelas, compra e equipamento de skins, presentes, reembolsos no fim da temporada e as configurações da loja. |
 | [Ranking da comunidade](community-ranking.pt.md) | Todos | A votação em duplas de jogadores, a pontuação, os limites de votos e suas configurações. |
 | [Anti-Cheat](anti-cheat.pt.md) | Todos | A página que oferece o download do Anti-Cheat, quem precisa usar o Anti-Cheat nos servidores de jogo, e suas configurações. |
-| [Páginas dentro do jogo](in-game-pages.pt.md) | Todos | O que o `!ranking` abre dentro do Left 4 Dead 2. |
+| [Páginas dentro do jogo](in-game-pages.pt.md) | Todos | As páginas leves que o `!ranking`, o `!comandos` e o `!commands` podem abrir dentro do Left 4 Dead 2. |
 | [Comandos do servidor de jogo](commands.pt.md) | Todos | A página Comandos: todos os comandos do servidor de jogo com exemplos, e os catálogos de onde vem o seu texto. |
 | [Idiomas, temas e celulares](languages-and-themes.pt.md) | Todos | Os três idiomas, o tema escuro e o tema claro, e o layout no celular. |
 

@@ -36,7 +36,7 @@ The list has the same players as the ranking of the period, all of them and not 
 
 ## The player page
 
-Click a player anywhere on the site to open their page: the ranking, the matches, the live server, the community ranking and the administration pages all link to it, never straight to Steam. It has a period selector, a **Compare** button, and up to six tabs.
+Click a player anywhere on the site to open their page: the ranking, the matches, the live server, the community ranking and the administration pages all link to it, never straight to Steam. It has a period selector, a **Compare...** button, and up to six tabs.
 
 When the community ranking module is on, a box under the avatar shows the position of the player in the [community ranking](community-ranking.md) and the rating, or **Not in the community ranking yet** with the number of comparisons. It does not change with the period, since the community ranking does not reset with the season. When two players are compared, each one has a box.
 
@@ -139,7 +139,7 @@ Shown when the community ranking module is on, and only for one player, not in a
 
 ## Comparing two players
 
-**Compare** chooses a second player. The page then shows both players side by side: the general statistics with the Steam data, the survivor and infected statistics, and the matches they played, with the second player's numbers next to the first one's.
+**Compare...** chooses a second player. The page then shows both players side by side: the general statistics with the Steam data, the survivor and infected statistics, and the matches they played, with the second player's numbers next to the first one's.
 
 ![Two players compared](../images/en/player-compare.webp)
 

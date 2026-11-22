@@ -15,7 +15,7 @@ Conferido com as páginas renderizadas a partir de uma cópia dos dados de produ
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | `GET /players` (lista) | Controllers/PlayersController.cs:26-39 | done | Mesmo endereço. |
-| Query `orderBy` (uma das 25 estatísticas, padrão `Experience`) | Controllers/PlayersController.cs:27, Core/Players/Enums/PlayerResultProperty.cs | done | Mesmos nomes e mesma ordem (`Models/Players/PlayerResultProperty.cs`). Um valor desconhecido volta para `Experience`. |
+| Query `orderBy` (uma das 25 estatísticas, padrão `Experience`) | Controllers/PlayersController.cs:27, Core/Players/Enums/PlayerResultProperty.cs | done | Mesmos nomes e mesma ordem (`Models/Players/PlayerResultProperty.cs`). Um valor desconhecido volta para `Experience`. Sem `orderBy`, a página agora mostra a Visão geral, a antiga tabela do histórico, ordenada com `sort`. |
 | Query `asc` (padrão `false`) | Controllers/PlayersController.cs:27 | done | |
 | Item de menu "Jogadores" (dentro de "Mais") ativo na lista | Controllers/PlayersController.cs:29 | done | `ViewBag.Players = "active"`; não é definido na página do jogador, como antes. |
 | `GET /player/{communityId}/{compareWith?}` (jogador e comparação) | Controllers/PlayersController.cs:41-97 | done | Mesmo endereço. |
@@ -23,7 +23,7 @@ Conferido com as páginas renderizadas a partir de uma cópia dos dados de produ
 | Um jogador fora do ranking mostra a página "fora do ranking" com as informações de conexão (HTTP 200) | Controllers/PlayersController.cs:55-64 | done | A primeira versão do hub respondia 404 aqui. |
 | `compareWith` que não está no ranking é ignorado | Controllers/PlayersController.cs:53 | done | |
 | Ranking da temporada atual como fonte das duas páginas | Controllers/PlayersController.cs:31, :51, Core/Ranking/Services/RankingServiceCached.cs:11-19 | adapted | A chamada da API antiga devolvia só os 100 primeiros jogadores do ranking, então a lista parava em 100 e o jogador 101 caía na página "fora do ranking". O hub usa o ranking inteiro da temporada. |
-| Query `season` (novo) | - | adapted | Acréscimo do hub: as duas páginas aceitam `?season={id}` para mostrar uma temporada passada. Uma temporada desconhecida responde 404. Sem o parâmetro, a temporada atual é mostrada, como antes. |
+| Query `season` (novo) | - | adapted | Acréscimo do hub: as duas páginas aceitam `?season={id}`, `?year={year}` ou `?period=all-time` para mostrar um período passado. Uma temporada desconhecida responde 404. Sem o parâmetro, a temporada atual é mostrada, como antes. |
 | Avatares carregados antes da renderização | Controllers/PlayersController.cs:33, :60-61, :66-69, :85 | adapted | Os avatares são servidos por `/avatar/{communityId}` e baixados sob demanda; não é preciso uma chamada de pré-carregamento. |
 | Últimos jogos: as 50 partidas mais recentes da temporada, em qualquer modo de jogo, filtradas para aquelas em que um dos dois jogadores está em uma equipe | Controllers/PlayersController.cs:77, Core/Matches/MatchesServiceCached.cs:19, Models/PlayerDetailsModel.cs:22-32 | done | Mesma regra, sobre a temporada exibida e todos os servidores de jogo (`IPlayerMatchService`, `AppConsts.PlayerRecentMatches`). |
 | Contas relacionadas a partir das informações de conexão | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | adapted | `IPlayerConnectionService.RelatedAsync`. Vazio quando o módulo de servidor ao vivo está desligado, e para visitantes que não são administradores quando Configurações > Privacidade restringe as contas relacionadas aos administradores (o padrão é todos, como antes). |
@@ -44,17 +44,17 @@ Conferido com as páginas renderizadas a partir de uma cópia dos dados de produ
 |---|---|---|---|
 | Título "Jogadores" | Views/Players/Index.cshtml:63 | done | |
 | Estilos da página (margens de tabela, de parágrafo e de cabeçalho) | Views/Players/Index.cshtml:47-61 | done | |
-| Dropdown "Ordenar por: **estatística**" com o caret | Views/Players/Index.cshtml:67-71 | done | |
+| Dropdown "Ordenar por: **estatística**" com o caret, agora "Estatística: **estatística**", com um item Visão geral | Views/Players/Index.cshtml:67-71 | done | |
 | Itens do dropdown: as 25 estatísticas, cada uma com link para `orderBy={statistic}&asc=False` | Views/Players/Index.cshtml:72-81 | done | O link mantém a temporada exibida. |
 | Nomes das estatísticas: Experiência, Jogos, Vitórias, Derrotas, Rage quit, MVP de SI (vezes), MVP de CI (vezes), LVP de FF (vezes), Mortes, Vezes incapacitado, Dano recebido de SI, Commons mortos, SI mortos, Dano aos SI, Dano ao Tank, Pedras recebidas, Skeets totais, Melee skeets, Levels totais, Crowns totais, FF causado (sem incap.), Dano de SI (sem Tank), Dano como Tank (em pé), Dano de ácido (em pé), Dano total de pounce | Views/Players/Index.cshtml:15-27, Resources/SharedResource*.resx | done | `Helpers/PlayerProperties.cs`. Os tank wipes foram adicionados depois. |
-| Seletor de período (novo) | - | adapted | Acréscimo do hub, ao lado do dropdown "Ordenar por" e no estilo da página de histórico: "Período exibido: **De MM/YYYY até MM/YYYY**". Lista as temporadas do ano atual e depois um item por ano ("Ano de YYYY"), que mostra o ranking e as partidas daquele ano inteiro, e "Todo o período". Só aparece quando há mais de uma opção. |
+| Seletor de período (novo) | - | adapted | Acréscimo do hub, ao lado do dropdown "Estatística" e no estilo da página de histórico: "Período exibido: **De MM/YYYY até MM/YYYY**". Lista as temporadas do ano atual e depois um item por ano ("Ano de YYYY"), que mostra o ranking e as partidas daquele ano inteiro, e "Todo o período". Só aparece quando há mais de uma opção. |
 | Tabela `table-striped table-hover table-bordered table-condensed` | Views/Players/Index.cshtml:86 | done | |
-| Coluna `#` (slim, centralizada) | Views/Players/Index.cshtml:89, :113 | done | |
+| Coluna `#` (estreita, centralizada) | Views/Players/Index.cshtml:89, :113 | done | |
 | Coluna "Jogador" ocupando duas células (avatar e nome) | Views/Players/Index.cshtml:90 | done | |
 | Coluna com a estatística escolhida, com link para a ordem invertida e com a seta (↑ crescente, ↓ decrescente) | Views/Players/Index.cshtml:91-97 | done | |
 | Coluna "Por jogo", oculta quando a estatística é "Jogos" | Views/Players/Index.cshtml:44, :98-101, :131-139 | done | |
 | Posição: 1, 2, 3... na ordem decrescente; em contagem regressiva a partir do número de jogadores na crescente | Views/Players/Index.cshtml:105-107, :142 | done | |
-| Páginas de 100 jogadores (novo) | - | adapted | Acréscimo do hub: a lista mostra 100 jogadores por página com os links das páginas embaixo da tabela, que mantêm `orderBy`, `asc` e o período. A posição continua a da página anterior, nas duas ordens. Com até 100 jogadores não há links de página e a página fica como antes. |
+| Páginas de 100 jogadores (novo) | - | adapted | Acréscimo do hub: a lista mostra 100 jogadores por página com os links das páginas embaixo da tabela, que mantêm `orderBy`, `asc` e o período. A posição continua de onde a página anterior parou, nas duas ordens. Com até 100 jogadores não há links de página e a página fica como antes. |
 | Linha destacada (`it-is-me`) para o jogador logado | Views/Players/Index.cshtml:112 | done | |
 | Avatar de 40 px, arredondado, com link, título e a imagem de fallback em caso de erro | Views/Players/Index.cshtml:114-118 | done | |
 | Nome truncado (`TruncatePlayerName`) com link para a página do jogador | Views/Players/Index.cshtml:119-121 | done | O link mantém a temporada exibida. |
@@ -102,7 +102,7 @@ Em uma comparação, todo valor é seguido de ` | ` e do valor do segundo jogado
 | Painel "Estatísticas gerais" | Views/Players/Details.cshtml:666-669 | done | |
 | Ranking (`#position`) | Views/Players/Details.cshtml:674-682 | done | |
 | ID da Steam com o ícone de copiar e o popover "Texto copiado!" | Views/Players/Details.cshtml:684-700 | done | Mesmo campo, mesmo ícone (escuro ou claro conforme o tema) e mesmo comportamento, escrito como `STEAM_0:x:y`, igual ao site antigo. |
-| Nome (segundo jogador em uma nova linha) | Views/Players/Details.cshtml:703-711 | done | O nome mais usado (`MainName`), como antes. |
+| Nome (segundo jogador em uma nova linha) | Views/Players/Details.cshtml:703-711 | adapted | O nome de exibição do cadastro de jogadores (`MainName`): o nome forçado; se não houver, o nome mais usado; se não houver, o nome Steam. |
 | URL do perfil como link em uma nova aba, com o botão de copiar | Views/Players/Details.cshtml:713-733 | done | |
 | Nomes anteriores: até 5 rótulos com tooltip; os do segundo jogador em rótulos amarelos depois do separador; a linha só existe quando o primeiro jogador tem nomes | Views/Players/Details.cshtml:735-754 | done | |
 | Patente: imagem de 32 px com o tooltip "{name} - Nível nn - patente" (linha oculta no celular) | Views/Players/Details.cshtml:755-764 | done | |
@@ -227,8 +227,8 @@ O cartão é o antigo `Views/LastMatches/_Match.cshtml`. A página do jogador us
 | URL do perfil (nova aba) com o botão de copiar | Views/Players/PlayerNotFound.cshtml:94-105 | done | |
 | Painel "Contas relacionadas" com as mesmas cinco colunas da página do jogador | Views/Players/PlayerNotFound.cshtml:112-160 | adapted | Com o módulo de servidor ao vivo, e seguindo a mesma configuração de privacidade da página do jogador. |
 | Botão "Retornar à página de ranking" | Views/Players/PlayerNotFound.cshtml:162-164 | done | "Voltar para a página inicial" com o módulo de ranking desligado. |
-| Botão "Abrir perfil na Steam" abaixo do avatar, ID da Steam na forma `STEAM_1`, Steam3 ID (novo) | - | adapted | Adição do hub: todo link de jogador do site abre esta página em vez do perfil Steam, então a página oferece o caminho para a Steam. |
-| Aviso "Ainda sem estatísticas" com o módulo de ranking desligado (novo) | - | adapted | Adição do hub. |
+| Botão "Abrir perfil na Steam" abaixo do avatar, ID da Steam na forma `STEAM_1`, Steam3 ID (novo) | - | adapted | Acréscimo do hub: todo link de jogador do site abre esta página em vez do perfil Steam, então a página oferece o caminho para a Steam. |
+| Aviso "Ainda sem estatísticas" com o módulo de ranking desligado (novo) | - | adapted | Acréscimo do hub. |
 | Estilos (tamanho do avatar, células de cabeçalho, margem no celular) | Views/Players/PlayerNotFound.cshtml:15-34 | done | |
 | Metadados da página: título "{name or id} - Detalhes do jogador" | PageMetadata/PlayerNotFoundPageMetadata.cs:14 | done | |
 | Metadados da página: descrição "Veja as informações disponíveis sobre o jogador {name} no ..." | PageMetadata/PlayerNotFoundPageMetadata.cs:15 | adapted | O texto citava "L4D2 Competitive"; agora recebe o nome do site. |

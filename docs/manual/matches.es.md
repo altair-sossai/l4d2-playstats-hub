@@ -41,7 +41,7 @@ La página de detalles tiene:
 - los equipos y el resultado, como en la lista;
 - **Marcador**: un gráfico del marcador de cada equipo después de cada mapa;
 - **Puntos ganados por mapa**: un gráfico de barras con los puntos que hizo cada equipo en cada mapa. Un Tank sobre una barra marca un mapa en el que ese equipo hizo un [tank wipe](ranking.es.md#tank-wipes); pasa el ratón por la barra para ver quién lo hizo;
-- **Resultados del mapa**: una fila por mapa con el inicio, el fin, el tiempo que llevó y el marcador. Haz clic en un mapa para abrir sus estadísticas;
+- **Resultados del mapa**: una fila por mapa con el inicio, el fin, el tiempo que duró y el marcador. Haz clic en un mapa para abrir sus estadísticas;
 - una tabla por equipo y lado: el equipo A y el equipo B como supervivientes, y después como infectados.
 
 ![Los resultados de los mapas](../images/es/match-map-results.webp)
@@ -66,11 +66,11 @@ Después del cambio, el sitio reconstruye las partidas alrededor de ese mapa, as
 
 El servidor de juego envía un archivo de estadísticas por mapa. El sitio los une en partidas con estas reglas:
 
-1. Los archivos se separan por servidor de juego, por temporada, y por configuración y tamaño de equipo. Una partida nunca mezcla dos servidores, dos temporadas ni dos configuraciones.
+1. Los archivos se separan por servidor de juego, por temporada, y por configuración y tamaño de equipo. Una partida nunca mezcla dos servidores, dos temporadas ni dos configuraciones. Los archivos de un servidor de juego separados por más de 6 horas (el ajuste **Horas sin archivos que separan dos partidas**, en [Configuración](administration.es.md#puntos-del-ranking)) también empiezan una partida nueva.
 2. Los mapas de la misma campaña jugados en orden forman una partida. `c2m1_highway` seguido de `c2m2_fairgrounds` es una partida. Si el siguiente archivo es un mapa de otra campaña, o de la misma campaña fuera de orden, empieza una partida nueva.
 3. Qué mapas pertenecen a qué campaña, y en qué orden, sale de la [lista de campañas](game-modes-and-campaigns.es.md#campañas). Ahí se pueden agregar campañas personalizadas.
 4. Un mapa que terminó 0 a 0 se ignora. Un mapa que aparece dos veces seguidas se cuenta una vez.
-5. Los mapas que no están en ninguna campaña de la lista son **mapas desconocidos**. Por defecto se conservan: los mapas desconocidos consecutivos se unen en una partida cuando el número de ronda sube de a uno y pasaron menos de 2 horas entre ellos. Un administrador puede desactivar esto en [Configuración](administration.es.md#puntos-del-ranking); los mapas desconocidos pasan entonces a ignorarse.
+5. Los mapas que no están en ninguna campaña de la lista son **mapas desconocidos**. Por defecto se conservan: los mapas desconocidos consecutivos se unen en una partida cuando el número de ronda sube de uno en uno y pasaron menos de 2 horas entre ellos. Un administrador puede desactivar esto en [Configuración](administration.es.md#puntos-del-ranking); los mapas desconocidos pasan entonces a ignorarse.
 
 Cada archivo se guarda tal como llegó, así que las partidas se pueden reconstruir en cualquier momento con reglas nuevas.
 

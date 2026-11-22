@@ -4,7 +4,7 @@
 
 Uma única aplicação web auto-hospedada para servidores competitivos de Left 4 Dead 2: ranking, estatísticas de partidas, visualização do servidor ao vivo, loja de skins de armas e um ranking da comunidade, junto com os plugins SourceMod que a alimentam.
 
-> **Status: primeira versão publicada, migração em andamento.** A aplicação, os plugins, o instalador para Linux e a imagem Docker estão disponíveis nas [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Os plugins ainda não rodaram em um servidor de jogo real. Os [repositórios existentes](#repositórios-que-estão-sendo-consolidados) continuam rodando o site de produção ([l4d2.com.br](https://l4d2.com.br/)) até a migração terminar.
+> **Status: primeira versão publicada, migração concluída.** A aplicação, os plugins, o instalador para Linux e a imagem Docker estão disponíveis nas [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Os plugins ainda não rodaram em um servidor de jogo real. O site de produção ([l4d2.com.br](https://l4d2.com.br/)) roda nesta aplicação desde 19 de novembro de 2026, e os [repositórios que ela substituiu](#repositórios-que-este-substituiu) foram arquivados em 22 de novembro de 2026.
 
 ## Conteúdo
 
@@ -14,7 +14,7 @@ Uma única aplicação web auto-hospedada para servidores competitivos de Left 4
 - [Instalação](#instalação)
 - [Como tudo se encaixa](#como-tudo-se-encaixa)
 - [O que fica fora deste repositório](#o-que-fica-fora-deste-repositório)
-- [Repositórios que estão sendo consolidados](#repositórios-que-estão-sendo-consolidados)
+- [Repositórios que este substituiu](#repositórios-que-este-substituiu)
 - [Documentação](#documentação)
 - [Licença](#licença)
 
@@ -33,7 +33,7 @@ Este repositório reúne a lógica para que qualquer dono de servidor possa roda
 - **Servidor ao vivo.** Placar, jogadores, eventos e chat da partida em andamento, para cada servidor.
 - **Loja de skins de armas.** Os jogadores ganham estrelas com MVPs e as gastam em skins.
 - **Ranking da comunidade.** Os jogadores votam em duplas de jogadores, e os votos formam um segundo ranking.
-- **Páginas para dentro do jogo.** O `!ranking` abre uma versão leve do ranking, feita para o navegador do próprio jogo.
+- **Páginas para dentro do jogo.** O `!ranking` abre o ranking no navegador do próprio jogo, ou uma versão leve feita para ele, e `!comandos` / `!commands` abrem os comandos do servidor.
 - **Módulos.** O administrador liga ou desliga cada um desses recursos.
 - **Configuração guiada.** Um assistente de primeira configuração e uma página de status que mostra se cada servidor de jogo está conectado e o que está faltando.
 - **Três idiomas.** Inglês, português e espanhol.
@@ -49,7 +49,7 @@ A página do servidor ao vivo acompanha a partida em andamento em cada servidor 
 
 ![A página do servidor ao vivo](docs/images/pt/server-live.webp)
 
-Os jogadores gastam as estrelas que ganharam como MVP na loja de skins de armas.
+Na loja de skins de armas, os jogadores gastam as estrelas que ganharam como MVP.
 
 ![A loja de skins de armas](docs/images/pt/skins.webp)
 
@@ -63,7 +63,7 @@ Em uma VPS Linux, um único comando instala o site:
 curl -fsSL https://raw.githubusercontent.com/altair-sossai/l4d2-playstats-hub/main/deploy/install.sh | sudo bash
 ```
 
-Ele mostra o endereço do site e um código de configuração. Abra o endereço, cole o código, faça login com o Steam, e o site guia você pelo resto.
+Ele mostra o endereço do site e um código de configuração. Abra o endereço, cole o código, entre com a Steam, e o site guia você pelo resto.
 
 Esse comando baixa a versão publicada mais recente. A aplicação também pode ser [executada a partir do código-fonte](CONTRIBUTING.pt.md#como-rodar).
 
@@ -95,14 +95,14 @@ Os plugins enviam ao site o arquivo de estatísticas de cada mapa e a partida ao
 | [l4d2-playstats](https://github.com/altair-sossai/l4d2-playstats) | Pacote NuGet que faz o parse dos arquivos de estatísticas. Ele é útil por si só, e este projeto o usa como dependência. |
 | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets) | Modelos, materiais e fotos das skins de armas. Eles passam de 500 MB, então só a lógica da loja de skins fica aqui. |
 
-## Repositórios que estão sendo consolidados
+## Repositórios que este substituiu
 
-A migração acontece passo a passo. Os repositórios antigos são arquivados quando ela terminar.
+A migração aconteceu passo a passo. O l4d2-playstats-api e o l4d2-playstats-web foram arquivados em 22 de novembro de 2026 e apontam para este repositório.
 
 | Repositório | O que é | O que acontece com ele |
 |---|---|---|
-| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | API em Azure Functions que armazena os arquivos de estatísticas e calcula partidas, ranking e estrelas. | Substituído por esta aplicação e depois arquivado. |
-| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Site com ranking, estatísticas, página do servidor ao vivo e loja de skins de armas. | Substituído por esta aplicação e depois arquivado. |
+| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | API em Azure Functions que armazena os arquivos de estatísticas e calcula partidas, ranking e estrelas. | Substituído por esta aplicação; arquivado em 22 de novembro de 2026. |
+| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Site com ranking, estatísticas, página do servidor ao vivo e loja de skins de armas. | Substituído por esta aplicação; arquivado em 22 de novembro de 2026. |
 | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Configuração de servidor competitivo com plugins personalizados. | Os plugins do PlayStats dele agora ficam em [plugins/](plugins/README.pt.md). |
 
 ## Documentação

@@ -24,7 +24,7 @@ Pages for players and pages for administrators are marked in the list below. The
 
 | Page | For | What it covers |
 |---|---|---|
-| [Ranking](ranking.md) | Everyone | The main ranking, how experience is calculated, MVPs, rage quits, punishments and the minimum number of matches. |
+| [Ranking](ranking.md) | Everyone | The main ranking, how experience is calculated, MVPs, tank wipes, rage quits, punishments and the minimum number of matches. |
 | [Seasons and history](seasons-and-history.md) | Everyone | How seasons work, the period selector, and the rankings of past seasons, years and all time. |
 | [Patents](patents.md) | Everyone | The 15 patent levels and the experience each one needs. |
 | [Matches](matches.md) | Everyone | The match list, match details, map statistics, and how files become matches. |
@@ -33,7 +33,7 @@ Pages for players and pages for administrators are marked in the list below. The
 | [Weapon skin shop](skin-shop.md) | Everyone | Stars, buying and equipping skins, gifts, refunds at the end of the season, and the shop settings. |
 | [Community ranking](community-ranking.md) | Everyone | Voting on pairs of players, the rating, the vote limits and their settings. |
 | [Anti-Cheat](anti-cheat.md) | Everyone | The page that offers the Anti-Cheat download, who must use the Anti-Cheat on the game servers, and its settings. |
-| [Pages inside the game](in-game-pages.md) | Everyone | What `!ranking` opens inside Left 4 Dead 2. |
+| [Pages inside the game](in-game-pages.md) | Everyone | The light pages that `!ranking`, `!comandos` and `!commands` can open inside Left 4 Dead 2. |
 | [Game server commands](commands.md) | Everyone | The Commands page: every command of the game server with examples, and the catalogs its text comes from. |
 | [Languages, themes and phones](languages-and-themes.md) | Everyone | The three languages, the dark and light themes, and the layout on a phone. |
 

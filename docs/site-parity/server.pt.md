@@ -63,7 +63,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 |---|---|---|---|
 | Título do painel: nome do servidor, nome da configuração e tamanho do time ("4v4"), unidos por " - " | `Web/Views/Server/_Header.cshtml:22` | adapted | O nome é o host name que o servidor de jogo envia no heartbeat (o site antigo consultava a Steam); antes do primeiro heartbeat, é o nome com que o servidor foi cadastrado. |
 | Rótulo do anti-cheat (ligado, desligado, API indisponível) com ícone de cadeado, cor e tooltip | `Web/Views/Server/_Header.cshtml:37` | done |  |
-| O rótulo do anti-cheat leva à página do anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | O rótulo é o mesmo. O link só é escrito enquanto o módulo de anti-cheat está ligado, porque o hub ainda não tem uma página de anti-cheat (o módulo está reservado). |
+| O rótulo do anti-cheat leva à página do anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | O rótulo é o mesmo. O link só é escrito enquanto o módulo de anti-cheat está ligado, já que a página do Anti-Cheat pertence a esse módulo. |
 | Rótulo "IP do servidor" com o botão de ponto de interrogação que abre o modal de informações do servidor | `Web/Views/Server/_Header.cshtml:58` | done |  |
 | Valor do IP do servidor com o ícone de copiar (copia `connect <ip>`, popover "Texto copiado!", ícone conforme o tema) | `Web/Views/Server/_Header.cshtml:65` | done | O endereço é o do servidor em exibição. O ícone de copiar fica de fora quando o servidor não tem endereço. |
 | Jogadores: conectados / máximo | `Web/Views/Server/_Header.cshtml:73` | adapted | Conectados é o número de jogadores no estado ao vivo (sobreviventes, infectados e espectadores) em vez da consulta à Steam. Máximo são os slots que o servidor de jogo envia no heartbeat (`maxPlayers`, adicionado ao plugin); com um plugin mais antigo, é o dobro do tamanho do time. |
@@ -222,7 +222,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 |---|---|---|---|
 | Badge da navbar "● jogadores/slots", pulsando, com link para a página do servidor, oculto quando não há ninguém conectado | `Web/Views/Shared/_Layout.cshtml:322` | done | Já está no layout. Os números são os do cabeçalho (veja "Jogadores"). |
 | Título do navegador prefixado com "🟢 jogadores/slots" | `Web/Views/Shared/_Layout.cshtml:602` | done |  |
-| Linha do chat exibida ou oculta pela mesma verificação, a cada 4 s | `Web/Views/Shared/_Layout.cshtml:594` | done |  |
+| Linha do chat exibida ou oculta pela mesma verificação, a cada 4 s | `Web/Views/Shared/_Layout.cshtml:594` | adapted | A mesma verificação, que só começa depois que o visitante move o mouse, rola a página, toca ou digita pela primeira vez, e fica pausada enquanto a aba está em segundo plano. |
 | Ícone flutuante de conectar, oculto no celular | `Web/Views/Shared/_Layout.cshtml:526` | done | Já está no layout. Fica oculto enquanto nenhum servidor tem endereço; o antigo estava sempre lá. |
 
 ## Página de banimentos de chat
@@ -230,7 +230,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | Só administradores | `Web/Controllers/ChatBansController.cs:10` | done | Também precisa do módulo de chat do site. |
-| Cabeçalho "Bans do chat" com o botão "Adicionar ban" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
+| Cabeçalho "Bans do chat" com o botão "Adicionar" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
 | Texto de abertura | `Web/Views/ChatBans/Index.cshtml:42` | done |  |
 | Contador de jogadores banidos | `Web/Views/ChatBans/Index.cshtml:44` | done |  |
 | Busca por nome, Steam ID ou motivo, com "Limpar filtros" | `Web/Views/ChatBans/Index.cshtml:51`, `Web/Controllers/ChatBansController.cs:25` | done |  |

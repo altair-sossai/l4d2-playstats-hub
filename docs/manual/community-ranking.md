@@ -30,13 +30,13 @@ The community ranking is a second ranking, built from what the players think of 
 | Comparisons | How many times the player was judged against another player. |
 | Wins, Draws, Losses | How many comparisons the player won, drew and lost. |
 
-**See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. The filters **Votes made by** and **Votes about** take a name, or the search button next to each opens a window with the players of the voting, the most recent first. An administrator can hide who voted.
+**See the latest votes**, above and below the table, opens **Latest votes**: one card per vote with who voted, the two players side by side, the chosen one in green (or both in yellow for the same level) and when. "I don't know" answers are not listed. Clicking a player, or the arrows icon next to a name in the table, shows only the comparisons of that player. The filters **Votes made by** and **Votes about** take a name, or the search button next to each opens a window with the players of the voting, the most recent first. The votes are shown 30 per page, the newest first, with the counter and the page numbers under them. An administrator can hide who voted.
 
 ![The latest votes, as an administrator sees them](../images/en/community-votes.webp)
 
 On a phone the table shows only the position, the player and the rating. The **?** next to **Rating** opens a window that explains every column.
 
-Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. When more players are listed, the table shows 100 per page, with page links under it. **How does it work?**, in the box, opens a window that explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same link, also when the votes of the day are used up. Clicking a player's row opens a window with their rating, comparisons and a bar of wins, draws and losses, with links to their comparisons and profile. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days. The box shows only to visitors who are not signed in and to players who can still vote today; a player who used all the votes of the day, does not have enough matches or is blocked does not see it.
+Only players with enough comparisons are listed: 5 by default. A player must also have played the minimum number of matches to be compared, 1 by default. Both minimums are written under the table, and the list stops at the first 100 players by default. The table shows 100 players per page, with the counter and the page links under it. **How does it work?**, in the box, opens a window that explains in four steps how the votes become the list, with the numbers of the current settings. The voting page has the same link, also when the votes of the day are used up. Clicking a player's row opens a window with their rating, comparisons and a bar of wins, draws and losses, with links to their comparisons and profile. **Vote now**, in the box above the table, opens the voting page. The same box appears above the statistics ranking on the home page; a player can close it there, and it comes back after 7 days. The box shows only to visitors who are not signed in and to players who can still vote today; a player who used all the votes of the day, does not have enough matches or is blocked does not see it.
 
 ## Voting
 
@@ -48,7 +48,7 @@ The page shows two players with their avatars. Answer with one of:
 |---|---|
 | This one is better (left or right), or a click on the photo | The chosen player wins the comparison, the other loses. |
 | They are at the same level | A draw. |
-| I don't know one of them | Nothing changes, and this pair is not shown to you again. Both players can still come up in other pairs. |
+| I don't know one of them | Uses one of your votes of the day but changes no rating, and this pair is not shown to you again. Both players can still come up in other pairs. |
 
 Under each name the card shows up to 4 other names the player has used in matches, the most used first, so you recognize someone who changed names. After each answer the page marks your choice and the next pair slides in. On a computer the ← and → keys pick the left or the right player, ↓ says they are at the same level and ↑ that you don't know one of them. **Votes left today** shows how many votes you still have.
 
@@ -105,6 +105,7 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 | Maximum comparisons of the same player per voter | How many times each voter can judge the same player. Then that player is no longer offered to that voter, so one voter cannot decide the rating of someone they like or dislike. Votes given before are kept. 0 means no limit. | 5 |
 | Minimum matches to be compared and listed | Matches a player must have played, over all seasons, to be offered for comparison and to appear in the community ranking. | 1 |
 | Maximum days since the last match to be compared | A player whose last match is older than this is no longer offered for comparison, but stays in the community ranking. 0 means no limit. | 0 |
+| Other names shown on each voting card | Up to this many other names the player used in matches appear under the name on the voting card, the most used first, so voters recognize who changed names. 0 hides them. At most 10. | 4 |
 | Minimum comparisons to be listed | Comparisons a player needs to appear in the community ranking. | 5 |
 | Show who voted in the latest votes | Shows the name and the avatar of each voter on the Latest votes page. Off, each vote shows only "A player voted". | On |
 | Maximum players in the ranking | The community ranking shows at most this many players, from the highest rating down. 0 shows everyone. | 100 |
@@ -112,7 +113,7 @@ Each field has a **?** next to its name: hovering it shows a short explanation, 
 
 The ratings are calculated again from every vote after each new vote. **Rebuild the ratings** does it right away, for example after changing the initial rating.
 
-**Reset the community ranking**, in a red panel, deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation, since it cannot be undone.
+In the red **Reset the community ranking** panel, **Delete all votes and start again** deletes every vote and every rating, so the community ranking starts again from zero; the settings are kept. A window shows how many votes and players will be deleted and asks for confirmation (**Yes, delete everything**), since it cannot be undone.
 
 **Voters** lists everybody who voted, with their number of votes and their last vote, 20 per page, the most votes first; **See votes** opens, in a new tab, the latest votes of that voter. **Remove votes** deletes all the votes of one voter and rebuilds the ratings without them, for example when someone voted in bad faith. The field takes the voter in any Steam ID format or as a profile link, and the search button next to it opens the [player search](administration.md#the-player-search).
 

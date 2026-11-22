@@ -83,7 +83,7 @@ Después de **Guardar**, la página del servidor nuevo muestra el token una sola
 |---|---|
 | Cómo conectar este servidor | La descarga de los plugins, las dos líneas para `cfg/playstats.cfg` (con `exec playstats.cfg` en `cfg/server.cfg`), las líneas `sm plugins load` para `cfg/sharedplugins.cfg` y qué hacer después. Después de la primera vez, la parte de la clave del token se muestra como `TU-CLAVE`, porque el sitio no la guarda. |
 | Estado | El [estado de la conexión](first-run.es.md#el-estado-de-la-conexión) y la lista de verificación, actualizados cada 3 segundos, y el último nombre de host, mapa, configuración y versión de SourceMod que informó el servidor. |
-| Detalles | El nombre, las dos direcciones, **Activado** y el identificador. Un servidor desactivado no se muestra en la página del servidor en vivo, y el sitio rechaza lo que envía. |
+| Detalles | El nombre, las dos direcciones, **Activado** y el identificador, con **Guardar** debajo del panel. Un servidor desactivado no se muestra en la página del servidor en vivo, y el sitio rechaza lo que envía. |
 | Clave | **Generar una nueva clave** crea un token nuevo y lo muestra una sola vez. El servidor de juego queda desconectado hasta que su configuración tenga el token nuevo. **Eliminar** borra un servidor que nunca envió un archivo de estadísticas; un servidor con archivos solo se puede desactivar. |
 
 El identificador se crea a partir del nombre cuando se crea el servidor y nunca cambia. Cambiarle el nombre a un servidor no cambia su token.
@@ -167,7 +167,7 @@ Los puntos se aplican a todas las temporadas de inmediato, incluidas las pasadas
 | Ajuste | Valor predeterminado | Qué hace |
 |---|---|---|
 | Quién puede ver las cuentas relacionadas | Todos | **Todos** muestra el panel [Cuentas relacionadas](players.es.md#cuentas-relacionadas) a cada visitante, como hacía el sitio antiguo. **Solo administradores** lo oculta a los visitantes y a los jugadores que no son administradores, en la página del jugador y en la página de un jugador que no está en el ranking. |
-| Meses para guardar las conexiones de los jugadores | 3 | Las conexiones que no aparecen hace más tiempo que esto, con las direcciones IP, se borran todos los días. De 1 a 60. |
+| Meses para guardar las conexiones de los jugadores | 3 | Las conexiones que no se ven desde hace más tiempo que esto, con sus direcciones IP, se borran todos los días. De 1 a 60. |
 
 Este ajuste solo afecta al sitio. El plugin `l4d2_gameinfo_sync` sigue anunciando las cuentas relacionadas en el chat del juego mientras `gameinfo_related_accounts_chat` esté en `1`; ponlo en `0` en `cfg/playstats.cfg` para sacarlas también del chat. Los administradores siempre ven las conexiones en [Moderación > Conexiones de jugadores](moderation.es.md#conexiones-de-jugadores).
 
@@ -188,7 +188,7 @@ El SteamID64 es el número largo de la dirección de un perfil de Steam, como `7
 
 ### La búsqueda de jugadores
 
-Cada campo de la administración que recibe un jugador tiene al lado un botón que abre la misma ventana de búsqueda: administradores, votantes de la clasificación de la comunidad, conexiones de jugadores, baneos del chat, las listas del Anti-Cheat y los regalos de skins. Lista los jugadores que jugaron una partida o se conectaron a un servidor de juego, de los más recientes a los más antiguos, con su foto, nombre, Steam ID, cuándo se vieron por última vez y su posición en la clasificación actual. Escribe parte de un nombre o un Steam ID en cualquier formato para filtrar, y **Cargar más** muestra los siguientes jugadores. Al hacer clic en un jugador se completa el campo. Un Steam ID que nunca jugó aquí también se puede elegir.
+Cada campo de la administración que recibe un jugador tiene al lado un botón que abre la misma ventana de búsqueda: administradores, votantes del ranking de la comunidad, conexiones de jugadores, baneos del chat, las listas del Anti-Cheat y los regalos de skins. Lista los jugadores que jugaron una partida o se conectaron a un servidor de juego, de los más recientes a los más antiguos, con su foto, nombre, Steam ID, cuándo se vieron por última vez y su posición en el ranking actual. Escribe parte de un nombre o un Steam ID en cualquier formato para filtrar, y **Cargar más** muestra los siguientes jugadores. Al hacer clic en un jugador se completa el campo. Un Steam ID que nunca jugó aquí también se puede elegir.
 
 ## Copia de seguridad
 

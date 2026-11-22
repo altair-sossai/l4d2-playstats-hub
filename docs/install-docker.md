@@ -49,7 +49,7 @@ Then start it:
 docker compose up -d
 ```
 
-The first time, Docker downloads the image, then creates the network, the volume and the container:
+The first time, Docker downloads the image, then creates the network, the volumes and the container:
 
 ![docker compose up -d, the first time](images/en/install-docker-up.webp)
 
@@ -59,7 +59,7 @@ The secrets key, which encrypts the secrets saved in the settings, is in the `hu
 
 Run only one container of the application. The live match is kept in memory, and two containers would each have their own.
 
-The application runs as the unprivileged `app` user of the .NET image, not as root. When the container starts, it first gives that user the ownership of the data folder, then starts the site.
+The application runs as the unprivileged `app` user of the .NET image, not as root. When the container starts, it first gives that user the ownership of the data folder and of the secrets folder, then starts the site.
 
 ## The setup code
 

@@ -43,7 +43,7 @@ class Runner {
             return this.page.act(action);
 
         if (action.go)
-            return this.page.goto(this.url(action.go), action.settle);
+            return this.visit(action.go, action.settle);
 
         if (action.wait)
             return this.page.waitForSelector(action.wait);
@@ -59,8 +59,21 @@ class Runner {
         if (action.run)
             return action.run(this);
 
-        if (action.eval)
-            return this.page.act(action.eval, action);
+        if (action.eval) {
+            await this.page.act(action.eval, action);
+
+            if (action.navigates)
+                await this.wake();
+        }
+    }
+
+    async visit(address, settle) {
+        await this.page.goto(this.url(address), settle);
+        await this.wake();
+    }
+
+    async wake() {
+        await this.page.act(`window.dispatchEvent(new Event('pointermove'))`, { settle: 700 });
     }
 
     async shot(shot) {
@@ -78,7 +91,7 @@ class Runner {
         await this.page.viewport(width, height);
 
         if (shot.path)
-            await this.page.goto(this.url(shot.path), shot.settle);
+            await this.visit(shot.path, shot.settle);
 
         for (const action of shot.before || [])
             await this.step(action);

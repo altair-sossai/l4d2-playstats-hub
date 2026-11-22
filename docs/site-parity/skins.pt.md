@@ -13,7 +13,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Item | Onde no site antigo | Situação | Observações |
 |---|---|---|---|
 | Rota `GET /skins`, item de menu "Skins" ativo (`ViewBag.Skins`) | Controllers/SkinsController.cs:11-14 | done |  |
-| Metadados da página: título "Skins", descrição, imagem e alt da skin mais cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | A descrição recebe o nome do site das configurações em vez de citar "L4D2 Competitive". A imagem é a miniatura da skin, como endereço absoluto: o próprio `/imgs/skins/{id}.jpg` do site para as skins que vêm com o hub, como no site antigo, e senão a do endereço de assets. |
+| Metadados da página: título "Skins", descrição, imagem e alt da skin mais cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | A descrição recebe o nome do site das configurações em vez de citar "L4D2 Competitive". A imagem é a miniatura da skin, como endereço absoluto: o próprio `/imgs/skins/{id}.jpg` do site para as skins que vêm com o hub, como no site antigo, e, para as demais, a que fica no endereço de assets. |
 | Estilos inline da página (`.sk-*`, 700 linhas) | Views/Skins/Index.cshtml:34-734 | done | Copiados sem alterações. |
 | Token antiforgery na página | Views/Skins/Index.cshtml:736 | done |  |
 | Hero: antetítulo "Loja de skins", título "Skins", texto de abertura | Views/Skins/Index.cshtml:738-742 | done |  |
@@ -40,7 +40,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Cabeçalho da raridade: contagem de skins e faixa de preço | Views/Skins/Index.cshtml:1083 | done |  |
 | Ordem dentro de uma raridade: preço decrescente, ordem das armas, título em inglês | Models/SkinsModel.cs:70-80 | done |  |
 | Cartão: `col-xs-6 col-sm-4 col-md-3`, atributos de dados `weapon`, `rarity`, `affordable` | Views/Skins/Index.cshtml:980-981 | done |  |
-| Cartão: âncora `id="skin-{id}"` (só na aba Loja), borda de comprada, brilho de lendária | Views/Skins/Index.cshtml:982 | done |  |
+| Cartão: âncora `id="skin-{id}"` (só na aba Loja), borda nas skins compradas, brilho nas lendárias | Views/Skins/Index.cshtml:982 | done |  |
 | Cartão: miniatura, com carregamento tardio | Views/Skins/Index.cshtml:984-985 | done | Servida pelo site em `/imgs/skins/{id}.jpg`, como no site antigo, para as 196 skins que vêm com o hub. Uma skin adicionada depois é carregada de `{assets}/skins/{id}.jpg`. |
 | Cartão: rótulo da arma sobre a miniatura | Views/Skins/Index.cshtml:986 | done |  |
 | Cartão: rótulo de status "Equipada" (com ícone de check) ou "Comprada" | Views/Skins/Index.cshtml:987-996 | done |  |
@@ -195,7 +195,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Reembolso: devolve as estrelas, remove a skin e o equipamento dela | Core/Skins/Services/SkinShopService.cs:230-311 | done |  |
 | Reembolso de temporada: a cada dez minutos, as compras feitas antes da temporada atual são reembolsadas; os presentes são mantidos | BackgroundServices/SkinSeasonRefundBackgroundService.cs:8-35, Core/Skins/Services/SkinShopService.cs:246-260, 313-316 | adapted | Segue as temporadas do hub, de qualquer duração, e é uma configuração da loja que começa ligada. |
 | Catálogo: id, arma, raridade, preço, id do Workshop, fotos, autor, títulos e descrições em três idiomas, título e descrição originais | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | done | O catálogo do site antigo vem com o hub (`Core/Modules/Skins/Data/skins.json`, sem alterações) e é importado sozinho na primeira vez que a loja é ligada. O administrador pode importá-lo de novo, ou outro `skins.json`, na página do catálogo. Todos os campos são mantidos. |
-| Miniaturas em `/imgs/skins/{id}.jpg`, fotos em `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | done | As mesmas 196 miniaturas estão em `wwwroot/imgs/skins`. Fotos em `{assets}/skin-shots/{id}/`, onde o endereço de assets começa como o `SkinShotsUrl` do site antigo sem a última pasta (`https://l4d2playstats.blob.core.windows.net/assets`). Uma skin sem miniatura incluída a lê de `{assets}/skins/{id}.jpg`. |
+| Miniaturas em `/imgs/skins/{id}.jpg`, fotos em `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | done | As mesmas 196 miniaturas estão em `wwwroot/imgs/skins`. Fotos em `{assets}/skin-shots/{id}/`, onde o endereço de assets começa como o `SkinShotsUrl` do site antigo sem a última pasta (`https://l4d2playstats.blob.core.windows.net/assets`). Uma skin sem miniatura incluída usa a de `{assets}/skins/{id}.jpg`. |
 
 ## Páginas só do hub
 

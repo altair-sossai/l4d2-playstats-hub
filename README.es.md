@@ -4,7 +4,7 @@
 
 Una sola aplicación web autoalojada para servidores competitivos de Left 4 Dead 2: ranking, estadísticas de partidas, vista del servidor en vivo, tienda de skins de armas y un ranking de la comunidad, junto con los plugins de SourceMod que la alimentan.
 
-> **Estado: primera versión publicada, migración en curso.** La aplicación, los plugins, el instalador para Linux y la imagen de Docker están disponibles en las [versiones publicadas](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Los plugins todavía no se han ejecutado en un servidor de juego en vivo. Los [repositorios existentes](#repositorios-que-se-están-consolidando) siguen ejecutando el sitio de producción ([l4d2.com.br](https://l4d2.com.br/)) hasta que termine la migración.
+> **Estado: primera versión publicada, migración terminada.** La aplicación, los plugins, el instalador para Linux y la imagen de Docker están disponibles en las [versiones publicadas](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Los plugins todavía no se han ejecutado en un servidor de juego en vivo. El sitio de producción ([l4d2.com.br](https://l4d2.com.br/)) funciona con esta aplicación desde el 19 de noviembre de 2026, y los [repositorios que reemplazó](#repositorios-que-este-reemplazó) se archivaron el 22 de noviembre de 2026.
 
 ## Contenido
 
@@ -14,7 +14,7 @@ Una sola aplicación web autoalojada para servidores competitivos de Left 4 Dead
 - [Instalación](#instalación)
 - [Cómo encaja todo](#cómo-encaja-todo)
 - [Qué queda fuera de este repositorio](#qué-queda-fuera-de-este-repositorio)
-- [Repositorios que se están consolidando](#repositorios-que-se-están-consolidando)
+- [Repositorios que este reemplazó](#repositorios-que-este-reemplazó)
 - [Documentación](#documentación)
 - [Licencia](#licencia)
 
@@ -33,7 +33,7 @@ Este repositorio reúne la lógica para que cualquier dueño de servidor pueda e
 - **Servidor en vivo.** Marcador, jugadores, eventos y chat de la partida en curso, para cada servidor.
 - **Tienda de skins de armas.** Los jugadores ganan estrellas con los MVP y las gastan en skins.
 - **Ranking de la comunidad.** Los jugadores votan sobre pares de jugadores, y los votos forman un segundo ranking.
-- **Páginas para dentro del juego.** `!ranking` abre una versión ligera del ranking hecha para el navegador del propio juego.
+- **Páginas para dentro del juego.** `!ranking` abre el ranking en el navegador del propio juego, o una versión ligera hecha para él, y `!comandos` / `!commands` abren los comandos del servidor.
 - **Módulos.** El administrador activa o desactiva cada una de estas funciones.
 - **Configuración guiada.** Un asistente de primera ejecución y una página de estado que muestra si cada servidor de juego está conectado y qué falta.
 - **Tres idiomas.** Inglés, portugués y español.
@@ -95,14 +95,14 @@ Los plugins envían al sitio el archivo de estadísticas de cada mapa y la parti
 | [l4d2-playstats](https://github.com/altair-sossai/l4d2-playstats) | Paquete NuGet que analiza los archivos de estadísticas. Es útil por sí solo y este proyecto lo usa como dependencia. |
 | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets) | Modelos, materiales y fotos de las skins de armas. Ocupan más de 500 MB, así que aquí solo vive la lógica de la tienda de skins. |
 
-## Repositorios que se están consolidando
+## Repositorios que este reemplazó
 
-La migración se hace paso a paso. Los repositorios antiguos se archivan cuando termine.
+La migración se hizo paso a paso. l4d2-playstats-api y l4d2-playstats-web se archivaron el 22 de noviembre de 2026 y apuntan a este repositorio.
 
 | Repositorio | Qué es | Qué pasa con él |
 |---|---|---|
-| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | API en Azure Functions que guarda los archivos de estadísticas y calcula partidas, ranking y estrellas. | Se reemplaza por esta aplicación y luego se archiva. |
-| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Sitio web con ranking, estadísticas, página del servidor en vivo y tienda de skins de armas. | Se reemplaza por esta aplicación y luego se archiva. |
+| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | API en Azure Functions que guarda los archivos de estadísticas y calcula partidas, ranking y estrellas. | Se reemplazó por esta aplicación; se archivó el 22 de noviembre de 2026. |
+| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Sitio web con ranking, estadísticas, página del servidor en vivo y tienda de skins de armas. | Se reemplazó por esta aplicación; se archivó el 22 de noviembre de 2026. |
 | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Configuración de servidor competitivo con plugins propios. | Sus plugins de PlayStats ahora viven en [plugins/](plugins/README.es.md). |
 
 ## Documentación
@@ -118,7 +118,7 @@ La migración se hace paso a paso. Los repositorios antiguos se archivan cuando 
 | [docs/databases.es.md](docs/databases.es.md) | Usar SQL Server, PostgreSQL o MySQL. |
 | [plugins/README.es.md](plugins/README.es.md) | Todos los plugins, ajustes y comandos. |
 | [docs/roadmap.es.md](docs/roadmap.es.md) | Diseño, decisiones, qué está hecho y qué sigue abierto. |
-| [docs/in-game-browser.es.md](docs/in-game-browser.es.md) | Qué soporta el navegador que está dentro del juego. |
+| [docs/in-game-browser.es.md](docs/in-game-browser.es.md) | Qué admite el navegador que está dentro del juego. |
 | [docs/site-parity](docs/site-parity/README.es.md) | Cada pantalla del sitio que se está reemplazando, elemento por elemento, y su estado aquí. |
 | [CONTRIBUTING.es.md](CONTRIBUTING.es.md) | Cómo está organizado el código y las reglas para los cambios. |
 | [tools/screenshots](tools/screenshots/README.es.md) | La herramienta que toma las capturas de pantalla de la documentación. |

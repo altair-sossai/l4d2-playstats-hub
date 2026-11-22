@@ -201,7 +201,7 @@ docker compose start hub
 
 ## Actualizar
 
-Las versiones nuevas se publican en las [versiones publicadas](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Una actualización conserva los datos y los ajustes. Cuando una versión cambia la base de datos, el sitio actualiza las tablas por sí solo al iniciar.
+Las versiones nuevas se publican en la [página de versiones](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Una actualización conserva los datos y los ajustes. Cuando una versión cambia la base de datos, el sitio actualiza las tablas por sí solo al iniciar.
 
 En Linux:
 

@@ -4,7 +4,7 @@
 
 Esta é a forma recomendada de rodar o L4D2 PlayStats Hub. Um único comando instala tudo, e depois o próprio site guia você pelo restante.
 
-As capturas de tela desta página são a saída real do instalador, gravada em uma máquina Ubuntu 24.04 limpa, onde os comandos rodaram como root (por isso sem `sudo`). Os seus endereços, datas e código de configuração vão ser diferentes.
+As capturas de tela desta página são a saída real do instalador, gravada em uma máquina Ubuntu 24.04 limpa, onde os comandos rodaram como root (por isso sem `sudo`). Os seus endereços, as datas e o código de configuração vão ser diferentes.
 
 ## Conteúdo
 
@@ -193,7 +193,7 @@ Para levar o site para outra máquina com um zip do backup automático, execute 
 sudo install -o playstats -g playstats -m 600 secrets.key /etc/l4d2-playstats-hub/secrets.key
 ```
 
-Sem a chave original o site inicia e todos os dados estão lá, mas os segredos salvos nas configurações ficam vazios: o log avisa, e você digita de novo a chave da API da Steam e o destino do backup na área de administração. Se a chave não puder ser lida, o site também inicia, escreve o motivo no log e o mostra em **Administração > Backup**, e mantém os segredos que não consegue descriptografar até a chave voltar.
+Sem a chave original o site inicia e todos os dados estão lá, mas os segredos salvos nas configurações ficam vazios: o log avisa, e você digita de novo a chave da API da Steam e o destino do backup na área de administração. Se a chave não puder ser lida de forma alguma, o site também inicia, escreve o motivo no log e o mostra em **Administração > Backup**, e mantém os segredos que não consegue descriptografar até a chave voltar.
 
 ## Alterando a configuração
 
@@ -206,9 +206,9 @@ Quase tudo é alterado na área de administração do site. As poucas configura�
 | `Hub__SecretsKeyFile` | O arquivo da chave de segredos. Veja [A chave de segredos](#a-chave-de-segredos). | `/etc/l4d2-playstats-hub/secrets.key` |
 | `Hub__SecretsKey` | Opcional. A própria chave de segredos, 32 bytes aleatórios em base64 (`openssl rand -base64 32`), no lugar do arquivo. | vazio |
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` ou `MySql`. | `Sqlite` |
-| `Database__ConnectionString` | Como chegar ao banco de dados. | `Data Source=hub.db` |
+| `Database__ConnectionString` | Como acessar o banco de dados. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Outros proxies reversos cujos cabeçalhos `X-Forwarded-*` o site aceita: endereços IP ou redes como `10.0.0.0/8`, separados por vírgulas. Esta máquina (`127.0.0.1` e `::1`), onde o instalador coloca o Caddy, é sempre confiável. | vazio |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Opcional. A connection string de um recurso Azure Application Insights: o site passa a enviar o que as pessoas abrem, quanto tempo cada página e consulta leva e os erros. As consultas dos servidores de jogo, os avatares, os arquivos estáticos e as comparações de jogadores abertas sem referer (robôs) ficam de fora. | vazio (desligado) |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Opcional. A connection string de um recurso Azure Application Insights: o site passa a enviar o que as pessoas abrem, quanto tempo cada página e consulta leva e os erros. As consultas periódicas dos servidores de jogo, os avatares, os arquivos estáticos e as comparações de jogadores abertas sem referer (robôs) ficam de fora. | vazio (desligado) |
 
 Depois de editar o arquivo, reinicie: `playstats-hub restart`.
 

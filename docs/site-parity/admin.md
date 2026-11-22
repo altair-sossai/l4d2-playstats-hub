@@ -8,7 +8,7 @@ The pages of this area exist only in the hub: the old site has no setup wizard, 
 
 Status: `done` = present with the same content and behaviour, in the old site's look; `adapted` = present but changed, for the reason given; `not ported` = gone, for the reason given.
 
-Totals: 183 done, 11 adapted, 1 not ported.
+Totals: 178 done, 17 adapted, 1 not ported.
 
 How it was checked: every page was opened in a browser on a copy of real data (6,636 statistics files) and on an empty data folder (the whole wizard, from the setup code to "Finish"), in the dark and in the light theme, at 1280 and at 400 pixels wide, in English and in Portuguese; no page scrolls sideways at 400 pixels. Each form was posted at least once. `AdminPagesTests`, `SiteSettingsTests` and `FooterLinksTests` cover the layout, the menu, the new settings and the logo.
 
@@ -25,7 +25,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Step 1: error message when the setup code is not valid | `Views/Setup/Index.cshtml:37` | `done` |  |
 | Step 1: form `POST /setup/start` with the antiforgery token | `Views/Setup/Index.cshtml:39` | `done` |  |
 | Step 1: field "Setup code" (required, no autocomplete, keeps the typed value, filled from `?token=`) | `Views/Setup/Index.cshtml:42` | `done` |  |
-| Step 1: field "Development only: sign in as this SteamID64" (only with the development sign-in on) | `Views/Setup/Index.cshtml:47` | `done` |  |
+| Step 1: field "Development only: sign in as this SteamID64, without Steam" (only with the development sign-in on) | `Views/Setup/Index.cshtml:47` | `done` |  |
 | Step 1: button "Continue with Steam" with the Steam icon | `Views/Setup/Index.cshtml:51` | `done` |  |
 | Step 1: the code is kept in a cookie, the visitor signs in with Steam and `GET /setup/claim` makes that account the first administrator | `Controllers/SetupController.cs:67` | `done` |  |
 | Sign-in step: heading "Setup is in progress", explanation and button "Sign in with Steam" (`/login?returnUrl=/setup`) | `Views/Setup/Index.cshtml:60` | `done` |  |
@@ -252,9 +252,9 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Without scripts the form posts normally and the page reloads, with the refusal shown as an error | `Controllers/CommunityController.cs:60` | `done` |  |
 | The two players side by side, each with avatar and name | `Views/Community/_Ballot.cshtml:50` | `done` | Two Bootstrap 3 panels, side by side also on phones. |
 | Button "This one is better" under each player | `Views/Community/_Ballot.cshtml:52` | `done` |  |
-| Button "I don't know this player" under each player | `Views/Community/_Ballot.cshtml:53` | `done` |  |
+| Button "I don't know this player" under each player | `Views/Community/_Ballot.cshtml:53` | `adapted` | Replaced by one button, "I don't know one of them", under the two players (also the ↑ key). |
 | Button "They are at the same level" | `Views/Community/_Ballot.cshtml:69` | `done` |  |
-| Button "I don't know either of them" | `Views/Community/_Ballot.cshtml:70` | `done` |  |
+| Button "I don't know either of them" | `Views/Community/_Ballot.cshtml:70` | `adapted` | Replaced by the same "I don't know one of them" button. |
 | Counter "Votes left today: N / per day" | `Views/Community/_Ballot.cshtml:74` | `done` |  |
 
 ## Community ranking administration (`/admin/community`)
@@ -270,7 +270,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 | Form `POST /admin/community` with the antiforgery token, button "Save", message "Saved." | `Views/CommunityAdmin/Index.cshtml:23` | `done` |  |
 | Panel "Voting": "Minimum matches to vote" | `Views/CommunityAdmin/Index.cshtml:30` | `done` |  |
 | Panel "Voting": "Votes per day" (with its minimum) | `Views/CommunityAdmin/Index.cshtml:34` | `done` |  |
-| Panel "Voting": "Minimum matches to be compared" and the help text | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
+| Panel "Voting": "Minimum matches to be compared and listed" and the help text | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
 | Panel "Rating": "Minimum comparisons to be listed" | `Views/CommunityAdmin/Index.cshtml:51` | `done` |  |
 | Panel "Rating": "Elo K factor" (with its limits) | — | `adapted` | Removed on 21 November 2026: the rating became a Bradley–Terry fit of all the votes, which has no K factor. |
 | Panel "Rating": "Initial rating" and the help text | `Views/CommunityAdmin/Index.cshtml:59` | `done` |  |
@@ -295,7 +295,7 @@ How it was checked: every page was opened in a browser on a copy of real data (6
 
 | Item | Where today | Status | Notes |
 |---|---|---|---|
-| Bootstrap 5 styles and `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | It is the point of this work: the pages now use the Bootstrap 3 themes of `_Layout`. `_Bootstrap5Layout` and `wwwroot/lib/bootstrap` are still in the repository for the folders that other branches convert. |
+| Bootstrap 5 styles and `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | It is the point of this work: the pages now use the Bootstrap 3 themes of `_Layout`. `_Bootstrap5Layout` and `wwwroot/lib/bootstrap` were removed once every page was converted. |
 | htmx loaded on every page | `Views/Shared/_Bootstrap5Layout.cshtml:114` | `adapted` | `_Layout` does not load it. The three places that need it load it in their `Scripts` section: the game server page, the server step of the wizard and the vote page. |
-| `site.css` classes used by these pages (status dot, wizard steps, configuration block, avatars) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | What these pages still need (status dot, wizard steps, configuration block, grid of panels) is in the partial `Views/Shared/_AdministrationStyles.cshtml`, next to `_AdminStyles`; the ballot styles are in the vote page. |
+| `site.css` classes used by these pages (status dot, wizard steps, configuration block, avatars) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | What these pages still need (status dot, wizard steps, configuration block, grid of panels) is in `wwwroot/css/administration.css`, loaded by the `_AdministrationStyles` partial next to `_AdminStyles`; the ballot styles are in `wwwroot/css/pages/community-vote.css`. |
 | Error and "Saved." messages at the top of the page | `Views/Shared/_Bootstrap5Layout.cshtml:100` | `done` | By `_Layout`. |

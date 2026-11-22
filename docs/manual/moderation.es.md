@@ -37,13 +37,13 @@ Con el módulo del chat del sitio activado, los jugadores que iniciaron sesión 
 
 ![Los límites de los mensajes enviados desde el sitio](../images/es/admin-chat-bans-limits.webp)
 
-La página lista todos los baneos, con el jugador, la fecha, el motivo y quién baneó. Busca por nombre, Steam ID o motivo. Haz clic en un baneo para ver sus detalles, cambiar el motivo y **Guardar**, o quitarlo.
+La página lista todos los baneos, con el jugador, la fecha, el motivo y quién baneó. Busca por nombre, Steam ID o motivo. Haz clic en un baneo para ver sus detalles, cambiar el motivo y guardarlo con **Guardar**, o quitarlo.
 
 **Añadir**, a la derecha de la búsqueda, abre una ventana que pide el jugador y un motivo:
 
 ![Agregar un baneo del chat](../images/es/admin-chat-bans-add.webp)
 
-- Escribe un Steam ID en cualquier formato o un enlace de perfil, o elige de la lista. **Mensajes recientes del chat** lista a quienes escribieron en el chat del sitio en la última hora, así que el jugador que se acaba de portar mal está a un clic. Cuando escribes un ID, el nombre y la foto del jugador aparecen debajo del campo tras un momento.
+- Escribe un Steam ID en cualquier formato o un enlace de perfil, o elige de la lista. **Mensajes recientes del chat** lista a quienes escribieron en el chat del sitio en la última hora, así que el jugador que se acaba de portar mal está a un clic. Si en cambio escribes un ID, el nombre y la foto del jugador aparecen debajo del campo tras un momento.
 - El motivo es opcional, de hasta 300 caracteres. El jugador baneado lo ve en lugar del cuadro de chat.
 
 Un baneo se aplica al chat del sitio de todos los servidores de juego. No silencia al jugador dentro del juego; eso se hace con las herramientas del servidor de juego.
@@ -56,7 +56,7 @@ Con el módulo de comandos remotos activado, los administradores pueden enviar c
 
 1. Elige el servidor.
 2. Escribe el comando: `sm_command`, `!command` o `/command`, con sus argumentos. `!forcestart` y `/forcestart` se envían como `sm_forcestart`. Un comando no puede contener `;` y tiene como máximo 256 caracteres.
-   O haz clic en el botón de la terminal junto a la caja: lista los comandos de la terminal de la página en vivo con lo que hace cada uno y pide cada argumento paso a paso (modo de juego, campaña, equipo, duración, motivo; el nombre del jugador se escribe, ya que esta página no lista quién está conectado). El comando armado llena la caja, y aún puedes editarlo antes de enviarlo.
+   O haz clic en el botón de la terminal junto al cuadro: lista los comandos de la terminal de la página en vivo con lo que hace cada uno y pide cada argumento paso a paso (modo de partida, campaña, equipo, duración, motivo; el nombre del jugador se escribe, ya que esta página no lista quién está conectado). El comando armado llena el cuadro, y aún puedes editarlo antes de enviarlo.
 3. Haz clic en **Enviar**.
 
 El comando queda en cola. El servidor de juego le pide al sitio los comandos en cola en su próxima consulta y ejecuta el comando. Si ningún servidor de juego lo recoge en 5 minutos, se descarta.
@@ -84,8 +84,8 @@ Las mismas cuentas se muestran en la página del jugador como [Cuentas relaciona
 
 **Administración > Nombres forzados** guarda una lista de jugadores que siempre deben usar un nombre fijo.
 
-- En el sitio, el nombre forzado reemplaza el nombre del jugador en todas partes: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo, el chat, el ranking de la comunidad, las páginas del juego y la administración. La búsqueda de jugadores también encuentra al jugador por el nombre forzado. Los nombres usados antes siguen en la lista de nombres anteriores.
-- En los servidores de juego, el plugin `l4d2_forced_names` le cambia el nombre al jugador cuando entra y cada vez que se lo cambia. Con `l4d2_forced_names_hub 1`, el plugin lee esta lista al comienzo de cada ronda y la junta con su archivo `configs/forced_names.cfg`; cuando los dos tienen el mismo jugador, vale el nombre del sitio.
+- En el sitio, el nombre forzado reemplaza el nombre del jugador en todas partes: los rankings, la página del jugador, las partidas y sus estadísticas, el servidor en vivo, el chat, el ranking de la comunidad, las páginas dentro del juego y la administración. La búsqueda de jugadores también encuentra al jugador por el nombre forzado. Los nombres usados antes siguen en la lista de nombres anteriores.
+- En los servidores de juego, el plugin `l4d2_forced_names` le cambia el nombre al jugador cuando entra y cada vez que este cambia su nombre. Con `l4d2_forced_names_hub 1`, el plugin lee esta lista al comienzo de cada ronda y la combina con su archivo `configs/forced_names.cfg`; cuando los dos tienen el mismo jugador, vale el nombre del sitio.
 
 ![Los nombres forzados](../images/es/admin-forced-names.webp)
 

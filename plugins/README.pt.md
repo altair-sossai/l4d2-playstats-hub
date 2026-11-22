@@ -35,6 +35,7 @@ plugins/
 │   │   ├── scripting/               os fontes (.sp) e os arquivos include para compilá-los
 │   │   ├── translations/            textos do chat: inglês, pt, es, chi e zho
 │   │   └── configs/weapon_skins.cfg as armas e skins que o plugin de skins conhece
+│   ├── materials/sprites/           os ícones das patentes (patent_<level>_v02.vmt e .vtf)
 │   └── cfg/playstats.cfg            suas configurações: o único arquivo que você edita
 ├── build.ps1, build.sh              compilam os plugins em left4dead2/addons/sourcemod/plugins e na pasta optional dela
 ├── README.md, LICENSE, NOTICE.md    este guia e a licença (não vão para o servidor)
@@ -67,7 +68,7 @@ Só o `l4d2_playstats_sync` é obrigatório. Cada um dos outros funciona sem os 
 | `l4d2_playstats` | Os arquivos de estatísticas que o `l4d2_playstats_sync` envia | Sim, em `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
 | `readyup`, `pause`, `l4d_boss_percent`, `l4d2_hybrid_scoremod` ou `l4d2_hybrid_scoremod_zone`, `l4d2_skill_detect` | Opcionais: dados extras ao vivo no `l4d2_gameinfo_sync` (ready-up, pausas, porcentagens dos chefes, bônus, skeets e outros eventos) | Sim, em `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
 | `l4d2_mix`, `l4d2_anti_cheat` | Opcionais: o evento "mix iniciado" e o status do anti-cheat no `l4d2_gameinfo_sync` | Não | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) |
-| Sprites das patentes, modelos e materiais das skins, e um FastDL | `l4d2_show_patent_icon`, `l4d2_weapon_skins` | Não | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets), veja [Arquivos de skins de armas e de patentes](#arquivos-de-skins-de-armas-e-de-patentes) |
+| Modelos e materiais das skins, e um FastDL para eles e para os sprites das patentes (os sprites vêm neste pacote) | `l4d2_show_patent_icon`, `l4d2_weapon_skins` | Não | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets), veja [Arquivos de skins de armas e de patentes](#arquivos-de-skins-de-armas-e-de-patentes) |
 | Um servidor de jogo cadastrado no site | Todos | Não | O site: **Administração → Servidores de jogo** |
 
 Os plugins são compilados com o SourceMod 1.12.0.7260 e precisam do SourceMod 1.12 ou mais novo. Os plugins opcionais são procurados pelo nome enquanto o servidor roda: quando um deles não está carregado, o `l4d2_gameinfo_sync` continua funcionando e só deixa de fora aquela parte. Os arquivos include em `scripting/include` só são necessários para compilar; `l4d2util` e `colors` são compilados dentro dos plugins e não precisam de nada no servidor.
@@ -125,9 +126,9 @@ Onde defini-las:
 - Com `confogl_addcvar` na configuração de um modo de partida, por exemplo `cfg/cfgogl/zonemod/zonemod.cfg`, só para uma configuração que precisa ser diferente entre os modos. Depois apague essa linha de `cfg/playstats.cfg`: uma configuração nos dois lugares muda de um valor para o outro a cada mapa, e o Confogl mostra cada mudança no chat.
 - Nunca coloque `playstats_url` ou `playstats_token` em um modo de partida nem com `confogl_addcvar`: o Confogl mostra no chat o valor antigo e o novo das configurações que ele acompanha, o que mostraria o token para os jogadores.
 
-A cvar do token é protegida: o jogo nunca envia o valor dela para os jogadores, e o `sm_cvar` do SourceMod só a mostra para admins com a flag de senha. Os plugins nunca a imprimem.
+A cvar do token é protegida: o jogo nunca envia o valor dela para os jogadores, e o `sm_cvar` do SourceMod só a mostra para admins com a flag de senha. Os plugins nunca a mostram.
 
-A página que o `l4d2_ranking` abre é `<address>/ingame?steamid=<SteamID64 of the player>`. O navegador dentro do jogo é o Chromium 18, de 2012, e não se espera que ele abra sites HTTPS atuais. Se o painel ficar em branco, sirva o site em HTTP simples em outro endereço ou porta e coloque esse endereço em `playstats_ingame_url`. Veja [docs/in-game-browser.pt.md](../docs/in-game-browser.pt.md).
+A página que o `l4d2_ranking` abre é `<address><ranking_motd_path>?steamid=<SteamID64 of the player>`: a página inicial por padrão, `/ingame` para as páginas compactas. O `!comandos` e o `!commands` abrem `<address>/ingame/commands?steamid=...` (`ranking_commands_path`). O navegador dentro do jogo é o Chromium 18, de 2012, e não se espera que ele abra sites HTTPS atuais. Se o painel ficar em branco, sirva o site em HTTP simples em outro endereço ou porta e coloque esse endereço em `playstats_ingame_url`. Veja [docs/in-game-browser.pt.md](../docs/in-game-browser.pt.md).
 
 O `l4d2_gameinfo_sync` envia ao site o endereço IP de cada jogador que se conecta, e o site o usa para encontrar contas que compartilham um endereço. Ele também executa, como comandos do servidor, os comandos que os administradores do site enviam pela página **Comandos remotos**: quem controla uma conta de administrador do site pode executar qualquer comando do servidor, como com RCON. Ele também executa o `sm_aac sync` que o site enfileira depois de uma alteração nas configurações do Anti-Cheat, mesmo com o módulo de comandos remotos desligado.
 
@@ -260,7 +261,7 @@ Toda requisição leva o cabeçalho `Authorization: <playstats_token>`. Os valor
 |---|---|
 | `l4d2_playstats_sync` | `POST /api/servers/heartbeat`, `POST /api/statistics` |
 | `l4d2_gameinfo_sync` | `PUT /api/game-info/configuration`, `PUT /api/game-info/round`, `PUT /api/game-info/scoreboard`, `PUT /api/game-info/players`, `PUT /api/game-info/messages`, `POST /api/game-info/events`, `POST /api/game-info/player-connection-info`, `GET /api/game-info/server-command/dequeue`, `GET /api/external-chat` |
-| `l4d2_ranking` | Nenhuma. Ele abre `/ingame?steamid=...` e `/ingame/commands?steamid=...` no jogo do jogador. |
+| `l4d2_ranking` | Nenhuma. Ele abre `ranking_motd_path` (`/` por padrão) e `ranking_commands_path` (`/ingame/commands`), cada um com `?steamid=...`, no jogo do jogador. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
 | `l4d2-anti-cheat` (à parte, 1.5.0 ou mais novo, com `l4d2_web_url` e `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |

@@ -31,7 +31,7 @@ Enquanto a configuração não for concluída, todas as páginas do site levam a
 
 ![A primeira página do assistente pede o código de configuração](../images/pt/wizard-setup-code.webp)
 
-Cole o código de configuração e clique em **Continuar com a Steam**. O Steam pede que você faça login e manda você de volta para o site.
+Cole o código de configuração e clique em **Continuar com a Steam**. A Steam pede que você faça login e manda você de volta para o site.
 
 ![O código de configuração colado](../images/pt/wizard-setup-code-filled.webp)
 

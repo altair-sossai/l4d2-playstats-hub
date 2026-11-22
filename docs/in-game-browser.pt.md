@@ -82,7 +82,7 @@ O layout foi verificado renderizando duas caixas e medindo se elas ficam lado a 
 
 ## Rede
 
-Medido contra um servidor HTTP simples na mesma máquina.
+Medido com um servidor HTTP simples na mesma máquina.
 
 | Recurso | Resultado |
 |---|---|
@@ -99,7 +99,7 @@ A build de teste do jogo fechou sozinha antes que a página chegasse a estes doi
 
 ## O que isso significa para o front-end
 
-**Funcionam no jogo, comprovadamente:** Bootstrap 3.4.1 e jQuery 1.12.4, que o site atual usa em produção por esse motivo.
+**Funcionam no jogo, comprovadamente:** Bootstrap 3.4.1 e jQuery 1.12.4, que o site antigo usava em produção por esse motivo, e que este site também usa.
 
 **Devem falhar no jogo**, com base nas medições:
 
@@ -124,6 +124,6 @@ A build de teste do jogo fechou sozinha antes que a página chegasse a estes doi
 **A abordagem adotada:** duas camadas, em vez de prender o site inteiro a 2012.
 
 - O site principal mantém a base do site que ele substitui: Bootstrap 3 e jQuery, que sabidamente funcionam dentro do jogo, com Chart.js e diffDOM.
-- Três páginas para o jogo ficam em `/ingame`: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. Elas seguem as regras acima e são o que o plugin do jogo abre.
+- Quatro páginas para o jogo ficam em `/ingame`: o ranking da temporada, o resumo do jogador que abriu o painel, as últimas partidas e os comandos do servidor. Elas seguem as regras acima. O `!comandos` e o `!commands` abrem a página de comandos, e o `!ranking` abre a página do ranking quando `ranking_motd_path` é `/ingame`.
 
-As páginas disponíveis no jogo existem em dobro, então esse conjunto continua pequeno. Um teste falha se uma delas começar a usar algo que este navegador não tem. O [roadmap](roadmap.pt.md#front-end) tem o restante das decisões de front-end.
+As páginas disponíveis no jogo existem em dobro, por isso esse conjunto é mantido pequeno. Um teste falha se uma delas começar a usar algo que este navegador não tem. O [roadmap](roadmap.pt.md#front-end) tem o restante das decisões de front-end.

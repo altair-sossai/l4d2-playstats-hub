@@ -66,7 +66,7 @@ After the change, the site rebuilds the matches around that map, so the winner, 
 
 The game server sends one statistics file per map. The site joins them into matches with these rules:
 
-1. Files are kept apart by game server, by season, and by configuration and team size. A match never mixes two servers, two seasons or two configurations.
+1. Files are kept apart by game server, by season, and by configuration and team size. A match never mixes two servers, two seasons or two configurations. Files of a game server more than 6 hours apart (the setting **Hours without files that split two matches**, in [Settings](administration.md#ranking-points)) also start a new match.
 2. Maps of the same campaign played in order make one match. `c2m1_highway` followed by `c2m2_fairgrounds` is one match. If the next file is a map of another campaign, or the same campaign out of order, a new match starts.
 3. Which maps belong to which campaign, and in which order, comes from the [campaign list](game-modes-and-campaigns.md#campaigns). Custom campaigns can be added there.
 4. A map that ended 0 to 0 is ignored. A map that appears twice in a row is counted once.

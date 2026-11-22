@@ -2,7 +2,7 @@
 
 🌐 [English](in-game-pages.md) | **Português** | [Español](in-game-pages.es.md)
 
-Os jogadores podem ver o ranking sem sair do Left 4 Dead 2. O comando de chat `!ranking` abre uma versão leve do site no painel do próprio jogo. Com o plugin `l4d2_ranking`, ele também abre sozinho para os jogadores que entram antes de a partida começar.
+Os jogadores podem ver o ranking sem sair do Left 4 Dead 2. O comando de chat `!ranking` abre o site no painel do próprio jogo: por padrão o ranking da página inicial, ou, com `ranking_motd_path "/ingame"` no servidor de jogo, a versão leve descrita aqui. O `!comandos` e o `!commands` sempre abrem a página Comandos dela. Com o plugin `l4d2_ranking`, ele também abre sozinho para os jogadores que entram antes de a partida começar.
 
 [Voltar ao manual](README.pt.md)
 

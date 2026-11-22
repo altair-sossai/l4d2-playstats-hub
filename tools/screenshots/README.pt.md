@@ -11,7 +11,7 @@ Tira as capturas de tela usadas pela documentação e as salva em `docs/images/<
 | `switch` | A instalação do l4d2.com.br para [Trocando o site antigo](../../docs/switch-from-old-site.pt.md): o assistente e as páginas de administração com os valores desse site, e a visão geral depois da importação. | Um site iniciado com uma pasta de dados vazia, o código de configuração dele e o logo do site. Para a visão geral, a pasta de dados depois da importação. |
 | `site` | Todas as páginas públicas, a loja de skins, o ranking da comunidade, as páginas dentro do jogo, o layout de celular, os dois temas e todas as páginas da administração. | Um site com dados, logado pelo login de desenvolvimento. |
 
-As listas de capturas ficam em [site.js](site.js), [wizard.js](wizard.js) e [terminal-shots.json](terminal-shots.json). Cada captura tem um nome, uma página, uma largura (1280 para desktop, 390 para celular, 900x450 para as páginas dentro do jogo), as ações feitas antes da captura e o que guardar: a página inteira, a parte visível ou um elemento. As imagens são WebP com qualidade 80.
+As listas de capturas ficam em [site.js](site.js), [wizard.js](wizard.js) e [terminal-shots.json](terminal-shots.json). Cada captura tem um nome, uma página, uma largura (1280 para desktop, 390 para celular, 900x450 para as páginas dentro do jogo), as ações feitas antes da captura e o que guardar: a página inteira, a parte visível ou um elemento. As imagens são WebP com qualidade 80. Depois de abrir uma página, a ferramenta move o ponteiro uma vez, como um visitante faria, já que o site só busca os jogadores online, mostrados na barra do menu, depois da primeira interação.
 
 ## Rodando o site para ela
 
@@ -58,7 +58,7 @@ node tools/screenshots/fictional-data.js --from /path/to/real/data --to /path/to
 
 - Ele só lê a pasta do `--from`, e para se outro programa, como o site, estiver com o banco de dados dela aberto (detectado no Windows e no Linux). Pare o site antes, ou passe uma cópia da pasta.
 - A pasta do `--to` precisa ser nova ou estar vazia. Ela recebe o banco de dados, o logo e avatares novos; os avatares reais e as chaves não são copiados.
-- Cada SteamID vira um cujo número de conta começa em 4.000.000.000, uma faixa que o Steam ainda não usa, então nenhum link de perfil leva a uma pessoa real. Os administradores vêm primeiro, então o primeiro é sempre `76561201960265728`. Os SteamIDs mudam em todas as tabelas, nas configurações e nos arquivos de estatísticas brutos, em todos os formatos em que aparecem (SteamID64, `STEAM_x:y:z` e `[U:1:n]`).
+- Cada SteamID vira um cujo número de conta começa em 4.000.000.000, uma faixa que a Steam ainda não usa, então nenhum link de perfil leva a uma pessoa real. Os administradores vêm primeiro, então o primeiro é sempre `76561201960265728`. Os SteamIDs mudam em todas as tabelas, nas configurações e nos arquivos de estatísticas brutos, em todos os formatos em que aparecem (SteamID64, `STEAM_x:y:z` e `[U:1:n]`).
 - Cada nome vira um apelido de jogador inventado, o mesmo para a mesma pessoa em todo lugar, incluindo os arquivos de estatísticas brutos e os nomes anteriores. Um jogador que usou vários nomes recebe vários nomes fictícios.
 - Cada jogador que tinha avatar ganha um novo, um quadrado colorido com iniciais ou uma forma simples, desenhado no Edge ou no Chrome.
 - Os endereços IP das conexões de jogadores viram endereços das faixas de documentação (`198.51.100.0/24` e `192.0.2.0/24`). Os servidores de jogo viram `L4D2 Competitive #1`, `#2`... em `203.0.113.10`, com os identificadores `l4d2-competitive-1`, `l4d2-competitive-2`...: os tokens deles mantêm a mesma chave com o novo identificador.
@@ -73,7 +73,7 @@ O comando `site` espera uma pasta de dados, como a cópia fictícia acima, com:
 - todos os módulos ligados em **Administração > Módulos**;
 - dois servidores de jogo, com os tokens deles;
 - alguns votos da comunidade, um banimento do chat, um comando remoto e uma conexão de jogador, para que essas páginas não fiquem vazias;
-- alguns backups em **Administração > Backup**, um deles com falha, para que a lista de backups recentes não fique vazia. O Azurite, o emulador do Azure Storage, pode recebê-los na própria máquina: inicie-o com `npx azurite-blob --skipApiVersionCheck`, salve a string de conexão dele (`UseDevelopmentStorage=true` ou a completa, com `devstoreaccount1`) e um nome de contêiner, e clique em **Fazer backup agora**. O print `admin-backup` então preenche o formulário com um endereço de contêiner de exemplo, que nunca é salvo.
+- alguns backups em **Administração > Backup**, um deles com falha, para que a lista de backups recentes não fique vazia. O Azurite, o emulador do Azure Storage, pode recebê-los na própria máquina: inicie-o com `npx azurite-blob --skipApiVersionCheck`, salve a string de conexão dele (`UseDevelopmentStorage=true` ou a completa, com `devstoreaccount1`) e um nome de contêiner, e clique em **Fazer backup agora**. A captura `admin-backup` então preenche o formulário com um endereço de contêiner de exemplo, que nunca é salvo.
 
 ```bash
 node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --admin <SteamID64 of an administrator> --player <SteamID64 of a player with matches and stars> --token <token of server 1> --token <token of server 2>
@@ -81,7 +81,7 @@ node tools/screenshots/capture.js site --base http://localhost:5103 --lang en --
 
 Antes das capturas do servidor ao vivo, ela envia a partida ao vivo de cada servidor, do jeito que os plugins fazem, com os jogadores do topo do ranking do site, e espera o atraso da página ao vivo. Reinicie o site antes de cada idioma, para que o chat ao vivo comece vazio. Antes das capturas da loja, ela faz o reembolso das compras do jogador e depois compra a primeira skin que o jogador consegue pagar. As capturas de banimento do chat adicionam um banimento para o `--banned`. Antes da captura das configurações do Anti-Cheat, ela coloca os dois primeiros jogadores do ranking na whitelist e os seis seguintes na lista obrigatória, e salva o modo. Ela também muda os dados, então use uma cópia que possa ser descartada: bloqueia dois votantes do ranking da comunidade para a página de votação bloqueada, adiciona o sexto jogador do ranking como administrador e importa nomes forçados para os jogadores do 11º ao 16º e adiciona um para o 17º. Use uma cópia nova dos dados para cada idioma.
 
-O login de desenvolvimento não tem nome do Steam, então ele usa o nome que o site conhece para esse jogador. O menu, as compras e os registros de auditoria só mostram `Player <SteamID64>` para um usuário que o site não conhece.
+O login de desenvolvimento não tem nome da Steam, então ele usa o nome que o site conhece para esse jogador. O menu, as compras e os registros de auditoria só mostram `Player <SteamID64>` para um usuário que o site não conhece.
 
 ## As janelas de terminal
 

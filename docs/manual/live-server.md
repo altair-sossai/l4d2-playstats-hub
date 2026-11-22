@@ -22,7 +22,7 @@ With one game server, **Server** opens its live page directly. With two or more,
 
 ![The server picker with two game servers](../images/en/servers.webp)
 
-While a server is online, the menu bar shows a small green badge with the number of players next to the site name. It links to the server page.
+While a server is online, the menu bar shows a small green badge with the number of players next to the site name. It links to the server page. It appears after the first mouse move, scroll, tap or key on the page, and is not refreshed while the tab is in the background.
 
 Only enabled servers appear. A server is enabled or disabled on its page in [Administration > Game servers](administration.md#game-servers).
 

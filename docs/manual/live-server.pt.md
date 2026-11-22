@@ -22,7 +22,7 @@ Com um único servidor de jogo, **Servidor** abre direto a página ao vivo dele.
 
 ![A escolha de servidor com dois servidores de jogo](../images/pt/servers.webp)
 
-Enquanto um servidor está online, a barra do menu mostra um pequeno selo verde com o número de jogadores ao lado do nome do site. Ele leva à página do servidor.
+Enquanto um servidor está online, a barra do menu mostra um pequeno selo verde com o número de jogadores ao lado do nome do site. Ele leva à página do servidor. Ele aparece depois do primeiro movimento do mouse, rolagem, toque ou tecla na página, e não é atualizado enquanto a aba está em segundo plano.
 
 Só os servidores ativados aparecem. Um servidor é ativado ou desativado na página dele em [Administração > Servidores de jogo](administration.pt.md#servidores-de-jogo).
 
@@ -47,7 +47,7 @@ De cima para baixo:
 - **Mensagens do chat**: os eventos e o chat da partida.
 - **Um botão `connect`** embaixo, que copia o comando para entrar no servidor.
 
-A página se atualiza sozinha. O site avisa assim que algo muda, e ela pergunta de novo por conta própria quando esse canal não pode ser aberto.
+A página se atualiza sozinha. O site a avisa assim que algo muda, e ela pergunta de novo por conta própria quando esse canal não pode ser aberto.
 
 ## Eventos e chat
 

@@ -84,7 +84,7 @@ Los tres plugins de `optional/` solo se cargan con un modo de partida (paso 5), 
 |---|---|---|
 | `l4d2_playstats_sync` | Envía los archivos de estadísticas y le avisa al sitio que el servidor está activo. | Siempre necesario |
 | `l4d2_gameinfo_sync` | Envía la partida en vivo: marcador, jugadores, eventos y chat. | Servidor en vivo |
-| `l4d2_ranking` | Abre el ranking dentro del juego con `!ranking`. | Ranking |
+| `l4d2_ranking` | Abre el ranking dentro del juego con `!ranking`, y los comandos del servidor con `!comandos` o `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Muestra el ícono de patente de cada jugador en el juego. | Ranking |
 | `l4d2_weapon_skins` | Aplica las skins de armas que tienen los jugadores. | Tienda de skins de armas |
 
@@ -107,7 +107,7 @@ Cada ajuste va en un solo lugar: `cfg/playstats.cfg` para los que son iguales en
 
 ## Paso 5: carga los plugins en tus modos de partida
 
-Cuando carga un modo de partida de Competitive Rework, descarga todos los plugins y carga solo los de sus listas. La lista compartida por todos los modos es `cfg/sharedplugins.cfg`. Agrégale estas líneas, dejando fuera los plugins que borraste:
+Cuando se carga un modo de partida de Competitive Rework, este descarga todos los plugins y carga solo los de sus listas. La lista compartida por todos los modos es `cfg/sharedplugins.cfg`. Agrégale estas líneas, dejando fuera los plugins que borraste:
 
 ```text
 sm plugins load optional/l4d2_playstats_sync.smx
@@ -176,7 +176,7 @@ El plugin de anti-cheat (`l4d2-anti-cheat.smx`, versión 1.5.0 o posterior) no f
 | `l4d2_web_secret` | El token de este servidor de juego, el mismo valor que `playstats_token`. Cada servidor de juego tiene el suyo. |
 | `anti_cheat_mode` | `0`: todos deben usar el Anti-Cheat, excepto los jugadores de la whitelist. `1`: solo los jugadores de la lista obligatoria deben usarlo (el valor predeterminado del plugin). El modo guardado en **Administración → Ajustes del Anti-Cheat** prevalece; este valor solo cuenta hasta que se guarde un modo allí. |
 
-Con `anti_cheat_enabled 0` en los modos de partida, la versión 1.6.0 del plugin permite que los jugadores activen el Anti-Cheat en la partida con `!aac vote`; ver [Activado por los jugadores](manual/anti-cheat.es.md#activado-por-los-jugadores).
+Con `anti_cheat_enabled 0` en los modos de partida, la versión 1.6.0 del plugin permite que los jugadores activen el Anti-Cheat en la partida con `!aac vote`; consulta [Activado por los jugadores](manual/anti-cheat.es.md#activado-por-los-jugadores).
 
 Nunca definas `l4d2_web_secret` con `confogl_addcvar`, por el mismo motivo que `playstats_token`. Los demás ajustes del plugin, como la dirección y el token de su propio servicio, no cambian.
 
@@ -190,7 +190,7 @@ La respuesta trae el modo (`null` hasta que se guarde uno) y las dos listas. `40
 
 ## El ranking dentro del juego
 
-`!ranking` abre el ranking de la página de inicio del sitio en el navegador del propio juego; con `ranking_motd_path "/ingame"` abre una versión más sencilla y compacta. Las páginas abiertas desde el juego no muestran la invitación a votar en el ranking de la comunidad. Ese navegador es de 2012 y no se espera que abra sitios HTTPS actuales, así que dale una dirección HTTP simple de tu sitio en `cfg/playstats.cfg`:
+`!ranking` abre el ranking de la página de inicio del sitio en el navegador del propio juego; con `ranking_motd_path "/ingame"` abre una versión más sencilla y compacta. `!comandos` y `!commands` abren la página de comandos de esa versión compacta, `/ingame/commands` (`ranking_commands_path`). Las páginas abiertas desde el juego no muestran la invitación a votar en el ranking de la comunidad. Ese navegador es de 2012 y no se espera que abra sitios HTTPS actuales, así que dale una dirección HTTP simple de tu sitio en `cfg/playstats.cfg`:
 
 ```text
 playstats_ingame_url "http://203.0.113.10:5080"
@@ -221,7 +221,7 @@ Authorization: <el token del servidor>
 | `400` | La lista está vacía, es impar, tiene más de 16, repite un jugador o tiene un SteamID64 inválido. |
 | `404` | El módulo del ranking de la comunidad está desactivado. |
 
-El sitio prueba todas las divisiones, se queda con las que dejan los equipos más cercanos en puntuación media, mejor jugador, dispersión e incertidumbre, y sortea una de ellas, para que los mismos jugadores no caigan siempre en los mismos equipos. Qué equipo empieza como superviviente también se sortea.
+El sitio prueba todas las divisiones, se queda con las que dejan los equipos más cercanos en puntuación media, mejor jugador, dispersión e incertidumbre, y sortea una de ellas, para que los mismos jugadores no caigan siempre en los mismos equipos. Qué equipo empieza como supervivientes también se sortea.
 
 ## Qué significa cada estado
 
@@ -261,7 +261,7 @@ Para el cambio completo del sitio anterior a este, con el orden de los pasos y c
 | "URL not set" o "Token not set" | Las líneas no se ejecutaron. Verifica que `cfg/server.cfg` termine con `exec playstats.cfg` y que tus dos líneas de `cfg/playstats.cfg` no empiecen con `//`. |
 | "Unknown identifier", "Wrong key" o "Token not accepted" | Pega de nuevo el token, o genera una nueva clave en el sitio. |
 | "Cannot reach ..." | El servidor de juego no puede abrir el sitio. Prueba la dirección desde esa máquina con `curl -I`, revisa el firewall, y consulta [Solución de problemas](../plugins/README.es.md#solución-de-problemas) para los errores de HTTPS. |
-| Funciona fuera de las partidas, se detiene cuando carga un modo de partida | Haz el paso 5. |
+| Funciona fuera de las partidas, se detiene cuando se carga un modo de partida | Haz el paso 5. |
 | Conectado, pero no llega ningún archivo de estadísticas | Juega un mapa completo en versus. Verifica que `sm_playstats_test` diga que la escritura de estadísticas está activada durante la partida. |
 | Las partidas llegan pero no cuentan para el ranking | En el sitio, abre **Administración → Modos de juego** y mira en qué regla cae la configuración. |
 | `!ranking` abre un panel vacío | Pon en `playstats_ingame_url` una dirección HTTP simple del sitio. |

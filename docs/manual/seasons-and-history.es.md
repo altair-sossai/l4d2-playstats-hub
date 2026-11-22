@@ -2,7 +2,7 @@
 
 🌐 [English](seasons-and-history.md) | [Português](seasons-and-history.pt.md) | **Español**
 
-El ranking se juega por temporadas. Al inicio de cada temporada todos vuelven a empezar desde cero experiencia. Las temporadas pasadas no se pierden: todavía se pueden consultar su ranking, sus partidas y sus jugadores, y también los de años completos y de todo el tiempo.
+El ranking se juega por temporadas. Al inicio de cada temporada todos vuelven a empezar con cero de experiencia. Las temporadas pasadas no se pierden: todavía se pueden consultar su ranking, sus partidas y sus jugadores, y también los de años completos y de todo el tiempo.
 
 [Volver al manual](README.es.md)
 
@@ -34,7 +34,7 @@ La página del ranking indica cuántos días quedan: **Próximo reinicio en N d�
 
 El ranking, la lista de jugadores y la página del jugador tienen este selector. Lista:
 
-- todas las temporadas, agrupadas por año, de la más reciente a la más antigua, con la actual marcada;
+- las temporadas del año actual, de la más reciente a la más antigua, con la actual marcada (una temporada más antigua todavía se abre desde su dirección, como un enlace compartido);
 - cada año calendario;
 - todo el tiempo.
 
@@ -42,11 +42,11 @@ Elegir un período cambia todos los números de la página: posiciones, victoria
 
 ## Historial
 
-El ranking final de una temporada pasada, de un año o de todo el tiempo está en la [lista de jugadores](players.es.md#la-lista-de-jugadores): elige el período y deja la **Vista general**, que muestra las victorias, derrotas, juegos, premios de MVP, porcentaje de victorias y rage quits de cada jugador en el orden del ranking. La lista de jugadores reemplazó la antigua página Historial; sus direcciones, como `/history/all-time` o `/history/2025`, abren la lista de jugadores del mismo período.
+El ranking final de una temporada pasada, de un año o de todo el tiempo está en la [lista de jugadores](players.es.md#la-lista-de-jugadores): elige el período (una temporada del año actual, cualquier año o todo el tiempo; una temporada más antigua se abre desde su dirección) y deja seleccionada la **Vista general**, que muestra las victorias, derrotas, juegos, premios de MVP, tank wipes, porcentaje de victorias y rage quits de cada jugador en el orden del ranking. La lista de jugadores reemplazó la antigua página Historial; sus direcciones, como `/history/all-time` o `/history/2025`, abren la lista de jugadores del mismo período.
 
 ## Años y todo el tiempo
 
-El ranking de un año usa todas las partidas de ranking cuyo último mapa se jugó en ese año calendario. Todo el tiempo usa todas las partidas de ranking registradas.
+El ranking de un año usa todas las partidas de ranking cuyo último mapa se jugó en ese año calendario. El de todo el tiempo usa todas las partidas de ranking registradas.
 
 La experiencia en estos rankings se calcula igual que en una temporada, sobre el período más largo, con dos diferencias:
 
@@ -65,4 +65,4 @@ No hay que hacer nada a mano. Cuando el reloj del sitio pasa el final de la temp
 - los castigos de la temporada anterior dejan de contar;
 - si la [tienda de skins](skin-shop.es.md#reembolsos-al-final-de-una-temporada) reembolsa las skins al final de una temporada, cada skin comprada antes de la nueva temporada se reembolsa y las estrellas vuelven a sus dueños.
 
-Las estrellas, las calificaciones de la comunidad y los regalos no se reinician.
+Las estrellas, las puntuaciones de la comunidad y los regalos no se reinician.

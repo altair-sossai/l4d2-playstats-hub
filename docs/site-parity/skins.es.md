@@ -13,18 +13,18 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | Ruta `GET /skins`, elemento del menú "Skins" activo (`ViewBag.Skins`) | Controllers/SkinsController.cs:11-14 | done |  |
-| Metadatos de página: título "Skins", descripción, imagen y alt de la skin más cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | La descripción toma el nombre del sitio de los ajustes en lugar de nombrar "L4D2 Competitive". La imagen es la miniatura de la skin, como dirección absoluta: la propia `/imgs/skins/{id}.jpg` del sitio para las skins que vienen con el hub, como en el sitio antiguo, y si no la de la dirección de assets. |
+| Metadatos de página: título "Skins", descripción, imagen y alt de la skin más cara | PageMetadata/SkinsPageMetadata.cs:9-18, Views/Skins/Index.cshtml:18 | adapted | La descripción toma el nombre del sitio de los ajustes en lugar de nombrar "L4D2 Competitive". La imagen es la miniatura de la skin, como dirección absoluta: la propia `/imgs/skins/{id}.jpg` del sitio para las skins que vienen con el hub, como en el sitio antiguo, y, si no, la de la dirección de assets. |
 | Estilos en línea de la página (`.sk-*`, 700 líneas) | Views/Skins/Index.cshtml:34-734 | done | Copiados sin cambios. |
 | Token antiforgery en la página | Views/Skins/Index.cshtml:736 | done |  |
 | Hero: antetítulo "Tienda de skins", título "Skins", texto introductorio | Views/Skins/Index.cshtml:738-742 | done |  |
 | Hero: píldora de la temporada con icono de calendario, último día de la temporada y días restantes | Views/Skins/Index.cshtml:744-747, Core/Skins/SkinSeason.cs:11-14 | done | Las fechas vienen de la temporada del hub en la zona horaria del sitio, sea cual sea su duración. Se oculta cuando el administrador desactiva el reembolso de temporada. |
 | Hero: botón "Cómo funciona" que abre el panel plegado (el caret gira) | Views/Skins/Index.cshtml:750-752, 80-86 | done |  |
 | Hero: botón "¿Cómo uso mis skins en el juego?" | Views/Skins/Index.cshtml:753-755 | done |  |
-| Monedero, sin sesión iniciada: estrella, "Entra con Steam para ver..." y el botón de inicio de sesión con regreso a la tienda | Views/Skins/Index.cshtml:760-769, 31 | done |  |
+| Monedero, sin sesión iniciada: estrella, "Inicia sesión con Steam para ver..." y el botón de inicio de sesión con regreso a la tienda | Views/Skins/Index.cshtml:760-769, 31 | done |  |
 | Monedero, estrellas no disponibles: tarjeta de advertencia | Views/Skins/Index.cshtml:770-778 | adapted | El marcado y el texto se conservan, pero el hub lee las estrellas de su propia base de datos, así que el monedero de un jugador con sesión iniciada siempre está disponible y esta tarjeta nunca se muestra. |
 | Monedero, con sesión iniciada: estrella, saldo, etiqueta "estrella(s) disponible(s)" (singular y plural) | Views/Skins/Index.cshtml:781-788 | done |  |
 | Resumen del monedero: estrellas ganadas como MVP y estrellas gastadas | Views/Skins/Index.cshtml:789 | done |  |
-| Monedero: número de MVPs de daño a SI y de MVPs de comunes | Views/Skins/Index.cshtml:790, Core/Skins/Results/WalletResult.cs:5-6 | done | Back-end añadido: `SkinStarsService` divide las estrellas en los dos tipos de MVP. |
+| Monedero: número de MVPs de daño a SI y de MVPs de comunes | Views/Skins/Index.cshtml:790, Core/Skins/Results/WalletResult.cs:5-6 | done | Añadido en el back-end: `SkinStarsService` divide las estrellas en los dos tipos de MVP. |
 | Cómo funciona: recuadros "1. Gana estrellas", "2. Compra y equipa", "3. Cambia en el juego" | Views/Skins/Index.cshtml:795-809 | done | Con el reembolso de temporada desactivado, el recuadro 2 termina con "es tuya para siempre" en lugar de "hasta el final de la temporada del ranking". |
 | Cómo funciona: banner "Skins por temporada" con el fin de la temporada y los días restantes | Views/Skins/Index.cshtml:811-817 | done | El texto dice la duración real de la temporada ("cada 2 meses" de forma predeterminada, "cada mes" o "cada N meses" en los demás casos). Se oculta con el reembolso de temporada desactivado. |
 | Cómo funciona: línea de créditos | Views/Skins/Index.cshtml:819 | done |  |
@@ -49,7 +49,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Tarjeta: "por {author}" con enlace al perfil de Steam del autor | Views/Skins/Index.cshtml:1001-1006 | done | Un autor importado sin Steam ID se muestra sin el enlace. |
 | Tarjeta: nombre de la rareza en el color de la rareza | Views/Skins/Index.cshtml:1007 | done |  |
 | Tarjeta: las fotos se funden al pasar el cursor (tomas 1, 5 y 6, tamaño `-card`, 1,6 s) | Views/Skins/Index.cshtml:1408-1474 | done | Comprobado frente a las fotos de producción a través de un proxy local. |
-| Sondeo de compatibilidad con AVIF; las fotos se piden como `.avif` cuando es compatible, `.webp` en caso contrario | Views/Skins/Index.cshtml:1408-1421 | done |  |
+| Detección de compatibilidad con AVIF; las fotos se piden como `.avif` cuando es compatible, `.webp` en caso contrario | Views/Skins/Index.cshtml:1408-1421 | done |  |
 | Acción, sin sesión iniciada: enlace "Entrar con Steam" | Views/Skins/Index.cshtml:829-833 | done |  |
 | Acción, equipada: botón "Volver a la predeterminada" | Views/Skins/Index.cshtml:835-841 | done |  |
 | Acción, adquirida: botón "Equipar" | Views/Skins/Index.cshtml:843-849 | done |  |
@@ -62,7 +62,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Pestaña Autores: texto introductorio | Views/Skins/Index.cshtml:1123 | done |  |
 | Pestaña Autores: un recuadro por autor con enlace al perfil, número de skins (singular y plural) y los títulos | Views/Skins/Index.cshtml:1124-1139, 25-30 | done | Los autores sin Steam ID se agrupan por nombre y se muestran sin el enlace. |
 | Modal de detalles: se abre con un clic en cualquier parte de la tarjeta, salvo las acciones y el enlace del autor | Views/Skins/Index.cshtml:1588-1598, 1622-1628 | done |  |
-| Modal de detalles: se abre solo para `/skins#skin-{id}` | Views/Skins/Index.cshtml:1773-1778 | done |  |
+| Modal de detalles: se abre automáticamente con `/skins#skin-{id}` | Views/Skins/Index.cshtml:1773-1778 | done |  |
 | Detalles: galería con la foto principal y seis miniaturas cuando la skin tiene fotos | Views/Skins/Index.cshtml:884-903, 1476-1506 | done | Se muestra cuando la skin tiene fotos. Las fotos vienen de la dirección de assets, que por defecto es la del sitio antiguo. |
 | Detalles: una sola imagen cuando la skin no tiene fotos, se abre en el lightbox | Views/Skins/Index.cshtml:904-911 | done |  |
 | Detalles: lightbox con zoom y desplazamiento (panzoom), clic para ampliar, zoom con la rueda | Views/Skins/Index.cshtml:1312, 1508-1542 | done |  |
@@ -73,7 +73,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Detalles: descripción localizada | Views/Skins/Index.cshtml:937-940 | done |  |
 | Detalles: título y descripción "Original" del Workshop | Views/Skins/Index.cshtml:880, 941-946 | done |  |
 | Detalles: el mismo botón de acción que la tarjeta | Views/Skins/Index.cshtml:947-949 | done |  |
-| Detalles: "Comando en el chat" con `!skin {id}` y el botón de copiar, solo cuando la skin es del jugador | Views/Skins/Index.cshtml:950-959 | done | Usa el parcial compartido `_CopyButton`: mismo icono, popover y comportamiento. |
+| Detalles: "Comando en el chat" con `!skin {id}` y el botón de copiar, solo cuando la skin es del jugador | Views/Skins/Index.cshtml:950-959 | done | Usa la vista parcial compartida `_CopyButton`: mismo icono, popover y comportamiento. |
 | Detalles: botón "Ver en el Workshop" | Views/Skins/Index.cshtml:960-962 | done | Se oculta para una skin importada sin id del Workshop. |
 | Detalles: botón "Regalar (admin)" para administradores | Views/Skins/Index.cshtml:963-968, 1691-1699 | done | No se ofrece para una skin que está fuera de venta. |
 | Pie del modal de detalles: enlace "¿Eres el autor?" y "Cerrar" | Views/Skins/Index.cshtml:1143-1161 | done | Se oculta solo cuando las dos direcciones del aviso están vacías en los ajustes de la tienda. |
@@ -101,7 +101,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Skin: recuadro de la skin elegida (miniatura, título, arma, rareza, precio) o "Ninguna skin elegida" | Views/Shared/_GiftModal.cshtml:87-90, 150-164 | done |  |
 | Skin: "Elegir skin" abre el selector de skins y vuelve | Views/Shared/_GiftModal.cshtml:91-93, 189-198 | done |  |
 | Confirmar: mensajes de validación cuando falta el jugador o la skin | Views/Shared/_GiftModal.cshtml:200-213 | done |  |
-| Confirmar: `POST /api/shop/gift`, mensaje de éxito y recarga, error por estado, mensaje de Steam ID no válido con 400 | Views/Shared/_GiftModal.cshtml:215-237, Controllers/Api/SkinShopController.cs:85-96, 130-141 | done | Back-end añadido: `SkinRecipient` lee `STEAM_x:y:z`, `[U:1:n]`, SteamID64 y enlaces de perfil. |
+| Confirmar: `POST /api/shop/gift`, mensaje de éxito y recarga, error por estado, mensaje de Steam ID no válido con 400 | Views/Shared/_GiftModal.cshtml:215-237, Controllers/Api/SkinShopController.cs:85-96, 130-141 | done | Añadido en el back-end: `SkinRecipient` lee `STEAM_x:y:z`, `[U:1:n]`, SteamID64 y enlaces de perfil. |
 | `GiftModal.open({ skin })` preselecciona una skin | Views/Shared/_GiftModal.cshtml:239-251 | done |  |
 | Regalo: gratis, equipado de inmediato, guarda quién lo dio | Core/Skins/Services/SkinShopService.cs:186-228 | done |  |
 
@@ -130,7 +130,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Fila: precio actual; etiqueta "Cambiado" y el precio predeterminado cuando se cambió | Views/SkinsAdmin/Prices.cshtml:79-87 | done | Una skin que salió del catálogo recibe también la etiqueta "Fuera de venta". |
 | "No se encontraron skins." | Views/SkinsAdmin/Prices.cshtml:62-65 | done |  |
 | Paginación "Mostrando a–b de n" que conserva los filtros | Views/SkinsAdmin/Prices.cshtml:13, 92 | done |  |
-| Modal de precio: imagen, arma, rareza, precio predeterminado, campo de precio (de 1 a 100.000), indicación | Views/SkinsAdmin/Prices.cshtml:94-134, 181-198 | done |  |
+| Modal de precio: imagen, arma, rareza, precio predeterminado, campo de precio (de 1 a 100.000), texto de ayuda | Views/SkinsAdmin/Prices.cshtml:94-134, 181-198 | done |  |
 | Modal de precio: "Guardar" (`POST /api/shop/skins/{id}/price`), mensaje y recarga | Views/SkinsAdmin/Prices.cshtml:157-179, 200-209, Controllers/Api/SkinShopController.cs:67-83 | done |  |
 | Modal de precio: "Restaurar predeterminado", solo para un precio cambiado | Views/SkinsAdmin/Prices.cshtml:192, 219-221 | done |  |
 | Modal de precio: "Regalar" abre el modal de regalo con la skin | Views/SkinsAdmin/Prices.cshtml:211-217 | done | Se oculta para una skin que está fuera de venta. |
@@ -158,7 +158,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | "No se encontraron compras." | Views/SkinsAdmin/Purchases.cshtml:334-337 | done |  |
 | Paginación que conserva la búsqueda y el jugador | Views/SkinsAdmin/Purchases.cshtml:16, 387 | done |  |
 | Modal de detalles: hero en el color de la rareza, portada que enlaza a la skin en la tienda, rareza, insignia de regalo, título, "arma · id", "Ver en la tienda" | Views/SkinsAdmin/Purchases.cshtml:389-419, 558-576, 596-599 | done |  |
-| Modal de detalles: recuadro del jugador con avatar, nombre, id, botones "solo las compras de este jugador" y "perfil del jugador" | Views/SkinsAdmin/Purchases.cshtml:420-433, 577-581 | done | El botón del perfil abre `/player/{id}`, portada por el área de jugadores. |
+| Modal de detalles: recuadro del jugador con avatar, nombre, id, botones "solo las compras de este jugador" y "perfil del jugador" | Views/SkinsAdmin/Purchases.cshtml:420-433, 577-581 | done | El botón del perfil abre `/player/{id}`, la página portada con el área de jugadores. |
 | Modal de detalles: datos de precio, saldo antes y después (compras), regalo dado por (regalos), fecha | Views/SkinsAdmin/Purchases.cshtml:434-453, 582-588 | done |  |
 | Modal de detalles: "Reembolsar compra", texto de confirmación, "Confirmar reembolso" (`POST /api/shop/refund`), mensaje y recarga | Views/SkinsAdmin/Purchases.cshtml:455-466, 610-637, Controllers/Api/SkinShopController.cs:98-109 | done |  |
 | Modal de reembolsar todo: introducción con los totales, advertencia, checkbox que habilita el botón, etiqueta de ejecución en curso | Views/SkinsAdmin/Purchases.cshtml:471-498, 643-660 | done |  |
@@ -182,7 +182,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | `GET /api/skins`: las skins que alguien tiene (`id`, `weapon`), para el servidor de juego | Controllers/Api/SkinsController.cs:10-22 | done | Ya está en el hub, sin cambios. |
 | `GET /api/players/skins`: skins y equipamiento de cada jugador, para el servidor de juego | Controllers/Api/PlayersController.cs:33-46 | done | Ya está en el hub, sin cambios. |
 | `GET /api/players/{communityId}/wallet`: `mvpSiDamage`, `mvpCommon`, `stars`, `spent`, `balance` | Controllers/Api/PlayersController.cs:48-56 | done | `mvpSiDamage` y `mvpCommon` añadidos a la respuesta. |
-| `POST /api/players/{communityId}/skins/equip` desde el servidor de juego: equipar o volver a la predeterminada | Controllers/Api/PlayersController.cs:58-69 | adapted | Misma ruta y cuerpo. El servidor de juego demuestra quién es con su token del hub (encabezado `Authorization`) en lugar del antiguo secreto compartido. |
+| `POST /api/players/{communityId}/skins/equip` desde el servidor de juego: equipar o volver a la predeterminada | Controllers/Api/PlayersController.cs:58-69 | adapted | Misma ruta y mismo cuerpo. El servidor de juego demuestra quién es con su token del hub (encabezado `Authorization`) en lugar del antiguo secreto compartido. |
 
 ## Reglas de la tienda y trabajo en segundo plano
 
@@ -194,7 +194,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Volver a la predeterminada quita el equipamiento del arma | Core/Skins/Services/SkinShopService.cs:159-184 | done |  |
 | Reembolso: devuelve las estrellas, quita la skin y su equipamiento | Core/Skins/Services/SkinShopService.cs:230-311 | done |  |
 | Reembolso de temporada: cada diez minutos se reembolsan las compras hechas antes de la temporada actual; los regalos se conservan | BackgroundServices/SkinSeasonRefundBackgroundService.cs:8-35, Core/Skins/Services/SkinShopService.cs:246-260, 313-316 | adapted | Sigue las temporadas del hub, de cualquier duración, y es un ajuste de la tienda que empieza activado. |
-| Catálogo: id, arma, rareza, precio, id del Workshop, fotos, autor, títulos y descripciones en tres idiomas, título y descripción originales | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | done | El catálogo del sitio antiguo viene con el hub (`Core/Modules/Skins/Data/skins.json`, sin cambios) y se importa solo la primera vez que se activa la tienda. El administrador puede volver a importarlo, u otro `skins.json`, en la página del catálogo. Se conservan todos los campos. |
+| Catálogo: id, arma, rareza, precio, id del Workshop, fotos, autor, títulos y descripciones en tres idiomas, título y descripción originales | Core/Skins/Skin.cs, Core/Skins/SkinAuthor.cs, Core/Skins/Data/skins.json | done | El catálogo del sitio antiguo viene con el hub (`Core/Modules/Skins/Data/skins.json`, sin cambios) y se importa automáticamente la primera vez que se activa la tienda. El administrador puede volver a importarlo, u otro `skins.json`, en la página del catálogo. Se conservan todos los campos. |
 | Miniaturas en `/imgs/skins/{id}.jpg`, fotos en `{SkinShotsUrl}/{id}/` | Core/Skins/Skin.cs:33, Views/Skins/Index.cshtml:871-874 | done | Las mismas 196 miniaturas están en `wwwroot/imgs/skins`. Fotos en `{assets}/skin-shots/{id}/`, donde la dirección de assets empieza como el `SkinShotsUrl` del sitio antiguo sin su última carpeta (`https://l4d2playstats.blob.core.windows.net/assets`). Una skin sin miniatura incluida la lee de `{assets}/skins/{id}.jpg`. |
 
 ## Páginas exclusivas del hub

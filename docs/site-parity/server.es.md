@@ -63,7 +63,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 |---|---|---|---|
 | Título del panel: nombre del servidor, nombre de la configuración y tamaño del equipo ("4v4"), unidos por " - " | `Web/Views/Server/_Header.cshtml:22` | adapted | El nombre es el nombre de host que el servidor de juego envía en su heartbeat (el sitio antiguo se lo pedía a Steam); antes del primer heartbeat es el nombre con el que se registró el servidor. |
 | Etiqueta del anti-cheat (activado, desactivado, API no disponible) con icono de candado, color y tooltip | `Web/Views/Server/_Header.cshtml:37` | done |  |
-| La etiqueta del anti-cheat enlaza a la página del anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | La etiqueta es la misma. El enlace solo se escribe mientras el módulo anti-cheat está activado, porque el hub todavía no tiene página de anti-cheat (el módulo está reservado). |
+| La etiqueta del anti-cheat enlaza a la página del anti-cheat | `Web/Views/Server/_Header.cshtml:46` | adapted | La etiqueta es la misma. El enlace solo se escribe mientras el módulo anti-cheat está activado, ya que la página del Anti-Cheat pertenece a ese módulo. |
 | Etiqueta "IP del Servidor" con el botón de signo de interrogación que abre el modal de información del servidor | `Web/Views/Server/_Header.cshtml:58` | done |  |
 | Valor de la IP del servidor con el icono de copiar (copia `connect <ip>`, popover "¡Texto copiado!", icono según el tema) | `Web/Views/Server/_Header.cshtml:65` | done | La dirección es la del servidor en pantalla. El icono de copiar se omite cuando el servidor no tiene dirección. |
 | Jugadores: conectados / máximo | `Web/Views/Server/_Header.cshtml:73` | adapted | Conectados es el número de jugadores en el estado en vivo (supervivientes, infectados y espectadores) en lugar de la consulta a Steam. Máximo son los slots que el servidor de juego envía en su heartbeat (`maxPlayers`, añadido al plugin); con un plugin más antiguo es el doble del tamaño del equipo. |
@@ -149,11 +149,11 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Ronda en marcha, primera o segunda | `Web/Views/Server/GameEvents/_RoundLiveEvent.cshtml` | done |  |
 | Skeet (melee, sniper, granada, normal) y skeet en equipo | `Web/Views/Server/GameEvents/_SkeetEvent.cshtml` | done |  |
 | Skeet con daño previo y nota de overkill | `Web/Views/Server/GameEvents/_SkeetHurtEvent.cshtml` | done |  |
-| El tank pasó a ser un bot | `Web/Views/Server/GameEvents/_TankBecameBotEvent.cshtml` | done |  |
-| El tank murió | `Web/Views/Server/GameEvents/_TankDiedEvent.cshtml` | done |  |
-| Roca del tank recibida | `Web/Views/Server/GameEvents/_TankRockEatenEvent.cshtml` | done |  |
-| Roca del tank skeeteada | `Web/Views/Server/GameEvents/_TankRockSkeetedEvent.cshtml` | done |  |
-| Apareció el tank | `Web/Views/Server/GameEvents/_TankSpawnedEvent.cshtml` | done |  |
+| El Tank pasó a ser un bot | `Web/Views/Server/GameEvents/_TankBecameBotEvent.cshtml` | done |  |
+| El Tank murió | `Web/Views/Server/GameEvents/_TankDiedEvent.cshtml` | done |  |
+| Roca del Tank recibida | `Web/Views/Server/GameEvents/_TankRockEatenEvent.cshtml` | done |  |
+| Roca del Tank skeeteada | `Web/Views/Server/GameEvents/_TankRockSkeetedEvent.cshtml` | done |  |
+| Apareció el Tank | `Web/Views/Server/GameEvents/_TankSpawnedEvent.cshtml` | done |  |
 | Lengua cortada | `Web/Views/Server/GameEvents/_TongueCutEvent.cshtml` | done |  |
 | Crown a la witch | `Web/Views/Server/GameEvents/_WitchCrownEvent.cshtml` | done |  |
 | Draw crown a la witch | `Web/Views/Server/GameEvents/_WitchCrownHurtEvent.cshtml` | done |  |
@@ -176,7 +176,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 |---|---|---|---|
 | Modal "Info. del servidor" abierto desde el encabezado | `Web/Views/Server/Index.cshtml:942` | done |  |
 | Fila IP con la etiqueta "Recomendado", `connect <ip>` e icono de copiar | `Web/Views/Server/Index.cshtml:954` | done | Se muestra cuando el servidor tiene dirección. |
-| Fila DNS con la etiqueta "Alternativa", `connect <dns>` e icono de copiar | `Web/Views/Server/Index.cshtml:966` | adapted | Campo nuevo "dirección alternativa" en el servidor de juego (se define en la administración). La fila y la explicación aparecen cuando está rellenado. |
+| Fila DNS con la etiqueta "Alternativa", `connect <dns>` e icono de copiar | `Web/Views/Server/Index.cshtml:966` | adapted | Campo nuevo "dirección alternativa" en el servidor de juego (se define en la administración). La fila y la explicación aparecen cuando se completa. |
 | Explicación de cuándo usar el DNS | `Web/Views/Server/Index.cshtml:980` | done | Se muestra junto con la fila DNS. |
 
 ## Reglas del estado en vivo
@@ -212,7 +212,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | `GET /api/game-info` y `/configuration`, `/round`, `/scoreboard`, `/players`, `/messages`, `/events` (público) | `Web/Controllers/Api/GameInfoController.cs:19` | adapted | Ahora por servidor: `/api/servers/{publicId}/game-info` y las mismas subrutas. Las rutas antiguas redirigen (302) al servidor con más jugadores. |
 | `GET /api/external-chat?after=` | `Web/Controllers/Api/ExternalChatController.cs:20` | adapted | Misma ruta y JSON, leído por el servidor de juego con su token; cada servidor recibe solo los mensajes escritos en su propia página. |
 | `POST /api/external-chat` (visitante con sesión iniciada) | `Web/Controllers/Api/ExternalChatController.cs:28` | adapted | Reemplazado por `POST /servers/{publicId}/chat` (ver "Envío"). Un POST no se puede redirigir, y ninguna página usa la ruta antigua. |
-| `GET /api/server` | `Web/Controllers/Api/ServerController.cs:9` | adapted | Misma ruta, usada por el layout. El JSON tiene `publicId`, `name`, `address`, `map`, `players` y `max_players` en lugar de la respuesta completa de Steam. El layout solo empieza a consultar después de que el visitante mueve el ratón, desplaza, toca o escribe por primera vez, y se detiene mientras la pestaña está en segundo plano. |
+| `GET /api/server` | `Web/Controllers/Api/ServerController.cs:9` | adapted | Misma ruta, usada por el layout. El JSON tiene `publicId`, `name`, `address`, `map`, `players` y `max_players` en lugar de la respuesta completa de Steam. El layout solo empieza a consultar después de que el visitante mueve el ratón, desplaza la página, toca o escribe por primera vez, y se detiene mientras la pestaña está en segundo plano. |
 | `GET /api/servers` redirige a `/api/server` | `Web/Controllers/Api/ServerController.cs:17` | not ported | En el hub `/api/servers` es la lista pública de servidores de juego, así que no puede redirigir a `/api/server`. |
 | `GET /api/campaigns` | `Web/Controllers/Api/CampaignController.cs` | done |  |
 
@@ -222,7 +222,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 |---|---|---|---|
 | Insignia de la navbar "● jugadores/slots", pulsante, enlazada a la página del servidor, oculta cuando no hay nadie conectado | `Web/Views/Shared/_Layout.cshtml:322` | done | Ya está en el layout. Los números son los del encabezado (ver "Jugadores"). |
 | Título del navegador con el prefijo "🟢 jugadores/slots" | `Web/Views/Shared/_Layout.cshtml:602` | done |  |
-| Fila del chat mostrada u oculta por la misma comprobación, cada 4 s | `Web/Views/Shared/_Layout.cshtml:594` | done |  |
+| Fila del chat mostrada u oculta por la misma comprobación, cada 4 s | `Web/Views/Shared/_Layout.cshtml:594` | adapted | La misma comprobación, que empieza solo después de que el visitante mueve el ratón, se desplaza, toca o teclea por primera vez, y se pausa mientras la pestaña está en segundo plano. |
 | Icono flotante de conexión, oculto en teléfonos | `Web/Views/Shared/_Layout.cshtml:526` | done | Ya está en el layout. Se oculta mientras ningún servidor tiene dirección; el antiguo estaba siempre ahí. |
 
 ## Página de baneos de chat
@@ -230,7 +230,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | Solo administradores | `Web/Controllers/ChatBansController.cs:10` | done | También necesita el módulo de chat del sitio. |
-| Encabezado "Baneos del chat" con el botón "Añadir baneo" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
+| Encabezado "Baneos del chat" con el botón "Añadir" | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
 | Texto introductorio | `Web/Views/ChatBans/Index.cshtml:42` | done |  |
 | Contador de jugadores baneados | `Web/Views/ChatBans/Index.cshtml:44` | done |  |
 | Búsqueda por nombre, Steam ID o motivo, con "Limpiar filtros" | `Web/Views/ChatBans/Index.cshtml:51`, `Web/Controllers/ChatBansController.cs:25` | done |  |
@@ -242,11 +242,11 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Modal de detalles: fecha del baneo, actualizado el, baneado por | `Web/Views/ChatBans/Index.cshtml:115` | done |  |
 | Modal de detalles: editar y guardar el motivo | `Web/Views/ChatBans/Index.cshtml:123`, `:245` | done |  |
 | Modal de detalles: quitar con una segunda confirmación | `Web/Views/ChatBans/Index.cshtml:127`, `:260` | done |  |
-| Modal de agregar: campo de Steam ID o URL del perfil | `Web/Views/ChatBans/Index.cshtml:153` | done |  |
-| Modal de agregar: un Steam ID escrito muestra la foto y el nombre del jugador | `Web/Views/ChatBans/Index.cshtml:348-371` | done | La misma búsqueda de los ajustes del Anti-Cheat, `/api/admin/players/lookup`. |
-| Modal de agregar: "Elegir de la lista" abre el selector de jugadores | `Web/Views/ChatBans/Index.cshtml:158`, `:334` | done |  |
-| Modal de agregar: motivo | `Web/Views/ChatBans/Index.cshtml:165` | done |  |
-| Modal de agregar: remitentes recientes con avatar, nombre, último mensaje y "Ya baneado" | `Web/Views/ChatBans/Index.cshtml:169`, `:284` | done |  |
+| Modal para añadir: campo de Steam ID o URL del perfil | `Web/Views/ChatBans/Index.cshtml:153` | done |  |
+| Modal para añadir: un Steam ID escrito muestra la foto y el nombre del jugador | `Web/Views/ChatBans/Index.cshtml:348-371` | done | La misma búsqueda que en los ajustes del Anti-Cheat, `/api/admin/players/lookup`. |
+| Modal para añadir: "Elegir de la lista" abre el selector de jugadores | `Web/Views/ChatBans/Index.cshtml:158`, `:334` | done |  |
+| Modal para añadir: motivo | `Web/Views/ChatBans/Index.cshtml:165` | done |  |
+| Modal para añadir: remitentes recientes con avatar, nombre, último mensaje y "Ya baneado" | `Web/Views/ChatBans/Index.cshtml:169`, `:284` | done |  |
 | Mensajes de éxito y de error, y después recarga | `Web/Views/ChatBans/Index.cshtml:201` | done |  |
 | Estilos (`_AdminStyles`, recorte del motivo, avatar redondo) | `Web/Views/ChatBans/Index.cshtml:16` | done |  |
 
@@ -267,7 +267,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 
 ## Páginas exclusivas del hub
 
-Estas no existían en el sitio antiguo. Se listan para que en el port no se pierda nada de lo que el hub tenía.
+Estas no existían en el sitio antiguo. Se listan para que en la migración no se pierda nada de lo que el hub tenía.
 
 | Elemento | Dónde en el hub | Estado | Notas |
 |---|---|---|---|
@@ -281,5 +281,5 @@ Estas no existían en el sitio antiguo. Se listan para que en el port no se pier
 
 - Totales: 151 `done`, 28 `adapted`, 1 `not ported`.
 - Las tablas de jugadores antiguas no muestran ningún icono de patente: ni `Views/Server/_Players.cshtml` ni la página en producción lo tienen, así que ahí no hay nada que portar.
-- Los estados se comprobaron frente a las páginas renderizadas: lado a lado con `https://l4d2.com.br/server` (escritorio, ancho de teléfono y tema claro), con una partida simulada que envía todos los eventos del juego, y manejando las páginas en un navegador headless (filtro del feed, envío de un mensaje, la terminal, el modal de información del servidor, todos los modales de la página de baneos de chat).
+- Los estados se comprobaron frente a las páginas renderizadas: lado a lado con `https://l4d2.com.br/server` (escritorio, ancho de teléfono y tema claro), con una partida simulada que envía todos los eventos del juego, y controlando las páginas en un navegador headless (filtro del feed, envío de un mensaje, la terminal, el modal de información del servidor, todos los modales de la página de baneos de chat).
 - El plugin del servidor de juego envía los slots del servidor en su heartbeat (`maxPlayers`) a partir de este cambio. Un servidor de juego que todavía ejecute el plugin anterior muestra como máximo el doble del tamaño del equipo.

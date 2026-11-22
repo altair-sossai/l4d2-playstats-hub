@@ -76,7 +76,7 @@ Haz clic en **Crear**. El sitio crea un identificador y una clave para el servid
 
 **Copia el token ahora.** La clave se muestra una sola vez. El sitio guarda solo un hash de ella, así que no puede volver a mostrarla. Si la pierdes, genera una nueva clave en la página del servidor en [Administración > Servidores de juego](administration.es.md#servidores-de-juego).
 
-Debajo de las instrucciones, el panel muestra el [estado de la conexión](#el-estado-de-la-conexión) del servidor: **Esperando la primera conexión** hasta que el servidor de juego llegue al sitio. Se actualiza solo cada 3 segundos y se pone verde cuando el servidor de juego se conecta:
+Debajo de las instrucciones, el panel muestra el [estado de la conexión](#el-estado-de-la-conexión) del servidor: **Esperando la primera conexión** hasta que el servidor de juego llegue al sitio. Se actualiza automáticamente cada 3 segundos y se pone verde cuando el servidor de juego se conecta:
 
 ![El estado de la conexión en el asistente, cuando el servidor de juego se conecta](../images/es/wizard-server-connected.webp)
 
@@ -98,7 +98,7 @@ A partir de aquí:
 
 ## El estado de la conexión
 
-El mismo panel aparece en el asistente y en la página de cada servidor de juego en el área de administración. Muestra el estado de la conexión y una lista de verificación, y se actualiza solo cada 3 segundos. Esta es la página del servidor creado arriba, unos segundos después de que el servidor de juego enviara su primera señal:
+El mismo panel aparece en el asistente y en la página de cada servidor de juego en el área de administración. Muestra el estado de la conexión y una lista de verificación, y se actualiza automáticamente cada 3 segundos. Esta es la página del servidor creado arriba, unos segundos después de que el servidor de juego enviara su primera señal:
 
 ![La página del nuevo servidor en el área de administración, conectado](../images/es/first-server-connected.webp)
 
@@ -122,6 +122,6 @@ Las mismas verificaciones se pueden ejecutar desde la consola del servidor de ju
 
 ## Si te detienes a la mitad
 
-Una vez que tu cuenta es la del administrador, el código de configuración ya no hace falta. Vuelve a abrir el sitio e inicia sesión con la misma cuenta de Steam: el asistente se abre en el paso del sitio, con lo que ya guardaste completado. Recorre los pasos de nuevo con **Continuar**. Un servidor de juego que ya creaste sigue registrado; no necesitas crearlo dos veces.
+Una vez que tu cuenta es la del administrador, el código de configuración ya no hace falta. Vuelve a abrir el sitio e inicia sesión con la misma cuenta de Steam: el asistente se abre en el paso del sitio, con los datos que ya guardaste completados. Recorre los pasos de nuevo con **Continuar**. Un servidor de juego que ya creaste sigue registrado; no necesitas crearlo dos veces.
 
 Cualquier otra persona que abra el sitio antes de que termines ve una página que dice que la configuración inicial está en curso.

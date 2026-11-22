@@ -31,7 +31,7 @@ As punições precisam do módulo de ranking.
 
 ## Banimentos do chat
 
-Com o módulo de chat do site ligado, os jogadores logados podem escrever no chat de um servidor de jogo pela [página do servidor ao vivo](live-server.pt.md#escrevendo-no-chat-pelo-site). **Administração > Bans de chat** impede um jogador de fazer isso. O painel **Limites das mensagens enviadas pelo site** define os segundos entre duas mensagens quaisquer num servidor de jogo (15 por padrão), os segundos entre duas mensagens do mesmo jogador (30) e o máximo de caracteres por mensagem (200, que também é o máximo que o chat do jogo aceita). 0 desliga uma pausa, e os administradores não ficam presos às pausas.
+Com o módulo de chat do site ligado, os jogadores logados podem escrever no chat de um servidor de jogo pela [página do servidor ao vivo](live-server.pt.md#escrevendo-no-chat-pelo-site). **Administração > Bans de chat** impede um jogador de fazer isso. O painel **Limites das mensagens enviadas pelo site** define os segundos entre duas mensagens quaisquer num servidor de jogo (15 por padrão), os segundos entre duas mensagens do mesmo jogador (30) e o máximo de caracteres por mensagem (200, que também é o máximo que o chat do jogo aceita). 0 desliga uma pausa, e os administradores não estão sujeitos às pausas.
 
 ![Os banimentos do chat](../images/pt/admin-chat-bans.webp)
 
@@ -50,7 +50,7 @@ Um banimento vale para o chat do site de todos os servidores de jogo. Ele não s
 
 ## Comandos remotos
 
-Com o módulo de comandos remotos ligado, os administradores podem enviar comandos do SourceMod do site para um servidor de jogo, sem RCON.
+Com o módulo de comandos remotos ligado, os administradores podem enviar comandos do SourceMod pelo site a um servidor de jogo, sem RCON.
 
 ![Os comandos remotos e o registro de auditoria](../images/pt/admin-remote-commands.webp)
 
@@ -59,7 +59,7 @@ Com o módulo de comandos remotos ligado, os administradores podem enviar comand
    Ou clique no botão do terminal ao lado da caixa: ele lista os comandos do terminal da página ao vivo com o que cada um faz e pede cada argumento passo a passo (modo de jogo, campanha, time, duração, motivo; o nome do jogador é digitado, já que esta página não lista quem está conectado). O comando montado preenche a caixa, e você ainda pode editá-lo antes de enviar.
 3. Clique em **Enviar**.
 
-O comando entra em uma fila. O servidor de jogo pergunta ao site pelos comandos na fila na próxima verificação e executa o comando. Se nenhum servidor de jogo o pegar em 5 minutos, ele é descartado.
+O comando entra em uma fila. O servidor de jogo pede ao site os comandos da fila na próxima verificação e executa o comando. Se nenhum servidor de jogo o pegar em 5 minutos, ele é descartado.
 
 Todo comando fica registrado no **Registro de auditoria**: o comando, o administrador, o servidor, quando foi enviado e se foi entregue ao servidor de jogo, e quando. O registro mostra 50 comandos por página, os mais recentes primeiro, e os contadores mostram quantos comandos foram enviados e quantos foram entregues no total. O registro também lista o `sm_aac sync` que o site envia a cada servidor de jogo depois de uma alteração nas [Configurações do Anti-Cheat](anti-cheat.pt.md#para-administradores); esse é enviado mesmo com este módulo desligado.
 
@@ -67,11 +67,11 @@ Os administradores também podem enviar um comando pela caixa de chat da página
 
 ## Conexões de jogadores
 
-Com o módulo do servidor ao vivo ligado, os servidores de jogo informam o endereço de onde cada jogador se conecta. **Administração > Conexões de jogadores** encontra as contas que se conectaram pelo mesmo endereço de um jogador, o que muitas vezes indica uma segunda conta.
+Com o módulo do servidor ao vivo ligado, os servidores de jogo informam o endereço de onde cada jogador se conecta. **Administração > Conexões de jogadores** encontra as contas que se conectaram do mesmo endereço que um jogador, o que muitas vezes indica uma segunda conta.
 
 ![As contas que compartilham um endereço com um jogador](../images/pt/admin-player-connections.webp)
 
-Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**, ou clique no botão de jogador ao lado do campo e escolha na [busca de jogadores](administration.pt.md#a-busca-de-jogadores); a busca roda assim que você escolhe. A página mostra:
+Digite o Steam ID ou o link do perfil do jogador e clique em **Buscar**, ou clique no botão de jogador ao lado do campo e escolha na [busca de jogadores](administration.pt.md#a-busca-de-jogadores); a busca é feita assim que você escolhe. A página mostra:
 
 - quantas conexões o jogador tem e quantas outras contas usaram o mesmo endereço;
 - cada conta, com o Steam ID dela (o SteamID64 aparece ao passar o mouse), quando foi vista pela primeira e pela última vez, e quantas conexões ela tem.

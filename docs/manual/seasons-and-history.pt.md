@@ -22,7 +22,7 @@ O administrador escolhe a duração de uma temporada, em meses, de 1 a 24. O pad
 - A primeira temporada começa no início de um ano, e os blocos seguem a partir daí. Com 2 meses, as temporadas começam em janeiro, março, maio, julho, setembro e novembro. Com 3 meses, em janeiro, abril, julho e outubro.
 - Cada temporada seguinte começa exatamente onde a anterior terminou.
 - As datas usam o fuso horário do site, definido em [Configurações](administration.pt.md#site). Uma temporada que termina em 31 de dezembro termina à meia-noite nesse fuso horário.
-- Em todo o site uma temporada aparece pelo primeiro e pelo último mês, como **De 01/2026 até 02/2026**, e os seletores de período acrescentam **(Temporada atual)** à atual.
+- Em todo o site, uma temporada é identificada pelo primeiro e pelo último mês, como **De 01/2026 até 02/2026**, e os seletores de período acrescentam **(Temporada atual)** à atual.
 - Cada arquivo de estatísticas pertence à temporada da data que o servidor de jogo gravou nele. Um arquivo de antes da primeira temporada cria as temporadas anteriores de que precisa, então dados antigos importados encontram o seu lugar.
 - Uma partida nunca atravessa duas temporadas. Mapas jogados antes e depois da meia-noite da virada de uma temporada formam duas partidas.
 
@@ -34,7 +34,7 @@ A página do ranking diz quantos dias faltam: **Próximo reset em N dia(s)**.
 
 O ranking, a lista de jogadores e a página do jogador têm este seletor. Ele lista:
 
-- todas as temporadas, agrupadas por ano, das mais recentes para as mais antigas, com a atual marcada;
+- as temporadas do ano atual, das mais recentes para as mais antigas, com a atual marcada (uma temporada mais antiga ainda abre pelo endereço dela, como um link compartilhado);
 - cada ano;
 - todo o período.
 
@@ -42,7 +42,7 @@ Escolher um período muda todos os números da página: posições, vitórias, M
 
 ## Histórico
 
-O ranking final de uma temporada passada, de um ano ou de todo o período fica na [lista de jogadores](players.pt.md#a-lista-de-jogadores): escolha o período e mantenha a **Visão geral**, que mostra as vitórias, derrotas, jogos, MVPs, taxa de vitória e rage quits de cada jogador na ordem do ranking. A lista de jogadores substituiu a antiga página Histórico; os endereços dela, como `/history/all-time` ou `/history/2025`, abrem a lista de jogadores do mesmo período.
+O ranking final de uma temporada passada, de um ano ou de todo o período fica na [lista de jogadores](players.pt.md#a-lista-de-jogadores): escolha o período (uma temporada do ano atual, qualquer ano ou todo o período; uma temporada mais antiga abre pelo endereço dela) e mantenha a **Visão geral**, que mostra as vitórias, derrotas, jogos, MVPs, tank wipes, taxa de vitória e rage quits de cada jogador na ordem do ranking. A lista de jogadores substituiu a antiga página Histórico; os endereços dela, como `/history/all-time` ou `/history/2025`, abrem a lista de jogadores do mesmo período.
 
 ## Anos e todo o período
 

@@ -8,7 +8,7 @@ As páginas desta área só existem no hub: o site antigo não tem assistente de
 
 Situação: `done` = presente com o mesmo conteúdo e comportamento, no visual do site antigo; `adapted` = presente, mas alterado, pelo motivo indicado; `not ported` = removido, pelo motivo indicado.
 
-Totais: 183 done, 11 adapted, 1 not ported.
+Totais: 178 done, 17 adapted, 1 not ported.
 
 Como foi conferido: todas as páginas foram abertas em um navegador sobre uma cópia de dados reais (6.636 arquivos de estatísticas) e sobre uma pasta de dados vazia (o assistente inteiro, do código de configuração até "Concluir"), no tema escuro e no claro, com 1280 e com 400 pixels de largura, em inglês e em português; nenhuma página tem rolagem lateral em 400 pixels. Cada formulário foi enviado ao menos uma vez. `AdminPagesTests`, `SiteSettingsTests` e `FooterLinksTests` cobrem o layout, o menu, as novas configurações e a logo.
 
@@ -25,7 +25,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Passo 1: mensagem de erro quando o código de configuração não é válido | `Views/Setup/Index.cshtml:37` | `done` |  |
 | Passo 1: formulário `POST /setup/start` com o token antiforgery | `Views/Setup/Index.cshtml:39` | `done` |  |
 | Passo 1: campo "Código de configuração" (obrigatório, sem autocomplete, mantém o valor digitado, preenchido a partir de `?token=`) | `Views/Setup/Index.cshtml:42` | `done` |  |
-| Passo 1: campo "Apenas desenvolvimento: entrar como este SteamID64" (só com o login de desenvolvimento ligado) | `Views/Setup/Index.cshtml:47` | `done` |  |
+| Passo 1: campo "Apenas desenvolvimento: entrar como este SteamID64, sem a Steam" (só com o login de desenvolvimento ligado) | `Views/Setup/Index.cshtml:47` | `done` |  |
 | Passo 1: botão "Continuar com a Steam" com o ícone da Steam | `Views/Setup/Index.cshtml:51` | `done` |  |
 | Passo 1: o código é guardado em um cookie, o visitante entra com a Steam e `GET /setup/claim` torna essa conta o primeiro administrador | `Controllers/SetupController.cs:67` | `done` |  |
 | Passo de login: cabeçalho "A configuração inicial está em andamento", explicação e botão "Entrar com a Steam" (`/login?returnUrl=/setup`) | `Views/Setup/Index.cshtml:60` | `done` |  |
@@ -252,9 +252,9 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Sem scripts, o formulário é enviado normalmente e a página recarrega, com a recusa exibida como erro | `Controllers/CommunityController.cs:60` | `done` |  |
 | Os dois jogadores lado a lado, cada um com avatar e nome | `Views/Community/_Ballot.cshtml:50` | `done` | Dois painéis do Bootstrap 3, lado a lado também no celular. |
 | Botão "Este é melhor" abaixo de cada jogador | `Views/Community/_Ballot.cshtml:52` | `done` |  |
-| Botão "Não conheço este jogador" abaixo de cada jogador | `Views/Community/_Ballot.cshtml:53` | `done` |  |
+| Botão "Não conheço este jogador" abaixo de cada jogador | `Views/Community/_Ballot.cshtml:53` | `adapted` | Substituído por um botão, "Não conheço um deles", abaixo dos dois jogadores (também a tecla ↑). |
 | Botão "Estão no mesmo nível" | `Views/Community/_Ballot.cshtml:69` | `done` |  |
-| Botão "Não conheço nenhum dos dois" | `Views/Community/_Ballot.cshtml:70` | `done` |  |
+| Botão "Não conheço nenhum dos dois" | `Views/Community/_Ballot.cshtml:70` | `adapted` | Substituído pelo mesmo botão "Não conheço um deles". |
 | Contador "Votos restantes hoje: N / por dia" | `Views/Community/_Ballot.cshtml:74` | `done` |  |
 
 ## Administração do ranking da comunidade (`/admin/community`)
@@ -270,7 +270,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 | Formulário `POST /admin/community` com o token antiforgery, botão "Salvar", mensagem "Salvo." | `Views/CommunityAdmin/Index.cshtml:23` | `done` |  |
 | Painel "Votação": "Mínimo de partidas para votar" | `Views/CommunityAdmin/Index.cshtml:30` | `done` |  |
 | Painel "Votação": "Votos por dia" (com o mínimo dele) | `Views/CommunityAdmin/Index.cshtml:34` | `done` |  |
-| Painel "Votação": "Mínimo de partidas para ser comparado" e o texto de ajuda | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
+| Painel "Votação": "Mínimo de partidas para ser comparado e aparecer na lista" e o texto de ajuda | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
 | Painel "Pontuação": "Mínimo de comparações para aparecer na lista" | `Views/CommunityAdmin/Index.cshtml:51` | `done` |  |
 | Painel "Pontuação": "Fator K do Elo" (com os limites dele) | — | `adapted` | Removido em 21 de novembro de 2026: a pontuação virou um ajuste de Bradley–Terry com todos os votos, que não tem fator K. |
 | Painel "Pontuação": "Pontuação inicial" e o texto de ajuda | `Views/CommunityAdmin/Index.cshtml:59` | `done` |  |
@@ -295,7 +295,7 @@ Como foi conferido: todas as páginas foram abertas em um navegador sobre uma c�
 
 | Item | Onde hoje | Situação | Observações |
 |---|---|---|---|
-| Estilos do Bootstrap 5 e `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | É o objetivo deste trabalho: as páginas agora usam os temas em Bootstrap 3 do `_Layout`. `_Bootstrap5Layout` e `wwwroot/lib/bootstrap` continuam no repositório para as pastas que outras branches convertem. |
+| Estilos do Bootstrap 5 e `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | É o objetivo deste trabalho: as páginas agora usam os temas em Bootstrap 3 do `_Layout`. `_Bootstrap5Layout` e `wwwroot/lib/bootstrap` foram removidos quando todas as páginas foram convertidas. |
 | htmx carregado em todas as páginas | `Views/Shared/_Bootstrap5Layout.cshtml:114` | `adapted` | O `_Layout` não o carrega. Os três lugares que precisam dele o carregam na seção `Scripts`: a página do servidor de jogo, o passo de servidor do assistente e a página de votação. |
-| Classes do `site.css` usadas por estas páginas (ponto de status, passos do assistente, bloco de configuração, avatares) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | O que estas páginas ainda precisam (ponto de status, passos do assistente, bloco de configuração, grade de painéis) está na partial `Views/Shared/_AdministrationStyles.cshtml`, ao lado de `_AdminStyles`; os estilos da cédula ficam na página de votação. |
+| Classes do `site.css` usadas por estas páginas (ponto de status, passos do assistente, bloco de configuração, avatares) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | O que estas páginas ainda precisam (ponto de status, passos do assistente, bloco de configuração, grade de painéis) está em `wwwroot/css/administration.css`, carregado pela partial `_AdministrationStyles`, ao lado de `_AdminStyles`; os estilos da cédula ficam em `wwwroot/css/pages/community-vote.css`. |
 | Mensagens de erro e de "Salvo." no topo da página | `Views/Shared/_Bootstrap5Layout.cshtml:100` | `done` | Pelo `_Layout`. |

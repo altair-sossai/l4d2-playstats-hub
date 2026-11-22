@@ -15,7 +15,7 @@ Checked against the rendered pages of a copy of the production data and against 
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
 | `GET /players` (list) | Controllers/PlayersController.cs:26-39 | done | Same address. |
-| Query `orderBy` (one of 25 statistics, default `Experience`) | Controllers/PlayersController.cs:27, Core/Players/Enums/PlayerResultProperty.cs | done | Same names and order (`Models/Players/PlayerResultProperty.cs`). An unknown value falls back to `Experience`. |
+| Query `orderBy` (one of 25 statistics, default `Experience`) | Controllers/PlayersController.cs:27, Core/Players/Enums/PlayerResultProperty.cs | done | Same names and order (`Models/Players/PlayerResultProperty.cs`). An unknown value falls back to `Experience`. Without `orderBy` the page now shows the Overview, the former history table, ordered with `sort`. |
 | Query `asc` (default `false`) | Controllers/PlayersController.cs:27 | done | |
 | Menu item "Players" (under "More") active on the list | Controllers/PlayersController.cs:29 | done | `ViewBag.Players = "active"`; not set on the player page, as before. |
 | `GET /player/{communityId}/{compareWith?}` (player and comparison) | Controllers/PlayersController.cs:41-97 | done | Same address. |
@@ -23,7 +23,7 @@ Checked against the rendered pages of a copy of the production data and against 
 | A player outside the ranking shows the "not ranked" page with the connection information (HTTP 200) | Controllers/PlayersController.cs:55-64 | done | The hub's first version answered 404 here. |
 | `compareWith` that is not in the ranking is ignored | Controllers/PlayersController.cs:53 | done | |
 | Ranking of the current season as the source of both pages | Controllers/PlayersController.cs:31, :51, Core/Ranking/Services/RankingServiceCached.cs:11-19 | adapted | The old API call returned only the first 100 players of the ranking, so the list stopped at 100 and player 101 got the "not ranked" page. The hub uses the whole ranking of the season. |
-| Query `season` (new) | - | adapted | Hub addition: both pages accept `?season={id}` to show a past season. An unknown season answers 404. Without it the current season is shown, as before. |
+| Query `season` (new) | - | adapted | Hub addition: both pages accept `?season={id}`, `?year={year}` or `?period=all-time` to show a past period. An unknown season answers 404. Without it the current season is shown, as before. |
 | Avatars loaded before rendering | Controllers/PlayersController.cs:33, :60-61, :66-69, :85 | adapted | Avatars are served by `/avatar/{communityId}` and downloaded on demand; no preload call is needed. |
 | Last matches: the 50 most recent matches of the season, any game mode, filtered to the ones where either player is on a team | Controllers/PlayersController.cs:77, Core/Matches/MatchesServiceCached.cs:19, Models/PlayerDetailsModel.cs:22-32 | done | Same rule, over the displayed season and every game server (`IPlayerMatchService`, `AppConsts.PlayerRecentMatches`). |
 | Related accounts from the connection information | Controllers/PlayersController.cs:78, Core/GameInfo/Services/PlayerConnectionInfoService.cs:75-108 | adapted | `IPlayerConnectionService.RelatedAsync`. Empty when the live server module is off, and for visitors who are not administrators when Settings > Privacy limits related accounts to administrators (the default is everyone, as before). |
@@ -44,10 +44,10 @@ Checked against the rendered pages of a copy of the production data and against 
 |---|---|---|---|
 | Heading "Players" | Views/Players/Index.cshtml:63 | done | |
 | Page styles (table, paragraph and header margins) | Views/Players/Index.cshtml:47-61 | done | |
-| Dropdown "Order by: **statistic**" with the caret | Views/Players/Index.cshtml:67-71 | done | |
+| Dropdown "Order by: **statistic**" with the caret, now "Statistic: **statistic**", with an Overview entry | Views/Players/Index.cshtml:67-71 | done | |
 | Dropdown items: the 25 statistics, each linking to `orderBy={statistic}&asc=False` | Views/Players/Index.cshtml:72-81 | done | The link keeps the displayed season. |
 | Statistic names: Experience, Games, Wins, Loss, Rage quit, SI MVP awards, CI MVP awards, FF LVP awards, Deaths, Times incapacitated, SI damage taken, Commons killed, SI killed, Damage to SI, Damage to Tank, Rock hits taken, Total skeets, Melee skeets, Total levels, Total crowns, FF dealt (non-incap.), SI damage (excl. Tank), Damage as Tank (upright), Spit damage (upright), Total pounce damage | Views/Players/Index.cshtml:15-27, Resources/SharedResource*.resx | done | `Helpers/PlayerProperties.cs`. Tank wipes were added after it. |
-| Period selector (new) | - | adapted | Hub addition, next to the "Order by" dropdown and in the style of the history page: "Displayed period: **From MM/YYYY to MM/YYYY**". It lists the seasons of the current year then one entry per year ("Year of YYYY"), which shows the ranking and the matches of that whole year, and "All time". Only shown when there is more than one choice. |
+| Period selector (new) | - | adapted | Hub addition, next to the "Statistic" dropdown and in the style of the history page: "Displayed period: **From MM/YYYY to MM/YYYY**". It lists the seasons of the current year then one entry per year ("Year of YYYY"), which shows the ranking and the matches of that whole year, and "All time". Only shown when there is more than one choice. |
 | Table `table-striped table-hover table-bordered table-condensed` | Views/Players/Index.cshtml:86 | done | |
 | Column `#` (slim, centered) | Views/Players/Index.cshtml:89, :113 | done | |
 | Column "Player" over two cells (avatar and name) | Views/Players/Index.cshtml:90 | done | |
@@ -102,7 +102,7 @@ Every value is followed by ` | ` and the second player's value in yellow when co
 | Panel "General statistics" | Views/Players/Details.cshtml:666-669 | done | |
 | Ranking (`#position`) | Views/Players/Details.cshtml:674-682 | done | |
 | Steam ID with the copy icon and the "Text copied!" popover | Views/Players/Details.cshtml:684-700 | done | Same field, icon (dark or light by theme) and behaviour, written as `STEAM_0:x:y` like the old site. |
-| Name (second player on a new line) | Views/Players/Details.cshtml:703-711 | done | The most used name (`MainName`), as before. |
+| Name (second player on a new line) | Views/Players/Details.cshtml:703-711 | adapted | The display name of the player registry (`MainName`): the forced name, else the most used name, else the Steam name. |
 | Profile URL as a link in a new tab, with the copy button | Views/Players/Details.cshtml:713-733 | done | |
 | Previous names: up to 5 labels with tooltip; the second player's in yellow labels after the separator; the row only exists when the first player has names | Views/Players/Details.cshtml:735-754 | done | |
 | Patent: image of 32 px with the tooltip "{name} - Level nn - patent" (row hidden on a phone) | Views/Players/Details.cshtml:755-764 | done | |

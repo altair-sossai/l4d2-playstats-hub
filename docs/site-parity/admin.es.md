@@ -8,7 +8,7 @@ Las páginas de esta área solo existen en el hub: el sitio antiguo no tiene asi
 
 Estado: `done` = presente con el mismo contenido y comportamiento, con el aspecto del sitio antiguo; `adapted` = presente pero cambiado, por el motivo indicado; `not ported` = eliminado, por el motivo indicado.
 
-Totales: 183 done, 11 adapted, 1 not ported.
+Totales: 178 done, 17 adapted, 1 not ported.
 
 Cómo se comprobó: cada página se abrió en un navegador sobre una copia de datos reales (6.636 archivos de estadísticas) y sobre una carpeta de datos vacía (todo el asistente, desde el código de configuración hasta "Finalizar"), en el tema oscuro y en el claro, a 1280 y a 400 píxeles de ancho, en inglés y en portugués; ninguna página se desplaza hacia los lados a 400 píxeles. Cada formulario se envió al menos una vez. `AdminPagesTests`, `SiteSettingsTests` y `FooterLinksTests` cubren el layout, el menú, los ajustes nuevos y el logo.
 
@@ -25,7 +25,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Paso 1: mensaje de error cuando el código de configuración no es válido | `Views/Setup/Index.cshtml:37` | `done` |  |
 | Paso 1: formulario `POST /setup/start` con el token antiforgery | `Views/Setup/Index.cshtml:39` | `done` |  |
 | Paso 1: campo "Código de configuración" (obligatorio, sin autocompletar, conserva el valor escrito, se rellena desde `?token=`) | `Views/Setup/Index.cshtml:42` | `done` |  |
-| Paso 1: campo "Solo desarrollo: iniciar sesión como este SteamID64" (solo con el inicio de sesión de desarrollo activado) | `Views/Setup/Index.cshtml:47` | `done` |  |
+| Paso 1: campo "Solo desarrollo: iniciar sesión como este SteamID64, sin Steam" (solo con el inicio de sesión de desarrollo activado) | `Views/Setup/Index.cshtml:47` | `done` |  |
 | Paso 1: botón "Continuar con Steam" con el icono de Steam | `Views/Setup/Index.cshtml:51` | `done` |  |
 | Paso 1: el código se guarda en una cookie, el visitante inicia sesión con Steam y `GET /setup/claim` convierte esa cuenta en el primer administrador | `Controllers/SetupController.cs:67` | `done` |  |
 | Paso de inicio de sesión: encabezado "La configuración inicial está en curso", explicación y botón "Entrar con Steam" (`/login?returnUrl=/setup`) | `Views/Setup/Index.cshtml:60` | `done` |  |
@@ -50,7 +50,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 
 | Elemento | Dónde hoy | Estado | Notas |
 |---|---|---|---|
-| Enlaces: Vista general, Servidores de juego, Módulos, Configuración, Modos de juego, Campañas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `adapted` | La fila de píldoras ahora es un menú lateral (`Views/Shared/_AdminMenu.cshtml`, en `_AdminLayout`) en todas las páginas de administrador, agrupado en Sitio, Servidores de juego, Clasificación, Tienda de skins y Anti-Cheat. La fila faltaba en las páginas de baneos de chat, del Anti-Cheat y de skins, y el administrador perdía el camino de vuelta; ahora el menú siempre está ahí. En el teléfono se recoge en un control encima del contenido que muestra la página actual. |
+| Enlaces: Vista general, Servidores de juego, Módulos, Configuración, Modos de juego, Campañas, Administradores | `Views/Shared/_AdminNav.cshtml:8` | `adapted` | La fila de píldoras ahora es un menú lateral (`Views/Shared/_AdminMenu.cshtml`, en `_AdminLayout`) en todas las páginas de administrador, agrupado en Sitio, Servidores de juego, Ranking, Tienda de skins y Anti-Cheat. La fila faltaba en las páginas de baneos de chat, del Anti-Cheat y de skins, así que el administrador perdía el camino de vuelta; ahora el menú siempre está ahí. En teléfonos se recoge en un control encima del contenido que indica la página actual. |
 | Enlace "Skins", solo con la tienda de skins activada | `Views/Shared/_AdminNav.cshtml:18` | `adapted` | Sustituido por las cuatro páginas de skins (Compras, Precios, Catálogo, Ajustes de la tienda) en el grupo Tienda de skins del menú lateral, que también sustituye su propia fila de pestañas. |
 | Enlace "Ranking de la comunidad", solo con el ranking de la comunidad activado | `Views/Shared/_AdminNav.cshtml:21` | `done` |  |
 | Enlace "Baneos de chat", solo con el chat del sitio activado | `Views/Shared/_AdminNav.cshtml:24` | `done` |  |
@@ -108,7 +108,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Título de página y encabezado "Administración" | `Views/Admin/Index.cshtml:3` | `done` |  |
 | Menú de administración | `Views/Admin/Index.cshtml:6` | `done` |  |
 | Mensaje "Reprocesamiento finalizado. Partidas reconstruidas: N" | `Views/Admin/Index.cshtml:8` | `done` |  |
-| Mosaico "Servidores de juego" | `Views/Admin/Index.cshtml:14` | `done` | Mosaicos `admin-stats`, como en la antigua página Baneos del Chat. |
+| Mosaico "Servidores de juego" | `Views/Admin/Index.cshtml:14` | `done` | Mosaicos `admin-stats`, como en la antigua página Baneos del chat. |
 | Mosaico "Archivos de estadísticas" | `Views/Admin/Index.cshtml:15` | `done` |  |
 | Mosaico "Partidas" | `Views/Admin/Index.cshtml:16` | `done` |  |
 | Mosaico "Partidas clasificatorias" | `Views/Admin/Index.cshtml:17` | `done` |  |
@@ -116,7 +116,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Mosaico "Temporadas" | nuevo | `done` | Añadido: el controlador ya contaba las temporadas y la página no mostraba el número. |
 | Advertencia sobre las configuraciones que no coinciden con ninguna regla, con el enlace "Revisar los modos de juego" | `Views/Admin/Index.cshtml:21` | `done` |  |
 | Sección "Servidores de juego": mensaje "Aún no hay ningún servidor de juego registrado." con el enlace "Añadir uno" | `Views/Admin/Index.cshtml:32` | `done` | `admin-empty` dentro de un `admin-list`. |
-| Sección "Servidores de juego": una línea por servidor con el punto de estado, el nombre (enlace a la página del servidor) y el número de archivos | `Views/Admin/Index.cshtml:39` | `done` | `admin-list` / `admin-item`, como en la antigua página Baneos del Chat. La línea muestra también el estado en palabras y el identificador. |
+| Sección "Servidores de juego": una línea por servidor con el punto de estado, el nombre (enlace a la página del servidor) y el número de archivos | `Views/Admin/Index.cshtml:39` | `done` | `admin-list` / `admin-item`, como en la antigua página Baneos del chat. La línea muestra también el estado en palabras y el identificador. |
 | Panel "Mantenimiento": explicación y botón "Reprocesar todas las partidas" (`POST /admin/reprocess`, pregunta "¿Reconstruir todas las partidas ahora?") | `Views/Admin/Index.cshtml:51` | `done` |  |
 
 ## Servidores de juego (`/admin/servers`)
@@ -252,9 +252,9 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Sin scripts el formulario se envía normalmente y la página se recarga, con el rechazo mostrado como un error | `Controllers/CommunityController.cs:60` | `done` |  |
 | Los dos jugadores uno al lado del otro, cada uno con avatar y nombre | `Views/Community/_Ballot.cshtml:50` | `done` | Dos paneles de Bootstrap 3, uno al lado del otro también en teléfonos. |
 | Botón "Este es mejor" debajo de cada jugador | `Views/Community/_Ballot.cshtml:52` | `done` |  |
-| Botón "No conozco a este jugador" debajo de cada jugador | `Views/Community/_Ballot.cshtml:53` | `done` |  |
+| Botón "No conozco a este jugador" debajo de cada jugador | `Views/Community/_Ballot.cshtml:53` | `adapted` | Reemplazado por un solo botón, "No conozco a uno de ellos", debajo de los dos jugadores (también la tecla ↑). |
 | Botón "Están al mismo nivel" | `Views/Community/_Ballot.cshtml:69` | `done` |  |
-| Botón "No conozco a ninguno de los dos" | `Views/Community/_Ballot.cshtml:70` | `done` |  |
+| Botón "No conozco a ninguno de los dos" | `Views/Community/_Ballot.cshtml:70` | `adapted` | Reemplazado por el mismo botón "No conozco a uno de ellos". |
 | Contador "Votos restantes hoy: N / por día" | `Views/Community/_Ballot.cshtml:74` | `done` |  |
 
 ## Administración del ranking de la comunidad (`/admin/community`)
@@ -270,7 +270,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 | Formulario `POST /admin/community` con el token antiforgery, botón "Guardar", mensaje "Guardado." | `Views/CommunityAdmin/Index.cshtml:23` | `done` |  |
 | Panel "Votación": "Mínimo de partidas para votar" | `Views/CommunityAdmin/Index.cshtml:30` | `done` |  |
 | Panel "Votación": "Votos por día" (con su mínimo) | `Views/CommunityAdmin/Index.cshtml:34` | `done` |  |
-| Panel "Votación": "Mínimo de partidas para ser comparado" y el texto de ayuda | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
+| Panel "Votación": "Mínimo de partidas para ser comparado y aparecer en la lista" y el texto de ayuda | `Views/CommunityAdmin/Index.cshtml:38` | `done` |  |
 | Panel "Puntuación": "Mínimo de comparaciones para aparecer en la lista" | `Views/CommunityAdmin/Index.cshtml:51` | `done` |  |
 | Panel "Puntuación": "Factor K de Elo" (con sus límites) | — | `adapted` | Eliminado el 21 de noviembre de 2026: la puntuación pasó a ser un ajuste de Bradley–Terry con todos los votos, que no tiene factor K. |
 | Panel "Puntuación": "Puntuación inicial" y el texto de ayuda | `Views/CommunityAdmin/Index.cshtml:59` | `done` |  |
@@ -295,7 +295,7 @@ Cómo se comprobó: cada página se abrió en un navegador sobre una copia de da
 
 | Elemento | Dónde hoy | Estado | Notas |
 |---|---|---|---|
-| Estilos de Bootstrap 5 y `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | Es el objetivo de este trabajo: las páginas usan ahora los temas de Bootstrap 3 de `_Layout`. `_Bootstrap5Layout` y `wwwroot/lib/bootstrap` siguen en el repositorio para las carpetas que convierten otras ramas. |
+| Estilos de Bootstrap 5 y `bootstrap.bundle` | `Views/Shared/_Bootstrap5Layout.cshtml:19` | `not ported` | Es el objetivo de este trabajo: las páginas usan ahora los temas de Bootstrap 3 de `_Layout`. `_Bootstrap5Layout` y `wwwroot/lib/bootstrap` se eliminaron cuando se convirtieron todas las páginas. |
 | htmx cargado en todas las páginas | `Views/Shared/_Bootstrap5Layout.cshtml:114` | `adapted` | `_Layout` no lo carga. Los tres lugares que lo necesitan lo cargan en su sección `Scripts`: la página del servidor de juego, el paso del servidor en el asistente y la página de votación. |
-| Clases de `site.css` usadas por estas páginas (punto de estado, pasos del asistente, bloque de configuración, avatares) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | Lo que estas páginas todavía necesitan (punto de estado, pasos del asistente, bloque de configuración, cuadrícula de paneles) está en el parcial `Views/Shared/_AdministrationStyles.cshtml`, junto a `_AdminStyles`; los estilos de la papeleta están en la página de votación. |
+| Clases de `site.css` usadas por estas páginas (punto de estado, pasos del asistente, bloque de configuración, avatares) | `Views/Shared/_Bootstrap5Layout.cshtml:20` | `adapted` | Lo que estas páginas todavía necesitan (punto de estado, pasos del asistente, bloque de configuración, cuadrícula de paneles) está en `wwwroot/css/administration.css`, cargado por el parcial `_AdministrationStyles`, junto a `_AdminStyles`; los estilos de la papeleta están en `wwwroot/css/pages/community-vote.css`. |
 | Mensajes de error y "Guardado." en la parte superior de la página | `Views/Shared/_Bootstrap5Layout.cshtml:100` | `done` | Mediante `_Layout`. |

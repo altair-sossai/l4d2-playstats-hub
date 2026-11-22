@@ -63,9 +63,9 @@ Cómo se comprobó: la página de detalles y la página de estadísticas de una 
 | Imagen social: miniatura de la campaña de la última partida, texto alternativo con su nombre | PageMetadata/LastMatchesPageMetadata.cs:19-20 | done | |
 | Título `h4.text-center` "Últimas partidas" | Views/LastMatches/Index.cshtml:13 | done | |
 | `div.match` con una tarjeta por partida | Views/LastMatches/Index.cshtml:15-20 | done | |
-| Filtro de temporada | (nuevo) | adapted | Añadido del hub, con el aspecto antiguo: un select pequeño a la derecha, encima de la lista ("Todas las temporadas" de forma predeterminada, después las temporadas del año actual y un elemento por año), para que las temporadas pasadas se puedan seguir consultando. Las temporadas se nombran como en los selectores de período del sitio antiguo, "De MM/AAAA a MM/AAAA". Se oculta mientras hay una sola temporada y un solo servidor. |
-| Filtro de servidor | (nuevo) | adapted | Añadido del hub: un segundo select, que solo se muestra cuando hay más de un servidor de juego. |
-| Paginación | (nuevo) | adapted | Añadido del hub, con el parcial compartido `_Pagination`, que se muestra cuando hay más de una página. |
+| Filtro de temporada | (nuevo) | adapted | Añadido en el hub, con el aspecto antiguo: un select pequeño a la derecha, encima de la lista ("Todas las temporadas" de forma predeterminada, después las temporadas del año actual y una opción por año), para que las temporadas pasadas se puedan seguir consultando. Las temporadas se nombran como en los selectores de período del sitio antiguo, "De MM/AAAA a MM/AAAA". Se oculta mientras hay una sola temporada y un solo servidor. |
+| Filtro de servidor | (nuevo) | adapted | Añadido en el hub: un segundo select, que solo se muestra cuando hay más de un servidor de juego. |
+| Paginación | (nuevo) | adapted | Añadido en el hub, con el parcial compartido `_Pagination`, que se muestra cuando hay más de una página. |
 | Lista vacía | Views/LastMatches/Index.cshtml:15-20 | adapted | La página antigua no mostraba nada; el hub muestra "No se encontró ninguna partida" con el mismo estilo de título. |
 
 ## Tarjeta de partida (`Views/LastMatches/_Match.cshtml`)
@@ -75,9 +75,9 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 | Elemento | Dónde en el sitio antiguo | Estado | Notas |
 |---|---|---|---|
 | `panel panel-primary` con un padding del encabezado de `6px 10px` | _Match.cshtml:160-161 | done | |
-| Nombre de la campaña en un `h4` en negrita | _Match.cshtml:164-166 | adapted | Una partida en mapas de ninguna campaña registrada (solo posible en el hub) muestra "Campaña personalizada". |
+| Nombre de la campaña en un `h4` en negrita | _Match.cshtml:164-166 | adapted | Una partida en mapas que no son de ninguna campaña registrada (solo posible en el hub) muestra "Campaña personalizada". |
 | Nombre de la configuración en un `small` en cursiva | _Match.cshtml:167 | done | |
-| Nombre del servidor | (nuevo) | adapted | Añadido del hub: un segundo `small` en cursiva después del nombre de la configuración, solo cuando hay más de un servidor de juego. |
+| Nombre del servidor | (nuevo) | adapted | Añadido en el hub: un segundo `small` en cursiva después del nombre de la configuración, solo cuando hay más de un servidor de juego. |
 | Etiqueta "Competitiva" (`label-success`) o "Casual" (`label-default`) | _Match.cshtml:168-175 | done | |
 | "El equipo {0} ganó por {1:N0} puntos" | _Match.cshtml:176-178 | done | |
 | Icono de calendario e inicio: "Hoy a las {t}", "Ayer a las {t}" o "{d} a las {t}" | _Match.cshtml:181-197 | done | Hoy es el día actual en la zona horaria del sitio. |
@@ -100,7 +100,7 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 | Gráfico de líneas "Marcador": una serie por equipo ("Equipo A", "Equipo B"), puntuación después de cada mapa, verde para el ganador y rojo para el perdedor, nombres de los mapas cortados a 16 caracteres, leyenda abajo, eje que empieza en cero | _Match.cshtml:26-79, :284-294 | done | |
 | Gráfico de barras "Puntos ganados por mapa": una serie por equipo con los puntos de cada mapa (diferencia respecto al mapa anterior) | _Match.cshtml:81-157, :296-306 | done | Los tank wipes se añadieron después. |
 | El color del texto de los gráficos sigue el tema (`#222222` claro, `#c8c8c8` oscuro) | _Match.cshtml:18-24 | done | La cookie del tema es la del hub (`hub_theme`). |
-| Gráficos dibujados solo cuando entran en la vista (`canvas.app-chart` con `data-chart`), de 200px de alto | _Match.cshtml:285-304 | done | |
+| Gráficos dibujados solo cuando quedan a la vista (`canvas.app-chart` con `data-chart`), de 200px de alto | _Match.cshtml:285-304 | done | |
 | Móvil: la columna de la imagen y la columna de los equipos ocupan todo el ancho (`left-side`, `right-side`); gráficos apilados (`col-sm-6 col-xs-12`) | _Match.cshtml:211, :220, :284, :296 | done | |
 
 ## Detalles de la partida (`Views/LastMatches/Details.cshtml`)

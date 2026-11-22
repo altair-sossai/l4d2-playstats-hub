@@ -4,7 +4,7 @@
 
 One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, match statistics, live server view, weapon skin shop and a community ranking, together with the SourceMod plugins that feed it.
 
-> **Status: first version published, migration in progress.** The application, the plugins, the Linux installer and the Docker image are available in the [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). The plugins have not been run on a live game server yet. The [existing repositories](#repositories-being-consolidated) still run the production site ([l4d2.com.br](https://l4d2.com.br/)) until the migration is finished.
+> **Status: first version published, migration finished.** The application, the plugins, the Linux installer and the Docker image are available in the [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). The plugins have not been run on a live game server yet. The production site ([l4d2.com.br](https://l4d2.com.br/)) has run on this application since 19 November 2026, and the [repositories it replaced](#repositories-this-one-replaced) were archived on 22 November 2026.
 
 ## Contents
 
@@ -14,7 +14,7 @@ One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, 
 - [Installing](#installing)
 - [How it fits together](#how-it-fits-together)
 - [What stays outside this repository](#what-stays-outside-this-repository)
-- [Repositories being consolidated](#repositories-being-consolidated)
+- [Repositories this one replaced](#repositories-this-one-replaced)
 - [Documentation](#documentation)
 - [License](#license)
 
@@ -33,7 +33,7 @@ This repository brings the logic together so that any server owner can run the s
 - **Live server.** Scoreboard, players, events and chat of the match in progress, for each server.
 - **Weapon skin shop.** Players earn stars from MVPs and spend them on skins.
 - **Community ranking.** Players vote on pairs of players, and the votes build a second ranking.
-- **Pages for inside the game.** `!ranking` opens a light version of the ranking made for the game's own browser.
+- **Pages for inside the game.** `!ranking` opens the ranking in the game's own browser, or a light version made for it, and `!comandos` / `!commands` open the commands of the server.
 - **Modules.** The administrator turns each of these on or off.
 - **Guided setup.** A first-run wizard, and a status page that shows whether each game server is connected and what is missing.
 - **Three languages.** English, Portuguese and Spanish.
@@ -95,14 +95,14 @@ The plugins send each map's statistics file and the live match to the site. The 
 | [l4d2-playstats](https://github.com/altair-sossai/l4d2-playstats) | NuGet package that parses the statistics files. It is useful on its own and this project uses it as a dependency. |
 | [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets) | Weapon skin models, materials and photos. They are over 500 MB, so only the skin shop logic lives here. |
 
-## Repositories being consolidated
+## Repositories this one replaced
 
-The migration happens step by step. The old repositories are archived when it is finished.
+The migration happened step by step. l4d2-playstats-api and l4d2-playstats-web were archived on 22 November 2026 and point to this repository.
 
 | Repository | What it is | What happens to it |
 |---|---|---|
-| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions API that stores the statistics files and computes matches, ranking and stars. | Replaced by this application, then archived. |
-| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Website with ranking, statistics, live server page and weapon skin shop. | Replaced by this application, then archived. |
+| [l4d2-playstats-api](https://github.com/altair-sossai/l4d2-playstats-api) | Azure Functions API that stores the statistics files and computes matches, ranking and stars. | Replaced by this application; archived on 22 November 2026. |
+| [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) | Website with ranking, statistics, live server page and weapon skin shop. | Replaced by this application; archived on 22 November 2026. |
 | [l4d2-zone-server](https://github.com/altair-sossai/l4d2-zone-server) | Competitive server setup with custom plugins. | Its PlayStats plugins now live in [plugins/](plugins/README.md). |
 
 ## Documentation

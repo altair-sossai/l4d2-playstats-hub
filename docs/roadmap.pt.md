@@ -71,12 +71,12 @@ O [CONTRIBUTING.pt.md](../CONTRIBUTING.pt.md) descreve as pastas e as regras de 
 | Back-end | Uma única instância, seja qual for o número de servidores de jogo. |
 | Partida ao vivo | Somente em memória, separada por servidor de jogo. |
 | Reembolso de skins | Reembolsar as skins no fim de uma temporada é uma configuração, ligada por padrão. |
-| Catálogo de skins | O hub já vem com o catálogo e as miniaturas do site atual, e importa o catálogo na primeira vez que a loja é ligada. As fotos são lidas do endereço dos assets, por padrão o do site atual. |
+| Catálogo de skins | O hub já vem com o catálogo e as miniaturas do site antigo, e importa o catálogo na primeira vez que a loja é ligada. As fotos são lidas do endereço dos assets, por padrão o do site antigo. |
 | Plugins | Voltados para servidores baseados no L4D2 Competitive Rework. Um endereço e um token para todos eles. |
 | Comandos remotos | Enviar comandos do site para um servidor de jogo é um módulo, desligado por padrão, com log de auditoria. |
 | Anti-cheat | Um módulo, desligado por padrão, que mostra a página do Anti-Cheat com o download e as instruções. O programa Anti-Cheat e o serviço dele são projetos separados. |
 | Front-end | Duas camadas: o site principal, para os navegadores atuais, e algumas páginas feitas para o navegador dentro do jogo. |
-| Páginas dentro do jogo | Só o essencial: o ranking da temporada, o resumo do jogador que abriu o painel e as últimas partidas. |
+| Páginas dentro do jogo | Só o essencial: o ranking da temporada, o resumo do jogador que abriu o painel, as últimas partidas e os comandos do servidor. |
 | Área administrativa | Renderizada no servidor, como o resto do site. Um framework de página única, como o Angular, é permitido se alguma tela precisar, e não é usado. |
 | Docker | Oferecido como alternativa ao script de instalação. O contêiner roda o site com um usuário sem privilégios e tem verificação de saúde. |
 | Dados antigos | Importados e recalculados. Não há compatibilidade retroativa com o armazenamento antigo. |
@@ -112,7 +112,7 @@ Um módulo desligado some do menu, e as páginas dele respondem como não encont
 
 - As temporadas são linhas no banco de dados, criadas a partir da duração configurada. Uma temporada de dois meses começa em janeiro, março, maio e assim por diante.
 - Um arquivo com data anterior à primeira temporada cria as temporadas anteriores de que precisa.
-- A pontuação mantém os valores antigos como padrões que o administrador pode editar: 85 por vitória, -80 por derrota, -150 por rage quit, 8 e 6 para cada MVP. A experiência nunca fica abaixo de zero.
+- A pontuação mantém os valores antigos como padrões que o administrador pode editar: 85 por vitória, -80 por derrota, -150 por rage quit, 8 e 6 para cada MVP. Os tank wipes, novos aqui, somam 50 cada por padrão. A experiência nunca fica abaixo de zero.
 - As punições pertencem a uma temporada.
 - As partidas nunca atravessam um limite de temporada, uma mudança de configuração ou uma troca de servidor de jogo.
 
@@ -128,28 +128,28 @@ O arquivo de estatísticas traz o nome de exibição da configuração, como `Zo
 ## Ranking da comunidade
 
 - O votante vê dois jogadores com seus avatares e responde qual é melhor: o da esquerda, o da direita, mesmo nível ou "não conheço" um deles ou os dois.
-- Mesmo nível conta como empate. "Não conheço" não altera nada e esconde aquele jogador daquele votante dali em diante.
+- Mesmo nível conta como empate. "Não conheço" não altera nenhuma pontuação, mas usa um voto do dia, e aquele par não é oferecido de novo àquele votante.
 - O rating é um ajuste de Bradley–Terry com todos os votos, com uma margem de incerteza, e não é zerado com a temporada.
 - Votar exige um número mínimo de partidas jogadas, contadas em todas as temporadas: 10 por padrão.
-- Os votos por dia são limitados: 20 por padrão. Os jogadores não podem votar em si mesmos nem duas vezes no mesmo par.
+- Os votos por dia são limitados: 20 por padrão. Os jogadores não podem votar em si mesmos nem duas vezes no mesmo par, e um votante avalia o mesmo jogador no máximo 5 vezes por padrão (0 significa sem limite).
 - O site escolhe o par, dando preferência a jogadores com quem ou contra quem o votante já jogou, e só aceita resposta para o par que ofereceu.
 
 ## Loja de skins de armas
 
 - Os jogadores ganham uma estrela para cada MVP em partidas ranqueadas, ao longo de todo o histórico, e gastam estrelas em skins.
-- O catálogo e as miniaturas do site atual vêm com o hub, e o catálogo é importado sozinho na primeira vez que a loja é ligada. Um administrador pode importar outro catálogo de um arquivo ou de um endereço. As fotos são carregadas de um endereço que o administrador define, por padrão o do site atual.
+- O catálogo e as miniaturas do site antigo vêm com o hub, e o catálogo é importado sozinho na primeira vez que a loja é ligada. Um administrador pode importar outro catálogo de um arquivo ou de um endereço. As fotos são carregadas de um endereço que o administrador define, por padrão o do site antigo.
 - No início de uma temporada, as skins compradas antes são reembolsadas e os presentes são mantidos. O administrador pode desligar o reembolso.
 - Modelos, materiais e fotos ficam no [l4d2-zone-server-assets](https://github.com/altair-sossai/l4d2-zone-server-assets).
 
 ## Servidor ao vivo
 
-- O servidor de jogo envia a configuração, o round, o placar, os jogadores, o chat e os eventos da partida.
+- O servidor de jogo envia a configuração, a rodada, o placar, os jogadores, o chat e os eventos da partida.
 - O site mostra tudo isso com alguns segundos de atraso, como o site antigo fazia.
 - As conexões por endereço IP são armazenadas para apontar contas que compartilham um endereço. O endereço em si nunca é exibido.
 
 ## Assistente de configuração e status do servidor
 
-O assistente de primeira execução roda uma vez, depois da instalação: o primeiro administrador entra com a Steam usando um código impresso pelo instalador e depois escolhe as configurações do site, os módulos e o primeiro servidor de jogo.
+O assistente de primeira execução roda uma vez, depois da instalação: o primeiro administrador entra com a Steam usando um código mostrado pelo instalador e depois escolhe as configurações do site, os módulos e o primeiro servidor de jogo.
 
 Para cada servidor de jogo, o site mostra as duas linhas que devem ser coladas na configuração dele e então espera o servidor responder. É o servidor de jogo que chama o site, e não o contrário, o que funciona atrás de NAT e dispensa senha de RCON.
 
@@ -167,7 +167,7 @@ Um checklist mostra o que foi encontrado: conexão, plugin de envio, gravação 
 O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não tem flexbox, grid nem propriedades personalizadas. As medições estão em [in-game-browser.pt.md](in-game-browser.pt.md).
 
 - **Site principal.** Páginas renderizadas no servidor que mantêm o visual e o conteúdo do site que este projeto substitui: Bootstrap 3 com os temas escuro e claro, jQuery, Chart.js e diffDOM, sem etapa de build com Node. Cada página do site antigo foi portada item por item; os checklists estão em [site-parity](site-parity/README.pt.md). As páginas que são novas aqui (assistente, administração, ranking da comunidade) seguem o mesmo visual.
-- **Páginas dentro do jogo.** Três páginas somente leitura em `/ingame`, sem script, que cabem no painel do jogo. Um teste falha se elas começarem a usar algo que aquele navegador não tem.
+- **Páginas dentro do jogo.** Quatro páginas somente leitura em `/ingame`, sem script, que cabem no painel do jogo. Um teste falha se elas começarem a usar algo que aquele navegador não tem.
 
 ## Testes
 
@@ -178,7 +178,7 @@ O navegador dentro do jogo é o Chromium 18, de 2012. Ele roda apenas ES5 e não
 
 ## Implantação
 
-- **VPS Linux.** Um comando instala uma build self-contained como serviço, com HTTPS opcional pelo Caddy, e imprime o código de configuração. Atualização, backup e restauração são comandos únicos.
+- **VPS Linux.** Um comando instala uma build self-contained como serviço, com HTTPS opcional pelo Caddy, e mostra o código de configuração. Atualização, backup e restauração são comandos únicos.
 - **Backup agendado.** O site envia a cada algumas horas um zip com uma cópia do banco SQLite, as chaves e o logo para um contêiner do Azure Storage, configurado em Administração > Backup.
 - **Docker.** Uma imagem publicada a cada versão.
 - **Azure.** Uma máquina virtual com o instalador Linux, ou o App Service com a imagem.
@@ -210,5 +210,5 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 - **Plugins em um servidor real.** Eles compilam, e o site aceita o que enviam, mas ainda não rodaram em uma partida de verdade.
 - **HTTPS dentro do jogo.** Não medido. Veja [in-game-browser.pt.md](in-game-browser.pt.md#ainda-não-medido).
 - **Repositório de assets.** Resolvido: o catálogo e as 196 miniaturas do site atual vêm com o hub, como no site antigo, e as fotos são lidas de `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` por padrão.
-- **Ícones de patente no jogo.** Os sprites usados pelo `l4d2_show_patent_icon` não estão neste repositório.
+- **Ícones de patente no jogo.** Resolvido: os sprites usados pelo `l4d2_show_patent_icon` vêm no pacote dos plugins (`materials/sprites`); os jogadores ainda os baixam pelo FastDL.
 - **Azure App Service.** O guia foi escrito a partir da documentação do Azure e não foi executado de ponta a ponta.

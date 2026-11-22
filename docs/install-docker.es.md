@@ -4,7 +4,7 @@
 
 Usa esta opción si ya ejecutas tus servicios en contenedores. Si solo tienes un VPS Linux, el [instalador](install-linux.es.md) es más sencillo.
 
-Las capturas de pantalla de esta página son la salida real de los comandos, grabada en una máquina Ubuntu 24.04 limpia con Docker 29 y Compose 5.8, en una carpeta llamada `playstats`. Tus horarios y tu código de configuración serán distintos.
+Las capturas de pantalla de esta página son la salida real de los comandos, grabada en una máquina Ubuntu 24.04 limpia con Docker 29 y Compose 5.8, en una carpeta llamada `playstats`. Tus horas y tu código de configuración serán distintos.
 
 ## Contenido
 
@@ -49,7 +49,7 @@ Luego inícialo:
 docker compose up -d
 ```
 
-La primera vez, Docker descarga la imagen y luego crea la red, el volumen y el contenedor:
+La primera vez, Docker descarga la imagen y luego crea la red, los volúmenes y el contenedor:
 
 ![docker compose up -d, la primera vez](images/es/install-docker-up.webp)
 
@@ -59,7 +59,7 @@ La clave de secretos, que cifra los secretos guardados en la configuración, est
 
 Ejecuta un solo contenedor de la aplicación. La partida en vivo se guarda en memoria, y dos contenedores tendrían cada uno la suya.
 
-La aplicación se ejecuta con el usuario sin privilegios `app` de la imagen de .NET, no como root. Cuando el contenedor inicia, primero le da a ese usuario la propiedad de la carpeta de datos y después inicia el sitio.
+La aplicación se ejecuta con el usuario sin privilegios `app` de la imagen de .NET, no como root. Cuando el contenedor se inicia, primero le da a ese usuario la propiedad de la carpeta de datos y de la carpeta de los secretos, y después inicia el sitio.
 
 ## El código de configuración
 
@@ -95,7 +95,7 @@ docker compose pull
 docker compose up -d
 ```
 
-`pull` descarga la imagen más reciente, y `up -d` vuelve a crear el contenedor cuando la imagen cambió. Los datos del volumen se conservan, y el sitio actualiza sus tablas por sí solo al iniciar. Abajo, la imagen ya era la más reciente, así que el contenedor siguió en ejecución:
+`pull` descarga la imagen más reciente, y `up -d` vuelve a crear el contenedor cuando la imagen cambió. Los datos del volumen se conservan, y el sitio actualiza sus tablas por sí solo al iniciar. En la captura de abajo, la imagen ya era la más reciente, así que el contenedor siguió en ejecución:
 
 ![Actualizar con Docker](images/es/install-docker-update.webp)
 
@@ -155,13 +155,13 @@ docker compose start hub
 
 La clave de la API de Steam, la dirección o la cadena de conexión del destino de la copia de seguridad y el código de configuración se guardan cifrados en la base de datos, con la clave de `/secrets/secrets.key`. El sitio crea ese archivo la primera vez que arranca, con 32 bytes aleatorios, legible solo por el usuario `app`. Está en un volumen propio para que el volumen de datos, sus copias y el zip de copia de seguridad del sitio no revelen esos secretos.
 
-La copia automática a Azure Storage no incluye la clave. Guarda una copia de ella en un lugar seguro:
+La copia de seguridad automática a Azure Storage no incluye la clave. Guarda una copia de ella en un lugar seguro:
 
 ```bash
 docker compose exec hub cat /secrets/secrets.key
 ```
 
-Para llevar el sitio a otra máquina con un zip de la copia automática, pon la clave en el volumen `hub-secrets` de la nueva máquina antes de arrancarla: restaura el segundo archivo como se muestra en [Copia de seguridad](#copia-de-seguridad), o escribe la clave que copiaste en `/secrets/secrets.key`. Sin la clave original el sitio arranca y todos los datos están, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración.
+Para llevar el sitio a otra máquina con un zip de la copia automática, pon la clave en el volumen `hub-secrets` de la nueva máquina antes de arrancar el sitio: restaura el segundo archivo como se muestra en [Copia de seguridad](#copia-de-seguridad), o escribe la clave que copiaste en `/secrets/secrets.key`. Sin la clave original el sitio arranca igual y todos los datos siguen ahí, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración.
 
 En lugar del volumen puedes dar la clave en la variable `Hub__SecretsKey`, 32 bytes aleatorios en base64 (`openssl rand -base64 32`), o apuntar `Hub__SecretsKeyFile` a un secret de Docker, como `/run/secrets/hub_secrets_key`.
 
@@ -201,7 +201,7 @@ services:
 
 `docker network inspect` muestra la subred exacta si prefieres un rango más estrecho. No confíes en una red a la que los visitantes llegan directamente, o cualquiera de ellos podría fingir que viene de otro lugar.
 
-La [página del servidor en vivo](manual/live-server.es.md) recibe sus actualizaciones por un WebSocket en `/hubs/live`, así que deja que el proxy pase WebSockets (en nginx, las líneas de [Cambiar desde el sitio antiguo](switch-from-old-site.es.md#parte-3-el-cambio)). Sin eso la página sigue funcionando, por Server-Sent Events o long polling.
+La [página del servidor en vivo](manual/live-server.es.md) recibe sus actualizaciones por un WebSocket en `/hubs/live`, así que deja que el proxy pase WebSockets (en nginx, las líneas de [Cambiar desde el sitio antiguo](switch-from-old-site.es.md#parte-3-el-cambio)). Sin ellos la página sigue funcionando, por Server-Sent Events o long polling.
 
 ## Construir la imagen tú mismo
 

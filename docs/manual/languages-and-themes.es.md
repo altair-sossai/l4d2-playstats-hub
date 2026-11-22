@@ -14,7 +14,7 @@ El sitio habla tres idiomas, tiene un tema oscuro y uno claro, y funciona en un 
 
 ## Idiomas
 
-El sitio está en **inglés**, **portugués** y **español**. Todas las páginas están traducidas, incluidas el área de administración, las páginas dentro del juego y la página del Anti-Cheat.
+El sitio está en **inglés**, **portugués** y **español**. Todas las páginas están traducidas, incluidos el área de administración, las páginas dentro del juego y la página del Anti-Cheat.
 
 - El visitante elige el idioma en el menú de configuración, el ícono del engranaje a la derecha de la barra del menú. La elección se recuerda en ese navegador.
 - Un visitante que nunca eligió uno ve el **idioma predeterminado**, que el administrador define en [Configuración > Sitio](administration.es.md#sitio).

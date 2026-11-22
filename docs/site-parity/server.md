@@ -63,7 +63,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 |---|---|---|---|
 | Panel heading: server name, configuration name and team size ("4v4"), joined by " - " | `Web/Views/Server/_Header.cshtml:22` | adapted | The name is the host name the game server sends in its heartbeat (the old site asked Steam); before the first heartbeat it is the name the server was registered with. |
 | Anti-cheat label (on, off, API unavailable) with lock icon, colour and tooltip | `Web/Views/Server/_Header.cshtml:37` | done |  |
-| Anti-cheat label links to the anti-cheat page | `Web/Views/Server/_Header.cshtml:46` | adapted | The label is the same. The link is written only while the anti-cheat module is on, because the hub has no anti-cheat page yet (the module is reserved). |
+| Anti-cheat label links to the anti-cheat page | `Web/Views/Server/_Header.cshtml:46` | adapted | The label is the same. The link is written only while the anti-cheat module is on, since the Anti-Cheat page belongs to that module. |
 | "Server IP" label with the question mark button that opens the server info modal | `Web/Views/Server/_Header.cshtml:58` | done |  |
 | Server IP value with the copy icon (copies `connect <ip>`, "Text copied!" popover, icon per theme) | `Web/Views/Server/_Header.cshtml:65` | done | The address is the one of the server on screen. The copy icon is left out when the server has no address. |
 | Players: connected / maximum | `Web/Views/Server/_Header.cshtml:73` | adapted | Connected is the number of players in the live state (survivors, infected and spectators) instead of the Steam query. Maximum is the slots the game server sends in its heartbeat (`maxPlayers`, added to the plugin); with an older plugin it is twice the team size. |
@@ -222,7 +222,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 |---|---|---|---|
 | Navbar badge "● players/slots", pulsing, linked to the server page, hidden with nobody connected | `Web/Views/Shared/_Layout.cshtml:322` | done | Already in the layout. The numbers are the ones of the header (see "Players"). |
 | Browser title prefixed with "🟢 players/slots" | `Web/Views/Shared/_Layout.cshtml:602` | done |  |
-| Chat row shown or hidden by the same check, every 4 s | `Web/Views/Shared/_Layout.cshtml:594` | done |  |
+| Chat row shown or hidden by the same check, every 4 s | `Web/Views/Shared/_Layout.cshtml:594` | adapted | The same check, starting only after the visitor first moves the mouse, scrolls, taps or types, and paused while the tab is in the background. |
 | Floating connect icon, hidden on phones | `Web/Views/Shared/_Layout.cshtml:526` | done | Already in the layout. It is hidden while no server has an address; the old one was always there. |
 
 ## Chat bans page
@@ -230,7 +230,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Item | Where in the old site | Status | Notes |
 |---|---|---|---|
 | Administrators only | `Web/Controllers/ChatBansController.cs:10` | done | Also needs the site chat module. |
-| Header "Chat Bans" with the "Add ban" button | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
+| Header "Chat Bans" with the "Add" button | `Web/Views/ChatBans/Index.cshtml:35` | done |  |
 | Lead text | `Web/Views/ChatBans/Index.cshtml:42` | done |  |
 | Counter of banned players | `Web/Views/ChatBans/Index.cshtml:44` | done |  |
 | Search by name, Steam ID or reason, with "Clear filters" | `Web/Views/ChatBans/Index.cshtml:51`, `Web/Controllers/ChatBansController.cs:25` | done |  |

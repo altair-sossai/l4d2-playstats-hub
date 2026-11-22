@@ -2,7 +2,7 @@
 
 🌐 [English](databases.md) | **Português** | [Español](databases.es.md)
 
-O L4D2 PlayStats Hub armazena os dados em um banco de dados relacional. Você escolhe qual com duas configurações.
+O L4D2 PlayStats Hub armazena os dados em um banco de dados relacional. Duas configurações definem qual deles.
 
 ## Conteúdo
 
@@ -28,7 +28,7 @@ Os mesmos testes automatizados passam nos quatro. As versões usadas nesses test
 | Configuração | Valores |
 |---|---|
 | `Database__Provider` | `Sqlite`, `PostgreSql`, `MySql` ou `SqlServer` |
-| `Database__ConnectionString` | Como chegar ao banco de dados. O formato depende do provedor. |
+| `Database__ConnectionString` | Como acessar o banco de dados. O formato depende do provedor. |
 
 Onde colocá-las:
 

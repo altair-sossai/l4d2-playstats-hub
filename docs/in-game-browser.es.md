@@ -2,7 +2,7 @@
 
 🌐 [English](in-game-browser.md) | [Português](in-game-browser.pt.md) | **Español**
 
-Los jugadores abren el ranking dentro de Left 4 Dead 2 mediante el plugin `l4d2_ranking`, que muestra una página web en el panel MOTD del juego. Ese panel es un navegador integrado antiguo, así que cualquier página pensada para abrirse dentro del juego tiene que respetar sus límites. Este documento registra qué soporta ese navegador.
+Los jugadores abren el ranking dentro de Left 4 Dead 2 mediante el plugin `l4d2_ranking`, que muestra una página web en el panel MOTD del juego. Ese panel es un navegador integrado antiguo, así que cualquier página pensada para abrirse dentro del juego tiene que respetar sus límites. Este documento registra qué admite ese navegador.
 
 ## Contenido
 
@@ -29,7 +29,7 @@ El user agent contiene `Valve Client`, y un servidor puede usarlo para reconocer
 
 ## Cómo se midió
 
-El 2026-11-15, con el cliente de Windows, versión del juego 2.2.4.3. Se abrió una página de prueba en el panel MOTD mediante `l4d2_ranking`, y la página envió sus propios resultados a un servidor local. La misma página pasa todas las verificaciones en un navegador actual, así que cada fallo de abajo es un límite del navegador del juego.
+El 2026-11-15, con el cliente de Windows, versión del juego 2.2.4.3. Se abrió una página de prueba en el panel MOTD mediante `l4d2_ranking`, y la página envió sus propios resultados a un servidor local. La misma página pasa todas las verificaciones en un navegador actual, así que cada fallo indicado abajo es un límite del navegador del juego.
 
 ## JavaScript
 
@@ -99,7 +99,7 @@ La compilación del juego usada en la prueba se cerró sola antes de que la pág
 
 ## Qué significa esto para el front-end
 
-**Se sabe que funcionan dentro del juego:** Bootstrap 3.4.1 y jQuery 1.12.4, que el sitio actual usa en producción por este motivo.
+**Se sabe que funcionan dentro del juego:** Bootstrap 3.4.1 y jQuery 1.12.4, que el sitio antiguo usaba en producción por este motivo, y que este sitio también usa.
 
 **Se espera que fallen dentro del juego**, según las mediciones:
 
@@ -124,6 +124,6 @@ La compilación del juego usada en la prueba se cerró sola antes de que la pág
 **El enfoque adoptado:** dos capas en lugar de limitar todo el sitio a 2012.
 
 - El sitio principal mantiene la base del sitio que reemplaza: Bootstrap 3 y jQuery, que se sabe que funcionan dentro del juego, con Chart.js y diffDOM.
-- Tres páginas para el juego viven bajo `/ingame`: el ranking de la temporada, el resumen del jugador que abrió el panel y las últimas partidas. Siguen las reglas de arriba y son las que abre el plugin del juego.
+- Cuatro páginas para el juego viven bajo `/ingame`: el ranking de la temporada, el resumen del jugador que abrió el panel, las últimas partidas y los comandos del servidor. Siguen las reglas de arriba. `!comandos` y `!commands` abren la página de comandos, y `!ranking` abre la página del ranking cuando `ranking_motd_path` es `/ingame`.
 
 Las páginas disponibles dentro del juego existen por duplicado, así que ese conjunto se mantiene pequeño. Una prueba falla si alguna de ellas empieza a usar algo que este navegador no tiene. La [hoja de ruta](roadmap.es.md#front-end) tiene el resto de las decisiones de front-end.

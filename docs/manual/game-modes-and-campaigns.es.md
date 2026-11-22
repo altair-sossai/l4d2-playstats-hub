@@ -23,12 +23,12 @@ Cada archivo de estadísticas lleva el nombre de la configuración que ejecutaba
 
 ![La página de modos de juego](../images/es/admin-game-modes.webp)
 
-La pestaña **Reglas** lista las reglas, 20 por página, en orden de prioridad. El botón **Añadir**, encima de la lista a la derecha, abre una ventana con los campos de una regla nueva; **Editar**, en cada fila, abre la misma ventana con esa regla, y **Guardar** guarda los cambios. **Eliminar** borra una regla después de una confirmación. Una regla tiene:
+La pestaña **Reglas** lista las reglas, 20 por página, en orden de prioridad. El botón **Añadir**, encima de la lista a la derecha, abre una ventana con los campos de una regla nueva; **Editar**, en cada fila, abre la misma ventana con los datos de esa regla, y **Guardar** guarda los cambios. **Eliminar** borra una regla después de una confirmación. Una regla tiene:
 
 | Campo | Significado |
 |---|---|
 | Nombre | Una etiqueta para ti, como `4v4` o `1v1 practice`. |
-| Patrón de configuración | Los nombres de configuración que cubre la regla. `*` representa cualquier texto y `?` un carácter. Las mayúsculas y minúsculas no importan. `*` solo cubre todas las configuraciones. |
+| Patrón de configuración | Los nombres de configuración que cubre la regla. `*` representa cualquier texto y `?` un carácter. Las mayúsculas y minúsculas no importan. `*` por sí solo cubre todas las configuraciones. |
 | Tamaño del equipo | La cantidad de jugadores por equipo que cubre la regla, o **Cualquiera**. |
 | Mínimo de mapas | Cuántos mapas necesita una partida para contar. Como mínimo 1. |
 | Prioridad | El orden en que se revisan las reglas, de menor a mayor. |

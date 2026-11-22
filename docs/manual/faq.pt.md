@@ -20,25 +20,25 @@ Só as partidas ranqueadas contam. Uma partida é ranqueada quando a configuraç
 **Minha vitória contou como rage quit.**
 Um jogador que estava no primeiro mapa da partida e não está no último mapa é contado como rage quit, mesmo que tenha voltado depois ou perdido a conexão. Veja [Ranking > Vitórias, derrotas, empates e rage quits](ranking.pt.md#vitórias-derrotas-empates-e-rage-quits).
 
-**Entrei no meio de uma partida e não ganhei a vitória.**
+**Entrei no meio de uma partida e não recebi a vitória.**
 Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem entrou depois ganha só os pontos de MVP e de tank wipe.
 
 **Minha experiência não mudou depois de um empate.**
 Um empate não dá vitória nem derrota, só os pontos de MVP e de tank wipe.
 
 **Por que a minha experiência zerou?**
-Começou uma nova temporada. A temporada passada fica no seletor de período do ranking e de **Mais > Jogadores**.
+Começou uma nova temporada. A temporada passada fica no seletor de período do ranking e de **Mais > Jogadores** enquanto ela for do ano atual; para um ano anterior, escolha esse ano, ou abra a temporada pelo endereço dela.
 
 **Meu nome está antigo ou errado.**
-O site mostra o nome que você mais usou no período. Os seus outros nomes ficam em **Nomes anteriores**, na sua página.
+O site mostra um só nome em todo lugar: o nome que um administrador forçou; se não houver, o nome que você mais usou em todas as suas partidas, de todas as temporadas; se não houver, o seu nome Steam. Os seus outros nomes ficam em **Nomes anteriores**, na sua página. Veja [Jogadores > O nome do jogador](players.pt.md#o-nome-do-jogador).
 
 **Como eu ganho estrelas?**
-Uma estrela por cada prêmio de MVP de SI e de MVP de CI em uma partida ranqueada. Veja [Loja de skins de armas > Estrelas](skin-shop.pt.md#estrelas).
+Uma estrela para cada prêmio de MVP de SI e de MVP de CI em uma partida ranqueada. Veja [Loja de skins de armas > Estrelas](skin-shop.pt.md#estrelas).
 
 **Minhas skins sumiram.**
-Se o site faz o reembolso das skins no fim da temporada, as skins compradas são recolhidas quando começa uma nova temporada, e as estrelas voltam para você. Compre de novo. Presentes nunca são recolhidos.
+Se o site faz o reembolso das skins no fim da temporada, as skins compradas são recolhidas quando começa uma nova temporada, e as estrelas voltam para você. Compre-as de novo. Presentes nunca são recolhidos.
 
-**Comprei uma skin e não vejo ela no jogo.**
+**Comprei uma skin e não a vejo no jogo.**
 Ela aparece a partir da próxima troca de mapa. No jogo, `!skin status` mostra o que você tem.
 
 **O site diz que preciso de mais partidas para votar.**
@@ -50,7 +50,7 @@ Ela fica cerca de 15 segundos atrás, de propósito. Um administrador muda o atr
 ## Para administradores
 
 **Como eu adiciono outro administrador?**
-Em [Administração > Administradores](administration.pt.md#administradores), com o SteamID64 dele. Se você não consegue mais fazer login, use `playstats-hub add-admin <SteamID64>` no Linux.
+Em [Administração > Administradores](administration.pt.md#administradores), com o SteamID64 dele. Se você não conseguir mais fazer login, use `playstats-hub add-admin <SteamID64>` no Linux.
 
 **Como eu adiciono um segundo servidor de jogo?**
 Em [Administração > Servidores de jogo](administration.pt.md#servidores-de-jogo). Cada servidor recebe o próprio token. Os resultados dos jogadores se somam entre todos os servidores.
@@ -80,7 +80,7 @@ Não. A partida ao vivo fica na memória de um processo só. Rode uma cópia.
 Todo mundo, por padrão, como no site antigo. [Configurações > Privacidade](administration.pt.md#privacidade) pode restringi-las aos administradores. O aviso no chat do jogo é uma configuração separada do plugin, `gameinfo_related_accounts_chat`.
 
 **Os visitantes ainda veem a página antiga por um momento.**
-As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranking da comunidade e o painel do jogo) ficam guardadas por até 60 segundos, para que muitos visitantes e buscadores custem pouco. Novos arquivos de estatísticas, configurações, punições e o reprocessamento as atualizam na hora; outras mudanças, como votos da comunidade, avatares ou nomes de jogadores, aparecem em até um minuto. Jogadores conectados e administradores sempre veem a página atual.
+As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranking da comunidade e o painel do jogo) ficam guardadas por até 60 segundos, para que muitos visitantes e buscadores custem pouco. Novos arquivos de estatísticas, configurações, punições e o reprocessamento as atualizam na hora; outras mudanças, como votos da comunidade, avatares ou nomes de jogadores, aparecem em até um minuto. Jogadores logados e administradores sempre veem a página atual.
 
 ## Resolvendo problemas
 
@@ -88,7 +88,7 @@ As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranki
 |---|---|
 | Toda página leva para a página de configuração | A configuração não foi concluída. Faça login com a conta de administrador e conclua. Veja [Configuração inicial](first-run.pt.md). |
 | O código de configuração é recusado | Copie de novo: `playstats-hub setup-code`, ou `docker compose logs hub \| grep "setup code"`. Ele só funciona até o primeiro administrador fazer login. |
-| O servidor de jogo fica em **Aguardando a primeira conexão** | Confira as duas linhas no `cfg/playstats.cfg` e a linha `exec playstats.cfg` no `cfg/server.cfg` (ou as duas linhas no `cfg/server.cfg`), se o `l4d2_playstats_sync.smx` está na própria `addons/sourcemod/plugins/` e é carregado no `cfg/sharedplugins.cfg` e se o servidor de jogo consegue alcançar o endereço do site. Rode `sm_playstats_test` no console do servidor. |
+| O servidor de jogo fica em **Aguardando a primeira conexão** | Confira as duas linhas no `cfg/playstats.cfg` e a linha `exec playstats.cfg` no `cfg/server.cfg` (ou as duas linhas no `cfg/server.cfg`), se o `l4d2_playstats_sync.smx` está na própria pasta `addons/sourcemod/plugins/` e é carregado no `cfg/sharedplugins.cfg` e se o servidor de jogo consegue alcançar o endereço do site. Rode `sm_playstats_test` no console do servidor. |
 | O servidor de jogo mostra **Chave inválida** | O token na configuração do servidor de jogo não é o atual. Copie o token completo de novo, ou gere uma nova chave. |
 | Conectado, mas nenhum arquivo de estatísticas chega | Confira **Gravação de estatísticas ativada** na lista de verificação (`sm_stats_writestats 1`), e se um mapa foi jogado até o fim. |
 | As partidas chegam, mas são todas **Casual** | Nenhuma regra de modo de jogo as conta. A visão geral avisa sobre configurações sem regra. Veja [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo). |
@@ -97,7 +97,7 @@ As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranki
 | O `!ranking` abre um painel vazio | O jogo não consegue abrir o endereço HTTPS. Defina `playstats_ingame_url` com um endereço HTTP simples do site. Veja [Páginas dentro do jogo](in-game-pages.pt.md#o-endereço-usado-pelo-jogo). |
 | Os avatares não carregam | Eles são baixados em segundo plano. Espere alguns minutos, ou defina uma chave da Steam Web API em [Configurações](administration.pt.md#site). |
 | Os jogadores foram deslogados depois de mudar o site de lugar | A pasta `keys` não foi copiada. Eles só precisam fazer login de novo. |
-| As imagens das skins não carregam | As miniaturas das skins que vêm com o hub são servidas pelo site. Para as fotos, e para as miniaturas de skins adicionadas depois, confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja); em branco, usa o endereço do servidor atual. |
+| As imagens das skins não carregam | As miniaturas das skins que vêm com o hub são servidas pelo site. Para as fotos, e para as miniaturas de skins adicionadas depois, confira **Endereço dos assets** nas [configurações da loja](skin-shop.pt.md#configurações-da-loja); em branco, o site usa o endereço do servidor atual. |
 | Uma página mostra **Página não encontrada** | O endereço está errado, ou o módulo dela está desligado. Veja [Módulos](administration.pt.md#módulos). |
 | Uma página mostra **Algo deu errado** | O site encontrou um erro inesperado. Os detalhes estão no log: `playstats-hub logs`, ou `docker compose logs hub`. |
 | Atrás de um proxy reverso, o site vê `http` em vez de `https`, ou o endereço do proxy em vez do visitante | O proxy não está na mesma máquina, então o site ignora os cabeçalhos que ele repassa. Adicione o endereço ou a rede dele em `Hub__TrustedProxies`. Veja [Instalando com Docker > Configuração](../install-docker.pt.md#configuração). |

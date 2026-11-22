@@ -7,11 +7,11 @@ Toma las capturas de pantalla que usa la documentación y las guarda en `docs/im
 | Comando | Capturas | Necesita |
 |---|---|---|
 | `terminal` | El instalador y los comandos de Docker, dibujados como ventanas de terminal a partir de la salida grabada en [terminal/](terminal/). Las mismas imágenes van a la carpeta de cada idioma. | Nada más. |
-| `wizard` | Cada paso del asistente de instalación, desde el código de configuración hasta el sitio terminado. | Un sitio iniciado sobre una carpeta de datos vacía, y su código de configuración. |
+| `wizard` | Cada paso del asistente de configuración inicial, desde el código de configuración hasta el sitio terminado. | Un sitio iniciado sobre una carpeta de datos vacía, y su código de configuración. |
 | `switch` | La instalación de l4d2.com.br para [Cambiar desde el sitio antiguo](../../docs/switch-from-old-site.es.md): el asistente y las páginas de administración con los valores de ese sitio, y la vista general después de la importación. | Un sitio iniciado sobre una carpeta de datos vacía, su código de configuración y el logo del sitio. Para la vista general, la carpeta de datos después de la importación. |
 | `site` | Todas las páginas públicas, la tienda de skins, el ranking de la comunidad, las páginas dentro del juego, el diseño para teléfono, los dos temas y todas las páginas de administración. | Un sitio con datos, con la sesión iniciada mediante el inicio de sesión de desarrollo. |
 
-Las listas de capturas están en [site.js](site.js), [wizard.js](wizard.js) y [terminal-shots.json](terminal-shots.json). Cada captura tiene un nombre, una página, un ancho (1280 para escritorio, 390 para teléfono, 900x450 para las páginas dentro del juego), las acciones que se hacen antes de la captura y lo que se conserva: la página completa, la parte visible o un elemento. Las imágenes son WebP con calidad 80.
+Las listas de capturas están en [site.js](site.js), [wizard.js](wizard.js) y [terminal-shots.json](terminal-shots.json). Cada captura tiene un nombre, una página, un ancho (1280 para escritorio, 390 para teléfono, 900x450 para las páginas dentro del juego), las acciones que se hacen antes de la captura y lo que se conserva: la página completa, la parte visible o un elemento. Las imágenes son WebP con calidad 80. Después de abrir una página, la herramienta mueve el puntero una vez, como lo haría un visitante, ya que el sitio solo pide los jugadores en línea, que se muestran en la barra del menú, después de la primera interacción.
 
 ## Ejecutar el sitio para la herramienta
 
@@ -62,7 +62,7 @@ node tools/screenshots/fictional-data.js --from /path/to/real/data --to /path/to
 - Cada nombre pasa a un apodo de jugador inventado, el mismo para la misma persona en todas partes, incluidos los archivos de estadísticas en bruto y los nombres anteriores. Un jugador que usó varios nombres recibe varios nombres ficticios.
 - Cada jugador que tenía avatar recibe uno nuevo, un cuadrado de color con iniciales o una forma simple, dibujado en Edge o en Chrome.
 - Las direcciones IP de las conexiones de jugadores pasan a direcciones de los rangos de documentación (`198.51.100.0/24` y `192.0.2.0/24`). Los servidores de juego pasan a `L4D2 Competitive #1`, `#2`... en `203.0.113.10`, con los identificadores `l4d2-competitive-1`, `l4d2-competitive-2`...: sus tokens conservan la misma clave con el identificador nuevo.
-- El catálogo de skins se queda como está, porque da el crédito a los autores de las skins en el Workshop de Steam.
+- El catálogo de skins se queda como está, porque da crédito a los autores de las skins en el Workshop de Steam.
 
 Los nombres, los SteamID y los avatares salen de una semilla aleatoria, que la herramienta muestra; pásala de nuevo con `--seed` para obtener el mismo resultado a partir de los mismos datos. Necesita Node 22.16 o más reciente, sin flags. Cuando termina, inicia el sitio sobre la carpeta nueva, inicia sesión con el SteamID64 que mostró para el administrador y ejecuta **Administración > Vista general > Reprocesar todas las partidas**, para que cada partida se arme de nuevo a partir de los archivos ficticios.
 

@@ -38,7 +38,7 @@ Dónde ponerlos:
 | Docker | Dentro de `environment:` en el archivo compose |
 | Azure App Service | Configuración de la aplicación |
 
-La aplicación crea la base de datos si no existe, y crea o actualiza las tablas cada vez que inicia. El usuario de la cadena de conexión necesita permiso para hacerlo.
+La aplicación crea la base de datos si no existe, y crea o actualiza las tablas cada vez que se inicia. El usuario de la cadena de conexión necesita permiso para hacerlo.
 
 ## SQLite
 
@@ -74,6 +74,6 @@ Para Azure SQL, usa la cadena de conexión que el portal muestra en **Connection
 
 ## Cambiar de base de datos más adelante
 
-No hay ninguna herramienta que copie los datos de una base de datos a otra. Cuando cambias el proveedor, la aplicación inicia con una base de datos vacía y vuelve a mostrar la página de configuración.
+No hay ninguna herramienta que copie los datos de una base de datos a otra. Cuando cambias el proveedor, la aplicación arranca con una base de datos vacía y vuelve a mostrar la página de configuración.
 
 Los archivos de estadísticas son el origen de todo lo que muestran los rankings, pero el servidor de juego borra cada archivo después de enviarlo, y la única copia queda entonces dentro de la base de datos. Conserva una copia de seguridad de la base de datos anterior hasta que estés seguro de que ya no la necesitas. Las compras en la tienda de skins, los votos de la comunidad, las sanciones y los ajustes no están en esos archivos y habría que volver a ingresarlos.

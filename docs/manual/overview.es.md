@@ -32,9 +32,10 @@ El menú de arriba de cada página lleva a las funciones. Una función que el ad
 | Anti-Cheat | La página que ofrece el programa Anti-Cheat y le dice a un jugador que inició sesión si debe usarlo. | [Anti-Cheat](anti-cheat.es.md) |
 | Más > Jugadores | Todos los jugadores del período, con una vista general o los totales de cualquier estadística, para cualquier temporada, año o todo el tiempo. | [Jugadores](players.es.md) |
 | Más > Patentes | Los niveles de patente. | [Patentes](patents.es.md) |
+| Más > Comandos | Todos los comandos de los servidores de juego, con ejemplos. | [Comandos del servidor de juego](commands.es.md) |
 | Admin | El área de administración, solo para administradores. | [Administración](administration.es.md) |
-| Estrellas | Cuántas estrellas puede gastar en la tienda el jugador conectado. | [Tienda de skins de armas](skin-shop.es.md) |
-| Avatar | La página del jugador conectado. | [Jugadores](players.es.md) |
+| Estrellas | Cuántas estrellas puede gastar en la tienda el jugador que inició sesión. | [Tienda de skins de armas](skin-shop.es.md) |
+| Avatar | La página del jugador que inició sesión. | [Jugadores](players.es.md) |
 | Configuración (engranaje) | Tema, idioma, iniciar y cerrar sesión. | [Idiomas, temas y teléfonos](languages-and-themes.es.md) |
 
 El inicio de sesión se hace con Steam. Los visitantes no necesitan iniciar sesión para ver el ranking, las partidas o el servidor en vivo. Hay que iniciar sesión para comprar skins, votar en el ranking de la comunidad, usar el chat del sitio y administrar el sitio.
@@ -82,8 +83,8 @@ El servidor de juego siempre llama al sitio. El sitio nunca se conecta al servid
 
 | Quién | Puede |
 |---|---|
-| Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda y la página del Anti-Cheat. |
-| Un jugador conectado | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas) y escribir en el chat del sitio. |
+| Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda, la página de comandos y la página del Anti-Cheat. |
+| Un jugador que inició sesión | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas) y escribir en el chat del sitio. |
 | Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, regalar skins, los reembolsos, los baneos del chat y los comandos remotos. |
 
 El primer administrador es la cuenta de Steam que termina la [configuración inicial](first-run.es.md). Los demás administradores se agregan en [Administración > Administradores](administration.es.md#administradores).

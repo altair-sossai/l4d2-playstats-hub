@@ -2,7 +2,7 @@
 
 🌐 [English](README.md) | **Português** | [Español](README.es.md)
 
-Este projeto substitui um site que já existe, o [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) (em produção em [l4d2.com.br](https://l4d2.com.br/)). A regra para as páginas é rígida: tudo o que um visitante vê no site antigo precisa estar no novo, com o mesmo visual. Por isso, cada página foi portada a partir da view antiga, e não redesenhada, e conferida item por item.
+Este projeto substitui um site que já existe, o [l4d2-playstats-web](https://github.com/altair-sossai/l4d2-playstats-web) (arquivado; ele rodou o [l4d2.com.br](https://l4d2.com.br/) até 19 de novembro de 2026). A regra para as páginas é rígida: tudo o que um visitante vê no site antigo precisa estar no novo, com o mesmo visual. Por isso, cada página foi portada a partir da view antiga, e não redesenhada, e conferida item por item.
 
 ## Conteúdo
 
@@ -18,12 +18,12 @@ Cada checklist lista todos os itens das telas antigas de uma área: colunas, cam
 
 | Checklist | Telas | Prontos | Adaptados | Não portados |
 |---|---|---|---|---|
-| [site.pt.md](site.pt.md) | Layout, ranking, histórico, patentes, Anti-Cheat, configurações do Anti-Cheat | 104 | 37 | 1 |
-| [players.pt.md](players.pt.md) | Lista de jogadores, página do jogador, comparação, jogador fora do ranking | 150 | 23 | 0 |
-| [matches.pt.md](matches.pt.md) | Últimos jogos, detalhes da partida, estatísticas do mapa | 128 | 18 | 1 |
-| [server.pt.md](server.pt.md) | Servidor ao vivo, chat, eventos do jogo, banimentos de chat | 151 | 28 | 1 |
+| [site.pt.md](site.pt.md) | Layout, ranking, histórico, patentes, Anti-Cheat, configurações do Anti-Cheat | 101 | 41 | 1 |
+| [players.pt.md](players.pt.md) | Lista de jogadores, página do jogador, comparação, jogador fora do ranking | 146 | 30 | 0 |
+| [matches.pt.md](matches.pt.md) | Últimos jogos, detalhes da partida, estatísticas do mapa | 127 | 19 | 1 |
+| [server.pt.md](server.pt.md) | Servidor ao vivo, chat, eventos do jogo, banimentos de chat | 149 | 30 | 1 |
 | [skins.pt.md](skins.pt.md) | Loja de skins, presentes, preços, compras | 146 | 11 | 0 |
-| [admin.pt.md](admin.pt.md) | Páginas que só existem aqui: assistente, administração, ranking da comunidade | 182 | 12 | 1 |
+| [admin.pt.md](admin.pt.md) | Páginas que só existem aqui: assistente, administração, ranking da comunidade | 178 | 17 | 1 |
 
 Os cinco primeiros comparam o hub com o site antigo. O último compara as páginas que são novas aqui com a primeira versão delas, que usava outro visual, para que nada se perdesse na conversão.
 
@@ -60,6 +60,6 @@ A maioria das linhas `adapted` cai em poucos grupos:
 
 ## Ao alterar uma página
 
-- Mantenha o item do checklist verdadeiro: se você alterar algo que uma linha descreve, atualize a linha.
+- Mantenha o item do checklist correto: se você alterar algo que uma linha descreve, atualize a linha.
 - Uma página nova segue o mesmo visual: o layout, os temas e os padrões das páginas ao redor dela.
 - Não remova um campo, uma coluna ou uma informação de uma página que veio do site antigo.

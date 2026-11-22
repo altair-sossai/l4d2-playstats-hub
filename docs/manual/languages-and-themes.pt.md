@@ -17,7 +17,7 @@ O site fala três idiomas, tem um tema escuro e um claro, e funciona no celular.
 O site está em **inglês**, **português** e **espanhol**. Todas as páginas são traduzidas, inclusive a área de administração, as páginas dentro do jogo e a página do Anti-Cheat.
 
 - O visitante escolhe o idioma no menu de configurações, o ícone de engrenagem à direita da barra do menu. A escolha fica salva naquele navegador.
-- Um visitante que nunca escolheu vê o **idioma padrão**, definido pelo administrador em [Configurações > Site](administration.pt.md#site).
+- Um visitante que nunca escolheu um vê o **idioma padrão**, definido pelo administrador em [Configurações > Site](administration.pt.md#site).
 - Os nomes e as descrições das skins vêm do catálogo, que pode ter textos em vários idiomas. A loja mostra o idioma do visitante quando o catálogo tem esse idioma, e inglês quando não tem.
 - Nomes de jogadores, mensagens do chat, motivos de banimento e outros textos escritos por pessoas aparecem como foram escritos.
 

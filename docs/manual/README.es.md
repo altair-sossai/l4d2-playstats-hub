@@ -24,7 +24,7 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 
 | Página | Para | Qué cubre |
 |---|---|---|
-| [Ranking](ranking.es.md) | Todos | El ranking principal, cómo se calcula la experiencia, los MVP, los rage quits, los castigos y el mínimo de partidas. |
+| [Ranking](ranking.es.md) | Todos | El ranking principal, cómo se calcula la experiencia, los MVP, los tank wipes, los rage quits, los castigos y el mínimo de partidas. |
 | [Temporadas e historia](seasons-and-history.es.md) | Todos | Cómo funcionan las temporadas, el selector de período y los rankings de temporadas pasadas, de años y de todo el tiempo. |
 | [Patentes](patents.es.md) | Todos | Los 15 niveles de patente y la experiencia que necesita cada uno. |
 | [Partidas](matches.es.md) | Todos | La lista de partidas, los detalles de una partida, las estadísticas de un mapa y cómo los archivos se convierten en partidas. |
@@ -33,7 +33,7 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 | [Tienda de skins de armas](skin-shop.es.md) | Todos | Las estrellas, comprar y equipar skins, los regalos, los reembolsos al final de la temporada y los ajustes de la tienda. |
 | [Ranking de la comunidad](community-ranking.es.md) | Todos | La votación entre pares de jugadores, la calificación, los límites de votos y sus ajustes. |
 | [Anti-Cheat](anti-cheat.es.md) | Todos | La página que ofrece la descarga del Anti-Cheat, quién debe usar el Anti-Cheat en los servidores de juego, y sus ajustes. |
-| [Páginas dentro del juego](in-game-pages.es.md) | Todos | Lo que abre `!ranking` dentro de Left 4 Dead 2. |
+| [Páginas dentro del juego](in-game-pages.es.md) | Todos | Las páginas ligeras que `!ranking`, `!comandos` y `!commands` pueden abrir dentro de Left 4 Dead 2. |
 | [Comandos del servidor de juego](commands.es.md) | Todos | La página Comandos: todos los comandos del servidor de juego con ejemplos, y los catálogos de los que sale su texto. |
 | [Idiomas, temas y teléfonos](languages-and-themes.es.md) | Todos | Los tres idiomas, los temas oscuro y claro, y el diseño en el teléfono. |
 

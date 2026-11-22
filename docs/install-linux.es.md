@@ -165,7 +165,7 @@ El sitio se detiene unos segundos mientras se hace la copia. El archivo queda en
 
 ![Una copia de seguridad](images/es/install-linux-backup.webp)
 
-El archivo contiene la carpeta de datos (la base de datos, los avatares, el logo y las claves), `hub.env` y la clave de secretos. [Copias de seguridad y actualizaciones](manual/backups-and-updates.es.md) explica qué es cada parte. Como contiene la clave de secretos, cualquiera con este archivo puede leer los secretos guardados en la configuración: mantenlo privado, como mantienes el propio servidor.
+El archivo contiene la carpeta de datos (la base de datos, los avatares, el logo y las claves), `hub.env` y la clave de secretos. [Copias de seguridad y actualizaciones](manual/backups-and-updates.es.md) explica qué es cada parte. Como contiene la clave de secretos, cualquiera con este archivo puede leer los secretos guardados en la configuración: mantenlo privado, como harías con el propio servidor.
 
 Para restaurar una copia de seguridad, en el mismo VPS o en uno nuevo donde hayas ejecutado el instalador:
 
@@ -181,7 +181,7 @@ La clave de la API de Steam, la dirección o la cadena de conexión del destino 
 
 - El instalador la crea una vez, con 32 bytes aleatorios, legible solo por el usuario `playstats` (permisos `600`). Las actualizaciones la conservan.
 - `playstats-hub backup` la incluye y `playstats-hub restore` la vuelve a poner.
-- La copia automática a Azure Storage no la incluye. Guarda una copia de ella en un lugar seguro, lejos de las copias de seguridad:
+- La copia de seguridad automática a Azure Storage no la incluye. Guarda una copia de ella en un lugar seguro, lejos de las copias de seguridad:
 
 ```bash
 sudo cat /etc/l4d2-playstats-hub/secrets.key
@@ -193,7 +193,7 @@ Para llevar el sitio a otra máquina con un zip de la copia automática, ejecuta
 sudo install -o playstats -g playstats -m 600 secrets.key /etc/l4d2-playstats-hub/secrets.key
 ```
 
-Sin la clave original el sitio arranca y todos los datos están, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración. Si la clave no se puede leer, el sitio también arranca, escribe el motivo en el registro y lo muestra en **Administración > Copia de seguridad**, y conserva los secretos que no puede descifrar hasta que la clave vuelva.
+Sin la clave original el sitio arranca igual y todos los datos siguen ahí, pero los secretos guardados en la configuración quedan vacíos: el registro lo avisa, y vuelves a escribir la clave de la API de Steam y el destino de la copia de seguridad en el área de administración. Si la clave no se puede leer en absoluto, el sitio también arranca, escribe el motivo en el registro y lo muestra en **Administración > Copia de seguridad**, y conserva los secretos que no puede descifrar hasta que la clave vuelva.
 
 ## Cambiar la configuración
 
@@ -208,7 +208,7 @@ Casi todo se cambia en el área de administración del sitio. Los pocos ajustes 
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` o `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | Cómo conectarse a la base de datos. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Otros proxies inversos cuyas cabeceras `X-Forwarded-*` acepta el sitio: direcciones IP o redes como `10.0.0.0/8`, separadas por comas. Esta máquina (`127.0.0.1` y `::1`), donde el instalador pone Caddy, siempre es de confianza. | vacío |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Opcional. La connection string de un recurso Azure Application Insights: el sitio envía lo que la gente abre, cuánto tarda cada página y consulta, y los errores. Las consultas de los servidores de juego, los avatares, los archivos estáticos y las comparaciones de jugadores abiertas sin referer (robots) quedan fuera. | vacío (desactivado) |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Opcional. La cadena de conexión de un recurso de Azure Application Insights: el sitio envía entonces lo que la gente abre, cuánto tarda cada página y consulta, y los errores. Las consultas periódicas de los servidores de juego, los avatares, los archivos estáticos y las comparaciones de jugadores abiertas sin referer (robots) quedan fuera. | vacío (desactivado) |
 
 Después de editar el archivo, reinicia: `playstats-hub restart`.
 
@@ -230,7 +230,7 @@ Tus datos quedan en `/var/lib/l4d2-playstats-hub`. Borra también esa carpeta si
 | Lo que ves | Qué hacer |
 |---|---|
 | El instalador dice que la distribución no es compatible | Usa una de las distribuciones indicadas, o [Docker](install-docker.es.md). |
-| El sitio no abre | Verifica que el puerto esté abierto en el firewall de tu proveedor. Ejecuta `playstats-hub status`. |
+| El sitio no se abre | Verifica que el puerto esté abierto en el firewall de tu proveedor. Ejecuta `playstats-hub status`. |
 | "The application did not start" | Ejecuta `playstats-hub logs` y lee las últimas líneas. La causa habitual es un puerto que ya está en uso; instala con otro `HUB_PORT`. |
 | El código de configuración es rechazado | Cópialo de nuevo con `playstats-hub setup-code`. No tiene espacios. |
 | HTTPS no funciona con el dominio | El dominio ya debe apuntar al VPS, y los puertos 80 y 443 deben estar abiertos. Luego ejecuta `sudo systemctl restart caddy`. |

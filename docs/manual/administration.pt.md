@@ -73,7 +73,7 @@ A aba **Página do servidor ao vivo** define para todos os servidores, com **Sal
 
 ![A aba Página do servidor ao vivo](../images/pt/admin-servers-live.webp)
 
-Depois de **Salvar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
+Depois de **Salvar**, a página do novo servidor mostra o token uma única vez, com as instruções. Copie-o nessa hora: veja [Configuração inicial > Passo 4](first-run.pt.md#passo-4-o-servidor-de-jogo).
 
 ### A página de um servidor
 
@@ -84,7 +84,7 @@ Depois de **Salvar**, a página do novo servidor mostra o token uma única vez, 
 | Como conectar este servidor | O download dos plugins, as duas linhas para o `cfg/playstats.cfg` (com `exec playstats.cfg` no `cfg/server.cfg`), as linhas `sm plugins load` para o `cfg/sharedplugins.cfg` e o que fazer em seguida. Depois da primeira vez, a parte da chave do token aparece como `SUA-CHAVE`, porque o site não a guarda. |
 | Status | O [status da conexão](first-run.pt.md#o-status-da-conexão) e a lista de verificação, atualizados a cada 3 segundos, e o último hostname, mapa, configuração e versão do SourceMod que o servidor informou. |
 | Detalhes | O nome, os dois endereços, **Ativado** e o identificador, com **Salvar** abaixo do painel. Um servidor desativado não aparece na página do servidor ao vivo, e o site recusa o que ele envia. |
-| Chave | **Gerar uma nova chave** cria um novo token e mostra uma única vez. O servidor de jogo fica desconectado até que a configuração dele tenha o novo token. **Excluir** remove um servidor que nunca enviou um arquivo de estatísticas; um servidor com arquivos só pode ser desativado. |
+| Chave | **Gerar uma nova chave** cria um novo token e o mostra uma única vez. O servidor de jogo fica desconectado até que a configuração dele tenha o novo token. **Excluir** remove um servidor que nunca enviou um arquivo de estatísticas; um servidor com arquivos só pode ser desativado. |
 
 O identificador é gerado a partir do nome quando o servidor é criado e nunca muda. Renomear um servidor não muda o token dele.
 
@@ -175,7 +175,7 @@ Esta configuração vale só para o site. O plugin `l4d2_gameinfo_sync` continua
 
 ![Os administradores](../images/pt/admin-administrators.webp)
 
-A lista mostra todos os administradores e desde quando, 20 por página. O botão **Adicionar**, acima da lista, à direita, abre uma janela que pede a conta, como SteamID64, como Steam ID no formato `STEAM_1:0:123` ou `[U:1:123]`, ou pelo link do perfil, e, se quiser, um nome; **Salvar** a adiciona. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Editar**, em cada linha, abre a mesma janela para mudar o nome. **Remover** tira os direitos depois de uma confirmação. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
+A lista mostra todos os administradores e desde quando, 20 por página. O botão **Adicionar**, acima da lista, à direita, abre uma janela que pede a conta, como um SteamID64, um Steam ID como `STEAM_1:0:123` ou `[U:1:123]` ou um link de perfil, e, opcionalmente, um nome; **Salvar** a adiciona. O botão de busca ao lado do campo abre a [busca de jogadores](#a-busca-de-jogadores); o jogador escolhido também preenche o nome quando ele está vazio. **Editar**, em cada linha, abre a mesma janela para mudar o nome. **Remover** tira os direitos depois de uma confirmação. Você não pode remover a si mesmo, e o último administrador não pode ser removido.
 
 ![Adicionando um administrador](../images/pt/admin-administrators-add.webp)
 
@@ -194,7 +194,7 @@ Todo campo da administração que recebe um jogador tem ao lado um botão que ab
 
 ![A página de backup](../images/pt/admin-backup.webp)
 
-O site envia um zip dos dados dele para um contêiner do Azure Storage a cada algumas horas. [Backups e atualizações > Backup automático no Azure Storage](backups-and-updates.pt.md#backup-automático-no-azure-storage) explica o que o zip contém, como criar o contêiner e como restaurar um zip.
+O site envia um zip dos dados dele para um contêiner do Azure Storage a cada poucas horas. [Backups e atualizações > Backup automático no Azure Storage](backups-and-updates.pt.md#backup-automático-no-azure-storage) explica o que o zip contém, como criar o contêiner e como restaurar um zip.
 
 | Campo | O que faz |
 |---|---|
@@ -212,7 +212,7 @@ O site envia um zip dos dados dele para um contêiner do Azure Storage a cada al
 O endereço e a string de conexão são segredos. Depois de salvos, a página só os mostra mascarados, como `https://<conta>.blob.core.windows.net/<contêiner>?••••••••`; deixe o campo vazio para manter o que está salvo, ou digite um novo para trocar. Eles também nunca vão para o log.
 
 - **Status** mostra se o agendamento está ligado, o último backup que deu certo, quando roda o próximo e o resultado da última verificação.
-- **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup. **Verificar agora** baixa o zip mais recente do contêiner e confere que ele restaura: o zip e o manifesto, a verificação de integridade do SQLite no `hub.db` e o número de partidas, arquivos de estatísticas, jogadores e configurações. A mesma conferência roda depois de cada backup. Ela precisa do SQLite; com outros bancos o botão fica desligado.
+- **Fazer backup agora** faz um backup na hora. **Testar conexão** envia um arquivo pequeno de teste, confere se o contêiner o lista e o apaga, sem fazer backup. **Verificar agora** baixa o zip mais recente do contêiner e confere se ele restaura: o zip e o manifesto, a verificação de integridade do SQLite no `hub.db` e o número de partidas, arquivos de estatísticas, jogadores e configurações. A mesma conferência roda depois de cada backup. Ela precisa do SQLite; com outros bancos o botão fica desativado.
 - **Backups recentes** lista as últimas 20 execuções, agendadas ou manuais, com o arquivo, o tamanho, quanto tempo levou e, para um backup que falhou, o erro. Um backup que falhou é tentado de novo 30 minutos depois. A coluna **Verificado** mostra a conferência de cada zip: **Verificado** (passe o mouse no ícone de ajuda para ver as contagens), **Verificação falhou** com o motivo, ou **Não disponível** sem SQLite. [Conferindo que cada backup restaura](backups-and-updates.pt.md#conferindo-que-cada-backup-restaura) explica.
 - Num site que não usa SQLite, a página avisa que o banco não está no zip.
 - A página mostra onde está a [chave de segredos](backups-and-updates.pt.md#a-chave-de-segredos), a chave que criptografa esses segredos e a chave da API da Steam no banco de dados, e avisa que ela não está no zip: guarde uma cópia dela à parte. Quando a chave não pode ser carregada, a página avisa em vermelho, e o log diz o motivo.

@@ -32,6 +32,7 @@ The menu at the top of every page leads to the features. A feature the administr
 | Anti-Cheat | The page that offers the Anti-Cheat program and tells a signed-in player whether they must use it. | [Anti-Cheat](anti-cheat.md) |
 | More > Players | Every player of the period, with an overview or the totals of any statistic, for any season, year or all time. | [Players](players.md) |
 | More > Patents | The patent levels. | [Patents](patents.md) |
+| More > Commands | Every command of the game servers, with examples. | [Game server commands](commands.md) |
 | Admin | The administration area, for administrators only. | [Administration](administration.md) |
 | Stars | How many stars the signed-in player can spend in the shop. | [Weapon skin shop](skin-shop.md) |
 | Avatar | The page of the signed-in player. | [Players](players.md) |
@@ -82,7 +83,7 @@ The game server always calls the site. The site never connects to the game serve
 
 | Who | Can |
 |---|---|
-| Any visitor | See the ranking, the matches, the players, the patents, the live server, the community ranking, the shop catalog and the Anti-Cheat page. |
+| Any visitor | See the ranking, the matches, the players, the patents, the live server, the community ranking, the shop catalog, the commands page and the Anti-Cheat page. |
 | A signed-in player | Everything above, plus: buy and equip skins, vote in the community ranking (after enough matches), and write in the site chat. |
 | An administrator | Everything above, plus: the administration area, punishments, editing the score of a map, giving skins as gifts, refunds, chat bans and remote commands. |
 

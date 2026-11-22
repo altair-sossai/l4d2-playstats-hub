@@ -175,7 +175,7 @@ O cartão é `Views/Matches/_Match.cshtml` com o modelo `MatchCardModel`; `IMatc
 | Estrela dourada para o MVP (SI), estrela azul para o MVP (CI), ícone de LVP para quem causou mais fogo amigo, cada um com o seu tooltip | Statistics.cshtml:332-345 | done | |
 | Painel "Infectados": verde quando essa equipe venceu o mapa, vermelho caso contrário | Statistics.cshtml:293, :355-358 | done | |
 | Lista de infectados ordenada por dano: avatar, nome, dano (`N0`) com o tooltip "Dano de SI (sem Tank)", destaque `it-is-me` | Statistics.cshtml:305-307, :362-379 | done | |
-| Painel "Detalhes", tabela da esquerda: todos os contadores do round diferentes de zero (reinícios, pílulas, kits, desfibriladores, commons, SI mortos, dano em SI, SI spawnados, witches, tanks, incaps, mortes, FF) | Statistics.cshtml:388-407 | done | |
+| Painel "Detalhes", tabela da esquerda: todos os contadores da rodada diferentes de zero (reinícios, pílulas, kits, desfibriladores, commons, SI mortos, dano em SI, SI spawnados, witches, tanks, incaps, mortes, FF) | Statistics.cshtml:388-407 | done | |
 | Painel "Detalhes", tabela da direita: início, fim e duração da rodada; início, fim e duração da pausa; início, fim e duração do tank (cada um só quando existe) | Statistics.cshtml:409-476 | done | |
 | Painel "Sobreviventes" (tabela de estatísticas): cabeçalho com o nome truncado de cada jogador com link para o jogador | Statistics.cshtml:488-507 | done | |
 | Linhas exibidas só quando algum jogador tem valor; linhas separadoras em branco entre os grupos | Statistics.cshtml:61-128 | done | |

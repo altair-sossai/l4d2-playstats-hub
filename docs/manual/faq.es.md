@@ -27,10 +27,10 @@ Las victorias y las derrotas van para los jugadores que estaban en el primer map
 Un empate no da victoria ni derrota, solo los puntos de MVP y de tank wipe.
 
 **¿Por qué se reinició mi experiencia?**
-Empezó una temporada nueva. La temporada pasada está en el selector de período del ranking y de **Más > Jugadores**.
+Empezó una temporada nueva. La temporada pasada está en el selector de período del ranking y de **Más > Jugadores** mientras sea del año actual; para un año anterior, elige ese año, o abre la temporada desde su dirección.
 
 **Mi nombre es viejo o está mal.**
-El sitio muestra el nombre que más usaste en el período. Tus otros nombres están en **Nombres anteriores**, en tu página.
+El sitio muestra un solo nombre en todas partes: el nombre que forzó un administrador; si no, el que más usaste en todas tus partidas, de todas las temporadas; si no, tu nombre de Steam. Tus otros nombres están en **Nombres anteriores**, en tu página. Consulta [Jugadores > El nombre del jugador](players.es.md#el-nombre-del-jugador).
 
 **¿Cómo consigo estrellas?**
 Una estrella por cada premio de MVP de SI y de MVP de CI en una partida del ranking. Consulta [Tienda de skins de armas > Estrellas](skin-shop.es.md#estrellas).

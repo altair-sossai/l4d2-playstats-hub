@@ -4,7 +4,7 @@
 
 Los jugadores ganan estrellas al ser MVP en partidas de ranking y las gastan en skins para sus armas. Una skin comprada se equipa en el servidor de juego a partir del siguiente cambio de mapa. Las skins las hace la comunidad en el Steam Workshop; la tienda da el crédito a cada autor.
 
-La tienda necesita el módulo de ranking y el plugin `l4d2_weapon_skins` en el servidor de juego. El hub ya trae el catálogo y las miniaturas del servidor actual, e importa el catálogo solo la primera vez que se activa la tienda.
+La tienda necesita el módulo de ranking y el plugin `l4d2_weapon_skins` en el servidor de juego. El hub ya trae el catálogo y las miniaturas del servidor actual, e importa el catálogo por sí solo la primera vez que se activa la tienda.
 
 [Volver al manual](README.es.md)
 
@@ -27,7 +27,7 @@ La tienda necesita el módulo de ranking y el plugin `l4d2_weapon_skins` en el s
 - El saldo son las estrellas ganadas menos el precio de las skins que el jugador tiene ahora. Cuando una compra se reembolsa, su precio vuelve al saldo.
 - Los regalos no cuestan nada.
 
-Un jugador con la sesión iniciada ve el saldo en la barra del menú (**N estrellas disponibles**) y arriba en la tienda, con cuántas estrellas vinieron de cada tipo de MVP.
+Un jugador con la sesión iniciada ve el saldo en la barra del menú (**N estrellas disponibles**) y en la parte de arriba de la tienda, con cuántas estrellas vinieron de cada tipo de MVP.
 
 ## La página de la tienda
 
@@ -47,7 +47,7 @@ Las pestañas:
 | Pestaña | Muestra |
 |---|---|
 | Tienda | Todas las skins a la venta, agrupadas por rareza: Legendaria, Épica, Rara, Poco común y Común. |
-| Mis skins | Las skins que tienes. Se muestra cuando iniciaste sesión. |
+| Mis skins | Las skins que tienes. Se muestra cuando tienes la sesión iniciada. |
 | Autores | Todos los autores del Workshop cuyas skins están en la tienda, con un enlace a su perfil de Steam. |
 
 Los filtros eligen un arma (o todas las armas de fuego, o todas las armas cuerpo a cuerpo), una rareza y **Solo las que puedo comprar**.
@@ -108,7 +108,7 @@ Por defecto, las skins compradas duran una temporada:
 
 - Cuando empieza una temporada nueva, cada skin comprada antes de ella se retira y sus estrellas vuelven al dueño. El dueño puede volver a comprar de inmediato, las mismas skins u otras.
 - Los regalos no se retiran. Se conservan para siempre.
-- El administrador puede desactivar esto en los [ajustes de la tienda](#ajustes-de-la-tienda). Las skins compradas también se conservan para siempre entonces.
+- El administrador puede desactivar esto en los [ajustes de la tienda](#ajustes-de-la-tienda). Entonces, las skins compradas también se conservan para siempre.
 
 El reembolso se hace solo: el sitio revisa cada 10 minutos si empezó una temporada nueva. La tienda muestra cuántos días quedan.
 
@@ -124,7 +124,7 @@ Elige al jugador por Steam ID (en cualquier formato), por enlace al perfil o de 
 
 Cada skin muestra su autor con un enlace a su perfil de Steam y a la página original del Workshop. El aviso **¿Eres el autor?** explica que el proyecto no tiene fines de lucro, que las estrellas no se pueden comprar con dinero, y cómo un autor puede pedir que se retire una skin: un mensaje en Steam o una solicitud en GitHub, si el administrador definió esas direcciones.
 
-El nombre del autor viene de su perfil de Steam, y no solo del catálogo. Una vez al día el sitio le pide a Steam el nombre actual de cada autor y actualiza sus skins cuando alguien lo cambió, así la tienda siempre acredita el nombre que el autor usa hoy. Volver a importar el catálogo mantiene el nombre leído de Steam. Funciona sin la clave de la Steam Web API; con la clave, definida en los ajustes del sitio, es más rápido.
+El nombre del autor viene de su perfil de Steam, y no solo del catálogo. Una vez al día el sitio le pide a Steam el nombre actual de cada autor y actualiza sus skins cuando alguien lo cambió, así que la tienda siempre acredita el nombre que el autor usa hoy. Volver a importar el catálogo mantiene el nombre leído de Steam. Funciona sin la clave de la Steam Web API; con la clave, definida en los ajustes del sitio, es más rápido.
 
 ## Para administradores
 
@@ -136,7 +136,7 @@ La tienda tiene cuatro páginas, en el grupo **Tienda de skins** del [menú de a
 
 La lista de todas las compras y regalos, de la más reciente a la más antigua, con los totales: compras, estrellas gastadas y regalos dados. Busca por jugador, Steam ID o skin, o filtra por un jugador.
 
-Haz clic en una compra para ver los detalles: el precio, el saldo antes y después, quién la regaló (en un regalo) y la fecha. Desde ahí:
+Haz clic en una compra para ver los detalles: el precio, el saldo antes y después, quién la regaló (si es un regalo) y la fecha. Desde ahí:
 
 - **Reembolsar compra** le quita la skin a ese jugador y devuelve su precio.
 - **Mostrar solo las compras de este jugador** y **Abrir el perfil del jugador**.
@@ -149,7 +149,7 @@ Haz clic en una compra para ver los detalles: el precio, el saldo antes y despu�
 
 ![El catálogo de skins](../images/es/admin-skins-catalog.webp)
 
-El catálogo es un archivo `skins.json`. El hub ya trae el catálogo del servidor actual, 196 skins, y sus miniaturas. El catálogo se importa solo cuando se activa el módulo de la tienda de skins, en [Módulos](administration.es.md#módulos) o en el asistente de la primera ejecución, y cuando el sitio arranca con el módulo activado, siempre que todavía no se haya importado ningún catálogo. Después, solo cambia cuando un administrador importa uno:
+El catálogo es un archivo `skins.json`. El hub ya trae el catálogo del servidor actual, 196 skins, y sus miniaturas. El catálogo se importa automáticamente cuando se activa el módulo de la tienda de skins, en [Módulos](administration.es.md#módulos) o en el asistente de configuración inicial, y cuando el sitio arranca con el módulo activado, siempre que todavía no se haya importado ningún catálogo. Después, solo cambia cuando un administrador importa uno:
 
 - **Importar el catálogo incluido** vuelve a importar el catálogo que viene con esta versión del hub;
 - **Importar desde un archivo** recibe un archivo `skins.json` con el mismo formato;
@@ -187,6 +187,6 @@ El precio predeterminado de cada skin viene del catálogo. Haz clic en una skin 
 | Dirección de los recursos | Dónde se sirven las imágenes del repositorio de recursos. Las fotos se leen de `skin-shots/<id>/`, y las miniaturas de las skins que no vienen con el hub de `skins/<id>.jpg`, bajo esta dirección. Vacío usa `https://l4d2playstats.blob.core.windows.net/assets`, la dirección del servidor actual. |
 | Dirección del catálogo | Opcional. De dónde se descarga el archivo `skins.json` cuando importas desde la dirección configurada. |
 | Perfil de Steam para contacto | Lo abre **Escríbeme en Steam** en el aviso para los autores de skins. Vacío oculta el botón. |
-| Dirección para solicitudes de retirada | La abre **Abrir una solicitud en GitHub** en el mismo aviso, con la skin ya completada. Vacío oculta el botón. |
+| Dirección para solicitudes de retirada | La abre **Abrir una solicitud en GitHub** en el mismo aviso, con la skin ya indicada. Vacío oculta el botón. |
 
 Desactivar el módulo de la tienda de skins en [Módulos](administration.es.md#módulos) quita **Skins** del menú, las estrellas de la barra del menú y la pestaña Skins de la página del jugador. Las compras se conservan y vuelven si el módulo se activa de nuevo.

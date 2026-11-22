@@ -52,7 +52,7 @@ Informe ao App Service em qual porta a aplicação escuta e mantenha os dados no
 az webapp config appsettings set --resource-group playstats --name my-playstats --settings WEBSITES_PORT=8080 WEBSITES_ENABLE_APP_SERVICE_STORAGE=true Hub__DataDirectory=/home/data
 ```
 
-A chave da API da Steam, o destino do backup e o código de configuração são salvos criptografados no banco de dados, com uma chave de segredos guardada fora da pasta de dados, para que o zip de backup do site não os revele. No App Service a imagem guarda essa chave em `/home/secrets/secrets.key`, no disco persistente, e a cria na primeira vez que inicia. Para ficar você mesmo com a chave, o que facilita guardar uma cópia, passe-a como configuração do aplicativo antes da primeira inicialização, 32 bytes aleatórios em base64:
+A chave da API da Steam, o destino do backup e o código de configuração são salvos criptografados no banco de dados, com uma chave de segredos guardada fora da pasta de dados, para que o zip de backup do site não os revele. No App Service a imagem guarda essa chave em `/home/secrets/secrets.key`, no disco persistente, e a cria na primeira vez que inicia. Para controlar a chave você mesmo, o que facilita guardar uma cópia, informe-a em vez disso como configuração do aplicativo antes da primeira inicialização, com 32 bytes aleatórios em base64:
 
 ```bash
 az webapp config appsettings set --resource-group playstats --name my-playstats --settings Hub__SecretsKey="$(openssl rand -base64 32)"
@@ -82,7 +82,7 @@ az webapp log config --resource-group playstats --name my-playstats --docker-con
 az webapp log tail --resource-group playstats --name my-playstats
 ```
 
-Procure a linha que diz `Setup is pending`. Depois abra `https://my-playstats.azurewebsites.net`, cole o código, faça login com o Steam e siga as páginas. A [Configuração inicial](manual/first-run.pt.md) mostra cada uma delas.
+Procure a linha que diz `Setup is pending`. Depois abra `https://my-playstats.azurewebsites.net`, cole o código, entre com a Steam e siga as páginas. A [Configuração inicial](manual/first-run.pt.md) mostra cada uma delas.
 
 Duas coisas que você precisa saber sobre o App Service:
 
