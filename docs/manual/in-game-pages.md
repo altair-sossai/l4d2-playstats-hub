@@ -30,7 +30,7 @@ A player with no ranked match in the season sees a short message instead.
 
 ![The last matches, in the game](../images/en/ingame-matches.webp)
 
-**Commands**: the commands players can use on the server, from the same catalog as the [commands page](commands.md), without the administrator commands. A row of links at the top jumps to each section.
+**Commands**: the commands players can use on the server, from the same catalog as the [commands page](commands.md), without the administrator commands. A row of links at the top jumps to each section. Players also open it directly with `!comandos` or `!commands`.
 
 ![The commands, in the game](../images/en/ingame-commands.webp)
 

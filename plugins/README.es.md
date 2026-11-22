@@ -105,7 +105,8 @@ Puedes cambiar (cada línea está desactivada en el archivo, y el plugin usa el 
 |---|---|---|---|---|
 | `playstats_public_url` | `l4d2_ranking`, `l4d2_weapon_skins` | vacío | Una dirección, sin barra al final | Dirección del sitio que los jugadores leen en el chat: el aviso del ranking y el enlace de la tienda de skins. Vacío significa `playstats_url`. Ponla cuando los plugins llegan al sitio por una dirección IP pero los jugadores lo conocen por un nombre, por ejemplo `https://stats.example.com`. |
 | `playstats_ingame_url` | `l4d2_ranking` | vacío | Una dirección, sin barra al final | Dirección que abre el navegador del juego. Vacío significa `playstats_url`. Pon una dirección `http://` simple cuando el panel se queda en blanco (ver más abajo). |
-| `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` o `1` | `0` hace que el plugin no abra la página del ranking, ni siquiera con `!ranking`. |
+| `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` o `1` | `0` hace que el plugin no abra ninguna página, ni siquiera con `!ranking`, `!comandos` o `!commands`. |
+| `ranking_motd_path` | `l4d2_ranking` | `/` | Una ruta que empieza con `/` | Página que abre `!ranking`, desde la raíz del sitio: `/` es el ranking de la página inicial, `/ingame` las páginas compactas del juego. |
 | `ranking_commands_path` | `l4d2_ranking` | `/ingame/commands` | Una ruta que empieza con `/` | Página que abren `!comandos` y `!commands`, desde la raíz del sitio. |
 | `patent_icon_enabled` | `l4d2_show_patent_icon` | `0` | `0` o `1` | Activa los íconos de patente. Con `0` el plugin no pide las patentes al sitio y los jugadores no descargan los sprites. Actívalo solo cuando los sprites estén en el FastDL. |
 | `patent_icon_version` | `l4d2_show_patent_icon` | `2` | `1` o más | Versión en los nombres de los archivos de sprites, `patent_<level>_v<version>`, ambos con dos dígitos. Los archivos del repositorio de assets son la versión `2`. |

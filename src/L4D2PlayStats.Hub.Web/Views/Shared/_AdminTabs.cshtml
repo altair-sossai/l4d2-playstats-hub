@@ -21,6 +21,6 @@
 
     <link rel="stylesheet" href="~/css/pages/admin-tabs.css" asp-append-version="true"/>
 
-    <script type="application/json" id="admin-tabs-config">{ "values": { "AppConsts.AdminTabQuery": @Json.Serialize(AppConsts.AdminTabQuery), "AppConsts.AdminTabPanePrefix": @Json.Serialize(AppConsts.AdminTabPanePrefix) } }</script>
+    <script type="application/json" id="admin-tabs-config">{ "values": { "adminTabQuery": @Json.Serialize(AppConsts.AdminTabQuery), "adminTabPanePrefix": @Json.Serialize(AppConsts.AdminTabPanePrefix) } }</script>
     <script src="~/js/pages/admin-tabs.js" asp-append-version="true"></script>
 }

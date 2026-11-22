@@ -1,9 +1,9 @@
 var layout3Config = JSON.parse(document.getElementById("layout-3-config").textContent);
 
 var titlePlayersRegex = /^🟢\s*\d+\/\d+\s*\|\s*/;
-var liveServerEnabled = layout3Config.values["liveServer"];
-var robotVisitor = new RegExp(layout3Config.values["AppConsts.RobotUserAgentPattern"], 'i').test(navigator.userAgent);
-var skinShopEnabled = layout3Config.values["skinShop"];
+var liveServerEnabled = layout3Config.values.liveServer;
+var robotVisitor = new RegExp(layout3Config.values.robotUserAgentPattern, 'i').test(navigator.userAgent);
+var skinShopEnabled = layout3Config.values.skinShop;
 
 function getBaseTitle() {
     return document.title.replace(titlePlayersRegex, '');
@@ -152,7 +152,7 @@ function isObject(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-var navStarsKey = 'nav-stars-' + layout3Config.values["$\"{CurrentUser.CommunityId}\""];
+var navStarsKey = 'nav-stars-' + layout3Config.values.communityId;
 
 function setNavStars(balance) {
     var $stars = $('.nav-stars');

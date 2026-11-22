@@ -1,13 +1,13 @@
 var serversLiveConfig = JSON.parse(document.getElementById("servers-live-config").textContent);
 
-var serverUrl = serversLiveConfig.values["AppConsts.ServersUrl"] + '/' + serversLiveConfig.values["publicId"];
-var serverPublicId = serversLiveConfig.values["publicId"];
-var refreshInterval = serversLiveConfig.values["(await ChatSettings.GetAsync<LiveServerSettings>()).RefreshInMilliseconds"];
-var safetyRefreshInterval = serversLiveConfig.values["AppConsts.LivePageSafetyRefreshInMilliseconds"];
-var liveHubUrl = serversLiveConfig.values["AppConsts.LiveHubUrl"];
-var liveHubRetry = serversLiveConfig.values["AppConsts.LiveHubRetryInMilliseconds"];
-var requestTimeout = serversLiveConfig.values["AppConsts.LivePageRequestTimeoutInMilliseconds"];
-var maxFeedItems = serversLiveConfig.values["AppConsts.LivePageMaxFeedItems"];
+var serverUrl = serversLiveConfig.values.serversUrl + '/' + serversLiveConfig.values.publicId;
+var serverPublicId = serversLiveConfig.values.publicId;
+var refreshInterval = serversLiveConfig.values.refreshInterval;
+var safetyRefreshInterval = serversLiveConfig.values.livePageSafetyRefreshInMilliseconds;
+var liveHubUrl = serversLiveConfig.values.liveHubUrl;
+var liveHubRetry = serversLiveConfig.values.liveHubRetryInMilliseconds;
+var requestTimeout = serversLiveConfig.values.livePageRequestTimeoutInMilliseconds;
+var maxFeedItems = serversLiveConfig.values.livePageMaxFeedItems;
 var feedAfter = 0;
 var pushConnected = false;
 var dd = new diffDOM.DiffDOM();
@@ -143,9 +143,9 @@ function loadFeed(done) {
 
 var refreshers = {};
 
-refreshers[serversLiveConfig.values["AppConsts.LiveChangeHeader"]] = createRefresher(loadHeader, refreshInterval);
-refreshers[serversLiveConfig.values["AppConsts.LiveChangePlayers"]] = createRefresher(loadPlayers, refreshInterval);
-refreshers[serversLiveConfig.values["AppConsts.LiveChangeFeed"]] = createRefresher(loadFeed, refreshInterval / 2);
+refreshers[serversLiveConfig.values.liveChangeHeader] = createRefresher(loadHeader, refreshInterval);
+refreshers[serversLiveConfig.values.liveChangePlayers] = createRefresher(loadPlayers, refreshInterval);
+refreshers[serversLiveConfig.values.liveChangeFeed] = createRefresher(loadFeed, refreshInterval / 2);
 
 function refreshAll() {
     $.each(refreshers, function (name, refresher) {
@@ -154,7 +154,7 @@ function refreshAll() {
 }
 
 function refreshFeed() {
-    refreshers[serversLiveConfig.values["AppConsts.LiveChangeFeed"]].run();
+    refreshers[serversLiveConfig.values.liveChangeFeed].run();
 }
 
 function setPushConnected(connected) {
@@ -182,7 +182,7 @@ function startPush() {
     }
 
     function watch() {
-        return connection.invoke(serversLiveConfig.values["nameof(LiveHub.Watch)"], serverPublicId)
+        return connection.invoke(serversLiveConfig.values.watchMethod, serverPublicId)
             .then(function (watching) {
                 setPushConnected(watching === true);
             })
@@ -210,7 +210,7 @@ function startPush() {
         connection.start().then(watch, retry);
     }
 
-    connection.on(serversLiveConfig.values["AppConsts.LiveHubChangedMethod"], function (changes) {
+    connection.on(serversLiveConfig.values.liveHubChangedMethod, function (changes) {
         $.each(changes || [], function (index, change) {
             var refresher = refreshers[change];
 

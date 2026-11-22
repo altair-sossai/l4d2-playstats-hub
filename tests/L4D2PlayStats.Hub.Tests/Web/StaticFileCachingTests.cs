@@ -18,12 +18,14 @@ public class StaticFileCachingTests
         var versioned = Regex.Match(page, @"/js/hub\.js\?v=[^""]+").Value;
 
         using var withVersion = await client.GetAsync(versioned);
+        using var wrongVersion = await client.GetAsync("/js/hub.js?v=old");
         using var script = await client.GetAsync("/js/hub.js");
         using var style = await client.GetAsync("/css/admin.css");
         using var image = await client.GetAsync("/favicon.ico");
 
         Assert.IsFalse(string.IsNullOrEmpty(versioned));
         Assert.AreEqual("public, max-age=31536000, immutable", withVersion.Headers.CacheControl?.ToString());
+        Assert.AreEqual("no-cache", wrongVersion.Headers.CacheControl?.ToString());
         Assert.AreEqual("no-cache", script.Headers.CacheControl?.ToString());
         Assert.AreEqual("no-cache", style.Headers.CacheControl?.ToString());
         Assert.AreEqual("public, max-age=3600", image.Headers.CacheControl?.ToString());
