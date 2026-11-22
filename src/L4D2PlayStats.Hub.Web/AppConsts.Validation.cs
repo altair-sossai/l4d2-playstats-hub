@@ -13,6 +13,7 @@ public static partial class AppConsts
     public const string RemovedTempData = "Removed";
     public const string BlockedTempData = "Blocked";
     public const string AlreadyBlockedTempData = "AlreadyBlocked";
+    public const string RelatedLinkedTempData = "RelatedLinked";
     public const string UnblockedTempData = "Unblocked";
     public const string VoteRemovedTempData = "VoteRemoved";
     public const string RebuiltTempData = "Rebuilt";

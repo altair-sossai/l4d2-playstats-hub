@@ -1,0 +1,36 @@
+@if (Context.Items[AppConsts.RelatedAccountsModalItem] == null)
+{
+    Context.Items[AppConsts.RelatedAccountsModalItem] = true;
+
+    <link rel="stylesheet" href="~/css/pages/related-accounts-modal.css" asp-append-version="true"/>
+
+    <div id="ra-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ra-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="ra-title">
+                        <span class="glyphicon glyphicon-link"></span> @L["Related accounts"]
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p class="ra-intro"></p>
+                    <div class="list-group ra-list"></div>
+                    <p class="ra-question"></p>
+                    <small class="text-muted">@L["Uncheck an account to leave it out. The accounts that are already on the list are not changed."]</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default ra-only">@L["No, only this account"]</button>
+                    <button type="button" class="btn btn-primary ra-all">
+                        <span class="glyphicon glyphicon-ok"></span> <span class="ra-all-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="related-accounts-modal-config">{ "texts": { "intro": @Json.Serialize(L["This account has other Steam accounts that connected to the game servers from the same IP address, usually alternate accounts of the same person:"].Value), "introOne": @Json.Serialize(L["This account has another Steam account that connected to the game servers from the same IP address, usually an alternate account of the same person:"].Value), "lastSeen": @Json.Serialize(L["Last seen"].Value), "connection": @Json.Serialize(L["1 connection"].Value), "connections": @Json.Serialize(L["{0} connections"].Value), "unknown": @Json.Serialize(L["Unknown player"].Value), "all": @Json.Serialize(L["Yes, include them ({0})"].Value), "questions": { "@AppConsts.RelatedVoterBlocksList": @Json.Serialize(L["Do you also want to block these accounts?"].Value), "@AppConsts.RelatedChatBansList": @Json.Serialize(L["Do you also want to ban these accounts from the chat?"].Value), "@AppConsts.RelatedForcedNamesList": @Json.Serialize(L["Do you also want to give these accounts the same forced name?"].Value), "@AppConsts.RelatedAntiCheatListPrefix": @Json.Serialize(L["Do you also want to add these accounts to the list?"].Value) }, "linked": { "@AppConsts.RelatedVoterBlocksList": @Json.Serialize(L["Already blocked"].Value), "@AppConsts.RelatedChatBansList": @Json.Serialize(L["Already banned"].Value), "@AppConsts.RelatedForcedNamesList": @Json.Serialize(L["Has a forced name"].Value), "@AppConsts.RelatedAntiCheatListPrefix": @Json.Serialize(L["Already on the list"].Value) } }, "values": { "relatedAccountsUrl": @Json.Serialize(AppConsts.RelatedAccountsUrl), "antiCheatPrefix": @Json.Serialize(AppConsts.RelatedAntiCheatListPrefix) } }</script>
+    <script src="~/js/pages/related-accounts-modal.js" asp-append-version="true"></script>
+}

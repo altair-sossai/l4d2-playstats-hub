@@ -45,6 +45,7 @@ The page lists every ban, with the player, the date, the reason and who banned. 
 
 - Type a Steam ID in any format or a profile link, or choose from the list. **Recent chat senders** lists who wrote in the site chat in the last hour, so the player who just misbehaved is one click away. When you type an ID instead, the name and the photo of the player show under the field after a moment.
 - The reason is optional, up to 300 characters. The banned player sees it in place of the chat box.
+- If the player has [related accounts](#including-the-related-accounts) that are not banned yet, **Save** first asks whether to ban them too, with the same reason.
 
 A ban applies to the site chat of every game server. It does not mute the player inside the game; that is done with the tools of the game server.
 
@@ -80,6 +81,23 @@ The address itself is never shown. Connections older than three months are delet
 
 The same accounts are shown on the player page as [Related accounts](players.md#related-accounts), to every visitor or only to administrators depending on [Settings > Privacy](administration.md#privacy).
 
+### Including the related accounts
+
+When you add a player to a list of the site, the site checks whether the account has related accounts: other Steam accounts that connected from the same address, usually alternate accounts of the same person. If any of them is not on that list yet, a **Related accounts** window opens before saving. It shows each account with its photo, name, Steam ID, when it was last seen and how many connections it has, and asks whether to include them too:
+
+- **Yes, include them** saves the player and the checked accounts at once. Every account starts checked; uncheck one to leave it out.
+- **No, only this account** saves only the player you chose.
+- Closing the window goes back to the previous window without saving anything.
+
+The accounts that are already on the list are shown greyed out, with a label such as **Already banned**, and are not changed. Without related accounts, or with all of them already on the list, nothing is asked. The window appears when:
+
+- banning a player from the [site chat](#chat-bans): the related accounts get the same reason;
+- adding a [forced name](#forced-names): they get the same name (editing a name already on the list does not ask);
+- blocking a voter of the [community ranking](community-ranking.md#for-administrators), from any **Block** button or from the **Block a player** window: with **Block and delete the votes** or **Also delete the votes they already gave**, their votes are deleted too;
+- adding a player to an [Anti-Cheat list](anti-cheat.md#for-administrators).
+
+After a block or a forced name, the message on the page says how many related accounts were included. The site only includes accounts that really share an address with the player. The list of administrators does not ask on purpose: sharing an address does not prove that two accounts belong to the same person, and an administrator is always chosen one by one.
+
 ## Forced names
 
 **Administration > Forced names** keeps a list of players who must always use a fixed name.
@@ -89,7 +107,7 @@ The same accounts are shown on the player page as [Related accounts](players.md#
 
 ![The forced names](../images/en/admin-forced-names.webp)
 
-The list has 20 players per page and a search by name or Steam ID. **Add** opens a window with the player (in any Steam ID format, or chosen with the player search) and the name; **Edit** changes the name of a player already on the list, and **Remove** takes them off after a confirmation. **Import** takes the contents of a `forced_names.cfg` file: each line with a Steam ID and a name between quotes is added, or updates the name already on the list, and a message says how many were added, updated and left out.
+The list has 20 players per page and a search by name or Steam ID. **Add** opens a window with the player (in any Steam ID format, or chosen with the player search) and the name; **Edit** changes the name of a player already on the list, and **Remove** takes them off after a confirmation. When adding, if the player has [related accounts](#including-the-related-accounts), the site asks whether to give them the same name. **Import** takes the contents of a `forced_names.cfg` file: each line with a Steam ID and a name between quotes is added, or updates the name already on the list, and a message says how many were added, updated and left out.
 
 ![Adding a forced name](../images/en/admin-forced-names-add.webp)
 

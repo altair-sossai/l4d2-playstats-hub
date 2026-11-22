@@ -100,15 +100,17 @@ async function pickFirstPlayer(browser) {
     return picked;
 }
 
-async function postLive(context, path, body) {
+async function postLive(context, path, body, method = 'PUT') {
     const response = await fetch(context.base + path, {
-        method: 'PUT',
+        method,
         headers: { Authorization: context.token, 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
 
-    expect(response.ok, `PUT ${path} answered ${response.status}`);
+    expect(response.ok, `${method} ${path} answered ${response.status}`);
 }
+
+const chatBanIds = `Array.from(document.querySelectorAll('.cb-ban')).map(item => item.getAttribute('data-community-id'))`;
 
 function checks(context) {
     return [
@@ -486,6 +488,44 @@ function checks(context) {
                 const saved = await browser.eval(`Object.fromEntries(${quote(Object.keys(values))}.map(selector => [selector, document.querySelector(selector).value]))`);
 
                 expect(Object.keys(values).every(selector => saved[selector] === values[selector]), `The chat limits were not saved: ${JSON.stringify(saved)}`);
+            }
+        },
+        {
+            name: 'admin-related-accounts',
+            run: async browser => {
+                const main = fixtures.players[13];
+                const alternate = fixtures.players[14];
+
+                for (const player of [main, alternate])
+                    await postLive(context, '/api/game-info/player-connection-info', { communityId: player.id, ipAddress: '198.51.100.77', name: player.name }, 'POST');
+
+                await at(browser, fixtures.admin, desktop, '/admin/chat-bans');
+                await browser.click('.cb-add', { settle: 0 });
+                await browser.modalShown('#cb-add-modal');
+                await browser.fill({ '#cb-add-player': main.id });
+                await browser.click('.cb-add-save', { settle: 0 });
+                await browser.modalShown('#ra-modal');
+
+                const offered = await browser.eval(`Array.from(document.querySelectorAll('#ra-modal .ra-list input:checked')).map(input => input.getAttribute('data-community-id'))`);
+
+                expect(offered.length === 1 && offered[0] === alternate.id, `Banning ${main.name} offered the related accounts ${JSON.stringify(offered)} instead of ${alternate.name}`);
+                await browser.click('#ra-modal [data-dismiss="modal"]', { settle: 0 });
+                await browser.modalShown('#cb-add-modal');
+                expect(await browser.eval(`!document.querySelector('#cb-add-modal .cb-add-save').disabled && ${chatBanIds}.length === 0`), 'Closing the related accounts window did not go back to the ban window without saving');
+
+                const loaded = browser.page.waitFor('Page.loadEventFired');
+
+                await browser.click('.cb-add-save', { settle: 0 });
+                await browser.modalShown('#ra-modal');
+                await browser.click('#ra-modal .ra-all', { settle: 0 });
+                await loaded;
+                await browser.page.idle();
+
+                const banned = await browser.eval(chatBanIds);
+
+                expect(banned.includes(main.id) && banned.includes(alternate.id), `Including the related account banned ${JSON.stringify(banned)} instead of ${main.name} and ${alternate.name}`);
+
+                await browser.eval(`Promise.all(${quote([main.id, alternate.id])}.map(id => fetch('/api/chat-bans/' + id, { method: 'DELETE', headers: { RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]').value } }))).then(() => true)`);
             }
         },
         {

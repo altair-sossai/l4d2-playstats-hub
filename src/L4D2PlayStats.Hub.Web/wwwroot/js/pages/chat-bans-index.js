@@ -6,6 +6,7 @@ $(function () {
     var selected = null;
     var playerUrl = chatBansIndexConfig.playerUrl;
     var lookupUrl = chatBansIndexConfig.lookupUrl;
+    var relatedList = chatBansIndexConfig.relatedList;
     var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
 
     function saveBan(communityId, name, reason) {
@@ -180,14 +181,29 @@ $(function () {
             return;
         }
 
+        var reason = $.trim($('#cb-add-reason').val());
+
         $button.prop('disabled', true);
 
-        saveBan(player, $('#cb-add-name').val(), $.trim($('#cb-add-reason').val())).done(function () {
-            Hub.alert($message, true, texts.saved);
-            setTimeout(function () { location.reload(); }, 900);
-        }).fail(function (xhr) {
-            Hub.alert($message, false, Hub.errorText(xhr, texts.error));
-            $button.prop('disabled', false);
+        RelatedAccounts.ask($('#cb-add-modal'), player, relatedList, function (related) {
+            if (related === null) {
+                $button.prop('disabled', false);
+                return;
+            }
+
+            var saving = saveBan(player, $('#cb-add-name').val(), reason);
+
+            $.each(related, function (index, account) {
+                saving = saving.then(function () { return saveBan(account.communityId, account.name, reason); });
+            });
+
+            saving.done(function () {
+                Hub.alert($message, true, texts.saved);
+                setTimeout(function () { location.reload(); }, 900);
+            }).fail(function (xhr) {
+                Hub.alert($message, false, Hub.errorText(xhr, texts.error));
+                $button.prop('disabled', false);
+            });
         });
     });
 });

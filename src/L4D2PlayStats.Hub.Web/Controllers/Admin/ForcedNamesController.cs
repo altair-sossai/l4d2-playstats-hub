@@ -6,12 +6,13 @@ using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Players;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
 [Route("admin/forced-names")]
-public class ForcedNamesController(IForcedNameService forcedNameService, ICurrentUser currentUser) : AdminControllerBase
+public class ForcedNamesController(IForcedNameService forcedNameService, IRelatedAccountsService relatedAccountsService, ICurrentUser currentUser) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(string? q, int page = 1, CancellationToken cancellationToken = default)
@@ -32,10 +33,22 @@ public class ForcedNamesController(IForcedNameService forcedNameService, ICurren
         if (!await ValidAsync(form, cancellationToken))
             return Back(form.ReturnUrl, AppConsts.ForcedNamesUrl);
 
-        var result = await forcedNameService.SaveAsync(SteamIdParser.Parse(form.CommunityId)!.Value, form.Name, currentUser.CommunityId, cancellationToken);
+        var communityId = SteamIdParser.Parse(form.CommunityId)!.Value;
+        var result = await forcedNameService.SaveAsync(communityId, form.Name, currentUser.CommunityId, cancellationToken);
 
         if (result == ForcedNameSaveResult.Saved)
+        {
+            var related = 0;
+
+            foreach (var relatedId in await relatedAccountsService.ValidAsync(communityId, form.RelatedIds, cancellationToken))
+                if (await forcedNameService.SaveAsync(relatedId, form.Name, currentUser.CommunityId, cancellationToken) == ForcedNameSaveResult.Saved)
+                    related++;
+
+            if (related > 0)
+                TempData[AppConsts.RelatedLinkedTempData] = related;
+
             Saved();
+        }
         else
             Error(result == ForcedNameSaveResult.InvalidPlayer ? AppConsts.InvalidSteamIdMessage : AppConsts.ForcedNameInvalidNameMessage);
 

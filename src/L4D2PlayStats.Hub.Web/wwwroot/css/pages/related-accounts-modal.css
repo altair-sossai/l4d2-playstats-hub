@@ -1,0 +1,68 @@
+.ra-list {
+    max-height: 320px;
+    max-height: min(320px, 45vh);
+    margin: 10px 0;
+    overflow-y: auto;
+}
+
+    .ra-list .list-group-item {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    .ra-list .ra-linked {
+        cursor: default;
+        opacity: .65;
+    }
+
+    .ra-list input[type="checkbox"] {
+        margin: 0 10px 0 0;
+        flex: 0 0 auto;
+    }
+
+    .ra-list img {
+        width: 36px;
+        height: 36px;
+        margin-right: 10px;
+        border-radius: 50%;
+        flex: 0 0 auto;
+    }
+
+    .ra-list .label {
+        margin-left: 8px;
+        flex: 0 0 auto;
+    }
+
+.ra-info {
+    flex: 1;
+    min-width: 0;
+}
+
+    .ra-info strong,
+    .ra-info small {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .ra-info small {
+        opacity: .7;
+    }
+
+.ra-question {
+    font-weight: bold;
+}
+
+@media (max-width: 767px) {
+    .ra-info small {
+        white-space: normal;
+    }
+
+    #ra-modal .modal-footer .btn {
+        margin: 4px 0 0;
+        width: 100%;
+    }
+}

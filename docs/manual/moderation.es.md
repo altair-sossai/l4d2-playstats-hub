@@ -45,6 +45,7 @@ La página lista todos los baneos, con el jugador, la fecha, el motivo y quién 
 
 - Escribe un Steam ID en cualquier formato o un enlace de perfil, o elige de la lista. **Mensajes recientes del chat** lista a quienes escribieron en el chat del sitio en la última hora, así que el jugador que se acaba de portar mal está a un clic. Si en cambio escribes un ID, el nombre y la foto del jugador aparecen debajo del campo tras un momento.
 - El motivo es opcional, de hasta 300 caracteres. El jugador baneado lo ve en lugar del cuadro de chat.
+- Si el jugador tiene [cuentas relacionadas](#incluir-las-cuentas-relacionadas) que todavía no están baneadas, **Guardar** pregunta antes si también hay que banearlas, con el mismo motivo.
 
 Un baneo se aplica al chat del sitio de todos los servidores de juego. No silencia al jugador dentro del juego; eso se hace con las herramientas del servidor de juego.
 
@@ -80,6 +81,23 @@ La dirección en sí nunca se muestra. Las conexiones de más de tres meses se b
 
 Las mismas cuentas se muestran en la página del jugador como [Cuentas relacionadas](players.es.md#cuentas-relacionadas), a todos los visitantes o solo a los administradores, según [Configuración > Privacidad](administration.es.md#privacidad).
 
+### Incluir las cuentas relacionadas
+
+Cuando añades un jugador a una lista del sitio, el sitio comprueba si la cuenta tiene cuentas relacionadas: otras cuentas de Steam que se conectaron desde la misma dirección, normalmente cuentas alternativas de la misma persona. Si alguna todavía no está en esa lista, la ventana **Cuentas relacionadas** se abre antes de guardar. Muestra cada cuenta con su foto, nombre, Steam ID, cuándo se vio por última vez y cuántas conexiones tiene, y pregunta si también hay que incluirlas:
+
+- **Sí, incluirlas también** guarda al jugador y las cuentas marcadas de una sola vez. Todas las cuentas empiezan marcadas; desmarca una para dejarla fuera.
+- **No, solo esta cuenta** guarda solo al jugador que elegiste.
+- Cerrar la ventana vuelve a la ventana anterior sin guardar nada.
+
+Las cuentas que ya están en la lista aparecen atenuadas, con una etiqueta como **Ya baneado**, y no se modifican. Sin cuentas relacionadas, o con todas ya en la lista, no se pregunta nada. La ventana aparece al:
+
+- banear a un jugador del [chat del sitio](#baneos-del-chat): las cuentas relacionadas reciben el mismo motivo;
+- añadir un [nombre forzado](#nombres-forzados): reciben el mismo nombre (editar un nombre que ya está en la lista no pregunta);
+- bloquear a un votante del [ranking de la comunidad](community-ranking.es.md#para-administradores), desde cualquier botón **Bloquear** o desde la ventana **Bloquear a un jugador**: con **Bloquear y eliminar los votos** o **Eliminar también los votos que ya dio**, sus votos también se eliminan;
+- añadir un jugador a una [lista del Anti-Cheat](anti-cheat.es.md#para-administradores).
+
+Después de un bloqueo o de un nombre forzado, el mensaje de la página dice cuántas cuentas relacionadas se incluyeron. El sitio solo incluye cuentas que realmente comparten una dirección con el jugador. La lista de administradores no pregunta a propósito: compartir una dirección no prueba que dos cuentas sean de la misma persona, y un administrador siempre se elige uno por uno.
+
 ## Nombres forzados
 
 **Administración > Nombres forzados** guarda una lista de jugadores que siempre deben usar un nombre fijo.
@@ -89,7 +107,7 @@ Las mismas cuentas se muestran en la página del jugador como [Cuentas relaciona
 
 ![Los nombres forzados](../images/es/admin-forced-names.webp)
 
-La lista muestra 20 jugadores por página y tiene búsqueda por nombre o Steam ID. **Añadir** abre una ventana con el jugador (en cualquier formato de Steam ID, o elegido con la búsqueda de jugadores) y el nombre; **Editar** cambia el nombre de un jugador que ya está en la lista, y **Quitar** lo saca después de una confirmación. **Importar** recibe el contenido de un archivo `forced_names.cfg`: cada línea con un Steam ID y un nombre entre comillas se añade, o actualiza el nombre que ya está en la lista, y un mensaje dice cuántos se añadieron, actualizaron y omitieron.
+La lista muestra 20 jugadores por página y tiene búsqueda por nombre o Steam ID. **Añadir** abre una ventana con el jugador (en cualquier formato de Steam ID, o elegido con la búsqueda de jugadores) y el nombre; **Editar** cambia el nombre de un jugador que ya está en la lista, y **Quitar** lo saca después de una confirmación. Al añadir, si el jugador tiene [cuentas relacionadas](#incluir-las-cuentas-relacionadas), el sitio pregunta si también hay que darles el mismo nombre. **Importar** recibe el contenido de un archivo `forced_names.cfg`: cada línea con un Steam ID y un nombre entre comillas se añade, o actualiza el nombre que ya está en la lista, y un mensaje dice cuántos se añadieron, actualizaron y omitieron.
 
 ![Añadir un nombre forzado](../images/es/admin-forced-names-add.webp)
 

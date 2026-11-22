@@ -36,6 +36,10 @@
 {
     <div class="alert alert-success">@L["The voter was blocked and can no longer vote."]</div>
 }
+@if (TempData[AppConsts.RelatedLinkedTempData] is int relatedBlocked)
+{
+    <div class="alert alert-success">@L["Related accounts included: {0}.", relatedBlocked]</div>
+}
 @if (TempData[AppConsts.AlreadyBlockedTempData] != null)
 {
     <div class="alert alert-info">@L["That voter was already blocked."]</div>
@@ -363,7 +367,7 @@
 
 <div class="modal fade" id="ca-block-add-modal" tabindex="-1" role="dialog" aria-labelledby="ca-block-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" data-related-accounts="@AppConsts.RelatedVoterBlocksList" data-related-accounts-player="#ca-block-player">
             <input type="hidden" name="returnUrl" value="@blockedUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">

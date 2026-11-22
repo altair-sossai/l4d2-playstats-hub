@@ -12,6 +12,7 @@ using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Community;
 using L4D2PlayStats.Hub.Web.Models.Players;
+using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ public class CommunityAdminController(
     ISettingsService settingsService,
     ICommunityRankingService communityRankingService,
     ICommunityModerationService moderationService,
+    IRelatedAccountsService relatedAccountsService,
     ICurrentUser currentUser) : AdminControllerBase
 {
     [HttpGet("")]
@@ -87,12 +89,26 @@ public class CommunityAdminController(
             return Redirect(CommunityAdminUrls.Of(AppConsts.CommunityVotersTab));
 
         var voterId = SteamIdParser.Parse(form.CommunityId)!.Value;
+        var related = await relatedAccountsService.ValidAsync(voterId, form.RelatedIds, cancellationToken);
         var blocked = await moderationService.BlockAsync(voterId, currentUser.CommunityId, cancellationToken);
+        var relatedBlocked = 0;
         var removed = form.RemoveVotes ? await communityRankingService.RemoveVoterAsync(voterId, cancellationToken) : (int?)null;
+
+        foreach (var relatedId in related)
+        {
+            if (await moderationService.BlockAsync(relatedId, currentUser.CommunityId, cancellationToken))
+                relatedBlocked++;
+
+            if (form.RemoveVotes)
+                removed += await communityRankingService.RemoveVoterAsync(relatedId, cancellationToken);
+        }
 
         if (IsAdministrationReturn(form.ReturnUrl))
         {
-            TempData[blocked ? AppConsts.BlockedTempData : AppConsts.AlreadyBlockedTempData] = true;
+            TempData[blocked || relatedBlocked > 0 ? AppConsts.BlockedTempData : AppConsts.AlreadyBlockedTempData] = true;
+
+            if (relatedBlocked > 0)
+                TempData[AppConsts.RelatedLinkedTempData] = relatedBlocked;
 
             if (removed != null)
                 TempData[AppConsts.RemovedTempData] = removed;

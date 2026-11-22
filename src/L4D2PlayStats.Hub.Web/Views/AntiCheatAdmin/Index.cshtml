@@ -251,6 +251,7 @@
 </div>
 
 @await Html.PartialAsync("_PlayerPickerModal")
+@await Html.PartialAsync("_RelatedAccountsModal")
 
 @section Scripts {
     <script type="application/json" id="anti-cheat-admin-index-config">{
@@ -260,6 +261,7 @@
             "apiUrl": @Json.Serialize(AppConsts.AntiCheatAccessApiUrl),
             "lookupUrl": @Json.Serialize(AppConsts.PlayerLookupUrl),
             "playerUrl": @Json.Serialize(AppConsts.PlayerUrlPrefix),
+            "relatedList": @Json.Serialize(AppConsts.RelatedAntiCheatListPrefix + Model.ShownListName),
             "texts": {
                 "saved": @Json.Serialize(L["Player added."].Value),
                 "removed": @Json.Serialize(L["Player removed."].Value),

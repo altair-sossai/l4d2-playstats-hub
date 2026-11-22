@@ -7,6 +7,7 @@ $(function () {
     var apiUrl = antiCheatAdminIndexConfig.apiUrl;
     var lookupUrl = antiCheatAdminIndexConfig.lookupUrl;
     var playerUrl = antiCheatAdminIndexConfig.playerUrl;
+    var relatedList = antiCheatAdminIndexConfig.relatedList;
     var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
     var texts = antiCheatAdminIndexConfig.texts;
     var listedIds = antiCheatAdminIndexConfig.listedIds;
@@ -184,20 +185,39 @@ $(function () {
         if (!picked)
             return;
 
+        var player = picked;
+
         $button.prop('disabled', true);
 
-        $.ajax({
+        RelatedAccounts.ask($('#aca-add-modal'), player.communityId, relatedList, function (related) {
+            if (related === null) {
+                $button.prop('disabled', false);
+                return;
+            }
+
+            var saving = add(player.communityId, player.name);
+
+            $.each(related, function (index, account) {
+                saving = saving.then(function () { return add(account.communityId, account.name); });
+            });
+
+            saving.done(function () {
+                Hub.alert($message, true, texts.saved);
+                setTimeout(function () { location.reload(); }, 900);
+            }).fail(function (xhr) {
+                Hub.alert($message, false, Hub.errorText(xhr, texts.error));
+                $button.prop('disabled', false);
+            });
+        });
+    });
+
+    function add(communityId, name) {
+        return $.ajax({
             url: apiUrl + '/' + shownList,
             type: 'POST',
             headers: headers,
             contentType: 'application/json',
-            data: JSON.stringify({ player: picked.communityId, name: picked.name || null })
-        }).done(function () {
-            Hub.alert($message, true, texts.saved);
-            setTimeout(function () { location.reload(); }, 900);
-        }).fail(function (xhr) {
-            Hub.alert($message, false, Hub.errorText(xhr, texts.error));
-            $button.prop('disabled', false);
+            data: JSON.stringify({ player: communityId, name: name || null })
         });
-    });
+    }
 });

@@ -13,6 +13,7 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Api;
 public class AdminPlayersApiController(
     IPlayerLookupService playerLookupService,
     IPlayerDirectoryService playerDirectoryService,
+    IRelatedAccountsService relatedAccountsService,
     ISiteClock siteClock) : ControllerBase
 {
     [HttpGet("search")]
@@ -30,5 +31,13 @@ public class AdminPlayersApiController(
         var player = await playerLookupService.LookupAsync(id, cancellationToken);
 
         return player == null ? NotFound() : Ok(player);
+    }
+
+    [HttpGet("related")]
+    public async Task<IActionResult> RelatedAsync([FromQuery] string? id, [FromQuery] string? list, CancellationToken cancellationToken)
+    {
+        var related = await relatedAccountsService.FindAsync(id, list, cancellationToken);
+
+        return related == null ? NotFound() : Ok(related);
     }
 }

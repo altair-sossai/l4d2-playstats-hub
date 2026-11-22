@@ -1494,5 +1494,20 @@
   "How to use": "Cómo usar",
   "Example": "Ejemplo",
   "Examples": "Ejemplos",
-  "Statistic": "Estadística"
+  "Statistic": "Estadística",
+  "Uncheck an account to leave it out. The accounts that are already on the list are not changed.": "Desmarca una cuenta para dejarla fuera. Las cuentas que ya están en la lista no se modifican.",
+  "No, only this account": "No, solo esta cuenta",
+  "This account has other Steam accounts that connected to the game servers from the same IP address, usually alternate accounts of the same person:": "Esta cuenta tiene otras cuentas de Steam que se conectaron a los servidores de juego desde la misma dirección IP, normalmente cuentas alternativas de la misma persona:",
+  "This account has another Steam account that connected to the game servers from the same IP address, usually an alternate account of the same person:": "Esta cuenta tiene otra cuenta de Steam que se conectó a los servidores de juego desde la misma dirección IP, normalmente una cuenta alternativa de la misma persona:",
+  "{0} connections": "{0} conexiones",
+  "1 connection": "1 conexión",
+  "Yes, include them ({0})": "Sí, incluirlas también ({0})",
+  "Do you also want to block these accounts?": "¿Quieres bloquear también estas cuentas?",
+  "Do you also want to ban these accounts from the chat?": "¿Quieres banear también estas cuentas del chat?",
+  "Do you also want to give these accounts the same forced name?": "¿Quieres dar también el mismo nombre forzado a estas cuentas?",
+  "Do you also want to add these accounts to the list?": "¿Quieres añadir también estas cuentas a la lista?",
+  "Already blocked": "Ya bloqueado",
+  "Has a forced name": "Ya tiene nombre forzado",
+  "Already on the list": "Ya está en la lista",
+  "Related accounts included: {0}.": "Cuentas relacionadas incluidas: {0}."
 }

@@ -10,7 +10,7 @@
 
 <div class="modal fade" id="ca-block-modal" tabindex="-1" role="dialog" aria-labelledby="ca-block-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" data-related-accounts="@AppConsts.RelatedVoterBlocksList" data-related-accounts-player="#ca-block-id">
             <input type="hidden" id="ca-block-id" name="communityId" value="">
             <input type="hidden" id="ca-block-return" name="returnUrl" value="@returnUrl" data-default="@returnUrl" data-return-hash>
             <div class="modal-header">
@@ -42,4 +42,5 @@
     </div>
 </div>
 
+@await Html.PartialAsync("_RelatedAccountsModal")
 <script src="~/js/pages/community-admin-block-voter-modal.js" asp-append-version="true"></script>

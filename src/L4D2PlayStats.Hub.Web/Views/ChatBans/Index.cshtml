@@ -225,6 +225,7 @@
 </div>
 
 @await Html.PartialAsync("_PlayerPickerModal")
+@await Html.PartialAsync("_RelatedAccountsModal")
 
 @section Scripts {
     <script type="application/json" id="chat-bans-index-config">{
@@ -237,7 +238,8 @@
                 "error": @Json.Serialize(L["Something went wrong. Reload the page and try again."].Value)
             },
             "playerUrl": @Json.Serialize(AppConsts.PlayerUrlPrefix),
-            "lookupUrl": @Json.Serialize(AppConsts.PlayerLookupUrl)
+            "lookupUrl": @Json.Serialize(AppConsts.PlayerLookupUrl),
+            "relatedList": @Json.Serialize(AppConsts.RelatedChatBansList)
     }</script>
     <script src="~/js/pages/chat-bans-index.js" asp-append-version="true"></script>
 }

@@ -4,5 +4,6 @@ public class ForcedNameForm
 {
     public string? CommunityId { get; set; }
     public string? Name { get; set; }
+    public List<string>? RelatedIds { get; set; }
     public string? ReturnUrl { get; set; }
 }
