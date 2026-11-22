@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
@@ -8,6 +10,8 @@ public static partial class AppConsts
     public const string TelemetryLivePrefix = "/servers/";
 
     public static readonly string[] TelemetryIgnoredPaths = ["/api/server"];
+
+    public static readonly Regex TelemetryComparisonPath = new(@"^/player/\d+/\d+/?$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     public static readonly string[] TelemetryLivePollingSuffixes = ["/header", "/players", "/feed"];
 

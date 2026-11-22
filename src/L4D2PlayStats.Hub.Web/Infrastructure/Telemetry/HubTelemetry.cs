@@ -23,9 +23,14 @@ public static class HubTelemetry
         });
 
         services.Configure<LoggerFilterOptions>(options => options.AddFilter<OpenTelemetryLoggerProvider>(null, AppConsts.TelemetryMinimumLogLevel));
-        services.Configure<AspNetCoreTraceInstrumentationOptions>(options => options.Filter = context => IsTracked(context.Request.Path));
+        services.Configure<AspNetCoreTraceInstrumentationOptions>(options => options.Filter = context => IsTracked(context.Request));
 
         return services;
+    }
+
+    public static bool IsTracked(HttpRequest request)
+    {
+        return IsTracked(request.Path) && !IsUnreferredComparison(request);
     }
 
     public static bool IsTracked(PathString path)
@@ -42,5 +47,10 @@ public static class HubTelemetry
             return false;
 
         return !AppConsts.TelemetryIgnoredSegments.Any(segment => value.Contains(segment, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool IsUnreferredComparison(HttpRequest request)
+    {
+        return string.IsNullOrEmpty(request.Headers.Referer) && AppConsts.TelemetryComparisonPath.IsMatch(request.Path.Value ?? string.Empty);
     }
 }

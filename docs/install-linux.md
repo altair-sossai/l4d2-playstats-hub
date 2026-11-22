@@ -208,7 +208,7 @@ Almost everything is changed in the administration area of the site. The few set
 | `Database__Provider` | `Sqlite`, `SqlServer`, `PostgreSql` or `MySql`. | `Sqlite` |
 | `Database__ConnectionString` | How to reach the database. | `Data Source=hub.db` |
 | `Hub__TrustedProxies` | Other reverse proxies whose `X-Forwarded-*` headers the site believes: IP addresses or networks such as `10.0.0.0/8`, separated by commas. This machine (`127.0.0.1` and `::1`), where the installer puts Caddy, is always trusted. | empty |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Optional. The connection string of an Azure Application Insights resource: the site then sends what people open, how long each page and query takes, and the errors. The polling of the game servers, the avatars and the static files are left out. | empty (off) |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Optional. The connection string of an Azure Application Insights resource: the site then sends what people open, how long each page and query takes, and the errors. The polling of the game servers, the avatars, the static files and the player comparisons opened without a referrer (crawlers) are left out. | empty (off) |
 
 After editing the file, restart: `playstats-hub restart`.
 

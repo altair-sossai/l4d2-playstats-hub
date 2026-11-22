@@ -44,6 +44,23 @@ public class TelemetryTests
     }
 
     [TestMethod]
+    [DataRow("/player/76561198000000000/76561198000000001", "https://l4d2.com.br/player/76561198000000000", true)]
+    [DataRow("/player/76561198000000000/76561198000000001", "", false)]
+    [DataRow("/player/76561198000000000/76561198000000001/", "", false)]
+    [DataRow("/player/76561198000000000", "", true)]
+    [DataRow("/players", "", true)]
+    public void AComparisonOpenedWithoutAReferrerIsNotTracked(string path, string referer, bool tracked)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = path;
+
+        if (referer.Length > 0)
+            context.Request.Headers.Referer = referer;
+
+        Assert.AreEqual(tracked, HubTelemetry.IsTracked(context.Request));
+    }
+
+    [TestMethod]
     public void TheTelemetryIsOnOnlyWithAConnectionString()
     {
         var empty = new ConfigurationBuilder().Build();

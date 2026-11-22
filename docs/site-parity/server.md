@@ -212,7 +212,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | `GET /api/game-info` and `/configuration`, `/round`, `/scoreboard`, `/players`, `/messages`, `/events` (public) | `Web/Controllers/Api/GameInfoController.cs:19` | adapted | Now per server: `/api/servers/{publicId}/game-info` and the same sub-paths. The old paths redirect (302) to the server with most players. |
 | `GET /api/external-chat?after=` | `Web/Controllers/Api/ExternalChatController.cs:20` | adapted | Same path and JSON, read by the game server with its token; each server gets only the messages written on its own page. |
 | `POST /api/external-chat` (signed-in visitor) | `Web/Controllers/Api/ExternalChatController.cs:28` | adapted | Replaced by `POST /servers/{publicId}/chat` (see "Sending"). A POST cannot be redirected, and the old path is not used by any page. |
-| `GET /api/server` | `Web/Controllers/Api/ServerController.cs:9` | adapted | Same path, used by the layout. The JSON has `publicId`, `name`, `address`, `map`, `players` and `max_players` instead of the whole Steam answer. |
+| `GET /api/server` | `Web/Controllers/Api/ServerController.cs:9` | adapted | Same path, used by the layout. The JSON has `publicId`, `name`, `address`, `map`, `players` and `max_players` instead of the whole Steam answer. The layout asks for it only after the visitor first moves the mouse, scrolls, taps or types, and stops while the tab is in the background. |
 | `GET /api/servers` redirects to `/api/server` | `Web/Controllers/Api/ServerController.cs:17` | not ported | In the hub `/api/servers` is the public list of game servers, so it cannot redirect to `/api/server`. |
 | `GET /api/campaigns` | `Web/Controllers/Api/CampaignController.cs` | done |  |
 

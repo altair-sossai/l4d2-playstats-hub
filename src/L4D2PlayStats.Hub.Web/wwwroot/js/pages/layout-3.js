@@ -70,8 +70,48 @@ function updateServerInfo() {
             document.title = '🟢 ' + serverInfo.players + '/' + serverInfo.max_players + ' | ' + baseTitle;
         },
         complete: function () {
-            setTimeout(updateServerInfo, 4000);
+            setTimeout(nextServerInfo, 4000);
         }
+    });
+}
+
+var serverInfoStarted = false;
+var serverInfoPaused = false;
+var serverInfoStartEvents = ['pointermove', 'pointerdown', 'scroll', 'keydown', 'touchstart'];
+
+function nextServerInfo() {
+    if (document.hidden) {
+        serverInfoPaused = true;
+        return;
+    }
+
+    updateServerInfo();
+}
+
+function startServerInfo() {
+    if (serverInfoStarted)
+        return;
+
+    serverInfoStarted = true;
+
+    serverInfoStartEvents.forEach(function (name) {
+        window.removeEventListener(name, startServerInfo);
+    });
+
+    updateServerInfo();
+}
+
+function startServerInfoOnInteraction() {
+    serverInfoStartEvents.forEach(function (name) {
+        window.addEventListener(name, startServerInfo, { passive: true });
+    });
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden || !serverInfoPaused)
+            return;
+
+        serverInfoPaused = false;
+        updateServerInfo();
     });
 }
 
@@ -205,7 +245,7 @@ $(document).ready(function () {
         pulsate(this);
     });
 
-    updateServerInfo();
+    startServerInfoOnInteraction();
 
     loadNavStars();
 
