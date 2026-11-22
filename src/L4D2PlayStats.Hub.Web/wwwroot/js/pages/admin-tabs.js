@@ -2,7 +2,7 @@ var adminTabsConfig = JSON.parse(document.getElementById("admin-tabs-config").te
 
 document.addEventListener('DOMContentLoaded', function () {
     function current(key) {
-        document.querySelectorAll('input[name="' + adminTabsConfig.values.adminTabQuery + '"][data-admin-tab-field]').forEach(function (field) {
+        document.querySelectorAll('input[name="' + adminTabsConfig.values["AppConsts.AdminTabQuery"] + '"][data-admin-tab-field]').forEach(function (field) {
             field.value = key;
         });
     }
@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             var params = new URLSearchParams(window.location.search);
-            params.set(adminTabsConfig.values.adminTabQuery, key);
-            history.replaceState(null, '', window.location.pathname + '?' + params.toString() + window.location.hash.replace(new RegExp('^#' + adminTabsConfig.values.adminTabPanePrefix + '.*$'), ''));
+            params.set(adminTabsConfig.values["AppConsts.AdminTabQuery"], key);
+            history.replaceState(null, '', window.location.pathname + '?' + params.toString() + window.location.hash.replace(new RegExp('^#' + adminTabsConfig.values["AppConsts.AdminTabPanePrefix"] + '.*$'), ''));
         } catch (e) {
         }
     });

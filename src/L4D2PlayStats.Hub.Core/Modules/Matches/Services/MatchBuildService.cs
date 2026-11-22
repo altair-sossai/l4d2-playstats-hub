@@ -6,7 +6,6 @@ using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Models;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
@@ -86,48 +85,6 @@ public class MatchBuildService(
         hubState.DataChanged();
 
         return matches;
-    }
-
-    public async Task<int> BackfillTankWipesAsync(CancellationToken cancellationToken = default)
-    {
-        var state = await settingsService.GetAsync<MatchBackfillState>(cancellationToken);
-        if (state.TankWipes)
-            return 0;
-
-        var matchIds = await dbContext.Matches.OrderBy(m => m.Id).Select(m => m.Id).ToListAsync(cancellationToken);
-        var players = 0;
-
-        foreach (var chunk in matchIds.Chunk(AppConsts.MatchBackfillBatchSize))
-        {
-            var ids = chunk.ToList();
-            var rows = await dbContext.MatchPlayers.Where(p => ids.Contains(p.MatchId)).ToListAsync(cancellationToken);
-            var files = await dbContext.StatisticsFiles
-                .Where(f => f.MatchId != null && ids.Contains(f.MatchId.Value))
-                .Select(f => new { MatchId = f.MatchId!.Value, f.Content })
-                .ToListAsync(cancellationToken);
-
-            var wipes = files
-                .GroupBy(f => f.MatchId)
-                .ToDictionary(group => group.Key, group => TankWipes.Count(group.Select(f => Parse(f.Content)).OfType<ParsedStatistics>()));
-
-            foreach (var row in rows)
-            {
-                var value = row.TeamA || row.TeamB ? wipes.GetValueOrDefault(row.MatchId)?.GetValueOrDefault(row.CommunityId) ?? 0 : 0;
-                if (row.TankWipes == value)
-                    continue;
-
-                row.TankWipes = value;
-                players++;
-            }
-
-            await dbContext.SaveChangesAsync(cancellationToken);
-            dbContext.ChangeTracker.Clear();
-        }
-
-        state.TankWipes = true;
-        await settingsService.SaveAsync(state, cancellationToken);
-
-        return players;
     }
 
     private async Task<int> RebuildAsync(int gameServerId, int seasonId, List<StatisticsFile> files, CancellationToken cancellationToken)

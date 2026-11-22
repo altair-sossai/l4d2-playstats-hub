@@ -9,9 +9,6 @@ public static partial class AppConsts
     public const int ErrorStatusCodeLimit = 600;
     public const string ExceptionLoggedItem = "hub-exception-logged";
     public const string InGamePath = "/ingame";
-    public const string InGamePlayerPath = "/ingame/player";
-    public const string InGameMatchesPath = "/ingame/matches";
-    public const string InGameCommandsPath = "/ingame/commands";
     public const string InGameQueryKey = "steamid";
     public const string InGameCookie = "hub-in-game";
     public const string InGameCookieValue = "1";

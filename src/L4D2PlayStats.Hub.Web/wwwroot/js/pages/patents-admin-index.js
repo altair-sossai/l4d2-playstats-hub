@@ -3,8 +3,8 @@ var patentsAdminIndexConfig = JSON.parse(document.getElementById("patents-admin-
 (function () {
     var input = document.getElementById('MaxExperience');
     var curveInput = document.getElementById('Curve');
-    var levels = patentsAdminIndexConfig.values.patentLevels;
-    var rounding = patentsAdminIndexConfig.values.patentExperienceRounding;
+    var levels = patentsAdminIndexConfig.values["scale.All.Count"];
+    var rounding = patentsAdminIndexConfig.values["CoreConsts.PatentExperienceRounding"];
     var format = new Intl.NumberFormat(document.documentElement.lang || undefined);
 
     function refresh() {

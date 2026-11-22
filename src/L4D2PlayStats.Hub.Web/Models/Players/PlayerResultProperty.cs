@@ -11,7 +11,6 @@ public enum PlayerResultProperty
     MvpSiDamage,
     MvpCommon,
     LvpFfGiven,
-    TankWipes,
     Died,
     Incaps,
     DmgTaken,

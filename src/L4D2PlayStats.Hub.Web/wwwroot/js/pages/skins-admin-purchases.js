@@ -1,12 +1,12 @@
-var skinsAdminPurchasesConfig = JSON.parse(document.getElementById("skins-admin-purchases-config").textContent);
+var HubPage = JSON.parse(document.getElementById("skins-admin-purchases-config").textContent);
 
 $(function () {
-    var texts = skinsAdminPurchasesConfig.texts;
+    var texts = HubPage.texts;
 
     var token = $('input[name="__RequestVerificationToken"]').val();
-    var purchasesUrl = skinsAdminPurchasesConfig.purchasesUrl;
-    var query = skinsAdminPurchasesConfig.query;
-    var playerPageUrl = skinsAdminPurchasesConfig.playerPageUrl;
+    var purchasesUrl = HubPage.purchasesUrl;
+    var query = HubPage.query;
+    var playerPageUrl = HubPage.playerPageUrl;
     var rarityClasses = 'ska-rarity-legendary ska-rarity-epic ska-rarity-rare ska-rarity-uncommon ska-rarity-common';
     var selected = null;
 

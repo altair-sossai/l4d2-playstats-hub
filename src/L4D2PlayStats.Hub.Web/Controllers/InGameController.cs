@@ -22,28 +22,28 @@ public class InGameController(
     IMatchQueryService matchQueryService,
     ICommandCatalog commandCatalog) : Controller
 {
-    [HttpGet(AppConsts.InGamePath)]
+    [HttpGet("/ingame")]
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, false, cancellationToken));
     }
 
-    [HttpGet(AppConsts.InGamePlayerPath)]
+    [HttpGet("/ingame/player")]
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Player(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, false, cancellationToken));
     }
 
-    [HttpGet(AppConsts.InGameMatchesPath)]
+    [HttpGet("/ingame/matches")]
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Matches(long? steamid, CancellationToken cancellationToken)
     {
         return View(await ModelAsync(steamid, true, cancellationToken));
     }
 
-    [HttpGet(AppConsts.InGameCommandsPath)]
+    [HttpGet("/ingame/commands")]
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Commands(long? steamid, CancellationToken cancellationToken)
     {

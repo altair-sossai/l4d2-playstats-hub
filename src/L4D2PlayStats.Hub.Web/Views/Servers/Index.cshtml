@@ -16,7 +16,7 @@
 }
 
 @section Scripts {
-    <script type="application/json" id="servers-index-config">{ "values": { "serversUrl": @Json.Serialize(AppConsts.ServersUrl), "serverPickerRefreshInMilliseconds": @Json.Serialize(AppConsts.ServerPickerRefreshInMilliseconds), "livePageRequestTimeoutInMilliseconds": @Json.Serialize(AppConsts.LivePageRequestTimeoutInMilliseconds) } }</script>
+    <script type="application/json" id="servers-index-config">{ "values": { "AppConsts.ServersUrl": @Json.Serialize(AppConsts.ServersUrl), "AppConsts.ServerPickerRefreshInMilliseconds": @Json.Serialize(AppConsts.ServerPickerRefreshInMilliseconds), "AppConsts.LivePageRequestTimeoutInMilliseconds": @Json.Serialize(AppConsts.LivePageRequestTimeoutInMilliseconds) } }</script>
     <script src="~/js/pages/servers-index.js" asp-append-version="true"></script>
 }
 

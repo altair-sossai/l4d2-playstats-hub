@@ -105,8 +105,7 @@ You may change (each line is off in the file, and the plugin uses the default):
 |---|---|---|---|---|
 | `playstats_public_url` | `l4d2_ranking`, `l4d2_weapon_skins` | empty | An address, without a slash at the end | Address of the site that players read in chat: the ranking hint and the skin shop link. Empty means `playstats_url`. Set it when the plugins reach the site by an IP address but players know it by a name, for example `https://stats.example.com`. |
 | `playstats_ingame_url` | `l4d2_ranking` | empty | An address, without a slash at the end | Address the in-game browser opens. Empty means `playstats_url`. Set a plain `http://` address when the panel stays blank (see below). |
-| `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` or `1` | `0` stops the plugin from opening any page, even with `!ranking`, `!comandos` or `!commands`. |
-| `ranking_motd_path` | `l4d2_ranking` | `/` | A path that starts with `/` | Page that `!ranking` opens, from the root of the site: `/` is the ranking of the home page, `/ingame` the compact in-game pages. |
+| `ranking_show_motd_panel` | `l4d2_ranking` | `1` | `0` or `1` | `0` stops the plugin from opening the ranking page, even with `!ranking`. |
 | `ranking_commands_path` | `l4d2_ranking` | `/ingame/commands` | A path that starts with `/` | Page that `!comandos` and `!commands` open, from the root of the site. |
 | `patent_icon_enabled` | `l4d2_show_patent_icon` | `0` | `0` or `1` | Turns the patent icons on. With `0` the plugin does not ask the site for the patents and players do not download the sprites. Turn it on only after the sprites are on the FastDL. |
 | `patent_icon_version` | `l4d2_show_patent_icon` | `2` | `1` or more | Version in the names of the sprite files, `patent_<level>_v<version>`, both with two digits. The files of the assets repository are version `2`. |

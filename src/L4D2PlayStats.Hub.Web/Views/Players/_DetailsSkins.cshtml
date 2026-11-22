@@ -1,11 +1,20 @@
+@using System.Text.Encodings.Web
 @model PlayerDetailsModel
+@inject ISettingsService Settings
+@inject ICampaignImageService CampaignImages
 
 @{
     var firstPlayerRanking = Model.FirstPlayerRanking;
     var firstPlayer = firstPlayerRanking.Player;
+    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
+    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
 
     var secondPlayerRanking = Model.SecondPlayerRanking;
     var secondPlayer = secondPlayerRanking?.Player;
+    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
+    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
+
+    var seasonId = Model.Period.Query;
 
     void RenderWallet(PlayerSkinsModel? playerSkins)
     {

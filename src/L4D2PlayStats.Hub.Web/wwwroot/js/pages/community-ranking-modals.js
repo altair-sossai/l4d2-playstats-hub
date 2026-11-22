@@ -36,7 +36,7 @@ var communityRankingModalsConfig = JSON.parse(document.getElementById("community
         modal.find('.crm-bar-win').css('width', percent(wins, total));
         modal.find('.crm-bar-draw').css('width', percent(draws, total));
         modal.find('.crm-bar-loss').css('width', percent(losses, total));
-        modal.find('.crm-votes').attr('href', communityRankingModalsConfig.values.communityVotesPage + '?player=' + data.player);
+        modal.find('.crm-votes').attr('href', communityRankingModalsConfig.values["AppConsts.CommunityVotesPage"] + '?player=' + data.player);
         modal.find('.crm-profile').toggle(!!data.profile).attr('href', data.profile || '#');
         modal.modal('show');
     });

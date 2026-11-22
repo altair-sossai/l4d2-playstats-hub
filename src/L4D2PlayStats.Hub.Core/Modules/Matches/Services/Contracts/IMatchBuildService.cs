@@ -4,5 +4,4 @@ public interface IMatchBuildService
 {
     Task RebuildAroundAsync(int gameServerId, int seasonId, DateTime fileDate, CancellationToken cancellationToken = default);
     Task<int> RebuildAllAsync(CancellationToken cancellationToken = default);
-    Task<int> BackfillTankWipesAsync(CancellationToken cancellationToken = default);
 }

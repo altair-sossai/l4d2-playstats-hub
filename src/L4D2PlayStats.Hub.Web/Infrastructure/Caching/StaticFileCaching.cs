@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 
@@ -13,26 +12,13 @@ public static class StaticFileCaching
 
     private static void Apply(StaticFileResponseContext context)
     {
+        var request = context.Context.Request;
         var extension = Path.GetExtension(context.File.Name);
 
-        context.Context.Response.Headers[HeaderNames.CacheControl] = IsCurrentVersion(context.Context)
+        context.Context.Response.Headers[HeaderNames.CacheControl] = request.Query.ContainsKey(AppConsts.StaticFileVersionParameter)
             ? AppConsts.VersionedStaticFileCacheControl
             : AppConsts.CodeExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase)
                 ? AppConsts.UnversionedCodeCacheControl
                 : AppConsts.UnversionedStaticFileCacheControl;
-    }
-
-    private static bool IsCurrentVersion(HttpContext context)
-    {
-        var request = context.Request;
-        var version = request.Query[AppConsts.StaticFileVersionParameter].ToString();
-
-        if (string.IsNullOrEmpty(version) || !request.Path.HasValue)
-            return false;
-
-        var provider = context.RequestServices.GetRequiredService<IFileVersionProvider>();
-        var expected = provider.AddFileVersionToPath(request.PathBase, request.Path.Value);
-
-        return string.Equals(expected, $"{request.Path.Value}?{AppConsts.StaticFileVersionParameter}={version}", StringComparison.Ordinal);
     }
 }

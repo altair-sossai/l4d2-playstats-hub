@@ -600,9 +600,6 @@ namespace L4D2PlayStats.Hub.Migrations.SqlServer.Migrations
                     b.Property<int>("TankDamage")
                         .HasColumnType("int");
 
-                    b.Property<int>("TankWipes")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TeamA")
                         .HasColumnType("bit");
 

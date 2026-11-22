@@ -220,15 +220,15 @@ public class LiveHubTests
         var values = PageScripts.Config(page, "servers-live").GetProperty("values");
 
         Assert.Contains("/lib/signalr/signalr.min.js", page);
-        Assert.AreEqual(WebConsts.LiveHubUrl, values.GetProperty("liveHubUrl").GetString());
+        Assert.AreEqual(WebConsts.LiveHubUrl, values.GetProperty("AppConsts.LiveHubUrl").GetString());
         Assert.AreEqual("test-server", values.GetProperty("publicId").GetString());
-        Assert.AreEqual(CoreConsts.LiveRefreshInMilliseconds, values.GetProperty("refreshInterval").GetInt32());
-        Assert.AreEqual(WebConsts.LivePageSafetyRefreshInMilliseconds, values.GetProperty("livePageSafetyRefreshInMilliseconds").GetInt32());
+        Assert.AreEqual(CoreConsts.LiveRefreshInMilliseconds, values.GetProperty("(await ChatSettings.GetAsync<LiveServerSettings>()).RefreshInMilliseconds").GetInt32());
+        Assert.AreEqual(WebConsts.LivePageSafetyRefreshInMilliseconds, values.GetProperty("AppConsts.LivePageSafetyRefreshInMilliseconds").GetInt32());
         Assert.Contains("if (typeof signalR === 'undefined' || !window.Promise)", page);
-        Assert.AreEqual(WebConsts.LiveHubChangedMethod, values.GetProperty("liveHubChangedMethod").GetString());
-        Assert.Contains("connection.on(serversLiveConfig.values.liveHubChangedMethod", page);
-        Assert.AreEqual(nameof(LiveHub.Watch), values.GetProperty("watchMethod").GetString());
-        Assert.Contains("connection.invoke(serversLiveConfig.values.watchMethod, serverPublicId)", page);
+        Assert.AreEqual(WebConsts.LiveHubChangedMethod, values.GetProperty("AppConsts.LiveHubChangedMethod").GetString());
+        Assert.Contains("connection.on(serversLiveConfig.values[\"AppConsts.LiveHubChangedMethod\"]", page);
+        Assert.AreEqual(nameof(LiveHub.Watch), values.GetProperty("nameof(LiveHub.Watch)").GetString());
+        Assert.Contains("connection.invoke(serversLiveConfig.values[\"nameof(LiveHub.Watch)\"], serverPublicId)", page);
         Assert.Contains("pushConnected ? safetyRefreshInterval : interval", page);
         Assert.Contains("url: serverUrl + '/header'", page);
         Assert.Contains("url: serverUrl + '/players'", page);

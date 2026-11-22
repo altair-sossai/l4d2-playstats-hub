@@ -2,9 +2,9 @@ var matchesDetailsConfig = JSON.parse(document.getElementById("matches-details-c
 
 function showMatch(result) {
     if (result && result.matchId)
-        location.href = matchesDetailsConfig.values.matchesUrl + "/" + result.matchId;
+        location.href = matchesDetailsConfig.values["AppConsts.MatchesUrl"] + "/" + result.matchId;
     else
-        location.href = matchesDetailsConfig.values.matchesUrl;
+        location.href = matchesDetailsConfig.values["AppConsts.MatchesUrl"];
 }
 
 function editScore(statisticId, team, score, message) {
@@ -19,7 +19,7 @@ function editScore(statisticId, team, score, message) {
         return;
 
     if (score < 0 || score > 10000) {
-        alert(matchesDetailsConfig.values.invalidScoreRange);
+        alert(matchesDetailsConfig.values["L[\"Invalid score range\"].Value"]);
         return;
     }
 
@@ -32,7 +32,7 @@ function editScore(statisticId, team, score, message) {
         url: "/api/statistics/" + statisticId + "/update-score",
         type: "PUT",
         contentType: "application/json",
-        headers: matchesDetailsConfig.values.antiforgeryHeaders,
+        headers: matchesDetailsConfig.values["new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }"],
         data: JSON.stringify(command)
     }).done(showMatch);
 }

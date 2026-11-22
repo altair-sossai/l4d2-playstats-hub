@@ -14,6 +14,12 @@ a, a:visited, a:hover, a:active {
     margin-bottom: 0;
 }
 
+.navbar-nav .nav-item img {
+    width: 20px;
+    height: auto;
+    margin-top: -2px;
+}
+
 .logo {
     height: 100%;
     max-height: 50px;
@@ -63,10 +69,6 @@ a, a:visited, a:hover, a:active {
 
 .match .icon {
     width: 16px;
-}
-
-.match .icon.tank-wipe {
-    border-radius: 3px;
 }
 
 .match .teams .col-xs-6 {

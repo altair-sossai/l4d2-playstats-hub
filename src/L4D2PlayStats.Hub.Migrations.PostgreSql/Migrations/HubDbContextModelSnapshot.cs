@@ -600,9 +600,6 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.Property<int>("TankDamage")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TankWipes")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("TeamA")
                         .HasColumnType("boolean");
 

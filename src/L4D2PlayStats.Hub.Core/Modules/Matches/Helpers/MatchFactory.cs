@@ -116,9 +116,6 @@ public static class MatchFactory
             var mvpCommon = half.MvpCommon;
             var lvpFfGiven = half.LvpFfGiven;
 
-            if (TankWipes.Player(half) == communityId)
-                row.TankWipes++;
-
             foreach (var player in half.Players.Where(p => p.CommunityId == communityId))
             {
                 row.Died += player.Died;

@@ -5,7 +5,6 @@ using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Matches.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Services.Contracts;
@@ -63,12 +62,6 @@ public static class Hosting
 
         if (registry.Created + registry.Updated > 0)
             app.Logger.LogInformation("Updated the names of {Updated} of {Profiles} players and created {Created} missing player profiles in {Elapsed} ms.", registry.Updated, registry.Profiles, registry.Created, (long)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
-
-        started = Stopwatch.GetTimestamp();
-        var tankWipes = await services.GetRequiredService<IMatchBuildService>().BackfillTankWipesAsync();
-
-        if (tankWipes > 0)
-            app.Logger.LogInformation("Counted the tank wipes of {Count} match players from their statistics files in {Elapsed} ms.", tankWipes, (long)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
 
         var ratings = services.GetRequiredService<ICommunityRatingService>();
 

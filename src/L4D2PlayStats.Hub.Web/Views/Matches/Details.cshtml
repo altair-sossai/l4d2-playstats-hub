@@ -23,7 +23,7 @@
 @section Scripts {
     @if (Model.Administrator)
     {
-        <script type="application/json" id="matches-details-config">{ "values": { "matchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "invalidScoreRange": @Json.Serialize(L["Invalid score range"].Value), "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }) } }</script>
+        <script type="application/json" id="matches-details-config">{ "values": { "AppConsts.MatchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "L[\"Invalid score range\"].Value": @Json.Serialize(L["Invalid score range"].Value), "new Dictionary\u003cstring, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }) } }</script>
         <script src="~/js/pages/matches-details.js" asp-append-version="true"></script>
     }
 }
@@ -451,23 +451,6 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>
-                    @L["Tank wipes"]
-                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Round halves in which the player, as Tank, wiped the survivors and was still alive when the round ended."]" aria-label="@L["More information"]"></span>
-                </td>
-                @foreach (var player in team.Players)
-                {
-                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
-                        @player.TankWipes.ToString("N0")
-                    </td>
-                    <td class="text-left hide-mobile">
-                        @player.TankWipesPercentage.ToString("P0")
-                    </td>
-                }
-                <td class="text-center" data-label="@L["Total"]">@team.TankWipes.ToString("N0")</td>
-            </tr>
-
             <tr>
                 <td>
                     @L["SI damage (excl. Tank)"]

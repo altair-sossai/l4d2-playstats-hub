@@ -35,7 +35,7 @@ var layout2Config = JSON.parse(document.getElementById("layout-2-config").textCo
     function fit() {
         restore();
 
-        if (window.innerWidth >= layout2Config.values.navbarDesktopWidth && wraps()) {
+        if (window.innerWidth >= layout2Config.values["AppConsts.NavbarDesktopWidth"] && wraps()) {
             navbar.classList.add('nav-compact');
 
             var items = main.querySelectorAll('li.nav-fit');

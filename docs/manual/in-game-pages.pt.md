@@ -30,7 +30,7 @@ Um jogador sem nenhuma partida ranqueada na temporada vê uma mensagem curta no 
 
 ![As últimas partidas, dentro do jogo](../images/pt/ingame-matches.webp)
 
-**Comandos**: os comandos que os jogadores podem usar no servidor, do mesmo catálogo da [página de comandos](commands.pt.md), sem os comandos dos administradores. Uma linha de links no topo leva a cada seção. Os jogadores também a abrem direto com `!comandos` ou `!commands`.
+**Comandos**: os comandos que os jogadores podem usar no servidor, do mesmo catálogo da [página de comandos](commands.pt.md), sem os comandos dos administradores. Uma linha de links no topo leva a cada seção.
 
 ![Os comandos, dentro do jogo](../images/pt/ingame-commands.webp)
 

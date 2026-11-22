@@ -18,7 +18,6 @@ public static class PlayerProperties
             PlayerResultProperty.MvpSiDamage => player.MvpSiDamage,
             PlayerResultProperty.MvpCommon => player.MvpCommon,
             PlayerResultProperty.LvpFfGiven => player.LvpFfGiven,
-            PlayerResultProperty.TankWipes => player.TankWipes,
             PlayerResultProperty.Died => player.Died,
             PlayerResultProperty.Incaps => player.Incaps,
             PlayerResultProperty.DmgTaken => player.DmgTaken,
@@ -53,7 +52,6 @@ public static class PlayerProperties
             PlayerResultProperty.MvpSiDamage => "SI MVP awards",
             PlayerResultProperty.MvpCommon => "CI MVP awards",
             PlayerResultProperty.LvpFfGiven => "FF LVP awards",
-            PlayerResultProperty.TankWipes => "Tank wipes",
             PlayerResultProperty.Died => "Deaths",
             PlayerResultProperty.Incaps => "Times incapacitated",
             PlayerResultProperty.DmgTaken => "SI damage taken",
@@ -82,7 +80,6 @@ public static class PlayerProperties
             PlayerResultProperty.DmgTaken => "Damage from player infected and commons attributed to a Boomer; regular common damage is excluded.",
             PlayerResultProperty.DmgTotal => "SI damage, including incapacitated and post-boom damage; Tank damage is excluded.",
             PlayerResultProperty.HunterDpDmg => "Sum of damage from all recorded high pounces.",
-            PlayerResultProperty.TankWipes => "Round halves in which the player, as Tank, wiped the survivors and was still alive when the round ended.",
             _ => null
         };
     }
@@ -94,7 +91,6 @@ public static class PlayerProperties
         PlayerResultProperty.Games,
         PlayerResultProperty.MvpSiDamage,
         PlayerResultProperty.MvpCommon,
-        PlayerResultProperty.TankWipes,
         PlayerResultProperty.WinRate,
         PlayerResultProperty.RageQuit
     ];

@@ -17,7 +17,7 @@ var voteInviteConfig = JSON.parse(document.getElementById("vote-invite-config").
         invite.classList.add('hidden');
 
         try {
-            localStorage.setItem(key, String(Date.now() + voteInviteConfig.values.hiddenMilliseconds));
+            localStorage.setItem(key, String(Date.now() + voteInviteConfig.values["(long)TimeSpan.FromDays(AppConsts.VoteInviteHiddenDays).TotalMilliseconds"]));
         } catch (e) {
         }
     });
