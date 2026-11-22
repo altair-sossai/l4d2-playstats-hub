@@ -70,7 +70,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | "Próximo reset em N dia(s)" | Index.cshtml:78, Models/RankingPeriodModel.cs | adapted | Conta os dias até o fim da temporada atual, seja qual for a duração dela, em vez de períodos fixos de dois meses. |
 | Link "Ver rankings anteriores" | Index.cshtml:80 | done | |
 | Tabela zebrada, com hover, bordas e condensada | Index.cshtml:83 | done | |
-| Colunas: #, Patente, Jogador (avatar e nome), XP, Vitórias, Derrotas, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Jogos, Rage quit | Index.cshtml:85-97 | done | |
+| Colunas: #, Patente, Jogador (avatar e nome), XP, Vitórias, Derrotas, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Jogos, Rage quit | Index.cshtml:85-97 | done | Os tank wipes foram adicionados depois. |
 | Colunas ocultas no celular (XP, Derrotas, MVPs, Taxa de vitória, Jogos, Rage quit) | Index.cshtml:89-96 | done | |
 | Top 100 listado, os 50 primeiros visíveis, botão "Mostrar mais" para o restante | Index.cshtml:103, 109, 198-207, 50-57 | done | |
 | Linha do jogador logado destacada | Index.cshtml:109 | done | |
@@ -86,7 +86,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Ainda sem ranking: os seis primeiros do último ranking | Index.cshtml:60-65, Views/Home/_LastRankingTopSix.cshtml | done | |
 | Sem ranking e sem histórico: a mensagem "Não existem dados no momento..." | Index.cshtml:66-71 | done | |
 | Seis primeiros: troféu, cabeçalho, período de referência | _LastRankingTopSix.cshtml:36-61 | adapted | O texto do período cobre uma temporada de qualquer duração. |
-| Seis primeiros: um painel por jogador (destacado se for o jogador logado), rótulo de posição por cor, nome, avatar redondo, vitórias e derrotas, rótulos de taxa de vitória, MVP de SI, MVP de CI, jogos e rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
+| Seis primeiros: um painel por jogador (destacado se for o jogador logado), rótulo de posição por cor, nome, avatar redondo, vitórias e derrotas, rótulos de taxa de vitória, MVP de SI, MVP de CI, jogos e rage quit | _LastRankingTopSix.cshtml:63-111 | done | Os tank wipes foram adicionados depois. |
 | Seis primeiros: botão "Veja o ranking completo" | _LastRankingTopSix.cshtml:113-115 | done | Abre esse período no histórico. |
 | Com o módulo de ranking desligado | (novo) | adapted | Uma página curta de boas-vindas; o site antigo não tinha módulos. |
 | Seletor de período | (novo) | adapted | Acréscimo do hub acima da tabela, no estilo da página de histórico. A temporada atual é o padrão; ele também oferece as outras temporadas do ano atual, um item por ano e todo o período. Um ano e todo o período mostram a mesma tabela sem as colunas de patente e XP, que pertencem a uma temporada. |
@@ -103,7 +103,7 @@ Situação: `done` (mesmo conteúdo e visual), `adapted` (presente, alterado pel
 | Seletor de período mostrando o período exibido | Index.cshtml:36-85 | done | Todo o período, cada ano e as temporadas encerradas do ano atual, como no site antigo. Uma temporada de um ano anterior ainda abre pelo endereço dela. |
 | Nomes dos períodos: "De MM/YYYY até MM/YYYY", "Ano de YYYY", "Todo o período" | Index.cshtml:42-57 | done | |
 | Período padrão: o ano atual | Controllers/HistoryController.cs:26 | done | |
-| Colunas da tabela: #, Jogador (avatar e nome), Vitórias, Derrotas, Jogos, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Rage quit | Index.cshtml:87-101 | done | |
+| Colunas da tabela: #, Jogador (avatar e nome), Vitórias, Derrotas, Jogos, MVP de SI (vezes), MVP de CI (vezes), Taxa de vitória, Rage quit | Index.cshtml:87-101 | done | Os tank wipes foram adicionados depois. |
 | Colunas ocultas no celular | Index.cshtml:93-99 | done | |
 | Top 100, linha do jogador logado destacada, medalhas, avatar, nome encurtado, tooltips em todos os números | Index.cshtml:103-171 | done | |
 | Período desconhecido: "Histórico não encontrado" com um botão de volta para o ranking, sem indexação | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |

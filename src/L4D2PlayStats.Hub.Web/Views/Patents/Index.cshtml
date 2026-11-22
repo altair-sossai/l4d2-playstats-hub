@@ -26,6 +26,10 @@
         </p>
         <p>
             @Html.Raw(string.Format(L["Each victory awards the player <b>{0:N0}</b> XP points, while losses cause the player to lose <b>{1:N0}</b> XP points. An MVP SI title grants the player an additional <b>{2:N0}</b> XP points, and an MVP CI title grants an additional <b>{3:N0}</b> XP points. Rage quit results in a loss of <b>{4:N0}</b> XP points."].Value, Model.Config.Win, Math.Abs(Model.Config.Loss), Model.Config.Mvp, Model.Config.MvpCommon, Math.Abs(Model.Config.RageQuit)))
+            @if (Model.Config.TankWipe != 0)
+            {
+                @Html.Raw(string.Format(L["Each tank wipe, a round half in which the player, as Tank, takes down all the survivors and is still alive at the end, grants an additional <b>{0:N0}</b> XP points."].Value, Model.Config.TankWipe))
+            }
         </p>
     </div>
 </div>
@@ -67,6 +71,10 @@
             <li>@string.Format(L["Defeat: {0:N0} XP points"].Value, Model.Config.Loss)</li>
             <li>@string.Format(L["MVP SI: +{0:N0} XP points"].Value, Model.Config.Mvp)</li>
             <li>@string.Format(L["MVP CI: +{0:N0} XP points"].Value, Model.Config.MvpCommon)</li>
+            @if (Model.Config.TankWipe != 0)
+            {
+                <li>@string.Format(L["Tank wipe: +{0:N0} XP points"].Value, Model.Config.TankWipe)</li>
+            }
             <li>@string.Format(L["Rage quit: {0:N0} XP points"].Value, Model.Config.RageQuit)</li>
         </ul>
     </div>

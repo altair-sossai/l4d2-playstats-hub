@@ -66,11 +66,12 @@ The game server always calls the site. The site never connects to the game serve
 | Match | Maps of the same campaign played one after the other by the same teams. See [Matches](matches.md#how-files-become-matches). |
 | Ranked match | A match that counts for the ranking. It is shown as **Competitive**. A match that does not count is shown as **Casual**. Which matches count is decided by the [game modes](game-modes-and-campaigns.md). |
 | Season | A period of a fixed number of months. The ranking starts again at each season. See [Seasons and history](seasons-and-history.md). |
-| Experience (XP) | The points of the ranking: wins, losses, rage quits and MVPs. See [Ranking](ranking.md#how-experience-is-calculated). |
+| Experience (XP) | The points of the ranking: wins, losses, rage quits, MVPs and tank wipes. See [Ranking](ranking.md#how-experience-is-calculated). |
 | Patent | A level from 1 to 15 given by the experience. See [Patents](patents.md). |
 | SI MVP | The player who did the most damage to special infected in a round half. |
 | CI MVP | The player who killed the most common infected in a round half. |
 | FF LVP | The player who did the most friendly fire in a round half. It gives no points. |
+| Tank wipe | A round half in which the player, as Tank, took down all the survivors and was still alive at the end. It adds experience but no stars. See [Ranking](ranking.md#tank-wipes). |
 | Rage quit | A player who was in the first map of a match and is not in the last one. |
 | Star | The currency of the skin shop. One star for each SI MVP and each CI MVP in ranked matches. |
 | Game server | A Left 4 Dead 2 server registered on the site. Each one has an identifier and a key. |

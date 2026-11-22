@@ -41,7 +41,7 @@ public class ProductionParityTests
 
         using var hub = new TestHub();
 
-        await hub.RunAsync(services => services.GetRequiredService<ISettingsService>().SaveAsync(new RankingSettings { IncludeUnknownCampaigns = false }));
+        await hub.RunAsync(services => services.GetRequiredService<ISettingsService>().SaveAsync(new RankingSettings { IncludeUnknownCampaigns = false, TankWipe = 0 }));
 
         var server = (await hub.CreateServerAsync("Production")).Server;
         var imported = await ImportAsync(hub, server, Directory.GetDirectories(Path.Combine(dump, "statistics")).Single());

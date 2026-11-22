@@ -47,6 +47,49 @@ public class RankingCalculatorTests
     }
 
     [TestMethod]
+    public void TankWipesAddBonusPointsButNoStars()
+    {
+        var winner = Winner(Ana, 1);
+        var loser = Loser(Bia);
+
+        winner.TankWipes = 2;
+        loser.TankWipes = 1;
+
+        var ranking = Calculate(Match(1, Winner(Bia), Loser(Caio)), Match(2, winner, loser));
+
+        Assert.AreEqual(85 + 8 + 2 * 50, Player(ranking, Ana).Experience);
+        Assert.AreEqual(2, Player(ranking, Ana).TankWipes);
+        Assert.AreEqual(1, Player(ranking, Ana).Stars);
+        Assert.AreEqual(85 - 80 + 50, Player(ranking, Bia).Experience);
+        Assert.AreEqual(1, Player(ranking, Bia).TankWipes);
+    }
+
+    [TestMethod]
+    public void TheTankWipePointsComeFromTheSettingsAndZeroTurnsThemOff()
+    {
+        var winner = Winner(Ana);
+
+        winner.TankWipes = 3;
+
+        var matches = new[] { Match(1, winner, Loser(Bia)) };
+        var custom = RankingCalculator.Calculate(matches, NoPunishments, new RankingSettings { TankWipe = 4 });
+        var off = RankingCalculator.Calculate(matches, NoPunishments, new RankingSettings { TankWipe = 0 });
+
+        Assert.AreEqual(85 + 3 * 4, Player(custom, Ana).Experience);
+        Assert.AreEqual(85, Player(off, Ana).Experience);
+        Assert.AreEqual(3, Player(off, Ana).TankWipes);
+    }
+
+    [TestMethod]
+    public void ARageQuitAlsoReplacesTheTankWipePoints()
+    {
+        var quitter = new MatchPlayer { CommunityId = Caio, Name = "Caio", RageQuits = 1, Participant = true, TeamA = true, TankWipes = 2 };
+        var ranking = Calculate(Match(1, Winner(Caio), Loser(Bia)), Match(2, Winner(Caio), Loser(Bia)), Match(3, Winner(Ana), Loser(Bia), quitter));
+
+        Assert.AreEqual(2 * 85 - 150, Player(ranking, Caio).Experience);
+    }
+
+    [TestMethod]
     public void ARageQuitReplacesEverythingElse()
     {
         var quitter = new MatchPlayer { CommunityId = Caio, Name = "Caio", RageQuits = 1, Participant = true };

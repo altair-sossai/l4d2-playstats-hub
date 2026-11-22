@@ -9,6 +9,7 @@ public class RankingSettings : INormalizable
     public int RageQuit { get; set; } = AppConsts.DefaultRageQuitExperience;
     public int Mvp { get; set; } = AppConsts.DefaultMvpExperience;
     public int MvpCommon { get; set; } = AppConsts.DefaultMvpCommonExperience;
+    public int TankWipe { get; set; } = AppConsts.DefaultTankWipeExperience;
     public int MinimumMatches { get; set; }
     public bool IncludeUnknownCampaigns { get; set; } = true;
     public int MatchGapInHours { get; set; } = AppConsts.MatchClusterGapInHours;

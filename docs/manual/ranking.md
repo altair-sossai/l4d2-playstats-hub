@@ -13,6 +13,7 @@ The ranking is the first page of the site. It lists the top 100 players of the c
 - [How experience is calculated](#how-experience-is-calculated)
 - [Wins, losses, draws and rage quits](#wins-losses-draws-and-rage-quits)
 - [MVPs](#mvps)
+- [Tank wipes](#tank-wipes)
 - [Punishments](#punishments)
 - [Minimum number of matches](#minimum-number-of-matches)
 - [The order of the ranking](#the-order-of-the-ranking)
@@ -31,6 +32,7 @@ The ranking is the first page of the site. It lists the top 100 players of the c
 | XP | A bar with the progress towards the next patent. Hover it to see the experience, the next level and how much the last match changed. Green means the last match added experience, red means it took experience away. |
 | Wins, Loss | Ranked matches won and lost. A rage quit counts as a loss. |
 | SI MVP awards, CI MVP awards | How many times the player was MVP. See [MVPs](#mvps). |
+| Tank wipes | Round halves the player ended as Tank. See [Tank wipes](#tank-wipes). |
 | Win rate | Wins divided by wins plus losses. |
 | Games | Wins plus losses. Draws are not included. |
 | Rage quit | Matches the player left before the end. |
@@ -64,8 +66,9 @@ Each ranked match changes the experience of the players who were in it. With the
 | Rage quit | −150, and nothing else from that match |
 | Each SI MVP award in the match | +8 |
 | Each CI MVP award in the match | +6 |
+| Each tank wipe in the match | +50 |
 
-For example, a player who wins a match and was SI MVP in two round halves and CI MVP in one gets 85 + 2 × 8 + 6 = 107 XP. A player who loses with one SI MVP gets −80 + 8 = −72 XP.
+For example, a player who wins a match and was SI MVP in two round halves and CI MVP in one gets 85 + 2 × 8 + 6 = 107 XP. A player who loses with one SI MVP gets −80 + 8 = −72 XP, and a player who loses but wiped the survivors twice as Tank gets −80 + 2 × 50 = 20 XP.
 
 - The matches are applied in the order they were played.
 - Experience never goes below zero. A player with 30 XP who loses a match ends with 0, not −50.
@@ -81,11 +84,11 @@ The result of a match is decided by the score after its last map.
 |---|---|
 | Was in the first map and in the last map, on the team with the higher score | Win |
 | Was in the first map and in the last map, on the team with the lower score | Loss |
-| Both teams ended with the same score, and the player was in the first and the last map | Draw: no win or loss, only the MVP points |
+| Both teams ended with the same score, and the player was in the first and the last map | Draw: no win or loss, only the MVP and tank wipe points |
 | Was in the first map and is not in the last map | Rage quit: one loss, and −150 XP for the match |
-| Joined after the first map and was in the last map | No win and no loss; MVP points still count |
+| Joined after the first map and was in the last map | No win and no loss; MVP and tank wipe points still count |
 
-A rage quit replaces everything else the player would get from that match, including MVP points.
+A rage quit replaces everything else the player would get from that match, including MVP and tank wipe points.
 
 ## MVPs
 
@@ -93,6 +96,14 @@ The statistics file of each map has, for each round half, an MVP in special infe
 
 - SI MVP and CI MVP add experience (8 and 6 by default) and give one star each for the [skin shop](skin-shop.md#stars).
 - FF LVP is shown in the statistics and gives no points.
+
+## Tank wipes
+
+A tank wipe is a round half in which the player, as Tank, took down all the survivors and was still alive when the round ended: the infected won the round right there, before the survivors reached the safe room or killed the Tank.
+
+The statistics file has no field for it, so the site works it out from each round half: no survivor was standing at the end, and the Tank's time stopped in the same second as the round, which only happens when a Tank is still up. The wipe goes to the infected player who did the most damage as Tank in that half. A Tank driven by a bot, or one that never hit a survivor, gives no tank wipe.
+
+Tank wipes are shown in the ranking, the players list, the player page, the matches and the in-game pages. Each one adds experience (50 by default, see [Settings](#settings)); they give no stars for the skin shop.
 
 ## Punishments
 
@@ -118,6 +129,7 @@ Players are ordered by experience. When two players have the same experience, th
 |---|---|---|
 | Points for a win, a loss and a rage quit | [Settings > Ranking points](administration.md#ranking-points) | 85, −80, −150 |
 | Points for each SI MVP and each CI MVP | [Settings > Ranking points](administration.md#ranking-points) | 8, 6 |
+| Points for each tank wipe | [Settings > Ranking points](administration.md#ranking-points) | 50 |
 | Minimum matches to appear in the ranking | [Settings > Ranking points](administration.md#ranking-points) | 0 |
 | Which game modes count, and how many maps a match needs | [Game modes](game-modes-and-campaigns.md#game-modes) | 4v4 with at least 2 maps |
 | Season length | [Settings > Seasons](administration.md#seasons) | 2 months |

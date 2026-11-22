@@ -146,6 +146,7 @@ A module whose requirement is off behaves as off, even when its own box is ticke
 | Rage quit | −150 | Experience for leaving a match before the end. It replaces everything else from that match. |
 | MVP in special infected damage, per round | 8 | Experience for each SI MVP award. |
 | MVP in common infected, per round | 6 | Experience for each CI MVP award. |
+| Tank wipe, per round | 50 | Experience for each [tank wipe](ranking.md#tank-wipes). 0 gives none. |
 | Minimum matches to appear in the ranking | 0 | Games (wins plus losses) a player needs to be listed. |
 | Players in the ranking of the home page | 100 | How many players the ranking of the home page and of previous seasons lists at most, up to 500. |
 | Players shown before Show more | 50 | How many of them appear before **Show more**. |

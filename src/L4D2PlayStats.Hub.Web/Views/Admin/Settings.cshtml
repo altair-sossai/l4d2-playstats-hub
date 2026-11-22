@@ -233,6 +233,10 @@
                             <input class="form-control" id="Ranking_MvpCommon" name="Ranking.MvpCommon" type="number" value="@Model.Ranking.MvpCommon">
                         </div>
                         <div class="form-group">
+                            <label for="Ranking_TankWipe">@L["Tank wipe, per round"] @FieldHelp.Tip(L["Experience for each round half in which the player, as Tank, took down all the survivors and was still alive when the round ended. 50 by default. Use 0 to give no experience for it."])</label>
+                            <input class="form-control" id="Ranking_TankWipe" name="Ranking.TankWipe" type="number" value="@Model.Ranking.TankWipe">
+                        </div>
+                        <div class="form-group">
                             <label for="Ranking_MinimumMatches">@L["Minimum matches to appear in the ranking"] @FieldHelp.More(L["Games (wins plus losses) a player needs in the period shown to be listed in the ranking. 0 lists everyone."], L["Minimum matches to appear in the ranking"], L["A player with fewer games than this, in the season or period shown, is left out of the ranking. Their matches still count for everybody else.\nOnly wins and losses count as games: draws and casual matches do not.\n0, the default, lists every player with at least one ranked match. A value such as 5 keeps players with a single lucky match out of the top positions."])</label>
                             <input class="form-control" id="Ranking_MinimumMatches" name="Ranking.MinimumMatches" type="number" min="0" value="@Model.Ranking.MinimumMatches">
                         </div>

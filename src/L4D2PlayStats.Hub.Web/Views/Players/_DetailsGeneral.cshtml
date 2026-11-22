@@ -606,6 +606,24 @@
         </tr>
 
         <tr>
+            <th>
+                @L["Tank wipes"]:
+                <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Round halves in which the player, as Tank, wiped the survivors and was still alive when the round ended."]" aria-label="@L["More information"]"></span>
+            </th>
+            <td data-label="@L["Tank wipes"]:">
+                @firstPlayer.TankWipes.ToString("N0")
+                @if (secondPlayer != null)
+                {
+                    <span class="separator"> | </span>
+                    <span class="second">@secondPlayer.TankWipes.ToString("N0")</span>
+                }
+            </td>
+
+            <th></th>
+            <td></td>
+        </tr>
+
+        <tr>
             <th>@L["Spit damage (upright)"]:</th>
             <td data-label="@L["Spit damage (upright)"]:">
                 @firstPlayer.DmgSpit.ToString("N0")

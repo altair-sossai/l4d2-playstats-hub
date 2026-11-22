@@ -93,7 +93,7 @@ The card is `Views/Matches/_Match.cshtml` with the model `MatchCardModel`; `IMat
 | Row highlighted (`it-is-me`) for the signed-in player | _Match.cshtml:246 | done | |
 | Avatar 32px with rounded corners, link to the player, name in alt and title, fallback image on error | _Match.cshtml:247-251 | done | |
 | Truncated player name linking to the player page, "-" when unknown | _Match.cshtml:253 | done | |
-| Vertical bar separator after the name when the player has any MVP | _Match.cshtml:254-257 | done | |
+| Vertical bar separator after the name when the player has any MVP | _Match.cshtml:254-257 | done | Tank wipes were added after it. |
 | One gold star per MVP (SI) with tooltip "MVP (SI)" | _Match.cshtml:259-262 | done | |
 | One blue star per MVP (CI) with tooltip "MVP (CI)" | _Match.cshtml:264-267 | done | |
 | Horizontal rule between teams and charts | _Match.cshtml:281 | done | |

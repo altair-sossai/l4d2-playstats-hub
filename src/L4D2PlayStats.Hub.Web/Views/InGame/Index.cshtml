@@ -19,6 +19,7 @@ else
             <th class="num">@L["Losses"]</th>
             <th class="num">@L["Win rate"]</th>
             <th class="num">@L["MVPs"]</th>
+            <th class="num">@L["Tank wipes"]</th>
         </tr>
         @foreach (var row in Model.Players)
         {
@@ -33,6 +34,7 @@ else
                 <td class="num loss">@row.Player.Loss</td>
                 <td class="num">@Display.Percent(row.Player.WinRate)</td>
                 <td class="num">@row.Player.Stars</td>
+                <td class="num">@row.Player.TankWipes</td>
             </tr>
         }
         @if (Model.Me != null && Model.Players.All(row => row.Player.CommunityId != Model.SteamId))
@@ -48,6 +50,7 @@ else
                 <td class="num loss">@Model.Me.Player.Loss</td>
                 <td class="num">@Display.Percent(Model.Me.Player.WinRate)</td>
                 <td class="num">@Model.Me.Player.Stars</td>
+                <td class="num">@Model.Me.Player.TankWipes</td>
             </tr>
         }
     </table>

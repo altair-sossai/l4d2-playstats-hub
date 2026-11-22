@@ -194,7 +194,7 @@ function checks(context) {
                 const rows = await browser.eval(`document.querySelectorAll('#table-players-summary tbody tr').length`);
 
                 expect(rows === fixtures.players.length, `The players overview lists ${rows} players, expected ${fixtures.players.length}`);
-                expect(await browser.eval(`document.querySelectorAll('#table-players-summary thead th').length`) === 9, 'The players overview does not have the history columns');
+                expect(await browser.eval(`document.querySelectorAll('#table-players-summary thead th').length`) === 10, 'The players overview does not have the history columns');
 
                 await browser.click('#table-players-summary thead a[href="/players?sort=Games"]');
                 await browser.until(`location.search === '?sort=Games'`, 'sorting the overview by games');

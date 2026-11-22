@@ -70,7 +70,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | "Next reset in N day(s)" | Index.cshtml:78, Models/RankingPeriodModel.cs | adapted | Counts the days to the end of the current season, whatever its length, instead of fixed two-month periods. |
 | Link "View previous rankings" | Index.cshtml:80 | done | |
 | Table with stripes, hover, borders, condensed | Index.cshtml:83 | done | |
-| Columns: #, Patent, Player (avatar and name), XP, Wins, Loss, SI MVP awards, CI MVP awards, Win rate, Games, Rage quit | Index.cshtml:85-97 | done | |
+| Columns: #, Patent, Player (avatar and name), XP, Wins, Loss, SI MVP awards, CI MVP awards, Win rate, Games, Rage quit | Index.cshtml:85-97 | done | Tank wipes were added after it. |
 | Columns hidden on phones (XP, Loss, MVPs, Win rate, Games, Rage quit) | Index.cshtml:89-96 | done | |
 | Top 100 listed, first 50 visible, "Show more" button for the rest | Index.cshtml:103, 109, 198-207, 50-57 | done | |
 | Signed-in player's row highlighted | Index.cshtml:109 | done | |
@@ -86,7 +86,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | With no ranking yet: the top six of the last ranking | Index.cshtml:60-65, Views/Home/_LastRankingTopSix.cshtml | done | |
 | With no ranking and no history: the message "There is no ranking data at the moment..." | Index.cshtml:66-71 | done | |
 | Top six: trophy, header, reference period | _LastRankingTopSix.cshtml:36-61 | adapted | The period text covers a season of any length. |
-| Top six: one panel per player (highlighted if it is the signed-in player), place label by colour, name, round avatar, wins and losses, labels for win rate, SI MVP, CI MVP, games and rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
+| Top six: one panel per player (highlighted if it is the signed-in player), place label by colour, name, round avatar, wins and losses, labels for win rate, SI MVP, CI MVP, games and rage quit | _LastRankingTopSix.cshtml:63-111 | done | Tank wipes were added after it. |
 | Top six: "View full ranking" button | _LastRankingTopSix.cshtml:113-115 | done | Opens that period in the history. |
 | With the ranking module off | (new) | adapted | A short welcome page; the old site had no modules. |
 | Period selector | (new) | adapted | Hub addition above the table, in the style of the history page. The current season is the default; it also offers the other seasons of the current year, one entry per year and all time. A year and all time show the same table without the patent and XP columns, which belong to a season. |
@@ -103,7 +103,7 @@ Status: `done` (same content and look), `adapted` (present, changed for the stat
 | Period selector showing the displayed period | Index.cshtml:36-85 | done | All time, each year, and the finished seasons of the current year, as in the old site. A season of an earlier year still opens by its address. |
 | Period names: "From MM/YYYY to MM/YYYY", "Year of YYYY", "All time" | Index.cshtml:42-57 | done | |
 | Default period: the current year | Controllers/HistoryController.cs:26 | done | |
-| Table columns: #, Player (avatar and name), Wins, Loss, Games, SI MVP awards, CI MVP awards, Win rate, Rage quit | Index.cshtml:87-101 | done | |
+| Table columns: #, Player (avatar and name), Wins, Loss, Games, SI MVP awards, CI MVP awards, Win rate, Rage quit | Index.cshtml:87-101 | done | Tank wipes were added after it. |
 | Columns hidden on phones | Index.cshtml:93-99 | done | |
 | Top 100, signed-in player's row highlighted, medals, avatar, shortened name, tooltips on every number | Index.cshtml:103-171 | done | |
 | Unknown period: "History not found" with a button back to the ranking, not indexed | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |

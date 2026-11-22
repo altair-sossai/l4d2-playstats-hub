@@ -21,10 +21,10 @@ Só as partidas ranqueadas contam. Uma partida é ranqueada quando a configuraç
 Um jogador que estava no primeiro mapa da partida e não está no último mapa é contado como rage quit, mesmo que tenha voltado depois ou perdido a conexão. Veja [Ranking > Vitórias, derrotas, empates e rage quits](ranking.pt.md#vitórias-derrotas-empates-e-rage-quits).
 
 **Entrei no meio de uma partida e não ganhei a vitória.**
-Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem entrou depois ganha só os pontos de MVP.
+Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem entrou depois ganha só os pontos de MVP e de tank wipe.
 
 **Minha experiência não mudou depois de um empate.**
-Um empate não dá vitória nem derrota, só os pontos de MVP.
+Um empate não dá vitória nem derrota, só os pontos de MVP e de tank wipe.
 
 **Por que a minha experiência zerou?**
 Começou uma nova temporada. A temporada passada fica no seletor de período do ranking e de **Mais > Jogadores**.

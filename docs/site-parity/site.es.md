@@ -70,7 +70,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | "Próximo reinicio en N día(s)" | Index.cshtml:78, Models/RankingPeriodModel.cs | adapted | Cuenta los días hasta el final de la temporada actual, sea cual sea su duración, en lugar de períodos fijos de dos meses. |
 | Enlace "Ver rankings anteriores" | Index.cshtml:80 | done | |
 | Tabla con franjas, hover, bordes y condensada | Index.cshtml:83 | done | |
-| Columnas: #, Patente, Jugador (avatar y nombre), XP, Victorias, Derrotas, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Juegos, Rage quit | Index.cshtml:85-97 | done | |
+| Columnas: #, Patente, Jugador (avatar y nombre), XP, Victorias, Derrotas, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Juegos, Rage quit | Index.cshtml:85-97 | done | Los tank wipes se añadieron después. |
 | Columnas ocultas en teléfonos (XP, Derrotas, MVPs, Porcentaje de victorias, Juegos, Rage quit) | Index.cshtml:89-96 | done | |
 | Se listan los 100 primeros, con los 50 primeros visibles y el botón "Mostrar más" para el resto | Index.cshtml:103, 109, 198-207, 50-57 | done | |
 | Fila del jugador con sesión iniciada resaltada | Index.cshtml:109 | done | |
@@ -86,7 +86,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Sin ranking todavía: los seis primeros del último ranking | Index.cshtml:60-65, Views/Home/_LastRankingTopSix.cshtml | done | |
 | Sin ranking y sin historial: el mensaje "No existen datos en este momento..." | Index.cshtml:66-71 | done | |
 | Seis primeros: trofeo, encabezado, período de referencia | _LastRankingTopSix.cshtml:36-61 | adapted | El texto del período cubre una temporada de cualquier duración. |
-| Seis primeros: un panel por jugador (resaltado si es el jugador con sesión iniciada), etiqueta del puesto por color, nombre, avatar redondo, victorias y derrotas, etiquetas de porcentaje de victorias, MVP de SI, MVP de CI, juegos y rage quit | _LastRankingTopSix.cshtml:63-111 | done | |
+| Seis primeros: un panel por jugador (resaltado si es el jugador con sesión iniciada), etiqueta del puesto por color, nombre, avatar redondo, victorias y derrotas, etiquetas de porcentaje de victorias, MVP de SI, MVP de CI, juegos y rage quit | _LastRankingTopSix.cshtml:63-111 | done | Los tank wipes se añadieron después. |
 | Seis primeros: botón "Ver ranking completo" | _LastRankingTopSix.cshtml:113-115 | done | Abre ese período en el historial. |
 | Con el módulo de ranking desactivado | (nuevo) | adapted | Una página de bienvenida breve; el sitio antiguo no tenía módulos. |
 | Selector de período | (nuevo) | adapted | Añadido del hub encima de la tabla, con el estilo de la página de historial. La temporada actual es la predeterminada; también ofrece las otras temporadas del año actual, un elemento por año y todo el tiempo. Un año y todo el tiempo muestran la misma tabla sin las columnas de patente y XP, que pertenecen a una temporada. |
@@ -103,7 +103,7 @@ Estado: `done` (mismo contenido y aspecto), `adapted` (presente, cambiado por el
 | Selector de período que indica el período mostrado | Index.cshtml:36-85 | done | Todo el tiempo, cada año y las temporadas terminadas del año actual, como en el sitio antiguo. Una temporada de un año anterior se sigue abriendo por su dirección. |
 | Nombres de los períodos: "De MM/YYYY a MM/YYYY", "Año de YYYY", "Todo el tiempo" | Index.cshtml:42-57 | done | |
 | Período predeterminado: el año actual | Controllers/HistoryController.cs:26 | done | |
-| Columnas de la tabla: #, Jugador (avatar y nombre), Victorias, Derrotas, Juegos, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Rage quit | Index.cshtml:87-101 | done | |
+| Columnas de la tabla: #, Jugador (avatar y nombre), Victorias, Derrotas, Juegos, MVP de SI (veces), MVP de CI (veces), Porcentaje de victorias, Rage quit | Index.cshtml:87-101 | done | Los tank wipes se añadieron después. |
 | Columnas ocultas en teléfonos | Index.cshtml:93-99 | done | |
 | Top 100, fila del jugador con sesión iniciada resaltada, medallas, avatar, nombre acortado, tooltips en todos los números | Index.cshtml:103-171 | done | |
 | Período desconocido: "Historial no encontrado" con un botón para volver al ranking, no indexado | Views/History/NoHistory.cshtml, PageMetadata/HistoryNotFoundPageMetadata.cs | done | |

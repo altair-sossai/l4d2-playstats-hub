@@ -65,6 +65,10 @@ a, a:visited, a:hover, a:active {
     width: 16px;
 }
 
+.match .icon.tank-wipe {
+    border-radius: 3px;
+}
+
 .match .teams .col-xs-6 {
     padding-right: 5px;
     padding-left: 5px;

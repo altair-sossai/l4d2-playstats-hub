@@ -28,8 +28,8 @@ Todo jogador que jogou nos seus servidores de jogo tem uma página com os result
 
 ![A lista de jogadores](../images/pt/players.webp)
 
-- **Estatística** escolhe o que a tabela mostra. **Visão geral**, o padrão, mostra para cada jogador as vitórias, derrotas, jogos, MVPs de SI e de CI, taxa de vitória e rage quits, na ordem do ranking do período, com uma medalha para os três primeiros. Clique no cabeçalho de uma coluna para ordenar por ela; clique de novo para inverter a ordem, e clique em **#** para voltar à ordem do ranking.
-- Qualquer outra escolha mostra uma estatística: experiência, jogos, vitórias, derrotas, taxa de vitória, rage quits, prêmios de MVP, mortes, dano, skeets, levels, crowns, fogo amigo e os números de infectado. A coluna mostra o total de cada jogador, e **Por jogo** mostra a média por jogo. Passe o mouse sobre o ícone ⓘ para ver o número de jogos. Clique no cabeçalho da coluna para inverter a ordem.
+- **Estatística** escolhe o que a tabela mostra. **Visão geral**, o padrão, mostra para cada jogador as vitórias, derrotas, jogos, MVPs de SI e de CI, tank wipes, taxa de vitória e rage quits, na ordem do ranking do período, com uma medalha para os três primeiros. Clique no cabeçalho de uma coluna para ordenar por ela; clique de novo para inverter a ordem, e clique em **#** para voltar à ordem do ranking.
+- Qualquer outra escolha mostra uma estatística: experiência, jogos, vitórias, derrotas, taxa de vitória, rage quits, prêmios de MVP, tank wipes, mortes, dano, skeets, levels, crowns, fogo amigo e os números de infectado. A coluna mostra o total de cada jogador, e **Por jogo** mostra a média por jogo. Passe o mouse sobre o ícone ⓘ para ver o número de jogos. Clique no cabeçalho da coluna para inverter a ordem.
 - O [seletor de período](seasons-and-history.pt.md#o-seletor-de-período) escolhe uma temporada, um ano ou todo o período. Como no ranking, ele lista as temporadas do ano atual, cada ano e todo o período.
 
 A lista tem os mesmos jogadores do ranking do período, todos eles e não só os 100 melhores. Ela mostra 100 jogadores por página, e os links das páginas embaixo da tabela mantêm a estatística, a ordem e o período escolhidos.
@@ -84,7 +84,7 @@ Um endereço que não é um SteamID64 válido, como `/player/0` ou `/player/abc`
 | Maior sequência de vitórias, Maior sequência de derrotas | O maior número de partidas ganhas ou perdidas seguidas. |
 | Histórico de partidas | Uma faixa com o resultado de cada partida, da mais antiga para a mais recente. |
 
-**Estatísticas como sobrevivente** e **Estatísticas como infectado** somam os números de todas as partidas ranqueadas do período: prêmios de MVP, mortes causadas, dano, mortes, skeets, levels, crowns e assim por diante. Os ícones ⓘ explicam os menos óbvios.
+**Estatísticas como sobrevivente** e **Estatísticas como infectado** somam os números de todas as partidas ranqueadas do período: prêmios de MVP, tank wipes, mortes causadas, dano, mortes, skeets, levels, crowns e assim por diante. Os ícones ⓘ explicam os menos óbvios.
 
 **Últimos jogos** lista as partidas do jogador no período com os mesmos cartões da [lista de partidas](matches.pt.md#a-lista-de-partidas). Quando você está logado, a sua própria linha fica destacada.
 

@@ -27,7 +27,7 @@ Each card shows:
 - the campaign, the configuration (such as `ZoneMod v2.9.2b`) and a **Competitive** or **Casual** label;
 - the date and time of the match, in the time zone of the site, and how long it lasted;
 - which team won and by how many points;
-- the two teams with their final score, and each player with their MVP awards: a yellow star for each SI MVP and a blue star for each CI MVP;
+- the two teams with their final score, and each player with their MVP awards and tank wipes: a yellow star for each SI MVP, a blue star for each CI MVP and a Tank for each [tank wipe](ranking.md#tank-wipes);
 - a **Details** button.
 
 The filters at the top choose a season, a year or all seasons, and one game server or all of them. Seasons are named by their first and last month, as in the period selectors: **From 01/2026 to 02/2026**. With one game server registered, the server filter has only that server.
@@ -48,13 +48,13 @@ The details page has:
 
 ![Statistics of one team playing as survivors](../images/en/match-team-statistics.webp)
 
-The survivor tables show, for each player, the value and the share of the team (Team %): SI and CI MVP awards, FF LVP awards, deaths, times incapacitated, damage taken from special infected, commons killed, special infected killed, damage dealt to special infected, to the Tank and to the Witch, Tank rocks taken, skeets, melee skeets, levels, crowns and friendly fire. The infected tables show the damage done to survivors, the damage done as Tank, the spitter damage and the pounce damage. The ⓘ icons explain the less obvious columns.
+The survivor tables show, for each player, the value and the share of the team (Team %): SI and CI MVP awards, FF LVP awards, deaths, times incapacitated, damage taken from special infected, commons killed, special infected killed, damage dealt to special infected, to the Tank and to the Witch, Tank rocks taken, skeets, melee skeets, levels, crowns and friendly fire. The infected tables show the tank wipes, the damage done to survivors, the damage done as Tank, the spitter damage and the pounce damage. The ⓘ icons explain the less obvious columns.
 
 ## Map statistics
 
 ![The statistics of one map](../images/en/match-map-statistics.webp)
 
-The page of one map shows the score, the start and end time, and one tab per round half. Each half lists the survivors and the infected with their numbers, the MVP and LVP of the half, the times of the round, of pauses and of each Tank, and the players who were connected.
+The page of one map shows the score, the start and end time, and one tab per round half. Each half lists the survivors and the infected with their numbers, the MVP and LVP of the half, a Tank next to the infected player who ended the half with a tank wipe, the times of the round, of pauses and of each Tank, and the players who were connected.
 
 ## Editing the score of a map
 

@@ -13,6 +13,7 @@ O ranking é a primeira página do site. Ele lista os 100 melhores jogadores da 
 - [Como a experiência é calculada](#como-a-experiência-é-calculada)
 - [Vitórias, derrotas, empates e rage quits](#vitórias-derrotas-empates-e-rage-quits)
 - [MVPs](#mvps)
+- [Tank wipes](#tank-wipes)
 - [Punições](#punições)
 - [Número mínimo de partidas](#número-mínimo-de-partidas)
 - [A ordem do ranking](#a-ordem-do-ranking)
@@ -31,6 +32,7 @@ O ranking é a primeira página do site. Ele lista os 100 melhores jogadores da 
 | XP | Uma barra com o progresso até a próxima patente. Passe o mouse sobre ela para ver a experiência, o próximo nível e quanto a última partida mudou. Verde quer dizer que a última partida somou experiência; vermelho, que ela tirou experiência. |
 | Vitórias, Derrotas | Partidas ranqueadas ganhas e perdidas. Um rage quit conta como derrota. |
 | MVP de SI (vezes), MVP de CI (vezes) | Quantas vezes o jogador foi MVP. Veja [MVPs](#mvps). |
+| Tank wipes | Metades de rodada que o jogador encerrou como Tank. Veja [Tank wipes](#tank-wipes). |
 | Taxa de vitória | Vitórias divididas por vitórias mais derrotas. |
 | Jogos | Vitórias mais derrotas. Os empates não entram. |
 | Rage quit | Partidas que o jogador abandonou antes do fim. |
@@ -64,8 +66,9 @@ Cada partida ranqueada muda a experiência dos jogadores que estavam nela. Com a
 | Rage quit | −150, e nada mais dessa partida |
 | Cada MVP de SI na partida | +8 |
 | Cada MVP de CI na partida | +6 |
+| Cada tank wipe na partida | +50 |
 
-Por exemplo, um jogador que ganha uma partida e foi MVP de SI em duas metades de rodada e MVP de CI em uma recebe 85 + 2 × 8 + 6 = 107 XP. Um jogador que perde com um MVP de SI recebe −80 + 8 = −72 XP.
+Por exemplo, um jogador que ganha uma partida e foi MVP de SI em duas metades de rodada e MVP de CI em uma recebe 85 + 2 × 8 + 6 = 107 XP. Um jogador que perde com um MVP de SI recebe −80 + 8 = −72 XP, e um jogador que perde mas derrubou os sobreviventes duas vezes como Tank recebe −80 + 2 × 50 = 20 XP.
 
 - As partidas são aplicadas na ordem em que foram jogadas.
 - A experiência nunca fica abaixo de zero. Um jogador com 30 XP que perde uma partida termina com 0, não com −50.
@@ -81,11 +84,11 @@ O resultado de uma partida é decidido pelo placar depois do último mapa dela.
 |---|---|
 | Estava no primeiro e no último mapa, na equipe com o placar maior | Vitória |
 | Estava no primeiro e no último mapa, na equipe com o placar menor | Derrota |
-| As duas equipes terminaram com o mesmo placar, e o jogador estava no primeiro e no último mapa | Empate: nem vitória nem derrota, só os pontos de MVP |
+| As duas equipes terminaram com o mesmo placar, e o jogador estava no primeiro e no último mapa | Empate: nem vitória nem derrota, só os pontos de MVP e de tank wipe |
 | Estava no primeiro mapa e não está no último | Rage quit: uma derrota e −150 XP pela partida |
-| Entrou depois do primeiro mapa e estava no último | Nem vitória nem derrota; os pontos de MVP continuam valendo |
+| Entrou depois do primeiro mapa e estava no último | Nem vitória nem derrota; os pontos de MVP e de tank wipe continuam valendo |
 
-Um rage quit substitui tudo o que o jogador receberia daquela partida, inclusive os pontos de MVP.
+Um rage quit substitui tudo o que o jogador receberia daquela partida, inclusive os pontos de MVP e de tank wipe.
 
 ## MVPs
 
@@ -93,6 +96,14 @@ O arquivo de estatísticas de cada mapa tem, para cada metade de rodada, um MVP 
 
 - O MVP de SI e o MVP de CI somam experiência (8 e 6 por padrão) e dão uma estrela cada para a [loja de skins](skin-shop.pt.md#estrelas).
 - O LVP de FF aparece nas estatísticas e não dá pontos.
+
+## Tank wipes
+
+Um tank wipe é uma metade de rodada em que o jogador, como Tank, derrubou todos os sobreviventes e ainda estava vivo quando a rodada terminou: os infectados ganharam a rodada ali mesmo, antes de os sobreviventes chegarem à sala segura ou matarem o Tank.
+
+O arquivo de estatísticas não tem um campo para isso, então o site descobre a partir de cada metade de rodada: nenhum sobrevivente estava de pé no fim, e o tempo do Tank parou no mesmo segundo que o da rodada, o que só acontece quando ainda há um Tank vivo. O tank wipe vai para o jogador infectado que causou mais dano como Tank naquela metade. Um Tank controlado por um bot, ou um que nunca acertou um sobrevivente, não dá tank wipe.
+
+Os tank wipes aparecem no ranking, na lista de jogadores, na página do jogador, nas partidas e nas páginas dentro do jogo. Cada um soma experiência (50 por padrão, veja [Configurações](#configurações)); eles não dão estrelas para a loja de skins.
 
 ## Punições
 
@@ -118,6 +129,7 @@ Os jogadores são ordenados por experiência. Quando dois jogadores têm a mesma
 |---|---|---|
 | Pontos por vitória, derrota e rage quit | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 85, −80, −150 |
 | Pontos por cada MVP de SI e cada MVP de CI | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 8, 6 |
+| Pontos por cada tank wipe | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 50 |
 | Mínimo de partidas para aparecer no ranking | [Configurações > Pontos do ranking](administration.pt.md#pontos-do-ranking) | 0 |
 | Quais modos de jogo contam, e de quantos mapas uma partida precisa | [Modos de jogo](game-modes-and-campaigns.pt.md#modos-de-jogo) | 4v4 com pelo menos 2 mapas |
 | Duração da temporada | [Configurações > Temporadas](administration.pt.md#temporadas) | 2 meses |

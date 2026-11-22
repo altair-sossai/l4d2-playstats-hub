@@ -93,7 +93,7 @@ La tarjeta es `Views/Matches/_Match.cshtml` con el modelo `MatchCardModel`; `IMa
 | Fila resaltada (`it-is-me`) para el jugador con sesión iniciada | _Match.cshtml:246 | done | |
 | Avatar de 32px con esquinas redondeadas, enlace al jugador, nombre en alt y title, imagen de reserva en caso de error | _Match.cshtml:247-251 | done | |
 | Nombre del jugador truncado que enlaza a la página del jugador, "-" cuando se desconoce | _Match.cshtml:253 | done | |
-| Separador de barra vertical después del nombre cuando el jugador tiene algún MVP | _Match.cshtml:254-257 | done | |
+| Separador de barra vertical después del nombre cuando el jugador tiene algún MVP | _Match.cshtml:254-257 | done | Los tank wipes se añadieron después. |
 | Una estrella dorada por cada MVP (SI) con el tooltip "MVP (SI)" | _Match.cshtml:259-262 | done | |
 | Una estrella azul por cada MVP (CI) con el tooltip "MVP (CI)" | _Match.cshtml:264-267 | done | |
 | Línea horizontal entre los equipos y los gráficos | _Match.cshtml:281 | done | |

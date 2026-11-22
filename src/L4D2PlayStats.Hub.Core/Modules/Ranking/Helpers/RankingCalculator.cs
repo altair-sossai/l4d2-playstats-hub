@@ -86,6 +86,7 @@ public static class RankingCalculator
                 player.Add(row);
                 calculation.Mvps += row.MvpSiDamage;
                 calculation.MvpsCommon += row.MvpCommon;
+                calculation.TankWipes += row.TankWipes;
             }
 
             foreach (var (communityId, calculation) in experience)
@@ -217,6 +218,7 @@ public static class RankingCalculator
         public bool RageQuit { get; set; }
         public int Mvps { get; set; }
         public int MvpsCommon { get; set; }
+        public int TankWipes { get; set; }
 
         public decimal Total(RankingSettings settings)
         {
@@ -233,6 +235,7 @@ public static class RankingCalculator
 
             total += Mvps * settings.Mvp;
             total += MvpsCommon * settings.MvpCommon;
+            total += TankWipes * settings.TankWipe;
 
             return total;
         }

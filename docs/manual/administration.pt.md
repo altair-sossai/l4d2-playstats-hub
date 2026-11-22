@@ -146,6 +146,7 @@ Um módulo cujo requisito está desligado se comporta como desligado, mesmo com 
 | Rage quit | −150 | Experiência por sair de uma partida antes do fim. Substitui todo o resto daquela partida. |
 | MVP em dano em infectados especiais, por rodada | 8 | Experiência por cada prêmio de MVP de SI. |
 | MVP em infectados comuns, por rodada | 6 | Experiência por cada prêmio de MVP de CI. |
+| Tank wipe, por rodada | 50 | Experiência por cada [tank wipe](ranking.pt.md#tank-wipes). 0 não dá nenhuma. |
 | Mínimo de partidas para aparecer no ranking | 0 | Jogos (vitórias mais derrotas) de que um jogador precisa para aparecer na lista. |
 | Jogadores no ranking da página inicial | 100 | Quantos jogadores, no máximo, o ranking da página inicial e das temporadas anteriores lista, até 500. |
 | Jogadores mostrados antes de Mostrar mais | 50 | Quantos deles aparecem antes de **Mostrar mais**. |

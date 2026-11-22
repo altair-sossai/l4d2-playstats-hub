@@ -16,11 +16,11 @@ Os jogadores podem ver o ranking sem sair do Left 4 Dead 2. O comando de chat `!
 
 O painel tem quatro abas. As três primeiras mostram só a temporada atual, e só as partidas ranqueadas. A barra do topo mostra o nome dessa temporada como o site faz, por exemplo **De 11/2026 até 12/2026**.
 
-**Ranking**: os 50 melhores jogadores, com patente, experiência, vitórias, derrotas, taxa de vitória e MVPs. A linha do jogador que abriu o painel fica destacada.
+**Ranking**: os 50 melhores jogadores, com patente, experiência, vitórias, derrotas, taxa de vitória, MVPs e tank wipes. A linha do jogador que abriu o painel fica destacada.
 
 ![O ranking dentro do jogo](../images/pt/ingame-ranking.webp)
 
-**Meu resumo**: a patente do jogador que abriu o painel, a experiência e o progresso até a próxima patente, vitórias, derrotas, taxa de vitória, maior sequência de vitórias, MVPs e rage quits, e as médias por partida.
+**Meu resumo**: a patente do jogador que abriu o painel, a experiência e o progresso até a próxima patente, vitórias, derrotas, taxa de vitória, maior sequência de vitórias, MVPs, tank wipes e rage quits, e as médias por partida.
 
 ![O resumo do jogador que abriu o painel](../images/pt/ingame-player.webp)
 

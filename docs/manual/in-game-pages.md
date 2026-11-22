@@ -16,11 +16,11 @@ Players can see the ranking without leaving Left 4 Dead 2. The `!ranking` chat c
 
 The panel has four tabs. The first three show the current season only, and only ranked matches. The bar at the top names that season as the site does, such as **From 11/2026 to 12/2026**.
 
-**Ranking**: the top 50 players, with patent, experience, wins, losses, win rate and MVPs. The row of the player who opened the panel is highlighted.
+**Ranking**: the top 50 players, with patent, experience, wins, losses, win rate, MVPs and tank wipes. The row of the player who opened the panel is highlighted.
 
 ![The in-game ranking](../images/en/ingame-ranking.webp)
 
-**My summary**: the patent of the player who opened the panel, the experience and the progress towards the next patent, wins, losses, win rate, best win streak, MVPs and rage quits, and the averages per match.
+**My summary**: the patent of the player who opened the panel, the experience and the progress towards the next patent, wins, losses, win rate, best win streak, MVPs, tank wipes and rage quits, and the averages per match.
 
 ![The summary of the player who opened the panel](../images/en/ingame-player.webp)
 

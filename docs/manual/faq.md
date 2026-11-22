@@ -21,10 +21,10 @@ Only ranked matches count. A match is ranked when its configuration and team siz
 A player who was in the first map of the match and is not in the last map is counted as a rage quit, even if they came back later or lost connection. See [Ranking > Wins, losses, draws and rage quits](ranking.md#wins-losses-draws-and-rage-quits).
 
 **I joined in the middle of a match and got no win.**
-Wins and losses go to the players who were in the first map. Players who joined later get only their MVP points.
+Wins and losses go to the players who were in the first map. Players who joined later get only their MVP and tank wipe points.
 
 **My experience did not change after a draw.**
-A draw gives no win or loss, only the MVP points.
+A draw gives no win or loss, only the MVP and tank wipe points.
 
 **Why did my experience reset?**
 A new season started. The past season is in the period selector of the ranking and of **More > Players**.

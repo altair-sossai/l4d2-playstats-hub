@@ -27,7 +27,7 @@ Cada tarjeta muestra:
 - la campaña, la configuración (como `ZoneMod v2.9.2b`) y una etiqueta **Competitiva** o **Casual**;
 - la fecha y la hora de la partida, en la zona horaria del sitio, y cuánto duró;
 - qué equipo ganó y por cuántos puntos;
-- los dos equipos con su marcador final, y cada jugador con sus premios de MVP: una estrella amarilla por cada MVP de SI y una estrella azul por cada MVP de CI;
+- los dos equipos con su marcador final, y cada jugador con sus premios de MVP y tank wipes: una estrella amarilla por cada MVP de SI, una estrella azul por cada MVP de CI y un Tank por cada [tank wipe](ranking.es.md#tank-wipes);
 - un botón **Detalles**.
 
 Los filtros de arriba eligen una temporada, un año o todas las temporadas, y un servidor de juego o todos. Las temporadas se nombran por su primer y su último mes, como en los selectores de período: **De 01/2026 a 02/2026**. Con un solo servidor de juego registrado, el filtro de servidor tiene solo ese servidor.
@@ -48,13 +48,13 @@ La página de detalles tiene:
 
 ![Estadísticas de un equipo jugando como supervivientes](../images/es/match-team-statistics.webp)
 
-Las tablas de supervivientes muestran, para cada jugador, el valor y la parte del equipo (% del equipo): premios de MVP de SI y de CI, premios de LVP de FF, muertes, veces incapacitado, daño recibido de infectados especiales, comunes eliminados, infectados especiales eliminados, daño hecho a infectados especiales, al Tank y a la Bruja, rocas del Tank recibidas, skeets, melee skeets, levels, crowns y fuego amigo. Las tablas de infectados muestran el daño hecho a los supervivientes, el daño hecho como Tank, el daño de spitter y el daño de pounce. Los íconos ⓘ explican las columnas menos obvias.
+Las tablas de supervivientes muestran, para cada jugador, el valor y la parte del equipo (% del equipo): premios de MVP de SI y de CI, premios de LVP de FF, muertes, veces incapacitado, daño recibido de infectados especiales, comunes eliminados, infectados especiales eliminados, daño hecho a infectados especiales, al Tank y a la Bruja, rocas del Tank recibidas, skeets, melee skeets, levels, crowns y fuego amigo. Las tablas de infectados muestran los tank wipes, el daño hecho a los supervivientes, el daño hecho como Tank, el daño de spitter y el daño de pounce. Los íconos ⓘ explican las columnas menos obvias.
 
 ## Estadísticas de un mapa
 
 ![Las estadísticas de un mapa](../images/es/match-map-statistics.webp)
 
-La página de un mapa muestra el marcador, la hora de inicio y de fin, y una pestaña por mitad de ronda. Cada mitad lista los supervivientes y los infectados con sus números, el MVP y el LVP de la mitad, los tiempos de la ronda, de las pausas y de cada Tank, y los jugadores que estuvieron conectados.
+La página de un mapa muestra el marcador, la hora de inicio y de fin, y una pestaña por mitad de ronda. Cada mitad lista los supervivientes y los infectados con sus números, el MVP y el LVP de la mitad, un Tank junto al jugador infectado que terminó la mitad con un tank wipe, los tiempos de la ronda, de las pausas y de cada Tank, y los jugadores que estuvieron conectados.
 
 ## Editar el marcador de un mapa
 

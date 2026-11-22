@@ -453,6 +453,23 @@
             <tbody>
             <tr>
                 <td>
+                    @L["Tank wipes"]
+                    <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["Round halves in which the player, as Tank, wiped the survivors and was still alive when the round ended."]" aria-label="@L["More information"]"></span>
+                </td>
+                @foreach (var player in team.Players)
+                {
+                    <td class="text-right" data-label="@player.Name?.TruncatePlayerName()">
+                        @player.TankWipes.ToString("N0")
+                    </td>
+                    <td class="text-left hide-mobile">
+                        @player.TankWipesPercentage.ToString("P0")
+                    </td>
+                }
+                <td class="text-center" data-label="@L["Total"]">@team.TankWipes.ToString("N0")</td>
+            </tr>
+
+            <tr>
+                <td>
                     @L["SI damage (excl. Tank)"]
                     <span class="glyphicon glyphicon-info-sign text-muted" tabindex="0" role="button" data-toggle="tooltip" data-trigger="hover focus" data-placement="top" title="@L["SI damage, including incapacitated and post-boom damage; Tank damage is excluded."]" aria-label="@L["More information"]"></span>
                 </td>

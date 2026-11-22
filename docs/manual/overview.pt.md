@@ -66,11 +66,12 @@ O login é feito com a Steam. Os visitantes não precisam fazer login para ver o
 | Partida | Mapas da mesma campanha jogados um depois do outro pelas mesmas equipes. Veja [Partidas](matches.pt.md#como-os-arquivos-viram-partidas). |
 | Partida ranqueada | Uma partida que conta para o ranking. Ela aparece como **Competitiva**. Uma partida que não conta aparece como **Casual**. Quais partidas contam é decidido pelos [modos de jogo](game-modes-and-campaigns.pt.md). |
 | Temporada | Um período com um número fixo de meses. O ranking recomeça a cada temporada. Veja [Temporadas e histórico](seasons-and-history.pt.md). |
-| Experiência (XP) | Os pontos do ranking: vitórias, derrotas, rage quits e MVPs. Veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada). |
+| Experiência (XP) | Os pontos do ranking: vitórias, derrotas, rage quits, MVPs e tank wipes. Veja [Ranking](ranking.pt.md#como-a-experiência-é-calculada). |
 | Patente | Um nível de 1 a 15 dado pela experiência. Veja [Patentes](patents.pt.md). |
 | MVP de SI | O jogador que causou mais dano em infectados especiais em uma metade de rodada. |
 | MVP de CI | O jogador que matou mais infectados comuns em uma metade de rodada. |
 | LVP de FF | O jogador que causou mais fogo amigo em uma metade de rodada. Não dá pontos. |
+| Tank wipe | Uma metade de rodada em que o jogador, como Tank, derrubou todos os sobreviventes e ainda estava vivo no fim. Soma experiência, mas não dá estrelas. Veja [Ranking](ranking.pt.md#tank-wipes). |
 | Rage quit | Um jogador que estava no primeiro mapa de uma partida e não está no último. |
 | Estrela | A moeda da loja de skins. Uma estrela para cada MVP de SI e cada MVP de CI em partidas ranqueadas. |
 | Servidor de jogo | Um servidor de Left 4 Dead 2 cadastrado no site. Cada um tem um identificador e uma chave. |
