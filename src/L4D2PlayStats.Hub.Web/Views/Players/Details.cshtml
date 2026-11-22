@@ -1,24 +1,14 @@
-@using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Antiforgery
 @model PlayerDetailsModel
 @inject ISettingsService Settings
 @inject IAntiforgery Antiforgery
-@inject ICampaignImageService CampaignImages
 
 @{
-    var defaultPunishment = (await Settings.GetAsync<RankingSettings>()).DefaultPunishment;
     var firstPlayerRanking = Model.FirstPlayerRanking;
     var firstPlayer = firstPlayerRanking.Player;
-    var firstPlayerPatentProgress = firstPlayerRanking.PatentProgress;
-    var firstPlayerPatent = firstPlayerPatentProgress.Patent;
 
     var secondPlayerRanking = Model.SecondPlayerRanking;
     var secondPlayer = secondPlayerRanking?.Player;
-    var secondPlayerPatentProgress = secondPlayerRanking?.PatentProgress;
-    var secondPlayerPatent = secondPlayerPatentProgress?.Patent;
-
-    var light = Context.Request.Cookies[AppConsts.ThemeCookie] == AppConsts.LightTheme;
-    var copyIcon = light ? "copy-light.png" : "copy-dark.png";
 
     var site = await Settings.GetAsync<SiteSettings>();
     var seasonId = Model.Period.Query;
@@ -48,7 +38,7 @@
 }
 
 @section Scripts {
-    <script type="application/json" id="players-details-config">{ "texts": { "How many experience points should the user lose?": @Json.Serialize(L["How many experience points should the user lose?"].Value), "Remove the punishments of this player in this season?": @Json.Serialize(L["Remove the punishments of this player in this season?"].Value) }, "values": { "new Dictionary\u003cstring, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }": @Json.Serialize(new Dictionary<string, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }), "AppConsts.PlayerSeasonParameter": @Json.Serialize(AppConsts.PlayerSeasonParameter), "Model.Period.Season?.Id": @Json.Serialize(Model.Period.Season?.Id) } }</script>
+    <script type="application/json" id="players-details-config">{ "texts": { "How many experience points should the user lose?": @Json.Serialize(L["How many experience points should the user lose?"].Value), "Remove the punishments of this player in this season?": @Json.Serialize(L["Remove the punishments of this player in this season?"].Value) }, "values": { "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }), "playerSeasonParameter": @Json.Serialize(AppConsts.PlayerSeasonParameter), "seasonId": @Json.Serialize(Model.Period.Season?.Id) } }</script>
     <script src="~/js/pages/players-details.js" asp-append-version="true"></script>
 }
 

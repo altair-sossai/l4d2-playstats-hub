@@ -1,7 +1,7 @@
 var serversIndexConfig = JSON.parse(document.getElementById("servers-index-config").textContent);
 
-var refreshInterval = serversIndexConfig.values["AppConsts.ServerPickerRefreshInMilliseconds"];
-var requestTimeout = serversIndexConfig.values["AppConsts.LivePageRequestTimeoutInMilliseconds"];
+var refreshInterval = serversIndexConfig.values.serverPickerRefreshInMilliseconds;
+var requestTimeout = serversIndexConfig.values.livePageRequestTimeoutInMilliseconds;
 var dd = new diffDOM.DiffDOM();
 
 function sync(current, html) {
@@ -15,7 +15,7 @@ function sync(current, html) {
 
 function refreshServers() {
     $.ajax({
-        url: serversIndexConfig.values["AppConsts.ServersUrl"] + '?cards=true',
+        url: serversIndexConfig.values.serversUrl + '?cards=true',
         type: 'GET',
         timeout: requestTimeout,
         success: function (html) {

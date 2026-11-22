@@ -37,6 +37,6 @@
 
 @if (Model.Compact)
 {
-    <script type="application/json" id="vote-invite-config">{ "values": { "(long)TimeSpan.FromDays(AppConsts.VoteInviteHiddenDays).TotalMilliseconds": @Json.Serialize((long)TimeSpan.FromDays(AppConsts.VoteInviteHiddenDays).TotalMilliseconds) } }</script>
+    <script type="application/json" id="vote-invite-config">{ "values": { "hiddenMilliseconds": @Json.Serialize((long)TimeSpan.FromDays(AppConsts.VoteInviteHiddenDays).TotalMilliseconds) } }</script>
     <script src="~/js/pages/vote-invite.js" asp-append-version="true"></script>
 }

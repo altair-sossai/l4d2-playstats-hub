@@ -579,6 +579,9 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.Property<int>("TankDamage")
                         .HasColumnType("int");
 
+                    b.Property<int>("TankWipes")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TeamA")
                         .HasColumnType("tinyint(1)");
 

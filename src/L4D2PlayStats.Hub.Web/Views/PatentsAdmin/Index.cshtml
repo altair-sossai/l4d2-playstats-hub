@@ -66,6 +66,6 @@
 </form>
 
 @section Scripts {
-    <script type="application/json" id="patents-admin-index-config">{ "values": { "scale.All.Count": @Json.Serialize(scale.All.Count), "CoreConsts.PatentExperienceRounding": @Json.Serialize(CoreConsts.PatentExperienceRounding) } }</script>
+    <script type="application/json" id="patents-admin-index-config">{ "values": { "patentLevels": @Json.Serialize(scale.All.Count), "patentExperienceRounding": @Json.Serialize(CoreConsts.PatentExperienceRounding) } }</script>
     <script src="~/js/pages/patents-admin-index.js" asp-append-version="true"></script>
 }

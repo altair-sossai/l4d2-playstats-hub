@@ -28,7 +28,7 @@
         .patent { width: 22px; height: 22px; vertical-align: middle; }
         .box { background: #1d2129; border: 1px solid #323844; -webkit-border-radius: 6px; border-radius: 6px; padding: 10px; margin-bottom: 8px; overflow: hidden; }
         .big { font-size: 22px; font-weight: bold; }
-        .cell { float: left; width: 16%; text-align: center; }
+        .cell { float: left; width: 14%; text-align: center; }
         .bar { background: #323844; height: 6px; -webkit-border-radius: 3px; border-radius: 3px; overflow: hidden; }
         .bar div { background: #2f6fed; height: 6px; }
         code { font-family: Consolas, "Courier New", monospace; background: #262b35; color: #ffd479; padding: 1px 4px; -webkit-border-radius: 3px; border-radius: 3px; }
@@ -45,10 +45,10 @@
 <body>
 <div class="top">
     <div class="site">@Model.SiteName</div>
-    <a class="tab @(active == "ranking" ? "on" : "")" href="/ingame@(query)">@L["Ranking"]</a>
-    <a class="tab @(active == "player" ? "on" : "")" href="/ingame/player@(query)">@L["My summary"]</a>
-    <a class="tab @(active == "matches" ? "on" : "")" href="/ingame/matches@(query)">@L["Matches"]</a>
-    <a class="tab @(active == "commands" ? "on" : "")" href="/ingame/commands@(query)">@L["Commands"]</a>
+    <a class="tab @(active == "ranking" ? "on" : "")" href="@AppConsts.InGamePath@(query)">@L["Ranking"]</a>
+    <a class="tab @(active == "player" ? "on" : "")" href="@AppConsts.InGamePlayerPath@(query)">@L["My summary"]</a>
+    <a class="tab @(active == "matches" ? "on" : "")" href="@AppConsts.InGameMatchesPath@(query)">@L["Matches"]</a>
+    <a class="tab @(active == "commands" ? "on" : "")" href="@AppConsts.InGameCommandsPath@(query)">@L["Commands"]</a>
     <div class="season">@RankingPeriod.ForSeason(Model.Season).Label(L)</div>
 </div>
 <div class="body">

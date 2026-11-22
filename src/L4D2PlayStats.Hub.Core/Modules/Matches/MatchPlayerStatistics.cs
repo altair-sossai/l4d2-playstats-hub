@@ -23,6 +23,7 @@ public class MatchPlayerStatistics
     public int MvpSiDamage { get; set; }
     public int MvpCommon { get; set; }
     public int LvpFfGiven { get; set; }
+    public int TankWipes { get; set; }
 
     public void Add(MatchPlayerStatistics other, int times = 1)
     {
@@ -47,5 +48,6 @@ public class MatchPlayerStatistics
         MvpSiDamage += other.MvpSiDamage * times;
         MvpCommon += other.MvpCommon * times;
         LvpFfGiven += other.LvpFfGiven * times;
+        TankWipes += other.TankWipes * times;
     }
 }

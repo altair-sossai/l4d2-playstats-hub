@@ -206,6 +206,6 @@
 </div>
 
 @section Scripts {
-    <script type="application/json" id="admin-game-modes-config">{ "values": { "L4D2PlayStats.Hub.Core.AppConsts.AnyConfigurationPattern": @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.AnyConfigurationPattern), "L4D2PlayStats.Hub.Core.AppConsts.DefaultMinimumMaps": @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.DefaultMinimumMaps), "AppConsts.GameModeNewRulePriority": @Json.Serialize(AppConsts.GameModeNewRulePriority) } }</script>
+    <script type="application/json" id="admin-game-modes-config">{ "values": { "anyConfigurationPattern": @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.AnyConfigurationPattern), "defaultMinimumMaps": @Json.Serialize(L4D2PlayStats.Hub.Core.AppConsts.DefaultMinimumMaps), "gameModeNewRulePriority": @Json.Serialize(AppConsts.GameModeNewRulePriority) } }</script>
     <script src="~/js/pages/admin-game-modes.js" asp-append-version="true"></script>
 }

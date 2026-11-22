@@ -1,11 +1,11 @@
-var HubPage = JSON.parse(document.getElementById("chat-bans-index-config").textContent);
+var chatBansIndexConfig = JSON.parse(document.getElementById("chat-bans-index-config").textContent);
 
 $(function () {
-    var texts = HubPage.texts;
+    var texts = chatBansIndexConfig.texts;
 
     var selected = null;
-    var playerUrl = HubPage.playerUrl;
-    var lookupUrl = HubPage.lookupUrl;
+    var playerUrl = chatBansIndexConfig.playerUrl;
+    var lookupUrl = chatBansIndexConfig.lookupUrl;
     var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
 
     function saveBan(communityId, name, reason) {

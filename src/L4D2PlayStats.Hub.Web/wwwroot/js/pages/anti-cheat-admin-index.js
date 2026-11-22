@@ -1,15 +1,15 @@
-var HubPage = JSON.parse(document.getElementById("anti-cheat-admin-index-config").textContent);
+var antiCheatAdminIndexConfig = JSON.parse(document.getElementById("anti-cheat-admin-index-config").textContent);
 
 $(function () {
-    var shownList = HubPage.shownList;
-    var savedMode = HubPage.savedMode;
-    var pageUrl = HubPage.pageUrl;
-    var apiUrl = HubPage.apiUrl;
-    var lookupUrl = HubPage.lookupUrl;
-    var playerUrl = HubPage.playerUrl;
+    var shownList = antiCheatAdminIndexConfig.shownList;
+    var savedMode = antiCheatAdminIndexConfig.savedMode;
+    var pageUrl = antiCheatAdminIndexConfig.pageUrl;
+    var apiUrl = antiCheatAdminIndexConfig.apiUrl;
+    var lookupUrl = antiCheatAdminIndexConfig.lookupUrl;
+    var playerUrl = antiCheatAdminIndexConfig.playerUrl;
     var headers = { RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val() };
-    var texts = HubPage.texts;
-    var listedIds = HubPage.listedIds;
+    var texts = antiCheatAdminIndexConfig.texts;
+    var listedIds = antiCheatAdminIndexConfig.listedIds;
 
     var selected = null;
     var picked = null;

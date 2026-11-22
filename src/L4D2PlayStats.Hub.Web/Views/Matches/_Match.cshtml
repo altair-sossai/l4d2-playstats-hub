@@ -237,7 +237,7 @@
                                                 </td>
                                                 <td class="vertical-align-middle">
                                                     <a href="@Model.PlayerUrl(player.CommunityId)">@(player.Name?.TruncatePlayerName() ?? "-")</a>
-                                                    @if (player.MvpSiDamage > 0 || player.MvpCommon > 0)
+                                                    @if (player.MvpSiDamage > 0 || player.MvpCommon > 0 || player.TankWipes > 0)
                                                     {
                                                         <small> | </small>
                                                     }
@@ -250,6 +250,11 @@
                                                     @for (var i = 0; i < player.MvpCommon; i++)
                                                     {
                                                         <img src="~/imgs/icons/star-blue.png" alt="@L["MVP (CI)"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["MVP (CI)"]"/>
+                                                    }
+
+                                                    @for (var i = 0; i < player.TankWipes; i++)
+                                                    {
+                                                        <img src="~/imgs/infected-type/tank.jpg" alt="@L["Tank wipe"]" class="icon tank-wipe" data-toggle="tooltip" data-placement="top" title="@L["Tank wipe"]"/>
                                                     }
                                                 </td>
                                             </tr>

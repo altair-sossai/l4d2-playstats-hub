@@ -21,7 +21,7 @@ The page follows the [modules](administration.md#modules): commands that need a 
 
 ![The commands page](../images/en/commands.webp)
 
-Players can also read the commands inside the game: the panel that `!ranking` opens has a **Commands** tab with the same text, without the administrator commands. See [Pages inside the game](in-game-pages.md#the-four-pages).
+Players can also read the commands inside the game: `!comandos` or `!commands` open the same list, without the administrator commands, in the game panel. When the server opens the compact in-game pages (`ranking_motd_path "/ingame"`), the panel of `!ranking` also has a **Commands** tab. See [Pages inside the game](in-game-pages.md#the-four-pages).
 
 ## Where the content lives
 

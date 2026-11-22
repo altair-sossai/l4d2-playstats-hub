@@ -45,6 +45,7 @@ public static class AppConsts
     public const int MatchClusterGapInHours = 6;
     public const int MatchMinGapInHours = 1;
     public const int MatchMaxGapInHours = 72;
+    public const int MatchBackfillBatchSize = 200;
     public const int PlayerDefaultPunishment = 150;
     public const int RankingVisiblePlayers = 50;
     public const int RankingListedPlayers = 100;

@@ -4,8 +4,8 @@ function reloadPage() {
     location.reload();
 }
 
-var punishmentSeasonId = playersDetailsConfig.values["Model.Period.Season?.Id"];
-var punishmentHeaders = playersDetailsConfig.values["new Dictionary<string, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }"];
+var punishmentSeasonId = playersDetailsConfig.values.seasonId;
+var punishmentHeaders = playersDetailsConfig.values.antiforgeryHeaders;
 
 function addPunishments(communityId, lostExperiencePoints) {
     var command = { 
@@ -25,7 +25,7 @@ function addPunishments(communityId, lostExperiencePoints) {
 
 function deletePunishments(communityId) {
     $.ajax({
-        url: "/api/punishments/" + communityId + "?" + playersDetailsConfig.values["AppConsts.PlayerSeasonParameter"] + "=" + punishmentSeasonId,
+        url: "/api/punishments/" + communityId + "?" + playersDetailsConfig.values.playerSeasonParameter + "=" + punishmentSeasonId,
         type: "DELETE",
         headers: punishmentHeaders
     }).done(reloadPage);

@@ -1,7 +1,7 @@
-var HubPage = JSON.parse(document.getElementById("skins-index-config").textContent);
+var skinsIndexConfig = JSON.parse(document.getElementById("skins-index-config").textContent);
 
 $(function () {
-    var texts = HubPage.texts;
+    var texts = skinsIndexConfig.texts;
 
     var token = $('input[name="__RequestVerificationToken"]').val();
     var weapon = 'all';

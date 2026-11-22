@@ -21,7 +21,7 @@ A página segue os [módulos](administration.pt.md#módulos): os comandos que pr
 
 ![A página de comandos](../images/pt/commands.webp)
 
-Os jogadores também podem ler os comandos dentro do jogo: o painel que o `!ranking` abre tem uma aba **Comandos** com o mesmo texto, sem os comandos dos administradores. Veja [Páginas dentro do jogo](in-game-pages.pt.md#as-quatro-páginas).
+Os jogadores também podem ler os comandos dentro do jogo: `!comandos` ou `!commands` abrem a mesma lista, sem os comandos dos administradores, no painel do jogo. Quando o servidor abre as páginas compactas do jogo (`ranking_motd_path "/ingame"`), o painel do `!ranking` também tem uma aba **Comandos**. Veja [Páginas dentro do jogo](in-game-pages.pt.md#as-quatro-páginas).
 
 ## Onde fica o conteúdo
 

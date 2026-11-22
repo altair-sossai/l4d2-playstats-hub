@@ -162,6 +162,7 @@
     var mvpSiDamage = half.Players.Where(p => p.SiDamage > 0).OrderByDescending(p => p.SiDamage).FirstOrDefault();
     var mvpCommon = half.Players.Where(p => p.Common > 0).OrderByDescending(p => p.Common).FirstOrDefault();
     var lvpFfGiven = half.Players.Where(p => p.FfGiven > 0).OrderByDescending(p => p.FfGiven).FirstOrDefault();
+    var tankWipe = TankWipes.Player(half);
 
     var players = half.Players
         .OrderByDescending(p => p == mvpSiDamage)
@@ -237,6 +238,11 @@
                                     </td>
                                     <td class="vertical-align-middle">
                                         <a href="/player/@infectedPlayer.CommunityId">@((DisplayNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName))?.TruncatePlayerName() ?? "-")</a>
+
+                                        @if (tankWipe != null && infectedPlayer.CommunityId == tankWipe)
+                                        {
+                                            <img src="~/imgs/infected-type/tank.jpg" alt="@L["Tank wipe"]" class="icon tank-wipe" data-toggle="tooltip" data-placement="top" title="@L["Tank wipe"]"/>
+                                        }
                                     </td>
                                     <td class="slim text-center">
                                         <span data-toggle="tooltip" data-placement="top" title="@L["SI damage (excl. Tank)"]">
@@ -596,7 +602,6 @@
 
             </div>
         </div>
-
 
         <br/>
 

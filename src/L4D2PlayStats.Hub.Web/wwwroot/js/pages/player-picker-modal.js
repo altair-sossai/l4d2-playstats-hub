@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
         count: playerPickerModalConfig.texts["{0} of {1} players"]
     };
 
-    var searchUrl = playerPickerModalConfig.values["AppConsts.PlayerSearchUrl"];
-    var delay = playerPickerModalConfig.values["AppConsts.PlayerSearchDelayInMilliseconds"];
+    var searchUrl = playerPickerModalConfig.values.playerSearchUrl;
+    var delay = playerPickerModalConfig.values.playerSearchDelayInMilliseconds;
     var $modal = $('#pp-modal');
     var $search = $modal.find('.pp-search');
     var $list = $modal.find('.pp-list');

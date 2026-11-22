@@ -29,6 +29,7 @@ public class MatchPlayerResult(MatchTeamResult team, long communityId, string? n
     public decimal MvpCommonPercentage => Share(MvpCommon, team.MvpCommon);
     public int TotalMvp => MvpSiDamage + MvpCommon;
     public decimal LvpFfGivenPercentage => Share(LvpFfGiven, team.LvpFfGiven);
+    public decimal TankWipesPercentage => Share(TankWipes, team.TankWipes);
 
     private static decimal Share(decimal value, decimal total)
     {
