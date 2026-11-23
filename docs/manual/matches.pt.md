@@ -12,6 +12,7 @@ Toda partida jogada nos seus servidores de jogo tem uma página com as equipes, 
 - [Detalhes da partida](#detalhes-da-partida)
 - [Estatísticas do mapa](#estatísticas-do-mapa)
 - [Editando o placar de um mapa](#editando-o-placar-de-um-mapa)
+- [Trocando um jogador](#trocando-um-jogador)
 - [Como os arquivos viram partidas](#como-os-arquivos-viram-partidas)
 - [Partidas competitivas e casuais](#partidas-competitivas-e-casuais)
 - [Reconstruindo as partidas](#reconstruindo-as-partidas)
@@ -61,6 +62,20 @@ A página de um mapa mostra o placar, a hora de início e de fim e uma aba por m
 Às vezes um mapa termina com o placar errado, por exemplo depois de um crash. Um administrador vê um link **Editar** ao lado de cada placar em **Resultados por mapa**. Ele pede o novo placar daquela equipe.
 
 Depois da alteração, o site reconstrói as partidas em volta daquele mapa, então o vencedor, a experiência e as estrelas acompanham o novo placar. O arquivo original é mantido com o placar corrigido.
+
+## Trocando um jogador
+
+Quando um substituto entra no lugar de um jogador, os arquivos têm o jogador que saiu nos primeiros mapas e o substituto nos outros. O resultado de uma partida só conta para quem jogou o primeiro e o último mapa, então o jogador que saiu leva um rage quit e o substituto não leva nem a vitória nem a derrota.
+
+Um administrador corrige isso com **Trocar jogador**, no topo de **Resultados por mapa**, ou com o botão ⇄ ao lado de cada nome nas tabelas de sobreviventes:
+
+1. Escolha o **Jogador que saiu**. A lista tem todos que jogaram pelo menos um mapa da partida, como sobrevivente ou infectado, inclusive quem saiu antes do último mapa.
+2. Escolha o **Jogador que entrou**: digite um Steam ID ou um link de perfil, ou clique em **Escolher da lista** para procurar os jogadores.
+3. Marque os **Mapas** que serão alterados. Só podem ser marcados os mapas que o jogador que saiu jogou, e um mapa que o jogador que entrou já jogou não pode ser alterado, porque os dois ficariam nele.
+
+Nos mapas marcados, o jogador que entrou fica com o lugar e os números do jogador que saiu, como sobrevivente e como infectado. Depois o site reconstrói a partida, então o vencedor, os rage quits, a experiência e o ranking acompanham a troca. Os arquivos de estatísticas desses mapas são gravados com a troca; para desfazer, troque os jogadores de volta.
+
+Por exemplo, se A saiu depois do primeiro mapa e B jogou o resto, trocar A por B no primeiro mapa dá a B o resultado da partida e tira o rage quit de A. B também fica com os números que A fez naquele mapa.
 
 ## Como os arquivos viram partidas
 

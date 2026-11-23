@@ -574,6 +574,56 @@ function checks(context) {
             }
         },
         {
+            name: 'admin-replace-player',
+            run: async browser => {
+                await at(browser, fixtures.admin, desktop, '/matches/1');
+                await pageOk(browser, 'The match page of an administrator');
+
+                const shortcut = await browser.eval(`document.querySelector('table .mrp-open[data-replaced]').getAttribute('data-replaced')`);
+
+                await browser.click('table .mrp-open[data-replaced]', { settle: 0 });
+                await browser.modalShown('#mrp-modal');
+                expect(await browser.eval(`$('#mrp-replaced').val()`) === shortcut, 'The button next to a player did not choose that player in the replace window');
+                await closeModal(browser, '#mrp-modal');
+
+                await browser.click('.maps .mrp-open', { settle: 0 });
+                await browser.modalShown('#mrp-modal');
+
+                const replaced = await browser.eval(`$('#mrp-replaced').val()`);
+                const inMatch = await browser.eval(`matchesDetailsConfig.values.players.map(player => player.communityId)`);
+                const checked = await browser.eval(`$('#mrp-modal .mrp-maps input:checked').map(function () { return +this.value; }).get()`);
+
+                expect(checked.length > 0, `No map is checked for ${replaced}, who played the match`);
+
+                await browser.click('#mrp-modal .mrp-pick-player', { settle: 0 });
+                await browser.modalShown('#pp-modal');
+                await browser.until(`document.querySelector('#pp-modal .pp-player')`, 'the players of the search window');
+
+                const picked = await browser.eval(`(() => { const outside = Array.from(document.querySelectorAll('#pp-modal .pp-player')).find(item => !${quote(inMatch)}.includes(item.getAttribute('data-community-id'))); if (!outside) return null; outside.setAttribute('data-e2e-pick', '1'); return outside.getAttribute('data-community-id'); })()`);
+
+                expect(picked, 'The search window has no player who is outside the match');
+                await browser.click('#pp-modal [data-e2e-pick]', { settle: 0 });
+                await browser.modalShown('#mrp-modal');
+                expect(await browser.eval(`$('#mrp-replacement').val()`) === picked, 'Choosing a player in the search window did not fill the player who came in');
+                expect(await browser.eval(`$('#mrp-modal .mrp-picked').text().trim().length > 0`), 'The replace window does not show the name of the player who came in');
+
+                const loaded = browser.page.waitFor('Page.loadEventFired');
+
+                await browser.click('#mrp-modal .mrp-save', { settle: 0 });
+                await loaded;
+                await browser.page.idle();
+                await pageOk(browser, 'The match page after replacing a player');
+
+                const after = await browser.eval(`matchesDetailsConfig.values.maps.filter(map => ${quote(checked)}.includes(map.fileId)).map(map => ({ left: map.players.includes(${quote(replaced)}), came: map.players.includes(${quote(picked)}) }))`);
+
+                expect(after.length === checked.length && after.every(map => !map.left && map.came), `After the replacement the maps have ${JSON.stringify(after)}: ${picked} should be in every checked map in the place of ${replaced}`);
+
+                const back = await browser.eval(`fetch(matchesDetailsConfig.values.replacePlayerUrl, { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, matchesDetailsConfig.values.antiforgeryHeaders), body: JSON.stringify({ replaced: ${quote(picked)}, replacement: ${quote(replaced)}, fileIds: ${quote(checked)} }) }).then(response => response.status)`);
+
+                expect(back === 200, `Replacing the players back answered ${back}`);
+            }
+        },
+        {
             name: 'languages',
             run: async browser => {
                 await at(browser, null, phone);

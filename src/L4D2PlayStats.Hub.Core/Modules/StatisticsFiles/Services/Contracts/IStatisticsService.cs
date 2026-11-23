@@ -8,4 +8,5 @@ public interface IStatisticsService
     Task<UploadResult> UploadAsync(GameServer server, string? fileName, string? content, CancellationToken cancellationToken = default);
     Task<StatisticsFile?> UpdateScoreAsync(int fileId, int teamAScore, int teamBScore, CancellationToken cancellationToken = default);
     Task<StatisticsFile?> FindAsync(int fileId, CancellationToken cancellationToken = default);
+    Task<PlayerReplacementResult> ReplacePlayerAsync(int matchId, IReadOnlyCollection<int> fileIds, long replaced, long replacement, string? replacementName, CancellationToken cancellationToken = default);
 }

@@ -12,6 +12,7 @@ Cada partida jugada en tus servidores de juego tiene una página con los equipos
 - [Detalles de la partida](#detalles-de-la-partida)
 - [Estadísticas de un mapa](#estadísticas-de-un-mapa)
 - [Editar el marcador de un mapa](#editar-el-marcador-de-un-mapa)
+- [Cambiar un jugador](#cambiar-un-jugador)
 - [Cómo los archivos se convierten en partidas](#cómo-los-archivos-se-convierten-en-partidas)
 - [Partidas competitivas y casuales](#partidas-competitivas-y-casuales)
 - [Reconstruir las partidas](#reconstruir-las-partidas)
@@ -61,6 +62,20 @@ La página de un mapa muestra el marcador, la hora de inicio y de fin, y una pes
 A veces un mapa termina con un marcador equivocado, por ejemplo después de un crash. Un administrador ve un enlace **Editar** junto a cada marcador en **Resultados del mapa**. Pide el nuevo marcador de ese equipo.
 
 Después del cambio, el sitio reconstruye las partidas alrededor de ese mapa, así que el ganador, la experiencia y las estrellas siguen el nuevo marcador. El archivo original se conserva con el marcador corregido.
+
+## Cambiar un jugador
+
+Cuando un sustituto entra en lugar de un jugador, los archivos tienen al jugador que salió en los primeros mapas y al sustituto en los demás. El resultado de una partida solo cuenta para quien jugó el primer y el último mapa, así que el jugador que salió recibe un rage quit y el sustituto no recibe ni la victoria ni la derrota.
+
+Un administrador lo corrige con **Cambiar jugador**, arriba de **Resultados del mapa**, o con el botón ⇄ junto a cada nombre en las tablas de supervivientes:
+
+1. Elige el **Jugador que salió**. La lista tiene a todos los que jugaron al menos un mapa de la partida, como superviviente o infectado, incluso quien salió antes del último mapa.
+2. Elige el **Jugador que entró**: escribe un Steam ID o un enlace de perfil, o haz clic en **Elegir de la lista** para buscar a los jugadores.
+3. Marca los **Mapas** que se van a cambiar. Solo se pueden marcar los mapas que jugó el jugador que salió, y un mapa que el jugador que entró ya jugó no se puede cambiar, porque los dos quedarían en él.
+
+En los mapas marcados, el jugador que entró se queda con el lugar y los números del jugador que salió, como superviviente y como infectado. Después el sitio reconstruye la partida, así que el ganador, los rage quits, la experiencia y la clasificación siguen el cambio. Los archivos de estadísticas de esos mapas se guardan con el cambio; para deshacerlo, cambia los jugadores de vuelta.
+
+Por ejemplo, si A salió después del primer mapa y B jugó el resto, cambiar A por B en el primer mapa le da a B el resultado de la partida y le quita el rage quit a A. B también se queda con los números que A hizo en ese mapa.
 
 ## Cómo los archivos se convierten en partidas
 

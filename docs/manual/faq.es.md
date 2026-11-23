@@ -18,7 +18,7 @@ Preguntas frecuentes de jugadores y administradores, y qué hacer cuando algo no
 Solo cuentan las partidas del ranking. Una partida entra en el ranking cuando su configuración y su tamaño de equipo encajan con una regla de modo de juego que cuenta, y tiene suficientes mapas: con la regla predeterminada, 4v4 y al menos 2 mapas seguidos de la misma campaña. Los mapas sueltos, el 1v1 y otros modos aparecen como **Casual**. Además, la partida solo aparece después de que se sube su último mapa, unos segundos después de que termina el mapa.
 
 **Mi victoria contó como rage quit.**
-Un jugador que estaba en el primer mapa de la partida y no está en el último mapa cuenta como rage quit, aunque haya vuelto después o haya perdido la conexión. Consulta [Ranking > Victorias, derrotas, empates y rage quits](ranking.es.md#victorias-derrotas-empates-y-rage-quits).
+Un jugador que estaba en el primer mapa de la partida y no está en el último mapa cuenta como rage quit, aunque haya vuelto después o haya perdido la conexión. Consulta [Ranking > Victorias, derrotas, empates y rage quits](ranking.es.md#victorias-derrotas-empates-y-rage-quits). Cuando un sustituto ocupó el lugar, un administrador puede [cambiar al jugador](matches.es.md#cambiar-un-jugador).
 
 **Entré en medio de una partida y no recibí la victoria.**
 Las victorias y las derrotas van para los jugadores que estaban en el primer mapa. Los jugadores que entraron después reciben solo sus puntos de MVP y de tank wipe.
@@ -69,6 +69,9 @@ Sí. La temporada actual conserva sus fechas; la nueva duración se aplica a par
 
 **¿Hay forma de eliminar una partida?**
 No. Una partida sale de los archivos de estadísticas. Para corregir un resultado equivocado, [edita el marcador del mapa](matches.es.md#editar-el-marcador-de-un-mapa).
+
+**Entró un sustituto y el jugador que salió recibió un rage quit. ¿Se puede corregir?**
+Sí. [Cambia al jugador](matches.es.md#cambiar-un-jugador) que salió por el sustituto en los mapas que jugó el jugador que salió. La partida y la clasificación se recalculan.
 
 **¿Cómo importo los datos de mi sitio anterior?**
 La migración de datos es un programa aparte, fuera de este repositorio, que sube los archivos de estadísticas antiguos por el mismo camino que usan los plugins. Consulta [la hoja de ruta](../roadmap.es.md#migración-de-datos) y, para los comandos usados en l4d2.com.br, [Trae los datos del sitio antiguo](../switch-from-old-site.es.md#trae-los-datos-del-sitio-antiguo).

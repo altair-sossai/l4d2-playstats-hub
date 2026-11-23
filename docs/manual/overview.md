@@ -85,7 +85,7 @@ The game server always calls the site. The site never connects to the game serve
 |---|---|
 | Any visitor | See the ranking, the matches, the players, the patents, the live server, the community ranking, the shop catalog, the commands page and the Anti-Cheat page. |
 | A signed-in player | Everything above, plus: buy and equip skins, vote in the community ranking (after enough matches), and write in the site chat. |
-| An administrator | Everything above, plus: the administration area, punishments, editing the score of a map, giving skins as gifts, refunds, chat bans and remote commands. |
+| An administrator | Everything above, plus: the administration area, punishments, editing the score of a map, replacing a player in a match, giving skins as gifts, refunds, chat bans and remote commands. |
 
 The first administrator is the Steam account that finishes the [first-run setup](first-run.md). More administrators are added in [Administration > Administrators](administration.md#administrators).
 

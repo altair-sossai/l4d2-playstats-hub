@@ -18,7 +18,7 @@ Common questions from players and administrators, and what to do when something 
 Only ranked matches count. A match is ranked when its configuration and team size fit a game mode rule that counts, and it has enough maps: with the default rule, 4v4 and at least 2 maps of the same campaign in a row. Single maps, 1v1 and other modes are listed as **Casual**. The match also appears only after its last map is uploaded, a few seconds after the map ends.
 
 **My win counted as a rage quit.**
-A player who was in the first map of the match and is not in the last map is counted as a rage quit, even if they came back later or lost connection. See [Ranking > Wins, losses, draws and rage quits](ranking.md#wins-losses-draws-and-rage-quits).
+A player who was in the first map of the match and is not in the last map is counted as a rage quit, even if they came back later or lost connection. See [Ranking > Wins, losses, draws and rage quits](ranking.md#wins-losses-draws-and-rage-quits). When a substitute took the place, an administrator can [replace the player](matches.md#replacing-a-player).
 
 **I joined in the middle of a match and got no win.**
 Wins and losses go to the players who were in the first map. Players who joined later get only their MVP and tank wipe points.
@@ -69,6 +69,9 @@ Yes. The current season keeps its dates; the new length applies from the next on
 
 **Is there a way to remove a match?**
 No. A match comes from the statistics files. To fix a wrong result, [edit the score of the map](matches.md#editing-the-score-of-a-map).
+
+**A substitute came in and the player who left got a rage quit. Can I fix it?**
+Yes. [Replace the player](matches.md#replacing-a-player) who left with the substitute in the maps the player who left played. The match and the ranking are recalculated.
 
 **How do I import the data of my old site?**
 The data migration is a separate program, outside this repository, that uploads the old statistics files through the same path the plugins use. See [the roadmap](../roadmap.md#data-migration), and [Bring the data of the old site](../switch-from-old-site.md#bring-the-data-of-the-old-site) for the commands used on l4d2.com.br.

@@ -85,7 +85,7 @@ El servidor de juego siempre llama al sitio. El sitio nunca se conecta al servid
 |---|---|
 | Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda, la página de comandos y la página del Anti-Cheat. |
 | Un jugador que inició sesión | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas) y escribir en el chat del sitio. |
-| Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, regalar skins, los reembolsos, los baneos del chat y los comandos remotos. |
+| Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, cambiar un jugador en una partida, regalar skins, los reembolsos, los baneos del chat y los comandos remotos. |
 
 El primer administrador es la cuenta de Steam que termina la [configuración inicial](first-run.es.md). Los demás administradores se agregan en [Administración > Administradores](administration.es.md#administradores).
 

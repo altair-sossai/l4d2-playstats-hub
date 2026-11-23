@@ -1,3 +1,4 @@
+using System.Globalization;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
@@ -94,6 +95,72 @@ public class StatisticsService(
 
             return file;
         }
+    }
+
+    public async Task<PlayerReplacementResult> ReplacePlayerAsync(int matchId, IReadOnlyCollection<int> fileIds, long replaced, long replacement, string? replacementName, CancellationToken cancellationToken = default)
+    {
+        if (replaced == replacement)
+            return PlayerReplacementResult.Failed(PlayerReplacementError.SamePlayer);
+
+        var ids = fileIds.Distinct().ToList();
+        if (ids.Count == 0)
+            return PlayerReplacementResult.Failed(PlayerReplacementError.NoMaps);
+
+        await using (await hubState.LockAsync(cancellationToken))
+        {
+            if (!await dbContext.Matches.AnyAsync(m => m.Id == matchId, cancellationToken))
+                return PlayerReplacementResult.Failed(PlayerReplacementError.MatchNotFound);
+
+            var files = await dbContext.StatisticsFiles.Where(f => ids.Contains(f.Id)).OrderBy(f => f.FileDate).ToListAsync(cancellationToken);
+            if (files.Count != ids.Count || files.Any(f => f.MatchId != matchId))
+                return PlayerReplacementResult.Failed(PlayerReplacementError.MapNotInMatch, files.FirstOrDefault(f => f.MatchId != matchId)?.MapName);
+
+            var parsed = new List<(StatisticsFile File, ParsedStatistics Statistics)>();
+
+            // Every map is checked before any is changed, so a replacement is done in all the chosen maps or in none.
+            foreach (var file in files)
+            {
+                if (!ParsedStatistics.TryParse(file.Content, out var statistics) || statistics == null)
+                    return PlayerReplacementResult.Failed(PlayerReplacementError.UnreadableMap, file.MapName);
+
+                if (!PlayerReplacement.Plays(statistics, replaced))
+                    return PlayerReplacementResult.Failed(PlayerReplacementError.NotInMap, file.MapName);
+
+                if (PlayerReplacement.Plays(statistics, replacement))
+                    return PlayerReplacementResult.Failed(PlayerReplacementError.AlreadyInMap, file.MapName);
+
+                parsed.Add((file, statistics));
+            }
+
+            var name = await ReplacementNameAsync(replacement, replacementName, cancellationToken);
+
+            foreach (var (file, statistics) in parsed)
+            {
+                PlayerReplacement.Apply(statistics, replaced, replacement, name);
+
+                file.Content = statistics.ToString();
+                file.Apply(new ParsedStatistics(file.Content));
+            }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            var first = files[0];
+
+            await matchBuildService.RebuildAroundAsync(first.GameServerId, first.SeasonId, first.FileDate, cancellationToken);
+
+            return new PlayerReplacementResult(null, first.MatchId);
+        }
+    }
+
+    // The files keep the in-game name, so the one the player last used on the servers comes first.
+    private async Task<string> ReplacementNameAsync(long replacement, string? replacementName, CancellationToken cancellationToken)
+    {
+        var profile = await dbContext.PlayerProfiles.AsNoTracking().FirstOrDefaultAsync(p => p.CommunityId == replacement, cancellationToken);
+
+        return PlayerReplacement.CleanName(profile?.Name)
+               ?? PlayerReplacement.CleanName(profile?.SteamName)
+               ?? PlayerReplacement.CleanName(replacementName)
+               ?? replacement.ToString(CultureInfo.InvariantCulture);
     }
 
     public Task<StatisticsFile?> FindAsync(int fileId, CancellationToken cancellationToken = default)

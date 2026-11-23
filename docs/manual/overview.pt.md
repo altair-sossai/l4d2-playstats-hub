@@ -85,7 +85,7 @@ O login é feito com a Steam. Os visitantes não precisam fazer login para ver o
 |---|---|
 | Qualquer visitante | Ver o ranking, as partidas, os jogadores, as patentes, o servidor ao vivo, o ranking da comunidade, o catálogo da loja, a página de comandos e a página do Anti-Cheat. |
 | Um jogador logado | Tudo o que está acima, e também: comprar e equipar skins, votar no ranking da comunidade (depois de partidas suficientes) e escrever no chat do site. |
-| Um administrador | Tudo o que está acima, e também: a área de administração, punições, edição do placar de um mapa, skins de presente, reembolsos, banimentos do chat e comandos remotos. |
+| Um administrador | Tudo o que está acima, e também: a área de administração, punições, edição do placar de um mapa, troca de jogador em uma partida, skins de presente, reembolsos, banimentos do chat e comandos remotos. |
 
 O primeiro administrador é a conta Steam que conclui a [configuração inicial](first-run.pt.md). Outros administradores são adicionados em [Administração > Administradores](administration.pt.md#administradores).
 

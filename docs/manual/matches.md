@@ -12,6 +12,7 @@ Every match played on your game servers has a page with the teams, the score of 
 - [Match details](#match-details)
 - [Map statistics](#map-statistics)
 - [Editing the score of a map](#editing-the-score-of-a-map)
+- [Replacing a player](#replacing-a-player)
 - [How files become matches](#how-files-become-matches)
 - [Competitive and casual matches](#competitive-and-casual-matches)
 - [Rebuilding the matches](#rebuilding-the-matches)
@@ -61,6 +62,20 @@ The page of one map shows the score, the start and end time, and one tab per rou
 Sometimes a map ends with a wrong score, for example after a crash. An administrator sees an **Edit** link next to each score in **Map results**. It asks for the new score of that team.
 
 After the change, the site rebuilds the matches around that map, so the winner, the experience and the stars follow the new score. The original file is kept with the corrected score.
+
+## Replacing a player
+
+When a substitute comes in for a player, the files have the player who left in the first maps and the substitute in the others. The result of a match only counts for who played both the first and the last map, so the player who left gets a rage quit and the substitute gets neither the win nor the loss.
+
+An administrator fixes this with **Replace a player**, at the top of **Map results**, or with the ⇄ button next to each name in the survivor tables:
+
+1. Choose the **Player who left**. The list has everyone who played at least one map of the match, as survivor or infected, including who left before the last map.
+2. Choose the **Player who came in**: type a Steam ID or a profile link, or click **Choose from the list** to search the players.
+3. Check the **Maps** to change. Only the maps the player who left played can be checked, and a map the player who came in already played cannot be changed, since both would be in it.
+
+In the checked maps, the player who came in takes the place and the numbers of the player who left, as survivor and as infected. The site then rebuilds the match, so the winner, the rage quits, the experience and the ranking follow the change. The statistics files of those maps are saved with the change; to undo it, replace the players back.
+
+For example, if A left after the first map and B played the rest, replacing A with B in the first map gives B the result of the match and takes the rage quit away from A. B also takes the numbers A made in that map.
 
 ## How files become matches
 

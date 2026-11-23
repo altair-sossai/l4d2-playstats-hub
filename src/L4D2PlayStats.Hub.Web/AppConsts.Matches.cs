@@ -19,4 +19,15 @@ public static partial class AppConsts
     public const int MinScore = 0;
     public const decimal AvgClearTimeDivisor = 1000m;
     public const string WeaponShotsPrefix = "Shots";
+
+    public const string MatchesApiRoute = "api/matches";
+    public const string ReplacedPlayerRequiredMessage = "Choose the player who left.";
+    public const string ReplacementPlayerRequiredMessage = "Choose the player who came in.";
+    public const string ReplacementMapsRequiredMessage = "Choose at least one map.";
+    public const string ReplacementSamePlayerMessage = "The player who left and the player who came in must be different.";
+    public const string ReplacementMatchNotFoundMessage = "The match was not found. Reload the page and try again.";
+    public const string ReplacementMapNotInMatchMessage = "The map {0} is no longer part of this match. Reload the page and try again.";
+    public const string ReplacementUnreadableMapMessage = "The statistics file of the map {0} could not be read.";
+    public const string ReplacementNotInMapMessage = "The player who left did not play the map {0}.";
+    public const string ReplacementAlreadyInMapMessage = "The player who came in already played the map {0}, so both would be in the same map.";
 }

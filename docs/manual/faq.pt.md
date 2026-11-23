@@ -18,7 +18,7 @@ Dúvidas comuns de jogadores e administradores, e o que fazer quando algo não f
 Só as partidas ranqueadas contam. Uma partida é ranqueada quando a configuração e o tamanho do time dela se encaixam em uma regra de modo de jogo que conta, e ela tem mapas suficientes: com a regra padrão, 4v4 e pelo menos 2 mapas da mesma campanha em sequência. Mapas avulsos, 1v1 e outros modos aparecem como **Casual**. A partida também só aparece depois que o último mapa dela é enviado, alguns segundos depois de o mapa terminar.
 
 **Minha vitória contou como rage quit.**
-Um jogador que estava no primeiro mapa da partida e não está no último mapa é contado como rage quit, mesmo que tenha voltado depois ou perdido a conexão. Veja [Ranking > Vitórias, derrotas, empates e rage quits](ranking.pt.md#vitórias-derrotas-empates-e-rage-quits).
+Um jogador que estava no primeiro mapa da partida e não está no último mapa é contado como rage quit, mesmo que tenha voltado depois ou perdido a conexão. Veja [Ranking > Vitórias, derrotas, empates e rage quits](ranking.pt.md#vitórias-derrotas-empates-e-rage-quits). Quando um substituto entrou no lugar, um administrador pode [trocar o jogador](matches.pt.md#trocando-um-jogador).
 
 **Entrei no meio de uma partida e não recebi a vitória.**
 Vitórias e derrotas vão para os jogadores que estavam no primeiro mapa. Quem entrou depois ganha só os pontos de MVP e de tank wipe.
@@ -69,6 +69,9 @@ Sim. A temporada atual mantém as datas dela; a nova duração vale a partir da 
 
 **Tem como remover uma partida?**
 Não. Uma partida vem dos arquivos de estatísticas. Para corrigir um resultado errado, [edite o placar do mapa](matches.pt.md#editando-o-placar-de-um-mapa).
+
+**Um substituto entrou e o jogador que saiu levou rage quit. Dá para corrigir?**
+Sim. [Troque o jogador](matches.pt.md#trocando-um-jogador) que saiu pelo substituto nos mapas que o jogador que saiu jogou. A partida e o ranking são recalculados.
 
 **Como eu importo os dados do meu site antigo?**
 A migração de dados é um programa separado, fora deste repositório, que envia os arquivos de estatísticas antigos pelo mesmo caminho que os plugins usam. Veja [o roadmap](../roadmap.pt.md#migração-de-dados) e, para os comandos usados no l4d2.com.br, [Traga os dados do site antigo](../switch-from-old-site.pt.md#traga-os-dados-do-site-antigo).

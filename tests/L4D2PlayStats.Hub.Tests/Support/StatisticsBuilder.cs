@@ -100,6 +100,28 @@ public class StatisticsBuilder
         return this;
     }
 
+    // A substitute played this map in the place of the player: their survivor and infected lines carry the Steam ID of
+    // the substitute, and [PlayerNames:] lists the substitute, as the plugin writes it.
+    public StatisticsBuilder WithSubstitute(long communityId, long substitute, string name)
+    {
+        var id = communityId.ToString();
+        var accountId = substitute - 76561197960265728;
+        var steamId = $"STEAM_1:{accountId % 2}:{accountId / 2}";
+
+        foreach (var half in Statistics.Halves)
+        {
+            foreach (var player in half.Players.Where(p => p.CommunityId == id))
+                player.SteamId = steamId;
+
+            foreach (var player in half.InfectedPlayers.Where(p => p.CommunityId == id))
+                player.SteamId = steamId;
+        }
+
+        Statistics.PlayerNames.Add(new L4D2PlayStats.PlayerName { Index = Statistics.PlayerNames.Max(p => p.Index) + 1, SteamId = steamId, Name = name });
+
+        return this;
+    }
+
     public List<long> Survivors(char team)
     {
         var half = Statistics.Halves.First(h => h.RoundHalf!.Team == team);

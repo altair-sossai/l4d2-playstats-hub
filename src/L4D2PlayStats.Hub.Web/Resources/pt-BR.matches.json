@@ -1,3 +1,23 @@
 {
-  "See the latest {0} matches, including scores, campaigns, and players.": "Confira as partidas mais recentes do {0}, seus placares, campanhas e jogadores."
+  "Choose at least one map.": "Escolha pelo menos um mapa.",
+  "Choose the player who came in.": "Escolha o jogador que entrou.",
+  "Choose the player who left.": "Escolha o jogador que saiu.",
+  "Everyone who played at least one map of this match, as survivor or infected, including who left before the last map.": "Todos que jogaram pelo menos um mapa desta partida, como sobrevivente ou infectado, inclusive quem saiu antes do último mapa.",
+  "For a substitute who came in for a player. In the checked maps, the player who came in takes the place and the numbers of the player who left, and the match and the ranking are recalculated. The statistics files of those maps are changed; to undo it, replace the players back.": "Para um substituto que entrou no lugar de um jogador. Nos mapas marcados, o jogador que entrou fica com o lugar e os números do jogador que saiu, e a partida e o ranking são recalculados. Os arquivos de estatísticas desses mapas são alterados; para desfazer, troque os jogadores de volta.",
+  "Only the maps the player who left played can be checked. A map the player who came in already played cannot be changed, since both would be in it.": "Só podem ser marcados os mapas que o jogador que saiu jogou. Um mapa que o jogador que entrou já jogou não pode ser alterado, porque os dois ficariam nele.",
+  "Player who came in": "Jogador que entrou",
+  "Player who left": "Jogador que saiu",
+  "Replace": "Trocar",
+  "Replace a player": "Trocar jogador",
+  "See the latest {0} matches, including scores, campaigns, and players.": "Confira as partidas mais recentes do {0}, seus placares, campanhas e jogadores.",
+  "The map {0} is no longer part of this match. Reload the page and try again.": "O mapa {0} não faz mais parte desta partida. Recarregue a página e tente de novo.",
+  "The match was not found. Reload the page and try again.": "A partida não foi encontrada. Recarregue a página e tente de novo.",
+  "The player could not be replaced. Try again.": "Não foi possível trocar o jogador. Tente de novo.",
+  "The player was replaced. Opening the match again...": "Jogador trocado. Abrindo a partida de novo...",
+  "The player who came in already played the map {0}, so both would be in the same map.": "O jogador que entrou já jogou o mapa {0}, então os dois ficariam no mesmo mapa.",
+  "The player who left and the player who came in must be different.": "O jogador que saiu e o que entrou precisam ser diferentes.",
+  "The player who left did not play the map {0}.": "O jogador que saiu não jogou o mapa {0}.",
+  "The statistics file of the map {0} could not be read.": "Não foi possível ler o arquivo de estatísticas do mapa {0}.",
+  "did not play this map": "não jogou este mapa",
+  "the player who came in already played this map": "o jogador que entrou já jogou este mapa"
 }
