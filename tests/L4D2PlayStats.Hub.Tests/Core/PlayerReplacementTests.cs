@@ -1,8 +1,8 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Matches;
+using L4D2PlayStats.Hub.Core.Modules.Ranking.Models;
 using L4D2PlayStats.Hub.Core.Modules.Ranking.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
-using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Models;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -19,24 +19,29 @@ public class PlayerReplacementTests
     private const long Substitute = 76561198000000777;
     private const long Stranger = 76561198000000888;
 
+    // In the sample, team A plays the first round half as survivors and the second as infected.
+    private const int FirstHalf = 0;
+    private const int SecondHalf = 1;
+
     private static readonly DateTime Night = new(2026, 11, 14, 21, 0, 0);
 
+    // Match 1873 of l4d2.com.br: tom was a survivor in the first half of the first map and left; hard came in as an
+    // infected of the same team in the second half and played the rest of the match.
     [TestMethod]
-    public async Task TheSubstituteGetsTheResultAndThePlayerWhoLeftLosesTheRageQuit()
+    public async Task ReplacingThePlayerWhoLeftDuringAMapGivesTheResultToTheSubstitute()
     {
         using var hub = await SubstitutionAsync();
 
         var before = await MatchAsync(hub);
+        var files = await FilesAsync(hub);
 
         Assert.AreEqual(1, Row(before, Left)!.RageQuits);
-        Assert.IsTrue(Row(before, Substitute)!.TeamA);
         Assert.IsFalse(Row(before, Substitute)!.Win);
 
-        var files = await FilesAsync(hub);
-        var result = await ReplaceAsync(hub, before.Id, [files[0].Id], Left, Substitute);
+        var result = await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Substitute);
         var after = await MatchAsync(hub);
 
-        Assert.IsTrue(result.Replaced);
+        Assert.IsTrue(result.Replaced, result.Error?.ToString());
         Assert.AreEqual(after.Id, result.MatchId);
         Assert.AreEqual(before.Id, after.Id);
         Assert.IsTrue(Row(after, Substitute)!.Win);
@@ -53,7 +58,7 @@ public class PlayerReplacementTests
         var files = await FilesAsync(hub);
         var before = await RankingAsync(hub, match.SeasonId);
 
-        await ReplaceAsync(hub, match.Id, [files[0].Id], Left, Substitute);
+        await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Substitute);
 
         var after = await RankingAsync(hub, match.SeasonId);
 
@@ -64,172 +69,170 @@ public class PlayerReplacementTests
     }
 
     [TestMethod]
-    public async Task TheSubstituteTakesTheNumbersOfThePlayerWhoLeftInTheChosenMap()
+    public async Task OnlyTheChosenLineChangesAndKeepsItsNumbers()
     {
-        using var hub = await SubstitutionAsync();
+        using var hub = await TwoMapsAsync();
 
-        var match = await MatchAsync(hub);
         var files = await FilesAsync(hub);
         var original = Parse(files[0].Content);
-        var leftSurvivor = original.Halves.SelectMany(h => h.Players).Single(p => p.CommunityId == Left.ToString());
-        var leftInfected = original.Halves.SelectMany(h => h.InfectedPlayers).Single(p => p.CommunityId == Left.ToString());
+        var line = original.Halves[FirstHalf].Players.Single(p => p.CommunityId == Left.ToString());
 
-        await ReplaceAsync(hub, match.Id, [files[0].Id], Left, Substitute);
-
-        var changed = Parse((await FilesAsync(hub))[0].Content);
-        var survivor = changed.Halves.SelectMany(h => h.Players).Single(p => p.CommunityId == Substitute.ToString());
-        var infected = changed.Halves.SelectMany(h => h.InfectedPlayers).Single(p => p.CommunityId == Substitute.ToString());
-
-        Assert.IsFalse(PlayerReplacement.Plays(changed, Left));
-        Assert.AreEqual(leftSurvivor.SiDamage, survivor.SiDamage);
-        Assert.AreEqual(leftSurvivor.Common, survivor.Common);
-        Assert.AreEqual(leftSurvivor.Index, survivor.Index);
-        Assert.AreEqual(leftInfected.DmgTotal, infected.DmgTotal);
-        Assert.AreEqual("Sub", survivor.PlayerName);
-        Assert.AreEqual(original.Halves.Sum(h => h.Players.Count), changed.Halves.Sum(h => h.Players.Count));
-    }
-
-    [TestMethod]
-    public async Task OnlyTheChosenMapsChange()
-    {
-        using var hub = await SubstitutionAsync();
-
-        var match = await MatchAsync(hub);
-        var before = await FilesAsync(hub);
-
-        await ReplaceAsync(hub, match.Id, [before[0].Id], Left, Substitute);
+        await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Stranger);
 
         var after = await FilesAsync(hub);
+        var changed = Parse(after[0].Content);
+        var survivor = changed.Halves[FirstHalf].Players.Single(p => p.CommunityId == Stranger.ToString());
 
-        Assert.AreNotEqual(before[0].Content, after[0].Content);
-        Assert.AreEqual(before[1].Content, after[1].Content);
+        Assert.IsFalse(changed.Halves[FirstHalf].Players.Any(p => p.CommunityId == Left.ToString()));
+        Assert.IsTrue(changed.Halves[SecondHalf].InfectedPlayers.Any(p => p.CommunityId == Left.ToString()));
+        Assert.IsFalse(changed.Halves[SecondHalf].InfectedPlayers.Any(p => p.CommunityId == Stranger.ToString()));
+        Assert.AreEqual(line.SiDamage, survivor.SiDamage);
+        Assert.AreEqual(line.Common, survivor.Common);
+        Assert.AreEqual(line.Index, survivor.Index);
+        Assert.AreEqual(files[1].Content, after[1].Content);
     }
 
     [TestMethod]
-    public async Task ANewPlayerIsAddedToThePlayerNamesOfTheMap()
+    public async Task AnInfectedCanBeReplacedToo()
+    {
+        using var hub = await TwoMapsAsync();
+
+        var files = await FilesAsync(hub);
+        var line = Parse(files[0].Content).Halves[SecondHalf].InfectedPlayers.Single(p => p.CommunityId == Left.ToString());
+
+        var result = await ReplaceAsync(hub, files[0].Id, SecondHalf, false, Left, Stranger);
+        var changed = Parse((await FilesAsync(hub))[0].Content);
+
+        Assert.IsTrue(result.Replaced, result.Error?.ToString());
+        Assert.AreEqual(line.DmgTotal, changed.Halves[SecondHalf].InfectedPlayers.Single(p => p.CommunityId == Stranger.ToString()).DmgTotal);
+        Assert.IsTrue(changed.Halves[FirstHalf].Players.Any(p => p.CommunityId == Left.ToString()));
+    }
+
+    [TestMethod]
+    public async Task ThePlayerNamesOfTheMapGetTheNewPlayer()
     {
         using var hub = await SubstitutionAsync();
 
-        var match = await MatchAsync(hub);
         var files = await FilesAsync(hub);
         var namesBefore = Parse(files[0].Content).PlayerNames.Count;
 
-        await ReplaceAsync(hub, match.Id, [files[0].Id], Left, Substitute);
+        await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Stranger, "New\nGuy");
 
         var changed = Parse((await FilesAsync(hub))[0].Content);
 
         Assert.HasCount(namesBefore + 1, changed.PlayerNames);
-        Assert.AreEqual("Sub", changed.PlayerNames.Single(p => p.CommunityId == Substitute.ToString()).Name);
-        Assert.IsTrue(changed.PlayerNames.Any(p => p.CommunityId == Left.ToString()));
+        Assert.AreEqual("New Guy", changed.PlayerNames.Single(p => p.CommunityId == Stranger.ToString()).Name);
+        Assert.AreEqual("New Guy", changed.Halves[FirstHalf].Players.Single(p => p.CommunityId == Stranger.ToString()).PlayerName);
     }
 
     [TestMethod]
-    public async Task APlayerNeverSeenTakesTheNameGivenByTheAdministrator()
+    public async Task APlayerAlreadySeenKeepsTheNameOfTheSite()
     {
         using var hub = await SubstitutionAsync();
 
-        var match = await MatchAsync(hub);
         var files = await FilesAsync(hub);
 
-        await ReplaceAsync(hub, match.Id, [files[1].Id], Substitute, Stranger, "New\nGuy");
+        await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Substitute, "Typed by the administrator");
 
-        var changed = Parse((await FilesAsync(hub))[1].Content);
+        var changed = Parse((await FilesAsync(hub))[0].Content);
 
-        Assert.AreEqual("New Guy", changed.PlayerNames.Single(p => p.CommunityId == Stranger.ToString()).Name);
+        Assert.AreEqual("hard", changed.Halves[FirstHalf].Players.Single(p => p.CommunityId == Substitute.ToString()).PlayerName);
+        Assert.AreEqual(1, changed.PlayerNames.Count(p => p.CommunityId == Substitute.ToString()));
     }
 
     [TestMethod]
     public async Task ReplacingThePlayersBackGivesTheSameFile()
     {
-        using var hub = await SubstitutionAsync();
+        using var hub = await TwoMapsAsync();
 
-        var match = await MatchAsync(hub);
         var before = await FilesAsync(hub);
 
-        await ReplaceAsync(hub, match.Id, [before[1].Id], Substitute, Left);
-        await ReplaceAsync(hub, match.Id, [before[1].Id], Left, Substitute);
+        await ReplaceAsync(hub, before[1].Id, FirstHalf, true, Left, Stranger);
+        await ReplaceAsync(hub, before[1].Id, FirstHalf, true, Stranger, Left);
 
-        var after = await FilesAsync(hub);
+        var after = Parse((await FilesAsync(hub))[1].Content);
+        var original = Parse(before[1].Content);
 
-        Assert.AreEqual(before[1].Content, after[1].Content);
+        CollectionAssert.AreEqual(original.Halves.SelectMany(h => h.Players).Select(p => p.ToString()).ToList(), after.Halves.SelectMany(h => h.Players).Select(p => p.ToString()).ToList());
+        CollectionAssert.AreEqual(original.Halves.SelectMany(h => h.InfectedPlayers).Select(p => p.ToString()).ToList(), after.Halves.SelectMany(h => h.InfectedPlayers).Select(p => p.ToString()).ToList());
     }
 
     [TestMethod]
-    public async Task AMapThePlayerWhoLeftDidNotPlayStopsTheReplacementInEveryMap()
+    public async Task APlayerAlreadyInTheSameHalfAndSideIsRefusedAndNothingChanges()
     {
-        using var hub = await SubstitutionAsync();
+        using var hub = await TwoMapsAsync();
 
-        var match = await MatchAsync(hub);
         var before = await FilesAsync(hub);
-
-        var result = await ReplaceAsync(hub, match.Id, [before[0].Id, before[1].Id], Left, Stranger);
-        var after = await FilesAsync(hub);
-
-        Assert.AreEqual(PlayerReplacementError.NotInMap, result.Error);
-        Assert.AreEqual("c2m2_fairgrounds", result.MapName);
-        Assert.AreEqual(before[0].Content, after[0].Content);
-        Assert.AreEqual(before[1].Content, after[1].Content);
-    }
-
-    [TestMethod]
-    public async Task AMapTheSubstituteAlreadyPlayedIsRefused()
-    {
-        using var hub = await SubstitutionAsync();
-
-        var match = await MatchAsync(hub);
-        var files = await FilesAsync(hub);
         var teammate = StatisticsBuilder.Sample().Survivors('A').First(id => id != Left);
 
-        var result = await ReplaceAsync(hub, match.Id, [files[1].Id], teammate, Substitute);
+        var result = await ReplaceAsync(hub, before[0].Id, FirstHalf, true, teammate, Left);
 
-        Assert.AreEqual(PlayerReplacementError.AlreadyInMap, result.Error);
-        Assert.AreEqual("c2m2_fairgrounds", result.MapName);
+        Assert.AreEqual(PlayerReplacementError.AlreadyInHalf, result.Error);
+        Assert.AreEqual(before[0].Content, (await FilesAsync(hub))[0].Content);
     }
 
     [TestMethod]
-    public async Task TheSamePlayerOrNoMapIsRefused()
+    public async Task APlayerOfTheOtherTeamIsRefused()
     {
-        using var hub = await SubstitutionAsync();
+        using var hub = await TwoMapsAsync();
 
-        var match = await MatchAsync(hub);
+        var files = await FilesAsync(hub);
+        var rival = StatisticsBuilder.Sample().Survivors('B')[0];
+
+        var result = await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, rival);
+
+        Assert.AreEqual(PlayerReplacementError.OtherTeam, result.Error);
+    }
+
+    [TestMethod]
+    public async Task APlayerWhoIsNotOnTheChosenLineIsRefused()
+    {
+        using var hub = await TwoMapsAsync();
+
         var files = await FilesAsync(hub);
 
-        Assert.AreEqual(PlayerReplacementError.SamePlayer, (await ReplaceAsync(hub, match.Id, [files[0].Id], Left, Left)).Error);
-        Assert.AreEqual(PlayerReplacementError.NoMaps, (await ReplaceAsync(hub, match.Id, [], Left, Substitute)).Error);
+        Assert.AreEqual(PlayerReplacementError.NotInHalf, (await ReplaceAsync(hub, files[0].Id, FirstHalf, false, Left, Stranger)).Error);
+        Assert.AreEqual(PlayerReplacementError.NotInHalf, (await ReplaceAsync(hub, files[0].Id, 5, true, Left, Stranger)).Error);
     }
 
     [TestMethod]
-    public async Task AMapOfAnotherMatchOrAMatchThatDoesNotExistIsRefused()
+    public async Task TheSamePlayerOrAMapThatDoesNotExistIsRefused()
     {
-        using var hub = await SubstitutionAsync();
+        using var hub = await TwoMapsAsync();
 
-        var server = (await hub.CreateServerAsync("Other Server")).Server;
+        var files = await FilesAsync(hub);
 
-        await hub.UploadAsync(server, StatisticsBuilder.Map("c5m1_waterfront", Night, 1, 300, 200));
-        await hub.UploadAsync(server, StatisticsBuilder.Map("c5m2_park", Night.AddMinutes(15), 2, 600, 500));
-
-        var matches = await hub.RunAsync(services => services.GetRequiredService<HubDbContext>().Matches.AsNoTracking().OrderBy(m => m.Id).ToListAsync());
-        var otherFile = (await FilesAsync(hub)).First(f => f.MatchId == matches[1].Id);
-
-        Assert.AreEqual(PlayerReplacementError.MapNotInMatch, (await ReplaceAsync(hub, matches[0].Id, [otherFile.Id], Left, Stranger)).Error);
-        Assert.AreEqual(PlayerReplacementError.MatchNotFound, (await ReplaceAsync(hub, matches[1].Id + 1000, [otherFile.Id], Left, Stranger)).Error);
+        Assert.AreEqual(PlayerReplacementError.SamePlayer, (await ReplaceAsync(hub, files[0].Id, FirstHalf, true, Left, Left)).Error);
+        Assert.AreEqual(PlayerReplacementError.FileNotFound, (await ReplaceAsync(hub, files[1].Id + 1000, FirstHalf, true, Left, Stranger)).Error);
     }
 
-    // The player who left played the first map; the substitute played the second, which team A won.
+    // The player who left was a survivor in the first half of the first map; the substitute came in as an infected
+    // in the second half and played the second map, which team A won.
     private static async Task<TestHub> SubstitutionAsync()
     {
         var hub = new TestHub();
         var server = (await hub.CreateServerAsync()).Server;
 
-        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", Night, 1, 300, 200));
-        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", Night.AddMinutes(15), 2, 900, 450).WithSubstitute(Left, Substitute, "Sub"));
+        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", Night, 1, 300, 200).WithSubstitute(Left, Substitute, "hard", fromHalf: SecondHalf));
+        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", Night.AddMinutes(15), 2, 900, 450).WithSubstitute(Left, Substitute, "hard"));
 
         return hub;
     }
 
-    private static Task<PlayerReplacementResult> ReplaceAsync(TestHub hub, int matchId, int[] fileIds, long replaced, long replacement, string? name = null)
+    private static async Task<TestHub> TwoMapsAsync()
     {
-        return hub.RunAsync(services => services.GetRequiredService<IStatisticsService>().ReplacePlayerAsync(matchId, fileIds, replaced, replacement, name));
+        var hub = new TestHub();
+        var server = (await hub.CreateServerAsync()).Server;
+
+        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", Night, 1, 300, 200));
+        await hub.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", Night.AddMinutes(15), 2, 900, 450));
+
+        return hub;
+    }
+
+    private static Task<PlayerReplacementResult> ReplaceAsync(TestHub hub, int fileId, int half, bool survivor, long replaced, long replacement, string? name = null)
+    {
+        return hub.RunAsync(services => services.GetRequiredService<IStatisticsService>().ReplacePlayerAsync(fileId, half, survivor, replaced, replacement, name));
     }
 
     private static Task<Match> MatchAsync(TestHub hub)
@@ -242,7 +245,7 @@ public class PlayerReplacementTests
         return hub.RunAsync(services => services.GetRequiredService<HubDbContext>().StatisticsFiles.AsNoTracking().OrderBy(f => f.FileDate).ToListAsync());
     }
 
-    private static Task<IReadOnlyList<L4D2PlayStats.Hub.Core.Modules.Ranking.Models.RankingPlayer>> RankingAsync(TestHub hub, int seasonId)
+    private static Task<IReadOnlyList<RankingPlayer>> RankingAsync(TestHub hub, int seasonId)
     {
         return hub.RunAsync(services => services.GetRequiredService<IRankingService>().SeasonAsync(seasonId));
     }

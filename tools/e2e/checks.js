@@ -577,48 +577,39 @@ function checks(context) {
             name: 'admin-replace-player',
             run: async browser => {
                 await at(browser, fixtures.admin, desktop, '/matches/1');
-                await pageOk(browser, 'The match page of an administrator');
 
-                const shortcut = await browser.eval(`document.querySelector('table .mrp-open[data-replaced]').getAttribute('data-replaced')`);
+                const map = await browser.eval(`document.querySelector('a[href*="/statistics/"]').getAttribute('href')`);
 
-                await browser.click('table .mrp-open[data-replaced]', { settle: 0 });
-                await browser.modalShown('#mrp-modal');
-                expect(await browser.eval(`$('#mrp-replaced').val()`) === shortcut, 'The button next to a player did not choose that player in the replace window');
-                await closeModal(browser, '#mrp-modal');
+                await browser.open(map);
+                await pageOk(browser, 'The map page of an administrator');
+                const line = await browser.eval(`(() => { const button = document.querySelector('#tab-round-half-1 .ms-replace[data-survivor="true"]'); return button && { half: button.getAttribute('data-half'), player: button.getAttribute('data-player') }; })()`);
+                const onMap = await browser.eval(`Array.from(new Set(Array.from(document.querySelectorAll('.ms-replace')).map(button => button.getAttribute('data-player'))))`);
+                const pencils = await browser.eval(`document.querySelectorAll('.ms-replace').length`);
 
-                await browser.click('.maps .mrp-open', { settle: 0 });
-                await browser.modalShown('#mrp-modal');
+                expect(line, 'The map page has no pencil next to the survivors of the first round half');
+                expect(pencils === onMap.length * 2, `The map page has ${pencils} pencils for ${onMap.length} players; each player should have one per round half`);
 
-                const replaced = await browser.eval(`$('#mrp-replaced').val()`);
-                const inMatch = await browser.eval(`matchesDetailsConfig.values.players.map(player => player.communityId)`);
-                const checked = await browser.eval(`$('#mrp-modal .mrp-maps input:checked').map(function () { return +this.value; }).get()`);
-
-                expect(checked.length > 0, `No map is checked for ${replaced}, who played the match`);
-
-                await browser.click('#mrp-modal .mrp-pick-player', { settle: 0 });
+                await browser.eval(`window.confirm = () => true`);
+                await browser.click('#tab-round-half-1 .ms-replace[data-survivor="true"]', { settle: 0 });
                 await browser.modalShown('#pp-modal');
                 await browser.until(`document.querySelector('#pp-modal .pp-player')`, 'the players of the search window');
 
-                const picked = await browser.eval(`(() => { const outside = Array.from(document.querySelectorAll('#pp-modal .pp-player')).find(item => !${quote(inMatch)}.includes(item.getAttribute('data-community-id'))); if (!outside) return null; outside.setAttribute('data-e2e-pick', '1'); return outside.getAttribute('data-community-id'); })()`);
+                const picked = await browser.eval(`(() => { const outside = Array.from(document.querySelectorAll('#pp-modal .pp-player')).find(item => !${quote(onMap)}.includes(item.getAttribute('data-community-id'))); if (!outside) return null; outside.setAttribute('data-e2e-pick', '1'); return outside.getAttribute('data-community-id'); })()`);
 
-                expect(picked, 'The search window has no player who is outside the match');
-                await browser.click('#pp-modal [data-e2e-pick]', { settle: 0 });
-                await browser.modalShown('#mrp-modal');
-                expect(await browser.eval(`$('#mrp-replacement').val()`) === picked, 'Choosing a player in the search window did not fill the player who came in');
-                expect(await browser.eval(`$('#mrp-modal .mrp-picked').text().trim().length > 0`), 'The replace window does not show the name of the player who came in');
+                expect(picked, 'The search window has no player who is outside the map');
 
                 const loaded = browser.page.waitFor('Page.loadEventFired');
 
-                await browser.click('#mrp-modal .mrp-save', { settle: 0 });
+                await browser.click('#pp-modal [data-e2e-pick]', { settle: 0 });
                 await loaded;
                 await browser.page.idle();
-                await pageOk(browser, 'The match page after replacing a player');
+                await pageOk(browser, 'The map page after replacing a player');
 
-                const after = await browser.eval(`matchesDetailsConfig.values.maps.filter(map => ${quote(checked)}.includes(map.fileId)).map(map => ({ left: map.players.includes(${quote(replaced)}), came: map.players.includes(${quote(picked)}) }))`);
+                const after = await browser.eval(`Array.from(document.querySelectorAll('#tab-round-half-1 .ms-replace[data-survivor="true"]')).map(button => button.getAttribute('data-player'))`);
 
-                expect(after.length === checked.length && after.every(map => !map.left && map.came), `After the replacement the maps have ${JSON.stringify(after)}: ${picked} should be in every checked map in the place of ${replaced}`);
+                expect(after.includes(picked) && !after.includes(line.player), `After the replacement the survivors of the first round half are ${JSON.stringify(after)}: ${picked} should be there in the place of ${line.player}`);
 
-                const back = await browser.eval(`fetch(matchesDetailsConfig.values.replacePlayerUrl, { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, matchesDetailsConfig.values.antiforgeryHeaders), body: JSON.stringify({ replaced: ${quote(picked)}, replacement: ${quote(replaced)}, fileIds: ${quote(checked)} }) }).then(response => response.status)`);
+                const back = await browser.eval(`fetch(matchesStatisticsConfig.values.replacePlayerUrl, { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, matchesStatisticsConfig.values.antiforgeryHeaders), body: JSON.stringify({ half: ${Number(line.half)}, survivor: true, replaced: ${quote(picked)}, replacement: ${quote(line.player)} }) }).then(response => response.status)`);
 
                 expect(back === 200, `Replacing the players back answered ${back}`);
             }

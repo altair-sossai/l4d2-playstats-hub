@@ -87,7 +87,8 @@ public class MatchViewService(
         {
             Card = await DetailsCardAsync(match, cancellationToken),
             Statistics = statistics,
-            Statistic = statistic
+            Statistic = statistic,
+            Administrator = await currentUser.IsAdministratorAsync()
         };
     }
 

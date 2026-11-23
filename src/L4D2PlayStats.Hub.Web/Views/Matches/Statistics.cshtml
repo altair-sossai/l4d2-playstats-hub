@@ -1,4 +1,6 @@
+@using Microsoft.AspNetCore.Antiforgery
 @model StatisticsDetailsModel
+@inject IAntiforgery Antiforgery
 
 @{
     var campaign = Model.Match.Campaign ?? L["Campaign"].Value;
@@ -15,6 +17,14 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/matches-statistics.css" asp-append-version="true"/>
+}
+
+@section Scripts {
+    @if (Model.Administrator && Model.Statistic != null)
+    {
+        <script type="application/json" id="matches-statistics-config">{ "texts": { "Replace {0} with {1} in this round half? The match and the ranking are recalculated.": @Json.Serialize(L["Replace {0} with {1} in this round half? The match and the ranking are recalculated."].Value), "The player could not be replaced. Try again.": @Json.Serialize(L["The player could not be replaced. Try again."].Value), "Choose the player who takes the place of {0} in this round half, with the numbers of this line.": @Json.Serialize(L["Choose the player who takes the place of {0} in this round half, with the numbers of this line."].Value) }, "values": { "matchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "replacePlayerUrl": @Json.Serialize($"/{AppConsts.StatisticsApiRoute}/{Model.Statistic.FileId}/replace-player"), "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }) } }</script>
+        <script src="~/js/pages/matches-statistics.js" asp-append-version="true"></script>
+    }
 }
 
 @if (Model.Statistics.Count == 0)
@@ -125,3 +135,8 @@
     @await Html.PartialAsync("_StatisticsRound", (round, Model))
 }
 </div>
+
+@if (Model.Administrator)
+{
+    @await Html.PartialAsync("_PlayerPickerModal")
+}

@@ -20,14 +20,14 @@ public static partial class AppConsts
     public const decimal AvgClearTimeDivisor = 1000m;
     public const string WeaponShotsPrefix = "Shots";
 
-    public const string MatchesApiRoute = "api/matches";
-    public const string ReplacedPlayerRequiredMessage = "Choose the player who left.";
-    public const string ReplacementPlayerRequiredMessage = "Choose the player who came in.";
-    public const string ReplacementMapsRequiredMessage = "Choose at least one map.";
-    public const string ReplacementSamePlayerMessage = "The player who left and the player who came in must be different.";
-    public const string ReplacementMatchNotFoundMessage = "The match was not found. Reload the page and try again.";
-    public const string ReplacementMapNotInMatchMessage = "The map {0} is no longer part of this match. Reload the page and try again.";
-    public const string ReplacementUnreadableMapMessage = "The statistics file of the map {0} could not be read.";
-    public const string ReplacementNotInMapMessage = "The player who left did not play the map {0}.";
-    public const string ReplacementAlreadyInMapMessage = "The player who came in already played the map {0}, so both would be in the same map.";
+    public const string StatisticsApiRoute = "api/statistics";
+    public const string ReplacedPlayerRequiredMessage = "Choose the player to replace.";
+    public const string ReplacementPlayerRequiredMessage = "Choose the new player.";
+    public const string ReplacementPlaceRequiredMessage = "Choose the round half and the side of the player.";
+    public const string ReplacementSamePlayerMessage = "Choose a different player.";
+    public const string ReplacementFileNotFoundMessage = "The map was not found. Reload the page and try again.";
+    public const string ReplacementUnreadableFileMessage = "The statistics file of this map could not be read.";
+    public const string ReplacementNotInHalfMessage = "The player is no longer in this round half. Reload the page and try again.";
+    public const string ReplacementAlreadyInHalfMessage = "The chosen player is already in this round half, on the same side.";
+    public const string ReplacementOtherTeamMessage = "The chosen player played this map for the other team.";
 }

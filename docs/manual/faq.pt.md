@@ -71,7 +71,7 @@ Sim. A temporada atual mantém as datas dela; a nova duração vale a partir da 
 Não. Uma partida vem dos arquivos de estatísticas. Para corrigir um resultado errado, [edite o placar do mapa](matches.pt.md#editando-o-placar-de-um-mapa).
 
 **Um substituto entrou e o jogador que saiu levou rage quit. Dá para corrigir?**
-Sim. [Troque o jogador](matches.pt.md#trocando-um-jogador) que saiu pelo substituto nos mapas que o jogador que saiu jogou. A partida e o ranking são recalculados.
+Sim. Na página de cada mapa que o jogador que saiu jogou, use o lápis ao lado do nome dele para colocar o substituto no lugar. A partida e o ranking são recalculados. Veja [Trocando um jogador](matches.pt.md#trocando-um-jogador).
 
 **Como eu importo os dados do meu site antigo?**
 A migração de dados é um programa separado, fora deste repositório, que envia os arquivos de estatísticas antigos pelo mesmo caminho que os plugins usam. Veja [o roadmap](../roadmap.pt.md#migração-de-dados) e, para os comandos usados no l4d2.com.br, [Traga os dados do site antigo](../switch-from-old-site.pt.md#traga-os-dados-do-site-antigo).

@@ -8,8 +8,9 @@ public class ReplacePlayerCommandValidator : AbstractValidator<ReplacePlayerComm
 {
     public ReplacePlayerCommandValidator()
     {
+        RuleFor(command => command.Half).Must(half => half >= 0).WithMessage(AppConsts.ReplacementPlaceRequiredMessage);
+        RuleFor(command => command.Survivor).NotNull().WithMessage(AppConsts.ReplacementPlaceRequiredMessage);
         RuleFor(command => command.Replaced).SteamId(AppConsts.ReplacedPlayerRequiredMessage);
         RuleFor(command => command.Replacement).SteamId(AppConsts.ReplacementPlayerRequiredMessage);
-        RuleFor(command => command.FileIds).Must(ids => ids is { Count: > 0 }).WithMessage(AppConsts.ReplacementMapsRequiredMessage);
     }
 }

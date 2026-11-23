@@ -11,8 +11,6 @@ public class MatchDetailsModel
     public MatchResult Match => Card.Match;
     public TimeZoneInfo TimeZone => Card.TimeZone;
 
-    public MatchReplacementOptions ReplacementOptions() => new(Match, Statistics);
-
     public string StatisticsUrl(MatchStatisticsResult statistics)
     {
         return $"{Card.DetailsUrl}/statistics/{statistics.FileId}";

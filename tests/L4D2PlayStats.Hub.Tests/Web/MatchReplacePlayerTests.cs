@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.StatisticsFiles;
 using L4D2PlayStats.Hub.Tests.Support;
@@ -18,21 +19,22 @@ public class MatchReplacePlayerTests
     private const long Substitute = 76561198000000777;
 
     [TestMethod]
-    public async Task AnAdministratorReplacesThePlayerWhoLeftAndTheMatchFollows()
+    public async Task AnAdministratorReplacesAPlayerOfARoundHalfAndTheMatchFollows()
     {
         using var factory = await FactoryWithSubstitutionAsync();
         using var administrator = factory.Client(HubWebFactory.Administrator);
 
         var match = await MatchAsync(factory);
         var files = await FilesAsync(factory);
-        var token = await TokenAsync(administrator, match.Id);
+        var token = await TokenAsync(administrator, match.Id, files[0].Id);
 
-        var response = await PostAsync(administrator, match.Id, new { replaced = Left.ToString(), replacement = Substitute.ToString(), fileIds = new[] { files[0].Id } }, token);
+        var response = await PostAsync(administrator, files[0].Id, new { half = 0, survivor = true, replaced = Left.ToString(), replacement = Substitute.ToString() }, token);
         var answer = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
         var after = await MatchAsync(factory);
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         Assert.AreEqual(after.Id, answer.GetProperty("matchId").GetInt32());
+        Assert.AreEqual(files[0].Id, answer.GetProperty("fileId").GetInt32());
         Assert.IsTrue(after.Players.Single(p => p.CommunityId == Substitute).Win);
         Assert.IsFalse(after.Players.Any(p => p.CommunityId == Left));
     }
@@ -45,9 +47,9 @@ public class MatchReplacePlayerTests
 
         var match = await MatchAsync(factory);
         var files = await FilesAsync(factory);
-        var token = await TokenAsync(administrator, match.Id);
+        var token = await TokenAsync(administrator, match.Id, files[0].Id);
 
-        var response = await PostAsync(administrator, match.Id, new { replaced = Left.ToString(), replacement = "https://steamcommunity.com/profiles/76561198000000777", fileIds = new[] { files[0].Id } }, token);
+        var response = await PostAsync(administrator, files[0].Id, new { half = 0, survivor = true, replaced = Left.ToString(), replacement = "https://steamcommunity.com/profiles/76561198000000777" }, token);
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         Assert.IsTrue((await MatchAsync(factory)).Players.Single(p => p.CommunityId == Substitute).Win);
@@ -63,12 +65,12 @@ public class MatchReplacePlayerTests
 
         var match = await MatchAsync(factory);
         var files = await FilesAsync(factory);
-        var token = await TokenAsync(administrator, match.Id);
-        var command = new { replaced = Left.ToString(), replacement = Substitute.ToString(), fileIds = new[] { files[0].Id } };
+        var token = await TokenAsync(administrator, match.Id, files[0].Id);
+        var command = new { half = 0, survivor = true, replaced = Left.ToString(), replacement = Substitute.ToString() };
 
-        var anonymous = await PostAsync(visitor, match.Id, command, token);
-        var forbidden = await PostAsync(player, match.Id, command, token);
-        var withoutToken = await PostAsync(administrator, match.Id, command, null);
+        var anonymous = await PostAsync(visitor, files[0].Id, command, token);
+        var forbidden = await PostAsync(player, files[0].Id, command, token);
+        var withoutToken = await PostAsync(administrator, files[0].Id, command, null);
 
         Assert.AreEqual(HttpStatusCode.Unauthorized, anonymous.StatusCode);
         Assert.AreEqual(HttpStatusCode.Forbidden, forbidden.StatusCode);
@@ -84,58 +86,58 @@ public class MatchReplacePlayerTests
 
         var match = await MatchAsync(factory);
         var files = await FilesAsync(factory);
-        var token = await TokenAsync(administrator, match.Id);
+        var token = await TokenAsync(administrator, match.Id, files[0].Id);
+        var rival = StatisticsBuilder.Sample().Survivors('B')[0];
 
-        var notInMap = await PostAsync(administrator, match.Id, new { replaced = Left.ToString(), replacement = "76561198000000888", fileIds = new[] { files[1].Id } }, token);
-        var noReplacement = await PostAsync(administrator, match.Id, new { replaced = Left.ToString(), replacement = "", fileIds = new[] { files[0].Id } }, token);
-        var noMaps = await PostAsync(administrator, match.Id, new { replaced = Left.ToString(), replacement = Substitute.ToString(), fileIds = Array.Empty<int>() }, token);
+        var otherTeam = await PostAsync(administrator, files[0].Id, new { half = 0, survivor = true, replaced = Left.ToString(), replacement = rival.ToString() }, token);
+        var wrongSide = await PostAsync(administrator, files[0].Id, new { half = 0, survivor = false, replaced = Left.ToString(), replacement = Substitute.ToString() }, token);
+        var noReplacement = await PostAsync(administrator, files[0].Id, new { half = 0, survivor = true, replaced = Left.ToString(), replacement = "" }, token);
+        var noHalf = await PostAsync(administrator, files[0].Id, new { survivor = true, replaced = Left.ToString(), replacement = Substitute.ToString() }, token);
 
-        Assert.AreEqual(HttpStatusCode.BadRequest, notInMap.StatusCode);
-        Assert.AreEqual("The player who left did not play the map c2m2_fairgrounds.", await ErrorAsync(notInMap));
-        Assert.AreEqual("Choose the player who came in.", await ErrorAsync(noReplacement));
-        Assert.AreEqual("Choose at least one map.", await ErrorAsync(noMaps));
+        Assert.AreEqual(HttpStatusCode.BadRequest, otherTeam.StatusCode);
+        Assert.AreEqual("The chosen player played this map for the other team.", await ErrorAsync(otherTeam));
+        Assert.AreEqual("The player is no longer in this round half. Reload the page and try again.", await ErrorAsync(wrongSide));
+        Assert.AreEqual("Choose the new player.", await ErrorAsync(noReplacement));
+        Assert.AreEqual("Choose the round half and the side of the player.", await ErrorAsync(noHalf));
     }
 
     [TestMethod]
-    public async Task TheAdministratorGetsTheWindowWithEveryoneWhoPlayedAMap()
+    public async Task TheAdministratorGetsAPencilNextToEveryPlayerOfTheMap()
     {
         using var factory = await FactoryWithSubstitutionAsync();
         using var administrator = factory.Client(HubWebFactory.Administrator);
 
         var match = await MatchAsync(factory);
         var files = await FilesAsync(factory);
-        var body = await administrator.WithScriptsAsync($"/matches/{match.Id}");
-        var values = PageScripts.Config(body, "matches-details").GetProperty("values");
-        var maps = values.GetProperty("maps").EnumerateArray().ToList();
-        var players = values.GetProperty("players").EnumerateArray().Select(p => p.GetProperty("communityId").GetString()).ToList();
+        var body = await administrator.WithScriptsAsync($"/matches/{match.Id}/statistics/{files[0].Id}");
+        var values = PageScripts.Config(body, "matches-statistics").GetProperty("values");
+        var pencils = Regex.Matches(body, "class=\"btn btn-link btn-xs ms-replace\" data-half=\"(\\d)\" data-survivor=\"(true|false)\" data-player=\"(\\d+)\"");
 
-        Assert.Contains("id=\"mrp-modal\"", body);
+        Assert.HasCount(16, pencils);
+        Assert.IsTrue(pencils.Any(pencil => pencil.Groups[1].Value == "0" && pencil.Groups[2].Value == "true" && pencil.Groups[3].Value == Left.ToString()));
+        Assert.IsTrue(pencils.Any(pencil => pencil.Groups[1].Value == "1" && pencil.Groups[2].Value == "false" && pencil.Groups[3].Value == Substitute.ToString()));
+        Assert.AreEqual($"/api/statistics/{files[0].Id}/replace-player", values.GetProperty("replacePlayerUrl").GetString());
         Assert.Contains("id=\"pp-modal\"", body);
-        Assert.Contains("PlayerPicker.swap($modal", body);
-        Assert.AreEqual($"/api/matches/{match.Id}/replace-player", values.GetProperty("replacePlayerUrl").GetString());
-        Assert.HasCount(2, maps);
-        Assert.AreEqual(files[0].Id, maps[0].GetProperty("fileId").GetInt32());
-        Assert.AreEqual("c2m1_highway", maps[0].GetProperty("mapName").GetString());
-        Assert.Contains(Left.ToString(), maps[0].GetProperty("players").EnumerateArray().Select(p => p.GetString()).ToList());
-        Assert.DoesNotContain(Left.ToString(), maps[1].GetProperty("players").EnumerateArray().Select(p => p.GetString()).ToList());
-        Assert.Contains(Left.ToString(), players);
-        Assert.Contains(Substitute.ToString(), players);
+        Assert.Contains("PlayerPicker.open(", body);
     }
 
     [TestMethod]
-    public async Task AVisitorDoesNotGetTheWindow()
+    public async Task AVisitorDoesNotGetThePencils()
     {
         using var factory = await FactoryWithSubstitutionAsync();
         using var visitor = factory.Client();
 
         var match = await MatchAsync(factory);
-        var body = await visitor.GetStringAsync($"/matches/{match.Id}");
+        var files = await FilesAsync(factory);
+        var body = await visitor.GetStringAsync($"/matches/{match.Id}/statistics/{files[0].Id}");
 
-        Assert.DoesNotContain("mrp-modal", body);
-        Assert.DoesNotContain("mrp-open", body);
+        Assert.DoesNotContain("ms-replace", body);
+        Assert.DoesNotContain("matches-statistics-config", body);
         Assert.DoesNotContain("pp-modal", body);
     }
 
+    // As in match 1873 of l4d2.com.br: the player who left was a survivor in the first half of the first map, and the
+    // substitute came in as an infected of the same team in the second half and played the second map.
     private static async Task<HubWebFactory> FactoryWithSubstitutionAsync()
     {
         var factory = new HubWebFactory();
@@ -148,15 +150,15 @@ public class MatchReplacePlayerTests
         var now = DateTime.UtcNow;
         var night = new DateTime(now.Year, now.Month, Math.Min(now.Day, 20), 12, 0, 0);
 
-        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", night, 1, 300, 200));
-        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", night.AddMinutes(15), 2, 900, 450).WithSubstitute(Left, Substitute, "Sub"));
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m1_highway", night, 1, 300, 200).WithSubstitute(Left, Substitute, "hard", fromHalf: 1));
+        await HubWebFactory.UploadAsync(server, StatisticsBuilder.Map("c2m2_fairgrounds", night.AddMinutes(15), 2, 900, 450).WithSubstitute(Left, Substitute, "hard"));
 
         return factory;
     }
 
-    private static Task<HttpResponseMessage> PostAsync(HttpClient client, int matchId, object command, string? token)
+    private static Task<HttpResponseMessage> PostAsync(HttpClient client, int fileId, object command, string? token)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/matches/{matchId}/replace-player") { Content = JsonContent.Create(command) };
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/statistics/{fileId}/replace-player") { Content = JsonContent.Create(command) };
 
         if (token != null)
             request.Headers.Add(TokenHeader, token);
@@ -169,10 +171,10 @@ public class MatchReplacePlayerTests
         return JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("errorMessage").GetString();
     }
 
-    private static async Task<string> TokenAsync(HttpClient administrator, int matchId)
+    private static async Task<string> TokenAsync(HttpClient administrator, int matchId, int fileId)
     {
-        var body = await administrator.GetStringAsync($"/matches/{matchId}");
-        var values = PageScripts.Config(body, "matches-details").GetProperty("values");
+        var body = await administrator.GetStringAsync($"/matches/{matchId}/statistics/{fileId}");
+        var values = PageScripts.Config(body, "matches-statistics").GetProperty("values");
 
         return values.GetProperty("antiforgeryHeaders").GetProperty(TokenHeader).GetString()!;
     }

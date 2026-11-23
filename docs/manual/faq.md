@@ -71,7 +71,7 @@ Yes. The current season keeps its dates; the new length applies from the next on
 No. A match comes from the statistics files. To fix a wrong result, [edit the score of the map](matches.md#editing-the-score-of-a-map).
 
 **A substitute came in and the player who left got a rage quit. Can I fix it?**
-Yes. [Replace the player](matches.md#replacing-a-player) who left with the substitute in the maps the player who left played. The match and the ranking are recalculated.
+Yes. On the page of each map the player who left played, use the pencil next to their name to put the substitute in their place. The match and the ranking are recalculated. See [Replacing a player](matches.md#replacing-a-player).
 
 **How do I import the data of my old site?**
 The data migration is a separate program, outside this repository, that uploads the old statistics files through the same path the plugins use. See [the roadmap](../roadmap.md#data-migration), and [Bring the data of the old site](../switch-from-old-site.md#bring-the-data-of-the-old-site) for the commands used on l4d2.com.br.

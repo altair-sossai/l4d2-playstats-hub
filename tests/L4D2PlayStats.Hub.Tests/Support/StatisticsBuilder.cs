@@ -100,15 +100,16 @@ public class StatisticsBuilder
         return this;
     }
 
-    // A substitute played this map in the place of the player: their survivor and infected lines carry the Steam ID of
-    // the substitute, and [PlayerNames:] lists the substitute, as the plugin writes it.
-    public StatisticsBuilder WithSubstitute(long communityId, long substitute, string name)
+    // A substitute played this map in the place of the player, from the given round half on (0 is the whole map, 1 a
+    // substitute who came in after the first half): those survivor and infected lines carry the Steam ID of the
+    // substitute, and [PlayerNames:] lists the substitute, as the plugin writes it.
+    public StatisticsBuilder WithSubstitute(long communityId, long substitute, string name, int fromHalf = 0)
     {
         var id = communityId.ToString();
         var accountId = substitute - 76561197960265728;
         var steamId = $"STEAM_1:{accountId % 2}:{accountId / 2}";
 
-        foreach (var half in Statistics.Halves)
+        foreach (var half in Statistics.Halves.Skip(fromHalf))
         {
             foreach (var player in half.Players.Where(p => p.CommunityId == id))
                 player.SteamId = steamId;

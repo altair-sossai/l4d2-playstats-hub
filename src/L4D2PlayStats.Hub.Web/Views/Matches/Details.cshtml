@@ -23,9 +23,7 @@
 @section Scripts {
     @if (Model.Administrator)
     {
-        var replacement = Model.ReplacementOptions();
-
-        <script type="application/json" id="matches-details-config">{ "texts": { "Choose the player who left.": @Json.Serialize(L["Choose the player who left."].Value), "Choose the player who came in.": @Json.Serialize(L["Choose the player who came in."].Value), "Choose at least one map.": @Json.Serialize(L["Choose at least one map."].Value), "The player was replaced. Opening the match again...": @Json.Serialize(L["The player was replaced. Opening the match again..."].Value), "The player could not be replaced. Try again.": @Json.Serialize(L["The player could not be replaced. Try again."].Value), "did not play this map": @Json.Serialize(L["did not play this map"].Value), "the player who came in already played this map": @Json.Serialize(L["the player who came in already played this map"].Value) }, "values": { "matchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "replacePlayerUrl": @Json.Serialize($"/{AppConsts.MatchesApiRoute}/{match.Id}/replace-player"), "invalidScoreRange": @Json.Serialize(L["Invalid score range"].Value), "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }), "maps": @Json.Serialize(replacement.Maps), "players": @Json.Serialize(replacement.Players) } }</script>
+        <script type="application/json" id="matches-details-config">{ "values": { "matchesUrl": @Json.Serialize(AppConsts.MatchesUrl), "invalidScoreRange": @Json.Serialize(L["Invalid score range"].Value), "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string?> { [AppConsts.AntiforgeryHeader] = Antiforgery.GetAndStoreTokens(Context).RequestToken }) } }</script>
         <script src="~/js/pages/matches-details.js" asp-append-version="true"></script>
     }
 }
@@ -61,12 +59,6 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             @L["Maps"]
-            @if (Model.Administrator)
-            {
-                <button type="button" class="btn btn-default btn-xs pull-right mrp-open">
-                    <span class="glyphicon glyphicon-transfer"></span> @L["Replace a player"]
-                </button>
-            }
         </div>
         <div class="panel-body">
             @L["Map results"]
@@ -159,12 +151,6 @@
                     <a href="/player/@player.CommunityId" title="@player.Name?.TruncatePlayerName()">
                         @player.Name?.TruncatePlayerName()
                     </a>
-                    @if (Model.Administrator)
-                    {
-                        <button type="button" class="btn btn-link btn-xs mrp-open" data-replaced="@player.CommunityId" title="@L["Replace a player"]" aria-label="@L["Replace a player"]" data-toggle="tooltip" data-placement="bottom">
-                            <span class="glyphicon glyphicon-transfer"></span>
-                        </button>
-                    }
                 </th>
             }
             <th class="text-center">@L["Total"]</th>
@@ -546,53 +532,4 @@
             </tbody>
         </table>
     </div>
-}
-
-@if (Model.Administrator)
-{
-    <div id="mrp-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title">@L["Replace a player"]</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted">@L["For a substitute who came in for a player. In the checked maps, the player who came in takes the place and the numbers of the player who left, and the match and the ranking are recalculated. The statistics files of those maps are changed; to undo it, replace the players back."]</p>
-                    <div class="form-group">
-                        <label for="mrp-replaced">@L["Player who left"] @FieldHelp.Tip(L["Everyone who played at least one map of this match, as survivor or infected, including who left before the last map."])</label>
-                        <select id="mrp-replaced" class="form-control"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="mrp-replacement">@L["Player who came in"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
-                        <input type="hidden" id="mrp-replacement-name"/>
-                        <div class="input-group">
-                            <input type="text" id="mrp-replacement" class="form-control" placeholder="76561198000000000"/>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default mrp-pick-player">
-                                    <span class="glyphicon glyphicon-user"></span> @L["Choose from the list"]
-                                </button>
-                            </span>
-                        </div>
-                        <div class="mrp-picked text-muted" style="margin-top: 6px"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>@L["Maps"] @FieldHelp.Tip(L["Only the maps the player who left played can be checked. A map the player who came in already played cannot be changed, since both would be in it."])</label>
-                        <div class="mrp-maps"></div>
-                    </div>
-                    <div class="mrp-message"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                    <button type="button" class="btn btn-primary mrp-save">
-                        <span class="glyphicon glyphicon-transfer"></span> @L["Replace"]
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @await Html.PartialAsync("_PlayerPickerModal")
 }

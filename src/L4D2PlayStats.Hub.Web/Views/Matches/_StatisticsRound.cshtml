@@ -212,6 +212,13 @@
                                         {
                                             <img src="~/imgs/icons/lvp.png" alt="@L["LVP"]" class="icon" data-toggle="tooltip" data-placement="top" title="@L["LVP"]"/>
                                         }
+
+                                        @if (details.Administrator)
+                                        {
+                                            <button type="button" class="btn btn-link btn-xs ms-replace" data-half="@(round - 1)" data-survivor="true" data-player="@player.CommunityId" data-name="@(DisplayNames.Apply(player.CommunityId, player.PlayerName) ?? player.CommunityId)" title="@L["Replace this player"]" aria-label="@L["Replace this player"]" data-toggle="tooltip" data-placement="top">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -242,6 +249,13 @@
                                         @if (tankWipe != null && infectedPlayer.CommunityId == tankWipe)
                                         {
                                             <img src="~/imgs/infected-type/tank.jpg" alt="@L["Tank wipe"]" class="icon tank-wipe" data-toggle="tooltip" data-placement="top" title="@L["Tank wipe"]"/>
+                                        }
+
+                                        @if (details.Administrator)
+                                        {
+                                            <button type="button" class="btn btn-link btn-xs ms-replace" data-half="@(round - 1)" data-survivor="false" data-player="@infectedPlayer.CommunityId" data-name="@(DisplayNames.Apply(infectedPlayer.CommunityId, infectedPlayer.PlayerName) ?? infectedPlayer.CommunityId)" title="@L["Replace this player"]" aria-label="@L["Replace this player"]" data-toggle="tooltip" data-placement="top">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </button>
                                         }
                                     </td>
                                     <td class="slim text-center">

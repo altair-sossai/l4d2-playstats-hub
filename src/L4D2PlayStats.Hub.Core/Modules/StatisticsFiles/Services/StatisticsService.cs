@@ -97,58 +97,34 @@ public class StatisticsService(
         }
     }
 
-    public async Task<PlayerReplacementResult> ReplacePlayerAsync(int matchId, IReadOnlyCollection<int> fileIds, long replaced, long replacement, string? replacementName, CancellationToken cancellationToken = default)
+    // Puts another player on one line of a map: a survivor or an infected of one round half. The file is saved with
+    // the change and the matches around the map are rebuilt, so the result and the ranking follow.
+    public async Task<PlayerReplacementResult> ReplacePlayerAsync(int fileId, int half, bool survivor, long replaced, long replacement, string? replacementName, CancellationToken cancellationToken = default)
     {
         if (replaced == replacement)
             return PlayerReplacementResult.Failed(PlayerReplacementError.SamePlayer);
 
-        var ids = fileIds.Distinct().ToList();
-        if (ids.Count == 0)
-            return PlayerReplacementResult.Failed(PlayerReplacementError.NoMaps);
-
         await using (await hubState.LockAsync(cancellationToken))
         {
-            if (!await dbContext.Matches.AnyAsync(m => m.Id == matchId, cancellationToken))
-                return PlayerReplacementResult.Failed(PlayerReplacementError.MatchNotFound);
+            var file = await dbContext.StatisticsFiles.FirstOrDefaultAsync(f => f.Id == fileId, cancellationToken);
+            if (file == null)
+                return PlayerReplacementResult.Failed(PlayerReplacementError.FileNotFound);
 
-            var files = await dbContext.StatisticsFiles.Where(f => ids.Contains(f.Id)).OrderBy(f => f.FileDate).ToListAsync(cancellationToken);
-            if (files.Count != ids.Count || files.Any(f => f.MatchId != matchId))
-                return PlayerReplacementResult.Failed(PlayerReplacementError.MapNotInMatch, files.FirstOrDefault(f => f.MatchId != matchId)?.MapName);
-
-            var parsed = new List<(StatisticsFile File, ParsedStatistics Statistics)>();
-
-            // Every map is checked before any is changed, so a replacement is done in all the chosen maps or in none.
-            foreach (var file in files)
-            {
-                if (!ParsedStatistics.TryParse(file.Content, out var statistics) || statistics == null)
-                    return PlayerReplacementResult.Failed(PlayerReplacementError.UnreadableMap, file.MapName);
-
-                if (!PlayerReplacement.Plays(statistics, replaced))
-                    return PlayerReplacementResult.Failed(PlayerReplacementError.NotInMap, file.MapName);
-
-                if (PlayerReplacement.Plays(statistics, replacement))
-                    return PlayerReplacementResult.Failed(PlayerReplacementError.AlreadyInMap, file.MapName);
-
-                parsed.Add((file, statistics));
-            }
+            if (!ParsedStatistics.TryParse(file.Content, out var statistics) || statistics == null)
+                return PlayerReplacementResult.Failed(PlayerReplacementError.UnreadableFile);
 
             var name = await ReplacementNameAsync(replacement, replacementName, cancellationToken);
 
-            foreach (var (file, statistics) in parsed)
-            {
-                PlayerReplacement.Apply(statistics, replaced, replacement, name);
+            if (PlayerReplacement.Apply(statistics, half, survivor, replaced, replacement, name) is { } error)
+                return PlayerReplacementResult.Failed(error);
 
-                file.Content = statistics.ToString();
-                file.Apply(new ParsedStatistics(file.Content));
-            }
+            file.Content = statistics.ToString();
+            file.Apply(new ParsedStatistics(file.Content));
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            await matchBuildService.RebuildAroundAsync(file.GameServerId, file.SeasonId, file.FileDate, cancellationToken);
 
-            var first = files[0];
-
-            await matchBuildService.RebuildAroundAsync(first.GameServerId, first.SeasonId, first.FileDate, cancellationToken);
-
-            return new PlayerReplacementResult(null, first.MatchId);
+            return new PlayerReplacementResult(null, file.MatchId);
         }
     }
 

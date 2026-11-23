@@ -65,17 +65,13 @@ After the change, the site rebuilds the matches around that map, so the winner, 
 
 ## Replacing a player
 
-When a substitute comes in for a player, the files have the player who left in the first maps and the substitute in the others. The result of a match only counts for who played both the first and the last map, so the player who left gets a rage quit and the substitute gets neither the win nor the loss.
+When a substitute comes in for a player, the files have the player who left in the first maps, or in the first half of a map, and the substitute in the rest. The result of a match only counts for who played both the first and the last map, so the player who left gets a rage quit and the substitute gets neither the win nor the loss.
 
-An administrator fixes this with **Replace a player**, at the top of **Map results**, or with the ⇄ button next to each name in the survivor tables:
+An administrator fixes this on the page of the map. Each survivor and each infected of each round half has a pencil next to the name: click it, choose the new player in the player search window and confirm. That line, with its numbers, goes to the new player, and the site rebuilds the match, so the winner, the rage quits, the experience and the ranking follow the change. The statistics file of the map is saved with the change; to undo it, use the pencil again and choose the previous player.
 
-1. Choose the **Player who left**. The list has everyone who played at least one map of the match, as survivor or infected, including who left before the last map.
-2. Choose the **Player who came in**: type a Steam ID or a profile link, or click **Choose from the list** to search the players.
-3. Check the **Maps** to change. Only the maps the player who left played can be checked, and a map the player who came in already played cannot be changed, since both would be in it.
+A replacement is refused when the new player is already in that round half on the same side, or played the map for the other team.
 
-In the checked maps, the player who came in takes the place and the numbers of the player who left, as survivor and as infected. The site then rebuilds the match, so the winner, the rage quits, the experience and the ranking follow the change. The statistics files of those maps are saved with the change; to undo it, replace the players back.
-
-For example, if A left after the first map and B played the rest, replacing A with B in the first map gives B the result of the match and takes the rage quit away from A. B also takes the numbers A made in that map.
+For example, if A was a survivor in the first half of the first map and B played the rest of the match, the pencil next to A in the first half of that map, choosing B, gives B the result of the match and takes the rage quit away from A. B also takes the numbers A made in that half.
 
 ## How files become matches
 

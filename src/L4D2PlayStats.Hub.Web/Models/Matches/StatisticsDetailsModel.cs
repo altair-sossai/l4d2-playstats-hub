@@ -7,6 +7,7 @@ public class StatisticsDetailsModel
     public required MatchCardModel Card { get; init; }
     public IReadOnlyList<MatchStatisticsResult> Statistics { get; init; } = [];
     public MatchStatisticsResult? Statistic { get; init; }
+    public bool Administrator { get; init; }
 
     public MatchResult Match => Card.Match;
     public TimeZoneInfo TimeZone => Card.TimeZone;
