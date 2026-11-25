@@ -98,6 +98,7 @@ El núcleo siempre está activado: registro de servidores de juego, subida de es
 | Tienda de skins de armas | Estrellas, compras, regalos y skins equipadas. Necesita el ranking. | Desactivado |
 | Ranking de la comunidad | Votación por pares y su ranking. | Desactivado |
 | Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat. | Desactivado |
+| Campeonatos | Campeonatos con participantes, equipos, draft, fases de liga y eliminatoria, fechas y resultados. | Desactivado |
 
 Un módulo desactivado desaparece del menú y sus páginas responden como no encontradas.
 

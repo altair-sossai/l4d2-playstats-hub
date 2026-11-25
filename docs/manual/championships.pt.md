@@ -1,0 +1,173 @@
+# Campeonatos
+
+🌐 [English](championships.md) | **Português** | [Español](championships.es.md)
+
+O módulo Campeonatos organiza campeonatos disputados nos servidores de jogo da comunidade: os participantes, as equipes e como elas são formadas, as fases (pontos corridos, com grupos, e mata-mata), as campanhas de cada jogo, as datas, os resultados e as estatísticas. Ele vem desligado; ligue-o em [Administração > Módulos](administration.pt.md#módulos).
+
+[Voltar ao manual](README.pt.md)
+
+## Conteúdo
+
+- [Para jogadores](#para-jogadores)
+  - [A página de campeonatos](#a-página-de-campeonatos)
+  - [A página de um campeonato](#a-página-de-um-campeonato)
+  - [A página de uma série](#a-página-de-uma-série)
+  - [Para capitães e vices](#para-capitães-e-vices)
+- [Para administradores](#para-administradores)
+  - [Criando um campeonato](#criando-um-campeonato)
+  - [Configurações](#configurações)
+  - [Participantes](#participantes)
+  - [Equipes](#equipes)
+  - [Draft](#draft)
+  - [Fases](#fases)
+  - [Jogos e resultados](#jogos-e-resultados)
+  - [Histórico](#histórico)
+- [Como as regras funcionam](#como-as-regras-funcionam)
+
+## Para jogadores
+
+### A página de campeonatos
+
+**Campeonatos** no menu lista os campeonatos em andamento no topo, em cartões, e abaixo o histórico dos finalizados e cancelados, com o campeão e o vice de cada um. Um campeonato em rascunho não aparece: só os administradores o veem.
+
+### A página de um campeonato
+
+Cada campeonato tem seu endereço, como `/championships/copa-2027`, e estas abas:
+
+| Aba | O que mostra |
+|---|---|
+| Visão geral | A descrição, o pódio quando terminou, os próximos jogos, os últimos resultados, as séries da sua equipe quando você é o capitão ou o vice, e o formato de cada fase. |
+| Regras | As regras escritas pela administração, no idioma da página quando há tradução. |
+| Equipes | Cada equipe com capitão, vice e jogadores, com as horas de Left 4 Dead 2 de cada um. |
+| Draft | A ordem dos capitães e cada escolha, quando as equipes foram formadas por draft, roleta ou potes. |
+| Classificação | A tabela de cada fase de pontos corridos e de cada grupo, com as equipes que avançam para a próxima fase marcadas em verde. |
+| Chave | A chave de cada fase de mata-mata, rodada a rodada, com a disputa de terceiro lugar quando existe. |
+| Jogos | Todas as séries por fase e rodada, com a data, o prazo e o resultado. |
+| Estatísticas | As séries e os jogos vencidos por cada equipe, e os números de cada jogador nos jogos ligados a partidas do servidor: MVPs, dano SI, comuns, skeets, levels, crowns, dano no Tank e mortes. |
+
+Uma aba só aparece quando tem algo a mostrar.
+
+### A página de uma série
+
+Uma série é o confronto de duas equipes: um jogo (melhor de 1) ou mais (melhor de 3, melhor de 5). A página mostra o placar em jogos, o status, a data com os botões **Adicionar ao Google Agenda** e **Baixar .ics**, o prazo, os vetos e cada jogo com a campanha, quem a escolheu, o placar e o link para a partida do servidor.
+
+Um jogo decidido por penalidade mostra os pontos descontados. No mata-mata, um jogo que não é mais necessário, como o terceiro depois de um 2 a 0, aparece como **Não necessário**.
+
+### Para capitães e vices
+
+Entre com a Steam. Quando você é o capitão ou o vice de uma das equipes de uma série em andamento, a página dela mostra o painel **Sua equipe**:
+
+- **Vetar uma campanha**: quando a fase tem vetos, cada equipe veta uma campanha antes do primeiro jogo. Uma campanha vetada não é escolhida nem sorteada na série.
+- **Campanha do jogo N**: quando as equipes escolhem as campanhas, sua equipe escolhe os jogos da vez dela. A melhor cabeça de chave escolhe o primeiro jogo, a outra equipe o segundo, e assim por diante. O último jogo de uma melhor de 3 ou de 5 é o desempate, sorteado só quando é necessário. Só aparecem as campanhas permitidas pelas regras.
+- **Datas**: proponha uma data para a outra equipe. Sua proposta já sai aceita pela sua equipe; o capitão ou o vice da outra equipe aceita ou recusa. Quando as duas equipes aceitam a mesma data, a série fica marcada. Uma data confirmada não pode ser excluída pelas equipes; para mudar, proponham outra e as duas aceitem. Você pode excluir as suas propostas que não foram confirmadas.
+
+Os horários estão no fuso do site, mostrado ao lado do formulário.
+
+## Para administradores
+
+**Administração > Campeonatos** lista todos os campeonatos, inclusive os rascunhos, numa tabela com status, equipes, participantes e campeão. **Adicionar** abre uma janela para criar um; **Editar** abre a página do campeonato e **Excluir** apaga o campeonato com as equipes, fases, jogos e histórico (as partidas do servidor não são alteradas).
+
+A página de um campeonato mostra os números no topo (participantes, equipes, fases montadas e séries terminadas) e as abas Configurações, Participantes, Equipes, Draft (quando a formação das equipes não é manual), Fases, Jogos e Histórico. Cada aba começa explicando para que serve e com os botões das suas ações; toda alteração é feita numa janela, e o endereço guarda a aba, então a página recarregada depois de salvar abre na mesma aba.
+
+### Criando um campeonato
+
+Na janela **Adicionar**, digite o nome e escolha o formato. O formato só cria as primeiras fases; tudo pode ser mudado na aba Fases até cada fase ser montada.
+
+| Formato | Fases |
+|---|---|
+| Pontos corridos | Todas as equipes se enfrentam uma vez, em melhor de 1, com uma campanha sorteada para cada rodada. |
+| Pontos corridos + mata-mata | Pontos corridos, e os quatro melhores disputam um mata-mata em melhor de 3, com as equipes escolhendo as campanhas. |
+| Mata-mata | Só um mata-mata em melhor de 3, com a chave sorteada. |
+| Grupos + mata-mata | Dois grupos, e os dois melhores de cada grupo disputam um mata-mata em melhor de 3. |
+
+Um campeonato novo é um rascunho, visto só pelos administradores, e a página dele abre na aba Configurações.
+
+### Configurações
+
+Um único formulário, salvo com o botão **Salvar** no rodapé:
+
+- **Campeonato**: nome, endereço, descrição curta, datas de início e fim, modo de jogo (como ZoneMod v2.9.1b) e os links da transmissão e dos vídeos.
+- **Status**: Rascunho, Participantes, Formação das equipes, Em andamento, Finalizado ou Cancelado, com o motivo do cancelamento. Montar a primeira fase coloca o campeonato em andamento. Marque como finalizado depois da final: o histórico passa a mostrar o campeão.
+- **Equipes e jogadores**: jogadores por jogo, jogadores por equipe (o máximo de jogadores de uma equipe, contando os reservas), vagas (o máximo de participantes), a formação das equipes (manual, roleta, potes, draft em serpentina ou draft em linha) e se as equipes podem ter reservas.
+- **Regras**, em inglês, português e espanhol, em Markdown: `#` títulos, `-` listas, `**negrito**`, `*itálico*` e `[links](https://...)`. A página mostra o texto do idioma do visitante, ou o em inglês.
+
+### Participantes
+
+Só a administração adiciona participantes. **Adicionar** abre uma janela onde você cola IDs da Steam, um por linha, ou usa **Escolher da lista** na janela de busca de jogadores. A tabela, com 20 jogadores por página, mostra as horas de Left 4 Dead 2 de cada jogador, a equipe e o pote; **Editar** muda o pote, usado no sorteio por potes, e **Remover** tira o jogador do campeonato e da equipe.
+
+### Equipes
+
+**Adicionar** cria uma equipe, e **Adicionar várias** cria Equipe A, Equipe B, Equipe C e assim por diante. A tabela mostra o cabeça de chave (1 é a melhor; ordena as equipes quando uma fase é montada pela ordem das equipes), o capitão, o vice e os jogadores de cada equipe. Em cada linha:
+
+- **Editar**: nome, sigla, cabeça de chave, capitão e vice. Um capitão ou vice sem equipe entra nesta equipe, e é assim que se escolhem os capitães de um draft.
+- **Jogadores**: os jogadores da equipe, com **Remover**, e **Adicionar jogador** com um ID da Steam ou a janela de busca de jogadores.
+- **Excluir**, enquanto a equipe não está em nenhuma fase.
+
+Um jogador só pode estar em uma equipe, e uma equipe não pode passar do limite de jogadores.
+
+### Draft
+
+Os botões no topo seguem o método escolhido nas configurações, e **Desfazer a última escolha** e **Recomeçar o draft** desfazem as escolhas. Cada escolha aparece na página pública do Draft.
+
+| Método | Como funciona |
+|---|---|
+| Manual | Não há aba Draft: a administração coloca cada jogador em uma equipe na aba Equipes. |
+| Roleta | **Girar a roleta** sorteia uma equipe entre as que têm menos jogadores e um jogador sem equipe. |
+| Potes | Defina o pote de cada participante na aba Participantes. **Sortear os potes** dá a cada equipe um jogador de cada pote; o jogador do primeiro pote vira o capitão de uma equipe que ainda não tem. |
+| Draft em serpentina | Dê um capitão a cada equipe na aba Equipes e **Sortear a ordem dos capitães**. A equipe da vez fica destacada; clique em **Escolher** no jogador que ela escolheu entre os que estão sem equipe. A ordem é A, B, C, D e depois D, C, B, A. |
+| Draft em linha | O mesmo, sempre na ordem A, B, C, D. |
+
+### Fases
+
+As fases são disputadas em ordem. **Adicionar** acrescenta uma no fim, com nome e tipo. A tabela mostra o formato, a regra das campanhas e se cada fase está montada, e as linhas têm:
+
+- **Editar**: a janela com todos os campos da fase, abaixo.
+- **Montar**: uma janela com as equipes que entram, na ordem delas, e o botão que cria os grupos e rodadas, ou a chave. A primeira fase recebe todas as equipes; as seguintes recebem as que avançam da fase anterior, que precisa estar montada e terminada.
+- **Penalidades** (fases de pontos corridos montadas): pontos descontados da classificação, com motivo.
+- **Desfazer** (fases montadas): apaga as séries e os resultados da fase para recomeçar, desde que a próxima fase não tenha sido montada.
+- **Excluir** (fases não montadas).
+
+| Campo | Significado |
+|---|---|
+| Tipo | Pontos corridos ou mata-mata. Uma fase de mata-mata precisa ser a última. |
+| Ordem das equipes | Pela ordem das equipes (cabeças de chave), por sorteio ou pela classificação da fase anterior. |
+| Melhor de | O número de jogos de cada série. O mata-mata tem a sua **Final melhor de**. |
+| Grupos e Turnos | Pontos corridos: quantos grupos, e se cada equipe enfrenta as outras uma ou duas vezes. |
+| Classificados por grupo | Quantas equipes de cada grupo entram na próxima fase. 0 para todas. Só quando há uma próxima fase. |
+| Vitória, Empate, Derrota | Os pontos de uma série na classificação. |
+| Desempates | Até três, em ordem: saldo de pontos, pontos conquistados, confronto direto, vitórias. |
+| Disputa de terceiro lugar | Mata-mata: os perdedores das semifinais disputam o terceiro lugar. |
+| Campanhas | Uma campanha sorteada para cada rodada, cada equipe escolhe uma com o desempate sorteado, ou a administração escolhe. |
+| Mínimo de mapas | Só campanhas com pelo menos esta quantidade de mapas podem ser escolhidas ou sorteadas. |
+| Vetos e uma vez por equipe | Cada equipe veta uma campanha por série, e uma equipe escolhe cada campanha uma única vez no campeonato. |
+
+Num mata-mata com um número de equipes que não é potência de dois, os melhores cabeças de chave ganham folga para a rodada seguinte. Com seis equipes, por exemplo, o primeiro e o segundo esperam nas semifinais, o terceiro enfrenta o sexto e o quarto enfrenta o quinto. Depois de montada, o tipo, os jogos, os grupos e a regra das campanhas não mudam; os pontos, os desempates, o mínimo de mapas, os vetos e a regra de uma vez por equipe ainda podem mudar.
+
+### Jogos e resultados
+
+A aba Jogos lista todas as séries das fases montadas, 20 por página, com filtro por fase. No topo:
+
+- **Prazos**: a data até a qual todas as séries de uma rodada devem ser disputadas, mostrada nas páginas dos jogos. Deixe vazio para tirar.
+- **Campanhas**: sortear de novo, ou limpar, as campanhas dos jogos ainda não disputados de uma fase.
+
+Cada série mostra a rodada, as equipes, o resultado, a data e um botão numerado por jogo: verde quando disputado, apagado quando não é necessário. O botão de um jogo abre a janela do jogo:
+
+- **Campanha**, escolhida pela administração a qualquer momento. Numa fase em que as equipes escolhem, a escolha da administração vale como a escolha da equipe daquela vez.
+- **Resultado**: ainda não disputado; **Partida do servidor**, entre as partidas dos últimos 60 dias com jogadores das duas equipes, das mais novas para as mais antigas, que dá o placar e descobre de que lado jogou cada equipe (uma partida só pode ser ligada a um jogo, e as estatísticas do campeonato vêm das partidas ligadas); ou **Digitar o resultado**, para um jogo que não tem partida no servidor.
+- **Penalidade** de cada equipe e observações: pontos descontados do placar de uma equipe no jogo. Podem mudar o vencedor.
+
+**Editar** numa série abre a janela dela: a data, o prazo, as observações, os vetos de cada equipe (quando a fase tem vetos), o W.O. (a equipe que vence sem jogar; os jogos não disputados são cancelados) e as propostas de data das equipes, que podem ser excluídas. **Ver** abre a página pública da série.
+
+O vencedor de uma série de mata-mata avança sozinho para a próxima série. Um resultado que mudaria um vencedor que já começou a próxima série é recusado: limpe antes os resultados da próxima série.
+
+### Histórico
+
+Todas as alterações do campeonato, com quem as fez e quando, 20 por página.
+
+## Como as regras funcionam
+
+- **Uma série** termina quando uma equipe vence a maioria dos jogos, como dois de três. Nos pontos corridos ela também termina depois de todos os jogos, e um número igual de vitórias é empate.
+- **Um jogo** é vencido pela equipe com mais pontos depois da penalidade. Nos pontos corridos, um empate é empate. No mata-mata, um jogo empatado não conta para ninguém, e um novo jogo é criado na série com uma campanha sorteada.
+- **A classificação** dá os pontos de vitória, empate e derrota, menos os pontos de penalidade. O saldo de pontos é o total conquistado menos o sofrido menos as penalidades dos jogos. Com pontos iguais, os desempates são usados em ordem, e depois o cabeça de chave.
+- **Os sorteios de campanhas** evitam as campanhas já escolhidas na série e os vetos, e só usam campanhas com o mínimo de mapas.
+- **Os jogos de um campeonato** são partidas normais do servidor: contam para o ranking como qualquer outra. A página da partida mostra o campeonato e leva à série.

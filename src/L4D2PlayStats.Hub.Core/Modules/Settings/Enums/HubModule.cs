@@ -8,5 +8,6 @@ public enum HubModule
     CommunityRanking,
     SiteChat,
     RemoteCommands,
-    AntiCheat
+    AntiCheat,
+    Championships
 }

@@ -1,0 +1,165 @@
+@model ChampionshipAdminModel
+@using L4D2PlayStats.Hub.Core.Modules.Championships.Services
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    var method = championship.DraftMethod;
+    var ordered = method is ChampionshipDraftMethod.Snake or ChampionshipDraftMethod.Linear;
+    var order = championship.Teams.Where(team => team.DraftPosition != null).OrderBy(team => team.DraftPosition).ToList();
+    var onTheClock = ChampionshipDraftService.OnTheClock(championship);
+    var free = ChampionshipDraftService.Free(championship);
+    var picks = championship.DraftPicks.OrderByDescending(pick => pick.Number).ToList();
+    var lead = method switch
+    {
+        ChampionshipDraftMethod.Roulette => L["Each spin draws a team among the ones with fewest players and a player without a team. Spin until the teams are full."].Value,
+        ChampionshipDraftMethod.Pots => L["Set the pot of each participant on the Participants tab, then draw the pots: each team gets one player of each pot, and the player of the first pot becomes the captain of a team without one."].Value,
+        _ => L["Give each team a captain on the Teams tab, then draw the order of the captains. The team on the clock chooses a player among the ones without a team: click Pick on the player it chose."].Value
+    };
+}
+
+<p class="admin-lead">@ChampionshipTexts.DraftMethod(L, method). @lead @L["Every pick goes to the public Draft page."]</p>
+
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        @if (ordered)
+        {
+            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/order">
+                <button class="btn btn-primary" type="submit" disabled="@(picks.Count > 0)">
+                    <span class="glyphicon glyphicon-random"></span> @L["Draw the order of the captains"]
+                </button>
+            </form>
+        }
+        @if (method == ChampionshipDraftMethod.Roulette)
+        {
+            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/spin">
+                <button class="btn btn-primary" type="submit" disabled="@(free.Count == 0)">
+                    <span class="glyphicon glyphicon-repeat"></span> @L["Spin the roulette"]
+                </button>
+            </form>
+        }
+        @if (method == ChampionshipDraftMethod.Pots)
+        {
+            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/pots" data-confirm="@L["Draw the pots now?"]">
+                <button class="btn btn-primary" type="submit" disabled="@(free.Count == 0)">
+                    <span class="glyphicon glyphicon-random"></span> @L["Draw the pots"]
+                </button>
+            </form>
+        }
+        <form method="post" asp-antiforgery="true" action="@Model.Url/draft/undo">
+            <button class="btn btn-default" type="submit" disabled="@(picks.Count == 0)">
+                <span class="glyphicon glyphicon-share-alt"></span> @L["Undo the last pick"]
+            </button>
+        </form>
+        <form method="post" asp-antiforgery="true" action="@Model.Url/draft/reset" data-confirm="@L["Undo every pick of the draft?"]">
+            <button class="btn btn-danger" type="submit" disabled="@(picks.Count == 0 && order.Count == 0)">
+                <span class="glyphicon glyphicon-refresh"></span> @L["Reset the draft"]
+            </button>
+        </form>
+    </div>
+</div>
+
+@if (ordered && onTheClock != null)
+{
+    <div class="alert alert-info"><span class="glyphicon glyphicon-hourglass"></span> @L["{0} chooses now.", onTheClock.Name]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @if (ordered)
+        {
+            <p class="admin-section">@L["Order of the captains"]</p>
+            @if (order.Count == 0)
+            {
+                <div class="admin-empty">@L["Give each team a captain and draw the order."]</div>
+            }
+            else
+            {
+                <table class="table table-striped table-bordered table-condensed admin-table">
+                    <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th>@L["Team"]</th>
+                        <th>@L["Captain"]</th>
+                        <th class="text-center">@L["Players"]</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var team in order)
+                    {
+                        <tr class="@(onTheClock?.Id == team.Id ? "info" : null)">
+                            <td class="text-center">@team.DraftPosition</td>
+                            <td>@team.Name</td>
+                            <td>@(team.CaptainCommunityId == null ? "—" : DisplayNames.Apply(team.CaptainCommunityId.Value, view.PlayerName(team.CaptainCommunityId.Value)))</td>
+                            <td class="text-center">@team.Members.Count / @championship.RosterSize</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        }
+        <p class="admin-section">@L["Players without a team"] <span class="badge">@free.Count</span></p>
+        @if (free.Count == 0)
+        {
+            <div class="admin-empty">@L["Every participant is in a team."]</div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed admin-table championship-free-list">
+                <tbody>
+                @foreach (var player in free)
+                {
+                    var hours = view.Hours(player);
+
+                    <tr>
+                        <td class="vertical-align-middle">
+                            <img src="@AppConsts.AvatarUrl@player" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                            @DisplayNames.Apply(player, view.PlayerName(player))
+                        </td>
+                        <td class="text-center vertical-align-middle">@(hours == null ? "—" : L["{0} h", Display.Number(hours.Value)].Value)</td>
+                        @if (ordered)
+                        {
+                            <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                                <form method="post" asp-antiforgery="true" action="@Model.Url/draft/pick">
+                                    <input type="hidden" name="communityId" value="@player">
+                                    <button class="btn btn-xs btn-primary" type="submit" disabled="@(onTheClock == null)">
+                                        <span class="glyphicon glyphicon-ok"></span> @L["Pick"]
+                                    </button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <p class="admin-section">@L["Picks"] <span class="badge">@picks.Count</span></p>
+        @if (picks.Count == 0)
+        {
+            <div class="admin-empty">@L["No pick yet."]</div>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered table-condensed admin-table championship-picks">
+                <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>@L["Team"]</th>
+                    <th>@L["Player"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var pick in picks)
+                {
+                    <tr>
+                        <td class="text-center">@pick.Number</td>
+                        <td>@view.TeamName(pick.TeamId)</td>
+                        <td>@DisplayNames.Apply(pick.CommunityId, view.PlayerName(pick.CommunityId))</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

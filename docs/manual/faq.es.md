@@ -52,6 +52,12 @@ Va unos 15 segundos atrasada, a propósito. Un administrador cambia el retraso e
 **¿Cómo agrego otro administrador?**
 En [Administración > Administradores](administration.es.md#administradores), con su SteamID64. Si ya no puedes iniciar sesión, usa `playstats-hub add-admin <SteamID64>` en Linux.
 
+**¿Cómo organizo un campeonato?**
+Activa **Campeonatos** en [Administración > Módulos](administration.es.md#módulos) y crea el campeonato en **Administración > Campeonatos**: elige el formato, añade los participantes y los equipos y arma la primera fase. Consulta [Campeonatos > Para administradores](championships.es.md#para-administradores).
+
+**Un juego del campeonato se jugó fuera de nuestro servidor.**
+En la pestaña Juegos del campeonato, en **Administración > Campeonatos**, haz clic en el botón del juego y elige **Escribir el resultado**. El juego cuenta en la clasificación y en el cuadro, pero no tiene estadísticas.
+
 **¿Cómo agrego un segundo servidor de juego?**
 En [Administración > Servidores de juego](administration.es.md#servidores-de-juego). Cada servidor recibe su propio token. Los resultados de los jugadores se suman entre todos los servidores.
 

@@ -1,0 +1,329 @@
+@model ChampionshipAdminModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@using L4D2PlayStats.Hub.Core.Modules.Championships.Services
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+}
+
+<div class="modal fade" id="stage-add-modal" tabindex="-1" role="dialog" aria-labelledby="stage-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="stage-add-title">@L["Add a stage"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-7 form-group" style="margin-bottom: 0">
+                        <label for="stage-add-name">@L["Name"]</label>
+                        <input class="form-control" id="stage-add-name" name="name" required maxlength="@CoreConsts.ChampionshipStageNameMaxLength" autocomplete="off">
+                    </div>
+                    <div class="col-sm-5 form-group" style="margin-bottom: 0">
+                        <label for="stage-add-type">@L["Type"]</label>
+                        <select class="form-control" id="stage-add-type" name="type">
+                            @foreach (var type in Enum.GetValues<ChampionshipStageType>())
+                            {
+                                <option value="@type">@ChampionshipTexts.StageType(L, type)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <p class="help-block" style="margin: 10px 0 0">@L["The stage is added at the end. A knockout stage must be the last one. Set its format with Edit."]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@foreach (var stage in view.Stages)
+{
+    var previous = ChampionshipStageService.Previous(championship, stage);
+    var next = ChampionshipStageService.Next(championship, stage);
+    var locked = stage.Generated;
+    var tiebreakers = ChampionshipTiebreakers.Parse(stage.Tiebreakers);
+    var entrants = Model.Entrants.GetValueOrDefault(stage.Id) ?? [];
+
+    <div class="modal fade" id="stage-edit-modal-@stage.Id" tabindex="-1" role="dialog" aria-labelledby="stage-edit-title-@stage.Id">
+        <div class="modal-dialog modal-lg" role="document">
+            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="stage-edit-title-@stage.Id">@L["Edit the stage"]</h4>
+                </div>
+                <div class="modal-body">
+                    @if (locked)
+                    {
+                        <div class="alert alert-info">@L["The stage is built: its type, games, groups and campaign rule cannot change. Reset it to change them."]</div>
+                        <input type="hidden" name="Type" value="@stage.Type">
+                        <input type="hidden" name="BestOf" value="@stage.BestOf">
+                        <input type="hidden" name="FinalBestOf" value="@stage.FinalBestOf">
+                        <input type="hidden" name="GroupCount" value="@stage.GroupCount">
+                        <input type="hidden" name="Legs" value="@stage.Legs">
+                        <input type="hidden" name="Seeding" value="@stage.Seeding">
+                        <input type="hidden" name="CampaignRule" value="@stage.CampaignRule">
+                        <input type="hidden" name="ThirdPlace" value="@(stage.ThirdPlace ? "true" : "false")">
+                    }
+                    <div class="row">
+                        <div class="col-sm-4 form-group">
+                            <label for="stage-name-@stage.Id">@L["Name"]</label>
+                            <input class="form-control" id="stage-name-@stage.Id" name="Name" value="@stage.Name" maxlength="@CoreConsts.ChampionshipStageNameMaxLength" required>
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="stage-type-@stage.Id">@L["Type"]</label>
+                            <select class="form-control" id="stage-type-@stage.Id" name="@(locked ? null : "Type")" disabled="@locked">
+                                @foreach (var type in Enum.GetValues<ChampionshipStageType>())
+                                {
+                                    <option value="@type" selected="@(type == stage.Type)">@ChampionshipTexts.StageType(L, type)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="stage-seeding-@stage.Id">@L["Order of the teams"]</label>
+                            <select class="form-control" id="stage-seeding-@stage.Id" name="@(locked ? null : "Seeding")" disabled="@locked">
+                                @foreach (var seeding in Enum.GetValues<ChampionshipSeeding>().Where(seeding => previous != null || seeding != ChampionshipSeeding.Standings))
+                                {
+                                    <option value="@seeding" selected="@(seeding == stage.Seeding)">@ChampionshipTexts.Seeding(L, seeding)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3 form-group">
+                            <label for="stage-bestof-@stage.Id">@L["Best of"]</label>
+                            <input type="number" class="form-control" id="stage-bestof-@stage.Id" name="@(locked ? null : "BestOf")" min="1" max="@CoreConsts.ChampionshipMaxBestOf" value="@stage.BestOf" disabled="@locked">
+                        </div>
+                        @if (stage.IsKnockout)
+                        {
+                            <div class="col-sm-3 form-group">
+                                <label for="stage-final-@stage.Id">@L["Final best of"]</label>
+                                <input type="number" class="form-control" id="stage-final-@stage.Id" name="@(locked ? null : "FinalBestOf")" min="1" max="@CoreConsts.ChampionshipMaxBestOf" value="@stage.FinalBestOf" disabled="@locked">
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="checkbox championship-checkbox">
+                                    <label for="stage-third-@stage.Id">
+                                        <input type="checkbox" id="stage-third-@stage.Id" name="@(locked ? null : "ThirdPlace")" value="true" checked="@stage.ThirdPlace" disabled="@locked">
+                                        @if (!locked)
+                                        {
+                                            <input type="hidden" name="ThirdPlace" value="false">
+                                        }
+                                        @L["Third place series"]
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-sm-3 form-group">
+                                <label for="stage-groups-@stage.Id">@L["Groups"]</label>
+                                <input type="number" class="form-control" id="stage-groups-@stage.Id" name="@(locked ? null : "GroupCount")" min="1" max="@CoreConsts.ChampionshipMaxGroups" value="@stage.GroupCount" disabled="@locked">
+                            </div>
+                            <div class="col-sm-3 form-group">
+                                <label for="stage-legs-@stage.Id">@L["Legs"] @FieldHelp.Tip(L["1: every team plays every other once. 2: twice, with the sides swapped."])</label>
+                                <input type="number" class="form-control" id="stage-legs-@stage.Id" name="@(locked ? null : "Legs")" min="1" max="@CoreConsts.ChampionshipMaxLegs" value="@stage.Legs" disabled="@locked">
+                            </div>
+                            @if (next != null)
+                            {
+                                <div class="col-sm-3 form-group">
+                                    <label for="stage-qualifiers-@stage.Id">@L["Move on per group"] @FieldHelp.Tip(L["How many teams of each group enter the next stage. 0 for all."])</label>
+                                    <input type="number" class="form-control" id="stage-qualifiers-@stage.Id" name="Qualifiers" min="0" max="@CoreConsts.ChampionshipMaxTeams" value="@stage.Qualifiers" readonly="@(next.Generated)">
+                                </div>
+                            }
+                            else
+                            {
+                                <input type="hidden" name="Qualifiers" value="@stage.Qualifiers">
+                            }
+                        }
+                    </div>
+                    @if (!stage.IsKnockout)
+                    {
+                        <div class="row">
+                            <div class="col-sm-2 col-xs-4 form-group">
+                                <label for="stage-win-@stage.Id">@L["Win"]</label>
+                                <input type="number" class="form-control" id="stage-win-@stage.Id" name="PointsForWin" min="0" max="@CoreConsts.ChampionshipMaxPoints" value="@stage.PointsForWin">
+                            </div>
+                            <div class="col-sm-2 col-xs-4 form-group">
+                                <label for="stage-draw-@stage.Id">@L["Draw"]</label>
+                                <input type="number" class="form-control" id="stage-draw-@stage.Id" name="PointsForDraw" min="0" max="@CoreConsts.ChampionshipMaxPoints" value="@stage.PointsForDraw">
+                            </div>
+                            <div class="col-sm-2 col-xs-4 form-group">
+                                <label for="stage-loss-@stage.Id">@L["Loss"]</label>
+                                <input type="number" class="form-control" id="stage-loss-@stage.Id" name="PointsForLoss" min="0" max="@CoreConsts.ChampionshipMaxPoints" value="@stage.PointsForLoss">
+                            </div>
+                            @for (var index = 0; index < 3; index++)
+                            {
+                                var current = index < tiebreakers.Count ? tiebreakers[index] : (ChampionshipTiebreaker?)null;
+
+                                <div class="col-sm-2 col-xs-4 form-group">
+                                    <label for="stage-tiebreaker-@stage.Id-@index">@L["Tiebreaker {0}", index + 1]</label>
+                                    <select class="form-control" id="stage-tiebreaker-@stage.Id-@index" name="tiebreaker">
+                                        <option value="">—</option>
+                                        @foreach (var tiebreaker in Enum.GetValues<ChampionshipTiebreaker>())
+                                        {
+                                            <option value="@tiebreaker" selected="@(tiebreaker == current)">@ChampionshipTexts.Tiebreaker(L, tiebreaker)</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="stage-rule-@stage.Id">@L["Campaigns"]</label>
+                            <select class="form-control" id="stage-rule-@stage.Id" name="@(locked ? null : "CampaignRule")" disabled="@locked">
+                                @foreach (var rule in Enum.GetValues<ChampionshipCampaignRule>())
+                                {
+                                    <option value="@rule" selected="@(rule == stage.CampaignRule)">@ChampionshipTexts.CampaignRule(L, rule)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="stage-maps-@stage.Id">@L["Minimum maps"] @FieldHelp.Tip(L["Only campaigns with at least this many maps can be chosen or drawn. 0 for any."])</label>
+                            <input type="number" class="form-control" id="stage-maps-@stage.Id" name="MinimumMaps" min="0" max="@CoreConsts.ChampionshipMaxMinimumMaps" value="@stage.MinimumMaps">
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label for="stage-veto-@stage.Id">
+                            <input type="checkbox" id="stage-veto-@stage.Id" name="Veto" value="true" checked="@stage.Veto">
+                            <input type="hidden" name="Veto" value="false">
+                            @L["Each team vetoes one campaign"]
+                        </label>
+                    </div>
+                    <div class="checkbox" style="margin-bottom: 0">
+                        <label for="stage-once-@stage.Id">
+                            <input type="checkbox" id="stage-once-@stage.Id" name="OncePerTeam" value="true" checked="@stage.OncePerTeam">
+                            <input type="hidden" name="OncePerTeam" value="false">
+                            @L["A team chooses each campaign only once in the championship"]
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!stage.Generated)
+    {
+        <div class="modal fade" id="stage-build-modal-@stage.Id" tabindex="-1" role="dialog" aria-labelledby="stage-build-title-@stage.Id">
+            <div class="modal-dialog" role="document">
+                <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/generate">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="stage-build-title-@stage.Id">@L["Build the stage {0}", stage.Name]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>@L["Teams that enter {0}", stage.Name]:</p>
+                        @if (entrants.Count == 0)
+                        {
+                            <div class="admin-empty">@L["No team enters yet."]</div>
+                        }
+                        else
+                        {
+                            <ol class="championship-entrants">
+                                @foreach (var team in entrants)
+                                {
+                                    <li>@view.TeamName(team)</li>
+                                }
+                            </ol>
+                        }
+                        <p class="help-block" style="margin-bottom: 0">
+                            @(stage.Seeding == ChampionshipSeeding.Random ? L["The order is drawn when the stage is built."].Value : L["The teams enter in this order."].Value)
+                            @L["After building, the format of the stage cannot change until it is reset."]
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                        <button type="submit" class="btn btn-primary" disabled="@(entrants.Count < 2)">
+                            <span class="glyphicon glyphicon-play"></span> @L["Build the stage"]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (stage.Generated && !stage.IsKnockout)
+    {
+        <div class="modal fade" id="stage-penalties-modal-@stage.Id" tabindex="-1" role="dialog" aria-labelledby="stage-penalties-title-@stage.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="stage-penalties-title-@stage.Id">@L["Penalty points of {0}", stage.Name]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="help-block">@L["Points taken off the standings of the stage, such as for a late team."]</p>
+                        @if (stage.Penalties.Count == 0)
+                        {
+                            <div class="admin-empty">@L["No penalty yet."]</div>
+                        }
+                        else
+                        {
+                            <table class="table table-condensed">
+                                <tbody>
+                                @foreach (var penalty in stage.Penalties.OrderBy(penalty => penalty.CreatedAtUtc))
+                                {
+                                    <tr>
+                                        <td class="vertical-align-middle"><strong>@view.TeamName(penalty.TeamId)</strong></td>
+                                        <td class="text-center vertical-align-middle">-@penalty.Points</td>
+                                        <td class="vertical-align-middle"><small class="text-muted">@penalty.Reason</small></td>
+                                        <td class="text-right vertical-align-middle slim">
+                                            <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/unpenalize">
+                                                <input type="hidden" name="penaltyId" value="@penalty.Id">
+                                                <button class="btn btn-xs btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span> @L["Remove"]</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/penalty" class="championship-penalty-add">
+                            <div class="row">
+                                <div class="col-sm-5 form-group">
+                                    <label for="penalty-team-@stage.Id">@L["Team"]</label>
+                                    <select class="form-control" id="penalty-team-@stage.Id" name="teamId">
+                                        @foreach (var team in view.Teams)
+                                        {
+                                            <option value="@team.Id">@team.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3 form-group">
+                                    <label for="penalty-points-@stage.Id">@L["Points"]</label>
+                                    <input type="number" class="form-control" id="penalty-points-@stage.Id" name="points" min="1" max="@CoreConsts.ChampionshipMaxPenalty" value="1" required>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <label for="penalty-reason-@stage.Id">@L["Reason"]</label>
+                                    <input class="form-control" id="penalty-reason-@stage.Id" name="reason" maxlength="@CoreConsts.ChampionshipReasonMaxLength">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span> @L["Penalize"]</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

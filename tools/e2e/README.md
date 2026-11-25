@@ -10,7 +10,7 @@ Checks the main pages of the site in a headless Chrome or Edge, so a layout or J
 - uploads 14 statistics files, five matches of 16 fictional players, made from the sample in [tests/L4D2PlayStats.Hub.Tests/Samples](../../tests/L4D2PlayStats.Hub.Tests/Samples) with the token of the server ([statistics.js](statistics.js), players in [fixtures.js](fixtures.js));
 - sets the community ranking to 4 votes a day, posts a live match and casts community votes with six players.
 
-Then it runs the checks in [checks.js](checks.js): the home ranking (also at 390 px, with no sideways scroll), the player page and its tabs, the page of an unknown SteamID, the matches, the players list (the overview, ordering it by a column, one statistic and the old history address), every public page at 390 px, the commands page (search, section links and the folded administrator commands), the community ranking (invitation, "how it works", player details and columns windows), voting with the arrow keys and a click on a photo up to the daily limit, the latest votes filters and player search window, every administration page and its help icons, the player search window, the remote command builder, the chat limits and live settings forms, the related accounts window when banning from the chat, replacing a player of a round half with the pencil on the map page and the player search window (and back), the live page receiving new data, Portuguese and Spanish, and the light theme. A JavaScript error or a server error on any page also fails the check.
+Then it runs the checks in [checks.js](checks.js): the home ranking (also at 390 px, with no sideways scroll), the player page and its tabs, the page of an unknown SteamID, the matches, the players list (the overview, ordering it by a column, one statistic and the old history address), every public page at 390 px, the commands page (search, section links and the folded administrator commands), the community ranking (invitation, "how it works", player details and columns windows), voting with the arrow keys and a click on a photo up to the daily limit, the latest votes filters and player search window, every administration page and its help icons, the player search window, the remote command builder, the chat limits and live settings forms, the related accounts window when banning from the chat, replacing a player of a round half with the pencil on the map page and the player search window (and back), the live page receiving new data, Portuguese and Spanish, the light theme, and the championships ([championships.js](championships.js)): five sample championships created through the administration (a league with matches of the server linked to its games, a knockout formed by a snake draft where the captains veto, choose the campaigns and agree on a date, groups formed by a roulette followed by a knockout, a league formed by pots followed by a knockout with byes, a cancelled one and a draft), their public pages on a computer and a phone, in the three languages and in the light theme. A JavaScript error or a server error on any page also fails the check.
 
 Everything runs against that throwaway site; the data folder is deleted at the end. Never point it at a real data folder.
 
@@ -21,7 +21,7 @@ dotnet publish src/L4D2PlayStats.Hub.Web -c Release -o ./e2e-site
 node tools/e2e/run.js --site ./e2e-site
 ```
 
-It takes about two minutes. A failed check prints why and saves a screenshot, the page and the site log in `e2e-output/`, which the workflow uploads as the `browser-test-failures` artifact.
+It takes about six minutes, four of them for the championships. A failed check prints why and saves a screenshot, the page and the site log in `e2e-output/`, which the workflow uploads as the `browser-test-failures` artifact.
 
 | Option | Meaning |
 |---|---|
@@ -33,3 +33,4 @@ It takes about two minutes. A failed check prints why and saves a screenshot, th
 | `--data` | An empty folder to use as the data folder, kept at the end. |
 | `--keep` | Keep the temporary data folder. |
 | `--serve` | Create the data, then keep the site running for a look in the browser, until Ctrl+C. |
+| `--shots` | A folder for screenshots of the championship pages, to look at them after the run. |

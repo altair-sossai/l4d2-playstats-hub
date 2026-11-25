@@ -52,6 +52,12 @@ It is about 15 seconds behind, on purpose. An administrator changes the delay in
 **How do I add another administrator?**
 In [Administration > Administrators](administration.md#administrators), with their SteamID64. If you cannot sign in any more, use `playstats-hub add-admin <SteamID64>` on Linux.
 
+**How do I run a championship?**
+Turn on **Championships** in [Administration > Modules](administration.md#modules), then create it in **Administration > Championships**: choose the format, add the participants and the teams, and build the first stage. See [Championships > For administrators](championships.md#for-administrators).
+
+**A championship game was played outside our server.**
+On the Games tab of the championship, in **Administration > Championships**, click the button of the game and choose **Type the result**. The game counts in the standings and the bracket, but it has no statistics.
+
 **How do I add a second game server?**
 In [Administration > Game servers](administration.md#game-servers). Each server gets its own token. Players' results add up across all servers.
 

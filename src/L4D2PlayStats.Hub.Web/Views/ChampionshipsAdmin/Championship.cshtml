@@ -1,0 +1,104 @@
+@model ChampionshipAdminModel
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    ViewData["Title"] = championship.Name;
+    var series = view.AllSeries.Where(item => !item.Bye).ToList();
+    var tabList = new List<AdminTab>
+    {
+        new(AppConsts.ChampionshipAdminSettingsTab, L["Settings"].Value, "cog"),
+        new(AppConsts.ChampionshipAdminParticipantsTab, L["Participants"].Value, "user", championship.Participants.Count),
+        new(AppConsts.ChampionshipAdminTeamsTab, L["Teams"].Value, "flag", championship.Teams.Count)
+    };
+
+    if (championship.DraftMethod != ChampionshipDraftMethod.Manual)
+        tabList.Add(new AdminTab(AppConsts.ChampionshipAdminDraftTab, L["Draft"].Value, "random", championship.DraftPicks.Count));
+
+    tabList.Add(new AdminTab(AppConsts.ChampionshipAdminStagesTab, L["Stages"].Value, "tasks", championship.Stages.Count));
+    tabList.Add(new AdminTab(AppConsts.ChampionshipAdminGamesTab, L["Games"].Value, "list", series.Count));
+    tabList.Add(new AdminTab(AppConsts.ChampionshipAdminHistoryTab, L["History"].Value, "time"));
+
+    var tabs = new AdminTabsModel(tabList, AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], tabList.Select(tab => tab.Key).ToArray()));
+}
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+    <link rel="stylesheet" href="~/css/pages/championships-admin.css" asp-append-version="true"/>
+}
+
+<div class="admin-header">
+    <h3>@championship.Name <span class="label @ChampionshipTexts.StatusLabel(championship.Status) championship-status">@ChampionshipTexts.Status(L, championship.Status)</span></h3>
+    <a class="btn btn-default" href="@AppConsts.ChampionshipsUrl/@championship.Slug" target="_blank">
+        <span class="glyphicon glyphicon-eye-open"></span> @L["See the page"]
+    </a>
+    <a class="btn btn-default" href="@AppConsts.AdminChampionshipsUrl">
+        <span class="glyphicon glyphicon-chevron-left"></span> @L["Championships"]
+    </a>
+</div>
+
+<div class="admin-stats">
+    <div>
+        <strong>@Display.Number(championship.Participants.Count)</strong>
+        <small>@L["participants"]</small>
+    </div>
+    <div>
+        <strong>@Display.Number(championship.Teams.Count)</strong>
+        <small>@L["teams"]</small>
+    </div>
+    <div>
+        <strong>@championship.Stages.Count(stage => stage.Generated) / @championship.Stages.Count</strong>
+        <small>@L["stages built"]</small>
+    </div>
+    <div>
+        <strong>@series.Count(item => item.Finished) / @series.Count</strong>
+        <small>@L["series finished"]</small>
+    </div>
+</div>
+
+@await Html.PartialAsync("_AdminTabs", tabs)
+
+<div class="tab-content">
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminSettingsTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminSettingsTab)">
+        @await Html.PartialAsync("_Settings", Model)
+    </div>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminParticipantsTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminParticipantsTab)">
+        @await Html.PartialAsync("_Participants", Model)
+    </div>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminTeamsTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminTeamsTab)">
+        @await Html.PartialAsync("_Teams", Model)
+    </div>
+    @if (championship.DraftMethod != ChampionshipDraftMethod.Manual)
+    {
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminDraftTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminDraftTab)">
+            @await Html.PartialAsync("_Draft", Model)
+        </div>
+    }
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminStagesTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminStagesTab)">
+        @await Html.PartialAsync("_Stages", Model)
+    </div>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminGamesTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminGamesTab)">
+        @await Html.PartialAsync("_Games", Model)
+    </div>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminHistoryTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminHistoryTab)">
+        @await Html.PartialAsync("_History", Model)
+    </div>
+</div>
+
+@await Html.PartialAsync("_ParticipantsModals", Model)
+@await Html.PartialAsync("_TeamsModals", Model)
+@await Html.PartialAsync("_StagesModals", Model)
+@await Html.PartialAsync("_GamesModals", Model)
+@await Html.PartialAsync("_PlayerPickerModal")
+
+@section Scripts {
+    <script type="application/json" id="championships-admin-config">{
+            "texts": {
+                "noMatch": @Json.Serialize(L["No match of the server with players of both teams in the last {0} days.", L4D2PlayStats.Hub.Core.AppConsts.ChampionshipCandidateMatchesInDays].Value),
+                "loading": @Json.Serialize(L["Loading..."].Value),
+                "linked": @Json.Serialize(L["linked"].Value),
+                "gameTitle": @Json.Serialize(L["Game {0}: {1} × {2}"].Value)
+            }
+    }</script>
+    <script src="~/js/pages/championships-admin.js" asp-append-version="true"></script>
+}

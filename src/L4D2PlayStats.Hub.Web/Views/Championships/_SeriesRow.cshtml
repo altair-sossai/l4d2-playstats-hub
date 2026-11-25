@@ -1,0 +1,60 @@
+@model ChampionshipSeriesRowModel
+@{
+    var owner = Model.Page;
+    var series = Model.Series;
+    var stage = owner.StageOf(series);
+    var progress = owner.Progress(series);
+    var status = owner.SeriesStatus(series);
+    var winnerA = series.Finished && series.WinnerTeamId == series.TeamAId;
+    var winnerB = series.Finished && series.WinnerTeamId == series.TeamBId;
+    var singleGame = series.Games.Count == 1 && series.BestOf == 1 ? series.Games[0] : null;
+}
+
+<a class="championship-series status-@status.ToString().ToLowerInvariant()" href="@Model.Url">
+    <span class="championship-series-team team-a @(winnerA ? "winner" : null)">@owner.TeamName(series.TeamAId)</span>
+    <span class="championship-series-score">
+        @if (series.Bye)
+        {
+            <small>@L["Bye"]</small>
+        }
+        else if (series.Walkover && series.Finished)
+        {
+            <small>@L["W.O."]</small>
+        }
+        else if (singleGame is { IsPlayed: true })
+        {
+            <span>@singleGame.TeamATotal.ToString("N0", CultureInfo.CurrentCulture)</span><span class="sep">×</span><span>@singleGame.TeamBTotal.ToString("N0", CultureInfo.CurrentCulture)</span>
+        }
+        else if (series.Games.Any(game => game.IsPlayed))
+        {
+            <span>@progress.WinsA</span><span class="sep">×</span><span>@progress.WinsB</span>
+        }
+        else
+        {
+            <span class="sep">×</span>
+        }
+    </span>
+    <span class="championship-series-team team-b @(winnerB ? "winner" : null)">@(series.Bye ? "" : owner.TeamName(series.TeamBId))</span>
+    <span class="championship-series-info text-muted">
+        @if (Model.ShowStage)
+        {
+            <span>@stage.Name · @ChampionshipTexts.Round(L, stage, series.Round, owner.Rounds(stage))</span>
+        }
+        @if (series.ScheduledAtUtc != null && !series.Finished)
+        {
+            <span><span class="glyphicon glyphicon-time"></span> @Display.DateTime(series.ScheduledAtUtc.Value, owner.TimeZone)</span>
+        }
+        else if (status != ChampionshipSeriesStatus.Finished)
+        {
+            <span>@ChampionshipTexts.SeriesStatus(L, status)</span>
+        }
+        @if (series.BestOf > 1 && !series.Bye)
+        {
+            <span>@L["Best of {0}", series.BestOf]</span>
+        }
+        @if (singleGame?.CampaignId != null)
+        {
+            <span>@owner.CampaignName(singleGame.CampaignId)</span>
+        }
+    </span>
+</a>

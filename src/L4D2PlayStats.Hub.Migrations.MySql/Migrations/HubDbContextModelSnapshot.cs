@@ -162,6 +162,584 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.ToTable("CampaignMaps");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)");
+
+                    b.Property<int>("DraftMethod")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndsOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("GameConfiguration")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("MaxParticipants")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("PlayersPerGame")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RosterSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Rules")
+                        .HasMaxLength(50000)
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RulesPortuguese")
+                        .HasMaxLength(50000)
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RulesSpanish")
+                        .HasMaxLength(50000)
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("StartsOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StreamUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<bool>("Substitutes")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("VideosUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Championships");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("ProposedByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamAAnswer")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamBAnswer")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeriesId");
+
+                    b.ToTable("ChampionshipDateProposals");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDraftPick", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PickedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("ChampionshipId", "Number")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipDraftPicks");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGame", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CampaignSource")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MatchId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("MatchTeamAIsTeamA")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PickedByTeamId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PlayedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Replay")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("ResultSource")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamAPenalty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamAScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamBPenalty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamBScore")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("SeriesId", "Number")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipGames");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StageId");
+
+                    b.ToTable("ChampionshipGroups");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroupTeam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Seed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("GroupId", "TeamId")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipGroupTeams");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<string>("Values")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChampionshipId", "CreatedAtUtc");
+
+                    b.ToTable("ChampionshipLogs");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AddedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Pot")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("ChampionshipId", "CommunityId")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipParticipants");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipPenalty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("CreatedByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("StageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StageId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("ChampionshipPenalties");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("BestOf")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Bye")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DeadlineUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Finished")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LoserNextSeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("LoserNextSlotA")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("NextSeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("NextSlotA")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ScheduledAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("StageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamAId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamAVetoCampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamBId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamBVetoCampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ThirdPlace")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("Walkover")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("WinnerTeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamAId");
+
+                    b.HasIndex("TeamBId");
+
+                    b.HasIndex("StageId", "Round", "Position");
+
+                    b.ToTable("ChampionshipSeries");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("BestOf")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CampaignRule")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinalBestOf")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Generated")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("GroupCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Legs")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinimumMaps")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<bool>("OncePerTeam")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsForDraw")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsForLoss")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointsForWin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qualifiers")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Seeding")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ThirdPlace")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Tiebreakers")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Veto")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChampionshipId", "Order");
+
+                    b.ToTable("ChampionshipStages");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<long?>("CaptainCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DraftPosition")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("Seed")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tag")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<long?>("ViceCaptainCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChampionshipId");
+
+                    b.ToTable("ChampionshipTeams");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeamMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("JoinedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("TeamId", "CommunityId")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipTeamMembers");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Community.CommunityOffer", b =>
                 {
                     b.Property<long>("VoterId")
@@ -1091,6 +1669,139 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", null)
+                        .WithMany("Proposals")
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDraftPick", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("DraftPicks")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", null)
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGame", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Matches.Match", null)
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", null)
+                        .WithMany("Games")
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroup", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", null)
+                        .WithMany("Groups")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroupTeam", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroup", null)
+                        .WithMany("Teams")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", null)
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipLog", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany()
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipParticipant", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("Participants")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipPenalty", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", null)
+                        .WithMany("Penalties")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", null)
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", "Stage")
+                        .WithMany("Series")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stage");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("Stages")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("Teams")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeamMember", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", null)
+                        .WithMany("Members")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Matches.Match", b =>
                 {
                     b.HasOne("L4D2PlayStats.Hub.Core.Modules.Servers.GameServer", "GameServer")
@@ -1195,6 +1906,43 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Campaigns.Campaign", b =>
                 {
                     b.Navigation("Maps");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", b =>
+                {
+                    b.Navigation("DraftPicks");
+
+                    b.Navigation("Participants");
+
+                    b.Navigation("Stages");
+
+                    b.Navigation("Teams");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipGroup", b =>
+                {
+                    b.Navigation("Teams");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", b =>
+                {
+                    b.Navigation("Games");
+
+                    b.Navigation("Proposals");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipStage", b =>
+                {
+                    b.Navigation("Groups");
+
+                    b.Navigation("Penalties");
+
+                    b.Navigation("Series");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipTeam", b =>
+                {
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Matches.Match", b =>

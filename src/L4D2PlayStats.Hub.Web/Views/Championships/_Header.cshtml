@@ -1,0 +1,78 @@
+@model ChampionshipPageModel
+@{
+    var championship = Model.Championship;
+    var url = $"{AppConsts.ChampionshipsUrl}/{championship.Slug}";
+    var tabs = new List<(string Tab, string Title, string Url)> { (AppConsts.ChampionshipOverviewTab, L["Overview"].Value, url) };
+
+    if (!string.IsNullOrWhiteSpace(Model.Rules(CultureInfo.CurrentUICulture.Name)))
+        tabs.Add((AppConsts.ChampionshipRulesTab, L["Rules"].Value, $"{url}/{AppConsts.ChampionshipRulesTab}"));
+
+    tabs.Add((AppConsts.ChampionshipTeamsTab, L["Teams"].Value, $"{url}/{AppConsts.ChampionshipTeamsTab}"));
+
+    if (Model.HasDraft)
+        tabs.Add((AppConsts.ChampionshipDraftTab, L["Draft"].Value, $"{url}/{AppConsts.ChampionshipDraftTab}"));
+
+    if (Model.HasStandings)
+        tabs.Add((AppConsts.ChampionshipStandingsTab, L["Standings"].Value, $"{url}/{AppConsts.ChampionshipStandingsTab}"));
+
+    if (Model.HasBracket)
+        tabs.Add((AppConsts.ChampionshipBracketTab, L["Bracket"].Value, $"{url}/{AppConsts.ChampionshipBracketTab}"));
+
+    if (Model.HasGames)
+    {
+        tabs.Add((AppConsts.ChampionshipGamesTab, L["Games"].Value, $"{url}/{AppConsts.ChampionshipGamesTab}"));
+        tabs.Add((AppConsts.ChampionshipStatisticsTab, L["Statistics"].Value, $"{url}/{AppConsts.ChampionshipStatisticsTab}"));
+    }
+}
+
+<ol class="breadcrumb championship-breadcrumb">
+    <li><a href="@AppConsts.ChampionshipsUrl">@L["Championships"]</a></li>
+    <li class="active">@championship.Name</li>
+</ol>
+
+<div class="championship-header">
+    <div class="championship-heading">
+        <h3>
+            @championship.Name
+            <span class="label @ChampionshipTexts.StatusLabel(championship.Status)">@ChampionshipTexts.Status(L, championship.Status)</span>
+        </h3>
+        <div class="championship-meta text-muted">
+            @if (championship.StartsOn != null)
+            {
+                <span><span class="glyphicon glyphicon-calendar"></span> @championship.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)@(championship.EndsOn != null ? $" – {championship.EndsOn.Value.ToString("d", CultureInfo.CurrentCulture)}" : "")</span>
+            }
+            <span><span class="glyphicon glyphicon-flag"></span> @L["{0} teams", championship.Teams.Count]</span>
+            <span><span class="glyphicon glyphicon-user"></span> @L["{0} per game", championship.PlayersPerGame]</span>
+            @if (!string.IsNullOrWhiteSpace(championship.GameConfiguration))
+            {
+                <span><span class="glyphicon glyphicon-cog"></span> @championship.GameConfiguration</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(championship.StreamUrl))
+            {
+                <a href="@championship.StreamUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-facetime-video"></span> @L["Live stream"]</a>
+            }
+            @if (!string.IsNullOrWhiteSpace(championship.VideosUrl))
+            {
+                <a href="@championship.VideosUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-film"></span> @L["Videos"]</a>
+            }
+            @if (Model.Administrator)
+            {
+                <a href="@AppConsts.AdminChampionshipsUrl/@championship.Id"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a>
+            }
+        </div>
+    </div>
+    @if (championship.Status == ChampionshipStatus.Draft)
+    {
+        <div class="alert alert-warning">@L["This championship is a draft. Only administrators can see it."]</div>
+    }
+    @if (championship.Status == ChampionshipStatus.Cancelled)
+    {
+        <div class="alert alert-danger">@L["This championship was cancelled."] @championship.CancelReason</div>
+    }
+    <ul class="nav nav-tabs championship-tabs">
+        @foreach (var tab in tabs)
+        {
+            <li role="presentation" class="@(tab.Tab == Model.Tab ? "active" : null)"><a href="@tab.Url">@tab.Title</a></li>
+        }
+    </ul>
+</div>

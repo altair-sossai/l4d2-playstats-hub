@@ -48,6 +48,11 @@
         skins.Add((AppConsts.SkinSettingsUrl, L["Shop settings"].Value, L["Shop settings"].Value, "wrench"));
     }
 
+    var championships = new List<(string Url, string Title, string Page, string Icon)>();
+
+    if (modules.IsEnabled(HubModule.Championships))
+        championships.Add((AppConsts.AdminChampionshipsUrl, L["Championships"].Value, L["Championships"].Value, "tower"));
+
     var antiCheat = new List<(string Url, string Title, string Page, string Icon)>();
 
     if (modules.IsEnabled(HubModule.AntiCheat))
@@ -58,6 +63,7 @@
         (Title: L["Site"].Value, Items: site),
         (Title: L["Game servers"].Value, Items: servers),
         (Title: L["Ranking"].Value, Items: ranking),
+        (Title: L["Championships"].Value, Items: championships),
         (Title: L["Skin shop"].Value, Items: skins),
         (Title: L["Anti-Cheat"].Value, Items: antiCheat)
     }.Where(section => section.Items.Count > 0).ToList();

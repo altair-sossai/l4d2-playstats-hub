@@ -1,0 +1,77 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Teams"].Value} - {Model.Championship.Name}", Description = L["Teams and players of {0}.", Model.Championship.Name] };
+    var taken = Model.Championship.Teams.SelectMany(team => team.Members).Select(member => member.CommunityId).ToHashSet();
+    var free = Model.Championship.Participants.Where(participant => !taken.Contains(participant.CommunityId)).ToList();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+@if (Model.Teams.Count == 0)
+{
+    <p class="text-muted">@L["The teams were not formed yet."]</p>
+}
+
+<div class="row championship-teams">
+    @foreach (var team in Model.Teams)
+    {
+        <div class="col-sm-6 col-lg-3">
+            <div class="panel panel-default championship-team">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        @team.Name
+                        @if (!string.IsNullOrWhiteSpace(team.Tag))
+                        {
+                            <small class="text-muted">[@team.Tag]</small>
+                        }
+                    </h3>
+                </div>
+                <ul class="list-group">
+                    @if (team.Members.Count == 0)
+                    {
+                        <li class="list-group-item text-muted">@L["No players yet."]</li>
+                    }
+                    @foreach (var member in team.Members.OrderByDescending(member => member.CommunityId == team.CaptainCommunityId).ThenByDescending(member => member.CommunityId == team.ViceCaptainCommunityId).ThenBy(member => member.JoinedAtUtc))
+                    {
+                        var hours = Model.Hours(member.CommunityId);
+
+                        <li class="list-group-item championship-player">
+                            <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                            <a href="@AppConsts.PlayerUrlPrefix@member.CommunityId">@DisplayNames.Apply(member.CommunityId, Model.PlayerName(member.CommunityId))</a>
+                            @if (member.CommunityId == team.CaptainCommunityId)
+                            {
+                                <span class="label label-warning" title="@L["Captain"]">@L["Captain"]</span>
+                            }
+                            else if (member.CommunityId == team.ViceCaptainCommunityId)
+                            {
+                                <span class="label label-info" title="@L["Vice-captain"]">@L["Vice"]</span>
+                            }
+                            @if (hours != null)
+                            {
+                                <small class="text-muted pull-right">@L["{0} h", hours.Value.ToString("N0", CultureInfo.CurrentCulture)]</small>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+@if (free.Count > 0 && Model.Championship.Status is ChampionshipStatus.Participants or ChampionshipStatus.TeamFormation)
+{
+    <h5 class="championship-section-title">@L["Players without a team"]</h5>
+    <div class="championship-free-players">
+        @foreach (var participant in free)
+        {
+            <span class="championship-chip">
+                <img src="@AppConsts.AvatarUrl@participant.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                @DisplayNames.Apply(participant.CommunityId, Model.PlayerName(participant.CommunityId))
+            </span>
+        }
+    </div>
+}

@@ -1,0 +1,138 @@
+@model ChampionshipAdminModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@{
+    var championship = Model.Championship;
+}
+
+<p class="admin-lead">@L["The information shown on the page of the championship, how the teams are formed and its status. A draft is seen only by the administrators; building the first stage puts the championship in progress."]</p>
+
+<form method="post" asp-antiforgery="true" action="@Model.Url">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span> @L["Championship"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Name">@L["Name"]</label>
+                        <input class="form-control" id="Name" name="Name" value="@championship.Name" maxlength="@CoreConsts.ChampionshipNameMaxLength" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Slug">@L["Address"] @FieldHelp.Tip(L["The end of the address of the public page, such as /championships/cup-2027. Letters, numbers and hyphens."])</label>
+                        <input class="form-control admin-mono" id="Slug" name="Slug" value="@championship.Slug" maxlength="@CoreConsts.ChampionshipSlugMaxLength">
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">@L["Short description"]</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="2" maxlength="@CoreConsts.ChampionshipDescriptionMaxLength">@championship.Description</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="startsOn">@L["Start"]</label>
+                            <input type="date" class="form-control" id="startsOn" name="startsOn" value="@ChampionshipDates.DateInput(championship.StartsOn)">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="endsOn">@L["End"]</label>
+                            <input type="date" class="form-control" id="endsOn" name="endsOn" value="@ChampionshipDates.DateInput(championship.EndsOn)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="GameConfiguration">@L["Game mode"] @FieldHelp.Tip(L["Shown on the page, such as ZoneMod v2.9.1b."])</label>
+                        <input class="form-control" id="GameConfiguration" name="GameConfiguration" value="@championship.GameConfiguration" maxlength="@CoreConsts.ChampionshipConfigurationMaxLength">
+                    </div>
+                    <div class="form-group">
+                        <label for="StreamUrl">@L["Live stream link"]</label>
+                        <input class="form-control" id="StreamUrl" name="StreamUrl" value="@championship.StreamUrl" placeholder="https://www.twitch.tv/..." maxlength="@CoreConsts.ChampionshipUrlMaxLength">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="VideosUrl">@L["Videos link"]</label>
+                        <input class="form-control" id="VideosUrl" name="VideosUrl" value="@championship.VideosUrl" placeholder="https://www.youtube.com/..." maxlength="@CoreConsts.ChampionshipUrlMaxLength">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-flag"></span> @L["Status"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="status">@L["Status"] @FieldHelp.Tip(L["Mark it as finished after the final: the history of the championships then shows the champion."])</label>
+                        <select class="form-control" id="status" name="status">
+                            @foreach (var status in Enum.GetValues<ChampionshipStatus>())
+                            {
+                                <option value="@status" selected="@(status == championship.Status)">@ChampionshipTexts.Status(L, status)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="reason">@L["Reason of the cancellation"]</label>
+                        <input class="form-control" id="reason" name="reason" value="@championship.CancelReason" maxlength="@CoreConsts.ChampionshipReasonMaxLength">
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> @L["Teams and players"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="PlayersPerGame">@L["Players per game"]</label>
+                            <input type="number" class="form-control" id="PlayersPerGame" name="PlayersPerGame" min="1" max="@CoreConsts.ChampionshipMaxPlayersPerGame" value="@championship.PlayersPerGame">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="RosterSize">@L["Players per team"] @FieldHelp.Tip(L["The most players a team can have, counting the substitutes."])</label>
+                            <input type="number" class="form-control" id="RosterSize" name="RosterSize" min="1" max="@CoreConsts.ChampionshipMaxRoster" value="@championship.RosterSize">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="MaxParticipants">@L["Places"] @FieldHelp.Tip(L["The most participants the championship takes. Empty for no limit."])</label>
+                            <input type="number" class="form-control" id="MaxParticipants" name="MaxParticipants" min="0" value="@championship.MaxParticipants">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="DraftMethod">@L["Team formation"] @FieldHelp.More(L["How the players are placed in the teams."], L["Team formation"], L["Manual: the administration puts each player in a team.\nRoulette: each spin draws a team among the ones with fewest players and a player without a team.\nPots: the participants are split in pots, and each team gets one player of each pot; the player of the first pot becomes the captain.\nSnake draft: the captains are drawn in an order and choose one player each, in the order A, B, C, D and then D, C, B, A.\nLinear draft: the same, always in the order A, B, C, D."])</label>
+                            <select class="form-control" id="DraftMethod" name="DraftMethod">
+                                @foreach (var method in Enum.GetValues<ChampionshipDraftMethod>())
+                                {
+                                    <option value="@method" selected="@(method == championship.DraftMethod)">@ChampionshipTexts.DraftMethod(L, method)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="checkbox" style="margin-bottom: 0">
+                        <label for="Substitutes">
+                            <input type="checkbox" id="Substitutes" name="Substitutes" value="true" checked="@championship.Substitutes">
+                            <input type="hidden" name="Substitutes" value="false">
+                            @L["The teams can have substitutes"]
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-book"></span> @L["Rules"] @FieldHelp.Tip(L["Markdown: # titles, - lists, **bold**, *italic* and [links](https://...). The page shows the text of the language of the visitor, or the English one."])</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label for="Rules">@L["English"]</label>
+                    <textarea class="form-control admin-mono championship-rules-input" id="Rules" name="Rules" rows="10">@championship.Rules</textarea>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="RulesPortuguese">@L["Portuguese"]</label>
+                    <textarea class="form-control admin-mono championship-rules-input" id="RulesPortuguese" name="RulesPortuguese" rows="10">@championship.RulesPortuguese</textarea>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="RulesSpanish">@L["Spanish"]</label>
+                    <textarea class="form-control admin-mono championship-rules-input" id="RulesSpanish" name="RulesSpanish" rows="10">@championship.RulesSpanish</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("_FormSaveButton")
+</form>

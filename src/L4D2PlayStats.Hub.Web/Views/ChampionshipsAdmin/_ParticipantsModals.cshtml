@@ -1,0 +1,60 @@
+@model ChampionshipAdminModel
+@{
+    var returnUrl = AdminListUrls.TabPage(Model.Url, AppConsts.ChampionshipAdminParticipantsTab, AppConsts.ChampionshipParticipantsPageQuery, Model.Participants.Page);
+}
+
+<div class="modal fade" id="participants-add-modal" tabindex="-1" role="dialog" aria-labelledby="participants-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/participants">
+            <input type="hidden" name="returnUrl" value="@returnUrl">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="participants-add-title">@L["Add participants"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="participants-players">@L["Steam IDs, one per line"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
+                    <textarea class="form-control admin-mono" id="participants-players" name="players" rows="6" required placeholder="76561198000000000"></textarea>
+                    <button type="button" class="btn btn-default btn-sm championship-picker" data-participants-picker="#participants-players">
+                        <span class="glyphicon glyphicon-user"></span> @L["Choose from the list"]
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="participant-pot-modal" tabindex="-1" role="dialog" aria-labelledby="participant-pot-title">
+    <div class="modal-dialog modal-sm" role="document">
+        <form class="modal-content" id="participant-pot-form" method="post" asp-antiforgery="true" action="">
+            <input type="hidden" name="returnUrl" value="@returnUrl">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="participant-pot-title">@L["Edit the participant"]</h4>
+            </div>
+            <div class="modal-body">
+                <p class="championship-pot-name"></p>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="participant-pot">@L["Pot"] @FieldHelp.Tip(L["Used by the pots draw. 0 leaves the player out of the pots."])</label>
+                    <input type="number" class="form-control" id="participant-pot" name="pot" min="0" max="@L4D2PlayStats.Hub.Core.AppConsts.ChampionshipMaxTeams" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

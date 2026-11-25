@@ -1,0 +1,83 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Draft"].Value} - {Model.Championship.Name}", Description = L["How the teams of {0} were formed.", Model.Championship.Name] };
+    var championship = Model.Championship;
+    var order = championship.Teams.Where(team => team.DraftPosition != null).OrderBy(team => team.DraftPosition).ToList();
+    var picks = championship.DraftPicks.OrderBy(pick => pick.Number).ToList();
+    var onTheClock = L4D2PlayStats.Hub.Core.Modules.Championships.Services.ChampionshipDraftService.OnTheClock(championship);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+<p class="text-muted">@L["Method"]: <strong>@ChampionshipTexts.DraftMethod(L, championship.DraftMethod)</strong></p>
+
+@if (onTheClock != null)
+{
+    <div class="alert alert-info"><span class="glyphicon glyphicon-hourglass"></span> @L["{0} chooses now.", onTheClock.Name]</div>
+}
+
+<div class="row">
+    @if (order.Count > 0)
+    {
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">@L["Order of the captains"]</h3></div>
+                <ol class="list-group championship-draft-order">
+                    @foreach (var team in order)
+                    {
+                        <li class="list-group-item">
+                            <strong>@team.DraftPosition.</strong> @team.Name
+                            @if (team.CaptainCommunityId != null)
+                            {
+                                <small class="text-muted">· @DisplayNames.Apply(team.CaptainCommunityId.Value, Model.PlayerName(team.CaptainCommunityId.Value))</small>
+                            }
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    }
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">@L["Picks"]</h3></div>
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    @if (order.Count > 0)
+                    {
+                        <th class="text-center">@L["Round"]</th>
+                    }
+                    <th>@L["Team"]</th>
+                    <th>@L["Player"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (picks.Count == 0)
+                {
+                    <tr><td colspan="4" class="text-muted">@L["No pick yet."]</td></tr>
+                }
+                @foreach (var pick in picks)
+                {
+                    <tr>
+                        <td class="text-center">@pick.Number</td>
+                        @if (order.Count > 0)
+                        {
+                            <td class="text-center">@DraftOrder.Round(pick.Number - 1, order.Count)</td>
+                        }
+                        <td>@Model.TeamName(pick.TeamId)</td>
+                        <td>
+                            <img src="@AppConsts.AvatarUrl@pick.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                            @DisplayNames.Apply(pick.CommunityId, Model.PlayerName(pick.CommunityId))
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Games"].Value} - {Model.Championship.Name}", Description = L["Games and results of {0}.", Model.Championship.Name] };
+    var url = $"{AppConsts.ChampionshipsUrl}/{Model.Championship.Slug}";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+@foreach (var stage in Model.Stages.Where(stage => stage.Generated))
+{
+    var rounds = Model.Rounds(stage);
+
+    <h4>@stage.Name</h4>
+    <div class="row">
+        @foreach (var round in stage.Series.Where(series => !series.Bye).GroupBy(series => (series.Round, series.ThirdPlace)).OrderBy(group => group.Key.Round).ThenBy(group => group.Key.ThirdPlace))
+        {
+            var deadline = round.Select(series => series.DeadlineUtc).FirstOrDefault(value => value != null);
+
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(round.Key.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, round.Key.Round, rounds))
+                            @if (deadline != null)
+                            {
+                                <small class="pull-right text-muted">@L["Until {0}", Display.DateTime(deadline.Value, Model.TimeZone)]</small>
+                            }
+                        </h3>
+                    </div>
+                    <div class="panel-body championship-series-list">
+                        @foreach (var series in round.OrderBy(series => series.GroupId).ThenBy(series => series.Position))
+                        {
+                            var group = Model.GroupName(series);
+
+                            @if (group != null && stage.Groups.Count > 1)
+                            {
+                                <small class="text-muted championship-group-tag">@L["Group {0}", group]</small>
+                            }
+                            @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, series, $"{url}/series/{series.Id}", false))
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

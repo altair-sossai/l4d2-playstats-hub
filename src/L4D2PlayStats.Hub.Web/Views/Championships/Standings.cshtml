@@ -1,0 +1,87 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Standings"].Value} - {Model.Championship.Name}", Description = L["Standings of {0}.", Model.Championship.Name] };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+@foreach (var stage in Model.Stages.Where(stage => !stage.IsKnockout && stage.Generated))
+{
+    var qualifiers = Model.Qualifiers(stage);
+    var tiebreakers = ChampionshipTiebreakers.Parse(stage.Tiebreakers);
+
+    <h4>@stage.Name</h4>
+    <div class="row">
+        @foreach (var group in stage.Groups.OrderBy(group => group.Order))
+        {
+            var standings = Model.Standings(stage, group);
+
+            <div class="@(stage.Groups.Count > 1 ? "col-lg-6" : "col-xs-12")">
+                <div class="panel panel-default">
+                    @if (stage.Groups.Count > 1)
+                    {
+                        <div class="panel-heading"><h3 class="panel-title">@L["Group {0}", group.Name]</h3></div>
+                    }
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-hover championship-standings">
+                            <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>@L["Team"]</th>
+                                <th class="text-center" title="@L["Points"]">@L["Pts"]</th>
+                                <th class="text-center" title="@L["Series played"]">@L["P"]</th>
+                                <th class="text-center" title="@L["Wins"]">@L["W"]</th>
+                                <th class="text-center" title="@L["Draws"]">@L["D"]</th>
+                                <th class="text-center" title="@L["Losses"]">@L["L"]</th>
+                                <th class="text-center hidden-xs" title="@L["Points scored"]">@L["Scored"]</th>
+                                <th class="text-center hidden-xs" title="@L["Points conceded"]">@L["Conceded"]</th>
+                                <th class="text-center hidden-xs" title="@L["Penalties in the games"]">@L["Penalties"]</th>
+                                <th class="text-center" title="@L["Point difference"]">@L["Diff."]</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var row in standings)
+                            {
+                                <tr class="@(row.Position <= qualifiers ? "championship-qualified" : null)">
+                                    <td class="text-center">@row.Position</td>
+                                    <td>
+                                        @Model.TeamName(row.TeamId)
+                                        @if (row.PenaltyPoints != 0)
+                                        {
+                                            <span class="label label-danger" title="@L["Penalty points"]">-@row.PenaltyPoints</span>
+                                        }
+                                    </td>
+                                    <td class="text-center"><strong>@row.Points</strong></td>
+                                    <td class="text-center">@row.Played</td>
+                                    <td class="text-center">@row.Wins</td>
+                                    <td class="text-center">@row.Draws</td>
+                                    <td class="text-center">@row.Losses</td>
+                                    <td class="text-center hidden-xs">@row.ScoreFor.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hidden-xs">@row.ScoreAgainst.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hidden-xs">@row.Penalties.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center">@row.Difference.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <p class="small text-muted">
+        @L["Win {0}, draw {1}, loss {2} points.", stage.PointsForWin, stage.PointsForDraw, stage.PointsForLoss]
+        @if (tiebreakers.Count > 0)
+        {
+            <text>@L["Ties are broken by"]: @string.Join(", ", tiebreakers.Select(tiebreaker => ChampionshipTexts.Tiebreaker(L, tiebreaker))).</text>
+        }
+        @if (qualifiers > 0)
+        {
+            <text><span class="championship-qualified-key"></span> @L["Move on to the next stage."]</text>
+        }
+    </p>
+}

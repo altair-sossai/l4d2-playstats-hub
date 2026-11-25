@@ -2,7 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
 
 namespace L4D2PlayStats.Hub.Core;
 
-public static class AppConsts
+public static partial class AppConsts
 {
     public const string DefaultSiteName = "L4D2 PlayStats";
     public const string DefaultTimeZone = "UTC";

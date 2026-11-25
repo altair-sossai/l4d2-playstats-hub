@@ -1,0 +1,16 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Rules"].Value} - {Model.Championship.Name}", Description = L["Rules of {0}.", Model.Championship.Name] };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+<div class="panel panel-default">
+    <div class="panel-body championship-rules">
+        @ChampionshipMarkdown.Render(Model.Rules(CultureInfo.CurrentUICulture.Name))
+    </div>
+</div>

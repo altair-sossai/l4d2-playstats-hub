@@ -1,0 +1,195 @@
+@model ChampionshipAdminModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    var free = L4D2PlayStats.Hub.Core.Modules.Championships.Services.ChampionshipDraftService.Free(championship);
+}
+
+<div class="modal fade" id="team-add-modal" tabindex="-1" role="dialog" aria-labelledby="team-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="team-add-title">@L["Add a team"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-8 form-group" style="margin-bottom: 0">
+                        <label for="team-add-name">@L["Name"]</label>
+                        <input class="form-control" id="team-add-name" name="name" required maxlength="@CoreConsts.ChampionshipTeamNameMaxLength" autocomplete="off">
+                    </div>
+                    <div class="col-sm-4 form-group" style="margin-bottom: 0">
+                        <label for="team-add-tag">@L["Tag"]</label>
+                        <input class="form-control" id="team-add-tag" name="tag" maxlength="@CoreConsts.ChampionshipTeamTagMaxLength" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="teams-add-modal" tabindex="-1" role="dialog" aria-labelledby="teams-add-title">
+    <div class="modal-dialog modal-sm" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/many">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="teams-add-title">@L["Add several teams"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="teams-add-count">@L["Number of teams"] @FieldHelp.Tip(L["The teams are named Team A, Team B, Team C and so on. The names can be changed later."])</label>
+                    <input type="number" class="form-control" id="teams-add-count" name="count" min="1" max="@CoreConsts.ChampionshipMaxTeams" value="4" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@foreach (var team in view.Teams)
+{
+    var members = team.Members.OrderBy(member => member.JoinedAtUtc).ThenBy(member => member.Id).ToList();
+    var open = members.Count < championship.RosterSize;
+
+    <div class="modal fade" id="team-edit-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-edit-title-@team.Id">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="team-edit-title-@team.Id">@L["Edit the team"]</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="team-name-@team.Id">@L["Name"]</label>
+                            <input class="form-control" id="team-name-@team.Id" name="name" value="@team.Name" required maxlength="@CoreConsts.ChampionshipTeamNameMaxLength">
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="team-tag-@team.Id">@L["Tag"]</label>
+                            <input class="form-control" id="team-tag-@team.Id" name="tag" value="@team.Tag" maxlength="@CoreConsts.ChampionshipTeamTagMaxLength">
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="team-seed-@team.Id">@L["Seed"]</label>
+                            <input type="number" class="form-control" id="team-seed-@team.Id" name="seed" value="@team.Seed" min="1" max="@CoreConsts.ChampionshipMaxTeams" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @foreach (var (field, label, current) in new[] { ("captain", L["Captain"].Value, team.CaptainCommunityId), ("viceCaptain", L["Vice-captain"].Value, team.ViceCaptainCommunityId) })
+                        {
+                            <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                                <label for="team-@field-@team.Id">@label</label>
+                                <select class="form-control" id="team-@field-@team.Id" name="@field">
+                                    <option value="">—</option>
+                                    @foreach (var member in members)
+                                    {
+                                        <option value="@member.CommunityId" selected="@(member.CommunityId == current)">@DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))</option>
+                                    }
+                                    @if (open && free.Count > 0)
+                                    {
+                                        <optgroup label="@L["Players without a team"]">
+                                            @foreach (var player in free)
+                                            {
+                                                <option value="@player">@DisplayNames.Apply(player, view.PlayerName(player))</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    <p class="help-block" style="margin: 10px 0 0">@L["A captain or vice-captain without a team joins this team."]</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="team-players-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-players-title-@team.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="team-players-title-@team.Id">@L["Players of {0}", team.Name] <small>@members.Count / @championship.RosterSize</small></h4>
+                </div>
+                <div class="modal-body">
+                    @if (members.Count == 0)
+                    {
+                        <div class="admin-empty">@L["No players yet."]</div>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed championship-members">
+                            <tbody>
+                            @foreach (var member in members)
+                            {
+                                <tr>
+                                    <td class="vertical-align-middle">
+                                        <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                                        @DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))
+                                        @if (member.CommunityId == team.CaptainCommunityId)
+                                        {
+                                            <span class="label label-warning">@L["Captain"]</span>
+                                        }
+                                        @if (member.CommunityId == team.ViceCaptainCommunityId)
+                                        {
+                                            <span class="label label-info">@L["Vice"]</span>
+                                        }
+                                    </td>
+                                    <td class="text-right vertical-align-middle slim">
+                                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members/@member.CommunityId/remove">
+                                            <button class="btn btn-xs btn-danger" type="submit">
+                                                <span class="glyphicon glyphicon-remove"></span> @L["Remove"]
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                    @if (open)
+                    {
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members" class="championship-member-add">
+                            <label for="member-@team.Id">@L["Add a player"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
+                            <div class="input-group">
+                                <input class="form-control" id="member-@team.Id" name="player" placeholder="76561198000000000" required autocomplete="off">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" data-player-picker="#member-@team.Id" title="@L["Choose from the list"]"><span class="glyphicon glyphicon-user"></span></button>
+                                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @L["Add"]</button>
+                                </span>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

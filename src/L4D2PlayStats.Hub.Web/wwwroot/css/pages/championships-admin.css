@@ -1,0 +1,58 @@
+.championship-status {
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+.championship-avatar {
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+    border-radius: 3px;
+    object-fit: cover;
+}
+
+.championship-picker {
+    margin-top: 8px;
+}
+
+.championship-member-add {
+    margin-top: 10px;
+}
+
+.championship-members {
+    margin-bottom: 0;
+}
+
+.championship-checkbox {
+    margin-top: 25px;
+}
+
+.championship-entrants {
+    margin-bottom: 10px;
+}
+
+.championship-penalty-add {
+    margin-top: 10px;
+}
+
+.championship-rules-input {
+    resize: vertical;
+}
+
+.championship-result {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.championship-winner {
+    font-weight: bold;
+}
+
+.championship-game-buttons .btn {
+    min-width: 26px;
+    margin: 1px;
+}
+
+.admin-toolbar-actions form {
+    display: inline-block;
+}

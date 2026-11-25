@@ -1,4 +1,5 @@
 const fixtures = require('./fixtures');
+const { championshipChecks } = require('./championships');
 const { sleep } = require('./browser');
 
 const phone = 390;
@@ -11,7 +12,7 @@ const languages = [
     { culture: 'es-ES', matches: 'Últimas partidas' },
     { culture: 'en-US', matches: 'Last matches' }
 ];
-const phonePages = ['/', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat', '/commands'];
+const phonePages = ['/', '/championships', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat', '/commands'];
 const adminPages = [
     { path: '/admin', help: false },
     { path: '/admin/servers' },
@@ -30,6 +31,7 @@ const adminPages = [
     { path: '/admin/remote-commands' },
     { path: '/admin/player-connections' },
     { path: '/admin/anti-cheat' },
+    { path: '/admin/championships' },
     { path: '/admin/backup' }
 ];
 
@@ -648,7 +650,8 @@ function checks(context) {
                     await browser.theme('default');
                 }
             }
-        }
+        },
+        ...championshipChecks(context)
     ];
 }
 
