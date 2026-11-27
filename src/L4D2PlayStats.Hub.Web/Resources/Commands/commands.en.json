@@ -858,12 +858,6 @@
           "description": "Draws again, at random, who will be the Tank."
         },
         {
-          "id": "admin-hp",
-          "names": ["!hp"],
-          "syntax": ["!hp", "!hp <1-100>"],
-          "description": "Adds health to every living survivor: 100 unless you give another amount from 1 to 100. Health never goes above 100, and incapacitated survivors are picked up."
-        },
-        {
           "id": "admin-fix",
           "names": ["!fix"],
           "description": "The same menu the players use, but the fix is applied right away, with no vote, through \"Apply now (admin)\". It works at any time, even in the ready-up and as a spectator.",
