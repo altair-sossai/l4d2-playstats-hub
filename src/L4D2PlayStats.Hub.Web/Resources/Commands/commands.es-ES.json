@@ -148,6 +148,78 @@
       ]
     },
     {
+      "id": "fix",
+      "icon": "wrench",
+      "title": "Ajustes durante el juego",
+      "intro": "Cuando alguien sale perjudicado durante el juego (perdió vida por un bug, se quedó sin pills, cayó sin motivo) y no hay ningún admin en el servidor, los propios jugadores lo resuelven con el `!fix`, y el equipo contrario decide en una votación.",
+      "commands": [
+        {
+          "id": "fix-menu",
+          "names": ["!fix"],
+          "who": ["Jugadores de los equipos"],
+          "when": ["Ronda en curso"],
+          "description": "Abre un menú para pedir un ajuste. Eliges qué ajustar, después el jugador, y confirmas en \"Empezar la votación\". Entonces vota el equipo contrario.",
+          "examples": [
+            { "code": "!fix", "text": "Abre el menú con: Vida de un superviviente, Dar pills a un superviviente, Levantar a un superviviente caído y, con un Tank vivo, Restaurar la vida del Tank." }
+          ],
+          "notes": [
+            "Una opción sin nadie para ajustar aparece apagada, con \"(nadie por ahora)\".",
+            "Antes de empezar la votación, el menú muestra el pedido para que lo revises, por ejemplo \"!fix: ¿dar pills a Feeh?\".",
+            "Usa el Atrás del menú para cambiar de jugador o de opción."
+          ]
+        },
+        {
+          "id": "fix-health",
+          "title": "Vida de un superviviente",
+          "description": "La lista muestra a cada superviviente de pie con su vida actual, como \"Feeh - 37 + 20 temp\": 37 de vida permanente y 20 de temporal (la de las pills y la adrenalina, que va bajando con el tiempo). Después de elegir al jugador, eliges cómo queda su vida.",
+          "notes": [
+            "Dejar todo permanente: la vida temporal pasa a ser permanente. En el ejemplo, Feeh queda con 57 permanente.",
+            "Definir la vida permanente: abre la lista 100, 90, 80, 70, 60 y 50. La vida queda exactamente en el valor elegido, sin vida temporal.",
+            "Definir la vida temporal: la misma lista, pero queda 1 de vida permanente y el resto temporal (100 pasa a ser 1 + 99), como si el jugador acabara de tomar pills.",
+            "El valor que dejaría la vida igual aparece apagado.",
+            "Solo aparecen los valores que no bajan la vida: ni la vida permanente ni el total (permanente + temporal) quedan nunca más bajos. Así el equipo que vota no puede quitarle vida a nadie. Un admin ve todos los valores.",
+            "Quien está caído no aparece aquí: usa \"Levantar a un superviviente caído\"."
+          ]
+        },
+        {
+          "id": "fix-pills",
+          "title": "Dar pills a un superviviente",
+          "description": "Da unas pills al superviviente que elijas.",
+          "notes": ["Solo aparecen los supervivientes sin pills y sin adrenalina, para que nadie pierda el objeto que ya tiene."]
+        },
+        {
+          "id": "fix-revive",
+          "title": "Levantar a un superviviente caído",
+          "description": "Levanta a un superviviente caído o colgando de un borde, igual que lo haría un compañero. La lista muestra \"(caído)\" o \"(colgando)\" junto al nombre.",
+          "notes": [
+            "Cuenta como una caída, igual que ser levantado por un compañero, así que puede dejar al jugador en blanco y negro.",
+            "No aparece quien está atrapado por un infectado, siendo levantado por un compañero o cayendo del borde. Quien ya murió no puede ser levantado."
+          ]
+        },
+        {
+          "id": "fix-tank",
+          "title": "Restaurar la vida del Tank",
+          "description": "Devuelve la vida del Tank al máximo, para cuando el Tank perdió vida por un bug. Solo aparece con un Tank vivo, y la lista muestra la vida actual y la máxima, como \"Feeh - 2100 / 6000\".",
+          "notes": ["En este pedido, los que votan son los supervivientes."]
+        },
+        {
+          "id": "fix-vote",
+          "title": "Reglas de la votación del !fix",
+          "description": "Decide siempre el equipo contrario de quien recibe el ajuste: los infectados votan los pedidos para los supervivientes, y los supervivientes votan el pedido de vida del Tank.",
+          "notes": [
+            "La votación usa las teclas del juego: F1 para Sí y F2 para No. Dura 15 s y solo la ve el equipo que vota.",
+            "Pasa con más Sí que No. Quien no vota no cuenta y, si nadie vota, no pasa.",
+            "Si quien pidió está en el equipo que vota, su voto ya cuenta como Sí.",
+            "Al aplicarlo, el servidor comprueba de nuevo. Si el jugador murió, ya fue levantado o ya tiene pills, el chat avisa que la situación cambió y no se aplica nada.",
+            "Solo con la ronda en juego: no funciona en el ready-up, con el juego en pausa, con otra votación en curso ni para espectadores. Si la ronda termina, la votación se cancela.",
+            "Después de pedir, espera 60 s para pedir de nuevo.",
+            "Cada equipo recibe como máximo 3 ajustes aprobados por ronda.",
+            "El chat avisa a todos de cada pedido y de su resultado."
+          ]
+        }
+      ]
+    },
+    {
       "id": "listen",
       "icon": "headphones",
       "title": "Voz como espectador",
@@ -790,6 +862,12 @@
           "names": ["!hp"],
           "syntax": ["!hp", "!hp <1-100>"],
           "description": "Suma vida a todos los sobrevivientes vivos: 100 a menos que indiques otra cantidad de 1 a 100. La vida nunca pasa de 100, y los sobrevivientes incapacitados se levantan."
+        },
+        {
+          "id": "admin-fix",
+          "names": ["!fix"],
+          "description": "El mismo menú de los jugadores, pero el ajuste se aplica en el acto, sin votación, con \"Aplicar ahora (admin)\". Funciona en cualquier momento, incluso en el ready-up y como espectador.",
+          "notes": ["El chat avisa a todos de quién aplicó qué. El ajuste de un admin no cuenta en el límite de 3 por ronda."]
         },
         {
           "id": "admin-slots",
