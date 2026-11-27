@@ -858,12 +858,6 @@
           "description": "Sortea de nuevo quién será el Tank."
         },
         {
-          "id": "admin-hp",
-          "names": ["!hp"],
-          "syntax": ["!hp", "!hp <1-100>"],
-          "description": "Suma vida a todos los sobrevivientes vivos: 100 a menos que indiques otra cantidad de 1 a 100. La vida nunca pasa de 100, y los sobrevivientes incapacitados se levantan."
-        },
-        {
           "id": "admin-fix",
           "names": ["!fix"],
           "description": "El mismo menú de los jugadores, pero el ajuste se aplica en el acto, sin votación, con \"Aplicar ahora (admin)\". Funciona en cualquier momento, incluso en el ready-up y como espectador.",
