@@ -148,6 +148,78 @@
       ]
     },
     {
+      "id": "fix",
+      "icon": "wrench",
+      "title": "Fixes during the game",
+      "intro": "When someone is harmed during the game (lost health to a bug, ended up without pills, went down for no reason) and there is no admin on the server, the players fix it themselves with `!fix`, and the other team decides in a vote.",
+      "commands": [
+        {
+          "id": "fix-menu",
+          "names": ["!fix"],
+          "who": ["Team players"],
+          "when": ["Live round"],
+          "description": "Opens a menu to ask for a fix. You choose what to fix, then the player, and confirm with \"Start the vote\". Then the other team votes.",
+          "examples": [
+            { "code": "!fix", "text": "Opens the menu with: Health of a survivor, Give pills to a survivor, Revive a downed survivor and, while a Tank is alive, Restore the Tank's health." }
+          ],
+          "notes": [
+            "An option with nobody to fix is greyed out, with \"(nobody right now)\".",
+            "Before the vote starts, the menu shows the request for you to check, for example \"!fix: give pills to Feeh?\".",
+            "Use the menu's Back to change the player or the option."
+          ]
+        },
+        {
+          "id": "fix-health",
+          "title": "Health of a survivor",
+          "description": "The list shows each standing survivor with their current health, like \"Feeh - 37 + 20 temp\": 37 permanent health and 20 temporary (the one from pills and adrenaline, which goes down over time). After choosing the player, you choose how their health ends up.",
+          "notes": [
+            "Make it all permanent: the temporary health becomes permanent. In the example, Feeh ends up with 57 permanent.",
+            "Set the permanent health: opens the list 100, 90, 80, 70, 60 and 50. The health is set to exactly the chosen value, with no temporary health.",
+            "Set the temporary health: the same list, but 1 health stays permanent and the rest is temporary (100 becomes 1 + 99), as if the player had just taken pills.",
+            "The value that would leave the health as it is is greyed out.",
+            "Only the values that do not lower the health are listed: neither the permanent health nor the total (permanent + temporary) ever ends up lower. That way the voting team cannot take health away from anyone. An admin sees every value.",
+            "Downed survivors are not listed here: use \"Revive a downed survivor\"."
+          ]
+        },
+        {
+          "id": "fix-pills",
+          "title": "Give pills to a survivor",
+          "description": "Gives pills to the survivor you choose.",
+          "notes": ["Only survivors with no pills and no adrenaline are listed, so nobody loses the item they already have."]
+        },
+        {
+          "id": "fix-revive",
+          "title": "Revive a downed survivor",
+          "description": "Picks up a survivor who is down or hanging from a ledge, the same way a teammate would. The list shows \"(down)\" or \"(hanging from a ledge)\" next to the name.",
+          "notes": [
+            "It counts as a down, the same as being picked up by a teammate, so it can leave the player black and white.",
+            "Survivors pinned by an infected, being picked up by a teammate or falling from a ledge are not listed. A survivor who already died cannot be picked up."
+          ]
+        },
+        {
+          "id": "fix-tank",
+          "title": "Restore the Tank's health",
+          "description": "Sets the Tank's health back to the max, for when the Tank lost health to a bug. Only shown while a Tank is alive, and the list shows the current and the max health, like \"Feeh - 2100 / 6000\".",
+          "notes": ["For this request, the survivors are the ones who vote."]
+        },
+        {
+          "id": "fix-vote",
+          "title": "Rules of the !fix vote",
+          "description": "The team that decides is always the opponent of whoever gets the fix: the infected vote on requests for the survivors, and the survivors vote on the Tank health request.",
+          "notes": [
+            "The vote uses the game keys: F1 for Yes and F2 for No. It lasts 15 s and only the voting team sees it.",
+            "It passes with more Yes than No. Not voting does not count, and if nobody votes, it does not pass.",
+            "If the requester is on the voting team, their vote already counts as Yes.",
+            "When applying it, the server checks again. If the player died, was already picked up or already got pills, the chat says the situation changed and nothing is applied.",
+            "Only with the round live: it does not work in the ready-up, with the game paused, with another vote in progress or for spectators. If the round ends, the vote is cancelled.",
+            "After asking, wait 60 s to ask again.",
+            "Each team gets at most 3 approved fixes per round.",
+            "The chat tells everyone about each request and its result."
+          ]
+        }
+      ]
+    },
+    {
       "id": "listen",
       "icon": "headphones",
       "title": "Voice while spectating",
@@ -790,6 +862,12 @@
           "names": ["!hp"],
           "syntax": ["!hp", "!hp <1-100>"],
           "description": "Adds health to every living survivor: 100 unless you give another amount from 1 to 100. Health never goes above 100, and incapacitated survivors are picked up."
+        },
+        {
+          "id": "admin-fix",
+          "names": ["!fix"],
+          "description": "The same menu the players use, but the fix is applied right away, with no vote, through \"Apply now (admin)\". It works at any time, even in the ready-up and as a spectator.",
+          "notes": ["The chat tells everyone who applied what. A fix by an admin does not count toward the limit of 3 per round."]
         },
         {
           "id": "admin-slots",
