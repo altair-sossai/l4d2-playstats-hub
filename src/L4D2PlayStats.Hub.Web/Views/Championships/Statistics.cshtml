@@ -1,0 +1,110 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Statistics"].Value} - {Model.Championship.Name}", Description = L["Statistics of the players and teams of {0}.", Model.Championship.Name] };
+    var stats = Model.Statistics;
+    var teamRows = Model.Teams.Select(team =>
+    {
+        var series = Model.AllSeries.Where(item => item.HasTeams && !item.Bye && item.Has(team.Id)).ToList();
+        var finished = series.Where(item => item.Finished).ToList();
+        var games = series.SelectMany(item => item.Games.Where(game => game.IsPlayed).Select(game => (Series: item, Game: game))).ToList();
+
+        return new
+        {
+            Team = team,
+            Wins = finished.Count(item => item.WinnerTeamId == team.Id),
+            Draws = finished.Count(item => item.WinnerTeamId == null),
+            Losses = finished.Count(item => item.WinnerTeamId != null && item.WinnerTeamId != team.Id),
+            GameWins = games.Count(pair => pair.Series.TeamAId == team.Id ? pair.Game.TeamATotal > pair.Game.TeamBTotal : pair.Game.TeamBTotal > pair.Game.TeamATotal),
+            GameLosses = games.Count(pair => pair.Series.TeamAId == team.Id ? pair.Game.TeamATotal < pair.Game.TeamBTotal : pair.Game.TeamBTotal < pair.Game.TeamATotal),
+            Scored = games.Sum(pair => pair.Series.TeamAId == team.Id ? pair.Game.TeamAScore : pair.Game.TeamBScore),
+            Conceded = games.Sum(pair => pair.Series.TeamAId == team.Id ? pair.Game.TeamBScore : pair.Game.TeamAScore)
+        };
+    }).OrderByDescending(row => row.Wins).ThenByDescending(row => row.GameWins).ThenByDescending(row => row.Scored - row.Conceded).ToList();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">@L["Teams"]</h3></div>
+    <div class="table-responsive">
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>@L["Team"]</th>
+                <th class="text-center" title="@L["Series won, drawn and lost"]">@L["Series"]</th>
+                <th class="text-center" title="@L["Games won and lost"]">@L["Games"]</th>
+                <th class="text-center">@L["Points scored"]</th>
+                <th class="text-center">@L["Points conceded"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in teamRows)
+            {
+                <tr>
+                    <td>@row.Team.Name</td>
+                    <td class="text-center">@row.Wins - @row.Draws - @row.Losses</td>
+                    <td class="text-center">@row.GameWins - @row.GameLosses</td>
+                    <td class="text-center">@row.Scored.ToString("N0", CultureInfo.CurrentCulture)</td>
+                    <td class="text-center">@row.Conceded.ToString("N0", CultureInfo.CurrentCulture)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">@L["Players"]</h3></div>
+    @if (stats.Count == 0)
+    {
+        <div class="panel-body text-muted">@L["The statistics appear when the games are linked to the matches of the server."]</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover table-striped championship-statistics">
+                <thead>
+                <tr>
+                    <th>@L["Player"]</th>
+                    <th class="hidden-xs">@L["Team"]</th>
+                    <th class="text-center">@L["Games"]</th>
+                    <th class="text-center">@L["MVP SI"]</th>
+                    <th class="text-center">@L["MVP CI"]</th>
+                    <th class="text-center">@L["SI damage"]</th>
+                    <th class="text-center">@L["Commons"]</th>
+                    <th class="text-center">@L["Skeets"]</th>
+                    <th class="text-center">@L["Levels"]</th>
+                    <th class="text-center">@L["Crowns"]</th>
+                    <th class="text-center hidden-xs">@L["Tank damage"]</th>
+                    <th class="text-center hidden-xs">@L["Deaths"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var row in stats)
+                {
+                    <tr>
+                        <td>
+                            @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(row.CommunityId, DisplayNames.Apply(row.CommunityId, Model.PlayerName(row.CommunityId))))
+                        </td>
+                        <td class="hidden-xs">@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.TeamId))</td>
+                        <td class="text-center">@row.Games</td>
+                        <td class="text-center">@row.Totals.MvpSiDamage</td>
+                        <td class="text-center">@row.Totals.MvpCommon</td>
+                        <td class="text-center">@row.Totals.SiDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center">@row.Totals.Common.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center">@row.Totals.Skeets</td>
+                        <td class="text-center">@row.Totals.Levels</td>
+                        <td class="text-center">@row.Totals.Crowns</td>
+                        <td class="text-center hidden-xs">@row.Totals.TankDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center hidden-xs">@row.Totals.Died</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

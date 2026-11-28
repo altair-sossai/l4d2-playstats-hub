@@ -1,4 +1,5 @@
 const fixtures = require('./fixtures');
+const { championshipChecks } = require('./championships');
 const { sleep } = require('./browser');
 
 const phone = 390;
@@ -11,7 +12,7 @@ const languages = [
     { culture: 'es-ES', matches: 'Últimas partidas' },
     { culture: 'en-US', matches: 'Last matches' }
 ];
-const phonePages = ['/', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat', '/commands'];
+const phonePages = ['/', '/championships', '/players', '/matches', '/matches/1', '/matches/1/statistics/1', `/player/${fixtures.players[0].id}`, `/player/${fixtures.unknownPlayer}`, '/community', '/community/votes', '/servers', '/patents', '/history', '/skins', '/anti-cheat', '/commands'];
 const adminPages = [
     { path: '/admin', help: false },
     { path: '/admin/servers' },
@@ -30,6 +31,7 @@ const adminPages = [
     { path: '/admin/remote-commands' },
     { path: '/admin/player-connections' },
     { path: '/admin/anti-cheat' },
+    { path: '/admin/championships' },
     { path: '/admin/backup' }
 ];
 
@@ -589,7 +591,6 @@ function checks(context) {
                 expect(line, 'The map page has no pencil next to the survivors of the first round half');
                 expect(pencils === onMap.length * 2, `The map page has ${pencils} pencils for ${onMap.length} players; each player should have one per round half`);
 
-                await browser.eval(`window.confirm = () => true`);
                 await browser.click('#tab-round-half-1 .ms-replace[data-survivor="true"]', { settle: 0 });
                 await browser.modalShown('#pp-modal');
                 await browser.until(`document.querySelector('#pp-modal .pp-player')`, 'the players of the search window');
@@ -601,6 +602,7 @@ function checks(context) {
                 const loaded = browser.page.waitFor('Page.loadEventFired');
 
                 await browser.click('#pp-modal [data-e2e-pick]', { settle: 0 });
+                await browser.confirm();
                 await loaded;
                 await browser.page.idle();
                 await pageOk(browser, 'The map page after replacing a player');
@@ -648,7 +650,8 @@ function checks(context) {
                     await browser.theme('default');
                 }
             }
-        }
+        },
+        ...championshipChecks(context)
     ];
 }
 

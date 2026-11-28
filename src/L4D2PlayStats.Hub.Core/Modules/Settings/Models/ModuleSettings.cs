@@ -11,6 +11,7 @@ public class ModuleSettings
     public bool SiteChat { get; set; }
     public bool RemoteCommands { get; set; }
     public bool AntiCheat { get; set; }
+    public bool Championships { get; set; }
 
     public bool IsEnabled(HubModule module)
     {
@@ -23,6 +24,7 @@ public class ModuleSettings
             HubModule.SiteChat => SiteChat && LiveServer,
             HubModule.RemoteCommands => RemoteCommands && LiveServer,
             HubModule.AntiCheat => AntiCheat,
+            HubModule.Championships => Championships,
             _ => false
         };
     }

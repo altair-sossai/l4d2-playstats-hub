@@ -26,7 +26,7 @@ public class HomeController(
         if (!modules.IsEnabled(HubModule.Ranking))
             return View("Welcome");
 
-        ViewBag.Home = "active";
+        ViewBag.Home = AppConsts.ActiveMenu;
 
         var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
         if (selected == null)

@@ -4,6 +4,9 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
@@ -11,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Live.Services;
 
-public class ChatBanService(HubDbContext dbContext, IClock clock, IPlayerNameService playerNameService) : IChatBanService
+public class ChatBanService(HubDbContext dbContext, IClock clock, IPlayerNameService playerNameService, INotificationService notifications) : IChatBanService
 {
     public Task<ChatBan?> FindAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -69,6 +72,7 @@ public class ChatBanService(HubDbContext dbContext, IClock clock, IPlayerNameSer
             };
 
             dbContext.Set<ChatBan>().Add(ban);
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.Chat, "You were banned from the chat of the site.", null));
         }
         else
             ban.UpdatedAtUtc = now;
@@ -93,6 +97,7 @@ public class ChatBanService(HubDbContext dbContext, IClock clock, IPlayerNameSer
             return false;
 
         dbContext.Set<ChatBan>().Remove(ban);
+        notifications.Send(communityId, new NotificationMessage(NotificationTopic.Chat, "You can use the chat of the site again.", null));
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return true;

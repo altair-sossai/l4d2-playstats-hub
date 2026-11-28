@@ -1,0 +1,10 @@
+@model PlayerChipModel
+<img src="@AppConsts.AvatarUrl@Model.CommunityId" alt="" class="player-chip-avatar" onerror="imgOnError(this)"/>
+@if (Model.Link)
+{
+    <a href="@PlayerUrls.Details(Model.CommunityId)" target="@(Model.NewTab ? "_blank" : null)">@Model.Name</a>
+}
+else
+{
+    @Model.Name
+}

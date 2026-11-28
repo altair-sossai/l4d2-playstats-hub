@@ -12,5 +12,10 @@
   "{0} years": "{0} años",
   "VAC bans": "Baneos VAC",
   "Game bans": "Baneos de juego",
-  "last ban {0} days ago": "último baneo hace {0} días"
+  "last ban {0} days ago": "último baneo hace {0} días",
+  "Take {0} experience points from this player in this season? The ranking is calculated again.": "¿Quitar {0} puntos de experiencia a este jugador en esta temporada? El ranking se calcula de nuevo.",
+  "Your name on the servers and on the site is now {0}.": "Tu nombre en los servidores y en el sitio ahora es {0}.",
+  "Your forced name was removed: the site shows the name you use in the game again.": "Tu nombre forzado fue quitado: el sitio vuelve a mostrar el nombre que usas en el juego.",
+  "You lost {0} experience points in this season.": "Perdiste {0} puntos de experiencia en esta temporada.",
+  "Your punishments in this season were removed.": "Tus castigos en esta temporada fueron quitados."
 }

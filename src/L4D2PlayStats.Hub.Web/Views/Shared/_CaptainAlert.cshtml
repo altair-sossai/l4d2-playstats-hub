@@ -1,0 +1,36 @@
+@inject L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts.IChampionshipCaptainService Captains
+@inject ICurrentUser CurrentUser
+@{
+    var teams = CurrentUser.CommunityId == null ? [] : await Captains.TeamsAsync(CurrentUser.CommunityId.Value, Context.RequestAborted);
+    var pending = teams.Sum(team => team.Tasks.Count);
+}
+@if (teams.Count > 0)
+{
+    <li class="dropdown nav-captain">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="@L["Captain area"]">
+            <span class="glyphicon glyphicon-tower"></span>
+            @if (pending > 0)
+            {
+                <span class="badge nav-captain-badge">@pending</span>
+            }
+            <span class="show-mobile">@L["Captain area"]</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">@L["Captain area"]</li>
+            @foreach (var team in teams)
+            {
+                <li>
+                    <a href="@ChampionshipUrls.Captain(team.Slug)">
+                        <strong>@team.Team</strong> · @team.Championship
+                        @if (team.Tasks.Count > 0)
+                        {
+                            <span class="badge nav-captain-badge">@team.Tasks.Count</span>
+                            <div class="small nav-captain-hint">@L["Things to do: {0}", team.Tasks.Count]</div>
+                        }
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+}

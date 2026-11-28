@@ -1,0 +1,232 @@
+@model ChampionshipAdminModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@{
+    var championship = Model.Championship;
+    var imageTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
+    var imageMegabytes = AppConsts.ChampionshipImageMaxBytes / AppConsts.BytesPerMegabyte;
+    var bannerUrl = ChampionshipUrls.Image(championship.Id, championship.BannerImage);
+    var logoUrl = ChampionshipUrls.Image(championship.Id, championship.LogoImage);
+    var gallery = championship.Gallery;
+}
+
+<p class="admin-lead">@L["The information shown on the page of the championship, how the teams are formed and its status. A draft is seen only by the administrators; building the first stage puts the championship in progress."]</p>
+
+<form method="post" asp-antiforgery="true" action="@Model.Url" enctype="multipart/form-data" data-confirm="@L["Save the settings of the championship? The public pages change at once."]">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span> @L["Championship"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="Name">@L["Name"]</label>
+                        <input class="form-control" id="Name" name="Name" value="@championship.Name" maxlength="@CoreConsts.ChampionshipNameMaxLength" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Slug">@L["Address"] @FieldHelp.Tip(L["The end of the address of the public page, such as /championships/cup-2027. Letters, numbers and hyphens."])</label>
+                        <input class="form-control admin-mono" id="Slug" name="Slug" value="@championship.Slug" maxlength="@CoreConsts.ChampionshipSlugMaxLength">
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">@L["Short description"]</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="2" maxlength="@CoreConsts.ChampionshipDescriptionMaxLength">@championship.Description</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="startsOn">@L["Start"]</label>
+                            <input type="date" class="form-control" id="startsOn" name="startsOn" value="@ChampionshipDates.DateInput(championship.StartsOn)">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="endsOn">@L["End"]</label>
+                            <input type="date" class="form-control" id="endsOn" name="endsOn" value="@ChampionshipDates.DateInput(championship.EndsOn)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="GameConfiguration">@L["Game mode"] @FieldHelp.Tip(L["Shown on the page, such as ZoneMod v2.9.1b."])</label>
+                        <input class="form-control" id="GameConfiguration" name="GameConfiguration" value="@championship.GameConfiguration" maxlength="@CoreConsts.ChampionshipConfigurationMaxLength">
+                    </div>
+                    <div class="form-group">
+                        <label for="StreamUrl">@L["Live stream link"]</label>
+                        <input class="form-control" id="StreamUrl" name="StreamUrl" value="@championship.StreamUrl" placeholder="https://www.twitch.tv/..." maxlength="@CoreConsts.ChampionshipUrlMaxLength">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="VideosUrl">@L["Videos link"]</label>
+                        <input class="form-control" id="VideosUrl" name="VideosUrl" value="@championship.VideosUrl" placeholder="https://www.youtube.com/..." maxlength="@CoreConsts.ChampionshipUrlMaxLength">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-flag"></span> @L["Status"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="status">@L["Status"] @FieldHelp.Tip(L["Mark it as finished after the final: the history of the championships then shows the champion."])</label>
+                        <select class="form-control" id="status" name="status">
+                            @foreach (var status in Enum.GetValues<ChampionshipStatus>())
+                            {
+                                <option value="@status" selected="@(status == championship.Status)">@ChampionshipTexts.Status(L, status)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label for="reason">@L["Reason of the cancellation"]</label>
+                        <input class="form-control" id="reason" name="reason" value="@championship.CancelReason" maxlength="@CoreConsts.ChampionshipReasonMaxLength">
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> @L["Teams and players"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="PlayersPerGame">@L["Players per game"]</label>
+                            <input type="number" class="form-control" id="PlayersPerGame" name="PlayersPerGame" min="1" max="@CoreConsts.ChampionshipMaxPlayersPerGame" value="@championship.PlayersPerGame">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="RosterSize">@L["Players per team"] @FieldHelp.Tip(L["The most players a team can have, counting the substitutes."])</label>
+                            <input type="number" class="form-control" id="RosterSize" name="RosterSize" min="1" max="@CoreConsts.ChampionshipMaxRoster" value="@championship.RosterSize">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group">
+                            <label for="MaxParticipants">@L["Places"] @FieldHelp.Tip(L["The most participants the championship takes. Empty for no limit."])</label>
+                            <input type="number" class="form-control" id="MaxParticipants" name="MaxParticipants" min="0" value="@championship.MaxParticipants">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <label for="DraftMethod">@L["Team formation"] @FieldHelp.More(L["How the players are placed in the teams."], L["Team formation"], L["Manual: the administration puts each player in a team.\nRoulette: each spin draws a team among the ones with fewest players and a player without a team.\nPots: the participants are split in pots, and each team gets one player of each pot; the player of the first pot becomes the captain.\nSnake draft: the captains are drawn in an order and choose one player each, in the order A, B, C, D and then D, C, B, A.\nLinear draft: the same, always in the order A, B, C, D."])</label>
+                            <select class="form-control" id="DraftMethod" name="DraftMethod">
+                                @foreach (var method in Enum.GetValues<ChampionshipDraftMethod>())
+                                {
+                                    <option value="@method" selected="@(method == championship.DraftMethod)">@ChampionshipTexts.DraftMethod(L, method)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="checkbox" style="margin-bottom: 0">
+                        <label for="Substitutes">
+                            <input type="checkbox" id="Substitutes" name="Substitutes" value="true" checked="@championship.Substitutes">
+                            <input type="hidden" name="Substitutes" value="false">
+                            @L["The teams can have substitutes"]
+                        </label>
+                    </div>
+                    <div class="checkbox" style="margin-bottom: 0">
+                        <label for="JoinRequests">
+                            <input type="checkbox" id="JoinRequests" name="JoinRequests" value="true" checked="@championship.JoinRequests">
+                            <input type="hidden" name="JoinRequests" value="false">
+                            @L["Players can ask to join"] @FieldHelp.Tip(L["While the status is Participants and there are places left, the page of the championship has a button for signed in players to ask for a place. Each request waits on the Participants tab until the administration approves or refuses it; an approved player becomes a participant."])
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default championship-images-panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-picture"></span> @L["Images"] @FieldHelp.Tip(L["Shown on the public page of the championship. Choose a file only to change it: saving without a file keeps the current image."])</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-5 form-group">
+                    <label for="Banner">@L["Banner"]</label>
+                    <div class="championship-image-preview championship-image-banner">
+                        @if (bannerUrl != null)
+                        {
+                            <img src="@bannerUrl" alt="@L["Banner"]">
+                        }
+                        else
+                        {
+                            <span class="text-muted">@L["No banner yet: the page shows a colored background."]</span>
+                        }
+                    </div>
+                    <input type="file" id="Banner" name="Banner" accept="@imageTypes">
+                    <span class="help-block">@L["A wide image, such as 1920 × 600, shown at the top of the page and on the card of the championship. PNG, JPG, WEBP or GIF, up to {0} MB.", imageMegabytes]</span>
+                    @if (bannerUrl != null)
+                    {
+                        <div class="checkbox">
+                            <label for="RemoveBanner">
+                                <input type="checkbox" id="RemoveBanner" name="RemoveBanner" value="true">
+                                @L["Remove the banner"]
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="Logo">@L["Logo"]</label>
+                    <div class="championship-image-preview championship-image-logo">
+                        @if (logoUrl != null)
+                        {
+                            <img src="@logoUrl" alt="@L["Logo"]">
+                        }
+                        else
+                        {
+                            <span class="text-muted">@L["No logo yet: the page shows the initials."]</span>
+                        }
+                    </div>
+                    <input type="file" id="Logo" name="Logo" accept="@imageTypes">
+                    <span class="help-block">@L["A square image, such as 512 × 512. PNG, JPG, WEBP or GIF, up to {0} MB.", imageMegabytes]</span>
+                    @if (logoUrl != null)
+                    {
+                        <div class="checkbox">
+                            <label for="RemoveLogo">
+                                <input type="checkbox" id="RemoveLogo" name="RemoveLogo" value="true">
+                                @L["Remove the logo"]
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="Gallery">@L["Gallery"] <small class="text-muted">@L["{0} of {1}", gallery.Count, CoreConsts.ChampionshipGalleryMaxImages]</small></label>
+                    @if (gallery.Count > 0)
+                    {
+                        <div class="championship-image-gallery">
+                            @foreach (var image in gallery)
+                            {
+                                <label class="championship-image-thumb" title="@L["Remove this image"]">
+                                    <img src="@ChampionshipUrls.Image(championship.Id, image)" alt="">
+                                    <span class="checkbox-inline"><input type="checkbox" name="RemoveGallery" value="@image"> @L["Remove"]</span>
+                                </label>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@L["No images yet."]</p>
+                    }
+                    <input type="file" id="Gallery" name="Gallery" accept="@imageTypes" multiple disabled="@(gallery.Count >= CoreConsts.ChampionshipGalleryMaxImages)">
+                    <span class="help-block">@L["Photos and art of the championship, shown at the end of the page. Choose one or more files, up to {0} images of {1} MB each.", CoreConsts.ChampionshipGalleryMaxImages, imageMegabytes]</span>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-link"></span> @L["Results"]</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="checkbox" style="margin-top: 0">
+                        <label for="AutoLinkMatches">
+                            <input type="checkbox" id="AutoLinkMatches" name="AutoLinkMatches" value="true" checked="@championship.AutoLinkMatches">
+                            <input type="hidden" name="AutoLinkMatches" value="false">
+                            @L["Link the matches of the server to the games by themselves"]
+                            @FieldHelp.More(L["When a match arrives from a server, it is linked to the game with the same campaign, both teams on opposite sides and a date near the time of the match."], L["Link the matches by themselves"], L["The game needs a date and a campaign. The match is linked when its campaign is the campaign of the game, at least half of the players of each team are in it on opposite sides, and it started within the hours of tolerance before or after the date of the series.\nWhile the match is played, the game shows In progress with the score of the maps played, and the standings and the bracket do not change.\nThe game ends when every map of the campaign is played, when no statistics arrive for the minutes set below (a game that ends early, such as on the third map), or when an administrator clicks End the game in the window of the game. Only then the winner moves on.\nA match unlinked by an administrator is not linked again to that game."])
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                            <label for="AutoLinkHours">@L["Hours of tolerance"] @FieldHelp.Tip(L["How many hours before or after the date of the series the match can start, for a game that is late or early."])</label>
+                            <input type="number" class="form-control" id="AutoLinkHours" name="AutoLinkHours" min="1" max="@CoreConsts.ChampionshipMaxAutoLinkHours" value="@championship.AutoLinkHours">
+                        </div>
+                        <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                            <label for="AutoCloseMinutes">@L["End after (minutes)"] @FieldHelp.Tip(L["A game in progress ends after this many minutes without new statistics of its match."])</label>
+                            <input type="number" class="form-control" id="AutoCloseMinutes" name="AutoCloseMinutes" min="@CoreConsts.ChampionshipMinAutoCloseMinutes" max="@CoreConsts.ChampionshipMaxAutoCloseMinutes" value="@championship.AutoCloseMinutes">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("_FormSaveButton")
+</form>

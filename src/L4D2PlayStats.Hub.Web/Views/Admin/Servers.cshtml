@@ -98,7 +98,7 @@
                 {
                     <div class="alert alert-success">@L["Saved."]</div>
                 }
-                <form method="post" asp-antiforgery="true" action="/admin/servers/live">
+                <form method="post" asp-antiforgery="true" action="/admin/servers/live" data-confirm="@L["Save the settings of the live page? They apply at once to every visitor."]">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">
@@ -133,7 +133,7 @@
 
 <div class="modal fade" id="server-add-modal" tabindex="-1" role="dialog" aria-labelledby="server-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/servers">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/servers" data-confirm="@L["Add this game server? It gets a token to send its statistics to the site."]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>

@@ -160,7 +160,7 @@
 
         if (Model.IsEquipped(skin))
         {
-            <button type="button" class="btn btn-default btn-sm @blockClass sk-action sk-unequip" data-weapon="@skin.Weapon" data-weapon-name="@WeaponName(skin.Weapon)">
+            <button data-confirm="@L["Take off the skin of this weapon? It goes back to the default look, and you can equip the skin again later."]" type="button" class="btn btn-default btn-sm @blockClass sk-action sk-unequip" data-weapon="@skin.Weapon" data-weapon-name="@WeaponName(skin.Weapon)">
                 <span class="glyphicon glyphicon-repeat"></span> @L["Back to default"]
             </button>
             return;
@@ -168,7 +168,7 @@
 
         if (Model.Owns(skin))
         {
-            <button type="button" class="btn btn-success btn-sm @blockClass sk-action sk-equip" data-skin="@skin.Id" data-title="@title" data-weapon-name="@WeaponName(skin.Weapon)">
+            <button data-confirm="@L["Equip this skin? It replaces the skin you use on this weapon from the next map."]" type="button" class="btn btn-success btn-sm @blockClass sk-action sk-equip" data-skin="@skin.Id" data-title="@title" data-weapon-name="@WeaponName(skin.Weapon)">
                 <span class="glyphicon glyphicon-ok"></span> @L["Equip"]
             </button>
             return;

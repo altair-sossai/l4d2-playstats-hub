@@ -97,7 +97,7 @@
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChatBansLimitsTab)" id="@AdminTabs.PaneId(AppConsts.ChatBansLimitsTab)">
         <div class="row">
             <div class="col-lg-8">
-                <form method="post" action="/admin/chat-bans/limits">
+                <form method="post" action="/admin/chat-bans/limits" data-confirm="@L["Save the limits of the chat? They apply at once to every message."]">
                     @Html.AntiForgeryToken()
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -175,7 +175,7 @@
                 </button>
                 <button type="button" class="btn btn-danger pull-left cb-remove-yes" style="display: none">@L["Confirm removal"]</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                <button type="button" class="btn btn-primary cb-save-reason">
+                <button data-confirm="@L["Save the reason of this ban?"]" type="button" class="btn btn-primary cb-save-reason">
                     <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                 </button>
             </div>
@@ -216,7 +216,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                <button type="button" class="btn btn-primary cb-add-save">
+                <button data-confirm="@L["Ban this player from the chat of the site?"]" type="button" class="btn btn-primary cb-add-save">
                     <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                 </button>
             </div>

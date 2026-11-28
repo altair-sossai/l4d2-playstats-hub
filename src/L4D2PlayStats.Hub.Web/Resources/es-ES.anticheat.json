@@ -52,5 +52,8 @@
   "This player is already on this list.": "Este jugador ya está en esta lista.",
   "The mode is invalid.": "El modo no es válido.",
   "Your Steam account must have the Anti-Cheat running to play on our servers. Open it before you join.": "Tu cuenta de Steam necesita tener el Anti-Cheat abierto para jugar en nuestros servidores. Ábrelo antes de entrar.",
-  "Your Steam account can play on our servers without the Anti-Cheat.": "Tu cuenta de Steam puede jugar en nuestros servidores sin el Anti-Cheat."
+  "Your Steam account can play on our servers without the Anti-Cheat.": "Tu cuenta de Steam puede jugar en nuestros servidores sin el Anti-Cheat.",
+  "Add this player to the list?": "¿Añadir este jugador a la lista?",
+  "Save the mode of the Anti-Cheat? It applies at once to every player who joins the servers.": "¿Guardar el modo del Anti-Cheat? Se aplica al instante a todos los jugadores que entran en los servidores.",
+  "Save the settings of the Anti-Cheat?": "¿Guardar la configuración del Anti-Cheat?"
 }

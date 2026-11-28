@@ -93,7 +93,7 @@
 
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane@(Model.Tab == AppConsts.CommunitySettingsTab ? " active" : "")" id="@AppConsts.CommunitySettingsAnchor">
-        <form method="post" asp-antiforgery="true" action="/admin/community">
+        <form method="post" asp-antiforgery="true" action="/admin/community" data-confirm="@L["Save the settings of the community ranking?"]">
             <div class="row">
                 <div class="col-md-6">
                     <div class="panel panel-default">
@@ -367,7 +367,7 @@
 
 <div class="modal fade" id="ca-block-add-modal" tabindex="-1" role="dialog" aria-labelledby="ca-block-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" data-related-accounts="@AppConsts.RelatedVoterBlocksList" data-related-accounts-player="#ca-block-player">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.CommunityBlockVoterUrl" data-related-accounts="@AppConsts.RelatedVoterBlocksList" data-related-accounts-player="#ca-block-player" data-confirm="@L["Block this player from voting in the community ranking?"]">
             <input type="hidden" name="returnUrl" value="@blockedUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">

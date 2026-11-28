@@ -78,7 +78,7 @@
                     {
                         <div class="alert alert-danger">@L[Model.Error]</div>
                     }
-                    <form method="post" asp-antiforgery="true" action="/setup/start">
+                    <form method="post" asp-antiforgery="true" action="/setup/start" data-confirm="@L["Start the setup with this code? You become the first administrator of the site."]">
                         <div class="form-group">
                             <label for="token">@L["Setup code"] @FieldHelp.More(L["The code the installer printed. Then you sign in with Steam, and that account becomes the first administrator."], L["Setup code"], L["The installer prints the setup code at the end. It is also in the application log and in the file setup-code.txt in the data folder, and on Linux the command playstats-hub setup-code shows it again.\nAfter the code, you sign in with Steam: that Steam account becomes the first administrator, and the code stops working. Only that account can continue the setup."])</label>
                             <input class="form-control" id="token" name="token" value="@Model.Token" autocomplete="off" required>
@@ -113,7 +113,7 @@
         }
         else if (Model.Step == "site")
         {
-            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/site" enctype="multipart/form-data">
+            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/site" enctype="multipart/form-data" data-confirm="@L["Save the site settings and go to the next step?"]">
                 <div class="panel-heading">
                     <h3 class="panel-title">@L["About the site"]</h3>
                 </div>
@@ -184,7 +184,7 @@
         }
         else if (Model.Step == "modules")
         {
-            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/modules">
+            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/modules" data-confirm="@L["Save the modules and go to the next step?"]">
                 <div class="panel-heading">
                     <h3 class="panel-title">@L["What should this site have?"]</h3>
                 </div>
@@ -207,7 +207,7 @@
                     @if (Model.Server == null)
                     {
                         <p>@L["Give the game server a name. You get an identifier and a key for it."]</p>
-                        <form method="post" asp-antiforgery="true" action="/setup/server">
+                        <form method="post" asp-antiforgery="true" action="/setup/server" data-confirm="@L["Create this game server? It gets a token to send its statistics to the site."]">
                             <div class="form-group">
                                 <label for="Name">@L["Server name"] @FieldHelp.Tip(L["The name shown on the site, as players know the server. The identifier is made from the name when the server is created and does not change when you rename it."])</label>
                                 <input class="form-control" id="Name" name="Name" required maxlength="100">
@@ -238,7 +238,7 @@
         }
         else
         {
-            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/finish">
+            <form class="panel panel-default" method="post" asp-antiforgery="true" action="/setup/finish" data-confirm="@L["Finish the setup? The site opens to the visitors."]">
                 <div class="panel-heading">
                     <h3 class="panel-title">@L["All set"]</h3>
                 </div>

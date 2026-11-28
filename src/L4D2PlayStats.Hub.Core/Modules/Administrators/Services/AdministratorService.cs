@@ -3,11 +3,14 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Administrators.Services;
 
-public class AdministratorService(HubDbContext dbContext, IClock clock) : IAdministratorService
+public class AdministratorService(HubDbContext dbContext, IClock clock, INotificationService notifications) : IAdministratorService
 {
     public Task<bool> IsAdministratorAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -32,6 +35,7 @@ public class AdministratorService(HubDbContext dbContext, IClock clock) : IAdmin
         {
             administrator = new Administrator { CommunityId = communityId, AddedAtUtc = clock.UtcNow };
             dbContext.Administrators.Add(administrator);
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.Administration, "You are an administrator of the site now.", AppConsts.AdministrationPath));
         }
 
         if (!string.IsNullOrWhiteSpace(name))

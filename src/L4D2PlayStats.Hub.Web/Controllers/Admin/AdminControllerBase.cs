@@ -8,33 +8,13 @@ namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
 [Authorize(Policy = AppConsts.AdministratorPolicy)]
 [AutoValidateAntiforgeryToken]
-public abstract class AdminControllerBase : Controller
+public abstract class AdminControllerBase : HubControllerBase
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         ViewBag.Admin = AppConsts.ActiveMenu;
 
         base.OnActionExecuting(context);
-    }
-
-    protected void Saved()
-    {
-        TempData[AppConsts.SavedTempData] = true;
-    }
-
-    protected void Error(string message)
-    {
-        TempData[AppConsts.ErrorTempData] = message;
-    }
-
-    protected bool IsLocal(string? returnUrl)
-    {
-        return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl);
-    }
-
-    protected IActionResult Back(string? returnUrl, string fallback)
-    {
-        return IsLocal(returnUrl) ? LocalRedirect(returnUrl!) : Redirect(fallback);
     }
 
     protected bool TryParseSteamId(string? value, out long communityId)

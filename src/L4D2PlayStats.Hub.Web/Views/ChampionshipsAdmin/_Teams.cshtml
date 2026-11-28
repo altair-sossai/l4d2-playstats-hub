@@ -1,0 +1,94 @@
+@model ChampionshipAdminModel
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    var pagination = PaginationModel.Of(Model.Teams, number => AdminListUrls.TabPage(Model.Url, AppConsts.ChampionshipAdminTeamsTab, AppConsts.ChampionshipTeamsPageQuery, number));
+}
+
+<p class="admin-lead">@L["The seed orders the teams when a stage is built by seeds: 1 is the best. The captain and the vice-captain propose the dates and choose the campaigns of the team."]</p>
+
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#team-add-modal">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#teams-add-modal">
+            <span class="glyphicon glyphicon-duplicate"></span> @L["Add several"]
+        </button>
+    </div>
+</div>
+
+@if (view.Teams.Any(team => team.HasPendingIdentity))
+{
+    <div class="alert alert-warning championship-approvals">
+        <span class="glyphicon glyphicon-time"></span> @L["Teams waiting for the approval of a new name, tag or flag: {0}. Click Review on each one.", view.Teams.Count(team => team.HasPendingIdentity)]
+    </div>
+}
+
+@if (view.Teams.Count == 0)
+{
+    <div class="admin-list">
+        <div class="admin-empty">@L["No team yet."]</div>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
+        <thead>
+        <tr>
+            <th class="text-center">@L["Seed"]</th>
+            <th>@L["Team"]</th>
+            <th>@L["Captain"]</th>
+            <th>@L["Vice-captain"]</th>
+            <th class="text-center">@L["Players"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var team in Model.Teams.Items)
+        {
+            <tr>
+                <td class="text-center vertical-align-middle" data-label="@L["Seed"]">@team.Seed</td>
+                <td class="vertical-align-middle" data-label="@L["Team"]">
+                    @if (team.Flag != null)
+                    {
+                        <img src="@ChampionshipUrls.Flag(team)" alt="" class="team-flag"/>
+                    }
+                    <strong>@team.Name</strong>
+                    @if (!string.IsNullOrWhiteSpace(team.Tag))
+                    {
+                        <small class="text-muted">[@team.Tag]</small>
+                    }
+                    @if (team.HasPendingIdentity)
+                    {
+                        <span class="label label-warning">@L["Waiting for approval"]</span>
+                    }
+                </td>
+                <td class="vertical-align-middle" data-label="@L["Captain"]">@(team.CaptainCommunityId == null ? "—" : DisplayNames.Apply(team.CaptainCommunityId.Value, view.PlayerName(team.CaptainCommunityId.Value)))</td>
+                <td class="vertical-align-middle" data-label="@L["Vice-captain"]">@(team.ViceCaptainCommunityId == null ? "—" : DisplayNames.Apply(team.ViceCaptainCommunityId.Value, view.PlayerName(team.ViceCaptainCommunityId.Value)))</td>
+                <td class="text-center vertical-align-middle" data-label="@L["Players"]">@team.Members.Count / @championship.RosterSize</td>
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    @if (team.HasPendingIdentity)
+                    {
+                        <button class="btn btn-xs btn-warning" type="button" data-toggle="modal" data-target="#team-review-modal-@team.Id">
+                            <span class="glyphicon glyphicon-check"></span> @L["Review"]
+                        </button>
+                    }
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#team-edit-modal-@team.Id">
+                        <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                    </button>
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#team-players-modal-@team.Id">
+                        <span class="glyphicon glyphicon-user"></span> @L["Players"]
+                    </button>
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/delete" data-confirm="@L["Delete the team {0}?", team.Name]">
+                        <button class="btn btn-xs btn-danger" type="submit">
+                            <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @await Html.PartialAsync("_Pagination", pagination)
+}

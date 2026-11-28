@@ -1,0 +1,280 @@
+@model ChampionshipAdminModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@{
+    var view = Model.Page;
+    var built = view.Stages.Where(stage => stage.Generated).ToList();
+    var campaigns = view.Campaigns.Values.OrderBy(campaign => campaign.Name).ToList();
+    var returnUrl = QueryUrl.Build(Model.Url, (AppConsts.AdminTabQuery, AppConsts.ChampionshipAdminGamesTab), (AppConsts.ChampionshipStageQuery, Model.StageFilter), (AppConsts.ChampionshipGamesPageQuery, Model.Series.Page));
+}
+
+<div class="modal fade" id="games-deadline-modal" tabindex="-1" role="dialog" aria-labelledby="games-deadline-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/deadlines" data-confirm="@L["Save the deadline of this round? Every series of the round shows it."]">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="games-deadline-title">@L["Deadline of a round"]</h4>
+            </div>
+            <div class="modal-body">
+                <p class="help-block">@L["The date by which every series of the round should be played. The teams can still play later if both agree."]</p>
+                <div class="row">
+                    <div class="col-sm-5 form-group">
+                        <label for="deadline-stage">@L["Stage"]</label>
+                        <select class="form-control" id="deadline-stage" name="stageId">
+                            @foreach (var stage in built)
+                            {
+                                <option value="@stage.Id">@stage.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="deadline-round">@L["Round"]</label>
+                        <input type="number" class="form-control" id="deadline-round" name="round" min="1" value="1" required>
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <label for="deadline-date">@L["Deadline"]</label>
+                        <input type="datetime-local" class="form-control" id="deadline-date" name="deadline">
+                    </div>
+                </div>
+                <p class="help-block" style="margin-bottom: 0">@L["Leave the date empty to remove the deadline. Times in the time zone of the site: {0}.", view.TimeZone.Id]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="games-campaigns-modal" tabindex="-1" role="dialog" aria-labelledby="games-campaigns-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/campaigns" data-confirm="@L["Change the campaigns of this stage? Only the games not played yet change."]">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="games-campaigns-title">@L["Campaigns of a stage"]</h4>
+            </div>
+            <div class="modal-body">
+                <p class="help-block">@L["Only the games not played yet change. Drawing again is for stages with one campaign drawn for each round."]</p>
+                <div class="form-group">
+                    <label for="campaigns-stage">@L["Stage"]</label>
+                    <select class="form-control" id="campaigns-stage" name="stageId">
+                        @foreach (var stage in built)
+                        {
+                            <option value="@stage.Id">@stage.Name · @ChampionshipTexts.CampaignRule(L, stage.CampaignRule)</option>
+                        }
+                    </select>
+                </div>
+                <div class="radio">
+                    <label><input type="radio" name="campaigns" value="@AppConsts.ChampionshipDrawCampaigns" checked> @L["Draw the campaigns again"]</label>
+                </div>
+                <div class="radio" style="margin-bottom: 0">
+                    <label><input type="radio" name="campaigns" value="@AppConsts.ChampionshipClearCampaigns"> @L["Clear the campaigns"]</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@foreach (var series in Model.Series.Items)
+{
+    var stage = view.StageOf(series);
+    var teamA = view.TeamName(series.TeamAId);
+    var teamB = view.TeamName(series.TeamBId);
+
+    <div class="modal fade" id="series-edit-modal-@series.Id" tabindex="-1" role="dialog" aria-labelledby="series-edit-title-@series.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id" id="series-form-@series.Id" data-confirm="@L["Save the changes to this series? A walkover finishes the series and cancels the games not played."]">
+                    <input type="hidden" name="returnUrl" value="@returnUrl">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="series-edit-title-@series.Id">@teamA × @teamB</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <label for="series-date-@series.Id">@L["Scheduled for"]</label>
+                                <input type="datetime-local" class="form-control" id="series-date-@series.Id" name="scheduledAt" value="@ChampionshipDates.Input(series.ScheduledAtUtc, view.TimeZone)">
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <label for="series-deadline-@series.Id">@L["Deadline"]</label>
+                                <input type="datetime-local" class="form-control" id="series-deadline-@series.Id" name="deadline" value="@ChampionshipDates.Input(series.DeadlineUtc, view.TimeZone)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="series-notes-@series.Id">@L["Notes"]</label>
+                            <input class="form-control" id="series-notes-@series.Id" name="notes" value="@series.Notes" maxlength="@CoreConsts.ChampionshipNotesMaxLength">
+                        </div>
+                        @if (stage.Veto && series.HasTeams)
+                        {
+                            <input type="hidden" name="veto" value="true">
+                            <div class="row">
+                                @foreach (var (field, team, current) in new[] { ("teamAVeto", teamA, series.TeamAVetoCampaignId), ("teamBVeto", teamB, series.TeamBVetoCampaignId) })
+                                {
+                                    <div class="col-sm-6 form-group">
+                                        <label for="series-@field-@series.Id">@L["Veto of {0}", team]</label>
+                                        <select class="form-control" id="series-@field-@series.Id" name="@field">
+                                            <option value="">—</option>
+                                            @foreach (var campaign in campaigns)
+                                            {
+                                                <option value="@campaign.Id" selected="@(campaign.Id == current)">@campaign.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @if (series.HasTeams)
+                        {
+                            <div class="form-group" style="margin-bottom: 0">
+                                <label for="series-walkover-@series.Id">@L["Walkover"] @FieldHelp.Tip(L["The team that wins without playing, such as when the other team does not show up. The games not played are cancelled."])</label>
+                                <select class="form-control" id="series-walkover-@series.Id" name="winnerTeamId">
+                                    <option value="">@L["No walkover"]</option>
+                                    <option value="@series.TeamAId" selected="@(series.Walkover && series.WinnerTeamId == series.TeamAId)">@teamA</option>
+                                    <option value="@series.TeamBId" selected="@(series.Walkover && series.WinnerTeamId == series.TeamBId)">@teamB</option>
+                                </select>
+                            </div>
+                        }
+                        <p class="help-block" style="margin: 10px 0 0">@L["Times in the time zone of the site: {0}.", view.TimeZone.Id]</p>
+                        @if (series.Proposals.Count > 0)
+                        {
+                            <p class="admin-section">@L["Date proposals"]</p>
+                            <table class="table table-condensed" style="margin-bottom: 0">
+                                <tbody>
+                                @foreach (var proposal in series.Proposals.OrderBy(proposal => proposal.DateUtc))
+                                {
+                                    <tr class="@(proposal.Confirmed ? "success" : null)">
+                                        <td class="vertical-align-middle"><strong>@Display.DateTime(proposal.DateUtc, view.TimeZone)</strong><br/><small class="text-muted">@L["Proposed by {0}", view.TeamName(proposal.TeamId)]</small></td>
+                                        <td class="vertical-align-middle small">@teamA: @proposal.TeamAAnswer<br/>@teamB: @proposal.TeamBAnswer</td>
+                                        <td class="text-right vertical-align-middle slim">
+                                            <button class="btn btn-xs btn-danger" type="submit" form="proposal-delete-@proposal.Id" data-confirm="@L["Delete this proposal?"]">
+                                                <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                        </button>
+                    </div>
+                </form>
+                @foreach (var proposal in series.Proposals)
+                {
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/delete" id="proposal-delete-@proposal.Id" data-confirm="@L["Delete this date proposal of the teams?"]">
+                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade" id="game-edit-modal" tabindex="-1" role="dialog" aria-labelledby="game-edit-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" id="game-form" method="post" asp-antiforgery="true" action="" data-confirm="@L["Save this game? The standings, the bracket and the next series are calculated again."]">
+            <input type="hidden" name="returnUrl" value="@returnUrl">
+            <input type="hidden" id="game-original-campaign" name="originalCampaignId" value="">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="game-edit-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning championship-game-live" id="game-in-progress" style="display: none">
+                    <p><span class="glyphicon glyphicon-play-circle"></span> @L["This game is in progress: the match of the server was linked to it by itself and the score follows the maps played. The standings and the bracket only change when it ends: when every map of the campaign is played, after {0} minutes without statistics, or now.", Model.Championship.AutoCloseMinutes]</p>
+                    <button type="button" class="btn btn-warning btn-sm" data-game-end-submit>
+                        <span class="glyphicon glyphicon-stop"></span> @L["End the game"]
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="game-campaign">@L["Campaign"]</label>
+                    <select class="form-control" id="game-campaign" name="campaignId">
+                        <option value="">—</option>
+                        @foreach (var campaign in campaigns)
+                        {
+                            <option value="@campaign.Id">@campaign.Name (@campaign.Maps)</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>@L["Result"]</label>
+                    <div class="radio" style="margin-top: 0">
+                        <label><input type="radio" name="result" value="@AppConsts.ChampionshipNoResult" data-game-result-option> @L["Not played yet"]</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="result" value="@AppConsts.ChampionshipMatchResult" data-game-result-option> @L["Match of the server"]</label>
+                    </div>
+                    <div class="radio" style="margin-bottom: 0">
+                        <label><input type="radio" name="result" value="@AppConsts.ChampionshipTypedResult" data-game-result-option> @L["Type the result"]</label>
+                    </div>
+                </div>
+                <div class="form-group championship-game-section" data-game-section="@AppConsts.ChampionshipMatchResult">
+                    <label for="game-match">@L["Match of the server"] @FieldHelp.Tip(L["The matches of the last days with players of both teams, the newest first. The score and the side of each team come from the match."])</label>
+                    <select class="form-control" id="game-match" name="matchId"></select>
+                </div>
+                <div class="championship-game-section" data-game-section="@AppConsts.ChampionshipTypedResult">
+                    <div class="row">
+                        <div class="col-sm-4 form-group">
+                            <label for="game-score-a" class="game-team-a"></label>
+                            <input type="number" class="form-control" id="game-score-a" name="teamAScore" min="0" max="@CoreConsts.MaxScore">
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="game-score-b" class="game-team-b"></label>
+                            <input type="number" class="form-control" id="game-score-b" name="teamBScore" min="0" max="@CoreConsts.MaxScore">
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <label for="game-played-at">@L["Date"]</label>
+                            <input type="datetime-local" class="form-control" id="game-played-at" name="playedAt">
+                        </div>
+                    </div>
+                </div>
+                <div class="championship-game-section" data-game-section="@AppConsts.ChampionshipMatchResult @AppConsts.ChampionshipTypedResult">
+                    <div class="row">
+                        <div class="col-sm-3 form-group">
+                            <label for="game-penalty-a">@L["Penalty"] <span class="game-team-a"></span></label>
+                            <input type="number" class="form-control" id="game-penalty-a" name="teamAPenalty" min="0" max="@CoreConsts.ChampionshipMaxPenalty" value="0">
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label for="game-penalty-b">@L["Penalty"] <span class="game-team-b"></span></label>
+                            <input type="number" class="form-control" id="game-penalty-b" name="teamBPenalty" min="0" max="@CoreConsts.ChampionshipMaxPenalty" value="0">
+                        </div>
+                        <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                            <label for="game-notes">@L["Notes"] @FieldHelp.Tip(L["Points taken off the score of the team in this game. They can change the winner."])</label>
+                            <input class="form-control" id="game-notes" name="notes" maxlength="@CoreConsts.ChampionshipNotesMaxLength">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="game-end-form" method="post" asp-antiforgery="true" action="" style="display: none" data-confirm="@L["End this game now with the current score?"]">
+    <input type="hidden" name="returnUrl" value="@returnUrl">
+</form>

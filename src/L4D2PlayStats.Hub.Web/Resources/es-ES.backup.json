@@ -51,5 +51,11 @@
   "The container address was not changed: it must start with https://, name the container and carry a SAS token (sig=...).": "La dirección del contenedor no se cambió: debe empezar con https://, nombrar el contenedor y llevar un token SAS (sig=...).",
   "The connection string was not changed: copy it as the Azure portal shows it, under Access keys of the storage account.": "La cadena de conexión no se cambió: cópiala como la muestra el portal de Azure, en Claves de acceso de la cuenta de almacenamiento.",
   "The container name was not changed: use 3 to 63 lowercase letters, digits and single hyphens.": "El nombre del contenedor no se cambió: usa de 3 a 63 letras minúsculas, dígitos y guiones simples.",
-  "The file name prefix was not changed: use up to 60 letters, digits, dots, hyphens and underscores, starting with a letter or a digit.": "El prefijo del nombre del archivo no se cambió: usa hasta 60 letras, dígitos, puntos, guiones y guiones bajos, empezando con una letra o un dígito."
+  "The file name prefix was not changed: use up to 60 letters, digits, dots, hyphens and underscores, starting with a letter or a digit.": "El prefijo del nombre del archivo no se cambió: usa hasta 60 letras, dígitos, puntos, guiones y guiones bajos, empezando con una letra o un dígito.",
+  "Back up the database now? It can take a few seconds.": "¿Hacer la copia de seguridad de la base de datos ahora? Puede tardar unos segundos.",
+  "Save the settings of the backups?": "¿Guardar la configuración de las copias de seguridad?",
+  "Test the connection to the destination of the backups now?": "¿Probar ahora la conexión con el destino de las copias de seguridad?",
+  "Verify the latest backup now?": "¿Verificar la última copia de seguridad ahora?",
+  "The automatic backup failed. Open the backup page to see why.": "La copia de seguridad automática falló. Abre la página de copias de seguridad para ver el motivo.",
+  "The automatic backup was uploaded, but its check failed. Open the backup page to see why.": "La copia de seguridad automática se subió, pero su verificación falló. Abre la página de copias de seguridad para ver el motivo."
 }

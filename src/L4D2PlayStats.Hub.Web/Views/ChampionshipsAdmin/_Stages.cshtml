@@ -1,0 +1,110 @@
+@model ChampionshipAdminModel
+@using L4D2PlayStats.Hub.Core.Modules.Championships.Services
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+}
+
+<p class="admin-lead">@L["The stages are played in order. Build a stage to create its groups, rounds or bracket: the first one with the teams, the next ones with the teams that move on from the previous stage. The format of a stage cannot change after it is built; reset it to change."]</p>
+
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#stage-add-modal">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+    </div>
+</div>
+
+@if (view.Stages.Count == 0)
+{
+    <div class="admin-list">
+        <div class="admin-empty">@L["The format was not defined yet."]</div>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
+        <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>@L["Stage"]</th>
+            <th>@L["Format"]</th>
+            <th>@L["Campaigns"]</th>
+            <th>@L["Status"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var stage in view.Stages)
+        {
+            var previous = ChampionshipStageService.Previous(championship, stage);
+            var next = ChampionshipStageService.Next(championship, stage);
+            var buildable = !stage.Generated && (previous == null || previous.Generated && previous.Series.All(series => series.Finished));
+            var played = stage.Series.Where(series => !series.Bye).ToList();
+
+            <tr>
+                <td class="text-center vertical-align-middle" data-label="#">@stage.Order</td>
+                <td class="vertical-align-middle" data-label="@L["Stage"]"><strong>@stage.Name</strong><br/><small class="text-muted">@ChampionshipTexts.StageType(L, stage.Type)</small></td>
+                <td class="vertical-align-middle" data-label="@L["Format"]">
+                    @L["Best of {0}", stage.BestOf]
+                    @if (stage.IsKnockout && stage.FinalBestOf != stage.BestOf)
+                    {
+                        <text> · @L["final best of {0}", stage.FinalBestOf]</text>
+                    }
+                    @if (!stage.IsKnockout && stage.GroupCount > 1)
+                    {
+                        <text> · @L["{0} groups", stage.GroupCount]</text>
+                    }
+                    @if (next != null && stage.Qualifiers > 0)
+                    {
+                        <text> · @L["{0} per group move on", stage.Qualifiers]</text>
+                    }
+                    <br/><small class="text-muted">@ChampionshipTexts.Seeding(L, stage.Seeding)</small>
+                </td>
+                <td class="vertical-align-middle" data-label="@L["Campaigns"]">@ChampionshipTexts.CampaignRule(L, stage.CampaignRule)</td>
+                <td class="vertical-align-middle" data-label="@L["Status"]">
+                    @if (stage.Generated)
+                    {
+                        <span class="label label-success">@L["Built"]</span>
+                        <br/><small class="text-muted">@L["{0} of {1} series", played.Count(series => series.Finished), played.Count]</small>
+                    }
+                    else
+                    {
+                        <span class="label label-default">@L["Not built yet"]</span>
+                    }
+                </td>
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#stage-edit-modal-@stage.Id">
+                        <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                    </button>
+                    @if (!stage.Generated)
+                    {
+                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#stage-build-modal-@stage.Id" disabled="@(!buildable)" title="@(buildable ? null : L["Build and finish the previous stage first."].Value)">
+                            <span class="glyphicon glyphicon-play"></span> @L["Build"]
+                        </button>
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/delete" data-confirm="@L["Delete the stage {0}?", stage.Name]">
+                            <button class="btn btn-xs btn-danger" type="submit">
+                                <span class="glyphicon glyphicon-trash"></span> @L["Delete"]
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        @if (!stage.IsKnockout)
+                        {
+                            <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#stage-penalties-modal-@stage.Id">
+                                <span class="glyphicon glyphicon-minus-sign"></span> @L["Penalties"]
+                            </button>
+                        }
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/reset" data-confirm="@L["Reset the stage {0}? Every series, result and date of this stage is deleted.", stage.Name]">
+                            <button class="btn btn-xs btn-danger" type="submit" disabled="@(next is { Generated: true })">
+                                <span class="glyphicon glyphicon-refresh"></span> @L["Reset"]
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -1,9 +1,12 @@
 @using Microsoft.AspNetCore.Antiforgery
 @model MatchDetailsModel
 @inject IAntiforgery Antiforgery
+@inject ISettingsService Settings
+@inject L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts.IChampionshipQueryService ChampionshipQueries
 
 @{
     var match = Model.Match;
+    var championshipLink = (await Settings.GetAsync<ModuleSettings>()).IsEnabled(HubModule.Championships) ? await ChampionshipQueries.MatchLinkAsync(match.Id, Context.RequestAborted) : null;
     var campaign = match.Campaign ?? L["Campaign"].Value;
     var campaignName = match.Campaign ?? L["Custom campaign"].Value;
 
@@ -50,6 +53,14 @@
         @campaignName
     </li>
 </ol>
+
+@if (championshipLink != null)
+{
+    <div class="alert alert-info match-championship">
+        🏆 @L["Game {0} of a series of {1}", championshipLink.GameNumber, championshipLink.Championship] ·
+        <a href="@ChampionshipUrls.Series(championshipLink.Slug, championshipLink.SeriesId)">@championshipLink.Stage</a>
+    </div>
+}
 
 <div class="match">
     @await Html.PartialAsync("_Match", Model.Card)

@@ -1,0 +1,47 @@
+@model ChampionshipsIndexModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = L["Championships"], Description = L["Championships of the community: the ones in progress and the history of the finished ones."] };
+    var current = Model.Current;
+    var history = Model.History.Items;
+    var pagination = PaginationModel.Of(Model.History, number => QueryUrl.Build(AppConsts.ChampionshipsUrl, (AppConsts.ChampionshipsPageQuery, number)));
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+    @await Html.PartialAsync("_PaginationStyles")
+}
+
+<div class="championship-showcase-head">
+    <h1>@L["Championships"]</h1>
+    <p class="text-muted">@L["Championships of the community: the ones in progress and the history of the finished ones."]</p>
+</div>
+
+@if (current.Count == 0 && Model.History.Total == 0)
+{
+    <div class="panel panel-default">
+        <div class="panel-body text-center text-muted championship-empty">@L["There are no championships yet."]</div>
+    </div>
+}
+
+@if (current.Count > 0)
+{
+    <h2 class="championship-section-title">@L["In progress"]</h2>
+    <div class="championship-cards championship-cards-current">
+        @foreach (var item in current)
+        {
+            @await Html.PartialAsync("_Card", item)
+        }
+    </div>
+}
+
+@if (Model.History.Total > 0)
+{
+    <h2 class="championship-section-title">@L["History"]</h2>
+    <div class="championship-cards championship-history">
+        @foreach (var item in history)
+        {
+            @await Html.PartialAsync("_Card", item)
+        }
+    </div>
+    @await Html.PartialAsync("_Pagination", pagination)
+}

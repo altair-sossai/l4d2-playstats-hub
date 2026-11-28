@@ -47,10 +47,28 @@ The community ranking asks for a minimum number of matches, counted over all sea
 **The live server page is behind the game.**
 It is about 15 seconds behind, on purpose. An administrator changes the delay in **Administration > Game servers > Live server page**.
 
+**I do not see the bell of the notifications.**
+The bell appears only after you sign in. See [Notifications](notifications.md).
+
+**The number on the bell does not go away.**
+It counts the notifications you did not open yet. Open them, or use **Mark all as read** at the bottom of the bell. Notifications older than 90 days are deleted.
+
 ## For administrators
 
 **How do I add another administrator?**
 In [Administration > Administrators](administration.md#administrators), with their SteamID64. If you cannot sign in any more, use `playstats-hub add-admin <SteamID64>` on Linux.
+
+**How do I run a championship?**
+Turn on **Championships** in [Administration > Modules](administration.md#modules), then create it in **Administration > Championships**: choose the format, add the participants and the teams, and build the first stage. See [Championships > For administrators](championships.md#for-administrators).
+
+**Can players sign up for a championship themselves?**
+Yes, when you turn on **Players can ask to join** in the Settings tab of the championship. While its status is Participants and there are places left, its page has a button for signed in players to ask for a place; each request waits on the Participants tab until you approve or refuse it. See [Asking to join](championships.md#asking-to-join).
+
+**Where does a captain manage the team?**
+In the captain area of the championship: sign in with Steam and click the tower icon next to your photo at the top, or **Open the captain area** on the page of the championship. There the captain and the vice-captain choose the players of a draft when it is their turn, send a new name, tag or flag for the approval of the administration, choose the vice-captain, propose and accept dates, veto and choose campaigns. See [The captain area](championships.md#the-captain-area).
+
+**A championship game was played outside our server.**
+On the Games tab of the championship, in **Administration > Championships**, click the button of the game and choose **Type the result**. The game counts in the standings and the bracket, but it has no statistics.
 
 **How do I add a second game server?**
 In [Administration > Game servers](administration.md#game-servers). Each server gets its own token. Players' results add up across all servers.

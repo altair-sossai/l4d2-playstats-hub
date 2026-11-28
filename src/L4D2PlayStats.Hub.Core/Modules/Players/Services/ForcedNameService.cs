@@ -5,6 +5,9 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
@@ -13,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Players.Services;
 
-public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock clock, IForcedNameStore store, IPlayerRegistryService playerRegistryService) : IForcedNameService
+public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock clock, IForcedNameStore store, IPlayerRegistryService playerRegistryService, INotificationService notifications) : IForcedNameService
 {
     public async Task<Page<ForcedNameEntry>> PageAsync(PlayerSearch search, int page, int size, CancellationToken cancellationToken = default)
     {
@@ -42,6 +45,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
             var profile = Profile(profiles, communityId);
 
             Force(profile, clean, updatedBy);
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.ForcedNames, "Your name on the servers and on the site is now {0}.", AppConsts.PlayerPathPrefix + communityId, clean));
 
             await SaveAsync([profile], cancellationToken);
         }
@@ -63,6 +67,7 @@ public class ForcedNameService(HubDbContext dbContext, HubState hubState, IClock
             profile.ForcedName = null;
             profile.ForcedNameUpdatedAtUtc = clock.UtcNow;
             profile.ForcedNameUpdatedBy = null;
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.ForcedNames, "Your forced name was removed: the site shows the name you use in the game again.", AppConsts.PlayerPathPrefix + communityId));
 
             await SaveAsync([profile], cancellationToken);
         }

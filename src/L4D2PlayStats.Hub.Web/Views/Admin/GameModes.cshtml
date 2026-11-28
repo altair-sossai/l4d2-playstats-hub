@@ -149,7 +149,7 @@
 
 <div class="modal fade" id="rule-edit-modal" tabindex="-1" role="dialog" aria-labelledby="rule-edit-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/game-modes">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="/admin/game-modes" data-confirm="@L["Save this rule? It changes how the matches of the configurations it covers are counted."]">
             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
             <input type="hidden" id="rule-id" name="Id" value="0">
             <div class="modal-header">

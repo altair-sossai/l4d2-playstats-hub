@@ -11,7 +11,7 @@ public class SkinsController(ISkinViewService skinViewService) : Controller
     [HttpGet(AppConsts.SkinShopUrl)]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        ViewBag.Skins = "active";
+        ViewBag.Skins = AppConsts.ActiveMenu;
 
         return View(await skinViewService.ShopAsync(cancellationToken));
     }

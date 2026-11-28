@@ -1,12 +1,15 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Punishments.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Punishments.Services;
 
-public class PunishmentService(HubDbContext dbContext, HubState hubState, IClock clock) : IPunishmentService
+public class PunishmentService(HubDbContext dbContext, HubState hubState, IClock clock, INotificationService notifications) : IPunishmentService
 {
     public async Task<Dictionary<long, int>> TotalsAsync(int seasonId, CancellationToken cancellationToken = default)
     {
@@ -42,6 +45,7 @@ public class PunishmentService(HubDbContext dbContext, HubState hubState, IClock
         };
 
         dbContext.Punishments.Add(punishment);
+        notifications.Send(communityId, new NotificationMessage(NotificationTopic.Punishments, "You lost {0} experience points in this season.", PlayerPath(communityId), points));
         await dbContext.SaveChangesAsync(cancellationToken);
         hubState.DataChanged();
 
@@ -53,9 +57,18 @@ public class PunishmentService(HubDbContext dbContext, HubState hubState, IClock
         var punishments = await dbContext.Punishments.Where(p => p.SeasonId == seasonId && p.CommunityId == communityId).ToListAsync(cancellationToken);
 
         dbContext.Punishments.RemoveRange(punishments);
+
+        if (punishments.Count > 0)
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.Punishments, "Your punishments in this season were removed.", PlayerPath(communityId)));
+
         await dbContext.SaveChangesAsync(cancellationToken);
         hubState.DataChanged();
 
         return punishments.Count;
+    }
+
+    private static string PlayerPath(long communityId)
+    {
+        return $"{AppConsts.PlayerPathPrefix}{communityId.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
     }
 }

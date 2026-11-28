@@ -1,0 +1,45 @@
+@inject INotificationViewService Notifications
+@{
+    var bell = await Notifications.BellAsync(Context.RequestAborted);
+}
+@if (bell != null)
+{
+    <li class="dropdown nav-notifications">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="@L["Notifications"]">
+            <span class="glyphicon glyphicon-bell"></span>
+            @if (bell.Unread > 0)
+            {
+                <span class="badge nav-notifications-badge">@(bell.Unread > AppConsts.NotificationBellBadgeMax ? $"{AppConsts.NotificationBellBadgeMax}+" : bell.Unread.ToString())</span>
+            }
+            <span class="show-mobile">@L["Notifications"]</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu nav-notifications-menu">
+            <li class="dropdown-header">@L["Notifications"]</li>
+            @if (bell.Latest.Count == 0)
+            {
+                <li class="nav-notifications-empty text-muted">@L["No notification yet."]</li>
+            }
+            @foreach (var notification in bell.Latest)
+            {
+                <li class="@(notification.Read ? null : "unread")">
+                    <a href="@AppConsts.NotificationsUrl/@notification.Id">
+                        <span class="nav-notifications-text">@notification.Text</span>
+                        <small class="text-muted">@Display.DateTime(notification.CreatedAtUtc, bell.TimeZone)</small>
+                    </a>
+                </li>
+            }
+            <li role="separator" class="divider"></li>
+            <li class="nav-notifications-actions">
+                <a href="@AppConsts.NotificationsUrl">@L["See all"]</a>
+                @if (bell.Unread > 0)
+                {
+                    <form method="post" asp-antiforgery="true" action="@AppConsts.NotificationsUrl/read" data-confirm="@L["Mark every notification as read? The counter next to the bell goes back to zero."]">
+                        <input type="hidden" name="returnUrl" value="@ErrorPages.OriginalPathAndQuery(Context)">
+                        <button type="submit" class="btn btn-link btn-xs">@L["Mark all as read"]</button>
+                    </form>
+                }
+            </li>
+        </ul>
+    </li>
+}

@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="col-md-5">
-        <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Id">
+        <form method="post" asp-antiforgery="true" action="/admin/servers/@server.Id" data-confirm="@L["Save the changes to this game server?"]">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">@L["Details"]</h3>

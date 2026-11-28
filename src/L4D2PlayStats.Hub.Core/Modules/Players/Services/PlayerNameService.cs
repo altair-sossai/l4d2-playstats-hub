@@ -40,6 +40,17 @@ public class PlayerNameService(HubDbContext dbContext) : IPlayerNameService
         return string.IsNullOrWhiteSpace(connection) ? null : connection;
     }
 
+    public async Task<Dictionary<long, string>> NamesWithAdministratorsAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
+    {
+        var ids = communityIds.Distinct().ToList();
+        var names = await dbContext.Administrators.AsNoTracking().Where(administrator => ids.Contains(administrator.CommunityId) && administrator.Name != null).ToDictionaryAsync(administrator => administrator.CommunityId, administrator => administrator.Name!, cancellationToken);
+
+        foreach (var (communityId, name) in await NamesAsync(ids.Where(id => !names.ContainsKey(id)).ToList(), cancellationToken))
+            names[communityId] = name;
+
+        return names;
+    }
+
     public async Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
     {
         var ids = communityIds.Distinct().ToList();

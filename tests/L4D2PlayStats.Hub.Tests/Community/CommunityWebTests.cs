@@ -714,7 +714,7 @@ public class CommunityWebTests
     private static async Task<HttpResponseMessage> PostWhileOffAsync(CommunityWebSite site, HttpClient client, string formPage, string action, Dictionary<string, string> fields)
     {
         var html = await client.GetStringAsync(formPage);
-        var token = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = HubWebFactory.Token(html);
         var form = new Dictionary<string, string>(fields) { ["__RequestVerificationToken"] = token };
 
         await site.Factory.SaveAsync(new ModuleSettings { CommunityRanking = false });

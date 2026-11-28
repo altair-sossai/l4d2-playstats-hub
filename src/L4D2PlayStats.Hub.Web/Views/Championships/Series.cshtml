@@ -1,0 +1,164 @@
+@model ChampionshipPageModel
+@{
+    var championship = Model.Championship;
+    var series = Model.Series!;
+    var stage = Model.StageOf(series);
+    var progress = Model.Progress(series);
+    var status = Model.SeriesStatus(series);
+    var url = ChampionshipUrls.Series(championship.Slug, series.Id);
+    var title = $"{Model.TeamName(series.TeamAId)} × {Model.TeamName(series.TeamBId)}";
+    var group = Model.GroupName(series);
+
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{title} - {championship.Name}", Description = L["{0} in {1}.", title, championship.Name] };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+<div class="panel panel-default championship-series-card">
+    <div class="panel-body">
+        <div class="championship-series-big">
+            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamAId ? "winner" : null)">@await Html.PartialAsync("_ChampionshipTeamName", (Model, series.TeamAId))</div>
+            <div class="score">@progress.WinsA <span class="sep">×</span> @progress.WinsB</div>
+            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamBId ? "winner" : null)">@if (series.Bye)
+                {
+                    @L["Bye"]
+                }
+                else
+                {
+                    @await Html.PartialAsync("_ChampionshipTeamName", (Model, series.TeamBId))
+                }</div>
+        </div>
+        <div class="text-center text-muted championship-series-details">
+            <span>@stage.Name · @(series.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, series.Round, Model.Rounds(stage)))</span>
+            @if (group != null && stage.Groups.Count > 1)
+            {
+                <span>· @L["Group {0}", group]</span>
+            }
+            <span>· @L["Best of {0}", series.BestOf]</span>
+            <span>· @ChampionshipTexts.SeriesStatus(L, status)</span>
+            @if (series.Walkover && series.Finished)
+            {
+                <span class="label label-warning">@L["Walkover"]</span>
+            }
+        </div>
+        <div class="text-center championship-series-dates">
+            @if (series.ScheduledAtUtc != null)
+            {
+                var start = series.ScheduledAtUtc.Value;
+                var google = $"{AppConsts.ChampionshipGoogleCalendarUrl}&text={Uri.EscapeDataString($"{title} - {championship.Name}")}&dates={ChampionshipDates.Calendar(start)}/{ChampionshipDates.Calendar(start.AddMinutes(AppConsts.ChampionshipCalendarDurationInMinutes))}&details={Uri.EscapeDataString(championship.StreamUrl ?? string.Empty)}";
+
+                <strong><span class="glyphicon glyphicon-calendar"></span> @Display.DateTime(start, Model.TimeZone)</strong>
+                @if (!series.Finished)
+                {
+                    <a class="btn btn-default btn-xs" href="@google" target="_blank" rel="noopener">@L["Add to Google Calendar"]</a>
+                    <a class="btn btn-default btn-xs" href="@url/calendar.ics">@L["Download .ics"]</a>
+                }
+            }
+            else if (!series.Finished)
+            {
+                <span class="text-muted">@L["The date is not set yet."]</span>
+            }
+            @if (series.DeadlineUtc != null && !series.Finished)
+            {
+                <div class="small text-muted">@L["Deadline: {0}", Display.DateTime(series.DeadlineUtc.Value, Model.TimeZone)]</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(series.Notes))
+            {
+                <div class="small">@series.Notes</div>
+            }
+            @if (Model.Administrator)
+            {
+                <div><a class="small" href="@ChampionshipUrls.AdminSeries(championship.Id, series.Id)"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a></div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (stage.Veto && (series.TeamAVetoCampaignId != null || series.TeamBVetoCampaignId != null))
+{
+    <p class="text-muted">
+        <span class="glyphicon glyphicon-ban-circle"></span> @L["Vetoes"]:
+        @Model.TeamName(series.TeamAId): <strong>@(Model.CampaignName(series.TeamAVetoCampaignId) ?? "—")</strong> ·
+        @Model.TeamName(series.TeamBId): <strong>@(Model.CampaignName(series.TeamBVetoCampaignId) ?? "—")</strong>
+    </p>
+}
+
+@if (series.Games.Count > 0)
+{
+    <div class="panel panel-default">
+        <table class="table table-condensed championship-games">
+            <thead>
+            <tr>
+                <th class="text-center">#</th>
+                <th>@L["Campaign"]</th>
+                <th class="text-center">@Model.TeamName(series.TeamAId)</th>
+                <th class="text-center">@Model.TeamName(series.TeamBId)</th>
+                <th class="text-right">@L["Match"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var game in series.Games.OrderBy(game => game.Number))
+            {
+                <tr class="@(game.Status == ChampionshipGameStatus.NotNeeded ? "text-muted championship-not-needed" : null)">
+                    <td class="text-center">@game.Number</td>
+                    <td>
+                        @(Model.CampaignName(game.CampaignId) ?? (GamePlan.IsDecider(game, series.BestOf) && stage.CampaignRule == ChampionshipCampaignRule.Picks ? L["Drawn when needed"].Value : "—"))
+                        @if (game.CampaignId != null)
+                        {
+                            <small class="text-muted">· @ChampionshipTexts.CampaignSource(L, game.CampaignSource, Model.Team(game.PickedByTeamId)?.Name)</small>
+                        }
+                        @if (game.Replay)
+                        {
+                            <span class="label label-default">@L["Replay"]</span>
+                        }
+                        @if (game.IsInProgress)
+                        {
+                            <span class="label label-warning championship-live">@L["In progress"]</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(game.Notes))
+                        {
+                            <div class="small text-muted">@game.Notes</div>
+                        }
+                    </td>
+                    @if (game.IsPlayed || game.IsInProgress)
+                    {
+                        <td class="text-center @(game.TeamATotal > game.TeamBTotal ? "championship-game-winner" : null)">
+                            @game.TeamATotal.ToString("N0", CultureInfo.CurrentCulture)
+                            @if (game.TeamAPenalty > 0)
+                            {
+                                <small class="text-danger" title="@L["Penalty"]">(-@game.TeamAPenalty)</small>
+                            }
+                        </td>
+                        <td class="text-center @(game.TeamBTotal > game.TeamATotal ? "championship-game-winner" : null)">
+                            @game.TeamBTotal.ToString("N0", CultureInfo.CurrentCulture)
+                            @if (game.TeamBPenalty > 0)
+                            {
+                                <small class="text-danger" title="@L["Penalty"]">(-@game.TeamBPenalty)</small>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="2" class="text-center text-muted">@(game.Status == ChampionshipGameStatus.NotNeeded ? L["Not needed"].Value : L["Not played yet"].Value)</td>
+                    }
+                    <td class="text-right">
+                        @if (game.MatchId != null)
+                        {
+                            <a href="@AppConsts.MatchesUrl/@game.MatchId">@L["See the match"]</a>
+                        }
+                        else if (game.ResultSource == ChampionshipResultSource.Manual)
+                        {
+                            <small class="text-muted">@L["Typed result"]</small>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+

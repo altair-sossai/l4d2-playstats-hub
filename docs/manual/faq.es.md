@@ -47,10 +47,28 @@ El ranking de la comunidad pide un número mínimo de partidas, contadas en toda
 **La página del servidor en vivo va atrasada respecto al juego.**
 Va unos 15 segundos atrasada, a propósito. Un administrador cambia el retraso en **Administración > Servidores de juego > Página del servidor en vivo**.
 
+**No veo la campana de las notificaciones.**
+La campana aparece solo después de iniciar sesión. Mira [Notificaciones](notifications.es.md).
+
+**El número de la campana no desaparece.**
+Cuenta las notificaciones que aún no abriste. Ábrelas o usa **Marcar todas como leídas** al final de la campana. Las notificaciones con más de 90 días se borran.
+
 ## Para administradores
 
 **¿Cómo agrego otro administrador?**
 En [Administración > Administradores](administration.es.md#administradores), con su SteamID64. Si ya no puedes iniciar sesión, usa `playstats-hub add-admin <SteamID64>` en Linux.
+
+**¿Cómo organizo un campeonato?**
+Activa **Campeonatos** en [Administración > Módulos](administration.es.md#módulos) y crea el campeonato en **Administración > Campeonatos**: elige el formato, añade los participantes y los equipos y arma la primera fase. Consulta [Campeonatos > Para administradores](championships.es.md#para-administradores).
+
+**¿Los jugadores pueden inscribirse solos en un campeonato?**
+Sí, cuando activas **Los jugadores pueden pedir participar** en la pestaña Configuración del campeonato. Mientras su estado es Participantes y quedan plazas, su página tiene un botón para que los jugadores conectados pidan una plaza; cada solicitud espera en la pestaña Participantes hasta que la apruebas o la rechazas. Ver [Pedir participar](championships.es.md#pedir-participar).
+
+**¿Dónde gestiona un capitán su equipo?**
+En el área del capitán del campeonato: inicia sesión con Steam y haz clic en el icono de torre junto a tu foto arriba, o en **Abrir el área del capitán** en la página del campeonato. Allí el capitán y el vicecapitán eligen los jugadores de un draft cuando es su turno, envían un nuevo nombre, sigla o bandera para la aprobación de la administración, eligen al vicecapitán, proponen y aceptan fechas, vetan y eligen campañas. Consulta [El área del capitán](championships.es.md#el-área-del-capitán).
+
+**Un juego del campeonato se jugó fuera de nuestro servidor.**
+En la pestaña Juegos del campeonato, en **Administración > Campeonatos**, haz clic en el botón del juego y elige **Escribir el resultado**. El juego cuenta en la clasificación y en el cuadro, pero no tiene estadísticas.
 
 **¿Cómo agrego un segundo servidor de juego?**
 En [Administración > Servidores de juego](administration.es.md#servidores-de-juego). Cada servidor recibe su propio token. Los resultados de los jugadores se suman entre todos los servidores.

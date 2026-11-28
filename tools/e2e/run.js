@@ -34,7 +34,7 @@ function parse(argv) {
 
 function usage() {
     console.log(`Usage:
-  node tools/e2e/run.js --site <published site folder> [--port ${defaultPort}] [--out e2e-output] [--only check,...] [--browser <path>] [--data <empty folder>] [--keep] [--serve]`);
+  node tools/e2e/run.js --site <published site folder> [--port ${defaultPort}] [--out e2e-output] [--only check,...] [--browser <path>] [--data <empty folder>] [--keep] [--serve] [--shots <folder>]`);
 }
 
 function withTimeout(promise, milliseconds, description) {
@@ -76,7 +76,7 @@ async function runCheck(browser, check, options) {
     browser.resetProblems();
 
     try {
-        await withTimeout(check.run(browser), checkTimeout, `The check ${check.name}`);
+        await withTimeout(check.run(browser), check.timeout || checkTimeout, `The check ${check.name}`);
         await sleep(200);
 
         const problems = [...browser.errors.map(error => `JavaScript error: ${error}`), ...browser.failedRequests.map(request => `Request failed: ${request}`)];
@@ -153,7 +153,7 @@ async function main() {
             await new Promise(() => {});
         }
 
-        const context = { token: seeded.token, base: site.base };
+        const context = { token: seeded.token, base: site.base, out: options.shots ? path.resolve(options.shots) : null };
 
         for (const check of checks(context)) {
             if (options.only && !options.only.includes(check.name))

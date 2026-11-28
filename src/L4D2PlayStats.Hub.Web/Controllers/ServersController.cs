@@ -28,7 +28,7 @@ public class ServersController(
     [HttpGet("/servers")]
     public async Task<IActionResult> Index(bool cards = false, CancellationToken cancellationToken = default)
     {
-        ViewBag.Server = "active";
+        ViewBag.Server = AppConsts.ActiveMenu;
 
         var servers = await liveViewService.EnabledServersAsync(cancellationToken);
 
@@ -43,7 +43,7 @@ public class ServersController(
     [HttpGet("/servers/{publicId}")]
     public async Task<IActionResult> Live(string publicId, CancellationToken cancellationToken)
     {
-        ViewBag.Server = "active";
+        ViewBag.Server = AppConsts.ActiveMenu;
 
         var server = await liveViewService.FindServerAsync(publicId, cancellationToken);
         if (server == null)

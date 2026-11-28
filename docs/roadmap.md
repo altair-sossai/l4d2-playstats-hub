@@ -98,6 +98,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Weapon skin shop | Stars, purchases, gifts and equipped skins. Needs the ranking. | Off |
 | Community ranking | Pairwise voting and its ranking. | Off |
 | Anti-Cheat | The page with the Anti-Cheat download and instructions. | Off |
+| Championships | Championships with participants, teams, draft, round robin and knockout stages, dates and results. | Off |
 
 A module that is off disappears from the menu and its pages answer as not found.
 

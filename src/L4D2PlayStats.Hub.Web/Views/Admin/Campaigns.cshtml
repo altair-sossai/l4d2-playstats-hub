@@ -73,7 +73,7 @@ else
 
 <div class="modal fade" id="campaign-edit-modal" tabindex="-1" role="dialog" aria-labelledby="campaign-edit-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" id="campaign-form" method="post" asp-antiforgery="true" action="/admin/campaigns">
+        <form class="modal-content" id="campaign-form" method="post" asp-antiforgery="true" action="/admin/campaigns" data-confirm="@L["Add this campaign with its maps? It is used to find the campaign of each match."]">
             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
             <input type="hidden" id="campaign-id" name="Id" value="">
             <input type="hidden" id="campaign-maps" name="Maps" value="">

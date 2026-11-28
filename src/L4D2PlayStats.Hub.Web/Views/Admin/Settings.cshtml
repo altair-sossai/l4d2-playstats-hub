@@ -34,7 +34,7 @@
     }
 }
 
-<form method="post" asp-antiforgery="true" action="/admin/settings" enctype="multipart/form-data">
+<form method="post" asp-antiforgery="true" action="/admin/settings" enctype="multipart/form-data" data-confirm="@L["Save the settings of the site? The changes are shown at once to every visitor."]">
     <input type="hidden" name="@AppConsts.AdminTabQuery" value="@tabs.Active" data-admin-tab-field>
     @await Html.PartialAsync("_AdminTabs", tabs)
 

@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Campaigns.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.GameModes.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Matches.Helpers;
@@ -25,9 +26,11 @@ public class MatchBuildService(
     IGameModeService gameModeService,
     ISettingsService settingsService,
     IPlayerRegistryService playerRegistryService,
-    IClock clock) : IMatchBuildService
+    IClock clock,
+    IChampionshipMatchService championshipMatchService) : IMatchBuildService
 {
     private readonly HashSet<long> _touched = [];
+    private readonly List<Match> _built = [];
 
     public async Task RebuildAroundAsync(int gameServerId, int seasonId, DateTime fileDate, CancellationToken cancellationToken = default)
     {
@@ -47,12 +50,15 @@ public class MatchBuildService(
             .ToListAsync(cancellationToken);
 
         _touched.Clear();
+        _built.Clear();
 
         await RebuildAsync(gameServerId, seasonId, files, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         await playerRegistryService.RefreshAsync([.. _touched], cancellationToken);
 
         hubState.DataChanged();
+
+        await championshipMatchService.SyncAsync(_built.Select(match => match.Id).Where(id => id > 0).ToList(), cancellationToken);
     }
 
     public async Task<int> RebuildAllAsync(CancellationToken cancellationToken = default)
@@ -78,6 +84,7 @@ public class MatchBuildService(
             await dbContext.SaveChangesAsync(cancellationToken);
             dbContext.ChangeTracker.Clear();
             _touched.Clear();
+            _built.Clear();
         }
 
         await playerRegistryService.BackfillAsync(cancellationToken);
@@ -210,6 +217,7 @@ public class MatchBuildService(
             }
 
             matches.Add(match);
+            _built.Add(match);
         }
 
         var used = drafts.SelectMany(draft => draft.Files).Select(draftFile => draftFile.File).ToHashSet();

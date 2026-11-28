@@ -13,6 +13,7 @@ This page covers the overview, the game servers, the modules, the settings, the 
 | Community ranking | [Community ranking > For administrators](community-ranking.md#for-administrators) |
 | Chat bans, Remote commands, Player connections | [Moderation](moderation.md) |
 | Anti-Cheat settings | [Anti-Cheat > For administrators](anti-cheat.md#for-administrators) |
+| Championships | [Championships > For administrators](championships.md#for-administrators) |
 
 An item whose module is off is not in the menu.
 
@@ -37,6 +38,7 @@ Every administration page has the same menu on the left, with the page you are o
 | Site | Overview, Settings, Modules, Administrators, Backup |
 | Game servers | Game servers, Remote commands, Player connections, Chat bans |
 | Ranking | Game modes, Campaigns, Community ranking |
+| Championships | Championships |
 | Skin shop | Purchases, Prices, Catalog, Shop settings |
 | Anti-Cheat | Anti-Cheat settings |
 
@@ -103,6 +105,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Weapon skin shop | Stars, purchases, gifts and equipped skins. | Ranking | Off | No **Skins** menu item, no stars in the menu bar, no Skins tab on the player page. The game server gets no skins. |
 | Community ranking | Pairwise voting and its ranking. | | Off | No **Community** menu item. |
 | Anti-Cheat | The page with the Anti-Cheat download and instructions, and who must use the Anti-Cheat on the game servers. | | Off | No **Anti-Cheat** menu item and no **Anti-Cheat settings** page. The anti-cheat plugin gets no mode or lists from the site. |
+| Championships | Championships with participants, teams, draft, stages, brackets, dates and results. | | Off | No **Championships** menu item and no **Championships** page in the administration. |
 
 A module whose requirement is off behaves as off, even when its own box is ticked.
 

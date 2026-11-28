@@ -69,7 +69,7 @@
                     @string.Format(L["Last changed by {0} {1} on {2}."].Value, Model.Access.UpdatedByName, updatedFrom, updatedAt)
                 }
             </small>
-            <button type="button" class="btn btn-success aca-save-mode" @(Model.Access.ModeSaved ? "disabled" : "")>
+            <button data-confirm="@L["Save the mode of the Anti-Cheat? It applies at once to every player who joins the servers."]" type="button" class="btn btn-success aca-save-mode" @(Model.Access.ModeSaved ? "disabled" : "")>
                 <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save mode"]
             </button>
         </div>
@@ -148,7 +148,7 @@
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.AntiCheatPageTab)" id="@AdminTabs.PaneId(AppConsts.AntiCheatPageTab)">
         <div class="row">
             <div class="col-lg-8">
-                <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl">
+                <form method="post" asp-antiforgery="true" action="@AppConsts.AntiCheatAdminUrl" data-confirm="@L["Save the settings of the Anti-Cheat?"]">
                     <div class="panel panel-default aca-page-panel">
                         <div class="panel-heading">
                             <h3 class="panel-title">@L["Anti-Cheat page"]</h3>
@@ -242,7 +242,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
-                <button type="button" class="btn btn-primary aca-add-save" disabled>
+                <button data-confirm="@L["Add this player to the list?"]" type="button" class="btn btn-primary aca-add-save" disabled>
                     <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
                 </button>
             </div>

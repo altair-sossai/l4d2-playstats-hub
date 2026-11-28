@@ -1,0 +1,156 @@
+@model ChampionshipAdminModel
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    var teams = championship.Teams.SelectMany(team => team.Members.Select(member => (member.CommunityId, team.Name))).ToDictionary(pair => pair.CommunityId, pair => pair.Name);
+    var tab = AppConsts.ChampionshipAdminParticipantsTab;
+    var returnUrl = AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, Model.Participants.Page);
+    var pagination = PaginationModel.Of(Model.Participants, number => AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, number));
+    var requestsPagination = PaginationModel.Of(Model.Requests, number => AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipRequestsPageQuery, number));
+}
+
+<p class="admin-lead">@L["The players of the championship. The administration adds them, or approves the requests of the players when the championship takes requests; a player put in a team becomes a participant too. The pot is used when the teams are formed by pots."]</p>
+
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#participants-add-modal">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+    </div>
+</div>
+
+@if (Model.Requests.TotalItems > 0 || championship.JoinRequests)
+{
+    var pending = Model.PendingRequests;
+
+    <div class="panel panel-default championship-requests">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-inbox"></span> @L["Requests to join"]
+                @if (pending > 0)
+                {
+                    <span class="badge">@pending</span>
+                }
+            </h3>
+        </div>
+        @if (Model.Requests.TotalItems == 0)
+        {
+            <div class="panel-body text-muted">@L["No request yet. Players ask to join on the page of the championship while its status is Participants."]</div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-condensed table-responsive admin-table" style="margin-bottom: 0">
+                <thead>
+                <tr>
+                    <th colspan="2">@L["Player"]</th>
+                    <th>@L["Message"]</th>
+                    <th>@L["Date"]</th>
+                    <th class="text-center">@L["Status"]</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var request in Model.Requests.Items)
+                {
+                    var name = DisplayNames.Apply(request.CommunityId, view.PlayerName(request.CommunityId));
+                    var hours = view.Hours(request.CommunityId);
+
+                    <tr class="championship-request status-@request.Status.ToString().ToLowerInvariant()">
+                        <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                            <img src="@AppConsts.AvatarUrl@request.CommunityId" alt="@name" style="width: 32px; border-radius: 4px" onerror="imgOnError(this)"/>
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Player"]">
+                            <a href="@PlayerUrls.Details(request.CommunityId)" target="_blank">@name</a>
+                            <br/><small class="text-muted admin-mono">@request.CommunityId</small>
+                        </td>
+                        <td class="vertical-align-middle championship-request-message" data-label="@L["Message"]">@(request.Message ?? "—")</td>
+                        <td class="vertical-align-middle text-nowrap" data-label="@L["Date"]">@Display.DateTime(request.CreatedAtUtc, view.TimeZone)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Status"]">
+                            @if (request.Status == ChampionshipJoinRequestStatus.Pending)
+                            {
+                                <span class="label label-warning">@L["Waiting"]</span>
+                            }
+                            else
+                            {
+                                <span class="label label-danger">@L["Refused"]</span>
+                            }
+                        </td>
+                        <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                            <form method="post" asp-antiforgery="true" action="@Model.Url/requests/@request.Id/approve" data-confirm="@L["Approve this request? The player becomes a participant of the championship."]">
+                                <input type="hidden" name="returnUrl" value="@returnUrl">
+                                <button class="btn btn-xs btn-success" type="submit">
+                                    <span class="glyphicon glyphicon-ok"></span> @L["Approve"]
+                                </button>
+                            </form>
+                            @if (request.Status == ChampionshipJoinRequestStatus.Pending)
+                            {
+                                <form method="post" asp-antiforgery="true" action="@Model.Url/requests/@request.Id/refuse" data-confirm="@L["Refuse the request of this player? The player sees that the request was refused and cannot ask again."]">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl">
+                                    <button class="btn btn-xs btn-danger" type="submit">
+                                        <span class="glyphicon glyphicon-remove"></span> @L["Refuse"]
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+    @await Html.PartialAsync("_Pagination", requestsPagination)
+}
+
+@if (Model.Participants.TotalItems == 0)
+{
+    <div class="admin-list">
+        <div class="admin-empty">@L["No participant yet."]</div>
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table" style="margin-bottom: 0">
+        <thead>
+        <tr>
+            <th colspan="2">@L["Player"]</th>
+            <th class="text-center">@L["Hours"]</th>
+            <th>@L["Team"]</th>
+            <th class="text-center">@L["Pot"]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var participant in Model.Participants.Items)
+        {
+            var name = DisplayNames.Apply(participant.CommunityId, view.PlayerName(participant.CommunityId));
+            var hours = view.Hours(participant.CommunityId);
+
+            <tr>
+                <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                    <img src="@AppConsts.AvatarUrl@participant.CommunityId" alt="@name" style="width: 32px; border-radius: 4px" onerror="imgOnError(this)"/>
+                </td>
+                <td class="vertical-align-middle" data-label="@L["Player"]">
+                    <a href="@PlayerUrls.Details(participant.CommunityId)" target="_blank">@name</a>
+                    <br/><small class="text-muted admin-mono">@participant.CommunityId</small>
+                </td>
+                <td class="text-center vertical-align-middle" data-label="@L["Hours"]">@(hours == null ? "—" : Display.Number(hours.Value))</td>
+                <td class="vertical-align-middle" data-label="@L["Team"]">@(teams.GetValueOrDefault(participant.CommunityId) ?? "—")</td>
+                <td class="text-center vertical-align-middle" data-label="@L["Pot"]">@(participant.Pot == 0 ? "—" : participant.Pot.ToString(CultureInfo.CurrentCulture))</td>
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    <button class="btn btn-xs btn-default" type="button" data-participant-pot="@Model.Url/participants/@participant.CommunityId/pot" data-participant-name="@name" data-participant-value="@participant.Pot">
+                        <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                    </button>
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/participants/@participant.CommunityId/remove" data-confirm="@L["Remove this participant? The player also leaves the team."]">
+                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                        <button class="btn btn-xs btn-danger" type="submit">
+                            <span class="glyphicon glyphicon-trash"></span> @L["Remove"]
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pagination", pagination)
+}

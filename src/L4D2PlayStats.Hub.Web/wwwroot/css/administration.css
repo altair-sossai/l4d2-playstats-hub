@@ -40,6 +40,10 @@
     font-size: 12px;
 }
 
+.admin-toolbar-actions form {
+    display: inline-block;
+}
+
 .admin-table form {
     display: inline;
 }

@@ -98,6 +98,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 | Loja de skins de armas | Estrelas, compras, presentes e skins equipadas. Precisa do ranking. | Desligado |
 | Ranking da comunidade | Votação em pares e o ranking dela. | Desligado |
 | Anti-Cheat | A página com o download e as instruções do Anti-Cheat. | Desligado |
+| Campeonatos | Campeonatos com participantes, equipes, draft, fases de pontos corridos e mata-mata, datas e resultados. | Desligado |
 
 Um módulo desligado some do menu, e as páginas dele respondem como não encontradas.
 

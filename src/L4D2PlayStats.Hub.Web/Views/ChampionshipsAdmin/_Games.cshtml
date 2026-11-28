@@ -1,0 +1,159 @@
+@model ChampionshipAdminModel
+@{
+    var championship = Model.Championship;
+    var view = Model.Page;
+    var built = view.Stages.Where(stage => stage.Generated).ToList();
+    var tab = AppConsts.ChampionshipAdminGamesTab;
+    var pagination = PaginationModel.Of(Model.Series, number => QueryUrl.Build(Model.Url, (AppConsts.AdminTabQuery, tab), (AppConsts.ChampionshipStageQuery, Model.StageFilter), (AppConsts.ChampionshipGamesPageQuery, number)));
+}
+
+<p class="admin-lead">@L["Every series of the built stages. Click a game to choose its campaign, link the match of the server or type the result. Edit sets the date, the deadline, the vetoes and the walkover of the series."]</p>
+
+@if (built.Count == 0)
+{
+    <div class="admin-list">
+        <div class="admin-empty">@L["Build a stage to create its games."]</div>
+    </div>
+}
+else
+{
+    <div class="admin-toolbar">
+        <form method="get" class="admin-filters" action="@Model.Url">
+            <input type="hidden" name="@AppConsts.AdminTabQuery" value="@tab">
+            <select class="form-control" name="@AppConsts.ChampionshipStageQuery" aria-label="@L["Stage"]">
+                <option value="">@L["Every stage"]</option>
+                @foreach (var stage in built)
+                {
+                    <option value="@stage.Id" selected="@(stage.Id == Model.StageFilter)">@stage.Name</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-filter"></span> @L["Filter"]
+            </button>
+        </form>
+        <div class="admin-toolbar-actions">
+            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#games-deadline-modal">
+                <span class="glyphicon glyphicon-time"></span> @L["Deadlines"]
+            </button>
+            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#games-campaigns-modal">
+                <span class="glyphicon glyphicon-random"></span> @L["Campaigns"]
+            </button>
+        </div>
+    </div>
+
+    @if (Model.Series.TotalItems == 0)
+    {
+        <div class="admin-list">
+            <div class="admin-empty">@L["No series in this stage."]</div>
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table championship-games-table" style="margin-bottom: 0">
+            <thead>
+            <tr>
+                <th>@L["Round"]</th>
+                <th class="text-right">@L["Team"]</th>
+                <th class="text-center">@L["Result"]</th>
+                <th>@L["Team"]</th>
+                <th>@L["Date"]</th>
+                <th class="text-center">@L["Games"]</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var series in Model.Series.Items)
+            {
+                var stage = view.StageOf(series);
+                var progress = view.Progress(series);
+                var group = view.GroupName(series);
+                var single = series.BestOf == 1 && series.Games.Count == 1 ? series.Games[0] : null;
+
+                <tr>
+                    <td class="vertical-align-middle" data-label="@L["Round"]">
+                        @stage.Name · @(series.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, series.Round, view.Rounds(stage)))
+                        @if (group != null && stage.Groups.Count > 1)
+                        {
+                            <br/><small class="text-muted">@L["Group {0}", group]</small>
+                        }
+                    </td>
+                    <td class="text-right vertical-align-middle @(series.Finished && series.WinnerTeamId == series.TeamAId ? "championship-winner" : null)" data-label="@L["Team"]">@await Html.PartialAsync("_ChampionshipTeamName", (view, series.TeamAId))</td>
+                    <td class="text-center vertical-align-middle championship-result" data-label="@L["Result"]">
+                        @if (series.Walkover && series.Finished)
+                        {
+                            <span class="label label-warning">@L["W.O."]</span>
+                        }
+                        else if (single is { IsPlayed: true })
+                        {
+                            @Display.Number(single.TeamATotal)<text> × </text>@Display.Number(single.TeamBTotal)
+                        }
+                        else if (single is { IsInProgress: true })
+                        {
+                            @Display.Number(single.TeamATotal)<text> × </text>@Display.Number(single.TeamBTotal)
+                            <span class="label label-warning">@L["In progress"]</span>
+                        }
+                        else if (series.Games.Any(game => game.IsPlayed || game.IsInProgress))
+                        {
+                            @progress.WinsA<text> × </text>@progress.WinsB
+                            @if (series.Games.Any(game => game.IsInProgress))
+                            {
+                                <span class="label label-warning">@L["In progress"]</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">×</span>
+                        }
+                    </td>
+                    <td class="vertical-align-middle @(series.Finished && series.WinnerTeamId == series.TeamBId ? "championship-winner" : null)" data-label="@L["Team"]">@await Html.PartialAsync("_ChampionshipTeamName", (view, series.TeamBId))</td>
+                    <td class="vertical-align-middle" data-label="@L["Date"]">
+                        @(series.ScheduledAtUtc == null ? "—" : Display.DateTime(series.ScheduledAtUtc.Value, view.TimeZone))
+                        @if (series.DeadlineUtc != null && !series.Finished)
+                        {
+                            <br/><small class="text-muted">@L["Until {0}", Display.DateTime(series.DeadlineUtc.Value, view.TimeZone)]</small>
+                        }
+                    </td>
+                    <td class="text-center vertical-align-middle championship-game-buttons" data-label="@L["Games"]">
+                        @foreach (var game in series.Games.OrderBy(game => game.Number))
+                        {
+                            var state = game.IsPlayed ? "btn-success" : game.IsInProgress ? "btn-warning" : game.Status == ChampionshipGameStatus.NotNeeded ? "btn-link" : "btn-default";
+                            var result = game.MatchId != null ? AppConsts.ChampionshipMatchResult : game.IsPlayed ? AppConsts.ChampionshipTypedResult : AppConsts.ChampionshipNoResult;
+                            var scored = game.IsPlayed || game.IsInProgress;
+
+                            <button class="btn btn-xs @state" type="button" disabled="@(!series.HasTeams)"
+                                    title="@(Model.Page.CampaignName(game.CampaignId) ?? L["Game {0}", game.Number].Value)"
+                                    data-game-edit="@Model.Url/series/@series.Id/games/@game.Id"
+                                    data-game-candidates="@Model.Url/series/@series.Id/candidates"
+                                    data-game-number="@game.Number"
+                                    data-game-team-a="@view.TeamName(series.TeamAId)"
+                                    data-game-team-b="@view.TeamName(series.TeamBId)"
+                                    data-game-campaign="@game.CampaignId"
+                                    data-game-result="@result"
+                                    data-game-match="@game.MatchId"
+                                    data-game-score-a="@(scored ? game.TeamAScore : null)"
+                                    data-game-score-b="@(scored ? game.TeamBScore : null)"
+                                    data-game-end="@(game.IsInProgress ? $"{Model.Url}/series/{series.Id}/games/{game.Id}/end" : null)"
+                                    data-game-played-at="@ChampionshipDates.Input(game.PlayedAtUtc, view.TimeZone)"
+                                    data-game-penalty-a="@game.TeamAPenalty"
+                                    data-game-penalty-b="@game.TeamBPenalty"
+                                    data-game-notes="@game.Notes">
+                                @game.Number
+                            </button>
+                        }
+                    </td>
+                    <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                        <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#series-edit-modal-@series.Id">
+                            <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                        </button>
+                        <a class="btn btn-xs btn-default" href="@ChampionshipUrls.Series(championship.Slug, series.Id)" target="_blank">
+                            <span class="glyphicon glyphicon-eye-open"></span> @L["See"]
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        @await Html.PartialAsync("_Pagination", pagination)
+    }
+}

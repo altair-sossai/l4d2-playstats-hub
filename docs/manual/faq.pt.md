@@ -47,10 +47,28 @@ O ranking da comunidade pede um número mínimo de partidas, contadas em todas a
 **A página do servidor ao vivo está atrasada em relação ao jogo.**
 Ela fica cerca de 15 segundos atrás, de propósito. Um administrador muda o atraso em **Administração > Servidores de jogo > Página do servidor ao vivo**.
 
+**Não vejo o sino das notificações.**
+O sino aparece só depois que você entra. Veja [Notificações](notifications.pt.md).
+
+**O número do sino não some.**
+Ele conta as notificações que você ainda não abriu. Abra-as ou use **Marcar todas como lidas** no fim do sino. Notificações com mais de 90 dias são apagadas.
+
 ## Para administradores
 
 **Como eu adiciono outro administrador?**
 Em [Administração > Administradores](administration.pt.md#administradores), com o SteamID64 dele. Se você não conseguir mais fazer login, use `playstats-hub add-admin <SteamID64>` no Linux.
+
+**Como eu organizo um campeonato?**
+Ligue **Campeonatos** em [Administração > Módulos](administration.pt.md#módulos) e crie o campeonato em **Administração > Campeonatos**: escolha o formato, adicione os participantes e as equipes e monte a primeira fase. Veja [Campeonatos > Para administradores](championships.pt.md#para-administradores).
+
+**Os jogadores podem se inscrever sozinhos em um campeonato?**
+Sim, quando você liga **Jogadores podem pedir para participar** na aba Configurações do campeonato. Enquanto o status é Participantes e há vagas, a página dele tem um botão para os jogadores conectados pedirem uma vaga; cada pedido espera na aba Participantes até você aprovar ou recusar. Veja [Pedindo para participar](championships.pt.md#pedindo-para-participar).
+
+**Onde um capitão administra a equipe?**
+Na área do capitão do campeonato: entre com a Steam e clique no ícone de torre ao lado da sua foto no topo, ou em **Abrir a área do capitão** na página do campeonato. Lá o capitão e o vice-capitão escolhem os jogadores de um draft quando é a vez deles, enviam um novo nome, sigla ou bandeira para a aprovação da administração, escolhem o vice-capitão, propõem e aceitam datas, vetam e escolhem campanhas. Veja [A área do capitão](championships.pt.md#a-área-do-capitão).
+
+**Um jogo do campeonato foi disputado fora do nosso servidor.**
+Na aba Jogos do campeonato, em **Administração > Campeonatos**, clique no botão do jogo e escolha **Digitar o resultado**. O jogo conta na classificação e na chave, mas não tem estatísticas.
 
 **Como eu adiciono um segundo servidor de jogo?**
 Em [Administração > Servidores de jogo](administration.pt.md#servidores-de-jogo). Cada servidor recebe o próprio token. Os resultados dos jogadores se somam entre todos os servidores.

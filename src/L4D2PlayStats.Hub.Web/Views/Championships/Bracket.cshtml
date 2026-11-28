@@ -1,0 +1,44 @@
+@model ChampionshipPageModel
+@{
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Bracket"].Value} - {Model.Championship.Name}", Description = L["Bracket of {0}.", Model.Championship.Name] };
+    var url = ChampionshipUrls.Page(Model.Championship.Slug);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+@await Html.PartialAsync("_Header", Model)
+
+@foreach (var stage in Model.Stages.Where(stage => stage.IsKnockout && stage.Generated))
+{
+    var rounds = Model.Rounds(stage);
+    var third = stage.Series.FirstOrDefault(series => series.ThirdPlace);
+
+    <h4>@stage.Name</h4>
+    <div class="championship-bracket">
+        @for (var round = 1; round <= rounds; round++)
+        {
+            var current = round;
+
+            <div class="bracket-round">
+                <div class="bracket-round-title">@ChampionshipTexts.Round(L, stage, round, rounds)</div>
+                <div class="bracket-round-series">
+                    @foreach (var series in stage.Series.Where(series => series.Round == current && !series.ThirdPlace).OrderBy(series => series.Position))
+                    {
+                        <div class="bracket-slot">
+                            @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, series, $"{url}/series/{series.Id}", false))
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    @if (third != null)
+    {
+        <div class="championship-third">
+            <div class="bracket-round-title">@L["Third place"]</div>
+            @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, third, $"{url}/series/{third.Id}", false))
+        </div>
+    }
+}

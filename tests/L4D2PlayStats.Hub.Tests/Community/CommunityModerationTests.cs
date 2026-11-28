@@ -46,7 +46,7 @@ public class CommunityModerationTests
         Assert.Contains("The voter was blocked and can no longer vote.", admin);
         Assert.Contains("Blocked voters", admin);
         Assert.Contains($"name=\"communityId\" value=\"{site.Voter}\"", admin);
-        Assert.Contains(BlockedMessage, ballot);
+        Assert.Contains(BlockedMessage, Ballot(ballot));
         Assert.IsNull(CommunityWebSite.Pair(ballot));
         Assert.HasCount(1, await site.VotesAsync());
         Assert.AreEqual(0, offers);
@@ -72,11 +72,11 @@ public class CommunityModerationTests
 
         await CommunityWebSite.PostVoteAsync(voter, pair, nameof(CommunityVoteOutcome.Left));
 
-        Assert.Contains(BlockedMessage, blocked);
+        Assert.Contains(BlockedMessage, Ballot(blocked));
         Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
         Assert.Contains("The voter was unblocked and can vote again.", admin);
         Assert.Contains("Nobody is blocked from voting.", admin);
-        Assert.DoesNotContain(BlockedMessage, ballot);
+        Assert.DoesNotContain(BlockedMessage, Ballot(ballot));
         Assert.HasCount(1, await site.VotesAsync());
     }
 
@@ -205,7 +205,7 @@ public class CommunityModerationTests
         Assert.AreEqual("/admin/community?tab=voters", response.Headers.Location?.OriginalString);
         Assert.Contains("The voter was blocked and can no longer vote.", admin);
         Assert.Contains("Votes removed: 1", admin);
-        Assert.Contains(BlockedMessage, ballot);
+        Assert.Contains(BlockedMessage, Ballot(ballot));
         Assert.IsEmpty(await site.VotesAsync());
         Assert.IsEmpty(await site.RatingsAsync());
     }
@@ -250,12 +250,12 @@ public class CommunityModerationTests
         Assert.AreEqual("/admin/community?tab=blocked", response.Headers.Location?.OriginalString);
         Assert.Contains("The voter was blocked and can no longer vote.", admin);
         Assert.Contains($"href=\"/community/votes?voter={site.Voter}\"", admin);
-        Assert.Contains(BlockedMessage, await voter.GetStringAsync(CommunityWebSite.VotePage));
+        Assert.Contains(BlockedMessage, Ballot(await voter.GetStringAsync(CommunityWebSite.VotePage)));
     }
 
     private static Task<HttpResponseMessage> PostWithTokenAsync(HttpClient client, string html, CommunityPair pair, string outcome)
     {
-        var token = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = HubWebFactory.Token(html);
 
         return client.PostAsync(CommunityWebSite.VotePage, new FormUrlEncodedContent(new Dictionary<string, string>
         {
@@ -264,5 +264,10 @@ public class CommunityModerationTests
             ["Outcome"] = outcome,
             ["__RequestVerificationToken"] = token
         }));
+    }
+
+    private static string Ballot(string html)
+    {
+        return html[html.IndexOf("id=\"community-ballot\"", StringComparison.Ordinal)..];
     }
 }

@@ -38,7 +38,7 @@
 }
 
 @section Scripts {
-    <script type="application/json" id="players-details-config">{ "texts": { "How many experience points should the user lose?": @Json.Serialize(L["How many experience points should the user lose?"].Value), "Remove the punishments of this player in this season?": @Json.Serialize(L["Remove the punishments of this player in this season?"].Value) }, "values": { "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }), "playerSeasonParameter": @Json.Serialize(AppConsts.PlayerSeasonParameter), "seasonId": @Json.Serialize(Model.Period.Season?.Id) } }</script>
+    <script type="application/json" id="players-details-config">{ "texts": { "How many experience points should the user lose?": @Json.Serialize(L["How many experience points should the user lose?"].Value), "Remove the punishments of this player in this season?": @Json.Serialize(L["Remove the punishments of this player in this season?"].Value), "Take {0} experience points from this player in this season? The ranking is calculated again.": @Json.Serialize(L["Take {0} experience points from this player in this season? The ranking is calculated again."].Value) }, "values": { "antiforgeryHeaders": @Json.Serialize(new Dictionary<string, string> { [AppConsts.AntiforgeryHeader] = antiforgeryToken ?? string.Empty }), "playerSeasonParameter": @Json.Serialize(AppConsts.PlayerSeasonParameter), "seasonId": @Json.Serialize(Model.Period.Season?.Id) } }</script>
     <script src="~/js/pages/players-details.js" asp-append-version="true"></script>
 }
 

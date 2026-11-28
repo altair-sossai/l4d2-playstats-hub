@@ -17,6 +17,7 @@
     var skinShop = modules.IsEnabled(HubModule.SkinShop);
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
     var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
+    var championships = modules.IsEnabled(HubModule.Championships);
     var metadata = ViewData["PageMetadata"] as PageMetadata;
     var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
     var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
@@ -155,6 +156,12 @@
                         <a href="/matches">@L["Last matches"]</a>
                     </li>
                 }
+                @if (championships)
+                {
+                    <li class="nav-fit @ViewBag.Championships">
+                        <a href="@AppConsts.ChampionshipsUrl">@L["Championships"]</a>
+                    </li>
+                }
                 @if (liveServer)
                 {
                     <li class="nav-fit @ViewBag.Server">
@@ -225,6 +232,13 @@
                                 </span>
                             </a>
                         </li>
+                    }
+
+                    @await Html.PartialAsync("_NotificationBell")
+
+                    if (championships)
+                    {
+                        @await Html.PartialAsync("_CaptainAlert")
                     }
 
                     <li>
@@ -369,6 +383,8 @@
         gtag('config', @Json.Serialize(site.GoogleAnalyticsId));
     </script>
 }
+
+@await Html.PartialAsync("_ConfirmModal")
 
 <div class="modal fade" id="field-help-modal" tabindex="-1" role="dialog" data-more="@L["Click the icon for more details."]">
     <div class="modal-dialog" role="document">

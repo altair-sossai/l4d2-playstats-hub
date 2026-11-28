@@ -1,6 +1,9 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Seasons.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
@@ -10,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Seasons.Services;
 
-public class SeasonService(HubDbContext dbContext, HubState hubState, ISettingsService settingsService, IClock clock) : ISeasonService
+public class SeasonService(HubDbContext dbContext, HubState hubState, ISettingsService settingsService, IClock clock, INotificationService notifications) : ISeasonService
 {
     public Task<List<Season>> ListAsync(CancellationToken cancellationToken = default)
     {
@@ -60,6 +63,12 @@ public class SeasonService(HubDbContext dbContext, HubState hubState, ISettingsS
         var missing = SeasonCalendar.Missing(existing, date, settings.LengthInMonths);
 
         dbContext.Seasons.AddRange(missing);
+
+        var now = await SiteNowAsync(cancellationToken);
+
+        foreach (var season in missing.Where(season => existing.Count > 0 && season.Contains(now)))
+            notifications.SendEveryone(new NotificationMessage(NotificationTopic.Seasons, "A new season started: the ranking starts again from zero.", "/"));
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return missing.First(s => s.Contains(date));

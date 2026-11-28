@@ -58,10 +58,13 @@ class Browser extends Runner {
     }
 
     async click(selector, options = {}) {
-        const found = await this.page.evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!element) return false; element.scrollIntoView({ block: 'center' }); element.click(); return true; })()`);
+        const found = await this.page.evaluate(`(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!element) return false; element.scrollIntoView({ block: 'center' }); const asks = element.matches('[data-confirm]') || (element.type === 'submit' && !!element.form && element.form.hasAttribute('data-confirm')); element.click(); return asks ? 'confirm' : true; })()`);
 
         if (!found)
             throw new Error(`Nothing to click at ${selector}`);
+
+        if (found === 'confirm')
+            await this.confirm();
 
         if (options.navigates) {
             await this.page.waitFor('Page.loadEventFired');
@@ -74,10 +77,21 @@ class Browser extends Runner {
     async submit(selector) {
         const loaded = this.page.waitFor('Page.loadEventFired');
 
-        await this.page.evaluate(`(() => { const form = document.querySelector(${JSON.stringify(selector)}).closest('form'); const button = form.querySelector('[type=submit]'); if (button) button.click(); else form.submit(); return true; })()`);
+        const asks = await this.page.evaluate(`(() => { const form = document.querySelector(${JSON.stringify(selector)}).closest('form'); const button = form.querySelector('[type=submit]'); const asks = form.hasAttribute('data-confirm') || (!!button && button.hasAttribute('data-confirm')); if (button) button.click(); else form.requestSubmit ? form.requestSubmit() : form.submit(); return asks; })()`);
+
+        if (asks)
+            await this.confirm();
+
         await loaded;
         await this.page.idle();
         await sleep(300);
+    }
+
+    async confirm() {
+        await this.until(`document.querySelector('#confirm-modal') && document.querySelector('#confirm-modal').classList.contains('in') && getComputedStyle(document.querySelector('#confirm-modal')).display === 'block'`, 'the confirmation window to open');
+        await sleep(200);
+        this.confirmations = (this.confirmations || 0) + 1;
+        await this.page.evaluate(`document.querySelector('#confirm-modal [data-confirm-ok]').click()`);
     }
 
     async fill(values) {

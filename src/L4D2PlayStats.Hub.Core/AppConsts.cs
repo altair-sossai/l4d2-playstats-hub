@@ -2,7 +2,7 @@ using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Enums;
 
 namespace L4D2PlayStats.Hub.Core;
 
-public static class AppConsts
+public static partial class AppConsts
 {
     public const string DefaultSiteName = "L4D2 PlayStats";
     public const string DefaultTimeZone = "UTC";
@@ -207,7 +207,7 @@ public static class AppConsts
     public const int SkinCatalogTimeoutInSeconds = 30;
     public const int SkinCatalogMaxBytes = 5 * 1024 * 1024;
     public const int SkinShopLockTimeoutInSeconds = 5;
-    public const int SkinSeasonClockStepInMinutes = 30;
+    public const int SiteTimeGapStepInMinutes = 30;
     public const string SkinSourceShop = "shop";
     public const string SkinSourceGift = "gift";
     public const string SkinSourceSite = "site";

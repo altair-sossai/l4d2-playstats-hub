@@ -1,0 +1,91 @@
+@model ChampionshipCaptainModel
+@{
+    var championship = Model.Championship;
+    var team = Model.Team;
+    var view = Model.Page;
+}
+
+<p class="admin-lead">@L["The series of your team. Propose the dates to the other team and, when the stage has them, veto a campaign and choose the campaigns of your turns. Times are in the time zone of the site: {0}.", view.TimeZone.Id]</p>
+
+<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
+    <thead>
+    <tr>
+        <th>@L["Stage"]</th>
+        <th>@L["Opponent"]</th>
+        <th>@L["Date"]</th>
+        <th>@L["Status"]</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var series in Model.Series)
+    {
+        var stage = view.StageOf(series);
+        var opponent = series.TeamAId == team.Id ? series.TeamBId : series.TeamAId;
+        var progress = view.Progress(series);
+        var wins = series.TeamAId == team.Id ? $"{progress.WinsA} × {progress.WinsB}" : $"{progress.WinsB} × {progress.WinsA}";
+        var open = championship.Status == ChampionshipStatus.Running && !series.Finished;
+        var teamA = series.TeamAId == team.Id;
+        var started = series.Games.Any(game => game.IsPlayed || game.IsInProgress);
+        var canVeto = open && stage.Veto && !started && (teamA ? series.TeamAVetoCampaignId : series.TeamBVetoCampaignId) == null;
+        var canPick = open && stage.CampaignRule == ChampionshipCampaignRule.Picks && series.Games.Any(game => game.Status == ChampionshipGameStatus.Pending && GamePlan.PickedByTeamA(game, series.BestOf) == teamA);
+        var tasks = Model.TasksOf(series);
+
+        <tr>
+            <td class="vertical-align-middle" data-label="@L["Stage"]">
+                @stage.Name
+                <div class="small text-muted">@(series.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, series.Round, view.Rounds(stage))) · @L["Best of {0}", series.BestOf]</div>
+            </td>
+            <td class="vertical-align-middle" data-label="@L["Opponent"]"><strong>@view.TeamName(opponent)</strong></td>
+            <td class="vertical-align-middle" data-label="@L["Date"]">
+                @if (series.ScheduledAtUtc != null)
+                {
+                    @Display.DateTime(series.ScheduledAtUtc.Value, view.TimeZone)
+                }
+                else
+                {
+                    <span class="text-muted">@L["Not set"]</span>
+                }
+                @if (series.DeadlineUtc != null && !series.Finished)
+                {
+                    <div class="small text-muted">@L["Deadline: {0}", Display.DateTime(series.DeadlineUtc.Value, view.TimeZone)]</div>
+                }
+            </td>
+            <td class="vertical-align-middle" data-label="@L["Status"]">
+                @ChampionshipTexts.SeriesStatus(L, view.SeriesStatus(series))
+                @if (started || series.Finished)
+                {
+                    <div class="small"><strong>@wins</strong></div>
+                }
+                @foreach (var task in tasks)
+                {
+                    <div><span class="label label-warning">@ChampionshipTexts.CaptainTask(L, task, null)</span></div>
+                }
+            </td>
+            <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                @if (open)
+                {
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#captain-dates-modal-@series.Id">
+                        <span class="glyphicon glyphicon-calendar"></span> @L["Dates"]
+                    </button>
+                }
+                @if (canVeto)
+                {
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#captain-veto-modal-@series.Id">
+                        <span class="glyphicon glyphicon-ban-circle"></span> @L["Veto"]
+                    </button>
+                }
+                @if (canPick)
+                {
+                    <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#captain-campaigns-modal-@series.Id">
+                        <span class="glyphicon glyphicon-map-marker"></span> @L["Campaigns"]
+                    </button>
+                }
+                <a class="btn btn-xs btn-default" href="@ChampionshipUrls.Series(championship.Slug, series.Id)">
+                    <span class="glyphicon glyphicon-eye-open"></span> @L["See"]
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

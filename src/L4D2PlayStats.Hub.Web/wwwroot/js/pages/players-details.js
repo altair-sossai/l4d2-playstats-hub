@@ -43,10 +43,16 @@ function editPunishment(communityId, punishment) {
         return;
 
     else if (lostExperiencePoints > 0)
-        addPunishments(communityId, lostExperiencePoints);
+        Hub.confirm(Hub.format(playersDetailsConfig.texts["Take {0} experience points from this player in this season? The ranking is calculated again."], lostExperiencePoints)).done(function (accepted) {
+            if (accepted)
+                addPunishments(communityId, lostExperiencePoints);
+        });
 
-    else if (lostExperiencePoints === 0 && confirm(playersDetailsConfig.texts["Remove the punishments of this player in this season?"]))
-        deletePunishments(communityId);
+    else if (lostExperiencePoints === 0)
+        Hub.confirm(playersDetailsConfig.texts["Remove the punishments of this player in this season?"]).done(function (accepted) {
+            if (accepted)
+                deletePunishments(communityId);
+        });
 }
 
 $(function () {
