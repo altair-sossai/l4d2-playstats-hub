@@ -1,5 +1,7 @@
 const { Runner } = require('./runner');
 const live = require('./live');
+const { fillChampionships, slugs } = require('./championships');
+const { fillBans, bannedPlayers, banReason } = require('./bans');
 const { sleep } = require('./cdp');
 
 const phone = 390;
@@ -43,6 +45,8 @@ async function discover(runner) {
     vars.blocked = voters.filter(id => ![vars.player, vars.voter, vars.admin].includes(id)).slice(2, 4);
     vars.forced = runner.context.livePlayers.slice(10, 17);
     vars.newAdmin = runner.context.livePlayers[5] || [vars.player, ''];
+
+    vars.bans = bannedPlayers(runner.context.livePlayers);
 
     return vars;
 }
@@ -113,7 +117,7 @@ async function feedLive(runner) {
     await sleep(17000);
 }
 
-function shots(vars) {
+function shots(vars, lang) {
     const player = vars.player;
     const admin = vars.admin;
     const openDropdown = selector => `$(${JSON.stringify(selector)}).first().closest('.dropdown').addClass('open')`;
@@ -128,6 +132,14 @@ function shots(vars) {
     const forcedImport = vars.forced.slice(0, -1).map(([id, name]) => `"${steam2(id)}" "${name.replace(/"/g, '')}"`).join('\n');
     const [forcedId, forcedName] = vars.forced[vars.forced.length - 1] || [player, 'Player'];
     const [newAdminId, newAdminName] = vars.newAdmin;
+    const cup = `/championships/${slugs.cup}`;
+    const championships = {};
+    const asCaptain = { run: runner => runner.signIn(championships.captain) };
+    const asAdmin = { run: runner => runner.signIn(admin) };
+    const championshipPage = (name, key, tab, extra = {}) => ({ name, height: adminHeight, full: true, ...extra, before: [{ run: runner => runner.visit(`${championships[key]}?tab=${tab}`) }, hideFloating] });
+    const captainPage = (name, tab) => ({ name, before: [asCaptain, { go: `${cup}/captain?tab=${tab}` }, hideFloating], full: true, maxHeight: 1000, after: [asAdmin] });
+    const draftShot = url => runner => runner.shot(adminPage('admin-championship-draft', `${url}?tab=draft`, { maxHeight: 1100 }));
+    const prepareChampionships = async runner => Object.assign(championships, await fillChampionships(runner, url => draftShot(url)(runner)));
 
     return [
         { name: 'ranking', path: '/', full: true, maxHeight: 1100 },
@@ -204,7 +216,7 @@ function shots(vars) {
         adminPage('admin-community-blocked', '/admin/community?tab=blocked'),
         adminModal('admin-chat-bans-add', '/admin/chat-bans', `$('.cb-add').click()`, {
             before: [`$('#cb-add-player').val(${JSON.stringify(vars.banned)}).trigger('input'); $('#cb-add-reason').val('Spam in the chat during matches')`, { sleep: 600 }],
-            after: [`$('.cb-add-save').click()`, { sleep: 1500 }]
+            after: [{ eval: `$('.cb-add-save').click()`, confirm: true }, { sleep: 1500 }]
         }),
         adminPage('admin-chat-bans', '/admin/chat-bans'),
         adminPage('admin-chat-bans-limits', '/admin/chat-bans?tab=limits'),
@@ -224,7 +236,35 @@ function shots(vars) {
             before: [`$('#fn-player').val(${JSON.stringify(forcedId)}); $('#fn-name').val(${JSON.stringify(forcedName)})`],
             after: [{ eval: `$('#fn-edit-modal form').submit()`, navigates: true }]
         }),
-        adminPage('admin-forced-names', '/admin/forced-names')
+        adminPage('admin-forced-names', '/admin/forced-names'),
+        { before: [{ run: runner => fillBans(runner, vars.bans) }], always: true },
+        { name: 'bans', path: '/bans', before: [hideFloating], full: true, maxHeight: 900 },
+        { name: 'player-ban', path: `/player/${vars.bans[0][0]}`, before: [hideFloating], height: 420 },
+        adminPage('admin-bans', '/admin/bans'),
+        adminPage('admin-bans-alerts', '/admin/bans?tab=alerts'),
+        adminModal('admin-bans-add', '/admin/bans', `$('[data-ban-add=""]').first().click()`, {
+            before: [`$('#ban-player').val(${JSON.stringify(vars.bans[7][0])}); $('#ban-add-duration').val('10080').trigger('change'); $('#ban-add-reason').val(${JSON.stringify(banReason(lang))})`]
+        }),
+        { before: [{ run: prepareChampionships }], always: true },
+        { name: 'championships', path: '/championships', before: [hideFloating], full: true, maxHeight: 1300 },
+        { name: 'championship', path: cup, before: [hideFloating], full: true, maxHeight: 1500 },
+        { name: 'championship-teams', path: `${cup}/teams`, before: [hideFloating], full: true, maxHeight: 1300 },
+        { name: 'championship-standings', path: `${cup}/standings`, before: [hideFloating], full: true, maxHeight: 1000 },
+        { name: 'championship-bracket', path: `${cup}/bracket`, before: [hideFloating], full: true, maxHeight: 1000 },
+        { name: 'championship-series', before: [{ run: runner => runner.visit(`${cup}/series/${championships.series}`) }, hideFloating], full: true, maxHeight: 1100 },
+        { name: 'championship-join', user: forcedId, path: `/championships/${slugs.open}`, before: [hideFloating], full: true, maxHeight: 1100 },
+        captainPage('championship-captain', 'series'),
+        captainPage('championship-captain-team', 'team'),
+        adminPage('admin-championships', '/admin/championships'),
+        championshipPage('admin-championship-settings', 'cup', 'settings', { maxHeight: 1400 }),
+        championshipPage('admin-championship-teams', 'cup', 'teams'),
+        championshipPage('admin-championship-stages', 'cup', 'stages'),
+        championshipPage('admin-championship-games', 'cup', 'games', { maxHeight: 1200 }),
+        championshipPage('admin-championship-requests', 'open', 'participants', { maxHeight: 1100 }),
+        { name: 'notifications-bell', path: '/players', height: 720, before: [hideFloating, `$('.nav-notifications').addClass('open')`] },
+        { name: 'notifications', path: '/notifications', before: [hideFloating], full: true, maxHeight: 1000 },
+        { name: 'phone-championship', width: phone, path: cup, before: [hideFloating], full: true, maxHeight: 1400 },
+        { name: 'phone-bans', width: phone, path: '/bans' }
     ];
 }
 
@@ -235,7 +275,7 @@ async function captureSite(page, context) {
 
     const vars = await discover(runner);
 
-    await runner.run(shots(vars));
+    await runner.run(shots(vars, context.lang));
 }
 
 module.exports = { captureSite };

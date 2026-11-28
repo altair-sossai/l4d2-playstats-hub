@@ -19,7 +19,7 @@ The six SourceMod plugins that connect a Left 4 Dead 2 server to L4D2 PlayStats 
 - [Troubleshooting](#troubleshooting)
 - [What the plugins call](#what-the-plugins-call)
 - [Building](#building)
-- [Not yet tested on a game server](#not-yet-tested-on-a-game-server)
+- [Tested on a game server](#tested-on-a-game-server)
 - [License](#license)
 
 ## What is in this folder
@@ -303,14 +303,9 @@ The build is reproducible: the same sources and the same compiler give the same 
 
 Code rules: no comments, constants as `#define` at the top of the file, and third-party include files stay exactly as they came.
 
-## Not yet tested on a game server
+## Tested on a game server
 
-The plugins compile without warnings and the build was checked on Windows and Linux, but this version was not run on a live game server yet. Until it is, treat these points as expected behaviour, not as tested facts:
-
-- the plugins load from `addons/sourcemod/plugins/` and `addons/sourcemod/plugins/optional/` as uncompressed `.smx` files (SourceMod supports them, but this build was not loaded by a server);
-- the flow `server.cfg` → `exec playstats.cfg` → `cfg/sharedplugins.cfg` on a server with L4D2 Competitive Rework;
-- the changes of this version: the tank and witch percent without `l4d_boss_percent`, the patent refresh after the configs run, and the error log lines written once;
-- the exact wording of SourceMod's own messages, which this guide describes instead of quoting.
+The plugins run on the game server of [l4d2.com.br](https://l4d2.com.br/), a Linux server based on L4D2 Competitive Rework, since 19 November 2026, and `l4d2_bans` since 28 November 2026. The build is checked on Windows and Linux, and the plugins compile without warnings. Not tried yet: a Windows game server, and a server without L4D2 Competitive Rework. The exact wording of SourceMod's own messages may change with its version, so this guide describes them instead of quoting them.
 
 ## License
 

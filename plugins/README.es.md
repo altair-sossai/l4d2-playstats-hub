@@ -19,7 +19,7 @@ Los seis plugins de SourceMod que conectan un servidor de Left 4 Dead 2 con L4D2
 - [Solución de problemas](#solución-de-problemas)
 - [Qué llamadas hacen los plugins](#qué-llamadas-hacen-los-plugins)
 - [Compilación](#compilación)
-- [Aún no probado en un servidor de juego](#aún-no-probado-en-un-servidor-de-juego)
+- [Probado en un servidor de juego](#probado-en-un-servidor-de-juego)
 - [Licencia](#licencia)
 
 ## Qué hay en esta carpeta
@@ -303,14 +303,9 @@ La compilación es reproducible: las mismas fuentes y el mismo compilador dan lo
 
 Reglas del código: sin comentarios, constantes como `#define` al inicio del archivo, y los archivos include de terceros se quedan exactamente como vinieron.
 
-## Aún no probado en un servidor de juego
+## Probado en un servidor de juego
 
-Los plugins compilan sin advertencias y la compilación se verificó en Windows y en Linux, pero esta versión todavía no se ejecutó en un servidor de juego real. Hasta que eso pase, toma estos puntos como el comportamiento esperado, no como hechos probados:
-
-- los plugins cargan desde `addons/sourcemod/plugins/` y `addons/sourcemod/plugins/optional/` como archivos `.smx` sin comprimir (SourceMod los admite, pero ningún servidor cargó esta compilación);
-- el flujo `server.cfg` → `exec playstats.cfg` → `cfg/sharedplugins.cfg` en un servidor con L4D2 Competitive Rework;
-- los cambios de esta versión: el porcentaje del tank y de la witch sin `l4d_boss_percent`, la actualización de las patentes después de que se ejecutan las configuraciones, y las líneas del registro de errores escritas una sola vez;
-- el texto exacto de los mensajes propios de SourceMod, que esta guía describe en lugar de citar.
+Los plugins funcionan en el servidor de juego de [l4d2.com.br](https://l4d2.com.br/), un servidor Linux basado en L4D2 Competitive Rework, desde el 19 de noviembre de 2026, y `l4d2_bans` desde el 28 de noviembre de 2026. La compilación se verifica en Windows y en Linux, y los plugins compilan sin advertencias. Aún sin probar: un servidor de juego en Windows y un servidor sin L4D2 Competitive Rework. El texto exacto de los mensajes propios de SourceMod puede cambiar con su versión, así que esta guía los describe en lugar de citarlos.
 
 ## Licencia
 

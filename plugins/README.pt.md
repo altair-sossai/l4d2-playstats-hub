@@ -19,7 +19,7 @@ Os seis plugins do SourceMod que conectam um servidor de Left 4 Dead 2 ao L4D2 P
 - [Solução de problemas](#solução-de-problemas)
 - [O que os plugins chamam](#o-que-os-plugins-chamam)
 - [Compilação](#compilação)
-- [Ainda não testado em um servidor de jogo](#ainda-não-testado-em-um-servidor-de-jogo)
+- [Testado em um servidor de jogo](#testado-em-um-servidor-de-jogo)
 - [Licença](#licença)
 
 ## O que há nesta pasta
@@ -303,14 +303,9 @@ A compilação é reproduzível: os mesmos fontes e o mesmo compilador geram os 
 
 Regras de código: sem comentários, constantes como `#define` no topo do arquivo, e os arquivos include de terceiros ficam exatamente como vieram.
 
-## Ainda não testado em um servidor de jogo
+## Testado em um servidor de jogo
 
-Os plugins compilam sem avisos e a compilação foi verificada no Windows e no Linux, mas esta versão ainda não rodou em um servidor de jogo de verdade. Até isso acontecer, trate estes pontos como comportamento esperado, não como fatos testados:
-
-- os plugins carregam de `addons/sourcemod/plugins/` e de `addons/sourcemod/plugins/optional/` como arquivos `.smx` sem compressão (o SourceMod aceita esses arquivos, mas esta versão ainda não foi carregada por um servidor);
-- o fluxo `server.cfg` → `exec playstats.cfg` → `cfg/sharedplugins.cfg` em um servidor com o L4D2 Competitive Rework;
-- as mudanças desta versão: a porcentagem do tank e da witch sem o `l4d_boss_percent`, a atualização das patentes depois que as configurações rodam, e as linhas do log de erros gravadas uma vez só;
-- o texto exato das mensagens do próprio SourceMod, que este guia descreve em vez de citar.
+Os plugins rodam no servidor de jogo de [l4d2.com.br](https://l4d2.com.br/), um servidor Linux baseado no L4D2 Competitive Rework, desde 19 de novembro de 2026, e o `l4d2_bans` desde 28 de novembro de 2026. A compilação é verificada no Windows e no Linux, e os plugins compilam sem avisos. Ainda não testados: um servidor de jogo no Windows e um servidor sem o L4D2 Competitive Rework. O texto exato das mensagens do próprio SourceMod pode mudar com a versão dele, então este guia as descreve em vez de citar.
 
 ## Licença
 

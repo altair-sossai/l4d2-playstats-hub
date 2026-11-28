@@ -1,6 +1,9 @@
 const path = require('path');
 const { sleep } = require('./cdp');
 
+const confirmTimeout = 1500;
+const confirmInterval = 100;
+
 class Runner {
     constructor(page, context) {
         this.page = page;
@@ -60,10 +63,40 @@ class Runner {
             return action.run(this);
 
         if (action.eval) {
-            await this.page.act(action.eval, action);
+            await this.act(action.eval, action);
 
             if (action.navigates)
                 await this.wake();
+        }
+    }
+
+    async act(expression, options) {
+        if (!options.navigates && !options.confirm)
+            return this.page.act(expression, options);
+
+        const loaded = options.navigates ? this.page.waitFor('Page.loadEventFired') : null;
+
+        await this.page.evaluate(expression);
+        await this.confirm();
+
+        if (loaded) {
+            await loaded;
+            await this.page.idle();
+        }
+
+        await sleep(options.settle === undefined ? 900 : options.settle);
+    }
+
+    async confirm() {
+        for (let waited = 0; waited < confirmTimeout; waited += confirmInterval) {
+            try {
+                if (await this.page.evaluate(`(() => { const modal = document.querySelector('#confirm-modal.in'); if (!modal) return false; modal.querySelector('[data-confirm-ok]').click(); return true; })()`))
+                    return;
+            } catch {
+                return;
+            }
+
+            await sleep(confirmInterval);
         }
     }
 
