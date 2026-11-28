@@ -553,6 +553,7 @@
   "This date is already confirmed.": "Esta fecha ya está confirmada.",
   "Wait for an answer to the dates already proposed, or delete one, before proposing another.": "Espera la respuesta a las fechas ya propuestas, o borra una, antes de proponer otra.",
   "This date has already passed.": "Esta fecha ya pasó.",
+  "Position": "Posición",
   "This date was already proposed.": "Esta fecha ya fue propuesta.",
   "This game is in progress: the match of the server was linked to it by itself and the score follows the maps played. The standings and the bracket only change when it ends: when every map of the campaign is played, after {0} minutes without statistics, or now.": "Este juego está en curso: la partida del servidor se vinculó sola y el marcador sigue los mapas jugados. La clasificación y el cuadro solo cambian cuando termina: cuando se jueguen todos los mapas de la campaña, después de {0} minutos sin estadísticas, o ahora.",
   "This game was already played.": "Este juego ya se jugó.",

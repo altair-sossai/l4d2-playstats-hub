@@ -2,6 +2,7 @@ namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
 {
+    public const string DetailsModalItem = "DetailsModal";
     public const string AdministratorPolicy = "Administrator";
     public const string GameServerItem = "GameServer";
     public const string AuthorizationHeader = "Authorization";

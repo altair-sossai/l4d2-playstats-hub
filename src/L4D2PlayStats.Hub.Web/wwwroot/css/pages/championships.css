@@ -1220,3 +1220,11 @@ h2.championship-section-title {
     margin-left: 4px;
 }
 
+
+.championship-table {
+    overflow-x: auto;
+}
+
+.championship-table td {
+    vertical-align: middle !important;
+}

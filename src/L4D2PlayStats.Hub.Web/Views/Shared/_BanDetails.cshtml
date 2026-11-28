@@ -1,0 +1,41 @@
+@model BanDetailsModel
+@{
+    var ban = Model.Ban;
+}
+<div class="details-player">
+    <img src="@AppConsts.AvatarUrl@ban.CommunityId" alt="" onerror="imgOnError(this)"/>
+    <div>
+        <strong>@Model.Name</strong>
+        <small>@SteamIds.DisplaySteamId(ban.CommunityId)</small>
+    </div>
+</div>
+<dl class="details-list">
+    <div>
+        <dt>@L["Reason"]</dt>
+        <dd>@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</dd>
+    </div>
+    <div>
+        <dt>@L["Banned on"]</dt>
+        <dd>@Display.DateTime(ban.CreatedAtUtc, Model.TimeZone)</dd>
+    </div>
+    <div>
+        <dt>@L["Ends"]</dt>
+        <dd>
+            @if (ban.EndsAtUtc == null)
+            {
+                <span class="label label-danger">@L["Permanent"]</span>
+            }
+            else
+            {
+                @Display.DateTime(ban.EndsAtUtc.Value, Model.TimeZone)
+            }
+        </dd>
+    </div>
+    <div>
+        <dt>@L["Banned by"]</dt>
+        <dd>@await Html.PartialAsync("_BanOrigin", ban)</dd>
+    </div>
+</dl>
+<a class="btn btn-default btn-block" href="@PlayerUrls.Details(ban.CommunityId)">
+    <span class="glyphicon glyphicon-user"></span> @L["Player profile"]
+</a>

@@ -12,6 +12,7 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="~/css/pages/details-modal.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/pages/bans-index.css" asp-append-version="true"/>
     @await Html.PartialAsync("_PaginationStyles")
 }
@@ -41,10 +42,11 @@ else
         <thead>
         <tr>
             <th colspan="2">@L["Player"]</th>
-            <th>@L["Reason"]</th>
+            <th class="hide-mobile">@L["Reason"]</th>
             <th class="text-center hide-mobile">@L["Banned on"]</th>
-            <th class="text-center">@L["Ends"]</th>
+            <th class="text-center hide-mobile">@L["Ends"]</th>
             <th class="hide-mobile">@L["Banned by"]</th>
+            <th class="details-cell"></th>
         </tr>
         </thead>
         <tbody>
@@ -60,11 +62,11 @@ else
                 </td>
                 <td class="vertical-align-middle">
                     <a href="@PlayerUrls.Details(ban.CommunityId)">@name.TruncatePlayerName()</a>
-                    <small class="bans-sub">@SteamIds.DisplaySteamId(ban.CommunityId)</small>
+                    <small class="bans-sub hide-mobile">@SteamIds.DisplaySteamId(ban.CommunityId)</small>
                 </td>
-                <td class="vertical-align-middle bans-reason">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</td>
+                <td class="vertical-align-middle bans-reason hide-mobile">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</td>
                 <td class="text-center vertical-align-middle hide-mobile">@Display.Date(ban.CreatedAtUtc, Model.TimeZone)</td>
-                <td class="text-center vertical-align-middle">
+                <td class="text-center vertical-align-middle hide-mobile">
                     @if (ban.EndsAtUtc == null)
                     {
                         <span class="label label-danger">@L["Permanent"]</span>
@@ -75,6 +77,12 @@ else
                     }
                 </td>
                 <td class="vertical-align-middle hide-mobile">@await Html.PartialAsync("_BanOrigin", ban)</td>
+                <td class="vertical-align-middle details-cell">
+                    <button type="button" class="btn btn-default btn-sm" data-details="#ban-details-@ban.Id" data-details-title="@name">
+                        <span class="glyphicon glyphicon-info-sign"></span> @L["Details"]
+                    </button>
+                    <template id="ban-details-@ban.Id">@await Html.PartialAsync("_BanDetails", new BanDetailsModel(ban, name, Model.TimeZone))</template>
+                </td>
             </tr>
         }
         </tbody>
@@ -82,3 +90,5 @@ else
 
     @await Html.PartialAsync("_Pagination", pagination)
 }
+
+@await Html.PartialAsync("_DetailsModal")

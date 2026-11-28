@@ -1,0 +1,10 @@
+@model IEnumerable<DetailsRow>
+<dl class="details-list">
+    @foreach (var row in Model)
+    {
+        <div>
+            <dt>@row.Label</dt>
+            <dd>@row.Value</dd>
+        </div>
+    }
+</dl>

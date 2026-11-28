@@ -22,7 +22,7 @@ El módulo viene apagado en un sitio nuevo. Enciende **Baneos** en **Administrac
 
 ## Para jugadores
 
-**Más → Baneos** abre `/bans`, la lista de los jugadores baneados ahora: el jugador, el motivo, el día del baneo, cuándo termina (o **Permanente**) y quién baneó. La búsqueda encuentra un baneo por nombre, Steam ID o motivo. Los baneos terminados no están en esta lista.
+**Más → Baneos** abre `/bans`, la lista de los jugadores baneados ahora: el jugador, el motivo, el día del baneo, cuándo termina (o **Permanente**) y quién baneó. La búsqueda encuentra un baneo por nombre, Steam ID o motivo. Los baneos terminados no están en esta lista. En un teléfono cada fila muestra la foto, el nombre y el botón **Detalles**, que abre una ventana con todo.
 
 La página de un jugador baneado empieza con un aviso rojo: "*Nombre* está baneado de los servidores hasta *fecha*", o "de forma permanente", con el motivo y un enlace a la lista.
 

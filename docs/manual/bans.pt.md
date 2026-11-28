@@ -22,7 +22,7 @@ O módulo vem desligado em um site novo. Ligue **Banimentos** em **Administraç�
 
 ## Para jogadores
 
-**Mais → Banimentos** abre `/bans`, a lista dos jogadores banidos agora: o jogador, o motivo, o dia do banimento, quando termina (ou **Permanente**) e quem baniu. A busca encontra um banimento por nome, Steam ID ou motivo. Banimentos encerrados não aparecem nessa lista.
+**Mais → Banimentos** abre `/bans`, a lista dos jogadores banidos agora: o jogador, o motivo, o dia do banimento, quando termina (ou **Permanente**) e quem baniu. A busca encontra um banimento por nome, Steam ID ou motivo. Banimentos encerrados não aparecem nessa lista. No celular cada linha mostra a foto, o nome e o botão **Detalhes**, que abre uma janela com tudo.
 
 A página de um jogador banido começa com um aviso vermelho: "*Nome* está banido dos servidores até *data*", ou "permanentemente", com o motivo e um link para a lista.
 

@@ -22,7 +22,7 @@ The module is off on a new site. Turn on **Bans** in **Administration → Module
 
 ## For players
 
-**More → Bans** opens `/bans`, the list of the players banned now: the player, the reason, the day of the ban, when it ends (or **Permanent**) and who banned. The search box finds a ban by name, Steam ID or reason. Bans that ended are not on this list.
+**More → Bans** opens `/bans`, the list of the players banned now: the player, the reason, the day of the ban, when it ends (or **Permanent**) and who banned. The search box finds a ban by name, Steam ID or reason. Bans that ended are not on this list. On a phone each row shows the photo, the name and a **Details** button, which opens a window with everything.
 
 The page of a banned player starts with a red warning: "*Name* is banned from the game servers until *date*", or "permanently", with the reason and a link to the list.
 

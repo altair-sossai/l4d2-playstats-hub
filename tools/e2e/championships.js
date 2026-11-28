@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const fixtures = require('./fixtures');
 const { sleep } = require('./browser');
+const { detailsOnAPhone } = require('./phone');
 
 const desktop = 1280;
 const phone = 390;
@@ -563,6 +564,9 @@ function championshipChecks(context) {
 
                 await browser.open('/championships/liga-e2e-2026/standings');
                 expect(await browser.eval(`document.querySelectorAll('.championship-standings tbody tr').length`) === 4, 'The standings do not have 4 teams');
+
+                await detailsOnAPhone(browser, '/championships/liga-e2e-2026/standings', '.championship-standings', 4, 'The standings');
+                await detailsOnAPhone(browser, '/championships/liga-e2e-2026/statistics', '.championship-statistics', 3, 'The statistics of the players');
 
                 await browser.open('/matches/1');
                 expect(await browser.eval(`!!document.querySelector('.match-championship a[href^="/championships/liga-e2e-2026/series/"]')`), 'The match page does not link to its championship');

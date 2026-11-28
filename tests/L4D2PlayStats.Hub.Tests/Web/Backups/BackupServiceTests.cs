@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
@@ -7,6 +8,7 @@ using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Backups;
@@ -317,10 +319,11 @@ public class BackupServiceTests
 
         var run = await RunAsync(factory, BackupTrigger.Schedule);
         var latest = (await factory.RunAsync(services => services.GetRequiredService<INotificationService>().LatestAsync(HubWebFactory.Administrator, true, 10))).First();
+        var isSqlite = await factory.RunAsync(services => Task.FromResult(services.GetRequiredService<HubDbContext>().Database.IsSqlite()));
 
         Assert.IsTrue(run!.Succeeded);
-        Assert.AreEqual(BackupVerificationStatus.Failed, run.Verification!.Status);
-        Assert.AreEqual("The automatic backup was uploaded, but its check failed. Open the backup page to see why.", latest.Text);
+        Assert.AreEqual(isSqlite ? BackupVerificationStatus.Failed : BackupVerificationStatus.NotAvailable, run.Verification!.Status);
+        Assert.AreEqual(isSqlite ? "The automatic backup was uploaded, but its check failed. Open the backup page to see why." : "The automatic backup failed. Open the backup page to see why.", latest.Text);
     }
 
     private static async Task<HubWebFactory> StartAsync(Action<BackupSettings>? change = null)

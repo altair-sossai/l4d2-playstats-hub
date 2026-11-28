@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const fixtures = require('./fixtures');
 const { sleep } = require('./browser');
+const { detailsOnAPhone } = require('./phone');
 
 const desktop = 1280;
 const phone = 390;
@@ -279,6 +280,7 @@ function banChecks(context) {
                 await browser.open(`/player/${fixtures.players[0].id}`);
                 expect(!(await browser.eval(`!!document.querySelector('.player-ban')`)), 'A player who is not banned shows a ban');
 
+                await detailsOnAPhone(browser, '/bans', '#table-bans', 3, 'The public bans');
                 await browser.page.viewport(phone, 844);
 
                 for (const address of ['/bans', `/player/${player.id}`]) {

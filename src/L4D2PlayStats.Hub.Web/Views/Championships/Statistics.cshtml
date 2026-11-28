@@ -24,21 +24,23 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/details-modal.css" asp-append-version="true"/>
 }
 
 @await Html.PartialAsync("_Header", Model)
 
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">@L["Teams"]</h3></div>
-    <div class="table-responsive">
+    <div class="championship-table">
         <table class="table table-condensed table-hover">
             <thead>
             <tr>
                 <th>@L["Team"]</th>
                 <th class="text-center" title="@L["Series won, drawn and lost"]">@L["Series"]</th>
-                <th class="text-center" title="@L["Games won and lost"]">@L["Games"]</th>
-                <th class="text-center">@L["Points scored"]</th>
-                <th class="text-center">@L["Points conceded"]</th>
+                <th class="text-center hide-mobile" title="@L["Games won and lost"]">@L["Games"]</th>
+                <th class="text-center hide-mobile">@L["Points scored"]</th>
+                <th class="text-center hide-mobile">@L["Points conceded"]</th>
+                <th class="details-cell"></th>
             </tr>
             </thead>
             <tbody>
@@ -47,9 +49,21 @@
                 <tr>
                     <td>@row.Team.Name</td>
                     <td class="text-center">@row.Wins - @row.Draws - @row.Losses</td>
-                    <td class="text-center">@row.GameWins - @row.GameLosses</td>
-                    <td class="text-center">@row.Scored.ToString("N0", CultureInfo.CurrentCulture)</td>
-                    <td class="text-center">@row.Conceded.ToString("N0", CultureInfo.CurrentCulture)</td>
+                    <td class="text-center hide-mobile">@row.GameWins - @row.GameLosses</td>
+                    <td class="text-center hide-mobile">@row.Scored.ToString("N0", CultureInfo.CurrentCulture)</td>
+                    <td class="text-center hide-mobile">@row.Conceded.ToString("N0", CultureInfo.CurrentCulture)</td>
+                    <td class="details-cell">
+                        <button type="button" class="btn btn-default btn-sm" data-details="#team-statistics-@row.Team.Id" data-details-title="@row.Team.Name">
+                                            <span class="glyphicon glyphicon-info-sign"></span> @L["Details"]
+                                        </button>
+                        <template id="team-statistics-@row.Team.Id">@await Html.PartialAsync("_DetailsList", new[]
+                        {
+                            new DetailsRow(L["Series won, drawn and lost"].Value, $"{row.Wins} - {row.Draws} - {row.Losses}"),
+                            new DetailsRow(L["Games won and lost"].Value, $"{row.GameWins} - {row.GameLosses}"),
+                            new DetailsRow(L["Points scored"].Value, row.Scored.ToString("N0", CultureInfo.CurrentCulture)),
+                            new DetailsRow(L["Points conceded"].Value, row.Conceded.ToString("N0", CultureInfo.CurrentCulture))
+                        })</template>
+                    </td>
                 </tr>
             }
             </tbody>
@@ -65,22 +79,23 @@
     }
     else
     {
-        <div class="table-responsive">
+        <div class="championship-table">
             <table class="table table-condensed table-hover table-striped championship-statistics">
                 <thead>
                 <tr>
                     <th>@L["Player"]</th>
-                    <th class="hidden-xs">@L["Team"]</th>
+                    <th class="hide-mobile">@L["Team"]</th>
                     <th class="text-center">@L["Games"]</th>
-                    <th class="text-center">@L["MVP SI"]</th>
-                    <th class="text-center">@L["MVP CI"]</th>
-                    <th class="text-center">@L["SI damage"]</th>
-                    <th class="text-center">@L["Commons"]</th>
-                    <th class="text-center">@L["Skeets"]</th>
-                    <th class="text-center">@L["Levels"]</th>
-                    <th class="text-center">@L["Crowns"]</th>
-                    <th class="text-center hidden-xs">@L["Tank damage"]</th>
-                    <th class="text-center hidden-xs">@L["Deaths"]</th>
+                    <th class="text-center hide-mobile">@L["MVP SI"]</th>
+                    <th class="text-center hide-mobile">@L["MVP CI"]</th>
+                    <th class="text-center hide-mobile">@L["SI damage"]</th>
+                    <th class="text-center hide-mobile">@L["Commons"]</th>
+                    <th class="text-center hide-mobile">@L["Skeets"]</th>
+                    <th class="text-center hide-mobile">@L["Levels"]</th>
+                    <th class="text-center hide-mobile">@L["Crowns"]</th>
+                    <th class="text-center hide-mobile">@L["Tank damage"]</th>
+                    <th class="text-center hide-mobile">@L["Deaths"]</th>
+                    <th class="details-cell"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -90,17 +105,36 @@
                         <td>
                             @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(row.CommunityId, DisplayNames.Apply(row.CommunityId, Model.PlayerName(row.CommunityId))))
                         </td>
-                        <td class="hidden-xs">@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.TeamId))</td>
+                        <td class="hide-mobile">@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.TeamId))</td>
                         <td class="text-center">@row.Games</td>
-                        <td class="text-center">@row.Totals.MvpSiDamage</td>
-                        <td class="text-center">@row.Totals.MvpCommon</td>
-                        <td class="text-center">@row.Totals.SiDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
-                        <td class="text-center">@row.Totals.Common.ToString("N0", CultureInfo.CurrentCulture)</td>
-                        <td class="text-center">@row.Totals.Skeets</td>
-                        <td class="text-center">@row.Totals.Levels</td>
-                        <td class="text-center">@row.Totals.Crowns</td>
-                        <td class="text-center hidden-xs">@row.Totals.TankDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
-                        <td class="text-center hidden-xs">@row.Totals.Died</td>
+                        <td class="text-center hide-mobile">@row.Totals.MvpSiDamage</td>
+                        <td class="text-center hide-mobile">@row.Totals.MvpCommon</td>
+                        <td class="text-center hide-mobile">@row.Totals.SiDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center hide-mobile">@row.Totals.Common.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center hide-mobile">@row.Totals.Skeets</td>
+                        <td class="text-center hide-mobile">@row.Totals.Levels</td>
+                        <td class="text-center hide-mobile">@row.Totals.Crowns</td>
+                        <td class="text-center hide-mobile">@row.Totals.TankDamage.ToString("N0", CultureInfo.CurrentCulture)</td>
+                        <td class="text-center hide-mobile">@row.Totals.Died</td>
+                        <td class="details-cell">
+                            <button type="button" class="btn btn-default btn-sm" data-details="#player-statistics-@row.CommunityId" data-details-title="@DisplayNames.Apply(row.CommunityId, Model.PlayerName(row.CommunityId))">
+                                            <span class="glyphicon glyphicon-info-sign"></span> @L["Details"]
+                                        </button>
+                            <template id="player-statistics-@row.CommunityId">@await Html.PartialAsync("_DetailsList", new[]
+                            {
+                                new DetailsRow(L["Team"].Value, Model.Teams.FirstOrDefault(team => team.Id == row.TeamId)?.Name ?? "-"),
+                                new DetailsRow(L["Games"].Value, row.Games.ToString()),
+                                new DetailsRow(L["MVP SI"].Value, row.Totals.MvpSiDamage.ToString()),
+                                new DetailsRow(L["MVP CI"].Value, row.Totals.MvpCommon.ToString()),
+                                new DetailsRow(L["SI damage"].Value, row.Totals.SiDamage.ToString("N0", CultureInfo.CurrentCulture)),
+                                new DetailsRow(L["Commons"].Value, row.Totals.Common.ToString("N0", CultureInfo.CurrentCulture)),
+                                new DetailsRow(L["Skeets"].Value, row.Totals.Skeets.ToString()),
+                                new DetailsRow(L["Levels"].Value, row.Totals.Levels.ToString()),
+                                new DetailsRow(L["Crowns"].Value, row.Totals.Crowns.ToString()),
+                                new DetailsRow(L["Tank damage"].Value, row.Totals.TankDamage.ToString("N0", CultureInfo.CurrentCulture)),
+                                new DetailsRow(L["Deaths"].Value, row.Totals.Died.ToString())
+                            })</template>
+                        </td>
                     </tr>
                 }
                 </tbody>
@@ -108,3 +142,5 @@
         </div>
     }
 </div>
+
+@await Html.PartialAsync("_DetailsModal")

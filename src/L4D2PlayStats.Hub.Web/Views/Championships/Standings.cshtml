@@ -5,6 +5,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/pages/details-modal.css" asp-append-version="true"/>
 }
 
 @await Html.PartialAsync("_Header", Model)
@@ -26,21 +27,22 @@
                     {
                         <div class="panel-heading"><h3 class="panel-title">@L["Group {0}", group.Name]</h3></div>
                     }
-                    <div class="table-responsive">
+                    <div class="championship-table">
                         <table class="table table-condensed table-hover championship-standings">
                             <thead>
                             <tr>
                                 <th class="text-center">#</th>
                                 <th>@L["Team"]</th>
                                 <th class="text-center" title="@L["Points"]">@L["Pts"]</th>
-                                <th class="text-center" title="@L["Series played"]">@L["P"]</th>
-                                <th class="text-center" title="@L["Wins"]">@L["W"]</th>
-                                <th class="text-center" title="@L["Draws"]">@L["D"]</th>
-                                <th class="text-center" title="@L["Losses"]">@L["L"]</th>
-                                <th class="text-center hidden-xs" title="@L["Points scored"]">@L["Scored"]</th>
-                                <th class="text-center hidden-xs" title="@L["Points conceded"]">@L["Conceded"]</th>
-                                <th class="text-center hidden-xs" title="@L["Penalties in the games"]">@L["Penalties"]</th>
-                                <th class="text-center" title="@L["Point difference"]">@L["Diff."]</th>
+                                <th class="text-center hide-mobile" title="@L["Series played"]">@L["P"]</th>
+                                <th class="text-center hide-mobile" title="@L["Wins"]">@L["W"]</th>
+                                <th class="text-center hide-mobile" title="@L["Draws"]">@L["D"]</th>
+                                <th class="text-center hide-mobile" title="@L["Losses"]">@L["L"]</th>
+                                <th class="text-center hide-mobile" title="@L["Points scored"]">@L["Scored"]</th>
+                                <th class="text-center hide-mobile" title="@L["Points conceded"]">@L["Conceded"]</th>
+                                <th class="text-center hide-mobile" title="@L["Penalties in the games"]">@L["Penalties"]</th>
+                                <th class="text-center hide-mobile" title="@L["Point difference"]">@L["Diff."]</th>
+                                <th class="details-cell"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -56,14 +58,33 @@
                                         }
                                     </td>
                                     <td class="text-center"><strong>@row.Points</strong></td>
-                                    <td class="text-center">@row.Played</td>
-                                    <td class="text-center">@row.Wins</td>
-                                    <td class="text-center">@row.Draws</td>
-                                    <td class="text-center">@row.Losses</td>
-                                    <td class="text-center hidden-xs">@row.ScoreFor.ToString("N0", CultureInfo.CurrentCulture)</td>
-                                    <td class="text-center hidden-xs">@row.ScoreAgainst.ToString("N0", CultureInfo.CurrentCulture)</td>
-                                    <td class="text-center hidden-xs">@row.Penalties.ToString("N0", CultureInfo.CurrentCulture)</td>
-                                    <td class="text-center">@row.Difference.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hide-mobile">@row.Played</td>
+                                    <td class="text-center hide-mobile">@row.Wins</td>
+                                    <td class="text-center hide-mobile">@row.Draws</td>
+                                    <td class="text-center hide-mobile">@row.Losses</td>
+                                    <td class="text-center hide-mobile">@row.ScoreFor.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hide-mobile">@row.ScoreAgainst.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hide-mobile">@row.Penalties.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="text-center hide-mobile">@row.Difference.ToString("N0", CultureInfo.CurrentCulture)</td>
+                                    <td class="details-cell">
+                                        <button type="button" class="btn btn-default btn-sm" data-details="#standing-@stage.Id-@group.Id-@row.TeamId" data-details-title="@(Model.Teams.FirstOrDefault(team => team.Id == row.TeamId)?.Name)">
+                                            <span class="glyphicon glyphicon-info-sign"></span> @L["Details"]
+                                        </button>
+                                        <template id="standing-@stage.Id-@group.Id-@row.TeamId">@await Html.PartialAsync("_DetailsList", new[]
+                                        {
+                                            new DetailsRow(L["Position"].Value, row.Position.ToString()),
+                                            new DetailsRow(L["Points"].Value, row.Points.ToString()),
+                                            new DetailsRow(L["Penalty points"].Value, row.PenaltyPoints == 0 ? "0" : $"-{row.PenaltyPoints}"),
+                                            new DetailsRow(L["Series played"].Value, row.Played.ToString()),
+                                            new DetailsRow(L["Wins"].Value, row.Wins.ToString()),
+                                            new DetailsRow(L["Draws"].Value, row.Draws.ToString()),
+                                            new DetailsRow(L["Losses"].Value, row.Losses.ToString()),
+                                            new DetailsRow(L["Points scored"].Value, row.ScoreFor.ToString("N0", CultureInfo.CurrentCulture)),
+                                            new DetailsRow(L["Points conceded"].Value, row.ScoreAgainst.ToString("N0", CultureInfo.CurrentCulture)),
+                                            new DetailsRow(L["Point difference"].Value, row.Difference.ToString("N0", CultureInfo.CurrentCulture)),
+                                            new DetailsRow(L["Penalties in the games"].Value, row.Penalties.ToString("N0", CultureInfo.CurrentCulture))
+                                        })</template>
+                                    </td>
                                 </tr>
                             }
                             </tbody>
@@ -85,3 +106,5 @@
         }
     </p>
 }
+
+@await Html.PartialAsync("_DetailsModal")
