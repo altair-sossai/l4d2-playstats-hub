@@ -1,0 +1,13 @@
+@model (ChampionshipPageModel Page, int? TeamId)
+@{
+    var team = Model.Page.Team(Model.TeamId);
+    var flag = Model.Page.FlagUrl(Model.TeamId);
+}
+@if (flag != null)
+{
+    <img src="@flag" alt="" class="championship-team-badge" loading="lazy"/>
+}
+else
+{
+    <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(Model.TeamId ?? 0)">@ChampionshipBadges.Initials(team?.Name, team?.Tag)</span>
+}

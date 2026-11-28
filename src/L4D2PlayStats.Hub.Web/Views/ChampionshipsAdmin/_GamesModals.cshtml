@@ -158,7 +158,7 @@
                                 {
                                     <tr class="@(proposal.Confirmed ? "success" : null)">
                                         <td class="vertical-align-middle"><strong>@Display.DateTime(proposal.DateUtc, view.TimeZone)</strong><br/><small class="text-muted">@L["Proposed by {0}", view.TeamName(proposal.TeamId)]</small></td>
-                                        <td class="vertical-align-middle small">@teamA: @proposal.TeamAAnswer<br/>@teamB: @proposal.TeamBAnswer</td>
+                                        <td class="vertical-align-middle small">@await Html.PartialAsync("_ChampionshipTeamName", (view, series.TeamAId)): @proposal.TeamAAnswer<br/>@await Html.PartialAsync("_ChampionshipTeamName", (view, series.TeamBId)): @proposal.TeamBAnswer</td>
                                         <td class="text-right vertical-align-middle slim">
                                             <button class="btn btn-xs btn-danger" type="submit" form="proposal-delete-@proposal.Id" data-confirm="@L["Delete this proposal?"]">
                                                 <span class="glyphicon glyphicon-trash"></span> @L["Delete"]

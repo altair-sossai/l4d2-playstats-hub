@@ -216,6 +216,30 @@ public class ChampionshipCaptainTests
         Assert.AreEqual(HttpStatusCode.Redirect, updated.StatusCode);
         Assert.IsNotNull((await TeamAsync(factory, teamId)).Flag);
         Assert.AreEqual(HttpStatusCode.OK, (await visitor.GetAsync($"/championship-flags/{teamId}")).StatusCode);
+        Assert.MatchesRegex($"<img src=\"/championship-flags/{teamId}[^\"]*\" alt=\"\" class=\"championship-team-badge\"", await visitor.GetStringAsync($"/championships/{championship.Slug}"));
+
+        var stageId = (await ChampionshipWeb.LoadAsync(factory, championship.Id)).Stages.Single().Id;
+
+        await factory.RunAsync(services => services.GetRequiredService<IChampionshipStageService>().GenerateAsync(stageId, HubWebFactory.Administrator));
+
+        var series = (await ChampionshipWeb.LoadAsync(factory, championship.Id)).Stages.Single().Series.Single();
+        var flag = $"/championship-flags/{teamId}?v=";
+
+        Assert.Contains(flag, await visitor.GetStringAsync($"/championships/{championship.Slug}/series/{series.Id}"));
+        Assert.Contains(flag, await visitor.GetStringAsync($"/championships/{championship.Slug}/statistics"));
+        Assert.IsGreaterThan(1, Regex.Count(await captain.GetStringAsync("/championships/" + championship.Slug), Regex.Escape(flag)));
+        Assert.Contains(flag, await admin.GetStringAsync($"{adminUrl}?tab=participants"));
+
+        await factory.RunAsync(async services =>
+        {
+            var game = series.Games.Single();
+
+            await services.GetRequiredService<IChampionshipSeriesService>().SetManualResultAsync(game.Id, series.TeamAId == teamId ? 600 : 300, series.TeamAId == teamId ? 300 : 600, null, HubWebFactory.Administrator);
+            await services.GetRequiredService<IChampionshipService>().SetStatusAsync(championship.Id, ChampionshipStatus.Finished, null, HubWebFactory.Administrator);
+        });
+
+        Assert.Contains(flag, await visitor.GetStringAsync("/championships"));
+        Assert.Contains(flag, await admin.GetStringAsync("/admin/championships"));
     }
 
     [TestMethod]

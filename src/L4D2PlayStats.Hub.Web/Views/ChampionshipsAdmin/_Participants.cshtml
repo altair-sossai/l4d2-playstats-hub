@@ -2,7 +2,7 @@
 @{
     var championship = Model.Championship;
     var view = Model.Page;
-    var teams = championship.Teams.SelectMany(team => team.Members.Select(member => (member.CommunityId, team.Name))).ToDictionary(pair => pair.CommunityId, pair => pair.Name);
+    var teams = championship.Teams.SelectMany(team => team.Members.Select(member => (member.CommunityId, team.Id))).ToDictionary(pair => pair.CommunityId, pair => pair.Id);
     var tab = AppConsts.ChampionshipAdminParticipantsTab;
     var returnUrl = AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, Model.Participants.Page);
     var pagination = PaginationModel.Of(Model.Participants, number => AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, number));
@@ -134,7 +134,16 @@ else
                     <br/><small class="text-muted admin-mono">@participant.CommunityId</small>
                 </td>
                 <td class="text-center vertical-align-middle" data-label="@L["Hours"]">@(hours == null ? "—" : Display.Number(hours.Value))</td>
-                <td class="vertical-align-middle" data-label="@L["Team"]">@(teams.GetValueOrDefault(participant.CommunityId) ?? "—")</td>
+                <td class="vertical-align-middle" data-label="@L["Team"]">
+                    @if (teams.TryGetValue(participant.CommunityId, out var teamId))
+                    {
+                        @await Html.PartialAsync("_ChampionshipTeamName", (view, (int?)teamId))
+                    }
+                    else
+                    {
+                        <text>—</text>
+                    }
+                </td>
                 <td class="text-center vertical-align-middle" data-label="@L["Pot"]">@(participant.Pot == 0 ? "—" : participant.Pot.ToString(CultureInfo.CurrentCulture))</td>
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                     <button class="btn btn-xs btn-default" type="button" data-participant-pot="@Model.Url/participants/@participant.CommunityId/pot" data-participant-name="@name" data-participant-value="@participant.Pot">

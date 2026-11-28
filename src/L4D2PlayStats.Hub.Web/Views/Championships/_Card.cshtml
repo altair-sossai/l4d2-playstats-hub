@@ -24,7 +24,11 @@
         <span class="championship-card-title">@Model.Name</span>
         @if (Model.Champion != null)
         {
-            <span class="championship-card-champion"><span class="championship-trophy" aria-hidden="true">🏆</span> @L["Champion"]: <strong>@Model.Champion</strong></span>
+            <span class="championship-card-champion"><span class="championship-trophy" aria-hidden="true">🏆</span> @L["Champion"]: @if (Model is { ChampionTeamId: not null, ChampionFlag: not null })
+            {
+                <img src="@ChampionshipUrls.Flag(Model.ChampionTeamId.Value, Model.ChampionFlag)" alt="" class="team-flag" loading="lazy"/>
+            }
+            <strong>@Model.Champion</strong></span>
         }
         else if (!string.IsNullOrWhiteSpace(Model.Description))
         {

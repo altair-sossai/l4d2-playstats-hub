@@ -22,6 +22,10 @@
             {
                 <li>
                     <a href="@ChampionshipUrls.Captain(team.Slug)">
+                        @if (team.Flag != null)
+                        {
+                            <img src="@ChampionshipUrls.Flag(team.TeamId, team.Flag)" alt="" class="team-flag"/>
+                        }
                         <strong>@team.Team</strong> · @team.Championship
                         @if (team.Tasks.Count > 0)
                         {

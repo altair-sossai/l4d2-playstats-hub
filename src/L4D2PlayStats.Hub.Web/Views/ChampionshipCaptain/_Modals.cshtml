@@ -46,7 +46,8 @@
 {
     var stage = view.StageOf(series);
     var teamA = series.TeamAId == team.Id;
-    var opponent = view.TeamName(teamA ? series.TeamBId : series.TeamAId);
+    var opponentId = teamA ? series.TeamBId : series.TeamAId;
+    var opponent = view.TeamName(opponentId);
     var vetoesDone = !stage.Veto || series.TeamAVetoCampaignId != null && series.TeamBVetoCampaignId != null;
     var proposals = series.Proposals.OrderBy(proposal => proposal.DateUtc).ToList();
 
@@ -82,7 +83,7 @@
                                     </td>
                                     <td class="small">
                                         @L["Your team"]: @Answer(myAnswer)<br/>
-                                        @opponent: @Answer(theirAnswer)
+                                        @await Html.PartialAsync("_ChampionshipTeamName", (view, opponentId)): @Answer(theirAnswer)
                                     </td>
                                     <td class="text-right slim admin-actions">
                                         @if (proposal.Confirmed)

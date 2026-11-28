@@ -531,6 +531,7 @@ h2.championship-section-title {
 }
 
 .championship-team-badge {
+    object-fit: cover;
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;

@@ -47,7 +47,7 @@
             @foreach (var row in teamRows)
             {
                 <tr>
-                    <td>@row.Team.Name</td>
+                    <td>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.Team.Id))</td>
                     <td class="text-center">@row.Wins - @row.Draws - @row.Losses</td>
                     <td class="text-center hide-mobile">@row.GameWins - @row.GameLosses</td>
                     <td class="text-center hide-mobile">@row.Scored.ToString("N0", CultureInfo.CurrentCulture)</td>

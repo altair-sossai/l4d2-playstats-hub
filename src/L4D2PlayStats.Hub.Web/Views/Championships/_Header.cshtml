@@ -84,7 +84,7 @@
             </div>
             @if (podium.Champion != null)
             {
-                <div class="championship-hero-champion"><span aria-hidden="true">🏆</span> @L["Champion"]: <strong>@Model.TeamName(podium.Champion)</strong></div>
+                <div class="championship-hero-champion"><span aria-hidden="true">🏆</span> @L["Champion"]: <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, podium.Champion))</strong></div>
             }
         </div>
     </div>

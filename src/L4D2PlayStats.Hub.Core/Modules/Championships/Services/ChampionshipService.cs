@@ -69,7 +69,8 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
                     championship.Teams.Count, championship.Participants.Count,
                     podium.Champion == null ? null : names.GetValueOrDefault(podium.Champion.Value),
                     podium.RunnerUp == null ? null : names.GetValueOrDefault(podium.RunnerUp.Value),
-                    championship.CreatedAtUtc, championship.BannerImage, championship.LogoImage);
+                    championship.CreatedAtUtc, championship.BannerImage, championship.LogoImage,
+                    podium.Champion, championship.Teams.FirstOrDefault(team => team.Id == podium.Champion)?.Flag);
             })
             .ToList();
     }

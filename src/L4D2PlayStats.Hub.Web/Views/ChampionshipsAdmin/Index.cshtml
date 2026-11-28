@@ -57,7 +57,13 @@ else
                 <td class="vertical-align-middle" data-label="@L["Status"]"><span class="label @ChampionshipTexts.StatusLabel(item.Status)">@ChampionshipTexts.Status(L, item.Status)</span></td>
                 <td class="text-center vertical-align-middle" data-label="@L["Teams"]">@Display.Number(item.Teams)</td>
                 <td class="text-center vertical-align-middle" data-label="@L["Participants"]">@Display.Number(item.Participants)</td>
-                <td class="vertical-align-middle" data-label="@L["Champion"]">@item.Champion</td>
+                <td class="vertical-align-middle" data-label="@L["Champion"]">
+                    @if (item is { ChampionTeamId: not null, ChampionFlag: not null })
+                    {
+                        <img src="@ChampionshipUrls.Flag(item.ChampionTeamId.Value, item.ChampionFlag)" alt="" class="team-flag" loading="lazy"/>
+                    }
+                    @item.Champion
+                </td>
                 <td class="text-center vertical-align-middle" data-label="@L["Created"]">@Display.Date(item.CreatedAtUtc, Model.TimeZone)</td>
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                     <a class="btn btn-xs btn-default" href="@ChampionshipUrls.Admin(item.Id)">

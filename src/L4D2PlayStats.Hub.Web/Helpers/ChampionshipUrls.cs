@@ -37,7 +37,12 @@ public static class ChampionshipUrls
 
     public static string Flag(ChampionshipTeam team)
     {
-        return $"{AppConsts.ChampionshipFlagsUrl}/{team.Id.ToString(CultureInfo.InvariantCulture)}?v={Version(team.Flag)}";
+        return Flag(team.Id, team.Flag);
+    }
+
+    public static string Flag(int teamId, string? flag)
+    {
+        return $"{AppConsts.ChampionshipFlagsUrl}/{teamId.ToString(CultureInfo.InvariantCulture)}?v={Version(flag)}";
     }
 
     public static string PendingFlag(ChampionshipTeam team)

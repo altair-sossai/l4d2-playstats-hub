@@ -89,7 +89,7 @@
                     {
                         <tr class="@(onTheClock?.Id == team.Id ? "info" : null)">
                             <td class="text-center">@team.DraftPosition</td>
-                            <td>@team.Name</td>
+                            <td>@await Html.PartialAsync("_ChampionshipTeamName", (view, (int?)team.Id))</td>
                             <td>@(team.CaptainCommunityId == null ? "—" : DisplayNames.Apply(team.CaptainCommunityId.Value, view.PlayerName(team.CaptainCommunityId.Value)))</td>
                             <td class="text-center">@team.Members.Count / @championship.RosterSize</td>
                         </tr>

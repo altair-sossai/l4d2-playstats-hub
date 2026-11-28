@@ -201,21 +201,19 @@
                 {
                     var stage = Model.StageOf(next);
                     var left = Model.Countdown(next);
-                    var teamA = Model.Team(next.TeamAId);
-                    var teamB = Model.Team(next.TeamBId);
 
                     <div class="panel panel-default championship-next">
                         <div class="panel-body">
                             <div class="championship-next-stage">@stage.Name · @ChampionshipTexts.Round(L, stage, next.Round, Model.Rounds(stage))@(next.BestOf > 1 ? $" · {L["Best of {0}", next.BestOf].Value}" : "")</div>
                             <div class="championship-next-teams">
                                 <div class="championship-next-team">
-                                    <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamAId ?? 0)">@ChampionshipBadges.Initials(teamA?.Name, teamA?.Tag)</span>
-                                    <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)next.TeamAId))</strong>
+                                    @await Html.PartialAsync("_ChampionshipTeamBadge", (Model, next.TeamAId))
+                                    <strong>@Model.TeamName(next.TeamAId)</strong>
                                 </div>
                                 <span class="championship-next-vs">@L["vs"]</span>
                                 <div class="championship-next-team">
-                                    <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamBId ?? 0)">@ChampionshipBadges.Initials(teamB?.Name, teamB?.Tag)</span>
-                                    <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)next.TeamBId))</strong>
+                                    @await Html.PartialAsync("_ChampionshipTeamBadge", (Model, next.TeamBId))
+                                    <strong>@Model.TeamName(next.TeamBId)</strong>
                                 </div>
                             </div>
                             <div class="championship-countdown" data-countdown="@DateTime.SpecifyKind(next.ScheduledAtUtc!.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture)" role="timer">
@@ -279,7 +277,7 @@
 
                 <div class="panel panel-default championship-team-card">
                     <div class="championship-team-card-head">
-                        <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(team.Id)">@ChampionshipBadges.Initials(team.Name, team.Tag)</span>
+                        @await Html.PartialAsync("_ChampionshipTeamBadge", (Model, (int?)team.Id))
                         <div class="championship-team-card-name">
                             <a href="@url/@AppConsts.ChampionshipTeamsTab">@team.Name</a>
                             <small class="text-muted">@L["{0} players", team.Members.Count]</small>

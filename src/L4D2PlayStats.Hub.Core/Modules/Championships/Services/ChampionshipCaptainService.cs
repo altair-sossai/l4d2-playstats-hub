@@ -29,7 +29,7 @@ public class ChampionshipCaptainService(HubDbContext dbContext, IClock clock, IC
             if (championship == null || team == null)
                 continue;
 
-            teams.Add(new ChampionshipCaptainTeam(championship.Id, championship.Slug, championship.Name, team.Id, team.Name, team.CaptainCommunityId == communityId, CaptainTasks.Of(championship, team, clock.UtcNow)));
+            teams.Add(new ChampionshipCaptainTeam(championship.Id, championship.Slug, championship.Name, team.Id, team.Name, team.Flag, team.CaptainCommunityId == communityId, CaptainTasks.Of(championship, team, clock.UtcNow)));
         }
 
         return teams.OrderByDescending(team => team.Tasks.Count).ThenBy(team => team.Championship).ToList();

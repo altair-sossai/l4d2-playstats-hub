@@ -38,7 +38,7 @@
                 @stage.Name
                 <div class="small text-muted">@(series.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, series.Round, view.Rounds(stage))) · @L["Best of {0}", series.BestOf]</div>
             </td>
-            <td class="vertical-align-middle" data-label="@L["Opponent"]"><strong>@view.TeamName(opponent)</strong></td>
+            <td class="vertical-align-middle" data-label="@L["Opponent"]"><strong>@await Html.PartialAsync("_ChampionshipTeamName", (view, opponent))</strong></td>
             <td class="vertical-align-middle" data-label="@L["Date"]">
                 @if (series.ScheduledAtUtc != null)
                 {

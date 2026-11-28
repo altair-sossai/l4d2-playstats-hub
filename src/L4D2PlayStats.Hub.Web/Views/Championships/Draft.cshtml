@@ -30,7 +30,7 @@
                     @foreach (var team in order)
                     {
                         <li class="list-group-item">
-                            <strong>@team.DraftPosition.</strong> @team.Name
+                            <strong>@team.DraftPosition.</strong> @await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)team.Id))
                             @if (team.CaptainCommunityId != null)
                             {
                                 <small class="text-muted">· @DisplayNames.Apply(team.CaptainCommunityId.Value, Model.PlayerName(team.CaptainCommunityId.Value))</small>
