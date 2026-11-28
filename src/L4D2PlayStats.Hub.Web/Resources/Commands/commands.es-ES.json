@@ -158,22 +158,22 @@
           "names": ["!fix"],
           "who": ["Jugadores de los equipos"],
           "when": ["Ronda en curso"],
-          "description": "Abre un menú para pedir un ajuste. Eliges qué ajustar, después el jugador, y confirmas en \"Empezar la votación\". Entonces vota el equipo contrario.",
+          "description": "Abre un menú para pedir un ajuste. Eliges qué ajustar, después el jugador, y confirmas en \"Abrir la votación\". Entonces vota el equipo contrario.",
           "examples": [
-            { "code": "!fix", "text": "Abre el menú con: Vida de un superviviente, Dar pills a un superviviente, Levantar a un superviviente caído y, con un Tank vivo, Restaurar la vida del Tank." }
+            { "code": "!fix", "text": "Abre el menú con: Ajustar la vida de un superviviente, Dar pills a un superviviente, Levantar a un superviviente caído y, con un Tank vivo, Restaurar la vida del Tank." }
           ],
           "notes": [
-            "Una opción sin nadie para ajustar aparece apagada, con \"(nadie por ahora)\".",
+            "Una opción sin nadie para ajustar aparece apagada, con \"(no disponible ahora)\".",
             "Antes de empezar la votación, el menú muestra el pedido para que lo revises, por ejemplo \"!fix: ¿dar pills a Feeh?\".",
             "Usa el Atrás del menú para cambiar de jugador o de opción."
           ]
         },
         {
           "id": "fix-health",
-          "title": "Vida de un superviviente",
-          "description": "La lista muestra a cada superviviente de pie con su vida actual, como \"Feeh - 37 + 20 temp\": 37 de vida permanente y 20 de temporal (la de las pills y la adrenalina, que va bajando con el tiempo). Después de elegir al jugador, eliges cómo queda su vida.",
+          "title": "Ajustar la vida de un superviviente",
+          "description": "La lista muestra a cada superviviente de pie con su vida actual, como \"Feeh: 57 HP (20 temp)\": 57 de vida en total, 20 de ella temporal (la de las pills y la adrenalina, que va bajando con el tiempo). Después de elegir al jugador, eliges cómo queda su vida.",
           "notes": [
-            "Dejar todo permanente: la vida temporal pasa a ser permanente. En el ejemplo, Feeh queda con 57 permanente.",
+            "Dejar todo permanente: la vida temporal pasa a ser permanente. En el ejemplo, Feeh queda con 57 HP permanentes.",
             "Definir la vida permanente: abre la lista 100, 90, 80, 70, 60 y 50. La vida queda exactamente en el valor elegido, sin vida temporal.",
             "Definir la vida temporal: la misma lista, pero queda 1 de vida permanente y el resto temporal (100 pasa a ser 1 + 99), como si el jugador acabara de tomar pills.",
             "El valor que dejaría la vida igual aparece apagado.",
@@ -190,7 +190,7 @@
         {
           "id": "fix-revive",
           "title": "Levantar a un superviviente caído",
-          "description": "Levanta a un superviviente caído o colgando de un borde, igual que lo haría un compañero. La lista muestra \"(caído)\" o \"(colgando)\" junto al nombre.",
+          "description": "Levanta a un superviviente caído o colgando de un borde, igual que lo haría un compañero. La lista muestra \"caído\" o \"colgando\" después del nombre.",
           "notes": [
             "Cuenta como una caída, igual que ser levantado por un compañero, así que puede dejar al jugador en blanco y negro.",
             "No aparece quien está atrapado por un infectado, siendo levantado por un compañero o cayendo del borde. Quien ya murió no puede ser levantado."
@@ -199,7 +199,7 @@
         {
           "id": "fix-tank",
           "title": "Restaurar la vida del Tank",
-          "description": "Devuelve la vida del Tank al máximo, para cuando el Tank perdió vida por un bug. Solo aparece con un Tank vivo, y la lista muestra la vida actual y la máxima, como \"Feeh - 2100 / 6000\".",
+          "description": "Devuelve la vida del Tank al máximo, para cuando el Tank perdió vida por un bug. Solo aparece con un Tank vivo, y la lista muestra la vida actual y la máxima, como \"Feeh: 2100 de 6000 HP\".",
           "notes": ["En este pedido, los que votan son los supervivientes."]
         },
         {

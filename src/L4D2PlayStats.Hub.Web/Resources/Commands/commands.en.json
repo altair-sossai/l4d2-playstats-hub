@@ -160,20 +160,20 @@
           "when": ["Live round"],
           "description": "Opens a menu to ask for a fix. You choose what to fix, then the player, and confirm with \"Start the vote\". Then the other team votes.",
           "examples": [
-            { "code": "!fix", "text": "Opens the menu with: Health of a survivor, Give pills to a survivor, Revive a downed survivor and, while a Tank is alive, Restore the Tank's health." }
+            { "code": "!fix", "text": "Opens the menu with: Change a survivor's health, Give pills to a survivor, Revive a downed survivor and, while a Tank is alive, Restore the Tank's health." }
           ],
           "notes": [
-            "An option with nobody to fix is greyed out, with \"(nobody right now)\".",
+            "An option with nobody to fix is greyed out, with \"(unavailable now)\".",
             "Before the vote starts, the menu shows the request for you to check, for example \"!fix: give pills to Feeh?\".",
             "Use the menu's Back to change the player or the option."
           ]
         },
         {
           "id": "fix-health",
-          "title": "Health of a survivor",
-          "description": "The list shows each standing survivor with their current health, like \"Feeh - 37 + 20 temp\": 37 permanent health and 20 temporary (the one from pills and adrenaline, which goes down over time). After choosing the player, you choose how their health ends up.",
+          "title": "Change a survivor's health",
+          "description": "The list shows each standing survivor with their current health, like \"Feeh: 57 HP (20 temp)\": 57 health in total, 20 of it temporary (the one from pills and adrenaline, which goes down over time). After choosing the player, you choose how their health ends up.",
           "notes": [
-            "Make it all permanent: the temporary health becomes permanent. In the example, Feeh ends up with 57 permanent.",
+            "Make it all permanent: the temporary health becomes permanent. In the example, Feeh ends up with 57 permanent HP.",
             "Set the permanent health: opens the list 100, 90, 80, 70, 60 and 50. The health is set to exactly the chosen value, with no temporary health.",
             "Set the temporary health: the same list, but 1 health stays permanent and the rest is temporary (100 becomes 1 + 99), as if the player had just taken pills.",
             "The value that would leave the health as it is is greyed out.",
@@ -190,7 +190,7 @@
         {
           "id": "fix-revive",
           "title": "Revive a downed survivor",
-          "description": "Picks up a survivor who is down or hanging from a ledge, the same way a teammate would. The list shows \"(down)\" or \"(hanging from a ledge)\" next to the name.",
+          "description": "Picks up a survivor who is down or hanging from a ledge, the same way a teammate would. The list shows \"down\" or \"hanging from a ledge\" after the name.",
           "notes": [
             "It counts as a down, the same as being picked up by a teammate, so it can leave the player black and white.",
             "Survivors pinned by an infected, being picked up by a teammate or falling from a ledge are not listed. A survivor who already died cannot be picked up."
@@ -199,7 +199,7 @@
         {
           "id": "fix-tank",
           "title": "Restore the Tank's health",
-          "description": "Sets the Tank's health back to the max, for when the Tank lost health to a bug. Only shown while a Tank is alive, and the list shows the current and the max health, like \"Feeh - 2100 / 6000\".",
+          "description": "Sets the Tank's health back to the max, for when the Tank lost health to a bug. Only shown while a Tank is alive, and the list shows the current and the max health, like \"Feeh: 2100 of 6000 HP\".",
           "notes": ["For this request, the survivors are the ones who vote."]
         },
         {

@@ -158,22 +158,22 @@
           "names": ["!fix"],
           "who": ["Jogadores dos times"],
           "when": ["Rodada em andamento"],
-          "description": "Abre um menu para pedir um ajuste. Você escolhe o que ajustar, depois o jogador, e confirma em \"Começar a votação\". Aí o time adversário vota.",
+          "description": "Abre um menu para pedir um ajuste. Você escolhe o que ajustar, depois o jogador, e confirma em \"Abrir a votação\". Aí o time adversário vota.",
           "examples": [
-            { "code": "!fix", "text": "Abre o menu com: Vida de um sobrevivente, Dar pills para um sobrevivente, Levantar um sobrevivente caído e, com um Tank vivo, Restaurar a vida do Tank." }
+            { "code": "!fix", "text": "Abre o menu com: Ajustar a vida de um sobrevivente, Dar pills para um sobrevivente, Levantar um sobrevivente caído e, com um Tank vivo, Restaurar a vida do Tank." }
           ],
           "notes": [
-            "Uma opção sem ninguém para ajustar aparece apagada, com \"(ninguém no momento)\".",
+            "Uma opção sem ninguém para ajustar aparece apagada, com \"(indisponível agora)\".",
             "Antes de começar a votação, o menu mostra o pedido para você conferir, por exemplo \"!fix: dar pills para Feeh?\".",
             "Use o Voltar do menu para trocar de jogador ou de opção."
           ]
         },
         {
           "id": "fix-health",
-          "title": "Vida de um sobrevivente",
-          "description": "A lista mostra cada sobrevivente de pé com a vida atual, como \"Feeh - 37 + 20 temp\": 37 de vida permanente e 20 de temporária (a das pills e da adrenalina, que vai caindo com o tempo). Depois de escolher o jogador, você escolhe como a vida dele fica.",
+          "title": "Ajustar a vida de um sobrevivente",
+          "description": "A lista mostra cada sobrevivente de pé com a vida atual, como \"Feeh: 57 HP (20 temp)\": 57 de vida no total, sendo 20 de temporária (a das pills e da adrenalina, que vai caindo com o tempo). Depois de escolher o jogador, você escolhe como a vida dele fica.",
           "notes": [
-            "Deixar tudo permanente: a vida temporária vira permanente. No exemplo, Feeh fica com 57 permanente.",
+            "Deixar tudo permanente: a vida temporária vira permanente. No exemplo, Feeh fica com 57 HP permanentes.",
             "Definir a vida permanente: abre a lista 100, 90, 80, 70, 60 e 50. A vida fica exatamente no valor escolhido, sem vida temporária.",
             "Definir a vida temporária: a mesma lista, mas fica 1 de vida permanente e o resto temporária (100 vira 1 + 99), como se o jogador tivesse acabado de tomar pills.",
             "O valor que deixaria a vida igual aparece apagado.",
@@ -190,7 +190,7 @@
         {
           "id": "fix-revive",
           "title": "Levantar um sobrevivente caído",
-          "description": "Levanta um sobrevivente caído ou pendurado na borda, do mesmo jeito que um colega levantaria. A lista mostra \"(caído)\" ou \"(pendurado)\" ao lado do nome.",
+          "description": "Levanta um sobrevivente caído ou pendurado na borda, do mesmo jeito que um colega levantaria. A lista mostra \"caído\" ou \"pendurado\" depois do nome.",
           "notes": [
             "Conta como uma queda, igual a ser levantado por um colega, então pode deixar o jogador no preto e branco.",
             "Não aparece quem está preso por um infectado, sendo levantado por um colega ou caindo da borda. Quem já morreu não pode ser levantado."
@@ -199,7 +199,7 @@
         {
           "id": "fix-tank",
           "title": "Restaurar a vida do Tank",
-          "description": "Volta a vida do Tank para o máximo, para quando o Tank perdeu vida por um bug. Só aparece com um Tank vivo, e a lista mostra a vida atual e a máxima, como \"Feeh - 2100 / 6000\".",
+          "description": "Volta a vida do Tank para o máximo, para quando o Tank perdeu vida por um bug. Só aparece com um Tank vivo, e a lista mostra a vida atual e a máxima, como \"Feeh: 2100 de 6000 HP\".",
           "notes": ["Neste pedido, quem vota são os sobreviventes."]
         },
         {
