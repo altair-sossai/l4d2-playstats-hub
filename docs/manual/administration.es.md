@@ -14,6 +14,7 @@ Esta página cubre la vista general, los servidores de juego, los módulos, la c
 | Baneos de chat, Comandos remotos, Conexiones de jugadores | [Moderación](moderation.es.md) |
 | Ajustes del Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
 | Campeonatos | [Campeonatos > Para administradores](championships.es.md#para-administradores) |
+| Baneos | [Baneos > Para administradores](bans.es.md#para-administradores) |
 
 Un elemento cuyo módulo está desactivado no aparece en el menú.
 
@@ -36,7 +37,7 @@ Todas las páginas de administración tienen el mismo menú a la izquierda, con 
 | Grupo | Páginas |
 |---|---|
 | Sitio | Vista general, Configuración, Módulos, Administradores, Copia de seguridad |
-| Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos de chat |
+| Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos, Baneos de chat |
 | Ranking | Modos de juego, Campañas, Ranking de la comunidad |
 | Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
 | Campeonatos | Campeonatos |
@@ -106,6 +107,7 @@ El núcleo siempre está activado: el registro de servidores de juego, la subida
 | Ranking de la comunidad | Votación por parejas y su ranking. | | Desactivado | No hay elemento **Comunidad** en el menú. |
 | Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat, y quién debe usar el Anti-Cheat en los servidores de juego. | | Desactivado | No hay elemento **Anti-Cheat** en el menú ni página **Ajustes del Anti-Cheat**. El plugin de anti-cheat no recibe modo ni listas del sitio. |
 | Campeonatos | Campeonatos con participantes, equipos, draft, fases, cuadros, fechas y resultados. | | Desactivado | No hay elemento **Campeonatos** en el menú ni página **Campeonatos** en la administración. |
+| Baneos | Los jugadores baneados de los servidores, los baneos dados en el juego y las alertas de cuentas relacionadas. | | Desactivado | No hay elemento **Baneos** en el menú **Más**, ni aviso en las páginas de los jugadores, ni página **Baneos** en la administración. Los servidores dejan entrar a todos. |
 
 Un módulo cuyo requisito está desactivado se comporta como desactivado, aunque su propia casilla esté marcada.
 

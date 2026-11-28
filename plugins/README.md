@@ -2,7 +2,7 @@
 
 🌐 **English** | [Português](README.pt.md) | [Español](README.es.md)
 
-The five SourceMod plugins that connect a Left 4 Dead 2 server to L4D2 PlayStats Hub. To install them, copy everything inside the `left4dead2` folder of this directory (or of the release zip) into the `left4dead2` folder of your game server, then set two values in `cfg/playstats.cfg`. For a guided walk-through, from registering the server on the site to the first match, see [Connecting a game server](../docs/game-server.md).
+The six SourceMod plugins that connect a Left 4 Dead 2 server to L4D2 PlayStats Hub. To install them, copy everything inside the `left4dead2` folder of this directory (or of the release zip) into the `left4dead2` folder of your game server, then set two values in `cfg/playstats.cfg`. For a guided walk-through, from registering the server on the site to the first match, see [Connecting a game server](../docs/game-server.md).
 
 ## Contents
 
@@ -30,7 +30,7 @@ The `left4dead2` folder has the same layout as the game folder of a server, so e
 plugins/
 ├── left4dead2/                      copy what is inside onto the server's left4dead2 folder
 │   ├── addons/sourcemod/
-│   │   ├── plugins/                 l4d2_gameinfo_sync and l4d2_weapon_skins (.smx)
+│   │   ├── plugins/                 l4d2_gameinfo_sync, l4d2_weapon_skins and l4d2_bans (.smx)
 │   │   │   └── optional/            the other three (.smx), loaded by the match modes
 │   │   ├── scripting/               their sources (.sp) and the include files to compile them
 │   │   ├── translations/            chat texts: English, pt, es, chi and zho
@@ -54,6 +54,7 @@ The `.smx` files in the repository are always the result of compiling the source
 | `l4d2_ranking` | Opens the in-game ranking page with `!ranking` and the commands page with `!comandos` or `!commands`, and the ranking by itself for players who join before a match starts. | Ranking | REST in Pawn, left4dhooks |
 | `l4d2_show_patent_icon` | Shows each player's patent icon above the head before a match starts. | Ranking | REST in Pawn, left4dhooks, the patent sprites |
 | `l4d2_weapon_skins` | Applies the weapon skins players bought in the shop. | Weapon skin shop | REST in Pawn, the skin models and materials |
+| `l4d2_bans` | Sends the bans given on the server (`sm_ban`, `sm_addban`, votes, other plugins) and `sm_unban` to the site, asks the site about each player who connects and kicks the banned ones. | Bans | REST in Pawn |
 
 Only `l4d2_playstats_sync` is required. Each of the others works without the rest; delete the `.smx` of a plugin you do not want before you copy the folder, or after.
 
@@ -63,7 +64,7 @@ Only `l4d2_playstats_sync` is required. Each of the others works without the res
 |---|---|---|---|
 | Left 4 Dead 2 dedicated server | All | No | SteamCMD, app 222860 |
 | Metamod:Source and SourceMod 1.12 | All | Yes | <https://www.sourcemod.net/downloads.php?branch=stable> |
-| REST in Pawn extension 1.3 (`rip.ext`) | All five | **No, you add it** | <https://github.com/ErikMinekus/sm-ripext/releases> |
+| REST in Pawn extension 1.3 (`rip.ext`) | All six | **No, you add it** | <https://github.com/ErikMinekus/sm-ripext/releases> |
 | Left 4 DHooks Direct (`left4dhooks`) | `l4d2_gameinfo_sync`, `l4d2_ranking`, `l4d2_show_patent_icon` | Yes | <https://github.com/SilvDev/Left4DHooks/releases> |
 | `l4d2_playstats` | The statistics files that `l4d2_playstats_sync` uploads | Yes, in `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
 | `readyup`, `pause`, `l4d_boss_percent`, `l4d2_hybrid_scoremod` or `l4d2_hybrid_scoremod_zone`, `l4d2_skill_detect` | Optional: extra live data in `l4d2_gameinfo_sync` (ready-up, pauses, boss percents, bonus, skeets and other events) | Yes, in `plugins/optional/` | [L4D2 Competitive Rework](https://github.com/SirPlease/L4D2-Competitive-Rework) |
@@ -86,18 +87,18 @@ To install REST in Pawn, download `sm-ripext-<version>-linux.zip` or `-windows.z
 7. Restart the game server.
 8. Run `sm_playstats_test` in the server console (see [Checking the installation](#checking-the-installation)).
 
-Copy the folder as it is: `l4d2_gameinfo_sync` and `l4d2_weapon_skins` go in `addons/sourcemod/plugins/`, which SourceMod loads when the server starts, and the other three in `addons/sourcemod/plugins/optional/`, which only a match mode loads (see [L4D2 Competitive Rework match modes](#l4d2-competitive-rework-match-modes)). That is where L4D2 Competitive Rework servers keep them, so a server that ran the earlier versions keeps loading them with the lines it already has. While no match mode is loaded, `l4d2_playstats_sync` does not run and the site shows the server as offline; to keep it connected, add `sm plugins load optional/l4d2_playstats_sync.smx` at the end of `cfg/server.cfg`.
+Copy the folder as it is: `l4d2_gameinfo_sync`, `l4d2_weapon_skins` and `l4d2_bans` go in `addons/sourcemod/plugins/`, which SourceMod loads when the server starts, and the other three in `addons/sourcemod/plugins/optional/`, which only a match mode loads (see [L4D2 Competitive Rework match modes](#l4d2-competitive-rework-match-modes)). That is where L4D2 Competitive Rework servers keep them, so a server that ran the earlier versions keeps loading them with the lines it already has. While no match mode is loaded, `l4d2_playstats_sync` does not run and the site shows the server as offline; to keep it connected, add `sm plugins load optional/l4d2_playstats_sync.smx` at the end of `cfg/server.cfg`.
 
 ## Settings
 
-Every setting of the five plugins is in `cfg/playstats.cfg`, with an explanation above each line. Only the first part of that file has to change; the rest is turned off with `//` and shows the default value.
+Every setting of the six plugins is in `cfg/playstats.cfg`, with an explanation above each line. Only the first part of that file has to change; the rest is turned off with `//` and shows the default value.
 
 You must set:
 
 | Cvar | Plugin | Default | Values | What to do |
 |---|---|---|---|---|
-| `playstats_url` | All five | empty | Address of the site with `https://` or `http://`, without a slash at the end | Paste the line the site shows |
-| `playstats_token` | All five | empty | `<identifier>:<key>`, as the site shows it | Paste the line the site shows. Keep it secret |
+| `playstats_url` | All six | empty | Address of the site with `https://` or `http://`, without a slash at the end | Paste the line the site shows |
+| `playstats_token` | All six | empty | `<identifier>:<key>`, as the site shows it | Paste the line the site shows. Keep it secret |
 | `sm_stats_writestats` | `l4d2_playstats` (Competitive Rework) | `0` | `0` off, `1` write the statistics files, `2` also write readable tables | Keep the `1` that `cfg/playstats.cfg` sets, unless a match mode already sets it |
 
 You may change (each line is off in the file, and the plugin uses the default):
@@ -144,6 +145,7 @@ sm plugins load l4d2_gameinfo_sync.smx
 sm plugins load optional/l4d2_ranking.smx
 sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
+sm plugins load l4d2_bans.smx
 ```
 
 Without those lines the three plugins in `optional/` never load, and the two in `addons/sourcemod/plugins/` stop when a match mode loads.
@@ -264,6 +266,7 @@ Every request carries the header `Authorization: <playstats_token>`. SteamID64 v
 | `l4d2_ranking` | None. It opens `ranking_motd_path` (`/` by default) and `ranking_commands_path` (`/ingame/commands`), each with `?steamid=...`, in the player's game. |
 | `l4d2_show_patent_icon` | `GET /api/players/patents` |
 | `l4d2_weapon_skins` | `GET /api/skins`, `GET /api/players/skins`, `GET /api/players/{id}/wallet`, `POST /api/players/{id}/skins/equip` |
+| `l4d2_bans` | `POST /api/bans/connections` when a player connects, `POST /api/bans` and `POST /api/bans/lift` when the server bans or unbans, `GET /api/bans/{id}` for `sm_playstats_ban_sync` |
 | `l4d2-anti-cheat` (separate, 1.5.0 or newer, with `l4d2_web_url` and `l4d2_web_secret`) | `GET /api/anti-cheat-access/server`, `PUT /api/anti-cheat-access/server/mode`, `POST /api/anti-cheat-access/server/{list}`, `DELETE /api/anti-cheat-access/server/{list}?player=<steamid>` |
 
 The heartbeat is sent when the configuration files have run, then every 30 seconds while the server is not hibernating, and right after `playstats_url` or `playstats_token` changes. Only one heartbeat is in flight at a time, with the default timeouts of REST in Pawn (10 seconds to connect, 30 in total).

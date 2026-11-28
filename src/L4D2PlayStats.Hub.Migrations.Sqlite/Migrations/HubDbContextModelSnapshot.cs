@@ -118,6 +118,123 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.ToTable("AntiCheatWhitelist", (string)null);
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Bans.Ban", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Command")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("CreatedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedByName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("EndsAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GameServerName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastAttemptAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LiftReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LiftedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("LiftedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LiftedByName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RelatedToBanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("UpdatedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpdatedByName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("CommunityId", "LiftedAtUtc", "EndsAtUtc");
+
+                    b.ToTable("Bans", (string)null);
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Bans.BanAlert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ResolvedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("ResolvedByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BanId", "CommunityId")
+                        .IsUnique();
+
+                    b.HasIndex("Status", "CommunityId");
+
+                    b.ToTable("BanAlerts", (string)null);
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Campaigns.Campaign", b =>
                 {
                     b.Property<int>("Id")
@@ -1811,6 +1928,15 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.HasIndex("GameServerId", "SeasonId", "FileDate");
 
                     b.ToTable("StatisticsFiles");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Bans.BanAlert", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Bans.Ban", null)
+                        .WithMany()
+                        .HasForeignKey("BanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Campaigns.CampaignMap", b =>

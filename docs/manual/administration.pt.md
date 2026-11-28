@@ -14,6 +14,7 @@ Esta página cobre a visão geral, os servidores de jogo, os módulos, as config
 | Bans de chat, Comandos remotos, Conexões de jogadores | [Moderação](moderation.pt.md) |
 | Configurações do Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
 | Campeonatos | [Campeonatos > Para administradores](championships.pt.md#para-administradores) |
+| Banimentos | [Banimentos > Para administradores](bans.pt.md#para-administradores) |
 
 Um item cujo módulo está desligado não aparece no menu.
 
@@ -36,7 +37,7 @@ Todas as páginas da administração têm o mesmo menu à esquerda, com a págin
 | Grupo | Páginas |
 |---|---|
 | Site | Visão geral, Configurações, Módulos, Administradores, Backup |
-| Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Bans de chat |
+| Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Banimentos, Bans de chat |
 | Ranking | Modos de jogo, Campanhas, Ranking da comunidade |
 | Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
 | Campeonatos | Campeonatos |
@@ -106,6 +107,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 | Ranking da comunidade | Votação em duplas e o ranking dela. | | Desligado | Sem o item **Comunidade** no menu. |
 | Anti-Cheat | A página com o download e as instruções do Anti-Cheat, e quem precisa usar o Anti-Cheat nos servidores de jogo. | | Desligado | Sem o item **Anti-Cheat** no menu e sem a página **Configurações do Anti-Cheat**. O plugin de anti-cheat não recebe modo nem listas do site. |
 | Campeonatos | Campeonatos com participantes, equipes, draft, fases, chaves, datas e resultados. | | Desligado | Sem o item **Campeonatos** no menu e sem a página **Campeonatos** na administração. |
+| Banimentos | Os jogadores banidos dos servidores, os banimentos dados no jogo e os alertas de contas relacionadas. | | Desligado | Sem o item **Banimentos** no menu **Mais**, sem o aviso nas páginas dos jogadores e sem a página **Banimentos** na administração. Os servidores deixam todos entrarem. |
 
 Um módulo cujo requisito está desligado se comporta como desligado, mesmo com a própria caixa marcada.
 

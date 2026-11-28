@@ -1,0 +1,405 @@
+@model BansAdminModel
+@{
+    ViewData["Title"] = L["Bans"].Value;
+    var culture = CultureInfo.CurrentUICulture;
+    var tabs = new AdminTabsModel(
+    [
+        new AdminTab(AppConsts.BansActiveTab, L["Bans.Active"].Value, "ban-circle", Model.Active.TotalItems),
+        new AdminTab(AppConsts.BansEndedTab, L["Ended"].Value, "time"),
+        new AdminTab(AppConsts.BansAlertsTab, L["Alerts"].Value, "link", Model.Alerts.TotalItems)
+    ], Model.Tab);
+    var activePages = PaginationModel.Of(Model.Active, number => BanUrls.Admin(Model.Search, AppConsts.BansActiveTab, number));
+    var endedPages = PaginationModel.Of(Model.Ended, number => BanUrls.Admin(Model.Search, AppConsts.BansEndedTab, number));
+    var alertPages = PaginationModel.Of(Model.Alerts, number => BanUrls.Admin(Model.Search, AppConsts.BansAlertsTab, number));
+}
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+    <link rel="stylesheet" href="~/css/pages/bans-admin-index.css" asp-append-version="true"/>
+}
+
+<div class="admin-header">
+    <h3>@L["Bans"]</h3>
+</div>
+
+<p class="text-muted">@L["Players on this list cannot join the game servers until the ban ends. The bans given on the servers with sm_ban, sm_addban, a vote or a plugin arrive here by themselves, and sm_unban lifts them. The servers check each player who connects."]</p>
+
+<div class="admin-stats">
+    <div>
+        <strong>@Model.ActiveCount.ToString("N0", culture)</strong>
+        <small>@L["players banned now"]</small>
+    </div>
+    <div>
+        <strong>@Model.Alerts.TotalItems.ToString("N0", culture)</strong>
+        <small>@L["related accounts to check"]</small>
+    </div>
+</div>
+
+@if (TempData[AppConsts.BanSavedTempData] != null)
+{
+    <div class="alert alert-success">@L["The ban was saved. The game servers apply it at once."]</div>
+}
+@if (TempData[AppConsts.BanLiftedTempData] != null)
+{
+    <div class="alert alert-success">@L["The ban was lifted. The player can join the game servers again."]</div>
+}
+@if (TempData[AppConsts.BanAlertIgnoredTempData] != null)
+{
+    <div class="alert alert-success">@L["The alert was ignored. It is not shown again for this ban."]</div>
+}
+@if (TempData[AppConsts.BansImportedTempData] is int[] imported && imported.Length == 3)
+{
+    <div class="alert @(imported[2] > 0 ? "alert-warning" : "alert-success")">@L["Import finished: {0} added, {1} already banned or already over, {2} lines left out.", imported[0], imported[1], imported[2]]</div>
+}
+@if (TempData[AppConsts.RelatedLinkedTempData] is int relatedBanned)
+{
+    <div class="alert alert-success">@L["Related accounts included: {0}.", relatedBanned]</div>
+}
+
+<div class="admin-toolbar">
+    <form method="get" class="admin-filters" action="@AppConsts.BansAdminUrl">
+        <div class="input-group admin-search">
+            <input class="form-control" name="q" type="search" value="@Model.Search" placeholder="@L["Name, Steam ID or reason"]" aria-label="@L["Name, Steam ID or reason"]">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit" title="@L["Search"]" aria-label="@L["Search"]">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Search))
+        {
+            <a class="btn btn-link" href="@AppConsts.BansAdminUrl">@L["Clear filters"]</a>
+        }
+    </form>
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#ban-import-modal">
+            <span class="glyphicon glyphicon-import"></span> @L["Import"]
+        </button>
+        <button class="btn btn-primary" type="button" data-ban-add="">
+            <span class="glyphicon glyphicon-plus"></span> @L["Add"]
+        </button>
+    </div>
+</div>
+
+@await Html.PartialAsync("_AdminTabs", tabs)
+
+<div class="tab-content">
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BansActiveTab)" id="@AdminTabs.PaneId(AppConsts.BansActiveTab)">
+        @if (Model.Active.TotalItems == 0)
+        {
+            <div class="admin-empty">@(string.IsNullOrEmpty(Model.Search) ? L["Nobody is banned."] : L["No active ban matches the search."])</div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table ban-table">
+                <thead>
+                <tr>
+                    <th colspan="2">@L["Player"]</th>
+                    <th>@L["Reason"]</th>
+                    <th class="text-center">@L["Banned on"]</th>
+                    <th class="text-center">@L["Ends"]</th>
+                    <th>@L["Banned by"]</th>
+                    <th class="text-center hide-mobile">@L["Attempts"] @FieldHelp.Tip(L["How many times the player tried to join a game server after the ban, and the last time."])</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ban in Model.Active.Items)
+                {
+                    var name = DisplayNames.Apply(ban.CommunityId, ban.Name ?? ban.CommunityId.ToString());
+                    var ends = ban.EndsAtUtc == null ? L["Permanent"].Value : Display.DateTime(ban.EndsAtUtc.Value, Model.TimeZone);
+
+                    <tr class="ban-row" data-ban-id="@ban.Id" data-community-id="@ban.CommunityId">
+                        <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                            <img src="@AppConsts.AvatarUrl@ban.CommunityId" alt="@name" class="ban-avatar" onerror="imgOnError(this)"/>
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Player"]">
+                            <a href="@PlayerUrls.Details(ban.CommunityId)" target="_blank">@name</a>
+                            <span class="ban-sub">@SteamIds.DisplaySteamId(ban.CommunityId)</span>
+                        </td>
+                        <td class="vertical-align-middle ban-reason" data-label="@L["Reason"]">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Banned on"]">@Display.DateTime(ban.CreatedAtUtc, Model.TimeZone)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Ends"]">
+                            @if (ban.EndsAtUtc == null)
+                            {
+                                <span class="label label-danger">@ends</span>
+                            }
+                            else
+                            {
+                                @ends
+                            }
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Banned by"]">@await Html.PartialAsync("_BanOrigin", ban)</td>
+                        <td class="text-center vertical-align-middle hide-mobile" data-label="@L["Attempts"]">
+                            @ban.Attempts.ToString("N0", culture)
+                            @if (ban.LastAttemptAtUtc != null)
+                            {
+                                <span class="ban-sub">@Display.DateTime(ban.LastAttemptAtUtc.Value, Model.TimeZone)</span>
+                            }
+                        </td>
+                        <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                            <button class="btn btn-xs btn-default" type="button" data-ban-edit="@ban.Id" data-ban-name="@name" data-ban-reason="@ban.Reason" data-ban-ends="@ChampionshipDates.Input(ban.EndsAtUtc, Model.TimeZone)">
+                                <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
+                            </button>
+                            <button class="btn btn-xs btn-danger" type="button" data-ban-lift="@ban.Id" data-ban-name="@name">
+                                <span class="glyphicon glyphicon-ok-circle"></span> @L["Unban"]
+                            </button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("_Pagination", activePages)
+        }
+    </div>
+
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BansEndedTab)" id="@AdminTabs.PaneId(AppConsts.BansEndedTab)">
+        @if (Model.Ended.TotalItems == 0)
+        {
+            <div class="admin-empty">@(string.IsNullOrEmpty(Model.Search) ? L["No ban has ended yet."] : L["No ended ban matches the search."])</div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table ban-table">
+                <thead>
+                <tr>
+                    <th colspan="2">@L["Player"]</th>
+                    <th>@L["Reason"]</th>
+                    <th class="text-center">@L["Banned on"]</th>
+                    <th>@L["Banned by"]</th>
+                    <th>@L["Ended"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ban in Model.Ended.Items)
+                {
+                    var name = DisplayNames.Apply(ban.CommunityId, ban.Name ?? ban.CommunityId.ToString());
+
+                    <tr class="ban-ended-row" data-ban-id="@ban.Id" data-community-id="@ban.CommunityId">
+                        <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                            <img src="@AppConsts.AvatarUrl@ban.CommunityId" alt="@name" class="ban-avatar" onerror="imgOnError(this)"/>
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Player"]">
+                            <a href="@PlayerUrls.Details(ban.CommunityId)" target="_blank">@name</a>
+                            <span class="ban-sub">@SteamIds.DisplaySteamId(ban.CommunityId)</span>
+                        </td>
+                        <td class="vertical-align-middle ban-reason" data-label="@L["Reason"]">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Banned on"]">@Display.DateTime(ban.CreatedAtUtc, Model.TimeZone)</td>
+                        <td class="vertical-align-middle" data-label="@L["Banned by"]">@await Html.PartialAsync("_BanOrigin", ban)</td>
+                        <td class="vertical-align-middle" data-label="@L["Ended"]">
+                            @if (ban.LiftedAtUtc != null)
+                            {
+                                <span class="label label-success">@L["Lifted"]</span>
+                                @Display.DateTime(ban.LiftedAtUtc.Value, Model.TimeZone)
+                                @if (!string.IsNullOrWhiteSpace(ban.LiftedByName))
+                                {
+                                    <span class="ban-sub">@L["by {0}", DisplayNames.Apply(ban.LiftedByCommunityId, ban.LiftedByName)!]</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(ban.LiftReason))
+                                {
+                                    <span class="ban-sub">@ban.LiftReason</span>
+                                }
+                            }
+                            else if (ban.EndsAtUtc != null)
+                            {
+                                <span class="label label-default">@L["Expired"]</span>
+                                @Display.DateTime(ban.EndsAtUtc.Value, Model.TimeZone)
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("_Pagination", endedPages)
+        }
+    </div>
+
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BansAlertsTab)" id="@AdminTabs.PaneId(AppConsts.BansAlertsTab)">
+        <p class="text-muted">@L["An account shows up here when it connects to a game server from the same IP address as a banned account after the ban, or when it already shared an address with an account banned on a server or imported. Ban it, or ignore the alert if it is not the same person."]</p>
+        @if (Model.Alerts.TotalItems == 0)
+        {
+            <div class="admin-empty">@L["No related account to check."]</div>
+        }
+        else
+        {
+            <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table ban-table">
+                <thead>
+                <tr>
+                    <th colspan="2">@L["Account"]</th>
+                    <th>@L["Related to"]</th>
+                    <th>@L["Reason"]</th>
+                    <th class="text-center">@L["Found on"]</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var entry in Model.Alerts.Items)
+                {
+                    var name = DisplayNames.Apply(entry.Alert.CommunityId, entry.Name ?? entry.Alert.CommunityId.ToString());
+                    var bannedName = DisplayNames.Apply(entry.Ban.CommunityId, entry.Ban.Name ?? entry.Ban.CommunityId.ToString());
+
+                    <tr class="ban-alert-row" data-alert-id="@entry.Alert.Id" data-community-id="@entry.Alert.CommunityId">
+                        <td class="text-center vertical-align-middle slim hide-mobile" style="margin: 0; padding: 0">
+                            <img src="@AppConsts.AvatarUrl@entry.Alert.CommunityId" alt="@name" class="ban-avatar" onerror="imgOnError(this)"/>
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Account"]">
+                            <a href="@PlayerUrls.Details(entry.Alert.CommunityId)" target="_blank">@name</a>
+                            <span class="ban-sub">@SteamIds.DisplaySteamId(entry.Alert.CommunityId)</span>
+                        </td>
+                        <td class="vertical-align-middle" data-label="@L["Related to"]">
+                            <a href="@PlayerUrls.Details(entry.Ban.CommunityId)" target="_blank">@bannedName</a>
+                            <span class="ban-sub">@(entry.Ban.EndsAtUtc == null ? L["Banned permanently"].Value : L["Banned until {0}", Display.DateTime(entry.Ban.EndsAtUtc.Value, Model.TimeZone)].Value)</span>
+                        </td>
+                        <td class="vertical-align-middle ban-reason" data-label="@L["Reason"]">@(string.IsNullOrWhiteSpace(entry.Ban.Reason) ? L["No reason given"].Value : entry.Ban.Reason)</td>
+                        <td class="text-center vertical-align-middle" data-label="@L["Found on"]">@Display.DateTime(entry.Alert.CreatedAtUtc, Model.TimeZone)</td>
+                        <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                            <button class="btn btn-xs btn-danger" type="button" data-ban-add="@entry.Alert.CommunityId" data-ban-name="@name" data-ban-related-to="@entry.Ban.Id" data-ban-reason="@L["Related account of {0}", bannedName]" data-ban-ends="@ChampionshipDates.Input(entry.Ban.EndsAtUtc, Model.TimeZone)">
+                                <span class="glyphicon glyphicon-ban-circle"></span> @L["Ban"]
+                            </button>
+                            <form method="post" asp-antiforgery="true" action="@AppConsts.BansAdminUrl/alerts/ignore" data-confirm="@L["Ignore this alert? The account stays unbanned and this alert is not shown again."]">
+                                <input type="hidden" name="id" value="@entry.Alert.Id">
+                                <input type="hidden" name="returnUrl" value="@Model.AlertsReturnUrl">
+                                <button class="btn btn-xs btn-default" type="submit">
+                                    <span class="glyphicon glyphicon-eye-close"></span> @L["Ignore"]
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("_Pagination", alertPages)
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="ban-add-modal" tabindex="-1" role="dialog" aria-labelledby="ban-add-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.BansAdminUrl/save" data-related-accounts="@AppConsts.RelatedBansList" data-related-accounts-player="#ban-player" data-confirm="@L["Ban this player? They are kicked from the game servers and cannot join until the ban ends."]">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <input type="hidden" name="relatedToBanId" id="ban-related-to">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="ban-add-title">@L["Ban a player"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ban-player">@L["Player"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
+                    <div class="input-group">
+                        <input class="form-control" id="ban-player" name="communityId" type="text" required autocomplete="off" placeholder="@AppConsts.AdminSteamIdPlaceholder" aria-label="@L["Steam ID or profile URL"]">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default ban-picker" data-player-picker="#ban-player" data-player-picker-name="#ban-name" title="@L["Search for a player"]" aria-label="@L["Search for a player"]">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                    <input type="hidden" id="ban-name" name="name">
+                </div>
+                @await Html.PartialAsync("_BanDuration", "ban-add")
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="ban-add-reason">@L["Reason"] @FieldHelp.Tip(L["Optional, up to 300 characters. Everyone sees it on the bans page and on the player page, and the player reads it when kicked."])</label>
+                    <textarea class="form-control" id="ban-add-reason" name="reason" rows="2" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.BanReasonMaxLength"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-ban-circle"></span> @L["Ban"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="ban-edit-modal" tabindex="-1" role="dialog" aria-labelledby="ban-edit-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.BansAdminUrl/edit" data-confirm="@L["Save the changes to this ban?"]">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <input type="hidden" name="id" id="ban-edit-id">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="ban-edit-title">@L["Edit the ban"]</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong class="ban-edit-name"></strong></p>
+                @await Html.PartialAsync("_BanDuration", "ban-edit")
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="ban-edit-reason">@L["Reason"]</label>
+                    <textarea class="form-control" id="ban-edit-reason" name="reason" rows="2" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.BanReasonMaxLength"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> @L["Save"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="ban-lift-modal" tabindex="-1" role="dialog" aria-labelledby="ban-lift-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.BansAdminUrl/lift" data-confirm="@L["Lift this ban? The player can join the game servers again at once."]">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+            <input type="hidden" name="id" id="ban-lift-id">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="ban-lift-title">@L["Unban"]</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong class="ban-lift-name"></strong></p>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="ban-lift-reason">@L["Why"] @FieldHelp.Tip(L["Optional. It stays in the history of the ban, shown to the administrators only."])</label>
+                    <textarea class="form-control" id="ban-lift-reason" name="reason" rows="2" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.BanLiftReasonMaxLength"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-ok-circle"></span> @L["Unban"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="ban-import-modal" tabindex="-1" role="dialog" aria-labelledby="ban-import-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.BansAdminUrl/import" data-confirm="@L["Import the bans of this file into the list?"]">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="ban-import-title">@L["Import from banned_user.cfg"]</h4>
+            </div>
+            <div class="modal-body">
+                <p>@L["Paste the contents of the cfg/banned_user.cfg file of a game server. Each banid line becomes a ban; the comments above it (Name, Ban date, Expire in and Ban reason) give the name, the date, the end and the reason. Players who are already banned are left as they are."]</p>
+                <textarea class="form-control admin-mono" name="text" rows="10" required placeholder="// Name: Player&#10;// Ban reason: Cheating&#10;banid 0 STEAM_1:0:12345678"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-import"></span> @L["Import"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@await Html.PartialAsync("_PlayerPickerModal")
+@await Html.PartialAsync("_RelatedAccountsModal")
+
+@section Scripts {
+    <script src="~/js/pages/bans-admin-index.js" asp-append-version="true"></script>
+}

@@ -51,6 +51,8 @@ El texto de cada notificación se muestra en el idioma que eligió el jugador, y
 | Un jugador pasa a ser administrador | Ese jugador. |
 | Se da o se quita un castigo | Ese jugador. |
 | Se da o se quita un baneo del chat | Ese jugador. |
+| Se banea a un jugador de los servidores, o se levanta el baneo | Ese jugador. |
+| Una cuenta comparte una dirección IP con una cuenta baneada (ver [Baneos](bans.es.md#cuentas-relacionadas-y-alertas)) | Los administradores. |
 | Un jugador es bloqueado para votar en el ranking de la comunidad, o desbloqueado | Ese jugador. |
 | Se define o se quita un nombre forzado | Ese jugador. |
 | Se regala o se reembolsa una skin | Ese jugador. |

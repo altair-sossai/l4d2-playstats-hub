@@ -1,0 +1,20 @@
+.ban-sub {
+    display: block;
+    font-size: 12px;
+    opacity: .7;
+}
+
+.ban-avatar {
+    width: 40px;
+    border-radius: 5px;
+}
+
+.ban-reason {
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+    .ban-reason {
+        max-width: 320px;
+    }
+}

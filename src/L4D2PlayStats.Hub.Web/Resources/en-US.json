@@ -1,4 +1,6 @@
 {
+  "Bans.Active": "Active",
+  "Bans.Vote": "Vote",
   "ChampionshipStatus.Draft": "Draft",
   "Rarity.Common": "Common",
   "Rarity.Epic": "Epic",

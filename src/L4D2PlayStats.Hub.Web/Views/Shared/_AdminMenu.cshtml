@@ -25,6 +25,9 @@
 
     servers.Add((AppConsts.ForcedNamesUrl, L["Forced names"].Value, L["Forced names"].Value, "tag"));
 
+    if (modules.IsEnabled(HubModule.Bans))
+        servers.Add((AppConsts.BansAdminUrl, L["Bans"].Value, L["Bans"].Value, "~/imgs/menu/bans.svg"));
+
     if (modules.IsEnabled(HubModule.SiteChat))
         servers.Add((AppConsts.ChatBansUrl, L["Chat bans"].Value, L["Chat bans"].Value, "~/imgs/menu/chat-bans.svg"));
 

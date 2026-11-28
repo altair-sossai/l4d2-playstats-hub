@@ -69,7 +69,7 @@ Both have a folder named `left4dead2` laid out like the game folder of the serve
 
 | File | What it is |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` and `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync`, `l4d2_weapon_skins` and `l4d2_bans`. |
 | `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` and `l4d2_show_patent_icon`, which the match modes load. |
 | `addons/sourcemod/scripting/` | Their sources, only for compiling. |
 | `addons/sourcemod/translations/` | The chat texts. |
@@ -87,6 +87,7 @@ The three plugins in `optional/` load only with a match mode (step 5), where Com
 | `l4d2_ranking` | Opens the ranking inside the game with `!ranking`, and the commands of the server with `!comandos` or `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Shows each player's patent icon in game. | Ranking |
 | `l4d2_weapon_skins` | Applies the weapon skins players own. | Weapon skin shop |
+| `l4d2_bans` | Sends the bans of the server to the site and keeps the banned players out. | Bans |
 
 ## Step 4: set the address and the token
 
@@ -99,7 +100,7 @@ The three plugins in `optional/` load only with a match mode (step 5), where Com
    sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
-That is all you must change. The rest of `cfg/playstats.cfg` lists every other setting of the five plugins, turned off with `//` and with its default value; each one has an explanation above it.
+That is all you must change. The rest of `cfg/playstats.cfg` lists every other setting of the six plugins, turned off with `//` and with its default value; each one has an explanation above it.
 
 `cfg/playstats.cfg` also turns on `sm_stats_writestats 1`, which makes `l4d2_playstats` write the statistics files. Its default is `0`, and the ZoneMod match modes of Competitive Rework do not change it. If your match modes already set it with `confogl_addcvar`, delete that line from `cfg/playstats.cfg`.
 
@@ -115,6 +116,7 @@ sm plugins load l4d2_gameinfo_sync.smx
 sm plugins load optional/l4d2_ranking.smx
 sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
+sm plugins load l4d2_bans.smx
 ```
 
 Then restart the game server.

@@ -18,6 +18,7 @@
     var communityRanking = modules.IsEnabled(HubModule.CommunityRanking);
     var antiCheat = modules.IsEnabled(HubModule.AntiCheat);
     var championships = modules.IsEnabled(HubModule.Championships);
+    var bans = modules.IsEnabled(HubModule.Bans);
     var metadata = ViewData["PageMetadata"] as PageMetadata;
     var pageTitle = metadata?.Title ?? ViewData["Title"] as string;
     var title = string.IsNullOrEmpty(pageTitle) || pageTitle == site.Name ? site.Name : $"{pageTitle} | {site.Name}";
@@ -180,7 +181,7 @@
                         <a href="@AppConsts.AntiCheatUrl">@L["Anti-Cheat"]</a>
                     </li>
                 }
-                <li class="dropdown @(ViewBag.Players ?? ViewBag.Patent ?? ViewBag.Commands)" id="nav-more" data-own="true">
+                <li class="dropdown @(ViewBag.Players ?? ViewBag.Patent ?? ViewBag.Bans ?? ViewBag.Commands)" id="nav-more" data-own="true">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         @L["More"] <span class="caret"></span>
                     </a>
@@ -198,6 +199,15 @@
                                 <a href="/patents">
                                     <img src="~/imgs/menu/patents.svg" alt="" class="img-responsive img-header-icon">
                                     @L["Patents"]
+                                </a>
+                            </li>
+                        }
+                        @if (bans)
+                        {
+                            <li class="@ViewBag.Bans">
+                                <a href="@AppConsts.BansUrl">
+                                    <img src="~/imgs/menu/bans.svg" alt="" class="img-responsive img-header-icon">
+                                    @L["Bans"]
                                 </a>
                             </li>
                         }

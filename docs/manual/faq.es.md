@@ -53,6 +53,9 @@ La campana aparece solo después de iniciar sesión. Mira [Notificaciones](notif
 **El número de la campana no desaparece.**
 Cuenta las notificaciones que aún no abriste. Ábrelas o usa **Marcar todas como leídas** al final de la campana. Las notificaciones con más de 90 días se borran.
 
+**Me expulsaron del servidor con un mensaje de que estoy baneado.**
+El mensaje dice el motivo y cuándo termina el baneo, y **Más > Baneos** lista todos los baneos. Los baneos no se pueden disputar en el sitio; habla con los administradores de la comunidad. Ver [Baneos](bans.es.md#para-jugadores).
+
 ## Para administradores
 
 **¿Cómo agrego otro administrador?**
@@ -102,6 +105,12 @@ Todos, de forma predeterminada, como en el sitio antiguo. [Configuración > Priv
 
 **Los visitantes todavía ven la página antigua por un momento.**
 Las páginas de quienes no iniciaron sesión con Steam (ranking, jugadores, partidas, ranking de la comunidad y el panel del juego) se guardan hasta 60 segundos, para que muchos visitantes y buscadores cuesten poco. Los nuevos archivos de estadísticas, la configuración, los castigos y el reprocesamiento las actualizan al instante; otros cambios, como los votos de la comunidad, los avatares o los nombres de los jugadores, aparecen en menos de un minuto. Los jugadores conectados y los administradores siempre ven la página actual.
+
+**Un baneo dado con sm_ban no aparece en la página de Baneos.**
+El servidor necesita el plugin `l4d2_bans` y el módulo Baneos debe estar encendido. Los baneos por dirección IP (`sm_banip`) no se guardan. Un baneo enviado con el sitio caído se envía de nuevo cada minuto mientras el servidor funciona. Ver [Baneos > Baneos dados en el juego](bans.es.md#baneos-dados-en-el-juego).
+
+**Desbaneé a un jugador en el sitio y el servidor todavía lo rechaza.**
+El desbaneo llega a los servidores por el módulo del servidor en vivo. Con él apagado, ejecuta `sm_playstats_ban_sync <SteamID64>` en la consola del servidor, o `removeid` con el Steam ID seguido de `writeid`.
 
 ## Solución de problemas
 

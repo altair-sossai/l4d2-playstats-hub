@@ -1,3 +1,4 @@
+using L4D2PlayStats.Hub.Core.Modules.Bans.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models;
 using L4D2PlayStats.Hub.Core.Modules.Live.Models.Events;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
@@ -17,7 +18,8 @@ public class GameInfoApiController(
     ILiveDataService liveDataService,
     IPlayerConnectionService playerConnectionService,
     IRemoteCommandService remoteCommandService,
-    IGameServerPresence presence) : ControllerBase
+    IGameServerPresence presence,
+    IBanAlertService banAlertService) : ControllerBase
 {
     [HttpPut("configuration")]
     public IActionResult Configuration([FromBody] LiveConfiguration? configuration)
@@ -76,7 +78,12 @@ public class GameInfoApiController(
 
         var related = await playerConnectionService.RegisterAsync(command, cancellationToken);
 
-        return related == null ? BadRequest(new { error = "A valid communityId, ipAddress and name are required" }) : Ok(related);
+        if (related == null)
+            return BadRequest(new { error = "A valid communityId, ipAddress and name are required" });
+
+        await banAlertService.DetectAsync(long.Parse(command!.CommunityId!), cancellationToken);
+
+        return Ok(related);
     }
 
     [HttpGet("server-command/dequeue")]

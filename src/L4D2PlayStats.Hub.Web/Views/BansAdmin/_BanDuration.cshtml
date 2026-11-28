@@ -1,0 +1,35 @@
+@model string
+@{
+    var labels = new Dictionary<int, string>
+    {
+        [60] = L["1 hour"].Value,
+        [1440] = L["1 day"].Value,
+        [4320] = L["3 days"].Value,
+        [10080] = L["1 week"].Value,
+        [20160] = L["2 weeks"].Value,
+        [43200] = L["1 month"].Value,
+        [129600] = L["3 months"].Value,
+        [525600] = L["1 year"].Value
+    };
+}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label for="@Model-duration">@L["Duration"] @FieldHelp.Tip(L["Counted from now. Permanent bans never end; choose a date to end the ban on a day and time of the site's time zone."])</label>
+            <select class="form-control ban-duration" id="@Model-duration" name="duration" data-ban-ends="#@Model-ends">
+                <option value="@AppConsts.BanPermanentDuration">@L["Permanent"]</option>
+                @foreach (var minutes in AppConsts.BanDurationsInMinutes)
+                {
+                    <option value="@minutes">@labels[minutes]</option>
+                }
+                <option value="@AppConsts.BanCustomDuration">@L["Until a date"]</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6 ban-ends-group">
+        <div class="form-group">
+            <label for="@Model-ends">@L["Ends at"]</label>
+            <input type="datetime-local" class="form-control" id="@Model-ends" name="endsAt">
+        </div>
+    </div>
+</div>

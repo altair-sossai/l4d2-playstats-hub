@@ -1,0 +1,9 @@
+.player-ban {
+    margin-bottom: 10px;
+}
+
+.player-ban-reason,
+.player-ban-link {
+    display: block;
+    margin-top: 4px;
+}

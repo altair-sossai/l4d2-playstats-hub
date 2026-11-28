@@ -1,0 +1,21 @@
+@model Ban
+@if (Model.Source == BanSource.Import)
+{
+    @L["Imported"]
+}
+else if (!string.IsNullOrWhiteSpace(Model.CreatedByName))
+{
+    @DisplayNames.Apply(Model.CreatedByCommunityId, Model.CreatedByName)
+}
+else if (Model.Command == AppConsts.BanVoteCommand)
+{
+    @L["Bans.Vote"]
+}
+else if (Model.Source == BanSource.Game)
+{
+    @L["Server"]
+}
+@if (Model.Source == BanSource.Game && !string.IsNullOrWhiteSpace(Model.Command))
+{
+    <small class="ban-sub">@Model.Command@(string.IsNullOrWhiteSpace(Model.GameServerName) ? null : " · " + Model.GameServerName)</small>
+}
