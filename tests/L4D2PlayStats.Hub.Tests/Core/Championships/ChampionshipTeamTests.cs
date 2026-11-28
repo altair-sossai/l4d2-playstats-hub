@@ -287,14 +287,17 @@ public class ChampionshipTeamTests
         await ResultAsync(hub, series.Games[0].Id, 100, 900);
         await hub.RunAsync(services => services.GetRequiredService<IChampionshipService>().SetStatusAsync(done.Id, ChampionshipStatus.Finished, null, Admin));
 
-        var listed = await hub.RunAsync(services => services.GetRequiredService<IChampionshipService>().ListAsync(true));
-        var all = await hub.RunAsync(services => services.GetRequiredService<IChampionshipService>().ListAsync(false));
+        var listed = await hub.RunAsync(async services => (await services.GetRequiredService<IChampionshipService>().HistoryAsync(1, 20)).Items.ToList());
+        var all = await hub.RunAsync(async services => (await services.GetRequiredService<IChampionshipService>().PageAsync(1, 20)).Items.ToList());
 
         Assert.HasCount(1, listed);
         Assert.AreEqual("Team B", listed[0].Champion);
         Assert.AreEqual("Team A", listed[0].RunnerUp);
+        var active = await hub.RunAsync(services => services.GetRequiredService<IChampionshipService>().ActiveAsync());
+
         Assert.HasCount(2, all);
-        Assert.AreEqual(hidden.Id, all[0].Id);
+        Assert.IsTrue(all.Any(item => item.Id == hidden.Id));
+        Assert.IsEmpty(active);
         Assert.AreEqual(teams[1], (await LoadAsync(hub, done.Id)).Stages.Single().Series.Single().WinnerTeamId);
     }
 }

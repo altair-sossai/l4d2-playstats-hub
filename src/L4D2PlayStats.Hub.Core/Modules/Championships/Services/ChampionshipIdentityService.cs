@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -126,9 +127,7 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
             throw new ChampionshipException("The team has nothing waiting for approval.");
 
         var removed = Clear(team);
-        var trimmed = reason?.Trim() ?? string.Empty;
-
-        team.RejectionReason = trimmed.Length > AppConsts.ChampionshipReasonMaxLength ? trimmed[..AppConsts.ChampionshipReasonMaxLength] : trimmed;
+        team.RejectionReason = Text.Clip(reason, AppConsts.ChampionshipReasonMaxLength) ?? string.Empty;
         log.Add(championship.Id, by, "Refused the new name, tag or flag of the team {0}", team.Name);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -173,8 +172,6 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
 
     private async Task<(Championship Championship, ChampionshipTeam Team)> Team(int teamId, CancellationToken cancellationToken)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw new ChampionshipException("The team was not found.");
-
-        return (championship, championship.Teams.First(team => team.Id == teamId));
+        return await loader.TeamAsync(teamId, cancellationToken);
     }
 }

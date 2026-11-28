@@ -14,7 +14,7 @@ public class CommandsController(ISettingsService settingsService, ICommandCatalo
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        ViewBag.Commands = "active";
+        ViewBag.Commands = AppConsts.ActiveMenu;
 
         var modules = await settingsService.GetAsync<ModuleSettings>(cancellationToken);
 

@@ -3,8 +3,8 @@ using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Tests.Support.Championships;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +16,7 @@ public class ChampionshipMatchLinkTests
     [TestMethod]
     public async Task AMatchOfTheServerIsLinkedByItselfAndTheGameEndsAfterTheLastMap()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var night = DateTime.UtcNow.AddHours(-3);
         var first = StatisticsBuilder.Map("c1m1_hotel", night, 1, 300, 200);
@@ -37,7 +37,7 @@ public class ChampionshipMatchLinkTests
 
         using var visitor = factory.Client();
 
-        var slug = (await LoadAsync(factory, championshipId)).Slug;
+        var slug = (await ChampionshipWeb.LoadAsync(factory, championshipId)).Slug;
         var page = await visitor.GetStringAsync($"/championships/{slug}/series/{game.SeriesId}");
 
         Assert.Contains("In progress", page);
@@ -72,7 +72,7 @@ public class ChampionshipMatchLinkTests
     [TestMethod]
     public async Task AGameThatEndsEarlyIsClosedAfterTheMinutesWithoutStatisticsOrByTheAdministrator()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var night = DateTime.UtcNow.AddHours(-2);
         var first = StatisticsBuilder.Map("c2m1_highway", night, 1, 300, 200);
@@ -149,7 +149,7 @@ public class ChampionshipMatchLinkTests
     [TestMethod]
     public async Task AMatchIsNotLinkedOutsideTheHoursOfToleranceNorWithAnotherCampaignNorWhenTheOptionIsOff()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var night = DateTime.UtcNow.AddHours(-30);
         var first = StatisticsBuilder.Map("c1m1_hotel", night, 1, 300, 200);
@@ -190,16 +190,6 @@ public class ChampionshipMatchLinkTests
         Assert.AreEqual(ChampionshipGameStatus.InProgress, (await GameAsync(factory, gameId)).Status);
     }
 
-    private static async Task<HubWebFactory> FactoryAsync()
-    {
-        var factory = new HubWebFactory();
-
-        await factory.CompleteSetupAsync();
-        await factory.SaveAsync(new ModuleSettings { Ranking = true, LiveServer = true, Championships = true });
-
-        return factory;
-    }
-
     private static Task<(int Championship, int Game)> SetupAsync(HubWebFactory factory, StatisticsBuilder sample, string campaign, DateTime scheduled, int bestOf)
     {
         return factory.RunAsync(async services =>
@@ -234,11 +224,6 @@ public class ChampionshipMatchLinkTests
 
             return (championship.Id, game.Id);
         });
-    }
-
-    private static Task<Championship> LoadAsync(HubWebFactory factory, int id)
-    {
-        return factory.RunAsync(async services => (await services.GetRequiredService<IChampionshipLoadService>().LoadAsync(id, false))!);
     }
 
     private static Task<ChampionshipGame> GameAsync(HubWebFactory factory, int gameId)

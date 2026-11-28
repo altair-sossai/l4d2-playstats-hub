@@ -331,7 +331,7 @@ public class LiveParityPageTests
 
         var credentials = await factory.CreateServerAsync();
         var page = await client.GetStringAsync("/servers/test-server");
-        var token = Regex.Match(page, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = HubWebFactory.Token(page);
 
         await factory.RunAsync(services => services.GetRequiredService<IChatBanService>().SaveAsync(HubWebFactory.Player, "Player", "Too much spam", HubWebFactory.Administrator, "Admin"));
 

@@ -14,7 +14,7 @@ public class PatentsController(ISettingsService settingsService, IPatentService 
     [HttpGet("/patents")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        ViewBag.Patent = "active";
+        ViewBag.Patent = AppConsts.ActiveMenu;
 
         var config = await settingsService.GetAsync<RankingSettings>(cancellationToken);
         var season = await settingsService.GetAsync<SeasonSettings>(cancellationToken);

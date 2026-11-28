@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
@@ -40,12 +41,7 @@ public class ChampionshipStageService(
     public async Task UpdateAsync(int stageId, ChampionshipStageForm form, long? by, CancellationToken cancellationToken = default)
     {
         var (championship, stage) = await Load(stageId, cancellationToken);
-        var name = form.Name.Trim();
-
-        if (name.Length == 0)
-            throw new ChampionshipException("Enter the name of the stage.");
-
-        stage.Name = name.Length > AppConsts.ChampionshipStageNameMaxLength ? name[..AppConsts.ChampionshipStageNameMaxLength] : name;
+        stage.Name = Text.Clip(form.Name, AppConsts.ChampionshipStageNameMaxLength) ?? throw new ChampionshipException("Enter the name of the stage.");
         stage.PointsForWin = Math.Clamp(form.PointsForWin, 0, AppConsts.ChampionshipMaxPoints);
         stage.PointsForDraw = Math.Clamp(form.PointsForDraw, 0, AppConsts.ChampionshipMaxPoints);
         stage.PointsForLoss = Math.Clamp(form.PointsForLoss, 0, AppConsts.ChampionshipMaxPoints);
@@ -207,13 +203,12 @@ public class ChampionshipStageService(
         if (points == 0 || Math.Abs(points) > AppConsts.ChampionshipMaxPenalty)
             throw new ChampionshipException("Enter the points of the penalty.");
 
-        var trimmed = reason?.Trim();
 
         stage.Penalties.Add(new ChampionshipPenalty
         {
             TeamId = teamId,
             Points = points,
-            Reason = string.IsNullOrEmpty(trimmed) ? null : trimmed.Length > AppConsts.ChampionshipReasonMaxLength ? trimmed[..AppConsts.ChampionshipReasonMaxLength] : trimmed,
+            Reason = Text.Clip(reason, AppConsts.ChampionshipReasonMaxLength),
             CreatedByCommunityId = by,
             CreatedAtUtc = clock.UtcNow
         });

@@ -32,13 +32,13 @@ public class ChampionshipPageModel
 
     public ChampionshipPodium Podium => ChampionshipPodiums.Of(Championship);
 
-    public string Url => $"{AppConsts.ChampionshipsUrl}/{Championship.Slug}";
+    public string Url => ChampionshipUrls.Page(Championship.Slug);
 
-    public string? BannerUrl => ChampionshipImageUrls.Of(Championship.Id, Championship.BannerImage);
+    public string? BannerUrl => ChampionshipUrls.Image(Championship.Id, Championship.BannerImage);
 
-    public string? LogoUrl => ChampionshipImageUrls.Of(Championship.Id, Championship.LogoImage);
+    public string? LogoUrl => ChampionshipUrls.Image(Championship.Id, Championship.LogoImage);
 
-    public List<string> GalleryUrls => Championship.Gallery.Select(image => ChampionshipImageUrls.Of(Championship.Id, image)!).ToList();
+    public List<string> GalleryUrls => Championship.Gallery.Select(image => ChampionshipUrls.Image(Championship.Id, image)!).ToList();
 
     public ChampionshipSeries? NextSeries => Upcoming().FirstOrDefault(series => series.ScheduledAtUtc >= NowUtc);
 
@@ -168,7 +168,7 @@ public class ChampionshipPageModel
     {
         var team = Team(teamId);
 
-        return team?.Flag == null ? null : ChampionshipFlags.Url(team);
+        return team?.Flag == null ? null : ChampionshipUrls.Flag(team);
     }
 
     public string? Rules(string culture)

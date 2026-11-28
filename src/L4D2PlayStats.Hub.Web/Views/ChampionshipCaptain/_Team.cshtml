@@ -35,7 +35,7 @@
     <div class="championship-identity-flag">
         @if (team.Flag != null)
         {
-            <img src="@ChampionshipFlags.Url(team)" alt="@L["Flag"]"/>
+            <img src="@ChampionshipUrls.Flag(team)" alt="@L["Flag"]"/>
         }
         else
         {
@@ -56,7 +56,7 @@
         <div class="championship-identity">
             @if (team.PendingFlag != null)
             {
-                <div class="championship-identity-flag"><img src="@ChampionshipFlags.PendingUrl(team)" alt="@L["New flag"]"/></div>
+                <div class="championship-identity-flag"><img src="@ChampionshipUrls.PendingFlag(team)" alt="@L["New flag"]"/></div>
             }
             <div>
                 @if (team.PendingName != null)
@@ -107,8 +107,7 @@ else if (team.RejectionReason != null)
 
         <tr>
             <td class="vertical-align-middle" data-label="@L["Player"]">
-                <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                <a href="@PlayerUrls.Details(member.CommunityId)">@DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))</a>
+                @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(member.CommunityId, DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))))
             </td>
             <td class="text-center vertical-align-middle" data-label="@L["Hours"]">@(hours == null ? "—" : Display.Number(hours.Value))</td>
             <td class="vertical-align-middle" data-label="@L["Role"]">

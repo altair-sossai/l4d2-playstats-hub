@@ -7,8 +7,8 @@ using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Tests.Support.Championships;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
@@ -27,13 +27,13 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task TheAdministratorUploadsTheBannerTheLogoAndTheGalleryAndThePublicPagesShowThem()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var visitor = factory.Client();
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Imagens");
         var response = await SaveAsync(admin, url, Fields("Copa Imagens"), ("Banner", "banner.png", Png), ("Logo", "logo.JPG", Jpeg), ("Gallery", "one.png", Png), ("Gallery", "two.webp", Webp()));
-        var championship = await LoadAsync(factory, id);
+        var championship = await ChampionshipWeb.LoadAsync(factory, id);
 
         Assert.AreEqual(HttpStatusCode.Redirect, response.StatusCode);
         Assert.MatchesRegex(@"^banner-[0-9a-f]{32}\.png$", championship.BannerImage);
@@ -73,18 +73,18 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task SavingTheSettingsWithoutFilesKeepsTheImagesAndANewBannerReplacesTheOldFile()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Troca");
 
         await SaveAsync(admin, url, Fields("Copa Troca"), ("Banner", "banner.png", Png), ("Gallery", "one.png", Png));
 
-        var before = await LoadAsync(factory, id);
+        var before = await ChampionshipWeb.LoadAsync(factory, id);
 
         await SaveAsync(admin, url, Fields("Copa Troca Renomeada"));
 
-        var kept = await LoadAsync(factory, id);
+        var kept = await ChampionshipWeb.LoadAsync(factory, id);
 
         Assert.AreEqual("Copa Troca Renomeada", kept.Name);
         Assert.AreEqual(before.BannerImage, kept.BannerImage);
@@ -92,7 +92,7 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Troca Renomeada"), ("Banner", "new.jpg", Jpeg));
 
-        var changed = await LoadAsync(factory, id);
+        var changed = await ChampionshipWeb.LoadAsync(factory, id);
         var history = await admin.GetStringAsync($"{url}?tab=history");
 
         Assert.AreNotEqual(before.BannerImage, changed.BannerImage);
@@ -105,7 +105,7 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task TheAdministratorRemovesEachImageAndItsFileIsDeleted()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var visitor = factory.Client();
 
@@ -113,7 +113,7 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Remover"), ("Banner", "banner.png", Png), ("Logo", "logo.png", Png), ("Gallery", "one.png", Png), ("Gallery", "two.png", Png));
 
-        var before = await LoadAsync(factory, id);
+        var before = await ChampionshipWeb.LoadAsync(factory, id);
         var removed = before.Gallery[0];
         var fields = Fields("Copa Remover");
 
@@ -122,7 +122,7 @@ public class ChampionshipImagesTests
         fields.Add(("RemoveGallery", removed));
 
         var response = await SaveAsync(admin, url, fields);
-        var after = await LoadAsync(factory, id);
+        var after = await ChampionshipWeb.LoadAsync(factory, id);
         var history = await admin.GetStringAsync($"{url}?tab=history");
         var landing = await visitor.GetStringAsync("/championships/copa-remover");
 
@@ -147,7 +147,7 @@ public class ChampionshipImagesTests
     [DataRow("banner.png", "html")]
     public async Task AFileThatIsNotAnImageIsRefusedAndNothingIsSaved(string fileName, string kind)
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Recusa");
@@ -155,7 +155,7 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Recusa Mudou"), ("Banner", fileName, content));
 
-        var championship = await LoadAsync(factory, id);
+        var championship = await ChampionshipWeb.LoadAsync(factory, id);
         var page = await admin.GetStringAsync(url);
 
         Assert.AreEqual("Copa Recusa", championship.Name);
@@ -167,21 +167,21 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task AnImageLargerThanTheLimitIsRefusedAndTheCurrentOneStays()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Grande");
 
         await SaveAsync(admin, url, Fields("Copa Grande"), ("Logo", "logo.png", Png));
 
-        var before = await LoadAsync(factory, id);
+        var before = await ChampionshipWeb.LoadAsync(factory, id);
         var large = new byte[WebConsts.ChampionshipImageMaxBytes + 1];
 
         Png.CopyTo(large, 0);
 
         await SaveAsync(admin, url, Fields("Copa Grande"), ("Logo", "large.png", large));
 
-        var after = await LoadAsync(factory, id);
+        var after = await ChampionshipWeb.LoadAsync(factory, id);
         var page = await admin.GetStringAsync(url);
 
         Assert.AreEqual(before.LogoImage, after.LogoImage);
@@ -194,13 +194,13 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Grande"), ("Logo", "exact.png", exact));
 
-        Assert.AreNotEqual(before.LogoImage, (await LoadAsync(factory, id)).LogoImage);
+        Assert.AreNotEqual(before.LogoImage, (await ChampionshipWeb.LoadAsync(factory, id)).LogoImage);
     }
 
     [TestMethod]
     public async Task TheGalleryTakesUpToTwelveImages()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Galeria");
@@ -208,11 +208,11 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Galeria"), full);
 
-        Assert.HasCount(CoreConsts.ChampionshipGalleryMaxImages, (await LoadAsync(factory, id)).Gallery);
+        Assert.HasCount(CoreConsts.ChampionshipGalleryMaxImages, (await ChampionshipWeb.LoadAsync(factory, id)).Gallery);
 
         await SaveAsync(admin, url, Fields("Copa Galeria"), ("Gallery", "extra.png", Png));
 
-        var championship = await LoadAsync(factory, id);
+        var championship = await ChampionshipWeb.LoadAsync(factory, id);
         var page = await admin.GetStringAsync(url);
 
         Assert.HasCount(CoreConsts.ChampionshipGalleryMaxImages, championship.Gallery);
@@ -225,7 +225,7 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, fields, ("Gallery", "extra.png", Png));
 
-        var swapped = await LoadAsync(factory, id);
+        var swapped = await ChampionshipWeb.LoadAsync(factory, id);
 
         Assert.HasCount(CoreConsts.ChampionshipGalleryMaxImages, swapped.Gallery);
         Assert.DoesNotContain(championship.Gallery[0], swapped.Gallery);
@@ -234,7 +234,7 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task TheImagesOfADraftAreSeenOnlyByAdministratorsAndOddNamesAreNotServed()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var visitor = factory.Client();
 
@@ -242,7 +242,7 @@ public class ChampionshipImagesTests
 
         await SaveAsync(admin, url, Fields("Copa Rascunho", ChampionshipStatus.Draft), ("Banner", "banner.png", Png));
 
-        var banner = ImageUrl(id, (await LoadAsync(factory, id)).BannerImage!);
+        var banner = ImageUrl(id, (await ChampionshipWeb.LoadAsync(factory, id)).BannerImage!);
 
         File.WriteAllText(Path.Combine(factory.DataDirectory, "secret.png"), "secret");
 
@@ -256,7 +256,7 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task DeletingTheChampionshipDeletesItsImages()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, url) = await CreateAsync(factory, admin, "Copa Apagada");
@@ -274,7 +274,7 @@ public class ChampionshipImagesTests
     [TestMethod]
     public async Task TheLandingShowsTheWatchLinksTheNextGameTheTeamsTheParticipantsTheFormatAndThePodium()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var visitor = factory.Client();
 
         var (slug, seriesId) = await factory.RunAsync(async services =>
@@ -353,16 +353,6 @@ public class ChampionshipImagesTests
         Assert.DoesNotContain("data-countdown=", finished);
     }
 
-    private static async Task<HubWebFactory> FactoryAsync()
-    {
-        var factory = new HubWebFactory();
-
-        await factory.CompleteSetupAsync();
-        await factory.SaveAsync(new ModuleSettings { Ranking = true, LiveServer = true, Championships = true });
-
-        return factory;
-    }
-
     private static async Task<(int Id, string Url)> CreateAsync(HubWebFactory factory, HttpClient admin, string name, ChampionshipStatus status = ChampionshipStatus.Participants)
     {
         var created = await HubWebFactory.PostFormAsync(admin, "/admin/championships", "/admin/championships", new Dictionary<string, string> { ["name"] = name, ["template"] = "Knockout" });
@@ -383,25 +373,9 @@ public class ChampionshipImagesTests
         ];
     }
 
-    private static async Task<HttpResponseMessage> SaveAsync(HttpClient client, string url, List<(string Name, string Value)> fields, params (string Field, string FileName, byte[] Content)[] files)
+    private static Task<HttpResponseMessage> SaveAsync(HttpClient client, string url, List<(string Name, string Value)> fields, params (string Field, string FileName, byte[] Content)[] files)
     {
-        var html = await client.GetStringAsync(url);
-        var token = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
-
-        using var content = new MultipartFormDataContent { { new StringContent(token), "__RequestVerificationToken" } };
-
-        foreach (var (name, value) in fields)
-            content.Add(new StringContent(value), name);
-
-        foreach (var (field, fileName, bytes) in files)
-        {
-            var part = new ByteArrayContent(bytes);
-
-            part.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            content.Add(part, field, fileName);
-        }
-
-        return await client.PostAsync(url, content);
+        return HubWebFactory.PostMultipartAsync(client, url, url, fields, files);
     }
 
     private static byte[] Webp()

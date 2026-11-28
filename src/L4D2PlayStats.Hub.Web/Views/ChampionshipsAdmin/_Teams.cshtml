@@ -2,6 +2,7 @@
 @{
     var championship = Model.Championship;
     var view = Model.Page;
+    var pagination = PaginationModel.Of(Model.Teams, number => AdminListUrls.TabPage(Model.Url, AppConsts.ChampionshipAdminTeamsTab, AppConsts.ChampionshipTeamsPageQuery, number));
 }
 
 <p class="admin-lead">@L["The seed orders the teams when a stage is built by seeds: 1 is the best. The captain and the vice-captain propose the dates and choose the campaigns of the team."]</p>
@@ -44,14 +45,14 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var team in view.Teams)
+        @foreach (var team in Model.Teams.Items)
         {
             <tr>
                 <td class="text-center vertical-align-middle" data-label="@L["Seed"]">@team.Seed</td>
                 <td class="vertical-align-middle" data-label="@L["Team"]">
                     @if (team.Flag != null)
                     {
-                        <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag"/>
+                        <img src="@ChampionshipUrls.Flag(team)" alt="" class="team-flag"/>
                     }
                     <strong>@team.Name</strong>
                     @if (!string.IsNullOrWhiteSpace(team.Tag))
@@ -89,4 +90,5 @@ else
         }
         </tbody>
     </table>
+    @await Html.PartialAsync("_Pagination", pagination)
 }

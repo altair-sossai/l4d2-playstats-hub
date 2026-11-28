@@ -1,10 +1,10 @@
 @model ChampionshipSummary
 @{
-    var banner = ChampionshipImageUrls.Of(Model.Id, Model.BannerImage);
-    var logo = ChampionshipImageUrls.Of(Model.Id, Model.LogoImage);
+    var banner = ChampionshipUrls.Image(Model.Id, Model.BannerImage);
+    var logo = ChampionshipUrls.Image(Model.Id, Model.LogoImage);
 }
 
-<a class="panel panel-default championship-card status-@Model.Status.ToString().ToLowerInvariant()" href="@AppConsts.ChampionshipsUrl/@Model.Slug" style="--championship-hue: @ChampionshipBadges.Hue(Model.Id)">
+<a class="panel panel-default championship-card status-@Model.Status.ToString().ToLowerInvariant()" href="@ChampionshipUrls.Page(Model.Slug)" style="--championship-hue: @ChampionshipBadges.Hue(Model.Id)">
     <span class="championship-card-banner">
         @if (banner != null)
         {

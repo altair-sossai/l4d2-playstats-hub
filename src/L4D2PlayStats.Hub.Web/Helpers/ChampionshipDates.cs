@@ -15,12 +15,17 @@ public static class ChampionshipDates
         return date?.ToString(AppConsts.ChampionshipDateOnlyFormat, CultureInfo.InvariantCulture) ?? string.Empty;
     }
 
+    public static DateTime? FromDateInput(string? value)
+    {
+        return DateTime.TryParseExact(value, AppConsts.ChampionshipDateOnlyFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : null;
+    }
+
     public static DateTime? ToUtc(string? local, TimeZoneInfo timeZone)
     {
         if (string.IsNullOrWhiteSpace(local) || !DateTime.TryParseExact(local.Trim(), AppConsts.ChampionshipLocalDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
             return null;
 
-        return TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(parsed, DateTimeKind.Unspecified), timeZone);
+        return SiteTime.ToUtc(parsed, timeZone);
     }
 
     public static string Calendar(DateTime utc)

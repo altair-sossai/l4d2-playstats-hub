@@ -37,12 +37,11 @@ public class LiveWebFactory : HubWebFactory
 
     public static async Task<HttpResponseMessage> SendJsonAsync(HttpClient client, string tokenPage, HttpMethod method, string url, string? json)
     {
-        var html = await client.GetStringAsync(tokenPage);
-        var match = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"");
+        var token = await HubWebFactory.TokenAsync(client, tokenPage);
 
         using var request = new HttpRequestMessage(method, url);
 
-        request.Headers.Add("RequestVerificationToken", match.Groups[1].Value);
+        request.Headers.Add("RequestVerificationToken", token);
 
         if (json != null)
             request.Content = Json(json);

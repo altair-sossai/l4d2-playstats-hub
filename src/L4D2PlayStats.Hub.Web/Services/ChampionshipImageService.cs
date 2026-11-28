@@ -3,6 +3,7 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
@@ -60,18 +61,12 @@ public class ChampionshipImageService(IChampionshipService championshipService, 
     {
         foreach (var file in upload.Files)
         {
-            if (!ChampionshipImageStore.IsSupported(file.FileName))
-                throw new ChampionshipException("Nothing was saved: the images must be PNG, JPG, WEBP or GIF files.");
+            var error = await ImageUploads.CheckAsync(file, AppConsts.ChampionshipImageMaxBytes, cancellationToken);
 
-            if (file.Length > AppConsts.ChampionshipImageMaxBytes)
+            if (error == ImageUploadError.TooLarge)
                 throw new ChampionshipException("Nothing was saved: an image is larger than the limit.");
 
-            await using var content = file.OpenReadStream();
-
-            var header = new byte[AppConsts.ImageSignatureLength];
-            var read = await content.ReadAtLeastAsync(header, header.Length, false, cancellationToken);
-
-            if (!ImageSignature.IsImage(header.AsSpan(0, read)))
+            if (error != null)
                 throw new ChampionshipException("Nothing was saved: the images must be PNG, JPG, WEBP or GIF files.");
         }
 

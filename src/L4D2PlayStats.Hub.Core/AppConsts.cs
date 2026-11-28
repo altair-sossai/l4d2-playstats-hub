@@ -207,7 +207,7 @@ public static partial class AppConsts
     public const int SkinCatalogTimeoutInSeconds = 30;
     public const int SkinCatalogMaxBytes = 5 * 1024 * 1024;
     public const int SkinShopLockTimeoutInSeconds = 5;
-    public const int SkinSeasonClockStepInMinutes = 30;
+    public const int SiteTimeGapStepInMinutes = 30;
     public const string SkinSourceShop = "shop";
     public const string SkinSourceGift = "gift";
     public const string SkinSourceSite = "site";

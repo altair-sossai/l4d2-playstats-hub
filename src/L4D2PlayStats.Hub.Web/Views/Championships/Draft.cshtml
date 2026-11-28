@@ -69,10 +69,9 @@
                         {
                             <td class="text-center">@DraftOrder.Round(pick.Number - 1, order.Count)</td>
                         }
-                        <td>@Model.TeamName(pick.TeamId)</td>
+                        <td>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)pick.TeamId))</td>
                         <td>
-                            <img src="@AppConsts.AvatarUrl@pick.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                            @DisplayNames.Apply(pick.CommunityId, Model.PlayerName(pick.CommunityId))
+                            @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(pick.CommunityId, DisplayNames.Apply(pick.CommunityId, Model.PlayerName(pick.CommunityId)), false))
                         </td>
                     </tr>
                 }

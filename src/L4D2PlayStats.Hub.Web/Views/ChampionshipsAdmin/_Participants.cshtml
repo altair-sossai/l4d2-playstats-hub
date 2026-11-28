@@ -6,6 +6,7 @@
     var tab = AppConsts.ChampionshipAdminParticipantsTab;
     var returnUrl = AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, Model.Participants.Page);
     var pagination = PaginationModel.Of(Model.Participants, number => AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipParticipantsPageQuery, number));
+    var requestsPagination = PaginationModel.Of(Model.Requests, number => AdminListUrls.TabPage(Model.Url, tab, AppConsts.ChampionshipRequestsPageQuery, number));
 }
 
 <p class="admin-lead">@L["The players of the championship. The administration adds them, or approves the requests of the players when the championship takes requests; a player put in a team becomes a participant too. The pot is used when the teams are formed by pots."]</p>
@@ -18,9 +19,9 @@
     </div>
 </div>
 
-@if (Model.Requests.Count > 0 || championship.JoinRequests)
+@if (Model.Requests.TotalItems > 0 || championship.JoinRequests)
 {
-    var pending = Model.Requests.Count(request => request.Status == ChampionshipJoinRequestStatus.Pending);
+    var pending = Model.PendingRequests;
 
     <div class="panel panel-default championship-requests">
         <div class="panel-heading">
@@ -32,7 +33,7 @@
                 }
             </h3>
         </div>
-        @if (Model.Requests.Count == 0)
+        @if (Model.Requests.TotalItems == 0)
         {
             <div class="panel-body text-muted">@L["No request yet. Players ask to join on the page of the championship while its status is Participants."]</div>
         }
@@ -49,7 +50,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var request in Model.Requests)
+                @foreach (var request in Model.Requests.Items)
                 {
                     var name = DisplayNames.Apply(request.CommunityId, view.PlayerName(request.CommunityId));
                     var hours = view.Hours(request.CommunityId);
@@ -97,6 +98,7 @@
             </table>
         }
     </div>
+    @await Html.PartialAsync("_Pagination", requestsPagination)
 }
 
 @if (Model.Participants.TotalItems == 0)

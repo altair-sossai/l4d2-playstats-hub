@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
@@ -18,13 +19,13 @@ public class ChampionshipSeriesService(
 {
     public async Task<List<ChampionshipCandidateMatch>> CandidatesAsync(int seriesId, CancellationToken cancellationToken = default)
     {
-        var (championship, _, series) = await LoadSeries(seriesId, cancellationToken);
+        var (championship, _, series) = await loader.SeriesAsync(seriesId, cancellationToken);
 
         if (!series.HasTeams)
             return [];
 
-        var teamA = Members(championship, series.TeamAId!.Value);
-        var teamB = Members(championship, series.TeamBId!.Value);
+        var teamA = championship.Teams.First(team => team.Id == series.TeamAId!.Value).Players();
+        var teamB = championship.Teams.First(team => team.Id == series.TeamBId!.Value).Players();
         var everyone = teamA.Concat(teamB).ToList();
         var since = clock.UtcNow.AddDays(-AppConsts.ChampionshipCandidateMatchesInDays);
         var rows = await dbContext.MatchPlayers.AsNoTracking()
@@ -61,7 +62,7 @@ public class ChampionshipSeriesService(
 
     public async Task LinkMatchAsync(int gameId, int matchId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         if (!series.HasTeams)
             throw new ChampionshipException("The series does not have both teams yet.");
@@ -70,8 +71,8 @@ public class ChampionshipSeriesService(
             throw new ChampionshipException("This match is already linked to another game.");
 
         var match = await dbContext.Matches.AsNoTracking().Include(item => item.Players).FirstOrDefaultAsync(item => item.Id == matchId, cancellationToken) ?? throw new ChampionshipException("The match was not found.");
-        var teamA = Members(championship, series.TeamAId!.Value);
-        var teamB = Members(championship, series.TeamBId!.Value);
+        var teamA = championship.Teams.First(team => team.Id == series.TeamAId!.Value).Players();
+        var teamB = championship.Teams.First(team => team.Id == series.TeamBId!.Value).Players();
         var straight = match.Players.Count(player => player.TeamA && teamA.Contains(player.CommunityId) || player.TeamB && teamB.Contains(player.CommunityId));
         var crossed = match.Players.Count(player => player.TeamA && teamB.Contains(player.CommunityId) || player.TeamB && teamA.Contains(player.CommunityId));
 
@@ -108,7 +109,7 @@ public class ChampionshipSeriesService(
 
     public async Task SetManualResultAsync(int gameId, int teamAScore, int teamBScore, DateTime? playedAtUtc, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         if (!series.HasTeams)
             throw new ChampionshipException("The series does not have both teams yet.");
@@ -133,16 +134,15 @@ public class ChampionshipSeriesService(
 
     public async Task SetPenaltiesAsync(int gameId, int teamAPenalty, int teamBPenalty, string? notes, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         if (teamAPenalty < 0 || teamBPenalty < 0 || teamAPenalty > AppConsts.ChampionshipMaxPenalty || teamBPenalty > AppConsts.ChampionshipMaxPenalty)
             throw new ChampionshipException("Enter the points of the penalty.");
 
-        var trimmed = notes?.Trim();
 
         game.TeamAPenalty = teamAPenalty;
         game.TeamBPenalty = teamBPenalty;
-        game.Notes = string.IsNullOrEmpty(trimmed) ? null : trimmed.Length > AppConsts.ChampionshipNotesMaxLength ? trimmed[..AppConsts.ChampionshipNotesMaxLength] : trimmed;
+        game.Notes = Text.Clip(notes, AppConsts.ChampionshipNotesMaxLength);
 
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, by, "Saved the penalties of game {0} of {1}", game.Number, Title(championship, stage, series));
@@ -151,7 +151,7 @@ public class ChampionshipSeriesService(
 
     public async Task ClearResultAsync(int gameId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         game.UnlinkedMatchId = game.MatchId ?? game.UnlinkedMatchId;
         game.MatchId = null;
@@ -173,7 +173,7 @@ public class ChampionshipSeriesService(
 
     public async Task SetCampaignAsync(int gameId, int? campaignId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         if (campaignId != null && (await loader.CampaignsAsync(cancellationToken)).All(campaign => campaign.Id != campaignId))
             throw new ChampionshipException("The campaign was not found.");
@@ -192,7 +192,7 @@ public class ChampionshipSeriesService(
 
     public async Task PickAsync(int gameId, int campaignId, long communityId, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
         var team = Leader(championship, series, communityId);
 
         Open(championship, series);
@@ -227,7 +227,7 @@ public class ChampionshipSeriesService(
 
     public async Task VetoAsync(int seriesId, int campaignId, long communityId, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series) = await LoadSeries(seriesId, cancellationToken);
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
         var team = Leader(championship, series, communityId);
         var teamA = series.TeamAId == team.Id;
 
@@ -257,7 +257,7 @@ public class ChampionshipSeriesService(
 
     public async Task SetVetoAsync(int seriesId, bool teamA, int? campaignId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series) = await LoadSeries(seriesId, cancellationToken);
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
 
         if (campaignId != null && series.Games.Any(game => game.CampaignId == campaignId))
             throw new ChampionshipException("This campaign is already chosen for a game of the series.");
@@ -274,7 +274,7 @@ public class ChampionshipSeriesService(
 
     public async Task WalkoverAsync(int seriesId, int? winnerTeamId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series) = await LoadSeries(seriesId, cancellationToken);
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
 
         if (winnerTeamId != null && (!series.HasTeams || !series.Has(winnerTeamId.Value)))
             throw new ChampionshipException("Choose one of the two teams of the series.");
@@ -289,12 +289,11 @@ public class ChampionshipSeriesService(
 
     public async Task SetScheduleAsync(int seriesId, DateTime? scheduledAtUtc, DateTime? deadlineUtc, string? notes, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series) = await LoadSeries(seriesId, cancellationToken);
-        var trimmed = notes?.Trim();
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
 
         series.ScheduledAtUtc = scheduledAtUtc;
         series.DeadlineUtc = deadlineUtc;
-        series.Notes = string.IsNullOrEmpty(trimmed) ? null : trimmed.Length > AppConsts.ChampionshipNotesMaxLength ? trimmed[..AppConsts.ChampionshipNotesMaxLength] : trimmed;
+        series.Notes = Text.Clip(notes, AppConsts.ChampionshipNotesMaxLength);
         log.Add(championship.Id, by, "Saved the date of {0}", Title(championship, stage, series));
         await dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -323,10 +322,6 @@ public class ChampionshipSeriesService(
             throw new ChampionshipException("The series is not open.");
     }
 
-    private static HashSet<long> Members(Championship championship, int teamId)
-    {
-        return championship.Teams.First(team => team.Id == teamId).Members.Select(member => member.CommunityId).ToHashSet();
-    }
 
     private static IEnumerable<ChampionshipGame> Games(Championship championship)
     {
@@ -339,20 +334,5 @@ public class ChampionshipSeriesService(
         championship.UpdatedAtUtc = clock.UtcNow;
     }
 
-    private async Task<(Championship, ChampionshipStage, ChampionshipSeries)> LoadSeries(int seriesId, CancellationToken cancellationToken)
-    {
-        var championship = await loader.LoadBySeriesAsync(seriesId, cancellationToken) ?? throw new ChampionshipException("The series was not found.");
-        var stage = championship.Stages.First(item => item.Series.Any(series => series.Id == seriesId));
 
-        return (championship, stage, stage.Series.First(series => series.Id == seriesId));
-    }
-
-    private async Task<(Championship, ChampionshipStage, ChampionshipSeries, ChampionshipGame)> LoadGame(int gameId, CancellationToken cancellationToken)
-    {
-        var championship = await loader.LoadByGameAsync(gameId, cancellationToken) ?? throw new ChampionshipException("The game was not found.");
-        var stage = championship.Stages.First(item => item.Series.Any(series => series.Games.Any(game => game.Id == gameId)));
-        var series = stage.Series.First(item => item.Games.Any(game => game.Id == gameId));
-
-        return (championship, stage, series, series.Games.First(game => game.Id == gameId));
-    }
 }

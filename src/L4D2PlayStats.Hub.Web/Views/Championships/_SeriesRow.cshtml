@@ -11,7 +11,7 @@
 }
 
 <a class="championship-series status-@status.ToString().ToLowerInvariant()" href="@Model.Url">
-    <span class="championship-series-team team-a @(winnerA ? "winner" : null)">@await Html.PartialAsync("_TeamName", (owner, series.TeamAId))</span>
+    <span class="championship-series-team team-a @(winnerA ? "winner" : null)">@await Html.PartialAsync("_ChampionshipTeamName", (owner, series.TeamAId))</span>
     <span class="championship-series-score">
         @if (series.Bye)
         {
@@ -36,7 +36,7 @@
     </span>
     <span class="championship-series-team team-b @(winnerB ? "winner" : null)">@if (!series.Bye)
         {
-            @await Html.PartialAsync("_TeamName", (owner, series.TeamBId))
+            @await Html.PartialAsync("_ChampionshipTeamName", (owner, series.TeamBId))
         }</span>
     <span class="championship-series-info text-muted">
         @if (Model.ShowStage)

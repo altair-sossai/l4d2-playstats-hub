@@ -21,7 +21,7 @@
             @foreach (var team in teams)
             {
                 <li>
-                    <a href="@AppConsts.ChampionshipsUrl/@team.Slug/@AppConsts.ChampionshipCaptainPath">
+                    <a href="@ChampionshipUrls.Captain(team.Slug)">
                         <strong>@team.Team</strong> · @team.Championship
                         @if (team.Tasks.Count > 0)
                         {

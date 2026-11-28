@@ -25,7 +25,7 @@
                     <h3 class="panel-title">
                         @if (team.Flag != null)
                         {
-                            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag championship-flag-lg" loading="lazy"/>
+                            <img src="@ChampionshipUrls.Flag(team)" alt="" class="team-flag team-flag-lg" loading="lazy"/>
                         }
                         @team.Name
                         @if (!string.IsNullOrWhiteSpace(team.Tag))
@@ -44,8 +44,7 @@
                         var hours = Model.Hours(member.CommunityId);
 
                         <li class="list-group-item championship-player">
-                            <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                            <a href="@AppConsts.PlayerUrlPrefix@member.CommunityId">@DisplayNames.Apply(member.CommunityId, Model.PlayerName(member.CommunityId))</a>
+                            @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(member.CommunityId, DisplayNames.Apply(member.CommunityId, Model.PlayerName(member.CommunityId))))
                             @if (member.CommunityId == team.CaptainCommunityId)
                             {
                                 <span class="label label-warning" title="@L["Captain"]">@L["Captain"]</span>
@@ -73,8 +72,7 @@
         @foreach (var participant in free)
         {
             <span class="championship-chip">
-                <img src="@AppConsts.AvatarUrl@participant.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                @DisplayNames.Apply(participant.CommunityId, Model.PlayerName(participant.CommunityId))
+                @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(participant.CommunityId, DisplayNames.Apply(participant.CommunityId, Model.PlayerName(participant.CommunityId)), false))
             </span>
         }
     </div>

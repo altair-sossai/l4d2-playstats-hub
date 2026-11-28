@@ -5,7 +5,7 @@
     var stage = Model.StageOf(series);
     var progress = Model.Progress(series);
     var status = Model.SeriesStatus(series);
-    var url = $"{AppConsts.ChampionshipsUrl}/{championship.Slug}/series/{series.Id}";
+    var url = ChampionshipUrls.Series(championship.Slug, series.Id);
     var title = $"{Model.TeamName(series.TeamAId)} × {Model.TeamName(series.TeamBId)}";
     var group = Model.GroupName(series);
 
@@ -21,7 +21,7 @@
 <div class="panel panel-default championship-series-card">
     <div class="panel-body">
         <div class="championship-series-big">
-            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamAId ? "winner" : null)">@await Html.PartialAsync("_TeamName", (Model, series.TeamAId))</div>
+            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamAId ? "winner" : null)">@await Html.PartialAsync("_ChampionshipTeamName", (Model, series.TeamAId))</div>
             <div class="score">@progress.WinsA <span class="sep">×</span> @progress.WinsB</div>
             <div class="team @(series.Finished && series.WinnerTeamId == series.TeamBId ? "winner" : null)">@if (series.Bye)
                 {
@@ -29,7 +29,7 @@
                 }
                 else
                 {
-                    @await Html.PartialAsync("_TeamName", (Model, series.TeamBId))
+                    @await Html.PartialAsync("_ChampionshipTeamName", (Model, series.TeamBId))
                 }</div>
         </div>
         <div class="text-center text-muted championship-series-details">
@@ -72,7 +72,7 @@
             }
             @if (Model.Administrator)
             {
-                <div><a class="small" href="@AppConsts.AdminChampionshipsUrl/@championship.Id/series/@series.Id"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a></div>
+                <div><a class="small" href="@ChampionshipUrls.AdminSeries(championship.Id, series.Id)"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a></div>
             }
         </div>
     </div>

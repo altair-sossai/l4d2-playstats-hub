@@ -15,7 +15,7 @@ public class MatchesController(IMatchViewService matchViewService, IMatchResultS
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(int? season, int? year, int? server, int page = 1, CancellationToken cancellationToken = default)
     {
-        ViewBag.LastMatches = "active";
+        ViewBag.LastMatches = AppConsts.ActiveMenu;
 
         var model = await matchViewService.ListAsync(season, year, server, page, cancellationToken);
 

@@ -58,7 +58,7 @@
 {
     <div class="alert alert-info match-championship">
         🏆 @L["Game {0} of a series of {1}", championshipLink.GameNumber, championshipLink.Championship] ·
-        <a href="@AppConsts.ChampionshipsUrl/@championshipLink.Slug/series/@championshipLink.SeriesId">@championshipLink.Stage</a>
+        <a href="@ChampionshipUrls.Series(championshipLink.Slug, championshipLink.SeriesId)">@championshipLink.Stage</a>
     </div>
 }
 

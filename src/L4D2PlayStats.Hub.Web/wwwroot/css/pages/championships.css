@@ -967,13 +967,6 @@ h2.championship-section-title {
     margin-left: auto;
 }
 
-.championship-avatar {
-    width: 22px;
-    height: 22px;
-    border-radius: 3px;
-    object-fit: cover;
-}
-
 .championship-free-players {
     display: flex;
     flex-wrap: wrap;
@@ -1030,18 +1023,6 @@ h2.championship-section-title {
 
 .championship-not-needed {
     opacity: .55;
-}
-
-.championship-inline-form {
-    margin-bottom: 10px;
-}
-
-.championship-inline-form label {
-    margin-right: 6px;
-}
-
-.championship-inline-buttons {
-    display: inline-block;
 }
 
 .championship-rules h3,
@@ -1169,23 +1150,6 @@ h2.championship-section-title {
         font-size: 20px;
     }
 
-    .championship-inline-form .form-control {
-        margin: 4px 0;
-    }
-}
-
-.championship-flag {
-    width: 20px;
-    height: 20px;
-    margin-right: 4px;
-    border-radius: 3px;
-    object-fit: cover;
-    vertical-align: middle;
-}
-
-.championship-flag-lg {
-    width: 32px;
-    height: 32px;
 }
 
 .championship-captain-link {
@@ -1256,6 +1220,3 @@ h2.championship-section-title {
     margin-left: 4px;
 }
 
-.admin-toolbar-actions form {
-    display: inline-block;
-}

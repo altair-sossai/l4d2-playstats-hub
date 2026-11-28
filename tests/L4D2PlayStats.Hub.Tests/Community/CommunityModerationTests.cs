@@ -255,7 +255,7 @@ public class CommunityModerationTests
 
     private static Task<HttpResponseMessage> PostWithTokenAsync(HttpClient client, string html, CommunityPair pair, string outcome)
     {
-        var token = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = HubWebFactory.Token(html);
 
         return client.PostAsync(CommunityWebSite.VotePage, new FormUrlEncodedContent(new Dictionary<string, string>
         {

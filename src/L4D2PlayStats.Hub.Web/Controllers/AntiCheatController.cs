@@ -20,7 +20,7 @@ public class AntiCheatController(
     [HttpGet(AppConsts.AntiCheatUrl)]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        ViewBag.AntiCheat = "active";
+        ViewBag.AntiCheat = AppConsts.ActiveMenu;
 
         var settings = await settingsService.GetAsync<AntiCheatSettings>(cancellationToken);
         var latest = await antiCheatVersionService.GetLatestAsync(cancellationToken);

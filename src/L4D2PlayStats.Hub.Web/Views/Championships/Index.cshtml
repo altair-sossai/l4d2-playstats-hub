@@ -1,12 +1,14 @@
 @model ChampionshipsIndexModel
 @{
     ViewData["PageMetadata"] = new PageMetadata { Title = L["Championships"], Description = L["Championships of the community: the ones in progress and the history of the finished ones."] };
-    var current = Model.Championships.Where(item => item.Status is not (ChampionshipStatus.Finished or ChampionshipStatus.Cancelled)).ToList();
-    var history = Model.Championships.Where(item => item.Status is ChampionshipStatus.Finished or ChampionshipStatus.Cancelled).ToList();
+    var current = Model.Current;
+    var history = Model.History.Items;
+    var pagination = PaginationModel.Of(Model.History, number => QueryUrl.Build(AppConsts.ChampionshipsUrl, (AppConsts.ChampionshipsPageQuery, number)));
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+    @await Html.PartialAsync("_PaginationStyles")
 }
 
 <div class="championship-showcase-head">
@@ -14,7 +16,7 @@
     <p class="text-muted">@L["Championships of the community: the ones in progress and the history of the finished ones."]</p>
 </div>
 
-@if (Model.Championships.Count == 0)
+@if (current.Count == 0 && Model.History.Total == 0)
 {
     <div class="panel panel-default">
         <div class="panel-body text-center text-muted championship-empty">@L["There are no championships yet."]</div>
@@ -32,7 +34,7 @@
     </div>
 }
 
-@if (history.Count > 0)
+@if (Model.History.Total > 0)
 {
     <h2 class="championship-section-title">@L["History"]</h2>
     <div class="championship-cards championship-history">
@@ -41,4 +43,5 @@
             @await Html.PartialAsync("_Card", item)
         }
     </div>
+    @await Html.PartialAsync("_Pagination", pagination)
 }

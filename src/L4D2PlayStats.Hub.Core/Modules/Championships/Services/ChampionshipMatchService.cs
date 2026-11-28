@@ -62,7 +62,7 @@ public class ChampionshipMatchService(
         {
             try
             {
-                var (championship, stage, series, item) = await LoadGameAsync(game.Id, cancellationToken);
+                var (championship, stage, series, item) = await loader.GameAsync(game.Id, cancellationToken);
 
                 await FinishAsync(championship, stage, series, item, null, ChampionshipGameEnd.Idle, game.AutoCloseMinutes, cancellationToken);
                 closed++;
@@ -79,7 +79,7 @@ public class ChampionshipMatchService(
 
     public async Task CloseAsync(int gameId, long? by, CancellationToken cancellationToken = default)
     {
-        var (championship, stage, series, game) = await LoadGameAsync(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
         if (!game.IsInProgress)
             throw new ChampionshipException("The game is not in progress.");
@@ -166,7 +166,7 @@ public class ChampionshipMatchService(
 
     private async Task LinkAsync(int gameId, Match match, CancellationToken cancellationToken)
     {
-        var (championship, stage, series, game) = await LoadGameAsync(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
         var side = Side(championship, series, match) ?? throw new ChampionshipException("None of the players of the two teams played this match.");
         var campaigns = await loader.CampaignsAsync(cancellationToken);
 
@@ -192,7 +192,7 @@ public class ChampionshipMatchService(
 
     private async Task UpdateAsync(int gameId, Match match, CancellationToken cancellationToken)
     {
-        var (championship, stage, series, game) = await LoadGameAsync(gameId, cancellationToken);
+        var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
         var campaigns = await loader.CampaignsAsync(cancellationToken);
         var before = (game.TeamAScore, game.TeamBScore);
 
@@ -258,7 +258,7 @@ public class ChampionshipMatchService(
 
         foreach (var orphan in orphans)
         {
-            var (championship, _, series, game) = await LoadGameAsync(orphan, cancellationToken);
+            var (championship, _, series, game) = await loader.GameAsync(orphan, cancellationToken);
 
             game.Status = ChampionshipGameStatus.Pending;
             game.ResultSource = null;
@@ -289,8 +289,8 @@ public class ChampionshipMatchService(
 
     private static bool? Side(Championship championship, ChampionshipSeries series, Match match)
     {
-        var teamA = championship.Teams.First(team => team.Id == series.TeamAId).Members.Select(member => member.CommunityId).ToHashSet();
-        var teamB = championship.Teams.First(team => team.Id == series.TeamBId).Members.Select(member => member.CommunityId).ToHashSet();
+        var teamA = championship.Teams.First(team => team.Id == series.TeamAId).Players();
+        var teamB = championship.Teams.First(team => team.Id == series.TeamBId).Players();
 
         return ChampionshipMatchSides.Detect(match.Players, teamA, teamB, championship.PlayersPerGame);
     }
@@ -300,12 +300,4 @@ public class ChampionshipMatchService(
         return (await settingsService.GetAsync<ModuleSettings>(cancellationToken)).IsEnabled(HubModule.Championships);
     }
 
-    private async Task<(Championship, ChampionshipStage, ChampionshipSeries, ChampionshipGame)> LoadGameAsync(int gameId, CancellationToken cancellationToken)
-    {
-        var championship = await loader.LoadByGameAsync(gameId, cancellationToken) ?? throw new ChampionshipException("The game was not found.");
-        var stage = championship.Stages.First(item => item.Series.Any(series => series.Games.Any(game => game.Id == gameId)));
-        var series = stage.Series.First(item => item.Games.Any(game => game.Id == gameId));
-
-        return (championship, stage, series, series.Games.First(game => game.Id == gameId));
-    }
 }

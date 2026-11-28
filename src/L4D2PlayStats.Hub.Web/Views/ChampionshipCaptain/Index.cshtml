@@ -26,7 +26,7 @@
 
 <ol class="breadcrumb championship-breadcrumb">
     <li><a href="@AppConsts.ChampionshipsUrl">@L["Championships"]</a></li>
-    <li><a href="@AppConsts.ChampionshipsUrl/@championship.Slug">@championship.Name</a></li>
+    <li><a href="@ChampionshipUrls.Page(championship.Slug)">@championship.Name</a></li>
     <li class="active">@L["Captain area"]</li>
 </ol>
 
@@ -34,11 +34,11 @@
     <h3>
         @if (team.Flag != null)
         {
-            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag championship-flag-lg"/>
+            <img src="@ChampionshipUrls.Flag(team)" alt="" class="team-flag team-flag-lg"/>
         }
         @L["Captain area"]: @team.Name
     </h3>
-    <a class="btn btn-default" href="@AppConsts.ChampionshipsUrl/@championship.Slug">
+    <a class="btn btn-default" href="@ChampionshipUrls.Page(championship.Slug)">
         <span class="glyphicon glyphicon-chevron-left"></span> @championship.Name
     </a>
 </div>

@@ -51,8 +51,8 @@ else
         {
             <tr>
                 <td class="vertical-align-middle" data-label="@L["Championship"]">
-                    <a href="@AppConsts.AdminChampionshipsUrl/@item.Id"><span class="text-underline">@item.Name</span></a>
-                    <br/><small class="text-muted admin-mono">@AppConsts.ChampionshipsUrl/@item.Slug</small>
+                    <a href="@ChampionshipUrls.Admin(item.Id)"><span class="text-underline">@item.Name</span></a>
+                    <br/><small class="text-muted admin-mono">@ChampionshipUrls.Page(item.Slug)</small>
                 </td>
                 <td class="vertical-align-middle" data-label="@L["Status"]"><span class="label @ChampionshipTexts.StatusLabel(item.Status)">@ChampionshipTexts.Status(L, item.Status)</span></td>
                 <td class="text-center vertical-align-middle" data-label="@L["Teams"]">@Display.Number(item.Teams)</td>
@@ -60,10 +60,10 @@ else
                 <td class="vertical-align-middle" data-label="@L["Champion"]">@item.Champion</td>
                 <td class="text-center vertical-align-middle" data-label="@L["Created"]">@Display.Date(item.CreatedAtUtc, Model.TimeZone)</td>
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
-                    <a class="btn btn-xs btn-default" href="@AppConsts.AdminChampionshipsUrl/@item.Id">
+                    <a class="btn btn-xs btn-default" href="@ChampionshipUrls.Admin(item.Id)">
                         <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
                     </a>
-                    <form method="post" asp-antiforgery="true" action="@AppConsts.AdminChampionshipsUrl/@item.Id/delete" data-confirm="@L["Delete the championship {0} and everything in it?", item.Name]">
+                    <form method="post" asp-antiforgery="true" action="@(ChampionshipUrls.Admin(item.Id))/delete" data-confirm="@L["Delete the championship {0} and everything in it?", item.Name]">
                         <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
                         <button class="btn btn-xs btn-danger" type="submit">
                             <span class="glyphicon glyphicon-trash"></span> @L["Delete"]

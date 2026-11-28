@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
@@ -140,11 +141,6 @@ public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, ICham
 
     private static string? Message(string? message)
     {
-        var trimmed = message?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            return null;
-
-        return trimmed.Length > AppConsts.ChampionshipJoinMessageMaxLength ? trimmed[..AppConsts.ChampionshipJoinMessageMaxLength] : trimmed;
+        return Text.Clip(message, AppConsts.ChampionshipJoinMessageMaxLength);
     }
 }

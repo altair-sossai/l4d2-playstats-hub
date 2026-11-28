@@ -395,9 +395,10 @@ public class SiteSettingsTests
         using var administrator = factory.Client(HubWebFactory.Administrator);
         using var player = factory.Client(HubWebFactory.Player);
 
-        var token = await TokenAsync(administrator, SettingsPage);
+        using var content = new MultipartFormDataContent { { new StringContent(await HubWebFactory.TokenAsync(administrator, SettingsPage)), HubWebFactory.TokenField }, { new ByteArrayContent(Png), "Logo", "logo.png" } };
 
-        using var content = Content(Fields([]), token, "logo.png", Png);
+        foreach (var (name, value) in Fields([]))
+            content.Add(new StringContent(value), name);
 
         var response = await player.PostAsync(SettingsPage, content);
         var logo = await player.GetAsync(WebConsts.LogoUrl);
@@ -491,37 +492,8 @@ public class SiteSettingsTests
         return factory.RunAsync(services => services.GetRequiredService<ISettingsService>().GetAsync<SiteSettings>());
     }
 
-    private static async Task<string> TokenAsync(HttpClient client, string formPage)
+    private static Task<HttpResponseMessage> PostAsync(HttpClient client, string formPage, string action, Dictionary<string, string> fields, string? fileName = null, byte[]? file = null)
     {
-        var html = await client.GetStringAsync(formPage);
-
-        return Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
-    }
-
-    private static MultipartFormDataContent Content(Dictionary<string, string> fields, string token, string? fileName, byte[]? file)
-    {
-        var content = new MultipartFormDataContent { { new StringContent(token), "__RequestVerificationToken" } };
-
-        foreach (var field in fields)
-            content.Add(new StringContent(field.Value), field.Key);
-
-        if (fileName == null || file == null)
-            return content;
-
-        var part = new ByteArrayContent(file);
-
-        part.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-        content.Add(part, "Logo", fileName);
-
-        return content;
-    }
-
-    private static async Task<HttpResponseMessage> PostAsync(HttpClient client, string formPage, string action, Dictionary<string, string> fields, string? fileName = null, byte[]? file = null)
-    {
-        var token = await TokenAsync(client, formPage);
-
-        using var content = Content(fields, token, fileName, file);
-
-        return await client.PostAsync(action, content);
+        return HubWebFactory.PostMultipartAsync(client, formPage, action, fields.Select(field => (field.Key, field.Value)), fileName == null || file == null ? [] : [("Logo", fileName, file)]);
     }
 }

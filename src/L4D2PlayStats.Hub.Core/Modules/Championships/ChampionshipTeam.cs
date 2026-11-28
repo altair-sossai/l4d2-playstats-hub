@@ -21,6 +21,11 @@ public class ChampionshipTeam
 
     public bool HasPendingIdentity => PendingName != null || PendingFlag != null;
 
+    public HashSet<long> Players()
+    {
+        return Members.Select(member => member.CommunityId).ToHashSet();
+    }
+
     public bool IsLeader(long communityId)
     {
         return CaptainCommunityId == communityId || ViceCaptainCommunityId == communityId;

@@ -8,7 +8,6 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
-using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
@@ -26,13 +25,12 @@ public class ChampionshipsController(
     IChampionshipViewService viewService,
     IChampionshipQueryService queryService,
     IChampionshipJoinService joinService,
-    ChampionshipFlagStore flagStore,
     ChampionshipImageStore imageStore,
     ISiteClock siteClock,
-    ICurrentUser currentUser) : Controller
+    ICurrentUser currentUser) : HubControllerBase
 {
     [HttpGet(AppConsts.ChampionshipFlagsUrl + "/{teamId:int}")]
-    [ResponseCache(Duration = AppConsts.ChampionshipFlagCacheInSeconds)]
+    [ResponseCache(Duration = AppConsts.ChampionshipImageCacheInSeconds, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> Flag(int teamId, CancellationToken cancellationToken)
     {
         var flag = await queryService.FlagAsync(teamId, cancellationToken);
@@ -40,7 +38,7 @@ public class ChampionshipsController(
         if (flag == null || (flag.Status == ChampionshipStatus.Draft && !await currentUser.IsAdministratorAsync()))
             return NotFound();
 
-        return FlagFile(flag.Flag);
+        return ImageFile(flag.ChampionshipId, flag.Flag);
     }
 
     [HttpGet(AppConsts.ChampionshipFlagsUrl + "/{teamId:int}/pending")]
@@ -53,7 +51,7 @@ public class ChampionshipsController(
         if (flag == null || !(await currentUser.IsAdministratorAsync() || me != null && (flag.Captain == me || flag.ViceCaptain == me)))
             return NotFound();
 
-        return FlagFile(flag.PendingFlag);
+        return ImageFile(flag.ChampionshipId, flag.PendingFlag);
     }
 
     private static readonly string[] Tabs =
@@ -64,32 +62,28 @@ public class ChampionshipsController(
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Championships = "active";
+        ViewBag.Championships = AppConsts.ActiveMenu;
 
         base.OnActionExecuting(context);
     }
 
     [HttpGet(AppConsts.ChampionshipsUrl)]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
     {
-        var championships = await championshipService.ListAsync(true, cancellationToken);
+        var current = await championshipService.ActiveAsync(cancellationToken);
+        var history = await championshipService.HistoryAsync(page, AppConsts.ChampionshipsPageSize, cancellationToken);
 
-        return View(new ChampionshipsIndexModel(championships, await siteClock.ZoneAsync(cancellationToken)));
+        return View(new ChampionshipsIndexModel(current, history, await siteClock.ZoneAsync(cancellationToken)));
     }
 
     [HttpGet(AppConsts.ChampionshipImagesUrl + "/{id:int}/{file}")]
     [ResponseCache(Duration = AppConsts.ChampionshipImageCacheInSeconds, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> Image(int id, string file, CancellationToken cancellationToken)
     {
-        var path = imageStore.PathOf(id, file);
-        var contentType = ChampionshipImageStore.ContentType(file);
-
-        if (path == null || contentType == null || !(await championshipService.IsPublicAsync(id, cancellationToken) || await currentUser.IsAdministratorAsync()))
+        if (!(await championshipService.IsPublicAsync(id, cancellationToken) || await currentUser.IsAdministratorAsync()))
             return NotFound();
 
-        Response.Headers.XContentTypeOptions = AppConsts.NoSniff;
-
-        return PhysicalFile(path, contentType);
+        return ImageFile(id, file);
     }
 
     [HttpGet(AppConsts.ChampionshipsUrl + "/{slug}")]
@@ -128,7 +122,7 @@ public class ChampionshipsController(
         var model = await viewService.PageAsync(championship, AppConsts.ChampionshipGamesTab, series, cancellationToken);
         var start = series.ScheduledAtUtc.Value;
         var title = $"{model.TeamName(series.TeamAId)} x {model.TeamName(series.TeamBId)} - {championship.Name}";
-        var url = $"{Request.Scheme}://{Request.Host}{AppConsts.ChampionshipsUrl}/{championship.Slug}/series/{series.Id}";
+        var url = $"{Request.Scheme}://{Request.Host}{ChampionshipUrls.Series(championship.Slug, series.Id)}";
         var calendar = new StringBuilder()
             .AppendLine("BEGIN:VCALENDAR")
             .AppendLine("VERSION:2.0")
@@ -169,17 +163,7 @@ public class ChampionshipsController(
         if (championship == null)
             return NotFound();
 
-        try
-        {
-            await action(championship.Id);
-            TempData[AppConsts.SavedTempData] = true;
-        }
-        catch (ChampionshipException exception)
-        {
-            TempData[AppConsts.ErrorTempData] = exception.Message;
-        }
-
-        return Redirect($"{AppConsts.ChampionshipsUrl}/{championship.Slug}#{AppConsts.ChampionshipJoinSection}");
+        return await RunAsync<ChampionshipException>(() => action(championship.Id), () => Redirect($"{ChampionshipUrls.Page(championship.Slug)}#{AppConsts.ChampionshipJoinSection}"));
     }
 
     private async Task<IActionResult> Page(string slug, string tab, CancellationToken cancellationToken)
@@ -202,11 +186,17 @@ public class ChampionshipsController(
         return championship.IsPublic || await currentUser.IsAdministratorAsync() ? championship : null;
     }
 
-    private IActionResult FlagFile(string? name)
+    private IActionResult ImageFile(int championshipId, string? file)
     {
-        var path = flagStore.PathOf(name);
+        var path = imageStore.PathOf(championshipId, file);
+        var contentType = ImageUploads.ContentType(file);
 
-        return path == null ? NotFound() : PhysicalFile(path, ChampionshipFlagStore.ContentType(path));
+        if (path == null || contentType == null)
+            return NotFound();
+
+        Response.Headers.XContentTypeOptions = AppConsts.NoSniff;
+
+        return PhysicalFile(path, contentType);
     }
 
     private static string Escape(string value)

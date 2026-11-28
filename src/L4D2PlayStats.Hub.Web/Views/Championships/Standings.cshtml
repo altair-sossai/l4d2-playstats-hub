@@ -49,7 +49,7 @@
                                 <tr class="@(row.Position <= qualifiers ? "championship-qualified" : null)">
                                     <td class="text-center">@row.Position</td>
                                     <td>
-                                        @await Html.PartialAsync("_TeamName", (Model, (int?)row.TeamId))
+                                        @await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.TeamId))
                                         @if (row.PenaltyPoints != 0)
                                         {
                                             <span class="label label-danger" title="@L["Penalty points"]">-@row.PenaltyPoints</span>

@@ -88,10 +88,9 @@
                 {
                     <tr>
                         <td>
-                            <img src="@AppConsts.AvatarUrl@row.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                            <a href="@AppConsts.PlayerUrlPrefix@row.CommunityId">@DisplayNames.Apply(row.CommunityId, Model.PlayerName(row.CommunityId))</a>
+                            @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(row.CommunityId, DisplayNames.Apply(row.CommunityId, Model.PlayerName(row.CommunityId))))
                         </td>
-                        <td class="hidden-xs">@Model.TeamName(row.TeamId)</td>
+                        <td class="hidden-xs">@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)row.TeamId))</td>
                         <td class="text-center">@row.Games</td>
                         <td class="text-center">@row.Totals.MvpSiDamage</td>
                         <td class="text-center">@row.Totals.MvpCommon</td>

@@ -6,7 +6,8 @@
     var view = Model.Page;
     var onTheClock = ChampionshipDraftService.OnTheClock(championship);
     var mine = onTheClock?.Id == team.Id;
-    var free = ChampionshipDraftService.Free(championship).OrderByDescending(id => view.Hours(id) ?? -1).ToList();
+    var free = Model.Free;
+    var pagination = PaginationModel.Of(Model.Free, number => AdminListUrls.TabPage(Model.Url, AppConsts.ChampionshipCaptainDraftTab, AppConsts.ChampionshipFreePageQuery, number));
     var order = championship.Teams.Where(item => item.DraftPosition != null).OrderBy(item => item.DraftPosition).ToList();
     var picks = championship.DraftPicks.OrderByDescending(pick => pick.Number).ToList();
 }
@@ -33,7 +34,7 @@ else
 <div class="row">
     <div class="col-md-7">
         <h4 class="championship-section-title">@L["Players without a team"]</h4>
-        @if (free.Count == 0)
+        @if (free.TotalItems == 0)
         {
             <div class="admin-list">
                 <div class="admin-empty">@L["Every player is in a team."]</div>
@@ -53,15 +54,14 @@ else
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var communityId in free)
+                @foreach (var communityId in free.Items)
                 {
                     var hours = view.Hours(communityId);
                     var name = view.PlayerName(communityId);
 
                     <tr>
                         <td class="vertical-align-middle" data-label="@L["Player"]">
-                            <img src="@AppConsts.AvatarUrl@communityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                            <a href="@PlayerUrls.Details(communityId)" target="_blank">@DisplayNames.Apply(communityId, name)</a>
+                            @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(communityId, DisplayNames.Apply(communityId, name), true, true))
                         </td>
                         <td class="text-center vertical-align-middle" data-label="@L["Hours"]">@(hours == null ? "—" : Display.Number(hours.Value))</td>
                         @if (mine)
@@ -79,6 +79,7 @@ else
                 }
                 </tbody>
             </table>
+            @await Html.PartialAsync("_Pagination", pagination)
         }
     </div>
     <div class="col-md-5">
@@ -111,7 +112,7 @@ else
                 {
                     <tr class="@(pick.TeamId == team.Id ? "info" : null)">
                         <td class="text-center slim">@pick.Number</td>
-                        <td>@view.TeamName(pick.TeamId)</td>
+                        <td>@await Html.PartialAsync("_ChampionshipTeamName", (view, (int?)pick.TeamId))</td>
                         <td>@DisplayNames.Apply(pick.CommunityId, view.PlayerName(pick.CommunityId))</td>
                     </tr>
                 }

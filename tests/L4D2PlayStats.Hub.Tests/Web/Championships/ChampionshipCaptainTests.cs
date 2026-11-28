@@ -8,15 +8,15 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Tests.Support.Championships;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace L4D2PlayStats.Hub.Tests.Web.Championships;
 
 [TestClass]
-public partial class ChampionshipCaptainTests
+public class ChampionshipCaptainTests
 {
     private const long FirstPlayer = 76561198300000000;
     private const long Stranger = 76561198399999999;
@@ -25,13 +25,13 @@ public partial class ChampionshipCaptainTests
     [TestMethod]
     public async Task TheCaptainsPickTheirPlayersInTheDraftWhenItIsTheirTurn()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var (championship, teamIds) = await SetupAsync(factory, ChampionshipDraftMethod.Snake, false);
 
         await factory.RunAsync(services => services.GetRequiredService<IChampionshipDraftService>().DrawOrderAsync(championship.Id, HubWebFactory.Administrator));
 
-        var loaded = await LoadAsync(factory, championship.Id);
+        var loaded = await ChampionshipWeb.LoadAsync(factory, championship.Id);
         var first = ChampionshipDraftService.OnTheClock(loaded)!;
         var second = loaded.Teams.Single(team => team.Id != first.Id);
         var area = $"/championships/{championship.Slug}/captain";
@@ -54,12 +54,12 @@ public partial class ChampionshipCaptainTests
         var outOfTurn = await HubWebFactory.PostFormAsync(secondCaptain, area, $"{area}/draft/pick", new Dictionary<string, string> { ["communityId"] = free[0].ToString() });
 
         Assert.AreEqual($"{area}?tab=draft", outOfTurn.Headers.Location!.OriginalString);
-        Assert.IsEmpty((await LoadAsync(factory, championship.Id)).DraftPicks);
+        Assert.IsEmpty((await ChampionshipWeb.LoadAsync(factory, championship.Id)).DraftPicks);
         Assert.Contains("It is not the turn of your team.", await secondCaptain.GetStringAsync($"{area}?tab=draft"));
 
         await HubWebFactory.PostFormAsync(firstCaptain, area, $"{area}/draft/pick", new Dictionary<string, string> { ["communityId"] = free[0].ToString() });
 
-        loaded = await LoadAsync(factory, championship.Id);
+        loaded = await ChampionshipWeb.LoadAsync(factory, championship.Id);
 
         Assert.HasCount(1, loaded.DraftPicks);
         Assert.IsTrue(loaded.Teams.Single(team => team.Id == first.Id).Members.Any(member => member.CommunityId == free[0]));
@@ -68,7 +68,7 @@ public partial class ChampionshipCaptainTests
 
         await HubWebFactory.PostFormAsync(admin, $"/admin/championships/{championship.Id}?tab=draft", $"/admin/championships/{championship.Id}/draft/pick", new Dictionary<string, string> { ["communityId"] = free[1].ToString() });
 
-        loaded = await LoadAsync(factory, championship.Id);
+        loaded = await ChampionshipWeb.LoadAsync(factory, championship.Id);
 
         Assert.HasCount(2, loaded.DraftPicks);
         Assert.AreEqual(second.Id, loaded.DraftPicks.Single(pick => pick.Number == 2).TeamId);
@@ -78,7 +78,7 @@ public partial class ChampionshipCaptainTests
     [TestMethod]
     public async Task TheNameTagAndFlagOfATeamWaitForTheApprovalOfTheAdministration()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var (championship, teamIds) = await SetupAsync(factory, ChampionshipDraftMethod.Manual, true);
         var teamId = teamIds[0];
@@ -177,7 +177,7 @@ public partial class ChampionshipCaptainTests
     [TestMethod]
     public async Task OnlyTheCaptainChoosesTheViceCaptain()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var (championship, teamIds) = await SetupAsync(factory, ChampionshipDraftMethod.Manual, true);
         var area = $"/championships/{championship.Slug}/captain";
@@ -213,16 +213,6 @@ public partial class ChampionshipCaptainTests
         await HubWebFactory.PostFormAsync(captain, area, $"{area}/vice", []);
 
         Assert.IsNull((await TeamAsync(factory, teamIds[0])).ViceCaptainCommunityId);
-    }
-
-    private static async Task<HubWebFactory> FactoryAsync()
-    {
-        var factory = new HubWebFactory();
-
-        await factory.CompleteSetupAsync();
-        await factory.SaveAsync(new ModuleSettings { Ranking = true, LiveServer = true, Championships = true });
-
-        return factory;
     }
 
     private static Task<(Championship Championship, List<int> Teams)> SetupAsync(HubWebFactory factory, ChampionshipDraftMethod method, bool members)
@@ -261,38 +251,13 @@ public partial class ChampionshipCaptainTests
         });
     }
 
-    private static Task<Championship> LoadAsync(HubWebFactory factory, int id)
-    {
-        return factory.RunAsync(async services => (await services.GetRequiredService<IChampionshipLoadService>().LoadAsync(id, false))!);
-    }
-
     private static Task<ChampionshipTeam> TeamAsync(HubWebFactory factory, int teamId)
     {
         return factory.RunAsync(services => services.GetRequiredService<HubDbContext>().ChampionshipTeams.AsNoTracking().SingleAsync(team => team.Id == teamId));
     }
 
-    private static async Task<HttpResponseMessage> PostMultipartAsync(HttpClient client, string formPage, string action, Dictionary<string, string> fields, byte[]? file, string? fileName)
+    private static Task<HttpResponseMessage> PostMultipartAsync(HttpClient client, string formPage, string action, Dictionary<string, string> fields, byte[]? file, string? fileName)
     {
-        var html = await client.GetStringAsync(formPage);
-        var token = Token().Match(html).Groups[1].Value;
-        using var content = new MultipartFormDataContent();
-
-        content.Add(new StringContent(token), "__RequestVerificationToken");
-
-        foreach (var (name, value) in fields)
-            content.Add(new StringContent(value), name);
-
-        if (file != null)
-        {
-            var bytes = new ByteArrayContent(file);
-
-            bytes.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-            content.Add(bytes, "flag", fileName!);
-        }
-
-        return await client.PostAsync(action, content);
+        return HubWebFactory.PostMultipartAsync(client, formPage, action, fields.Select(field => (field.Key, field.Value)), file == null ? [] : [("flag", fileName!, file)]);
     }
-
-    [GeneratedRegex("name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"")]
-    private static partial Regex Token();
 }

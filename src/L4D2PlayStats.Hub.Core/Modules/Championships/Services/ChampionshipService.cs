@@ -1,7 +1,8 @@
 using L4D2PlayStats.Hub.Core.Data;
-using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
-using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
+using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
@@ -13,26 +14,37 @@ namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
 public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampionshipLogService log) : IChampionshipService
 {
-    public async Task<Page<ChampionshipSummary>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
+    public Task<Page<ChampionshipSummary>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
-        var ids = await dbContext.Championships.AsNoTracking().OrderByDescending(championship => championship.CreatedAtUtc).ThenByDescending(championship => championship.Id).Select(championship => championship.Id).ToPageAsync(page, size, cancellationToken);
+        return PageOfAsync(dbContext.Championships.AsNoTracking().OrderByDescending(championship => championship.CreatedAtUtc).ThenByDescending(championship => championship.Id), page, size, cancellationToken);
+    }
+
+    public Task<Page<ChampionshipSummary>> HistoryAsync(int page, int size, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Championships.AsNoTracking()
+            .Where(championship => championship.Status == ChampionshipStatus.Finished || championship.Status == ChampionshipStatus.Cancelled)
+            .OrderByDescending(championship => championship.EndsOn ?? championship.StartsOn ?? championship.CreatedAtUtc)
+            .ThenByDescending(championship => championship.Id);
+
+        return PageOfAsync(query, page, size, cancellationToken);
+    }
+
+    public async Task<List<ChampionshipSummary>> ActiveAsync(CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Championships.AsNoTracking().Where(championship => championship.Status != ChampionshipStatus.Draft && championship.Status != ChampionshipStatus.Finished && championship.Status != ChampionshipStatus.Cancelled);
+
+        return (await Summaries(query, cancellationToken))
+            .OrderByDescending(summary => summary.StartsOn ?? summary.CreatedAtUtc)
+            .ThenByDescending(summary => summary.Id)
+            .ToList();
+    }
+
+    private async Task<Page<ChampionshipSummary>> PageOfAsync(IQueryable<Championship> ordered, int page, int size, CancellationToken cancellationToken)
+    {
+        var ids = await ordered.Select(championship => championship.Id).ToPageAsync(page, size, cancellationToken);
         var summaries = (await Summaries(dbContext.Championships.AsNoTracking().Where(championship => ids.Items.Contains(championship.Id)), cancellationToken)).ToDictionary(summary => summary.Id);
 
         return ids.Map(id => summaries[id]);
-    }
-
-    public async Task<List<ChampionshipSummary>> ListAsync(bool publicOnly, CancellationToken cancellationToken = default)
-    {
-        var query = dbContext.Championships.AsNoTracking();
-
-        if (publicOnly)
-            query = query.Where(championship => championship.Status != ChampionshipStatus.Draft);
-
-        return (await Summaries(query, cancellationToken))
-            .OrderBy(summary => summary.Status is ChampionshipStatus.Finished or ChampionshipStatus.Cancelled ? 1 : 0)
-            .ThenByDescending(summary => summary.StartsOn ?? summary.CreatedAtUtc)
-            .ThenByDescending(summary => summary.Id)
-            .ToList();
     }
 
     private static async Task<List<ChampionshipSummary>> Summaries(IQueryable<Championship> source, CancellationToken cancellationToken)
@@ -97,10 +109,10 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
 
         championship.Name = Required(form.Name);
         championship.Slug = await UniqueSlugAsync(slug, id, cancellationToken);
-        championship.Description = Text(form.Description, AppConsts.ChampionshipDescriptionMaxLength);
+        championship.Description = Text.Clip(form.Description, AppConsts.ChampionshipDescriptionMaxLength);
         championship.StreamUrl = Url(form.StreamUrl);
         championship.VideosUrl = Url(form.VideosUrl);
-        championship.GameConfiguration = Text(form.GameConfiguration, AppConsts.ChampionshipConfigurationMaxLength);
+        championship.GameConfiguration = Text.Clip(form.GameConfiguration, AppConsts.ChampionshipConfigurationMaxLength);
         championship.PlayersPerGame = Math.Clamp(form.PlayersPerGame, 1, AppConsts.ChampionshipMaxPlayersPerGame);
         championship.RosterSize = Math.Clamp(form.RosterSize, championship.PlayersPerGame, AppConsts.ChampionshipMaxRoster);
         championship.MaxParticipants = form.MaxParticipants is > 0 ? Math.Min(form.MaxParticipants.Value, AppConsts.ChampionshipMaxTeams * AppConsts.ChampionshipMaxRoster) : null;
@@ -122,9 +134,9 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
     {
         var championship = await dbContext.Championships.FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
 
-        championship.Rules = Text(english, AppConsts.ChampionshipRulesMaxLength);
-        championship.RulesPortuguese = Text(portuguese, AppConsts.ChampionshipRulesMaxLength);
-        championship.RulesSpanish = Text(spanish, AppConsts.ChampionshipRulesMaxLength);
+        championship.Rules = Text.Clip(english, AppConsts.ChampionshipRulesMaxLength);
+        championship.RulesPortuguese = Text.Clip(portuguese, AppConsts.ChampionshipRulesMaxLength);
+        championship.RulesSpanish = Text.Clip(spanish, AppConsts.ChampionshipRulesMaxLength);
         championship.UpdatedAtUtc = clock.UtcNow;
 
         log.Add(id, updatedBy, "Saved the rules");
@@ -139,7 +151,7 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
             throw new ChampionshipException("Choose a valid status.");
 
         championship.Status = status;
-        championship.CancelReason = status == ChampionshipStatus.Cancelled ? Text(reason, AppConsts.ChampionshipReasonMaxLength) : null;
+        championship.CancelReason = status == ChampionshipStatus.Cancelled ? Text.Clip(reason, AppConsts.ChampionshipReasonMaxLength) : null;
         championship.UpdatedAtUtc = clock.UtcNow;
 
         log.Add(id, updatedBy, "Changed the status to {0}", status);
@@ -259,12 +271,7 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
 
     private static string Required(string? name)
     {
-        var trimmed = name?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            throw new ChampionshipException("Enter the name of the championship.");
-
-        return trimmed.Length > AppConsts.ChampionshipNameMaxLength ? trimmed[..AppConsts.ChampionshipNameMaxLength] : trimmed;
+        return Text.Clip(name, AppConsts.ChampionshipNameMaxLength) ?? throw new ChampionshipException("Enter the name of the championship.");
     }
 
     private static string? Image(string? value)
@@ -274,19 +281,10 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         return string.IsNullOrEmpty(trimmed) ? null : trimmed;
     }
 
-    private static string? Text(string? value, int maxLength)
-    {
-        var trimmed = value?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            return null;
-
-        return trimmed.Length > maxLength ? trimmed[..maxLength] : trimmed;
-    }
 
     private static string? Url(string? value)
     {
-        var trimmed = Text(value, AppConsts.ChampionshipUrlMaxLength);
+        var trimmed = Text.Clip(value, AppConsts.ChampionshipUrlMaxLength);
 
         if (trimmed == null)
             return null;

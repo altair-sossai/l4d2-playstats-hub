@@ -3,11 +3,12 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipQueryService(HubDbContext dbContext) : IChampionshipQueryService
+public class ChampionshipQueryService(HubDbContext dbContext, IPlayerNameService playerNames) : IChampionshipQueryService
 {
     public async Task<Dictionary<long, PlayerProfile>> ProfilesAsync(Championship championship, CancellationToken cancellationToken = default)
     {
@@ -23,10 +24,9 @@ public class ChampionshipQueryService(HubDbContext dbContext) : IChampionshipQue
     {
         var ids = communityIds.Distinct().ToList();
         var names = await dbContext.Administrators.AsNoTracking().Where(administrator => ids.Contains(administrator.CommunityId) && administrator.Name != null).ToDictionaryAsync(administrator => administrator.CommunityId, administrator => administrator.Name!, cancellationToken);
-        var profiles = await dbContext.PlayerProfiles.AsNoTracking().Where(profile => ids.Contains(profile.CommunityId)).Select(profile => new { profile.CommunityId, Name = profile.DisplayName ?? profile.Name }).ToListAsync(cancellationToken);
 
-        foreach (var profile in profiles.Where(profile => profile.Name != null))
-            names[profile.CommunityId] = profile.Name!;
+        foreach (var (communityId, name) in await playerNames.NamesAsync(ids.Where(id => !names.ContainsKey(id)).ToList(), cancellationToken))
+            names[communityId] = name;
 
         return names;
     }
@@ -80,7 +80,7 @@ public class ChampionshipQueryService(HubDbContext dbContext) : IChampionshipQue
     {
         return dbContext.ChampionshipTeams.AsNoTracking()
             .Where(team => team.Id == teamId)
-            .Join(dbContext.Championships, team => team.ChampionshipId, championship => championship.Id, (team, championship) => new ChampionshipTeamFlag(team.Flag, team.PendingFlag, championship.Status, team.CaptainCommunityId, team.ViceCaptainCommunityId))
+            .Join(dbContext.Championships, team => team.ChampionshipId, championship => championship.Id, (team, championship) => new ChampionshipTeamFlag(team.ChampionshipId, team.Flag, team.PendingFlag, championship.Status, team.CaptainCommunityId, team.ViceCaptainCommunityId))
             .FirstOrDefaultAsync(cancellationToken);
     }
 }

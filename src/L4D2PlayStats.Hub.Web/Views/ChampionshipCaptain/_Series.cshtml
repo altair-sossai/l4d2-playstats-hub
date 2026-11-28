@@ -81,7 +81,7 @@
                         <span class="glyphicon glyphicon-map-marker"></span> @L["Campaigns"]
                     </button>
                 }
-                <a class="btn btn-xs btn-default" href="@AppConsts.ChampionshipsUrl/@championship.Slug/series/@series.Id">
+                <a class="btn btn-xs btn-default" href="@ChampionshipUrls.Series(championship.Slug, series.Id)">
                     <span class="glyphicon glyphicon-eye-open"></span> @L["See"]
                 </a>
             </td>

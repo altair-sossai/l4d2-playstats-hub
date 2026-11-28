@@ -30,7 +30,7 @@
 
 <div class="admin-header">
     <h3>@championship.Name <span class="label @ChampionshipTexts.StatusLabel(championship.Status) championship-status">@ChampionshipTexts.Status(L, championship.Status)</span></h3>
-    <a class="btn btn-default" href="@AppConsts.ChampionshipsUrl/@championship.Slug" target="_blank">
+    <a class="btn btn-default" href="@ChampionshipUrls.Page(championship.Slug)" target="_blank">
         <span class="glyphicon glyphicon-eye-open"></span> @L["See the page"]
     </a>
     <a class="btn btn-default" href="@AppConsts.AdminChampionshipsUrl">

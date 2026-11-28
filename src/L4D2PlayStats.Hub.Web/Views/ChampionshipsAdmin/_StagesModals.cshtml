@@ -238,7 +238,7 @@
                             <ol class="championship-entrants">
                                 @foreach (var team in entrants)
                                 {
-                                    <li>@view.TeamName(team)</li>
+                                    <li>@await Html.PartialAsync("_ChampionshipTeamName", (view, (int?)team))</li>
                                 }
                             </ol>
                         }
@@ -282,7 +282,7 @@
                                 @foreach (var penalty in stage.Penalties.OrderBy(penalty => penalty.CreatedAtUtc))
                                 {
                                     <tr>
-                                        <td class="vertical-align-middle"><strong>@view.TeamName(penalty.TeamId)</strong></td>
+                                        <td class="vertical-align-middle"><strong>@await Html.PartialAsync("_ChampionshipTeamName", (view, (int?)penalty.TeamId))</strong></td>
                                         <td class="text-center vertical-align-middle">-@penalty.Points</td>
                                         <td class="vertical-align-middle"><small class="text-muted">@penalty.Reason</small></td>
                                         <td class="text-right vertical-align-middle slim">

@@ -18,7 +18,7 @@ public class PlayersController(IPlayerViewService playerViewService, IPlayerComm
     [OutputCache(PolicyName = AppConsts.PageCachePolicy)]
     public async Task<IActionResult> Index(PlayerResultProperty? orderBy = null, PlayerResultProperty? sort = null, bool asc = false, int? season = null, int? year = null, string? period = null, int page = 1, CancellationToken cancellationToken = default)
     {
-        ViewBag.Players = "active";
+        ViewBag.Players = AppConsts.ActiveMenu;
 
         var selected = await playerViewService.PeriodAsync(season, year, period == AppConsts.AllTimeHistoryId, cancellationToken);
         if (selected == null)

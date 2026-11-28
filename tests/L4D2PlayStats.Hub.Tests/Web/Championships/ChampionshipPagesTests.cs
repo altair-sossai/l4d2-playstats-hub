@@ -6,6 +6,7 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Tests.Support.Championships;
 using L4D2PlayStats.Hub.Web.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,7 +44,7 @@ public partial class ChampionshipPagesTests
     [TestMethod]
     public async Task AChampionshipStaysHiddenWhileItIsADraft()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var visitor = factory.Client();
 
@@ -70,7 +71,7 @@ public partial class ChampionshipPagesTests
     [TestMethod]
     public async Task AChampionshipIsRunFromTheAdministrationAndShownOnEveryPublicPage()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var visitor = factory.Client();
 
@@ -95,7 +96,7 @@ public partial class ChampionshipPagesTests
 
         await HubWebFactory.PostFormAsync(admin, url, $"{url}/teams/many", new Dictionary<string, string> { ["count"] = "4" });
 
-        var championship = await LoadAsync(factory, id);
+        var championship = await ChampionshipWeb.LoadAsync(factory, id);
         var teams = championship.Teams.OrderBy(team => team.Seed).ToList();
 
         Assert.HasCount(8, championship.Participants);
@@ -115,7 +116,7 @@ public partial class ChampionshipPagesTests
         Assert.Contains($"action=\"{url}/rules\"", settingsPage);
         Assert.AreEqual(1, Regex.Matches(settingsPage, "id=\"Rules\"").Count);
 
-        championship = await LoadAsync(factory, id);
+        championship = await ChampionshipWeb.LoadAsync(factory, id);
 
         var stages = championship.Stages.OrderBy(stage => stage.Order).ToList();
         var preview = await admin.GetStringAsync($"{url}?tab=stages");
@@ -126,7 +127,7 @@ public partial class ChampionshipPagesTests
 
         Assert.AreEqual(HttpStatusCode.Redirect, built.StatusCode);
 
-        championship = await LoadAsync(factory, id);
+        championship = await ChampionshipWeb.LoadAsync(factory, id);
 
         Assert.AreEqual(ChampionshipStatus.Running, championship.Status);
 
@@ -148,7 +149,7 @@ public partial class ChampionshipPagesTests
 
         await HubWebFactory.PostFormAsync(admin, url, $"{url}/stages/{stages[1].Id}/generate", []);
 
-        championship = await LoadAsync(factory, id);
+        championship = await ChampionshipWeb.LoadAsync(factory, id);
 
         var playoffs = championship.Stages.First(stage => stage.Id == stages[1].Id);
 
@@ -184,7 +185,7 @@ public partial class ChampionshipPagesTests
     [TestMethod]
     public async Task CaptainsChooseTheCampaignsAndAgreeOnADateFromTheCaptainArea()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var (slug, seriesId, games) = await KnockoutAsync(factory);
         var page = $"/championships/{slug}/series/{seriesId}";
@@ -225,7 +226,7 @@ public partial class ChampionshipPagesTests
 
         Assert.AreEqual(HttpStatusCode.NotFound, strangerPost.StatusCode);
 
-        var championship = await LoadAsync(factory, await IdAsync(factory, slug));
+        var championship = await ChampionshipWeb.LoadAsync(factory, await IdAsync(factory, slug));
         var loaded = championship.Stages.Single().Series.Single(item => item.Id == seriesId);
         var proposal = loaded.Proposals.Single();
 
@@ -256,13 +257,13 @@ public partial class ChampionshipPagesTests
         var refused = await HubWebFactory.PostFormAsync(signedOut, page, $"{series}/proposals", new Dictionary<string, string> { ["date"] = date });
 
         Assert.AreNotEqual(HttpStatusCode.OK, refused.StatusCode);
-        Assert.HasCount(1, (await LoadAsync(factory, await IdAsync(factory, slug))).Stages.Single().Series.Single(item => item.Id == seriesId).Proposals);
+        Assert.HasCount(1, (await ChampionshipWeb.LoadAsync(factory, await IdAsync(factory, slug))).Stages.Single().Series.Single(item => item.Id == seriesId).Proposals);
     }
 
     [TestMethod]
     public async Task TheMatchPageShowsTheChampionshipOfItsGame()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
 
         var credentials = await factory.CreateServerAsync();
         using var server = factory.ServerClient(credentials);
@@ -292,11 +293,11 @@ public partial class ChampionshipPagesTests
         });
 
         var id = await IdAsync(factory, slug);
-        var stageId = (await LoadAsync(factory, id)).Stages.Single().Id;
+        var stageId = (await ChampionshipWeb.LoadAsync(factory, id)).Stages.Single().Id;
 
         await factory.RunAsync(services => services.GetRequiredService<IChampionshipStageService>().GenerateAsync(stageId, null));
 
-        var game = (await LoadAsync(factory, id)).Stages.Single().Series.Single().Games.Single();
+        var game = (await ChampionshipWeb.LoadAsync(factory, id)).Stages.Single().Series.Single().Games.Single();
 
         await factory.RunAsync(services => services.GetRequiredService<IChampionshipSeriesService>().LinkMatchAsync(game.Id, matchId, null));
 
@@ -373,16 +374,6 @@ public partial class ChampionshipPagesTests
         Assert.IsGreaterThan(80, texts.Count);
     }
 
-    private static async Task<HubWebFactory> FactoryAsync()
-    {
-        var factory = new HubWebFactory();
-
-        await factory.CompleteSetupAsync();
-        await factory.SaveAsync(new ModuleSettings { Ranking = true, LiveServer = true, Championships = true });
-
-        return factory;
-    }
-
     private static async Task<(string Slug, int SeriesId, List<int> Games)> KnockoutAsync(HubWebFactory factory)
     {
         return await factory.RunAsync(async services =>
@@ -409,11 +400,6 @@ public partial class ChampionshipPagesTests
 
             return (championship.Slug, series.Id, series.Games.OrderBy(game => game.Number).Select(game => game.Id).ToList());
         });
-    }
-
-    private static Task<L4D2PlayStats.Hub.Core.Modules.Championships.Championship> LoadAsync(HubWebFactory factory, int id)
-    {
-        return factory.RunAsync(async services => (await services.GetRequiredService<IChampionshipLoadService>().LoadAsync(id, false))!);
     }
 
     private static Task<int> IdAsync(HubWebFactory factory, string slug)

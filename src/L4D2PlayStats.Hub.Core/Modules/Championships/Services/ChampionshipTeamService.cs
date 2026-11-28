@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
+using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 
@@ -99,8 +100,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public async Task UpdateTeamAsync(int teamId, string name, string? tag, int seed, long? updatedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw TeamNotFound();
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         team.Name = TeamName(championship, name, teamId);
         team.Tag = Tag(tag);
@@ -111,8 +111,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public async Task DeleteTeamAsync(int teamId, long? deletedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw TeamNotFound();
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         if (championship.Stages.Any(stage => stage.Groups.Any(group => group.Teams.Any(entry => entry.TeamId == teamId)) || stage.Series.Any(series => series.Has(teamId))))
             throw new ChampionshipException("The team is already in a stage. Reset the stage before deleting it.");
@@ -130,8 +129,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public async Task AddMemberAsync(int teamId, long communityId, long? addedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw TeamNotFound();
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         AddMember(championship, team, communityId, clock.UtcNow);
         log.Add(championship.Id, addedBy, "Added {0} to the team {1}", communityId, team.Name);
@@ -140,8 +138,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public async Task RemoveMemberAsync(int teamId, long communityId, long? removedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw TeamNotFound();
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         RemoveFromTeam(team, communityId);
 
@@ -154,8 +151,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public async Task SetLeadersAsync(int teamId, long? captain, long? viceCaptain, long? updatedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw TeamNotFound();
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         if (captain != null && captain == viceCaptain)
             throw new ChampionshipException("The captain and the vice-captain must be different players.");
@@ -225,13 +221,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public static string TeamName(Championship championship, string? name, int? teamId)
     {
-        var trimmed = name?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            throw new ChampionshipException("Enter the name of the team.");
-
-        if (trimmed.Length > AppConsts.ChampionshipTeamNameMaxLength)
-            trimmed = trimmed[..AppConsts.ChampionshipTeamNameMaxLength];
+        var trimmed = Text.Clip(name, AppConsts.ChampionshipTeamNameMaxLength) ?? throw new ChampionshipException("Enter the name of the team.");
 
         if (championship.Teams.Any(team => team.Id != teamId && string.Equals(team.Name, trimmed, StringComparison.OrdinalIgnoreCase)))
             throw new ChampionshipException("There is already a team with this name.");
@@ -241,12 +231,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
     public static string? Tag(string? tag)
     {
-        var trimmed = tag?.Trim();
-
-        if (string.IsNullOrEmpty(trimmed))
-            return null;
-
-        return trimmed.Length > AppConsts.ChampionshipTeamTagMaxLength ? trimmed[..AppConsts.ChampionshipTeamTagMaxLength] : trimmed;
+        return Text.Clip(tag, AppConsts.ChampionshipTeamTagMaxLength);
     }
 
     private static string Label(int index)
@@ -257,10 +242,5 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
     private async Task<Championship> Load(int championshipId, CancellationToken cancellationToken)
     {
         return await loader.LoadAsync(championshipId, true, cancellationToken) ?? throw new ChampionshipException("The championship was not found.");
-    }
-
-    private static ChampionshipException TeamNotFound()
-    {
-        return new ChampionshipException("The team was not found.");
     }
 }

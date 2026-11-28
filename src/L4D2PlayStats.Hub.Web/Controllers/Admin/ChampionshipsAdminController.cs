@@ -3,13 +3,13 @@ using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models;
@@ -36,7 +36,7 @@ public class ChampionshipsAdminController(
     IChampionshipViewService viewService,
     IChampionshipIdentityService identityService,
     IChampionshipMatchService matchService,
-    ChampionshipFlagStore flagStore,
+    IChampionshipFlagService flagService,
     IChampionshipImageService imageService,
     IChampionshipJoinService joinService,
     ISiteClock siteClock,
@@ -73,13 +73,8 @@ public class ChampionshipsAdminController(
     [HttpPost("{id:int}/delete")]
     public async Task<IActionResult> Delete(int id, string? returnUrl, CancellationToken cancellationToken)
     {
-        var files = await identityService.FilesAsync(id, null, cancellationToken);
-
         if (await championshipService.DeleteAsync(id, cancellationToken))
-        {
-            flagStore.Delete(files);
             imageService.DeleteAll(id);
-        }
 
         Saved();
 
@@ -87,7 +82,7 @@ public class ChampionshipsAdminController(
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Championship(int id, int? stage, int participantsPage = 1, int gamesPage = 1, int historyPage = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Championship(int id, int? stage, int participantsPage = 1, int requestsPage = 1, int teamsPage = 1, int freePage = 1, int gamesPage = 1, int historyPage = 1, CancellationToken cancellationToken = default)
     {
         var championship = await loadService.LoadAsync(id, false, cancellationToken);
 
@@ -124,8 +119,11 @@ public class ChampionshipsAdminController(
         return View(new ChampionshipAdminModel
         {
             Page = page,
-            Requests = requests,
+            Requests = new PagedListModel<ChampionshipJoinRequest>(requests, requestsPage, AppConsts.ChampionshipRequestsPageSize),
+            PendingRequests = requests.Count(request => request.Status == ChampionshipJoinRequestStatus.Pending),
             Participants = new PagedListModel<ChampionshipParticipant>(participants, participantsPage, AppConsts.ChampionshipParticipantsPageSize),
+            Teams = new PagedListModel<ChampionshipTeam>(page.Teams, teamsPage, AppConsts.ChampionshipTeamsPageSize),
+            Free = new PagedListModel<long>(ChampionshipDraftService.Free(championship), freePage, AppConsts.ChampionshipFreePageSize),
             Series = new PagedListModel<ChampionshipSeries>(series, gamesPage, AppConsts.ChampionshipGamesPageSize),
             History = new PagedListModel<ChampionshipLog>(history),
             Entrants = entrants,
@@ -137,8 +135,8 @@ public class ChampionshipsAdminController(
     [RequestSizeLimit(AppConsts.ChampionshipSettingsFormMaxBytes)]
     public async Task<IActionResult> SaveSettings(int id, ChampionshipSettingsForm form, ChampionshipImagesUpload images, string? startsOn, string? endsOn, ChampionshipStatus status, string? reason, CancellationToken cancellationToken)
     {
-        form.StartsOn = Date(startsOn);
-        form.EndsOn = Date(endsOn);
+        form.StartsOn = ChampionshipDates.FromDateInput(startsOn);
+        form.EndsOn = ChampionshipDates.FromDateInput(endsOn);
 
         return await Run(async () =>
         {
@@ -218,9 +216,9 @@ public class ChampionshipsAdminController(
             await teamService.SetLeadersAsync(teamId, captain is > 0 ? captain : null, viceCaptain is > 0 ? viceCaptain : null, Me, cancellationToken);
 
             if (flag is { Length: > 0 })
-                flagStore.Delete(await identityService.SetFlagAsync(teamId, await flagStore.SaveAsync(flag, cancellationToken), Me, cancellationToken));
+                await flagService.ApplyAsync(id, flag, saved => identityService.SetFlagAsync(teamId, saved!, Me, cancellationToken), cancellationToken);
             else if (removeFlag)
-                flagStore.Delete(await identityService.RemoveFlagAsync(teamId, Me, false, cancellationToken));
+                flagService.Delete(id, await identityService.RemoveFlagAsync(teamId, Me, false, cancellationToken));
         }, null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
     }
 
@@ -231,8 +229,8 @@ public class ChampionshipsAdminController(
 
         return operation switch
         {
-            "approve" => Run(async () => flagStore.Delete(await identityService.ApproveAsync(teamId, Me, cancellationToken)), null, back),
-            "refuse" => Run(async () => flagStore.Delete(await identityService.RejectAsync(teamId, reason, Me, cancellationToken)), null, back),
+            "approve" => Run(async () => flagService.Delete(id, await identityService.ApproveAsync(teamId, Me, cancellationToken)), null, back),
+            "refuse" => Run(async () => flagService.Delete(id, await identityService.RejectAsync(teamId, reason, Me, cancellationToken)), null, back),
             _ => Task.FromResult<IActionResult>(NotFound())
         };
     }
@@ -245,16 +243,16 @@ public class ChampionshipsAdminController(
         return await Run(async () =>
         {
             await teamService.DeleteTeamAsync(teamId, Me, cancellationToken);
-            flagStore.Delete(files);
+            flagService.Delete(id, files);
         }, null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
     }
 
     [HttpPost("{id:int}/teams/{teamId:int}/members")]
-    public Task<IActionResult> AddMember(int id, int teamId, string? player, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddMember(int id, int teamId, string? player, CancellationToken cancellationToken)
     {
-        var communityId = SteamIdParser.Parse(player);
+        var back = Address(id, AppConsts.ChampionshipAdminTeamsTab);
 
-        return Run(() => communityId == null ? throw new ChampionshipException(AppConsts.InvalidSteamIdMessage) : teamService.AddMemberAsync(teamId, communityId.Value, Me, cancellationToken), null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
+        return TryParseSteamId(player, out var communityId) ? await Run(() => teamService.AddMemberAsync(teamId, communityId, Me, cancellationToken), null, back) : Redirect(back);
     }
 
     [HttpPost("{id:int}/teams/{teamId:int}/members/{communityId:long}/remove")]
@@ -416,29 +414,15 @@ public class ChampionshipsAdminController(
         };
     }
 
-    private async Task<IActionResult> Run(Func<Task> action, string? returnUrl, string fallback)
+    private Task<IActionResult> Run(Func<Task> action, string? returnUrl, string fallback)
     {
-        try
-        {
-            await action();
-            Saved();
-        }
-        catch (ChampionshipException exception)
-        {
-            Error(exception.Message);
-        }
-
-        return Back(returnUrl, fallback);
+        return RunAsync<ChampionshipException>(action, () => Back(returnUrl, fallback));
     }
 
-    private static DateTime? Date(string? value)
-    {
-        return DateTime.TryParseExact(value, AppConsts.ChampionshipDateOnlyFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : null;
-    }
 
     private static string Address(int id, string? tab = null)
     {
-        var url = $"{AppConsts.AdminChampionshipsUrl}/{id}";
+        var url = ChampionshipUrls.Admin(id);
 
         return tab == null ? url : AdminTabs.Url(url, tab);
     }

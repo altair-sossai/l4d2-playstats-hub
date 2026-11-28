@@ -11,4 +11,14 @@ public static class SiteTime
     {
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone);
     }
+
+    public static DateTime ToUtc(DateTime siteTime, TimeZoneInfo timeZone)
+    {
+        var local = DateTime.SpecifyKind(siteTime, DateTimeKind.Unspecified);
+
+        while (timeZone.IsInvalidTime(local))
+            local = local.AddMinutes(AppConsts.SiteTimeGapStepInMinutes);
+
+        return TimeZoneInfo.ConvertTimeToUtc(local, timeZone);
+    }
 }

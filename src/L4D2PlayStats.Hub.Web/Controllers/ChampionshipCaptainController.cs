@@ -2,13 +2,14 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
-using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
+using L4D2PlayStats.Hub.Web.Models;
 using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -29,20 +30,20 @@ public class ChampionshipCaptainController(
     IChampionshipDraftService draftService,
     IChampionshipSeriesService seriesService,
     IChampionshipScheduleService scheduleService,
-    ChampionshipFlagStore flagStore,
+    IChampionshipFlagService flagService,
     ISiteClock siteClock,
     IClock clock,
-    ICurrentUser currentUser) : Controller
+    ICurrentUser currentUser) : HubControllerBase
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Championships = "active";
+        ViewBag.Championships = AppConsts.ActiveMenu;
 
         base.OnActionExecuting(context);
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> Index(string slug, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string slug, int freePage = 1, CancellationToken cancellationToken = default)
     {
         var (championship, team) = await FindAsync(slug, cancellationToken);
 
@@ -56,44 +57,27 @@ public class ChampionshipCaptainController(
             Page = page,
             Team = team,
             Captain = team.CaptainCommunityId == Me,
-            Tasks = CaptainTasks.Of(championship, team, clock.UtcNow)
+            Tasks = CaptainTasks.Of(championship, team, clock.UtcNow),
+            Free = new PagedListModel<long>(ChampionshipDraftService.Free(championship).OrderByDescending(id => page.Hours(id) ?? -1).ToList(), freePage, AppConsts.ChampionshipFreePageSize)
         });
     }
 
     [HttpPost("identity")]
     public async Task<IActionResult> Identity(string slug, string? name, string? tag, IFormFile? flag, CancellationToken cancellationToken)
     {
-        return await Act(slug, AppConsts.ChampionshipCaptainTeamTab, async team =>
-        {
-            string? saved = null;
-
-            if (flag is { Length: > 0 })
-                saved = await flagStore.SaveAsync(flag, cancellationToken);
-
-            try
-            {
-                flagStore.Delete(await identityService.ProposeAsync(team.Id, Me, name, tag, saved, cancellationToken));
-            }
-            catch (ChampionshipException)
-            {
-                if (saved != null)
-                    flagStore.Delete([saved]);
-
-                throw;
-            }
-        });
+        return await Act(slug, AppConsts.ChampionshipCaptainTeamTab, team => flagService.ApplyAsync(team.ChampionshipId, flag, saved => identityService.ProposeAsync(team.Id, Me, name, tag, saved, cancellationToken), cancellationToken));
     }
 
     [HttpPost("identity/cancel")]
     public Task<IActionResult> CancelIdentity(string slug, CancellationToken cancellationToken)
     {
-        return Act(slug, AppConsts.ChampionshipCaptainTeamTab, async team => flagStore.Delete(await identityService.CancelAsync(team.Id, Me, cancellationToken)));
+        return Act(slug, AppConsts.ChampionshipCaptainTeamTab, async team => flagService.Delete(team.ChampionshipId, await identityService.CancelAsync(team.Id, Me, cancellationToken)));
     }
 
     [HttpPost("flag/remove")]
     public Task<IActionResult> RemoveFlag(string slug, CancellationToken cancellationToken)
     {
-        return Act(slug, AppConsts.ChampionshipCaptainTeamTab, async team => flagStore.Delete(await identityService.RemoveFlagAsync(team.Id, Me, true, cancellationToken)));
+        return Act(slug, AppConsts.ChampionshipCaptainTeamTab, async team => flagService.Delete(team.ChampionshipId, await identityService.RemoveFlagAsync(team.Id, Me, true, cancellationToken)));
     }
 
     [HttpPost("vice")]
@@ -161,16 +145,6 @@ public class ChampionshipCaptainController(
         if (championship == null || team == null)
             return NotFound();
 
-        try
-        {
-            await action(team);
-            TempData[AppConsts.SavedTempData] = true;
-        }
-        catch (ChampionshipException exception)
-        {
-            TempData[AppConsts.ErrorTempData] = exception.Message;
-        }
-
-        return Redirect(AdminTabs.Url($"{AppConsts.ChampionshipsUrl}/{championship.Slug}/{AppConsts.ChampionshipCaptainPath}", tab));
+        return await RunAsync<ChampionshipException>(() => action(team), () => Redirect(AdminTabs.Url(ChampionshipUrls.Captain(championship.Slug), tab)));
     }
 }

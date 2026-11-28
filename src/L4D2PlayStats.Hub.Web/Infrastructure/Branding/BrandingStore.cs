@@ -1,3 +1,5 @@
+using L4D2PlayStats.Hub.Web.Helpers;
+
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 
 public class BrandingStore(HubPaths paths)
@@ -28,12 +30,7 @@ public class BrandingStore(HubPaths paths)
 
     public long LogoVersion => LogoPath == null ? 0 : File.GetLastWriteTimeUtc(LogoPath).Ticks;
 
-    public string? LogoContentType => LogoPath == null ? null : AppConsts.LogoContentTypes.GetValueOrDefault(Path.GetExtension(LogoPath).ToLowerInvariant());
-
-    public static bool IsSupported(string? fileName)
-    {
-        return !string.IsNullOrEmpty(fileName) && AppConsts.LogoContentTypes.ContainsKey(Path.GetExtension(fileName).ToLowerInvariant());
-    }
+    public string? LogoContentType => ImageUploads.ContentType(LogoPath);
 
     public async Task SaveLogoAsync(Stream content, string fileName, CancellationToken cancellationToken)
     {
@@ -77,6 +74,6 @@ public class BrandingStore(HubPaths paths)
 
         return Directory
             .EnumerateFiles(_directory, $"{AppConsts.LogoFile}.*")
-            .FirstOrDefault(file => AppConsts.LogoContentTypes.ContainsKey(Path.GetExtension(file).ToLowerInvariant()));
+            .FirstOrDefault(ImageUploads.IsSupported);
     }
 }

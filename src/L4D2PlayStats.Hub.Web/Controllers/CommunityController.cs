@@ -35,7 +35,7 @@ public class CommunityController(
     ISiteClock siteClock,
     IStringLocalizer<SharedResource> localizer,
     ICurrentUser currentUser,
-    IPatentService patentService) : Controller
+    IPatentService patentService) : HubControllerBase
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -140,7 +140,7 @@ public class CommunityController(
             return PartialView("_Ballot", await ModelAsync(refusal, cancellationToken));
 
         if (refusal != null)
-            TempData[AppConsts.ErrorTempData] = refusal;
+            Error(refusal);
 
         return Redirect(AppConsts.CommunityVotePage);
     }

@@ -1,7 +1,7 @@
 @model ChampionshipPageModel
 @{
     ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Games"].Value} - {Model.Championship.Name}", Description = L["Games and results of {0}.", Model.Championship.Name] };
-    var url = $"{AppConsts.ChampionshipsUrl}/{Model.Championship.Slug}";
+    var url = ChampionshipUrls.Page(Model.Championship.Slug);
 }
 
 @section Styles {

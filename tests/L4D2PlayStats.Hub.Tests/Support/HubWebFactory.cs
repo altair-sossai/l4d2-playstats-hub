@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Modules.Administrators.Services.Contracts;
@@ -17,11 +18,12 @@ using Microsoft.Extensions.Hosting;
 
 namespace L4D2PlayStats.Hub.Tests.Support;
 
-public class HubWebFactory : WebApplicationFactory<Program>
+public partial class HubWebFactory : WebApplicationFactory<Program>
 {
     public const long Administrator = 76561198000000100;
     public const long Player = 76561198000000200;
     public const string UserHeader = "X-Test-User";
+    public const string TokenField = "__RequestVerificationToken";
     public const string NamelessHeader = "X-Test-Nameless";
 
     private readonly TestDatabase _database = new();
@@ -132,13 +134,41 @@ public class HubWebFactory : WebApplicationFactory<Program>
         return serverClient.PostAsJsonAsync("/api/statistics", new { fileName = builder.FileName, content = builder.Content });
     }
 
+    public static string Token(string html)
+    {
+        return TokenPattern().Match(html).Groups[1].Value;
+    }
+
+    public static async Task<string> TokenAsync(HttpClient client, string page)
+    {
+        return Token(await client.GetStringAsync(page));
+    }
+
     public static async Task<HttpResponseMessage> PostFormAsync(HttpClient client, string formPage, string action, Dictionary<string, string> fields)
     {
-        var html = await client.GetStringAsync(formPage);
-        var match = Regex.Match(html, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"");
-
-        var form = new Dictionary<string, string>(fields) { ["__RequestVerificationToken"] = match.Groups[1].Value };
+        var form = new Dictionary<string, string>(fields) { [TokenField] = await TokenAsync(client, formPage) };
 
         return await client.PostAsync(action, new FormUrlEncodedContent(form));
     }
+
+    public static async Task<HttpResponseMessage> PostMultipartAsync(HttpClient client, string formPage, string action, IEnumerable<(string Name, string Value)> fields, params (string Field, string FileName, byte[] Content)[] files)
+    {
+        using var content = new MultipartFormDataContent { { new StringContent(await TokenAsync(client, formPage)), TokenField } };
+
+        foreach (var (name, value) in fields)
+            content.Add(new StringContent(value), name);
+
+        foreach (var (field, fileName, bytes) in files)
+        {
+            var part = new ByteArrayContent(bytes);
+
+            part.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            content.Add(part, field, fileName);
+        }
+
+        return await client.PostAsync(action, content);
+    }
+
+    [GeneratedRegex("name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"")]
+    private static partial Regex TokenPattern();
 }

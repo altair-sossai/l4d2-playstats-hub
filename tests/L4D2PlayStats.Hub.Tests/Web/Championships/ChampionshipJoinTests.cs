@@ -5,8 +5,8 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
-using L4D2PlayStats.Hub.Core.Modules.Settings.Models;
 using L4D2PlayStats.Hub.Tests.Support;
+using L4D2PlayStats.Hub.Tests.Support.Championships;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +20,7 @@ public class ChampionshipJoinTests
     [TestMethod]
     public async Task APlayerAsksToJoinAndTheAdministrationApprovesTheRequest()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var player = factory.Client(HubWebFactory.Player);
         using var visitor = factory.Client();
@@ -65,7 +65,7 @@ public class ChampionshipJoinTests
     [TestMethod]
     public async Task ARefusedPlayerSeesItAndCannotAskAgainButTheAdministrationCanStillApprove()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var player = factory.Client(HubWebFactory.Player);
 
@@ -92,7 +92,7 @@ public class ChampionshipJoinTests
     [TestMethod]
     public async Task APlayerCancelsAPendingRequestAndCanAskAgain()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var player = factory.Client(HubWebFactory.Player);
 
@@ -116,7 +116,7 @@ public class ChampionshipJoinTests
     [TestMethod]
     public async Task RequestsAreClosedWhenTheSettingIsOffTheStatusIsNotParticipantsOrThePlacesAreTaken()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
         using var player = factory.Client(HubWebFactory.Player);
 
@@ -147,7 +147,7 @@ public class ChampionshipJoinTests
     [TestMethod]
     public async Task DeletingTheChampionshipDeletesItsRequests()
     {
-        using var factory = await FactoryAsync();
+        using var factory = await ChampionshipWeb.FactoryAsync();
         using var admin = factory.Client(HubWebFactory.Administrator);
 
         var (id, _) = await CreateAsync(factory, admin, "Copa Some", true);
@@ -156,16 +156,6 @@ public class ChampionshipJoinTests
         await HubWebFactory.PostFormAsync(admin, "/admin/championships", $"/admin/championships/{id}/delete", []);
 
         Assert.AreEqual(0, await factory.RunAsync(services => services.GetRequiredService<HubDbContext>().ChampionshipJoinRequests.CountAsync()));
-    }
-
-    private static async Task<HubWebFactory> FactoryAsync()
-    {
-        var factory = new HubWebFactory();
-
-        await factory.CompleteSetupAsync();
-        await factory.SaveAsync(new ModuleSettings { Ranking = true, LiveServer = true, Championships = true });
-
-        return factory;
     }
 
     private static async Task<(int Id, string Url)> CreateAsync(HubWebFactory factory, HttpClient admin, string name, bool requests, int? places = null)

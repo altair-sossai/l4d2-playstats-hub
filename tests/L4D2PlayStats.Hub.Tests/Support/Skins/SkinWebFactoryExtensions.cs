@@ -14,8 +14,6 @@ namespace L4D2PlayStats.Hub.Tests.Support.Skins;
 public static class SkinWebFactoryExtensions
 {
     private const string TokenHeader = "RequestVerificationToken";
-    private const string TokenPattern = "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"";
-
     public static async Task StartSkinShopAsync(this HubWebFactory factory, bool importCatalog = true)
     {
         await factory.CompleteSetupAsync();
@@ -62,26 +60,24 @@ public static class SkinWebFactoryExtensions
 
     public static async Task<HttpResponseMessage> PostJsonAsync(HttpClient client, string tokenPage, string action, object? body = null)
     {
-        var html = await client.GetStringAsync(tokenPage);
-        var match = Regex.Match(html, TokenPattern);
+        var token = await HubWebFactory.TokenAsync(client, tokenPage);
         var request = new HttpRequestMessage(HttpMethod.Post, action) { Content = JsonContent.Create(body ?? new { }) };
 
-        request.Headers.Add(TokenHeader, match.Groups[1].Value);
+        request.Headers.Add(TokenHeader, token);
 
         return await client.SendAsync(request);
     }
 
     public static async Task<HttpResponseMessage> PostFileAsync(HttpClient client, string formPage, string action, string fileName, string content)
     {
-        var html = await client.GetStringAsync(formPage);
-        var match = Regex.Match(html, TokenPattern);
+        var token = await HubWebFactory.TokenAsync(client, formPage);
         var file = new ByteArrayContent(Encoding.UTF8.GetBytes(content));
 
         file.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
         var form = new MultipartFormDataContent
         {
-            { new StringContent(match.Groups[1].Value), "__RequestVerificationToken" },
+            { new StringContent(token), HubWebFactory.TokenField },
             { file, "file", fileName }
         };
 

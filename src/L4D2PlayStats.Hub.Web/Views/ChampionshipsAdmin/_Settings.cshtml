@@ -4,8 +4,8 @@
     var championship = Model.Championship;
     var imageTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
     var imageMegabytes = AppConsts.ChampionshipImageMaxBytes / AppConsts.BytesPerMegabyte;
-    var bannerUrl = ChampionshipImageUrls.Of(championship.Id, championship.BannerImage);
-    var logoUrl = ChampionshipImageUrls.Of(championship.Id, championship.LogoImage);
+    var bannerUrl = ChampionshipUrls.Image(championship.Id, championship.BannerImage);
+    var logoUrl = ChampionshipUrls.Image(championship.Id, championship.LogoImage);
     var gallery = championship.Gallery;
 }
 
@@ -187,7 +187,7 @@
                             @foreach (var image in gallery)
                             {
                                 <label class="championship-image-thumb" title="@L["Remove this image"]">
-                                    <img src="@ChampionshipImageUrls.Of(championship.Id, image)" alt="">
+                                    <img src="@ChampionshipUrls.Image(championship.Id, image)" alt="">
                                     <span class="checkbox-inline"><input type="checkbox" name="RemoveGallery" value="@image"> @L["Remove"]</span>
                                 </label>
                             }

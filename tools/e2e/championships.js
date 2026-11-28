@@ -887,7 +887,7 @@ function championshipChecks(context) {
 
                 await as(browser, null);
                 await browser.open(`/championships/${slug}/teams`);
-                expect(await browser.eval(`document.body.innerText.includes('Lobos E2E') && !!document.querySelector('.championship-team img.championship-flag')`), 'The approved name and flag are not on the teams page');
+                expect(await browser.eval(`document.body.innerText.includes('Lobos E2E') && !!document.querySelector('.championship-team img.team-flag')`), 'The approved name and flag are not on the teams page');
                 await shot(browser, context, `championship-${slug}-teams`);
 
                 await as(browser, admin);

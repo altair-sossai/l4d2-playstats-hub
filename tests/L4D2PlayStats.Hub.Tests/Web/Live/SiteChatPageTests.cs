@@ -140,7 +140,7 @@ public class SiteChatPageTests
         await factory.CreateServerAsync();
 
         var before = await client.GetStringAsync(LivePage);
-        var token = Regex.Match(before, "name=\"__RequestVerificationToken\" type=\"hidden\" value=\"([^\"]+)\"").Groups[1].Value;
+        var token = HubWebFactory.Token(before);
 
         await factory.EnableAsync(true, false);
 

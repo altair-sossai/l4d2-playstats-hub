@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using L4D2PlayStats.Hub.Web.Helpers;
 
 namespace L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 
@@ -7,19 +8,9 @@ public partial class ChampionshipImageStore(HubPaths paths)
 {
     private readonly string _directory = Path.Combine(paths.Branding, AppConsts.ChampionshipImagesFolder);
 
-    public static bool IsSupported(string? fileName)
-    {
-        return BrandingStore.IsSupported(fileName);
-    }
-
-    public static string? ContentType(string? fileName)
-    {
-        return string.IsNullOrEmpty(fileName) ? null : AppConsts.LogoContentTypes.GetValueOrDefault(Path.GetExtension(fileName).ToLowerInvariant());
-    }
-
     public static bool IsValidName(string? fileName)
     {
-        return !string.IsNullOrEmpty(fileName) && FileName().IsMatch(fileName) && ContentType(fileName) != null;
+        return !string.IsNullOrEmpty(fileName) && FileName().IsMatch(fileName) && ImageUploads.IsSupported(fileName);
     }
 
     public static bool IsValidKind(string kind)

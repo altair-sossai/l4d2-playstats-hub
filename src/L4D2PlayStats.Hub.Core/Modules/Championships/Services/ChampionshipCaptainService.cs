@@ -37,8 +37,7 @@ public class ChampionshipCaptainService(HubDbContext dbContext, IClock clock, IC
 
     public async Task SetViceAsync(int teamId, long captain, long? viceCaptain, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadByTeamAsync(teamId, cancellationToken) ?? throw new ChampionshipException("The team was not found.");
-        var team = championship.Teams.First(item => item.Id == teamId);
+        var (championship, team) = await loader.TeamAsync(teamId, cancellationToken);
 
         if (team.CaptainCommunityId != captain)
             throw new ChampionshipException("Only the captain chooses the vice-captain.");

@@ -11,9 +11,7 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
 {
     public async Task<ChampionshipDateProposal> ProposeAsync(int seriesId, DateTime dateUtc, long communityId, CancellationToken cancellationToken = default)
     {
-        var championship = await loader.LoadBySeriesAsync(seriesId, cancellationToken) ?? throw new ChampionshipException("The series was not found.");
-        var stage = championship.Stages.First(item => item.Series.Any(series => series.Id == seriesId));
-        var series = stage.Series.First(item => item.Id == seriesId);
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
         var team = ChampionshipSeriesService.Leader(championship, series, communityId);
 
         ChampionshipSeriesService.Open(championship, series);
@@ -45,9 +43,7 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
     public async Task AnswerAsync(int proposalId, bool accept, long communityId, CancellationToken cancellationToken = default)
     {
         var seriesId = await SeriesOf(proposalId, cancellationToken);
-        var championship = await loader.LoadBySeriesAsync(seriesId, cancellationToken) ?? throw new ChampionshipException("The series was not found.");
-        var stage = championship.Stages.First(item => item.Series.Any(series => series.Id == seriesId));
-        var series = stage.Series.First(item => item.Id == seriesId);
+        var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
         var proposal = series.Proposals.First(item => item.Id == proposalId);
         var team = ChampionshipSeriesService.Leader(championship, series, communityId);
 
@@ -76,8 +72,7 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
     public async Task DeleteAsync(int proposalId, long communityId, bool administrator, CancellationToken cancellationToken = default)
     {
         var seriesId = await SeriesOf(proposalId, cancellationToken);
-        var championship = await loader.LoadBySeriesAsync(seriesId, cancellationToken) ?? throw new ChampionshipException("The series was not found.");
-        var series = championship.Stages.SelectMany(stage => stage.Series).First(item => item.Id == seriesId);
+        var (championship, _, series) = await loader.SeriesAsync(seriesId, cancellationToken);
         var proposal = series.Proposals.First(item => item.Id == proposalId);
 
         if (!administrator)

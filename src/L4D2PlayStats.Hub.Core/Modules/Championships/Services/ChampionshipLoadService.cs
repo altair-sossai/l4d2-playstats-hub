@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,30 @@ public class ChampionshipLoadService(HubDbContext dbContext) : IChampionshipLoad
         var seriesId = await dbContext.ChampionshipGames.AsNoTracking().Where(game => game.Id == gameId).Select(game => (int?)game.SeriesId).FirstOrDefaultAsync(cancellationToken);
 
         return seriesId == null ? null : await LoadBySeriesAsync(seriesId.Value, cancellationToken);
+    }
+
+    public async Task<(Championship Championship, ChampionshipTeam Team)> TeamAsync(int teamId, CancellationToken cancellationToken = default)
+    {
+        var championship = await LoadByTeamAsync(teamId, cancellationToken) ?? throw new ChampionshipException("The team was not found.");
+
+        return (championship, championship.Teams.First(team => team.Id == teamId));
+    }
+
+    public async Task<(Championship Championship, ChampionshipStage Stage, ChampionshipSeries Series)> SeriesAsync(int seriesId, CancellationToken cancellationToken = default)
+    {
+        var championship = await LoadBySeriesAsync(seriesId, cancellationToken) ?? throw new ChampionshipException("The series was not found.");
+        var stage = championship.Stages.First(item => item.Series.Any(series => series.Id == seriesId));
+
+        return (championship, stage, stage.Series.First(series => series.Id == seriesId));
+    }
+
+    public async Task<(Championship Championship, ChampionshipStage Stage, ChampionshipSeries Series, ChampionshipGame Game)> GameAsync(int gameId, CancellationToken cancellationToken = default)
+    {
+        var championship = await LoadByGameAsync(gameId, cancellationToken) ?? throw new ChampionshipException("The game was not found.");
+        var stage = championship.Stages.First(item => item.Series.Any(series => series.Games.Any(game => game.Id == gameId)));
+        var series = stage.Series.First(item => item.Games.Any(game => game.Id == gameId));
+
+        return (championship, stage, series, series.Games.First(game => game.Id == gameId));
     }
 
     public async Task<List<ChampionshipCampaignOption>> CampaignsAsync(CancellationToken cancellationToken = default)

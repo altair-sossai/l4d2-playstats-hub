@@ -187,12 +187,12 @@
                             <div class="championship-next-teams">
                                 <div class="championship-next-team">
                                     <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamAId ?? 0)">@ChampionshipBadges.Initials(teamA?.Name, teamA?.Tag)</span>
-                                    <strong>@Model.TeamName(next.TeamAId)</strong>
+                                    <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)next.TeamAId))</strong>
                                 </div>
                                 <span class="championship-next-vs">@L["vs"]</span>
                                 <div class="championship-next-team">
                                     <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamBId ?? 0)">@ChampionshipBadges.Initials(teamB?.Name, teamB?.Tag)</span>
-                                    <strong>@Model.TeamName(next.TeamBId)</strong>
+                                    <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)next.TeamBId))</strong>
                                 </div>
                             </div>
                             <div class="championship-countdown" data-countdown="@DateTime.SpecifyKind(next.ScheduledAtUtc!.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture)" role="timer">
@@ -270,8 +270,7 @@
                         @foreach (var (leader, title, label) in leaders)
                         {
                             <li>
-                                <img src="@AppConsts.AvatarUrl@leader" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                                <a href="@AppConsts.PlayerUrlPrefix@leader">@DisplayNames.Apply(leader!.Value, Model.PlayerName(leader.Value))</a>
+                                @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(leader!.Value, DisplayNames.Apply(leader!.Value, Model.PlayerName(leader.Value))))
                                 <span class="label @label">@title</span>
                             </li>
                         }
@@ -377,20 +376,20 @@
                     <div class="podium-place second">
                         <div class="podium-medal">🥈</div>
                         <small>@L["Runner-up"]</small>
-                        <strong>@Model.TeamName(podium.RunnerUp)</strong>
+                        <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)podium.RunnerUp))</strong>
                     </div>
                 }
                 <div class="podium-place first">
                     <div class="podium-medal">🏆</div>
                     <small>@L["Champion"]</small>
-                    <strong>@Model.TeamName(podium.Champion)</strong>
+                    <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)podium.Champion))</strong>
                 </div>
                 @if (podium.Third != null)
                 {
                     <div class="podium-place third">
                         <div class="podium-medal">🥉</div>
                         <small>@L["Third place"]</small>
-                        <strong>@Model.TeamName(podium.Third)</strong>
+                        <strong>@await Html.PartialAsync("_ChampionshipTeamName", (Model, (int?)podium.Third))</strong>
                     </div>
                 }
             </div>

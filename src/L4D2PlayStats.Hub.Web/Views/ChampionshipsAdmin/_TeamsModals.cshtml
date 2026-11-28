@@ -119,7 +119,7 @@
                     <div class="championship-flag-field">
                         @if (team.Flag != null)
                         {
-                            <img src="@ChampionshipFlags.Url(team)" alt="@L["Flag"]" class="championship-flag championship-flag-lg"/>
+                            <img src="@ChampionshipUrls.Flag(team)" alt="@L["Flag"]" class="team-flag team-flag-xl"/>
                         }
                         <div class="form-group" style="margin-bottom: 0">
                             <label for="team-flag-@team.Id">@L["Flag"] @FieldHelp.Tip(L["A square image, ideally 1024 × 1024 pixels: PNG, JPG, WEBP or GIF, up to 2 MB. A flag chosen here is shown at once."])</label>
@@ -188,14 +188,14 @@
                                     <td>
                                         @if (team.Flag != null)
                                         {
-                                            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-review-flag"/>
+                                            <img src="@ChampionshipUrls.Flag(team)" alt="" class="championship-review-flag"/>
                                         }
                                         else
                                         {
                                             <span class="text-muted">—</span>
                                         }
                                     </td>
-                                    <td class="warning"><a href="@ChampionshipFlags.PendingUrl(team)" target="_blank"><img src="@ChampionshipFlags.PendingUrl(team)" alt="" class="championship-review-flag"/></a></td>
+                                    <td class="warning"><a href="@ChampionshipUrls.PendingFlag(team)" target="_blank"><img src="@ChampionshipUrls.PendingFlag(team)" alt="" class="championship-review-flag"/></a></td>
                                 </tr>
                             }
                             </tbody>
@@ -243,8 +243,7 @@
                             {
                                 <tr>
                                     <td class="vertical-align-middle">
-                                        <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
-                                        @DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))
+                                        @await Html.PartialAsync("_PlayerChip", new PlayerChipModel(member.CommunityId, DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId)), false))
                                         @if (member.CommunityId == team.CaptainCommunityId)
                                         {
                                             <span class="label label-warning">@L["Captain"]</span>
