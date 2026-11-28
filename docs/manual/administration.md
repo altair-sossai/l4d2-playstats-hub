@@ -8,10 +8,11 @@ This page covers the overview, the game servers, the modules, the settings, the 
 
 | Menu item | Explained in |
 |---|---|
+| Patents | [Patents](patents.md) |
 | Game modes, Campaigns | [Game modes and campaigns](game-modes-and-campaigns.md) |
 | Purchases, Prices, Catalog, Shop settings | [Weapon skin shop > For administrators](skin-shop.md#for-administrators) |
 | Community ranking | [Community ranking > For administrators](community-ranking.md#for-administrators) |
-| Chat bans, Remote commands, Player connections | [Moderation](moderation.md) |
+| Chat bans, Remote commands, Player connections, Forced names | [Moderation](moderation.md) |
 | Anti-Cheat settings | [Anti-Cheat > For administrators](anti-cheat.md#for-administrators) |
 | Championships | [Championships > For administrators](championships.md#for-administrators) |
 | Bans | [Bans > For administrators](bans.md#for-administrators) |
@@ -37,8 +38,8 @@ Every administration page has the same menu on the left, with the page you are o
 | Group | Pages |
 |---|---|
 | Site | Overview, Settings, Modules, Administrators, Backup |
-| Game servers | Game servers, Remote commands, Player connections, Bans, Chat bans |
-| Ranking | Game modes, Campaigns, Community ranking |
+| Game servers | Game servers, Remote commands, Player connections, Forced names, Bans, Chat bans |
+| Ranking | Game modes, Campaigns, Patents, Community ranking |
 | Championships | Championships |
 | Skin shop | Purchases, Prices, Catalog, Shop settings |
 | Anti-Cheat | Anti-Cheat settings |
@@ -95,7 +96,7 @@ The identifier is made from the name when the server is created and never change
 
 ![The modules](../images/en/admin-modules.webp)
 
-The core is always on: game server registration, statistics upload, Steam sign-in and the administration area. Everything else is a module. A module that is off disappears from the menu, and its pages and its API answer as not found. Turning a module off deletes nothing; its data comes back when it is turned on again.
+The core is always on: game server registration, statistics upload, Steam sign-in and the administration area. Everything else is a module. A module that is off disappears from the menu, and its pages and its API answer as not found. Turning a module off deletes nothing; its data comes back when it is turned on again. The [modules guide](../modules.md) shows what each module does, with screenshots.
 
 | Module | What it contains | Needs | Default | When it is off |
 |---|---|---|---|---|

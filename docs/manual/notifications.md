@@ -15,6 +15,8 @@ The site tells each signed-in player what happened that concerns them: a champio
 
 ## The bell
 
+![The bell, with the latest notifications](../images/en/notifications-bell.webp)
+
 A signed-in player sees a bell in the top bar, next to the photo. A red number on the bell counts the notifications not read yet. Visitors who are not signed in do not see the bell.
 
 A click on the bell opens the 8 newest notifications. The unread ones are in bold with a red mark on the left. A click on one opens its page, for example the page of the championship or the captain area, and marks it as read.
@@ -27,6 +29,8 @@ At the bottom of the list:
 | Mark all as read | Asks for confirmation, then marks every notification as read. The number on the bell goes back to zero. |
 
 ## The notifications page
+
+![The notifications page](../images/en/notifications.webp)
 
 **See all** opens `/notifications`, the full list from the newest to the oldest, 20 per page. The unread ones have a red **New** label. **Open** goes to the page of the notification and marks it as read. **Mark all as read** at the top does the same as the link in the bell.
 

@@ -22,9 +22,15 @@ O módulo vem desligado em um site novo. Ligue **Banimentos** em **Administraç�
 
 ## Para jogadores
 
+![A lista pública de banimentos](../images/pt/bans.webp)
+
 **Mais → Banimentos** abre `/bans`, a lista dos jogadores banidos agora: o jogador, o motivo, o dia do banimento, quando termina (ou **Permanente**) e quem baniu. A busca encontra um banimento por nome, Steam ID ou motivo. Banimentos encerrados não aparecem nessa lista. No celular cada linha mostra a foto, o nome e o botão **Detalhes**, que abre uma janela com tudo.
 
+![A lista pública de banimentos no celular](../images/pt/phone-bans.webp)
+
 A página de um jogador banido começa com um aviso vermelho: "*Nome* está banido dos servidores até *data*", ou "permanentemente", com o motivo e um link para a lista.
+
+![O aviso na página de um jogador banido](../images/pt/player-ban.webp)
 
 Um jogador banido que tenta entrar em um servidor é expulso com o motivo e o fim do banimento, no idioma do jogo. Não há como contestar um banimento pelo site.
 
@@ -33,6 +39,8 @@ Um jogador conectado ao site é avisado no sino quando é banido e quando o bani
 Os endereços IP, as contas relacionadas e os alertas nunca aparecem para o público: só os administradores os veem.
 
 ## Para administradores
+
+![Os banimentos na área de administração](../images/pt/admin-bans.webp)
 
 **Administração → Banimentos** (`/admin/bans`) tem três abas:
 
@@ -50,6 +58,8 @@ A busca no topo filtra as abas Ativos e Encerrados por nome, Steam ID ou motivo.
 | **Editar** | Muda o fim e o motivo de um banimento ativo. |
 | **Desbanir** | Retira o banimento na hora. O motivo que você escrever fica no histórico e só os administradores o veem. |
 | **Importar** | Lê um arquivo `banned_user.cfg`. Veja [Importando o banned_user.cfg](#importando-o-banned_usercfg). |
+
+![Banindo um jogador](../images/pt/admin-bans-add.webp)
 
 Toda alteração pede confirmação. Com o [módulo do servidor ao vivo](live-server.pt.md) ligado, um banimento, uma alteração ou um desbanimento feito no site chega aos servidores em poucos segundos: um jogador banido que está jogando é expulso, e um jogador desbanido sai da lista de banimentos do servidor. Sem esse módulo, a alteração vale na próxima vez que o jogador se conectar.
 
@@ -76,6 +86,8 @@ Quando um jogador se conecta, o plugin consulta o site sobre aquele jogador, uma
 Se o site não responder, o jogador entra, exceto pelos banimentos que o próprio servidor guarda: os dados naquele servidor e os que ele aprendeu com o site desde que foi iniciado.
 
 ## Contas relacionadas e alertas
+
+![Os alertas de contas relacionadas](../images/pt/admin-bans-alerts.webp)
 
 O site sabe quais contas Steam se conectaram do mesmo endereço IP (veja [Conexões de jogadores](moderation.pt.md)).
 

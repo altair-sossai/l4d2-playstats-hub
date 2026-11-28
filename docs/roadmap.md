@@ -87,7 +87,7 @@ One ASP.NET Core application that is the website, the API for the plugins, the a
 
 ## Modules
 
-The core is always on: game server registration, statistics upload, Steam sign-in and the admin area.
+The core is always on: game server registration, statistics upload, Steam sign-in, notifications and the admin area. The [modules guide](modules.md) shows each module with screenshots.
 
 | Module | Contents | Default |
 |---|---|---|
@@ -99,6 +99,7 @@ The core is always on: game server registration, statistics upload, Steam sign-i
 | Community ranking | Pairwise voting and its ranking. | Off |
 | Anti-Cheat | The page with the Anti-Cheat download and instructions. | Off |
 | Championships | Championships with participants, teams, draft, round robin and knockout stages, dates and results. | Off |
+| Bans | The bans of the game servers, with the public list, the bans given in the game and the alerts of related accounts. | Off |
 
 A module that is off disappears from the menu and its pages answer as not found.
 
@@ -199,16 +200,19 @@ A separate console program, outside this repository, moves the production data o
 | 1. Foundation | Database, settings and modules, Steam sign-in, wizard, game server registration and status. | Done |
 | 2. Statistics and ranking | Upload, match assembly, scoring, punishments, seasons and game mode rules. | Done |
 | 3. Website | Ranking, history, matches, players, patents, Anti-Cheat page, admin area and the in-game pages, in three languages. | Done; every screen of the old site ported and checked item by item |
-| 4. Live server | Live state per server, server picker, site chat, remote commands and chat bans. | Done, not yet seen with a real game server |
-| 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, with the catalog and the thumbnails of the current site; not yet tried on a game server |
-| 6. Plugins | The five plugins with one address and token, heartbeat and connection test. | Compiled, not yet run on a game server |
+| 4. Live server | Live state per server, server picker, site chat, remote commands and chat bans. | Done; in use on l4d2.com.br |
+| 5. Weapon skin shop | Shop, gifts, refunds, catalog import and season refund. | Done, with the catalog and the thumbnails of the current site; in use on l4d2.com.br |
+| 6. Plugins | The six plugins with one address and token, heartbeat and connection test. | Done; the game server of l4d2.com.br has used them since 19 November 2026, and `l4d2_bans` since 28 November 2026 |
 | 7. Community ranking | Voting page, rating, limits and admin page. | Done |
 | 8. Deployment | Linux installer, Docker image, release workflow and guides. | Done; published since v0.1.1, installer and image tried from the published version; scheduled backup to Azure Storage from v0.9.0 |
 | 9. Migration | Import of the production data, switch of the production site, archiving of the old repositories. | Production data imported and l4d2.com.br switched to the new site on 19 November 2026 ([Switching from the old site](switch-from-old-site.md)); l4d2-playstats-api and l4d2-playstats-web archived on 22 November 2026, pointing to this repository |
+| 10. Championships | Participants and requests to join, teams and draft, round robin and knockout stages, captain area, dates, campaigns, results linked to the matches of the server, public pages. | Done |
+| 11. Notifications | The bell, the notifications page and the notifications sent by the other modules. | Done |
+| 12. Bans | The public list, the administration, the `l4d2_bans` plugin, the related accounts and the import of `banned_user.cfg`. | Done |
 
 ## Open questions
 
-- **Plugins on a live server.** They compile, and the site accepts what they send, but they have not been run in a real match.
+- **Plugins on a live server.** Resolved: the game server of l4d2.com.br, based on L4D2 Competitive Rework on Linux, has used them since 19 November 2026. Other setups, such as a Windows game server, were not tried.
 - **HTTPS inside the game.** Not measured. See [in-game-browser.md](in-game-browser.md#not-measured-yet).
 - **Assets repository.** Resolved: the catalog and the 196 thumbnails of the current site come with the hub, as in the old site, and the photos are read from `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` by default.
 - **Patent icons in game.** Resolved: the sprites used by `l4d2_show_patent_icon` come in the plugins package (`materials/sprites`); players still download them through the FastDL.

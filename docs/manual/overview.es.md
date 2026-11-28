@@ -2,7 +2,7 @@
 
 🌐 [English](overview.md) | [Português](overview.pt.md) | **Español**
 
-L4D2 PlayStats Hub es un sitio web para una comunidad competitiva de Left 4 Dead 2. Tus servidores de juego envían las estadísticas de cada mapa jugado, y el sitio las convierte en un ranking, un historial de partidas, una página para cada jugador, una vista de la partida en curso y algunos extras: una tienda de skins de armas y un ranking votado por los jugadores.
+L4D2 PlayStats Hub es un sitio web para una comunidad competitiva de Left 4 Dead 2. Tus servidores de juego envían las estadísticas de cada mapa jugado, y el sitio las convierte en un ranking, un historial de partidas, una página para cada jugador, una vista de la partida en curso y más: campeonatos, los baneos de los servidores de juego, una tienda de skins de armas y un ranking votado por los jugadores. La [guía de los módulos](../modules.es.md) lista todas las funciones.
 
 Lo instalas una sola vez, en una máquina que controlas. Es un solo programa y un solo archivo de base de datos. Varios servidores de juego pueden alimentar el mismo sitio.
 
@@ -18,7 +18,7 @@ Lo instalas una sola vez, en una máquina que controlas. Es un solo programa y u
 
 ## Lo que ve un visitante
 
-El menú de arriba de cada página lleva a las funciones. Una función que el administrador desactivó no aparece en el menú.
+El menú de arriba de cada página lleva a las funciones. Una función que el administrador desactivó no aparece en el menú, y los elementos que no caben en el ancho de la ventana pasan a **Más**.
 
 ![El menú del sitio, con Admin para un administrador](../images/es/admin-menu.webp)
 
@@ -27,18 +27,22 @@ El menú de arriba de cada página lleva a las funciones. Una función que el ad
 | Ranking | Los 100 mejores jugadores de la temporada actual. | [Ranking](ranking.es.md) |
 | Comunidad | El ranking votado por los jugadores. | [Ranking de la comunidad](community-ranking.es.md) |
 | Últimas partidas | Todas las partidas, de la más reciente a la más antigua. | [Partidas](matches.es.md) |
+| Campeonatos | Los campeonatos en curso y los terminados. | [Campeonatos](championships.es.md) |
 | Servidor | La partida en curso en tus servidores de juego. | [Servidor en vivo](live-server.es.md) |
 | Skins | La tienda de skins de armas. | [Tienda de skins de armas](skin-shop.es.md) |
 | Anti-Cheat | La página que ofrece el programa Anti-Cheat y le dice a un jugador que inició sesión si debe usarlo. | [Anti-Cheat](anti-cheat.es.md) |
 | Más > Jugadores | Todos los jugadores del período, con una vista general o los totales de cualquier estadística, para cualquier temporada, año o todo el tiempo. | [Jugadores](players.es.md) |
 | Más > Patentes | Los niveles de patente. | [Patentes](patents.es.md) |
+| Más > Baneos | Los jugadores baneados de los servidores de juego ahora. | [Baneos](bans.es.md) |
 | Más > Comandos | Todos los comandos de los servidores de juego, con ejemplos. | [Comandos del servidor de juego](commands.es.md) |
 | Admin | El área de administración, solo para administradores. | [Administración](administration.es.md) |
 | Estrellas | Cuántas estrellas puede gastar en la tienda el jugador que inició sesión. | [Tienda de skins de armas](skin-shop.es.md) |
+| Campana | Lo que ocurrió que le concierne al jugador que inició sesión, con las no leídas contadas. | [Notificaciones](notifications.es.md) |
+| Torre | El área del capitán, para el capitán o vicecapitán de un campeonato. | [Campeonatos > El área del capitán](championships.es.md#el-área-del-capitán) |
 | Avatar | La página del jugador que inició sesión. | [Jugadores](players.es.md) |
 | Configuración (engranaje) | Tema, idioma, iniciar y cerrar sesión. | [Idiomas, temas y teléfonos](languages-and-themes.es.md) |
 
-El inicio de sesión se hace con Steam. Los visitantes no necesitan iniciar sesión para ver el ranking, las partidas o el servidor en vivo. Hay que iniciar sesión para comprar skins, votar en el ranking de la comunidad, usar el chat del sitio y administrar el sitio.
+El inicio de sesión se hace con Steam. Los visitantes no necesitan iniciar sesión para ver el ranking, las partidas o el servidor en vivo. Hay que iniciar sesión para comprar skins, votar en el ranking de la comunidad, usar el chat del sitio, pedir participar en un campeonato y liderar un equipo, recibir notificaciones y administrar el sitio.
 
 ## Cómo encajan las partes
 
@@ -83,9 +87,10 @@ El servidor de juego siempre llama al sitio. El sitio nunca se conecta al servid
 
 | Quién | Puede |
 |---|---|
-| Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda, la página de comandos y la página del Anti-Cheat. |
-| Un jugador que inició sesión | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas) y escribir en el chat del sitio. |
-| Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, cambiar un jugador en una partida, regalar skins, los reembolsos, los baneos del chat y los comandos remotos. |
+| Cualquier visitante | Ver el ranking, las partidas, los jugadores, las patentes, el servidor en vivo, el ranking de la comunidad, el catálogo de la tienda, los campeonatos, los baneos, la página de comandos y la página del Anti-Cheat. |
+| Un jugador que inició sesión | Todo lo anterior, y además: comprar y equipar skins, votar en el ranking de la comunidad (después de suficientes partidas), escribir en el chat del sitio, pedir participar en un campeonato y leer las notificaciones. |
+| Un capitán o vicecapitán | Todo lo anterior, y además el área del capitán: el draft, el nombre, el tag y la bandera del equipo, las fechas, los vetos y las campañas. |
+| Un administrador | Todo lo anterior, y además: el área de administración, los castigos, editar el marcador de un mapa, cambiar un jugador en una partida, regalar skins, los reembolsos, los campeonatos, los baneos, los baneos del chat, los nombres forzados y los comandos remotos. |
 
 El primer administrador es la cuenta de Steam que termina la [configuración inicial](first-run.es.md). Los demás administradores se agregan en [Administración > Administradores](administration.es.md#administradores).
 

@@ -15,6 +15,8 @@ El sitio avisa a cada jugador conectado de lo que pasó y le concierne: un campe
 
 ## La campana
 
+![La campana, con las últimas notificaciones](../images/es/notifications-bell.webp)
+
 Un jugador conectado ve una campana en la barra superior, junto a la foto. Un número rojo en la campana cuenta las notificaciones aún no leídas. Los visitantes que no iniciaron sesión no ven la campana.
 
 Un clic en la campana abre las 8 notificaciones más recientes. Las no leídas están en negrita, con una marca roja a la izquierda. Un clic en una abre su página, por ejemplo la página del campeonato o el área del capitán, y la marca como leída.
@@ -27,6 +29,8 @@ Al final de la lista:
 | Marcar todas como leídas | Pide confirmación y marca todas las notificaciones como leídas. El número de la campana vuelve a cero. |
 
 ## La página de notificaciones
+
+![La página de notificaciones](../images/es/notifications.webp)
 
 **Ver todas** abre `/notifications`, la lista completa de la más nueva a la más antigua, 20 por página. Las no leídas tienen la etiqueta roja **Nueva**. **Abrir** va a la página de la notificación y la marca como leída. **Marcar todas como leídas**, arriba, hace lo mismo que el enlace de la campana.
 

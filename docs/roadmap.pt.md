@@ -87,7 +87,7 @@ O [CONTRIBUTING.pt.md](../CONTRIBUTING.pt.md) descreve as pastas e as regras de 
 
 ## Módulos
 
-O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatísticas, login com a Steam e a área administrativa.
+O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatísticas, login com a Steam, notificações e a área administrativa. O [guia dos módulos](modules.pt.md) mostra cada módulo com capturas de tela.
 
 | Módulo | Conteúdo | Padrão |
 |---|---|---|
@@ -99,6 +99,7 @@ O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatís
 | Ranking da comunidade | Votação em pares e o ranking dela. | Desligado |
 | Anti-Cheat | A página com o download e as instruções do Anti-Cheat. | Desligado |
 | Campeonatos | Campeonatos com participantes, equipes, draft, fases de pontos corridos e mata-mata, datas e resultados. | Desligado |
+| Banimentos | Os banimentos dos servidores de jogo, com a lista pública, os banimentos dados no jogo e os alertas de contas relacionadas. | Desligado |
 
 Um módulo desligado some do menu, e as páginas dele respondem como não encontradas.
 
@@ -199,16 +200,19 @@ Um programa de console separado, fora deste repositório, move os dados de produ
 | 1. Fundação | Banco de dados, configurações e módulos, login com a Steam, assistente, cadastro e status de servidores de jogo. | Concluída |
 | 2. Estatísticas e ranking | Envio, montagem de partidas, pontuação, punições, temporadas e regras de modos de jogo. | Concluída |
 | 3. Site | Ranking, histórico, partidas, jogadores, patentes, página do Anti-Cheat, área administrativa e as páginas dentro do jogo, em três idiomas. | Concluída; cada tela do site antigo portada e conferida item por item |
-| 4. Servidor ao vivo | Estado ao vivo por servidor, seletor de servidor, chat do site, comandos remotos e banimentos do chat. | Concluída, ainda não vista com um servidor de jogo real |
-| 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, com o catálogo e as miniaturas do site atual; ainda não testada em um servidor de jogo |
-| 6. Plugins | Os cinco plugins com um endereço e um token, heartbeat e teste de conexão. | Compilados, ainda não rodaram em um servidor de jogo |
+| 4. Servidor ao vivo | Estado ao vivo por servidor, seletor de servidor, chat do site, comandos remotos e banimentos do chat. | Concluída; em uso em l4d2.com.br |
+| 5. Loja de skins de armas | Loja, presentes, reembolsos, importação do catálogo e reembolso de temporada. | Concluída, com o catálogo e as miniaturas do site atual; em uso em l4d2.com.br |
+| 6. Plugins | Os seis plugins com um endereço e um token, heartbeat e teste de conexão. | Concluída; o servidor de jogo de l4d2.com.br os usa desde 19 de novembro de 2026, e o `l4d2_bans` desde 28 de novembro de 2026 |
 | 7. Ranking da comunidade | Página de votação, rating, limites e página administrativa. | Concluída |
 | 8. Implantação | Instalador Linux, imagem Docker, workflow de release e guias. | Concluída; publicada desde a v0.1.1, instalador e imagem testados a partir da versão publicada; backup agendado no Azure Storage desde a v0.9.0 |
 | 9. Migração | Importação dos dados de produção, troca do site de produção, arquivamento dos repositórios antigos. | Dados de produção importados e l4d2.com.br trocado para o site novo em 19 de novembro de 2026 ([Trocando o site antigo](switch-from-old-site.pt.md)); l4d2-playstats-api e l4d2-playstats-web arquivados em 22 de novembro de 2026, apontando para este repositório |
+| 10. Campeonatos | Participantes e pedidos para participar, equipes e draft, fases de pontos corridos e mata-mata, área do capitão, datas, campanhas, resultados ligados às partidas do servidor, páginas públicas. | Concluída |
+| 11. Notificações | O sino, a página de notificações e as notificações enviadas pelos outros módulos. | Concluída |
+| 12. Banimentos | A lista pública, a administração, o plugin `l4d2_bans`, as contas relacionadas e a importação do `banned_user.cfg`. | Concluída |
 
 ## Perguntas em aberto
 
-- **Plugins em um servidor real.** Eles compilam, e o site aceita o que enviam, mas ainda não rodaram em uma partida de verdade.
+- **Plugins em um servidor real.** Resolvido: o servidor de jogo de l4d2.com.br, baseado no L4D2 Competitive Rework em Linux, os usa desde 19 de novembro de 2026. Outros ambientes, como um servidor de jogo no Windows, não foram testados.
 - **HTTPS dentro do jogo.** Não medido. Veja [in-game-browser.pt.md](in-game-browser.pt.md#ainda-não-medido).
 - **Repositório de assets.** Resolvido: o catálogo e as 196 miniaturas do site atual vêm com o hub, como no site antigo, e as fotos são lidas de `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` por padrão.
 - **Ícones de patente no jogo.** Resolvido: os sprites usados pelo `l4d2_show_patent_icon` vêm no pacote dos plugins (`materials/sprites`); os jogadores ainda os baixam pelo FastDL.

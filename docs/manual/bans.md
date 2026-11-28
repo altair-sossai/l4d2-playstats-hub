@@ -22,9 +22,15 @@ The module is off on a new site. Turn on **Bans** in **Administration → Module
 
 ## For players
 
+![The public list of bans](../images/en/bans.webp)
+
 **More → Bans** opens `/bans`, the list of the players banned now: the player, the reason, the day of the ban, when it ends (or **Permanent**) and who banned. The search box finds a ban by name, Steam ID or reason. Bans that ended are not on this list. On a phone each row shows the photo, the name and a **Details** button, which opens a window with everything.
 
+![The public list of bans on a phone](../images/en/phone-bans.webp)
+
 The page of a banned player starts with a red warning: "*Name* is banned from the game servers until *date*", or "permanently", with the reason and a link to the list.
+
+![The warning on the page of a banned player](../images/en/player-ban.webp)
 
 A banned player who tries to join a game server is kicked with the reason and the end of the ban, in the language of the game. There is no way to contest a ban on the site.
 
@@ -33,6 +39,8 @@ A signed-in player is told in the bell when banned and when the ban is lifted (s
 The IP addresses, the related accounts and the alerts are never shown to the public: only administrators see them.
 
 ## For administrators
+
+![The bans in the administration area](../images/en/admin-bans.webp)
 
 **Administration → Bans** (`/admin/bans`) has three tabs:
 
@@ -50,6 +58,8 @@ The search box at the top filters the Active and Ended tabs by name, Steam ID or
 | **Edit** | Changes the end and the reason of an active ban. |
 | **Unban** | Lifts the ban at once. The reason you write stays in the history and is shown only to administrators. |
 | **Import** | Reads a `banned_user.cfg` file. See [Importing banned_user.cfg](#importing-banned_usercfg). |
+
+![Banning a player](../images/en/admin-bans-add.webp)
 
 Every change asks for confirmation. When the [live server module](live-server.md) is on, a ban, a change or an unban made on the site reaches the game servers within a few seconds: a banned player who is playing is kicked, and an unbanned player is removed from the ban list of the server. Without that module, the change applies the next time the player connects.
 
@@ -76,6 +86,8 @@ When a player connects, the plugin asks the site about that one player, once. Th
 If the site cannot be reached, the player gets in, except for the bans the server holds itself: the ones given on that server, and the ones it learned from the site since it started.
 
 ## Related accounts and alerts
+
+![The alerts of related accounts](../images/en/admin-bans-alerts.webp)
 
 The site knows which Steam accounts connected from the same IP address (see [Player connections](moderation.md)).
 

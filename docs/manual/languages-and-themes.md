@@ -42,3 +42,5 @@ Tables keep their most important columns, and the less important ones are hidden
 ![A player page on a phone](../images/en/phone-player.webp)
 
 ![The skin shop on a phone](../images/en/phone-skins.webp)
+
+![A championship on a phone](../images/en/phone-championship.webp)

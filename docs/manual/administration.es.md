@@ -8,10 +8,11 @@ Esta página cubre la vista general, los servidores de juego, los módulos, la c
 
 | Elemento del menú | Se explica en |
 |---|---|
+| Patentes | [Patentes](patents.es.md) |
 | Modos de juego, Campañas | [Modos de juego y campañas](game-modes-and-campaigns.es.md) |
 | Compras, Precios, Catálogo, Ajustes de la tienda | [Tienda de skins de armas > Para administradores](skin-shop.es.md#para-administradores) |
 | Ranking de la comunidad | [Ranking de la comunidad > Para administradores](community-ranking.es.md#para-administradores) |
-| Baneos de chat, Comandos remotos, Conexiones de jugadores | [Moderación](moderation.es.md) |
+| Baneos de chat, Comandos remotos, Conexiones de jugadores, Nombres forzados | [Moderación](moderation.es.md) |
 | Ajustes del Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.es.md#para-administradores) |
 | Campeonatos | [Campeonatos > Para administradores](championships.es.md#para-administradores) |
 | Baneos | [Baneos > Para administradores](bans.es.md#para-administradores) |
@@ -37,10 +38,10 @@ Todas las páginas de administración tienen el mismo menú a la izquierda, con 
 | Grupo | Páginas |
 |---|---|
 | Sitio | Vista general, Configuración, Módulos, Administradores, Copia de seguridad |
-| Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Baneos, Baneos de chat |
-| Ranking | Modos de juego, Campañas, Ranking de la comunidad |
-| Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
+| Servidores de juego | Servidores de juego, Comandos remotos, Conexiones de jugadores, Nombres forzados, Baneos, Baneos de chat |
+| Ranking | Modos de juego, Campañas, Patentes, Ranking de la comunidad |
 | Campeonatos | Campeonatos |
+| Tienda de skins | Compras, Precios, Catálogo, Ajustes de la tienda |
 | Anti-Cheat | Ajustes del Anti-Cheat |
 
 Una página cuyo módulo está desactivado no aparece en el menú, y un grupo que se queda sin páginas desaparece. En una página larga, el menú sigue a la vista mientras te desplazas. El menú de arriba del sitio sigue igual, con **Admin** para volver aquí desde cualquier página.
@@ -95,7 +96,7 @@ El identificador se crea a partir del nombre cuando se crea el servidor y nunca 
 
 ![Los módulos](../images/es/admin-modules.webp)
 
-El núcleo siempre está activado: el registro de servidores de juego, la subida de estadísticas, el inicio de sesión con Steam y el área de administración. Todo lo demás es un módulo. Un módulo desactivado desaparece del menú, y sus páginas y su API responden como no encontradas. Desactivar un módulo no borra nada; sus datos vuelven cuando se activa de nuevo.
+El núcleo siempre está activado: el registro de servidores de juego, la subida de estadísticas, el inicio de sesión con Steam y el área de administración. Todo lo demás es un módulo. Un módulo desactivado desaparece del menú, y sus páginas y su API responden como no encontradas. Desactivar un módulo no borra nada; sus datos vuelven cuando se activa de nuevo. La [guía de los módulos](../modules.es.md) muestra qué hace cada módulo, con capturas de pantalla.
 
 | Módulo | Qué contiene | Necesita | Predeterminado | Cuando está desactivado |
 |---|---|---|---|---|

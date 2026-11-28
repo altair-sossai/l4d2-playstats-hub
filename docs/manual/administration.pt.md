@@ -8,10 +8,11 @@ Esta página cobre a visão geral, os servidores de jogo, os módulos, as config
 
 | Item do menu | Explicado em |
 |---|---|
+| Patentes | [Patentes](patents.pt.md) |
 | Modos de jogo, Campanhas | [Modos de jogo e campanhas](game-modes-and-campaigns.pt.md) |
 | Compras, Preços, Catálogo, Configurações da loja | [Loja de skins de armas > Para administradores](skin-shop.pt.md#para-administradores) |
 | Ranking da comunidade | [Ranking da comunidade > Para administradores](community-ranking.pt.md#para-administradores) |
-| Bans de chat, Comandos remotos, Conexões de jogadores | [Moderação](moderation.pt.md) |
+| Bans de chat, Comandos remotos, Conexões de jogadores, Nomes forçados | [Moderação](moderation.pt.md) |
 | Configurações do Anti-Cheat | [Anti-Cheat > Para administradores](anti-cheat.pt.md#para-administradores) |
 | Campeonatos | [Campeonatos > Para administradores](championships.pt.md#para-administradores) |
 | Banimentos | [Banimentos > Para administradores](bans.pt.md#para-administradores) |
@@ -37,10 +38,10 @@ Todas as páginas da administração têm o mesmo menu à esquerda, com a págin
 | Grupo | Páginas |
 |---|---|
 | Site | Visão geral, Configurações, Módulos, Administradores, Backup |
-| Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Banimentos, Bans de chat |
-| Ranking | Modos de jogo, Campanhas, Ranking da comunidade |
-| Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
+| Servidores de jogo | Servidores de jogo, Comandos remotos, Conexões de jogadores, Nomes forçados, Banimentos, Bans de chat |
+| Ranking | Modos de jogo, Campanhas, Patentes, Ranking da comunidade |
 | Campeonatos | Campeonatos |
+| Loja de skins | Compras, Preços, Catálogo, Configurações da loja |
 | Anti-Cheat | Configurações do Anti-Cheat |
 
 Uma página cujo módulo está desligado não aparece no menu, e um grupo que fica sem páginas some. Em uma página comprida, o menu continua à vista enquanto você rola. O menu do topo do site continua como está, com **Admin** para voltar para cá de qualquer página.
@@ -95,7 +96,7 @@ O identificador é gerado a partir do nome quando o servidor é criado e nunca m
 
 ![Os módulos](../images/pt/admin-modules.webp)
 
-O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatísticas, login com o Steam e a área de administração. Todo o resto é um módulo. Um módulo desligado some do menu, e as páginas e a API dele respondem como não encontradas. Desligar um módulo não apaga nada; os dados dele voltam quando ele é ligado de novo.
+O núcleo está sempre ligado: cadastro de servidores de jogo, envio de estatísticas, login com o Steam e a área de administração. Todo o resto é um módulo. Um módulo desligado some do menu, e as páginas e a API dele respondem como não encontradas. Desligar um módulo não apaga nada; os dados dele voltam quando ele é ligado de novo. O [guia dos módulos](../modules.pt.md) mostra o que cada módulo faz, com capturas de tela.
 
 | Módulo | O que contém | Requer | Padrão | Quando está desligado |
 |---|---|---|---|---|

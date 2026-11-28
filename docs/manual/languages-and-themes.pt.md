@@ -42,3 +42,5 @@ As tabelas mantêm as colunas mais importantes, e as menos importantes ficam esc
 ![A página de um jogador no celular](../images/pt/phone-player.webp)
 
 ![A loja de skins no celular](../images/pt/phone-skins.webp)
+
+![Um campeonato no celular](../images/pt/phone-championship.webp)

@@ -18,6 +18,7 @@ Pages for players and pages for administrators are marked in the list below. The
 | Page | For | What it covers |
 |---|---|---|
 | [What the application is](overview.md) | Everyone | What the site does, the words used in this manual, and how the parts fit together. |
+| [Modules](../modules.md) | Everyone | What each module is for, what it does, who uses it and what it needs. |
 | [First-run setup](first-run.md) | Administrators | The setup wizard, step by step, until your first game server is connected. |
 
 ### The site
@@ -44,9 +45,9 @@ Pages for players and pages for administrators are marked in the list below. The
 
 | Page | For | What it covers |
 |---|---|---|
-| [Administration](administration.md) | Administrators | The overview, game servers, modules, settings and administrators. |
+| [Administration](administration.md) | Administrators | The overview, game servers, modules, settings, administrators and backup. |
 | [Game modes and campaigns](game-modes-and-campaigns.md) | Administrators | Which matches count for the ranking, and which maps form a match. |
-| [Moderation](moderation.md) | Administrators | Punishments, chat bans, remote commands and player connections. |
+| [Moderation](moderation.md) | Administrators | Punishments, chat bans, remote commands, player connections and forced names. |
 | [Backups and updates](backups-and-updates.md) | Administrators | What to back up, how to restore, and how to update. |
 | [Questions and problems](faq.md) | Everyone | Common questions and what to do when something does not work. |
 

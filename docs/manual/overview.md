@@ -2,7 +2,7 @@
 
 🌐 **English** | [Português](overview.pt.md) | [Español](overview.es.md)
 
-L4D2 PlayStats Hub is a website for a competitive Left 4 Dead 2 community. Your game servers send the statistics of every map played, and the site turns them into a ranking, a history of matches, a page for each player, a view of the match in progress, and a few extras: a weapon skin shop and a ranking voted by the players.
+L4D2 PlayStats Hub is a website for a competitive Left 4 Dead 2 community. Your game servers send the statistics of every map played, and the site turns them into a ranking, a history of matches, a page for each player, a view of the match in progress, and more: championships, the bans of the game servers, a weapon skin shop and a ranking voted by the players. The [modules guide](../modules.md) lists every feature.
 
 You install it once, on a machine you control. It is one program and one database file. Several game servers can feed the same site.
 
@@ -18,7 +18,7 @@ You install it once, on a machine you control. It is one program and one databas
 
 ## What a visitor sees
 
-The menu at the top of every page leads to the features. A feature the administrator turned off is not in the menu.
+The menu at the top of every page leads to the features. A feature the administrator turned off is not in the menu, and the items that do not fit the width of the window move into **More**.
 
 ![The menu of the site, with Admin for an administrator](../images/en/admin-menu.webp)
 
@@ -27,18 +27,22 @@ The menu at the top of every page leads to the features. A feature the administr
 | Ranking | The top 100 players of the current season. | [Ranking](ranking.md) |
 | Community | The ranking voted by the players. | [Community ranking](community-ranking.md) |
 | Last matches | Every match, newest first. | [Matches](matches.md) |
+| Championships | The championships in progress and the finished ones. | [Championships](championships.md) |
 | Server | The match in progress on your game servers. | [Live server](live-server.md) |
 | Skins | The weapon skin shop. | [Weapon skin shop](skin-shop.md) |
 | Anti-Cheat | The page that offers the Anti-Cheat program and tells a signed-in player whether they must use it. | [Anti-Cheat](anti-cheat.md) |
 | More > Players | Every player of the period, with an overview or the totals of any statistic, for any season, year or all time. | [Players](players.md) |
 | More > Patents | The patent levels. | [Patents](patents.md) |
+| More > Bans | The players banned from the game servers now. | [Bans](bans.md) |
 | More > Commands | Every command of the game servers, with examples. | [Game server commands](commands.md) |
 | Admin | The administration area, for administrators only. | [Administration](administration.md) |
 | Stars | How many stars the signed-in player can spend in the shop. | [Weapon skin shop](skin-shop.md) |
+| Bell | What happened that concerns the signed-in player, with the unread ones counted. | [Notifications](notifications.md) |
+| Tower | The captain area, for a captain or vice-captain of a championship. | [Championships > The captain area](championships.md#the-captain-area) |
 | Avatar | The page of the signed-in player. | [Players](players.md) |
 | Settings (gear) | Theme, language, sign in and sign out. | [Languages, themes and phones](languages-and-themes.md) |
 
-Signing in is done with Steam. Visitors do not need to sign in to see the ranking, the matches or the live server. Signing in is needed to buy skins, to vote in the community ranking, to use the site chat, and to administer the site.
+Signing in is done with Steam. Visitors do not need to sign in to see the ranking, the matches or the live server. Signing in is needed to buy skins, to vote in the community ranking, to use the site chat, to ask to join a championship and lead a team, to receive notifications, and to administer the site.
 
 ## How the parts fit together
 
@@ -83,9 +87,10 @@ The game server always calls the site. The site never connects to the game serve
 
 | Who | Can |
 |---|---|
-| Any visitor | See the ranking, the matches, the players, the patents, the live server, the community ranking, the shop catalog, the commands page and the Anti-Cheat page. |
-| A signed-in player | Everything above, plus: buy and equip skins, vote in the community ranking (after enough matches), and write in the site chat. |
-| An administrator | Everything above, plus: the administration area, punishments, editing the score of a map, replacing a player in a match, giving skins as gifts, refunds, chat bans and remote commands. |
+| Any visitor | See the ranking, the matches, the players, the patents, the live server, the community ranking, the shop catalog, the championships, the bans, the commands page and the Anti-Cheat page. |
+| A signed-in player | Everything above, plus: buy and equip skins, vote in the community ranking (after enough matches), write in the site chat, ask to join a championship, and read the notifications. |
+| A captain or vice-captain | Everything above, plus the captain area: the draft, the name, tag and flag of the team, the dates, vetoes and campaigns. |
+| An administrator | Everything above, plus: the administration area, punishments, editing the score of a map, replacing a player in a match, giving skins as gifts, refunds, championships, bans, chat bans, forced names and remote commands. |
 
 The first administrator is the Steam account that finishes the [first-run setup](first-run.md). More administrators are added in [Administration > Administrators](administration.md#administrators).
 

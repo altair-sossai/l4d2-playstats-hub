@@ -30,9 +30,13 @@ El módulo Campeonatos organiza campeonatos jugados en los servidores de juego d
 
 ### La página de campeonatos
 
+![La página de campeonatos](../images/es/championships.webp)
+
 **Campeonatos** en el menú muestra cada campeonato en una tarjeta con su banner, su logotipo, su estado, sus equipos, sus jugadores y su fecha de inicio: los en curso arriba, en tarjetas más grandes, y debajo el historial de los finalizados y cancelados, con el campeón de cada uno. Un campeonato sin banner recibe un fondo de color, y uno sin logotipo muestra sus iniciales. Un campeonato en borrador no aparece: solo los administradores lo ven.
 
 ### La página de un campeonato
+
+![La página de un campeonato](../images/es/championship.webp)
 
 Cada campeonato tiene su dirección, como `/championships/copa-2027`. Cada página del campeonato empieza con su banner, su logotipo, su nombre, su estado y sus fechas, seguidos de sus pestañas.
 
@@ -62,7 +66,15 @@ Una sección sin nada que mostrar se omite. Las otras pestañas van más a fondo
 
 Una pestaña solo aparece cuando tiene algo que mostrar.
 
+![Los equipos de un campeonato](../images/es/championship-teams.webp)
+
+![La clasificación de una fase de liga](../images/es/championship-standings.webp)
+
+![El cuadro de una fase eliminatoria](../images/es/championship-bracket.webp)
+
 ### Pedir participar
+
+![Un campeonato que acepta pedidos para participar](../images/es/championship-join.webp)
 
 Cuando la administración deja que los jugadores pidan participar, la página del campeonato tiene una sección **Inscripciones**, y la parte de arriba de la página un botón **Pedir participar**, mientras el estado es Participantes y quedan plazas. Entra con Steam, escribe un mensaje para la administración si quieres (como tu experiencia o cuándo puedes jugar) y pulsa **Pedir participar**. La sección pasa a decir que tu solicitud está esperando; **Cancelar la solicitud** la retira, y puedes pedirlo de nuevo después.
 
@@ -70,11 +82,15 @@ La administración aprueba o rechaza cada solicitud. Una vez aprobada eres parti
 
 ### La página de una serie
 
+![La página de una serie, con su fecha y sus juegos](../images/es/championship-series.webp)
+
 Una serie es el enfrentamiento de dos equipos: un juego (al mejor de 1) o más (al mejor de 3, al mejor de 5). Su página muestra el marcador en juegos, el estado, la fecha con los botones **Añadir a Google Calendar** y **Descargar .ics**, el plazo, los vetos y cada juego con su campaña, quién la eligió, el marcador y el enlace a la partida del servidor.
 
 Un juego decidido por una penalización muestra los puntos descontados. En una eliminatoria, un juego que ya no hace falta, como el tercero después de un 2 a 0, aparece como **No necesario**. Un juego que se está jugando en el servidor aparece como **En curso**, con el marcador de los mapas jugados hasta el momento.
 
 ### El área del capitán
+
+![El área del capitán, con lo que el equipo tiene que hacer](../images/es/championship-captain.webp)
 
 Las páginas de un campeonato solo muestran información. Lo que un capitán o un vicecapitán hace por su equipo está en una página aparte, el **área del capitán**, en `/championships/<dirección>/captain`. Inicia sesión con Steam: cuando lideras un equipo de un campeonato que no es un borrador ni terminó, aparece un icono de torre junto a tu foto arriba en todas las páginas, con un número rojo cuando tu equipo tiene algo que hacer, y las páginas del campeonato muestran **Abrir el área del capitán**.
 
@@ -86,11 +102,15 @@ El área del capitán empieza con la lista de lo que tu equipo tiene que hacer, 
 | Draft | En un draft en serpiente o en línea, el orden de los capitanes, las elecciones hechas y los jugadores sin equipo. Cuando es el turno de tu equipo, **Elegir** pone al jugador en tu equipo y elige el siguiente equipo. No hay límite de tiempo y nada pasa en vivo: cada capitán elige cuando puede, el mismo día o el siguiente. |
 | Series | Cada serie de tu equipo, con su fecha y su estado. **Fechas** lista las propuestas de los dos equipos: propón una fecha (tu propuesta ya sale aceptada por tu equipo) y acepta o rechaza las del otro equipo. Cuando los dos equipos aceptan la misma fecha, la serie queda programada. Los equipos no pueden eliminar una fecha confirmada. Cada equipo puede tener como máximo 5 fechas esperando respuesta, y una fecha que ya pasó solo se puede rechazar. **Vetar** (cuando la fase tiene vetos) veta una campaña antes del primer juego: no se elige ni se sortea en la serie, y no se puede cambiar. **Campañas** (cuando los equipos las eligen) elige la campaña de los juegos de tu turno: el mejor cabeza de serie el primer juego, el otro equipo el segundo, y así sucesivamente; el desempate se sortea solo cuando hace falta. |
 
+![La pestaña Equipo del área del capitán](../images/es/championship-captain-team.webp)
+
 El vicecapitán puede hacer todo lo que hace el capitán, menos elegir al vicecapitán. Las horas están en la zona horaria del sitio, que se muestra en la pestaña Series. Los resultados siempre salen de las partidas del servidor: los capitanes no escriben ni cambian marcadores.
 
 ## Para administradores
 
 **Administración > Campeonatos** lista todos los campeonatos, incluidos los borradores, en una tabla con su estado, equipos, participantes y campeón. **Añadir** abre una ventana para crear uno; **Editar** abre la página del campeonato y **Eliminar** lo borra con sus equipos, fases, juegos e historial (las partidas del servidor no se tocan).
+
+![Los campeonatos en el área de administración](../images/es/admin-championships.webp)
 
 La página de un campeonato muestra sus números arriba (participantes, equipos, fases armadas y series terminadas) y las pestañas Configuración, Reglas, Participantes, Equipos, Draft (cuando la formación de equipos no es manual), Fases, Juegos e Historial. Cada pestaña empieza explicando para qué sirve y con los botones de sus acciones; todo cambio se hace en una ventana, y la dirección guarda la pestaña, así que la página recargada después de guardar abre en la misma pestaña.
 
@@ -109,6 +129,8 @@ Un campeonato nuevo es un borrador, que solo ven los administradores, y su pági
 
 ### Configuración
 
+![La configuración de un campeonato](../images/es/admin-championship-settings.webp)
+
 Un único formulario, guardado con el botón **Guardar** al pie:
 
 - **Campeonato**: nombre, dirección, descripción corta, fechas de inicio y fin, modo de juego (como ZoneMod v2.9.1b) y los enlaces de la transmisión y de los vídeos.
@@ -125,11 +147,15 @@ Las reglas en inglés, portugués y español, una debajo de la otra, guardadas c
 
 ### Participantes
 
+![Los participantes, con los pedidos para participar](../images/es/admin-championship-requests.webp)
+
 La administración añade los participantes, o aprueba las solicitudes de los jugadores. Con **Los jugadores pueden pedir participar** activado en la pestaña Configuración, el panel **Solicitudes para participar** arriba de la pestaña Participantes lista cada solicitud que espera respuesta, con el jugador, el mensaje, la fecha y un contador de cuántas esperan. **Aprobar** hace al jugador participante, salvo que el campeonato esté lleno, y **Rechazar** responde que no; una solicitud rechazada sigue en la lista, así que todavía puede aprobarse después. Cada solicitud, aprobación y rechazo queda en el historial.
 
 **Añadir** abre una ventana donde pegas IDs de Steam, uno por línea, o usas **Elegir de la lista** en la ventana de búsqueda de jugadores. La tabla, con 20 jugadores por página, muestra las horas de Left 4 Dead 2 de cada jugador, su equipo y su bombo; **Editar** cambia el bombo, usado en el sorteo por bombos, y **Quitar** saca al jugador del campeonato y de su equipo.
 
 ### Equipos
+
+![Los equipos de un campeonato](../images/es/admin-championship-teams.webp)
 
 **Añadir** crea un equipo, y **Añadir varios** crea Equipo A, Equipo B, Equipo C y así sucesivamente. La tabla muestra la cabeza de serie (1 es el mejor; ordena los equipos cuando una fase se arma por el orden de los equipos), el capitán, el vicecapitán y los jugadores de cada equipo. En cada fila:
 
@@ -142,6 +168,8 @@ La pestaña avisa cuando hay equipos en espera de aprobación. Un jugador solo p
 
 ### Draft
 
+![El draft, con el equipo de turno](../images/es/admin-championship-draft.webp)
+
 Los botones de arriba siguen el método elegido en la configuración, y **Deshacer la última elección** y **Reiniciar el draft** deshacen las elecciones. Cada elección aparece en la página pública del Draft.
 
 | Método | Cómo funciona |
@@ -153,6 +181,8 @@ Los botones de arriba siguen el método elegido en la configuración, y **Deshac
 | Draft en línea | Lo mismo, siempre en el orden A, B, C, D. |
 
 ### Fases
+
+![Las fases de un campeonato](../images/es/admin-championship-stages.webp)
 
 Las fases se juegan en orden. **Añadir** añade una al final, con nombre y tipo. La tabla muestra el formato, la regla de campañas y si cada fase está armada, y sus filas tienen:
 
@@ -179,6 +209,8 @@ Las fases se juegan en orden. **Añadir** añade una al final, con nombre y tipo
 En una eliminatoria con un número de equipos que no es potencia de dos, los mejores cabezas de serie pasan directo a la ronda siguiente. Con seis equipos, por ejemplo, el primero y el segundo esperan en las semifinales, el tercero juega contra el sexto y el cuarto contra el quinto. Después de armada, el tipo, los juegos, los grupos y la regla de campañas no cambian; los puntos, los desempates, el mínimo de mapas, los vetos y la regla de una vez por equipo sí se pueden cambiar.
 
 ### Juegos y resultados
+
+![Los juegos de un campeonato](../images/es/admin-championship-games.webp)
 
 La pestaña Juegos lista todas las series de las fases armadas, 20 por página, con filtro por fase. Arriba:
 

@@ -87,7 +87,7 @@ Una sola aplicación ASP.NET Core que es el sitio web, la API para los plugins, 
 
 ## Módulos
 
-El núcleo siempre está activado: registro de servidores de juego, subida de estadísticas, inicio de sesión con Steam y el área de administración.
+El núcleo siempre está activado: registro de servidores de juego, subida de estadísticas, inicio de sesión con Steam, las notificaciones y el área de administración. La [guía de los módulos](modules.es.md) muestra cada módulo con capturas de pantalla.
 
 | Módulo | Contenido | Predeterminado |
 |---|---|---|
@@ -99,6 +99,7 @@ El núcleo siempre está activado: registro de servidores de juego, subida de es
 | Ranking de la comunidad | Votación por pares y su ranking. | Desactivado |
 | Anti-Cheat | La página con la descarga y las instrucciones del Anti-Cheat. | Desactivado |
 | Campeonatos | Campeonatos con participantes, equipos, draft, fases de liga y eliminatoria, fechas y resultados. | Desactivado |
+| Baneos | Los baneos de los servidores de juego, con la lista pública, los baneos dados en el juego y las alertas de cuentas relacionadas. | Desactivado |
 
 Un módulo desactivado desaparece del menú y sus páginas responden como no encontradas.
 
@@ -199,16 +200,19 @@ Un programa de consola aparte, fuera de este repositorio, mueve los datos de pro
 | 1. Base | Base de datos, ajustes y módulos, inicio de sesión con Steam, asistente, registro y estado de los servidores de juego. | Hecho |
 | 2. Estadísticas y ranking | Subida, armado de partidas, puntuación, sanciones, temporadas y reglas de modos de juego. | Hecho |
 | 3. Sitio web | Ranking, historial, partidas, jugadores, patentes, página del Anti-Cheat, área de administración y las páginas dentro del juego, en tres idiomas. | Hecho; cada pantalla del sitio antiguo portada y comprobada elemento por elemento |
-| 4. Servidor en vivo | Estado en vivo por servidor, selector de servidor, chat del sitio, comandos remotos y baneos del chat. | Hecho, todavía no se ha visto con un servidor de juego real |
-| 5. Tienda de skins de armas | Tienda, regalos, reembolsos, importación del catálogo y reembolso de temporada. | Hecho, con el catálogo y las miniaturas del sitio actual; todavía no se ha probado en un servidor de juego |
-| 6. Plugins | Los cinco plugins con una sola dirección y un solo token, heartbeat y prueba de conexión. | Compilados, todavía no se han ejecutado en un servidor de juego |
+| 4. Servidor en vivo | Estado en vivo por servidor, selector de servidor, chat del sitio, comandos remotos y baneos del chat. | Hecho; en uso en l4d2.com.br |
+| 5. Tienda de skins de armas | Tienda, regalos, reembolsos, importación del catálogo y reembolso de temporada. | Hecho, con el catálogo y las miniaturas del sitio actual; en uso en l4d2.com.br |
+| 6. Plugins | Los seis plugins con una sola dirección y un solo token, heartbeat y prueba de conexión. | Hecho; el servidor de juego de l4d2.com.br los usa desde el 19 de noviembre de 2026, y `l4d2_bans` desde el 28 de noviembre de 2026 |
 | 7. Ranking de la comunidad | Página de votación, puntuación, límites y página de administración. | Hecho |
 | 8. Despliegue | Instalador para Linux, imagen de Docker, workflow de publicación y guías. | Hecho; publicado desde la v0.1.1, instalador e imagen probados a partir de la versión publicada; copia programada en Azure Storage desde la v0.9.0 |
 | 9. Migración | Importación de los datos de producción, cambio del sitio de producción y archivado de los repositorios antiguos. | Datos de producción importados y l4d2.com.br cambiado al sitio nuevo el 19 de noviembre de 2026 ([Cambiar desde el sitio antiguo](switch-from-old-site.es.md)); l4d2-playstats-api y l4d2-playstats-web archivados el 22 de noviembre de 2026, apuntando a este repositorio |
+| 10. Campeonatos | Participantes y pedidos para participar, equipos y draft, fases de liga y eliminatoria, área del capitán, fechas, campañas, resultados enlazados a las partidas del servidor, páginas públicas. | Hecho |
+| 11. Notificaciones | La campana, la página de notificaciones y las notificaciones que envían los otros módulos. | Hecho |
+| 12. Baneos | La lista pública, la administración, el plugin `l4d2_bans`, las cuentas relacionadas y la importación de `banned_user.cfg`. | Hecho |
 
 ## Preguntas abiertas
 
-- **Plugins en un servidor en vivo.** Compilan, y el sitio acepta lo que envían, pero no se han ejecutado en una partida real.
+- **Plugins en un servidor en vivo.** Resuelto: el servidor de juego de l4d2.com.br, basado en L4D2 Competitive Rework en Linux, los usa desde el 19 de noviembre de 2026. Otros entornos, como un servidor de juego en Windows, no se probaron.
 - **HTTPS dentro del juego.** No se ha medido. Consulta [in-game-browser.es.md](in-game-browser.es.md#aún-no-medido).
 - **Repositorio de assets.** Resuelto: el catálogo y las 196 miniaturas del sitio actual vienen con el hub, como en el sitio antiguo, y las fotos se leen de `https://l4d2playstats.blob.core.windows.net/assets/skin-shots` por defecto.
 - **Íconos de patente dentro del juego.** Resuelto: los sprites que usa `l4d2_show_patent_icon` vienen en el paquete de plugins (`materials/sprites`); los jugadores todavía los descargan por el FastDL.

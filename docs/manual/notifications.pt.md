@@ -15,6 +15,8 @@ O site avisa cada jogador conectado do que aconteceu e diz respeito a ele: um ca
 
 ## O sino
 
+![O sino, com as últimas notificações](../images/pt/notifications-bell.webp)
+
 Um jogador conectado vê um sino na barra do topo, ao lado da foto. Um número vermelho no sino conta as notificações ainda não lidas. Visitantes que não entraram não veem o sino.
 
 Um clique no sino abre as 8 notificações mais recentes. As não lidas ficam em negrito, com uma marca vermelha à esquerda. Um clique em uma abre a página dela, por exemplo a página do campeonato ou a área do capitão, e a marca como lida.
@@ -27,6 +29,8 @@ No fim da lista:
 | Marcar todas como lidas | Pede confirmação e marca todas as notificações como lidas. O número no sino volta para zero. |
 
 ## A página de notificações
+
+![A página de notificações](../images/pt/notifications.webp)
 
 **Ver todas** abre `/notifications`, a lista completa da mais nova para a mais antiga, 20 por página. As não lidas têm o selo vermelho **Nova**. **Abrir** vai para a página da notificação e a marca como lida. **Marcar todas como lidas**, no topo, faz o mesmo que o link do sino.
 

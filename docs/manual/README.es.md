@@ -18,6 +18,7 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 | Página | Para | Qué cubre |
 |---|---|---|
 | [Qué es la aplicación](overview.es.md) | Todos | Qué hace el sitio, las palabras usadas en este manual y cómo encajan las partes. |
+| [Módulos](../modules.es.md) | Todos | Para qué sirve cada módulo, qué hace, quién lo usa y qué necesita. |
 | [Configuración inicial](first-run.es.md) | Administradores | El asistente de instalación, paso a paso, hasta conectar tu primer servidor de juego. |
 
 ### El sitio
@@ -44,9 +45,9 @@ La lista de abajo indica qué páginas son para jugadores y cuáles para adminis
 
 | Página | Para | Qué cubre |
 |---|---|---|
-| [Administración](administration.es.md) | Administradores | La vista general, los servidores de juego, los módulos, la configuración y los administradores. |
+| [Administración](administration.es.md) | Administradores | La vista general, los servidores de juego, los módulos, la configuración, los administradores y la copia de seguridad. |
 | [Modos de juego y campañas](game-modes-and-campaigns.es.md) | Administradores | Qué partidas cuentan para el ranking y qué mapas forman una partida. |
-| [Moderación](moderation.es.md) | Administradores | Castigos, baneos del chat, comandos remotos y conexiones de jugadores. |
+| [Moderación](moderation.es.md) | Administradores | Castigos, baneos del chat, comandos remotos, conexiones de jugadores y nombres forzados. |
 | [Copias de seguridad y actualizaciones](backups-and-updates.es.md) | Administradores | Qué respaldar, cómo restaurar y cómo actualizar. |
 | [Preguntas y problemas](faq.es.md) | Todos | Preguntas frecuentes y qué hacer cuando algo no funciona. |
 

@@ -30,9 +30,13 @@ The Championships module organizes championships played on the game servers of t
 
 ### The championships page
 
+![The championships page](../images/en/championships.webp)
+
 **Championships** in the menu shows each championship as a card with its banner, its logo, its status, its teams, its players and its start date: the ones in progress at the top, in larger cards, and the history of the finished and cancelled ones below, with the champion of each. A championship without a banner gets a colored background, and one without a logo shows its initials. A championship in draft is not listed: only the administrators see it.
 
 ### The page of a championship
+
+![The page of a championship](../images/en/championship.webp)
 
 Each championship has its own address, such as `/championships/cup-2027`. Every page of the championship starts with its banner, its logo, its name, its status and its dates, followed by its tabs.
 
@@ -62,7 +66,15 @@ A section without anything to show is left out. The other tabs go deeper:
 
 A tab only appears when it has something to show.
 
+![The teams of a championship](../images/en/championship-teams.webp)
+
+![The standings of a round robin stage](../images/en/championship-standings.webp)
+
+![The bracket of a knockout stage](../images/en/championship-bracket.webp)
+
 ### Asking to join
+
+![A championship that takes requests to join](../images/en/championship-join.webp)
 
 When the administration lets the players ask to join, the page of the championship has a **Registration** section, and the top of the page a button **Ask to join**, while the status is Participants and there are places left. Sign in with Steam, write a message to the administration if you want (such as your experience or when you can play) and press **Ask to join**. The section then says that your request is waiting; **Cancel the request** withdraws it, and you can ask again later.
 
@@ -70,11 +82,15 @@ The administration approves or refuses each request. Once it is approved you are
 
 ### The page of a series
 
+![The page of a series, with its date and its games](../images/en/championship-series.webp)
+
 A series is the meeting of two teams: one game (best of 1) or more (best of 3, best of 5). Its page shows the score in games, the status, the date with the buttons **Add to Google Calendar** and **Download .ics**, the deadline, the vetoes and each game with its campaign, who chose it, the score and the link to the match of the server.
 
 A game decided by a penalty shows the points taken off. In a knockout, a game that is not needed any more, such as the third game after a 2–0, appears as **Not needed**. A game being played on the server appears as **In progress**, with the score of the maps played so far.
 
 ### The captain area
+
+![The captain area, with what the team has to do](../images/en/championship-captain.webp)
 
 The pages of a championship only show information. What a captain or a vice-captain does for the team is in a separate page, the **captain area**, at `/championships/<address>/captain`. Sign in with Steam: when you lead a team of a championship that is not a draft nor over, a tower icon appears next to your photo at the top of every page, with a red number when your team has something to do, and the pages of the championship show **Open the captain area**.
 
@@ -86,11 +102,15 @@ The captain area starts with the list of what your team has to do, each one a li
 | Draft | In a snake or linear draft, the order of the captains, the picks made and the players without a team. When it is the turn of your team, **Choose** puts the player in your team and the next team chooses. There is no time limit and nothing happens live: each captain chooses when they can, on the same day or the next. |
 | Series | Each series of your team, with its date and status. **Dates** lists the proposals of both teams: propose a date (your proposal is already accepted by your team), and accept or refuse the ones of the other team. When both teams accept the same date, the series is scheduled. A confirmed date cannot be deleted by the teams. Each team can have at most 5 dates waiting for an answer, and a date that has passed can only be refused. **Veto** (when the stage has vetoes) vetoes one campaign before the first game: it is not chosen nor drawn in the series, and cannot be changed. **Campaigns** (when the teams choose them) chooses the campaign of the games of your turn: the best seed the first game, the other team the second, and so on; the decider is drawn only when it is needed. |
 
+![The Team tab of the captain area](../images/en/championship-captain-team.webp)
+
 The vice-captain can do everything the captain does, except choosing the vice-captain. Times are in the time zone of the site, shown on the Series tab. The results always come from the matches of the server: the captains do not type nor change scores.
 
 ## For administrators
 
 **Administration > Championships** lists every championship, including the drafts, in a table with its status, teams, participants and champion. **Add** opens a window to create one; **Edit** opens the page of the championship and **Delete** deletes it with its teams, stages, games and history (the matches of the server are not touched).
+
+![The championships in the administration area](../images/en/admin-championships.webp)
 
 The page of a championship shows its numbers at the top (participants, teams, stages built and series finished) and the tabs Settings, Rules, Participants, Teams, Draft (when the team formation is not manual), Stages, Games and History. Each tab starts with what it is for and the buttons of its actions; every change is made in a window, and the address keeps the tab, so a page reloaded after saving opens on the same tab.
 
@@ -109,6 +129,8 @@ A new championship is a draft, seen only by the administrators, and its page ope
 
 ### Settings
 
+![The settings of a championship](../images/en/admin-championship-settings.webp)
+
 One form, saved with the **Save** button at the bottom:
 
 - **Championship**: name, address, short description, start and end dates, game mode (such as ZoneMod v2.9.1b), and the links of the live stream and the videos.
@@ -125,11 +147,15 @@ The rules in English, Portuguese and Spanish, one under the other, saved with th
 
 ### Participants
 
+![The participants, with the requests to join](../images/en/admin-championship-requests.webp)
+
 The administration adds the participants, or approves the requests of the players. With **Players can ask to join** on in the Settings tab, the panel **Requests to join** at the top of the Participants tab lists each request waiting for an answer, with the player, the message, the date and a badge with how many are waiting. **Approve** makes the player a participant, unless the championship is full, and **Refuse** answers no; a refused request stays in the list, so it can still be approved later. Each request, approval and refusal is written in the history.
 
 **Add** opens a window where you paste Steam IDs, one per line, or **Choose from the list** in the player search window. The table, 20 players per page, shows the hours of Left 4 Dead 2 of each player, the team and the pot; **Edit** changes the pot, used by the pots draw, and **Remove** takes the player out of the championship and of the team.
 
 ### Teams
+
+![The teams of a championship](../images/en/admin-championship-teams.webp)
 
 **Add** creates one team, and **Add several** creates Team A, Team B, Team C and so on. The table shows the seed (1 is the best; it orders the teams when a stage is built by seeds), the captain, the vice-captain and the players of each team. On each row:
 
@@ -142,6 +168,8 @@ The tab warns when teams are waiting for approval. A player can only be in one t
 
 ### Draft
 
+![The draft, with the team on the clock](../images/en/admin-championship-draft.webp)
+
 The buttons at the top follow the method chosen in the settings, and **Undo the last pick** and **Reset the draft** take the picks back. Every pick appears on the public Draft page.
 
 | Method | How it works |
@@ -153,6 +181,8 @@ The buttons at the top follow the method chosen in the settings, and **Undo the 
 | Linear draft | The same, always in the order A, B, C, D. |
 
 ### Stages
+
+![The stages of a championship](../images/en/admin-championship-stages.webp)
 
 The stages are played in order. **Add** adds one at the end, with a name and a type. The table shows the format, the campaign rule and whether each stage is built, and its rows have:
 
@@ -179,6 +209,8 @@ The stages are played in order. **Add** adds one at the end, with a name and a t
 In a knockout with a number of teams that is not a power of two, the best seeds get a bye to the next round. With six teams, for example, the first and the second wait in the semifinals, the third plays the sixth and the fourth plays the fifth. After a stage is built, its type, games, groups and campaign rule cannot change; the points, tiebreakers, minimum maps, vetoes and the once-per-team rule still can.
 
 ### Games and results
+
+![The games of a championship](../images/en/admin-championship-games.webp)
 
 The Games tab lists every series of the built stages, 20 per page, and can be filtered by stage. At the top:
 

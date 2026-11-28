@@ -42,3 +42,5 @@ Las tablas mantienen sus columnas más importantes y ocultan las menos important
 ![La página de un jugador en un teléfono](../images/es/phone-player.webp)
 
 ![La tienda de skins en un teléfono](../images/es/phone-skins.webp)
+
+![Un campeonato en un teléfono](../images/es/phone-championship.webp)

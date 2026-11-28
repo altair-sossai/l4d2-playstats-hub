@@ -2,7 +2,7 @@
 
 🌐 [English](overview.md) | **Português** | [Español](overview.es.md)
 
-O L4D2 PlayStats Hub é um site para uma comunidade competitiva de Left 4 Dead 2. Os seus servidores de jogo enviam as estatísticas de cada mapa jogado, e o site transforma isso em um ranking, um histórico de partidas, uma página para cada jogador, uma visão da partida em andamento e alguns extras: uma loja de skins de armas e um ranking votado pelos jogadores.
+O L4D2 PlayStats Hub é um site para uma comunidade competitiva de Left 4 Dead 2. Os seus servidores de jogo enviam as estatísticas de cada mapa jogado, e o site transforma isso em um ranking, um histórico de partidas, uma página para cada jogador, uma visão da partida em andamento e mais: campeonatos, os banimentos dos servidores de jogo, uma loja de skins de armas e um ranking votado pelos jogadores. O [guia dos módulos](../modules.pt.md) lista todos os recursos.
 
 Você instala uma vez, em uma máquina que você controla. É um programa e um arquivo de banco de dados. Vários servidores de jogo podem alimentar o mesmo site.
 
@@ -18,7 +18,7 @@ Você instala uma vez, em uma máquina que você controla. É um programa e um a
 
 ## O que um visitante vê
 
-O menu no topo de cada página leva aos recursos. Um recurso que o administrador desligou não aparece no menu.
+O menu no topo de cada página leva aos recursos. Um recurso que o administrador desligou não aparece no menu, e os itens que não cabem na largura da janela vão para **Mais**.
 
 ![O menu do site, com Admin para um administrador](../images/pt/admin-menu.webp)
 
@@ -27,18 +27,22 @@ O menu no topo de cada página leva aos recursos. Um recurso que o administrador
 | Ranking | Os 100 melhores jogadores da temporada atual. | [Ranking](ranking.pt.md) |
 | Comunidade | O ranking votado pelos jogadores. | [Ranking da comunidade](community-ranking.pt.md) |
 | Últimos jogos | Todas as partidas, das mais recentes para as mais antigas. | [Partidas](matches.pt.md) |
+| Campeonatos | Os campeonatos em andamento e os encerrados. | [Campeonatos](championships.pt.md) |
 | Servidor | A partida em andamento nos seus servidores de jogo. | [Servidor ao vivo](live-server.pt.md) |
 | Skins | A loja de skins de armas. | [Loja de skins de armas](skin-shop.pt.md) |
 | Anti-Cheat | A página que oferece o programa Anti-Cheat e diz a um jogador logado se ele precisa usá-lo. | [Anti-Cheat](anti-cheat.pt.md) |
 | Mais > Jogadores | Todos os jogadores do período, com uma visão geral ou os totais de qualquer estatística, para qualquer temporada, ano ou todo o período. | [Jogadores](players.pt.md) |
 | Mais > Patentes | Os níveis de patente. | [Patentes](patents.pt.md) |
+| Mais > Banimentos | Os jogadores banidos dos servidores de jogo agora. | [Banimentos](bans.pt.md) |
 | Mais > Comandos | Todos os comandos dos servidores de jogo, com exemplos. | [Comandos do servidor de jogo](commands.pt.md) |
 | Admin | A área de administração, só para administradores. | [Administração](administration.pt.md) |
 | Estrelas | Quantas estrelas o jogador logado pode gastar na loja. | [Loja de skins de armas](skin-shop.pt.md) |
+| Sino | O que aconteceu que diz respeito ao jogador logado, com as não lidas contadas. | [Notificações](notifications.pt.md) |
+| Torre | A área do capitão, para o capitão ou vice-capitão de um campeonato. | [Campeonatos > A área do capitão](championships.pt.md#a-área-do-capitão) |
 | Avatar | A página do jogador logado. | [Jogadores](players.pt.md) |
 | Configurações (engrenagem) | Tema, idioma, login e logout. | [Idiomas, temas e celulares](languages-and-themes.pt.md) |
 
-O login é feito com a Steam. Os visitantes não precisam fazer login para ver o ranking, as partidas ou o servidor ao vivo. O login é necessário para comprar skins, votar no ranking da comunidade, usar o chat do site e administrar o site.
+O login é feito com a Steam. Os visitantes não precisam fazer login para ver o ranking, as partidas ou o servidor ao vivo. O login é necessário para comprar skins, votar no ranking da comunidade, usar o chat do site, pedir para participar de um campeonato e liderar uma equipe, receber notificações e administrar o site.
 
 ## Como as partes se encaixam
 
@@ -83,9 +87,10 @@ O login é feito com a Steam. Os visitantes não precisam fazer login para ver o
 
 | Quem | Pode |
 |---|---|
-| Qualquer visitante | Ver o ranking, as partidas, os jogadores, as patentes, o servidor ao vivo, o ranking da comunidade, o catálogo da loja, a página de comandos e a página do Anti-Cheat. |
-| Um jogador logado | Tudo o que está acima, e também: comprar e equipar skins, votar no ranking da comunidade (depois de partidas suficientes) e escrever no chat do site. |
-| Um administrador | Tudo o que está acima, e também: a área de administração, punições, edição do placar de um mapa, troca de jogador em uma partida, skins de presente, reembolsos, banimentos do chat e comandos remotos. |
+| Qualquer visitante | Ver o ranking, as partidas, os jogadores, as patentes, o servidor ao vivo, o ranking da comunidade, o catálogo da loja, os campeonatos, os banimentos, a página de comandos e a página do Anti-Cheat. |
+| Um jogador logado | Tudo o que está acima, e também: comprar e equipar skins, votar no ranking da comunidade (depois de partidas suficientes), escrever no chat do site, pedir para participar de um campeonato e ler as notificações. |
+| Um capitão ou vice-capitão | Tudo o que está acima, e também a área do capitão: o draft, o nome, a tag e a bandeira da equipe, as datas, os vetos e as campanhas. |
+| Um administrador | Tudo o que está acima, e também: a área de administração, punições, edição do placar de um mapa, troca de jogador em uma partida, skins de presente, reembolsos, campeonatos, banimentos, banimentos do chat, nomes forçados e comandos remotos. |
 
 O primeiro administrador é a conta Steam que conclui a [configuração inicial](first-run.pt.md). Outros administradores são adicionados em [Administração > Administradores](administration.pt.md#administradores).
 

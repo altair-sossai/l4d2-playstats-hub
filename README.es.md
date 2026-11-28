@@ -2,14 +2,15 @@
 
 🌐 [English](README.md) | [Português](README.pt.md) | **Español**
 
-Una sola aplicación web autoalojada para servidores competitivos de Left 4 Dead 2: ranking, estadísticas de partidas, vista del servidor en vivo, tienda de skins de armas y un ranking de la comunidad, junto con los plugins de SourceMod que la alimentan.
+Una sola aplicación web autoalojada para servidores competitivos de Left 4 Dead 2: ranking, estadísticas de partidas, vista del servidor en vivo, campeonatos, baneos, tienda de skins de armas y un ranking de la comunidad, junto con los plugins de SourceMod que la alimentan.
 
-> **Estado: primera versión publicada, migración terminada.** La aplicación, los plugins, el instalador para Linux y la imagen de Docker están disponibles en las [versiones publicadas](https://github.com/altair-sossai/l4d2-playstats-hub/releases). Los plugins todavía no se han ejecutado en un servidor de juego en vivo. El sitio de producción ([l4d2.com.br](https://l4d2.com.br/)) funciona con esta aplicación desde el 19 de noviembre de 2026, y los [repositorios que reemplazó](#repositorios-que-este-reemplazó) se archivaron el 22 de noviembre de 2026.
+> **Estado: primera versión publicada, migración terminada.** La aplicación, los plugins, el instalador para Linux y la imagen de Docker están disponibles en las [versiones publicadas](https://github.com/altair-sossai/l4d2-playstats-hub/releases). El sitio de producción ([l4d2.com.br](https://l4d2.com.br/)) funciona con esta aplicación, y su servidor de juego con estos plugins, desde el 19 de noviembre de 2026, y los [repositorios que reemplazó](#repositorios-que-este-reemplazó) se archivaron el 22 de noviembre de 2026.
 
 ## Contenido
 
 - [Por qué existe este proyecto](#por-qué-existe-este-proyecto)
 - [Qué hace](#qué-hace)
+- [Módulos](#módulos)
 - [Un recorrido rápido](#un-recorrido-rápido)
 - [Instalación](#instalación)
 - [Cómo encaja todo](#cómo-encaja-todo)
@@ -30,14 +31,36 @@ Este repositorio reúne la lógica para que cualquier dueño de servidor pueda e
 - **Temporadas que tú configuras.** Eliges cuántos meses dura una temporada. El ranking empieza de nuevo en cada temporada, y las temporadas pasadas se pueden seguir consultando: ranking, partidas y jugadores.
 - **Varios servidores de juego, un solo sitio.** Cada servidor tiene su propia clave. Los resultados de un jugador se suman entre todos ellos.
 - **Modos de juego que tú configuras.** Eliges qué modos cuentan para el ranking y cuántos mapas forman una partida clasificatoria.
-- **Servidor en vivo.** Marcador, jugadores, eventos y chat de la partida en curso, para cada servidor.
+- **Servidor en vivo.** Marcador, jugadores, eventos y chat de la partida en curso, para cada servidor. Los jugadores que iniciaron sesión pueden escribir en el chat del juego desde el sitio, y los administradores pueden enviar comandos al servidor.
 - **Tienda de skins de armas.** Los jugadores ganan estrellas con los MVP y las gastan en skins.
 - **Ranking de la comunidad.** Los jugadores votan sobre pares de jugadores, y los votos forman un segundo ranking.
+- **Campeonatos.** Participantes que piden jugar, equipos formados por draft, ruleta o bombos, fases de liga y eliminatoria, un área del capitán para fechas, vetos y campañas, y resultados enlazados a las partidas del servidor.
+- **Baneos.** Los baneos de todos los servidores de juego en una lista pública, con los dados en el juego llegando solos y alertas de cuentas relacionadas.
+- **Anti-Cheat.** La página que ofrece el Anti-Cheat y quién debe usarlo en los servidores de juego.
+- **Notificaciones.** Una campana avisa a cada jugador de lo que le concierne: campeonatos, series, castigos, baneos, regalos.
 - **Páginas para dentro del juego.** `!ranking` abre el ranking en el navegador del propio juego, o una versión ligera hecha para él, y `!comandos` / `!commands` abren los comandos del servidor.
-- **Módulos.** El administrador activa o desactiva cada una de estas funciones.
+- **Módulos.** El administrador activa o desactiva el ranking, el servidor en vivo, el chat del sitio, los comandos remotos, la tienda de skins, el ranking de la comunidad, los campeonatos, los baneos y el Anti-Cheat. Consulta [Módulos](#módulos).
 - **Configuración guiada.** Un asistente de primera ejecución y una página de estado que muestra si cada servidor de juego está conectado y qué falta.
 - **Tres idiomas.** Inglés, portugués y español.
 - **La base de datos que prefieras.** SQLite de forma predeterminada, sin ningún servidor que instalar. SQL Server, PostgreSQL y MySQL también son compatibles.
+
+## Módulos
+
+Cada función de abajo es un módulo que el administrador activa o desactiva. La [guía de los módulos](docs/modules.es.md) explica cada uno con capturas de pantalla: para qué sirve, quién lo usa y qué necesita.
+
+| Módulo | Para qué sirve | Por defecto |
+|---|---|---|
+| [Ranking y estadísticas](docs/modules.es.md#ranking-y-estadísticas) | El ranking, las partidas, los jugadores y las temporadas. | Activado |
+| [Servidor en vivo](docs/modules.es.md#servidor-en-vivo) | La partida en curso en cada servidor de juego. | Activado |
+| [Chat del sitio](docs/modules.es.md#chat-del-sitio) | Escribir en el chat del juego desde el sitio. | Desactivado |
+| [Comandos remotos](docs/modules.es.md#comandos-remotos) | Enviar comandos del sitio a un servidor de juego. | Desactivado |
+| [Tienda de skins de armas](docs/modules.es.md#tienda-de-skins-de-armas) | Gastar las estrellas de los MVP en skins de armas. | Desactivado |
+| [Ranking de la comunidad](docs/modules.es.md#ranking-de-la-comunidad) | Un segundo ranking, votado por los jugadores. | Desactivado |
+| [Campeonatos](docs/modules.es.md#campeonatos) | Campeonatos con equipos, draft, fases y resultados. | Desactivado |
+| [Baneos](docs/modules.es.md#baneos) | Los jugadores baneados de los servidores de juego. | Desactivado |
+| [Anti-Cheat](docs/modules.es.md#anti-cheat) | La página del Anti-Cheat y quién debe usarlo. | Desactivado |
+
+Las notificaciones, la página de comandos, los nombres forzados, la administración y las copias de seguridad están [siempre activas](docs/modules.es.md#siempre-activo).
 
 ## Un recorrido rápido
 
@@ -53,7 +76,11 @@ Los jugadores gastan en la tienda de skins de armas las estrellas que ganaron co
 
 ![La tienda de skins de armas](docs/images/es/skins.webp)
 
-El [manual de usuario](docs/manual/README.es.md) explica cada página, cómo se calculan los números y cada ajuste, con capturas de pantalla.
+Los campeonatos tienen sus propias páginas, con los equipos, la clasificación, el cuadro y las fechas.
+
+![La página de un campeonato](docs/images/es/championship.webp)
+
+La [guía de los módulos](docs/modules.es.md) muestra todas las funciones, y el [manual de usuario](docs/manual/README.es.md) explica cada página, cómo se calculan los números y cada ajuste, con capturas de pantalla.
 
 ## Instalación
 
@@ -110,6 +137,7 @@ La migración se hizo paso a paso. l4d2-playstats-api y l4d2-playstats-web se ar
 | Documento | Contenido |
 |---|---|
 | [docs/manual/](docs/manual/README.es.md) | El manual de usuario: cada página y ajuste del sitio, con capturas de pantalla. |
+| [docs/modules.es.md](docs/modules.es.md) | Para qué sirve cada módulo, qué hace y qué necesita, con capturas de pantalla. |
 | [docs/install-linux.es.md](docs/install-linux.es.md) | Instalar, actualizar y hacer copias de seguridad en un VPS Linux. |
 | [docs/install-docker.es.md](docs/install-docker.es.md) | Ejecutar la imagen publicada. |
 | [docs/install-azure.es.md](docs/install-azure.es.md) | Ejecutar en Azure. |
@@ -124,7 +152,7 @@ La migración se hizo paso a paso. l4d2-playstats-api y l4d2-playstats-web se ar
 | [tools/screenshots](tools/screenshots/README.es.md) | La herramienta que toma las capturas de pantalla de la documentación. |
 | [tools/e2e](tools/e2e/README.es.md) | Las pruebas en el navegador de las páginas principales, ejecutadas en cada push. |
 
-El inglés es el idioma predeterminado de este repositorio. Cada documento tiene también una versión en portugués (`.pt.md`) y otra en español (`.es.md`).
+El inglés es el idioma predeterminado de este repositorio. Cada documento tiene también una versión en portugués (`.pt.md`) y otra en español (`.es.md`), salvo las propuestas de [docs/proposals](docs/proposals), que son borradores en portugués.
 
 ## Licencia
 

@@ -22,9 +22,15 @@ El módulo viene apagado en un sitio nuevo. Enciende **Baneos** en **Administrac
 
 ## Para jugadores
 
+![La lista pública de baneos](../images/es/bans.webp)
+
 **Más → Baneos** abre `/bans`, la lista de los jugadores baneados ahora: el jugador, el motivo, el día del baneo, cuándo termina (o **Permanente**) y quién baneó. La búsqueda encuentra un baneo por nombre, Steam ID o motivo. Los baneos terminados no están en esta lista. En un teléfono cada fila muestra la foto, el nombre y el botón **Detalles**, que abre una ventana con todo.
 
+![La lista pública de baneos en un teléfono](../images/es/phone-bans.webp)
+
 La página de un jugador baneado empieza con un aviso rojo: "*Nombre* está baneado de los servidores hasta *fecha*", o "de forma permanente", con el motivo y un enlace a la lista.
+
+![El aviso en la página de un jugador baneado](../images/es/player-ban.webp)
 
 Un jugador baneado que intenta entrar en un servidor es expulsado con el motivo y el fin del baneo, en el idioma del juego. No hay forma de disputar un baneo en el sitio.
 
@@ -33,6 +39,8 @@ Un jugador conectado al sitio recibe aviso en la campana cuando es baneado y cua
 Las direcciones IP, las cuentas relacionadas y las alertas nunca se muestran al público: solo los administradores las ven.
 
 ## Para administradores
+
+![Los baneos en el área de administración](../images/es/admin-bans.webp)
 
 **Administración → Baneos** (`/admin/bans`) tiene tres pestañas:
 
@@ -50,6 +58,8 @@ La búsqueda de arriba filtra las pestañas Activos y Terminados por nombre, Ste
 | **Editar** | Cambia el fin y el motivo de un baneo activo. |
 | **Desbanear** | Levanta el baneo al instante. El motivo que escribas queda en el historial y solo lo ven los administradores. |
 | **Importar** | Lee un archivo `banned_user.cfg`. Ver [Importar banned_user.cfg](#importar-banned_usercfg). |
+
+![Banear a un jugador](../images/es/admin-bans-add.webp)
 
 Cada cambio pide confirmación. Con el [módulo del servidor en vivo](live-server.es.md) encendido, un baneo, un cambio o un desbaneo hecho en el sitio llega a los servidores en pocos segundos: un jugador baneado que está jugando es expulsado, y un jugador desbaneado sale de la lista de baneos del servidor. Sin ese módulo, el cambio se aplica la próxima vez que el jugador se conecte.
 
@@ -76,6 +86,8 @@ Cuando un jugador se conecta, el plugin consulta al sitio sobre ese jugador, una
 Si el sitio no responde, el jugador entra, salvo por los baneos que el propio servidor guarda: los dados en ese servidor y los que aprendió del sitio desde que se inició.
 
 ## Cuentas relacionadas y alertas
+
+![Las alertas de cuentas relacionadas](../images/es/admin-bans-alerts.webp)
 
 El sitio sabe qué cuentas de Steam se conectaron desde la misma dirección IP (ver [Conexiones de jugadores](moderation.es.md)).
 

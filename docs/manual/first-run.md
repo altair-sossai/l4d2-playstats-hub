@@ -56,7 +56,7 @@ The code is shown again with `playstats-hub setup-code` on Linux, or in the log 
 
 ![The modules step](../images/en/wizard-modules.webp)
 
-Choose what the site has. Each module is explained in [Administration > Modules](administration.md#modules). If you are not sure, keep the defaults: the ranking and the live server are on, the rest is off, and you can turn things on later.
+Choose what the site has. Each module is explained, with screenshots, in the [modules guide](../modules.md). If you are not sure, keep the defaults: the ranking and the live server are on, the rest is off, and you can turn things on later.
 
 ## Step 4: the game server
 

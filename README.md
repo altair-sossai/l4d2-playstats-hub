@@ -2,14 +2,15 @@
 
 🌐 **English** | [Português](README.pt.md) | [Español](README.es.md)
 
-One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, match statistics, live server view, weapon skin shop and a community ranking, together with the SourceMod plugins that feed it.
+One self-hosted web application for competitive Left 4 Dead 2 servers: ranking, match statistics, live server view, championships, bans, weapon skin shop and a community ranking, together with the SourceMod plugins that feed it.
 
-> **Status: first version published, migration finished.** The application, the plugins, the Linux installer and the Docker image are available in the [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). The plugins have not been run on a live game server yet. The production site ([l4d2.com.br](https://l4d2.com.br/)) has run on this application since 19 November 2026, and the [repositories it replaced](#repositories-this-one-replaced) were archived on 22 November 2026.
+> **Status: first version published, migration finished.** The application, the plugins, the Linux installer and the Docker image are available in the [releases](https://github.com/altair-sossai/l4d2-playstats-hub/releases). The production site ([l4d2.com.br](https://l4d2.com.br/)) has run on this application, and its game server on these plugins, since 19 November 2026, and the [repositories it replaced](#repositories-this-one-replaced) were archived on 22 November 2026.
 
 ## Contents
 
 - [Why this project exists](#why-this-project-exists)
 - [What it does](#what-it-does)
+- [Modules](#modules)
 - [A short tour](#a-short-tour)
 - [Installing](#installing)
 - [How it fits together](#how-it-fits-together)
@@ -30,14 +31,36 @@ This repository brings the logic together so that any server owner can run the s
 - **Seasons you configure.** You choose how many months a season lasts. The ranking starts again at each season, and past seasons stay browsable: ranking, matches and players.
 - **Several game servers, one site.** Each server has its own key. A player's results add up across all of them.
 - **Game modes you configure.** You choose which modes count toward the ranking and how many maps make a ranked match.
-- **Live server.** Scoreboard, players, events and chat of the match in progress, for each server.
+- **Live server.** Scoreboard, players, events and chat of the match in progress, for each server. Signed-in players can write in the game chat from the site, and administrators can send commands to the server.
 - **Weapon skin shop.** Players earn stars from MVPs and spend them on skins.
 - **Community ranking.** Players vote on pairs of players, and the votes build a second ranking.
+- **Championships.** Participants who ask to join, teams formed by a draft, a roulette or pots, round robin and knockout stages, a captain area for dates, vetoes and campaigns, and results linked to the matches of the server.
+- **Bans.** The bans of every game server in one public list, with the ones given in the game arriving by themselves and alerts of related accounts.
+- **Anti-Cheat.** The page that offers the Anti-Cheat, and who must use it on the game servers.
+- **Notifications.** A bell tells each player what concerns them: championships, series, punishments, bans, gifts.
 - **Pages for inside the game.** `!ranking` opens the ranking in the game's own browser, or a light version made for it, and `!comandos` / `!commands` open the commands of the server.
-- **Modules.** The administrator turns each of these on or off.
+- **Modules.** The administrator turns the ranking, the live server, the site chat, the remote commands, the skin shop, the community ranking, the championships, the bans and the Anti-Cheat on or off. See [Modules](#modules).
 - **Guided setup.** A first-run wizard, and a status page that shows whether each game server is connected and what is missing.
 - **Three languages.** English, Portuguese and Spanish.
 - **Your choice of database.** SQLite by default, with no server to install. SQL Server, PostgreSQL and MySQL are supported.
+
+## Modules
+
+Each feature below is a module the administrator turns on or off. The [modules guide](docs/modules.md) explains each one with screenshots: what it is for, who uses it and what it needs.
+
+| Module | What it is for | Default |
+|---|---|---|
+| [Ranking and statistics](docs/modules.md#ranking-and-statistics) | The ranking, the matches, the players and the seasons. | On |
+| [Live server](docs/modules.md#live-server) | The match in progress on each game server. | On |
+| [Site chat](docs/modules.md#site-chat) | Writing in the game chat from the site. | Off |
+| [Remote commands](docs/modules.md#remote-commands) | Sending commands from the site to a game server. | Off |
+| [Weapon skin shop](docs/modules.md#weapon-skin-shop) | Spending the stars of the MVPs on weapon skins. | Off |
+| [Community ranking](docs/modules.md#community-ranking) | A second ranking, voted by the players. | Off |
+| [Championships](docs/modules.md#championships) | Championships with teams, draft, stages and results. | Off |
+| [Bans](docs/modules.md#bans) | The players banned from the game servers. | Off |
+| [Anti-Cheat](docs/modules.md#anti-cheat) | The Anti-Cheat page and who must use it. | Off |
+
+The notifications, the commands page, the forced names, the administration and the backups are [always on](docs/modules.md#always-on).
 
 ## A short tour
 
@@ -53,7 +76,11 @@ Players spend the stars they earned as MVP in the weapon skin shop.
 
 ![The weapon skin shop](docs/images/en/skins.webp)
 
-The [user manual](docs/manual/README.md) explains every page, how the numbers are calculated, and every setting, with screenshots.
+Championships have their own pages, with the teams, the standings, the bracket and the dates.
+
+![The page of a championship](docs/images/en/championship.webp)
+
+The [modules guide](docs/modules.md) shows every feature, and the [user manual](docs/manual/README.md) explains every page, how the numbers are calculated, and every setting, with screenshots.
 
 ## Installing
 
@@ -110,6 +137,7 @@ The migration happened step by step. l4d2-playstats-api and l4d2-playstats-web w
 | Document | Contents |
 |---|---|
 | [docs/manual/](docs/manual/README.md) | The user manual: every page and setting of the site, with screenshots. |
+| [docs/modules.md](docs/modules.md) | What each module is for, what it does and what it needs, with screenshots. |
 | [docs/install-linux.md](docs/install-linux.md) | Installing, updating and backing up on a Linux VPS. |
 | [docs/install-docker.md](docs/install-docker.md) | Running the published image. |
 | [docs/install-azure.md](docs/install-azure.md) | Running on Azure. |
@@ -124,7 +152,7 @@ The migration happened step by step. l4d2-playstats-api and l4d2-playstats-web w
 | [tools/screenshots](tools/screenshots/README.md) | The tool that takes the screenshots of the documentation. |
 | [tools/e2e](tools/e2e/README.md) | The browser tests of the main pages, run on every push. |
 
-English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version.
+English is the default language of this repository. Every document also has a Portuguese (`.pt.md`) and a Spanish (`.es.md`) version, except the proposals in [docs/proposals](docs/proposals), which are drafts in Portuguese.
 
 ## License
 

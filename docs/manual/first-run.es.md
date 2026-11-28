@@ -56,7 +56,7 @@ El código se vuelve a mostrar con `playstats-hub setup-code` en Linux, o en el 
 
 ![El paso de los módulos](../images/es/wizard-modules.webp)
 
-Elige qué tiene el sitio. Cada módulo se explica en [Administración > Módulos](administration.es.md#módulos). Si no estás seguro, deja los valores predeterminados: el ranking y el servidor en vivo están activados, el resto está desactivado, y puedes activar cosas más adelante.
+Elige qué tiene el sitio. Cada módulo se explica, con capturas de pantalla, en la [guía de los módulos](../modules.es.md). Si no estás seguro, deja los valores predeterminados: el ranking y el servidor en vivo están activados, el resto está desactivado, y puedes activar cosas más adelante.
 
 ## Paso 4: el servidor de juego
 
