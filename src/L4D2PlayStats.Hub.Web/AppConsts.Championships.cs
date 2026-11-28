@@ -7,6 +7,7 @@ public static partial class AppConsts
     public const string ChampionshipLocalDateFormat = "yyyy-MM-ddTHH:mm";
     public static readonly string[] ChampionshipLocalDateFormats = [ChampionshipLocalDateFormat, "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:ss.fff"];
     public const string ChampionshipDateOnlyFormat = "yyyy-MM-dd";
+    public const string ChampionshipTimeFormat = "HH:mm";
     public const string ChampionshipCalendarDateFormat = "yyyyMMdd'T'HHmmss'Z'";
     public const string ChampionshipCalendarContentType = "text/calendar";
     public const string ChampionshipGoogleCalendarUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE";

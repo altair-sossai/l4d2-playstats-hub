@@ -22,6 +22,7 @@ public class ChampionshipPageModel
     public Dictionary<long, string> Names { get; set; } = [];
     public DateTime NowUtc { get; init; } = DateTime.UtcNow;
     public bool JoinOpen { get; init; }
+    public bool AntiCheatPage { get; init; }
     public ChampionshipJoinRequest? JoinRequest { get; init; }
 
     public bool IsParticipant => CurrentUser != null && Championship.Participants.Any(participant => participant.CommunityId == CurrentUser);
@@ -180,14 +181,28 @@ public class ChampionshipPageModel
         return string.IsNullOrWhiteSpace(translated) ? Championship.Rules ?? Championship.RulesPortuguese ?? Championship.RulesSpanish : translated;
     }
 
+    public List<ChampionshipCampaignOption> AllowedCampaigns => CampaignRules.Allowed(Championship, Campaigns.Values).OrderBy(campaign => campaign.Name).ToList();
+
+    public List<ChampionshipCampaignOption> PlayableCampaigns => Stages.Count == 0 ? AllowedCampaigns : Stages.SelectMany(stage => CampaignRules.Eligible(stage, AllowedCampaigns)).DistinctBy(campaign => campaign.Id).OrderBy(campaign => campaign.Name).ToList();
+
+    public List<ChampionshipCampaignOption> AdminCampaigns
+    {
+        get
+        {
+            var chosen = AllSeries.SelectMany(series => series.Games.Select(game => game.CampaignId).Append(series.TeamAVetoCampaignId).Append(series.TeamBVetoCampaignId)).ToHashSet();
+
+            return AllowedCampaigns.UnionBy(Campaigns.Values.Where(campaign => chosen.Contains(campaign.Id)), campaign => campaign.Id).OrderBy(campaign => campaign.Name).ToList();
+        }
+    }
+
     public List<ChampionshipCampaignOption> PickOptions(ChampionshipSeries series, ChampionshipGame game, int teamId)
     {
-        return CampaignRules.ForPick(StageOf(series), series, game, teamId, Campaigns.Values, AllSeries.SelectMany(item => item.Games));
+        return CampaignRules.ForPick(StageOf(series), series, game, teamId, AllowedCampaigns, AllSeries.SelectMany(item => item.Games));
     }
 
     public List<ChampionshipCampaignOption> VetoOptions(ChampionshipSeries series, bool teamA)
     {
-        return CampaignRules.ForVeto(StageOf(series), series, teamA, Campaigns.Values);
+        return CampaignRules.ForVeto(StageOf(series), series, teamA, AllowedCampaigns);
     }
 
     public string LogText(ChampionshipLog log, Func<string, object[], string> localize)

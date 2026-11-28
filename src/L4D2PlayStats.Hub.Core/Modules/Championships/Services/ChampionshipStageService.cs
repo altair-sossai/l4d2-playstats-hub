@@ -122,7 +122,7 @@ public class ChampionshipStageService(
         if (teams.Count < 2)
             throw new ChampionshipException("At least two teams are needed to build this stage.");
 
-        var campaigns = await loader.CampaignsAsync(cancellationToken);
+        var campaigns = CampaignRules.Allowed(championship, await loader.CampaignsAsync(cancellationToken));
 
         if (stage.IsKnockout)
             await BuildKnockoutAsync(championship, stage, teams, campaigns, cancellationToken);
@@ -169,7 +169,7 @@ public class ChampionshipStageService(
         if (stage.CampaignRule != ChampionshipCampaignRule.RoundDraw)
             throw new ChampionshipException("This stage does not draw one campaign per round.");
 
-        DrawRounds(stage, await loader.CampaignsAsync(cancellationToken));
+        DrawRounds(stage, CampaignRules.Allowed(championship, await loader.CampaignsAsync(cancellationToken)));
         log.Add(championship.Id, by, "Drew the campaigns of the stage {0}", stage.Name);
         await dbContext.SaveChangesAsync(cancellationToken);
     }

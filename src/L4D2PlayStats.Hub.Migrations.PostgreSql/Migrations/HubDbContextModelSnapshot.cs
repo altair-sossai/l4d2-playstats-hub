@@ -298,6 +298,9 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AntiCheatRequired")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("AutoCloseMinutes")
                         .HasColumnType("integer");
 
@@ -387,6 +390,12 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.Property<bool>("Substitutes")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("SuggestedMinute")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SuggestedWeekday")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("timestamp without time zone");
 
@@ -400,6 +409,30 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                         .IsUnique();
 
                     b.ToTable("Championships");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipCampaign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("ChampionshipId", "CampaignId")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipCampaigns");
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
@@ -2019,6 +2052,21 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipCampaign", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Campaigns.Campaign", null)
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("Campaigns")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
                 {
                     b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", null)
@@ -2278,6 +2326,8 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", b =>
                 {
+                    b.Navigation("Campaigns");
+
                     b.Navigation("DraftPicks");
 
                     b.Navigation("Participants");

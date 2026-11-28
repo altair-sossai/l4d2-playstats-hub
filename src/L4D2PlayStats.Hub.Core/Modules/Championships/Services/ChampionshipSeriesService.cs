@@ -182,8 +182,16 @@ public class ChampionshipSeriesService(
     {
         var (championship, stage, series, game) = await loader.GameAsync(gameId, cancellationToken);
 
-        if (campaignId != null && (await loader.CampaignsAsync(cancellationToken)).All(campaign => campaign.Id != campaignId))
-            throw new ChampionshipException("The campaign was not found.");
+        if (campaignId != null)
+        {
+            var campaigns = await loader.CampaignsAsync(cancellationToken);
+
+            if (campaigns.All(campaign => campaign.Id != campaignId))
+                throw new ChampionshipException("The campaign was not found.");
+
+            if (game.CampaignId != campaignId && CampaignRules.Allowed(championship, campaigns).All(campaign => campaign.Id != campaignId))
+                throw new ChampionshipException("This campaign is not one of the campaigns of the championship.");
+        }
 
         var pickedByTeamA = GamePlan.PickedByTeamA(game, series.BestOf);
         var teamPick = campaignId != null && stage.CampaignRule == ChampionshipCampaignRule.Picks && pickedByTeamA != null && series.HasTeams;
@@ -218,7 +226,7 @@ public class ChampionshipSeriesService(
         if (stage.Veto && (series.TeamAVetoCampaignId == null || series.TeamBVetoCampaignId == null))
             throw new ChampionshipException("Both teams must veto a campaign first.");
 
-        var allowed = CampaignRules.ForPick(stage, series, game, team.Id, await loader.CampaignsAsync(cancellationToken), Games(championship));
+        var allowed = CampaignRules.ForPick(stage, series, game, team.Id, CampaignRules.Allowed(championship, await loader.CampaignsAsync(cancellationToken)), Games(championship));
 
         if (allowed.All(campaign => campaign.Id != campaignId))
             throw new ChampionshipException("Your team cannot choose this campaign.");
@@ -250,7 +258,7 @@ public class ChampionshipSeriesService(
         if ((teamA ? series.TeamAVetoCampaignId : series.TeamBVetoCampaignId) != null)
             throw new ChampionshipException("Your team has already vetoed a campaign.");
 
-        if (CampaignRules.ForVeto(stage, series, teamA, await loader.CampaignsAsync(cancellationToken)).All(campaign => campaign.Id != campaignId))
+        if (CampaignRules.ForVeto(stage, series, teamA, CampaignRules.Allowed(championship, await loader.CampaignsAsync(cancellationToken))).All(campaign => campaign.Id != campaignId))
             throw new ChampionshipException("Your team cannot veto this campaign.");
 
         if (teamA)

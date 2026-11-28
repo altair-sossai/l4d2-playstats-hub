@@ -27,4 +27,14 @@ public class ChampionshipDatesTests
         Assert.AreEqual(string.Empty, ChampionshipDates.Input(null, ThreeHoursBehind));
         Assert.AreEqual("20261204T003000Z", ChampionshipDates.Calendar(utc));
     }
+
+    [TestMethod]
+    public void ATimeIsReadAndGoesBackToTheForm()
+    {
+        Assert.AreEqual(1230, ChampionshipDates.FromTimeInput("20:30"));
+        Assert.IsNull(ChampionshipDates.FromTimeInput("25:00"));
+        Assert.IsNull(ChampionshipDates.FromTimeInput(null));
+        Assert.AreEqual("20:30", ChampionshipDates.TimeInput(1230));
+        Assert.AreEqual(string.Empty, ChampionshipDates.TimeInput(null));
+    }
 }

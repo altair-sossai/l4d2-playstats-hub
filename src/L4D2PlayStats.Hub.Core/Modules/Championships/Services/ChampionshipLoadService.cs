@@ -1,4 +1,5 @@
 using L4D2PlayStats.Hub.Core.Data;
+using L4D2PlayStats.Hub.Core.Modules.Campaigns.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
@@ -77,16 +78,17 @@ public class ChampionshipLoadService(HubDbContext dbContext) : IChampionshipLoad
     public async Task<List<ChampionshipCampaignOption>> CampaignsAsync(CancellationToken cancellationToken = default)
     {
         var campaigns = await dbContext.Campaigns.AsNoTracking()
-            .Select(campaign => new { campaign.Id, campaign.Name, Maps = campaign.Maps.Count })
+            .Select(campaign => new { campaign.Id, campaign.Name, Maps = campaign.Maps.Select(map => map.MapName).ToList() })
             .ToListAsync(cancellationToken);
 
-        return campaigns.Select(campaign => new ChampionshipCampaignOption(campaign.Id, campaign.Name, campaign.Maps)).OrderBy(campaign => campaign.Name).ToList();
+        return campaigns.Select(campaign => new ChampionshipCampaignOption(campaign.Id, campaign.Name, campaign.Maps.Count, OriginalCampaigns.IsOriginal(campaign.Maps))).OrderBy(campaign => campaign.Name).ToList();
     }
 
     private IQueryable<Championship> Query(bool tracking)
     {
         var query = dbContext.Championships
             .Include(championship => championship.Participants)
+            .Include(championship => championship.Campaigns)
             .Include(championship => championship.Teams).ThenInclude(team => team.Members)
             .Include(championship => championship.DraftPicks)
             .Include(championship => championship.Stages).ThenInclude(stage => stage.Groups).ThenInclude(group => group.Teams)

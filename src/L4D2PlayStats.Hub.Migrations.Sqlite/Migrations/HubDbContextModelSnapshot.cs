@@ -283,6 +283,9 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("AntiCheatRequired")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("AutoCloseMinutes")
                         .HasColumnType("INTEGER");
 
@@ -372,6 +375,12 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.Property<bool>("Substitutes")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("SuggestedMinute")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("SuggestedWeekday")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("UpdatedAtUtc")
                         .HasColumnType("TEXT");
 
@@ -385,6 +394,28 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .IsUnique();
 
                     b.ToTable("Championships");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipCampaign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("ChampionshipId", "CampaignId")
+                        .IsUnique();
+
+                    b.ToTable("ChampionshipCampaigns");
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
@@ -1948,6 +1979,21 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipCampaign", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Campaigns.Campaign", null)
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany("Campaigns")
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipDateProposal", b =>
                 {
                     b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipSeries", null)
@@ -2207,6 +2253,8 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", b =>
                 {
+                    b.Navigation("Campaigns");
+
                     b.Navigation("DraftPicks");
 
                     b.Navigation("Participants");

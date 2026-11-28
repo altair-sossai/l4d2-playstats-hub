@@ -3,7 +3,7 @@
 @{
     var view = Model.Page;
     var built = view.Stages.Where(stage => stage.Generated).ToList();
-    var campaigns = view.Campaigns.Values.OrderBy(campaign => campaign.Name).ToList();
+    var campaigns = view.AdminCampaigns;
     var returnUrl = QueryUrl.Build(Model.Url, (AppConsts.AdminTabQuery, AppConsts.ChampionshipAdminGamesTab), (AppConsts.ChampionshipStageQuery, Model.StageFilter), (AppConsts.ChampionshipGamesPageQuery, Model.Series.Page));
 }
 

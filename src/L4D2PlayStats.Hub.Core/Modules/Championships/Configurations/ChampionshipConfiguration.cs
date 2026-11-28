@@ -24,6 +24,7 @@ public class ChampionshipConfiguration : IEntityTypeConfiguration<Championship>
         builder.HasMany(e => e.Participants).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(e => e.Teams).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(e => e.Stages).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(e => e.Campaigns).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(e => e.DraftPicks).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
         builder.Ignore(e => e.IsPublic);
         builder.Ignore(e => e.IsOver);

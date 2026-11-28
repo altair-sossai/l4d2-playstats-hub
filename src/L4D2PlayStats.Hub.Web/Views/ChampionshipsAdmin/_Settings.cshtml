@@ -7,6 +7,8 @@
     var bannerUrl = ChampionshipUrls.Image(championship.Id, championship.BannerImage);
     var logoUrl = ChampionshipUrls.Image(championship.Id, championship.LogoImage);
     var gallery = championship.Gallery;
+    var campaigns = Model.Page.Campaigns.Values.OrderByDescending(campaign => campaign.Original).ThenBy(campaign => campaign.Name).ToList();
+    var selected = championship.Campaigns.Select(campaign => campaign.CampaignId).ToHashSet();
 }
 
 <p class="admin-lead">@L["The information shown on the page of the championship, how the teams are formed and its status. A draft is seen only by the administrators; building the first stage puts the championship in progress."]</p>
@@ -122,6 +124,57 @@
                         </label>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-play"></span> @L["Games"]</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-6 form-group">
+                    <label for="SuggestedWeekday">@L["Suggested day"] @FieldHelp.Tip(L["Only a suggestion, shown on the page of the championship and to the captains when they propose a date. The captains can choose another day and time."])</label>
+                    <select class="form-control" id="SuggestedWeekday" name="SuggestedWeekday">
+                        <option value="">@L["Any day"]</option>
+                        @foreach (var weekday in Enum.GetValues<DayOfWeek>())
+                        {
+                            <option value="@weekday" selected="@(weekday == championship.SuggestedWeekday)">@ChampionshipTexts.Weekday(weekday)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-6 form-group">
+                    <label for="suggestedTime">@L["Suggested time"] @FieldHelp.Tip(L["In the time zone of the site: {0}. Empty for no suggestion.", Model.Page.TimeZone.Id])</label>
+                    <input type="time" class="form-control" id="suggestedTime" name="suggestedTime" value="@ChampionshipDates.TimeInput(championship.SuggestedMinute)">
+                </div>
+            </div>
+            <div class="checkbox" style="margin: 0">
+                <label for="AntiCheatRequired">
+                    <input type="checkbox" id="AntiCheatRequired" name="AntiCheatRequired" value="true" checked="@championship.AntiCheatRequired">
+                    <input type="hidden" name="AntiCheatRequired" value="false">
+                    @L["The Anti-Cheat is mandatory for everyone"] @FieldHelp.Tip(L["Shown on the page of the championship, on the page of each series and to the captains. The game servers ask for the Anti-Cheat according to the Anti-Cheat settings."])
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-map-marker"></span> @L["Campaigns"] @FieldHelp.Tip(L["Only the selected campaigns can be chosen, vetoed or drawn in this championship. Select none to allow all of them. The minimum of maps of each stage still applies."])</h3>
+        </div>
+        <div class="panel-body">
+            <div class="championship-campaigns-actions">
+                <button class="btn btn-default btn-sm" type="button" data-campaigns-select="original">@L["Only the original ones"]</button>
+                <button class="btn btn-default btn-sm" type="button" data-campaigns-select="all">@L["All campaigns"]</button>
+                <button class="btn btn-default btn-sm" type="button" data-campaigns-select="none">@L["No campaign"]</button>
+            </div>
+            <div class="championship-campaigns">
+                @foreach (var campaign in campaigns)
+                {
+                    <label class="championship-campaign">
+                        <input type="checkbox" name="CampaignIds" value="@campaign.Id" checked="@selected.Contains(campaign.Id)" data-campaign-original="@(campaign.Original ? "true" : "false")">
+                        <span>@campaign.Name <small class="text-muted">@L["{0} maps", campaign.Maps]</small></span>
+                    </label>
+                }
             </div>
         </div>
     </div>
