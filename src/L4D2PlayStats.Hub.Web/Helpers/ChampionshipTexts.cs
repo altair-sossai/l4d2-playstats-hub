@@ -1,3 +1,4 @@
+using System.Globalization;
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
@@ -31,6 +32,23 @@ public static class ChampionshipTexts
             ChampionshipStatus.Cancelled => "label-danger",
             _ => "label-info"
         };
+    }
+
+    public static string SuggestedTime(IStringLocalizer L, Championship championship)
+    {
+        if (championship.SuggestedMinute == null)
+            return string.Empty;
+
+        var time = ChampionshipDates.Time(championship.SuggestedMinute.Value).ToString("t", CultureInfo.CurrentCulture);
+
+        return championship.SuggestedWeekday == null ? time : L["{0} at {1}", Weekday(championship.SuggestedWeekday.Value), time];
+    }
+
+    public static string Weekday(DayOfWeek weekday)
+    {
+        var name = CultureInfo.CurrentUICulture.DateTimeFormat.GetDayName(weekday);
+
+        return char.ToUpper(name[0], CultureInfo.CurrentUICulture) + name[1..];
     }
 
     public static string StageType(IStringLocalizer L, ChampionshipStageType type)

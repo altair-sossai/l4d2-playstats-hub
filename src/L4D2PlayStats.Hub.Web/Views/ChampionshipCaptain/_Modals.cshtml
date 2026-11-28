@@ -111,11 +111,15 @@
                     <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals" class="championship-propose" data-confirm="@L["Propose this date to the other team? Your team already accepts it, and the series is scheduled when the other team accepts it too."]">
                         <label for="captain-date-@series.Id">@L["Propose a date"]</label>
                         <div class="input-group">
-                            <input type="datetime-local" class="form-control" id="captain-date-@series.Id" name="date" required data-utc-offset="@((int)view.TimeZone.GetUtcOffset(DateTime.UtcNow).TotalMinutes)">
+                            <input type="datetime-local" class="form-control" id="captain-date-@series.Id" name="date" required value="@ChampionshipDates.SuggestedInput(championship, view.NowUtc, view.TimeZone)" data-utc-offset="@((int)view.TimeZone.GetUtcOffset(DateTime.UtcNow).TotalMinutes)">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-send"></span> @L["Propose"]</button>
                             </span>
                         </div>
+                        @if (championship.SuggestedMinute != null)
+                        {
+                            <p class="help-block" style="margin-bottom: 0">@L["The suggestion of the championship is {0}. You can propose another day and time.", ChampionshipTexts.SuggestedTime(L, championship)]</p>
+                        }
                     </form>
                 </div>
                 <div class="modal-footer">

@@ -31,6 +31,9 @@ public class Championship
     public int AutoCloseMinutes { get; set; } = AppConsts.ChampionshipDefaultAutoCloseMinutes;
     public DateTime? StartsOn { get; set; }
     public DateTime? EndsOn { get; set; }
+    public bool AntiCheatRequired { get; set; }
+    public DayOfWeek? SuggestedWeekday { get; set; }
+    public int? SuggestedMinute { get; set; }
     public string? CancelReason { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public DateTime UpdatedAtUtc { get; set; }
@@ -38,6 +41,7 @@ public class Championship
     public List<ChampionshipTeam> Teams { get; set; } = [];
     public List<ChampionshipStage> Stages { get; set; } = [];
     public List<ChampionshipDraftPick> DraftPicks { get; set; } = [];
+    public List<ChampionshipCampaign> Campaigns { get; set; } = [];
 
     public bool IsPublic => Status != ChampionshipStatus.Draft;
 

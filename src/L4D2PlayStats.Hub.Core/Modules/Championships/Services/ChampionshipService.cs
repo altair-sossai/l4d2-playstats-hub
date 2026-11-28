@@ -101,7 +101,7 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
 
     public async Task UpdateAsync(int id, ChampionshipSettingsForm form, long? updatedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await dbContext.Championships.FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
+        var championship = await dbContext.Championships.Include(item => item.Campaigns).FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
         var slug = string.IsNullOrWhiteSpace(form.Slug) ? ChampionshipSlugs.From(form.Name) : ChampionshipSlugs.From(form.Slug);
 
         if (form.EndsOn != null && form.StartsOn != null && form.EndsOn < form.StartsOn)
@@ -122,6 +122,10 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         championship.AutoLinkMatches = form.AutoLinkMatches;
         championship.AutoLinkHours = Math.Clamp(form.AutoLinkHours, 1, AppConsts.ChampionshipMaxAutoLinkHours);
         championship.AutoCloseMinutes = Math.Clamp(form.AutoCloseMinutes, AppConsts.ChampionshipMinAutoCloseMinutes, AppConsts.ChampionshipMaxAutoCloseMinutes);
+        championship.AntiCheatRequired = form.AntiCheatRequired;
+        championship.SuggestedMinute = form.SuggestedMinute is >= 0 and < AppConsts.MinutesPerDay ? form.SuggestedMinute : null;
+        championship.SuggestedWeekday = championship.SuggestedMinute != null && form.SuggestedWeekday is { } weekday && Enum.IsDefined(weekday) ? weekday : null;
+        await SetCampaignsAsync(championship, form.CampaignIds, cancellationToken);
         championship.StartsOn = form.StartsOn?.Date;
         championship.EndsOn = form.EndsOn?.Date;
         championship.UpdatedAtUtc = clock.UtcNow;
@@ -253,6 +257,15 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
             MinimumMaps = template.CampaignRule == ChampionshipCampaignRule.RoundDraw ? AppConsts.ChampionshipDrawMinimumMaps : 0,
             Tiebreakers = ChampionshipTiebreakers.Format(ChampionshipTiebreakers.Default)
         };
+    }
+
+    private async Task SetCampaignsAsync(Championship championship, IReadOnlyCollection<int> campaignIds, CancellationToken cancellationToken)
+    {
+        var selected = await dbContext.Campaigns.Where(campaign => campaignIds.Contains(campaign.Id)).Select(campaign => campaign.Id).ToListAsync(cancellationToken);
+        var current = championship.Campaigns.Select(campaign => campaign.CampaignId).ToHashSet();
+
+        championship.Campaigns.RemoveAll(campaign => !selected.Contains(campaign.CampaignId));
+        championship.Campaigns.AddRange(selected.Where(campaignId => !current.Contains(campaignId)).Select(campaignId => new ChampionshipCampaign { CampaignId = campaignId }));
     }
 
     private async Task<string> UniqueSlugAsync(string slug, int? id, CancellationToken cancellationToken)

@@ -1,0 +1,11 @@
+@model ChampionshipPageModel
+@if (Model.Championship.AntiCheatRequired)
+{
+    <div class="alert alert-warning championship-anti-cheat">
+        <span class="glyphicon glyphicon-lock"></span> @L["Everyone plays this championship with the Anti-Cheat."]
+        @if (Model.AntiCheatPage)
+        {
+            <a class="alert-link" href="@AppConsts.AntiCheatUrl">@L["See how to use it"]</a>
+        }
+    </div>
+}

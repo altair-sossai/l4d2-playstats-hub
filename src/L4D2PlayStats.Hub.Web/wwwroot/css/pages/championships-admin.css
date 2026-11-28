@@ -88,6 +88,28 @@
 .championship-game-live p {
     margin-bottom: 8px;
 }
+
+.championship-campaigns-actions {
+    margin-bottom: 12px;
+}
+
+.championship-campaigns {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+    gap: 4px 16px;
+}
+
+.championship-campaign {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    min-width: 0;
+    margin: 0;
+    padding: 3px 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
 .championship-image-preview {
     display: flex;
     align-items: center;

@@ -71,6 +71,29 @@
                     <dd>@championship.GameConfiguration</dd>
                 </div>
             }
+            @if (championship.SuggestedMinute != null)
+            {
+                <div class="championship-fact">
+                    <dt><span class="glyphicon glyphicon-time"></span> @L["Suggested time"]</dt>
+                    <dd>@ChampionshipTexts.SuggestedTime(L, championship)</dd>
+                </div>
+            }
+            @if (championship.AntiCheatRequired)
+            {
+                <div class="championship-fact">
+                    <dt><span class="glyphicon glyphicon-lock"></span> @L["Anti-Cheat"]</dt>
+                    <dd>
+                        @if (Model.AntiCheatPage)
+                        {
+                            <a href="@AppConsts.AntiCheatUrl">@L["Mandatory"]</a>
+                        }
+                        else
+                        {
+                            @L["Mandatory"]
+                        }
+                    </dd>
+                </div>
+            }
         </dl>
     </section>
 
@@ -362,6 +385,10 @@
                 </li>
             }
         </ol>
+        @if (championship.Campaigns.Count > 0)
+        {
+            <p class="championship-campaigns"><strong>@L["Campaigns"]:</strong> @string.Join(", ", Model.PlayableCampaigns.Select(campaign => campaign.Name))</p>
+        }
     </section>
 
     @if (podium.Champion != null)

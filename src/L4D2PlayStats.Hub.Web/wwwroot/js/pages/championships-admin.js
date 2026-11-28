@@ -74,6 +74,14 @@ $(function () {
         sections($(this).val());
     });
 
+    $(document).on('click', '[data-campaigns-select]', function () {
+        var selection = $(this).attr('data-campaigns-select');
+
+        $('[data-campaign-original]').each(function () {
+            $(this).prop('checked', selection === 'all' || selection === 'original' && $(this).attr('data-campaign-original') === 'true');
+        });
+    });
+
     $(document).on('click', '[data-participant-pot]', function () {
         var $modal = $('#participant-pot-modal');
 

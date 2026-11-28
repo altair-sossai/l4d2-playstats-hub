@@ -52,4 +52,5 @@ public static partial class AppConsts
     public const int ChampionshipGalleryMaxLength = ChampionshipGalleryMaxImages * (ChampionshipImageMaxLength + 1);
     public const char ChampionshipGallerySeparator = '|';
     public const int ChampionshipJoinMessageMaxLength = 300;
+    public const int MinutesPerDay = 24 * 60;
 }

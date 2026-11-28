@@ -7,6 +7,8 @@
 
 <p class="admin-lead">@L["The series of your team. Propose the dates to the other team and, when the stage has them, veto a campaign and choose the campaigns of your turns. Times are in the time zone of the site: {0}.", view.TimeZone.Id]</p>
 
+@await Html.PartialAsync("_ChampionshipAntiCheat", view)
+
 <table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
     <thead>
     <tr>

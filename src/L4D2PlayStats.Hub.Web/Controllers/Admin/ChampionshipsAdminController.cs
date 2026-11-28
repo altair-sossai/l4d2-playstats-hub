@@ -133,10 +133,11 @@ public class ChampionshipsAdminController(
 
     [HttpPost("{id:int}")]
     [RequestSizeLimit(AppConsts.ChampionshipSettingsFormMaxBytes)]
-    public async Task<IActionResult> SaveSettings(int id, ChampionshipSettingsForm form, ChampionshipImagesUpload images, string? startsOn, string? endsOn, ChampionshipStatus status, string? reason, CancellationToken cancellationToken)
+    public async Task<IActionResult> SaveSettings(int id, ChampionshipSettingsForm form, ChampionshipImagesUpload images, string? startsOn, string? endsOn, string? suggestedTime, ChampionshipStatus status, string? reason, CancellationToken cancellationToken)
     {
         form.StartsOn = ChampionshipDates.FromDateInput(startsOn);
         form.EndsOn = ChampionshipDates.FromDateInput(endsOn);
+        form.SuggestedMinute = ChampionshipDates.FromTimeInput(suggestedTime);
 
         return await Run(async () =>
         {

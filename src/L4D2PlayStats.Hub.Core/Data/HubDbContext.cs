@@ -36,6 +36,7 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
     public DbSet<AntiCheatWhitelistPlayer> AntiCheatWhitelist => Set<AntiCheatWhitelistPlayer>();
     public DbSet<AntiCheatRequiredPlayer> AntiCheatRequired => Set<AntiCheatRequiredPlayer>();
     public DbSet<Championship> Championships => Set<Championship>();
+    public DbSet<ChampionshipCampaign> ChampionshipCampaigns => Set<ChampionshipCampaign>();
     public DbSet<ChampionshipParticipant> ChampionshipParticipants => Set<ChampionshipParticipant>();
     public DbSet<ChampionshipTeam> ChampionshipTeams => Set<ChampionshipTeam>();
     public DbSet<ChampionshipTeamMember> ChampionshipTeamMembers => Set<ChampionshipTeamMember>();

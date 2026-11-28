@@ -19,6 +19,10 @@ public class ChampionshipSettingsForm
     public bool AutoLinkMatches { get; set; } = true;
     public int AutoLinkHours { get; set; } = AppConsts.ChampionshipDefaultAutoLinkHours;
     public int AutoCloseMinutes { get; set; } = AppConsts.ChampionshipDefaultAutoCloseMinutes;
+    public bool AntiCheatRequired { get; set; }
+    public DayOfWeek? SuggestedWeekday { get; set; }
+    public int? SuggestedMinute { get; set; }
+    public List<int> CampaignIds { get; set; } = [];
     public DateTime? StartsOn { get; set; }
     public DateTime? EndsOn { get; set; }
 }

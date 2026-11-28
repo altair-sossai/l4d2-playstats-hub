@@ -182,7 +182,7 @@ public class ChampionshipHelpersTests
     public void ACampaignAlreadyPickedByTheTeamOrVetoedCannotBeChosenAgain()
     {
         var stage = new ChampionshipStage { OncePerTeam = true, CampaignRule = ChampionshipCampaignRule.Picks };
-        var campaigns = new List<ChampionshipCampaignOption> { new(1, "Dark Carnival", 5), new(2, "Dead Center", 4), new(3, "No Mercy", 5), new(4, "The Passing", 3) };
+        var campaigns = new List<ChampionshipCampaignOption> { new(1, "Dark Carnival", 5, true), new(2, "Dead Center", 4, true), new(3, "No Mercy", 5, true), new(4, "The Passing", 3, true) };
         var earlier = new ChampionshipGame { Id = 50, CampaignId = 1, CampaignSource = ChampionshipCampaignSource.Pick, PickedByTeamId = 7 };
         var series = new ChampionshipSeries { TeamAId = 7, TeamBId = 8, BestOf = 3, TeamBVetoCampaignId = 2 };
         var game = new ChampionshipGame { Id = 60, Number = 1 };

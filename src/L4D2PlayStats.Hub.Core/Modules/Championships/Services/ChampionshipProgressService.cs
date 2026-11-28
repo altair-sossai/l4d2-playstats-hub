@@ -42,7 +42,7 @@ public class ChampionshipProgressService(IChampionshipRandomService random) : IC
 
     public void DrawCampaign(Championship championship, ChampionshipStage stage, ChampionshipSeries series, ChampionshipGame game, IReadOnlyList<ChampionshipCampaignOption> campaigns)
     {
-        var pool = CampaignRules.ForDraw(stage, series, game, campaigns);
+        var pool = CampaignRules.ForDraw(stage, series, game, CampaignRules.Allowed(championship, campaigns));
 
         if (pool.Count == 0)
             return;

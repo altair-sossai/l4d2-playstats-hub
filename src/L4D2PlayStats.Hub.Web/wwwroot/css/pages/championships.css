@@ -406,6 +406,10 @@ h2.championship-section-title {
     background: rgba(127, 127, 127, .1);
 }
 
+.championship-campaigns {
+    margin: 12px 0 0;
+}
+
 .championship-fact dt {
     margin-bottom: 4px;
     font-size: 11px;
@@ -674,8 +678,7 @@ h2.championship-section-title {
 .championship-person img {
     width: 56px;
     height: 56px;
-    border: 2px solid rgba(127, 127, 127, .35);
-    border-radius: 50%;
+    border-radius: 5px;
     object-fit: cover;
 }
 

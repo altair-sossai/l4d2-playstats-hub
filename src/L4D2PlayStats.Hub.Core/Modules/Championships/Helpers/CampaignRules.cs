@@ -5,6 +5,13 @@ namespace L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
 
 public static class CampaignRules
 {
+    public static List<ChampionshipCampaignOption> Allowed(Championship championship, IEnumerable<ChampionshipCampaignOption> campaigns)
+    {
+        var allowed = championship.Campaigns.Select(campaign => campaign.CampaignId).ToHashSet();
+
+        return campaigns.Where(campaign => allowed.Count == 0 || allowed.Contains(campaign.Id)).ToList();
+    }
+
     public static List<ChampionshipCampaignOption> Eligible(ChampionshipStage stage, IEnumerable<ChampionshipCampaignOption> campaigns)
     {
         return campaigns.Where(campaign => stage.MinimumMaps <= 0 || campaign.Maps >= stage.MinimumMaps).OrderBy(campaign => campaign.Name).ToList();
