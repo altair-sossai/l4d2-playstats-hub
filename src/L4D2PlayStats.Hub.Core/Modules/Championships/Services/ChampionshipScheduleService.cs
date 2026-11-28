@@ -22,6 +22,9 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
         if (series.Proposals.Any(proposal => proposal.DateUtc == dateUtc && !proposal.Refused))
             throw new ChampionshipException("This date was already proposed.");
 
+        if (series.Proposals.Count(proposal => proposal.TeamId == team.Id && !proposal.Refused && !proposal.Confirmed) >= AppConsts.ChampionshipOpenProposalsMax)
+            throw new ChampionshipException("Wait for an answer to the dates already proposed, or delete one, before proposing another.");
+
         var teamA = series.TeamAId == team.Id;
         var proposal = new ChampionshipDateProposal
         {
@@ -56,6 +59,9 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
         if (proposal.Confirmed)
             throw new ChampionshipException("This date is already confirmed.");
 
+        if (accept && proposal.DateUtc <= clock.UtcNow)
+            throw new ChampionshipException("This date has already passed.");
+
         var answer = accept ? ChampionshipAnswer.Accepted : ChampionshipAnswer.Refused;
 
         if (series.TeamAId == team.Id)
@@ -80,6 +86,8 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
         if (!administrator)
         {
             var team = ChampionshipSeriesService.Leader(championship, series, communityId);
+
+            ChampionshipSeriesService.Open(championship, series);
 
             if (proposal.TeamId != team.Id)
                 throw new ChampionshipException("Only the team that proposed this date can delete it.");

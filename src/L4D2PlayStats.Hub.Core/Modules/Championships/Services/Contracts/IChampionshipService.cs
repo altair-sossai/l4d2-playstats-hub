@@ -14,7 +14,7 @@ public interface IChampionshipService
     Task UpdateRulesAsync(int id, string? english, string? portuguese, string? spanish, long? updatedBy, CancellationToken cancellationToken = default);
     Task SetStatusAsync(int id, ChampionshipStatus status, string? reason, long? updatedBy, CancellationToken cancellationToken = default);
     Task<ChampionshipImageSet?> ImagesAsync(int id, CancellationToken cancellationToken = default);
-    Task<bool> IsPublicAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> ShowsImageAsync(int id, string file, bool administrator, CancellationToken cancellationToken = default);
     Task<ChampionshipImageSet> SetImagesAsync(int id, ChampionshipImageSet images, long? updatedBy, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

@@ -76,6 +76,50 @@ public class ChampionshipCaptainTests
     }
 
     [TestMethod]
+    public async Task APendingFlagIsNotServedByTheAddressOfTheChampionshipImages()
+    {
+        using var factory = await ChampionshipWeb.FactoryAsync();
+
+        var (championship, teamIds) = await SetupAsync(factory, ChampionshipDraftMethod.Manual, true);
+        var area = $"/championships/{championship.Slug}/captain";
+
+        using var captain = factory.Client(FirstPlayer);
+        using var stranger = factory.Client(Stranger);
+        using var visitor = factory.Client();
+
+        await PostMultipartAsync(captain, area, $"{area}/identity", new Dictionary<string, string> { ["name"] = "Os Lobos", ["tag"] = "LOB" }, Png, "flag.png");
+
+        var team = await TeamAsync(factory, teamIds[0]);
+        var address = $"/championships/images/{championship.Id}/{team.PendingFlag}";
+
+        Assert.IsNotNull(team.PendingFlag);
+        Assert.AreEqual(HttpStatusCode.NotFound, (await visitor.GetAsync(address)).StatusCode);
+        Assert.AreEqual(HttpStatusCode.NotFound, (await stranger.GetAsync(address)).StatusCode);
+    }
+
+    [TestMethod]
+    public async Task AFlagLargerThanTheLimitIsRefusedBeforeItIsSaved()
+    {
+        using var factory = await ChampionshipWeb.FactoryAsync();
+
+        var (championship, teamIds) = await SetupAsync(factory, ChampionshipDraftMethod.Manual, true);
+        var area = $"/championships/{championship.Slug}/captain";
+
+        using var captain = factory.Client(FirstPlayer);
+
+        var huge = new byte[5 * 1024 * 1024];
+
+        Png.CopyTo(huge, 0);
+
+        var response = await PostMultipartAsync(captain, area, $"{area}/identity", new Dictionary<string, string> { ["name"] = "Os Lobos", ["tag"] = "LOB" }, huge, "flag.png");
+        var team = await TeamAsync(factory, teamIds[0]);
+
+        Assert.IsTrue(response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.RequestEntityTooLarge, $"A flag of 5 MB answered {response.StatusCode}");
+        Assert.IsNull(team.PendingFlag);
+        Assert.IsNull(team.PendingName);
+    }
+
+    [TestMethod]
     public async Task TheNameTagAndFlagOfATeamWaitForTheApprovalOfTheAdministration()
     {
         using var factory = await ChampionshipWeb.FactoryAsync();

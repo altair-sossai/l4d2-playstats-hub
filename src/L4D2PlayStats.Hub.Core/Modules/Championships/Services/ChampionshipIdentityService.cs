@@ -16,6 +16,7 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
         var proposedName = ChampionshipTeamService.TeamName(championship, string.IsNullOrWhiteSpace(name) ? team.Name : name, team.Id);
         var proposedTag = ChampionshipTeamService.Tag(tag);
         var nameChanged = proposedName != team.Name || proposedTag != team.Tag;
+        var waiting = team.PendingAtUtc != null;
 
         if (!nameChanged && flag == null)
             throw new ChampionshipException("Change the name, the tag or the flag first.");
@@ -38,7 +39,9 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
         team.PendingByCommunityId = leader;
         team.RejectionReason = null;
         log.Add(championship.Id, leader, "Sent a new name, tag or flag of the team {0} for approval", team.Name);
-        notify.IdentitySent(championship, team);
+        if (!waiting)
+            notify.IdentitySent(championship, team);
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return removed;

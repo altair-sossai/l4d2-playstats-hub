@@ -67,6 +67,7 @@ public static partial class AppConsts
     public const string ChampionshipLogoImage = "logo";
     public const string ChampionshipGalleryImage = "gallery";
     public const int ChampionshipImageMaxBytes = 2 * BytesPerMegabyte;
+    public const int ChampionshipIdentityRequestMaxBytes = ChampionshipImageMaxBytes + 64 * 1024;
     public const int ChampionshipSettingsFormMaxBytes = 32 * BytesPerMegabyte;
     public const int ChampionshipImageCacheInSeconds = 31536000;
     public const int ChampionshipHeroParticipants = 48;

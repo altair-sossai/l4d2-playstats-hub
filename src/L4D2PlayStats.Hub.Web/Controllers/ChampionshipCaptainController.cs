@@ -63,6 +63,8 @@ public class ChampionshipCaptainController(
     }
 
     [HttpPost("identity")]
+    [RequestSizeLimit(AppConsts.ChampionshipIdentityRequestMaxBytes)]
+    [RequestFormLimits(MultipartBodyLengthLimit = AppConsts.ChampionshipIdentityRequestMaxBytes)]
     public async Task<IActionResult> Identity(string slug, string? name, string? tag, IFormFile? flag, CancellationToken cancellationToken)
     {
         return await Act(slug, AppConsts.ChampionshipCaptainTeamTab, team => flagService.ApplyAsync(team.ChampionshipId, flag, saved => identityService.ProposeAsync(team.Id, Me, name, tag, saved, cancellationToken), cancellationToken));
