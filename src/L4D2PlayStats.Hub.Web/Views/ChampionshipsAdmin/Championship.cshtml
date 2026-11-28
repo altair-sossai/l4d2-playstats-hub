@@ -7,6 +7,7 @@
     var tabList = new List<AdminTab>
     {
         new(AppConsts.ChampionshipAdminSettingsTab, L["Settings"].Value, "cog"),
+        new(AppConsts.ChampionshipAdminRulesTab, L["Rules"].Value, "book"),
         new(AppConsts.ChampionshipAdminParticipantsTab, L["Participants"].Value, "user", championship.Participants.Count),
         new(AppConsts.ChampionshipAdminTeamsTab, L["Teams"].Value, "flag", championship.Teams.Count)
     };
@@ -61,6 +62,9 @@
 <div class="tab-content">
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminSettingsTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminSettingsTab)">
         @await Html.PartialAsync("_Settings", Model)
+    </div>
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminRulesTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminRulesTab)">
+        @await Html.PartialAsync("_Rules", Model)
     </div>
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipAdminParticipantsTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipAdminParticipantsTab)">
         @await Html.PartialAsync("_Participants", Model)

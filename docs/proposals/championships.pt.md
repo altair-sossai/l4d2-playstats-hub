@@ -13,7 +13,7 @@ A primeira versão foi implementada; o manual está em [docs/manual/championship
 | Horários no fuso de quem vê | Horários no fuso do site, como no resto do hub, com o fuso escrito ao lado dos formulários. |
 | Trava do elenco | Não há trava: só a administração mexe nos elencos, e cada mudança fica no histórico. |
 | W.O., desistência, desclassificação e jogo anulado | W.O. por série. Desistência e desclassificação são dadas como W.O. nas séries restantes; anular um jogo é limpar o resultado. |
-| Horário preferido e página "Meus jogos" | Não entraram. As séries da equipe do capitão ou do vice aparecem na visão geral do campeonato. |
+| Horário preferido e página "Meus jogos" | Não entraram como tal: as séries da equipe ficam na área do capitão. |
 | Estatísticas por fase | Estatísticas do campeonato inteiro. |
 | Data por jogo | Data por série: os jogos de uma série são marcados juntos. |
 
@@ -397,11 +397,15 @@ O repositório de regras continua como está: o regulamento de cada edição e o
 | Navegação | Só um link **Campeonatos** no menu principal; nada na página inicial. |
 | Site antigo | O subdomínio `torneio.l4d2.com.br` é desligado, sem redirecionamento. |
 | Participantes | Só a organização cadastra; não há inscrição pelo site. |
-| Agendamento | O capitão e um vice-capitão propõem e aceitam datas pela equipe. |
+| Agendamento | O capitão e um vice-capitão propõem e aceitam datas pela equipe, na área do capitão. |
 | Campanhas | Os capitães (ou vices) escolhem e vetam pelo site; o administrador pode escolher por eles. |
-| Draft | O administrador conduz e registra as escolhas, com página pública ao vivo. |
+| Draft | Cada capitão escolhe na área do capitão quando chega a vez da equipe, sem limite de tempo e sem nada ao vivo; o administrador também pode escolher por qualquer equipe. |
 | Formatos da primeira versão | Pontos corridos (com grupos) e eliminação simples. |
 | Jogo sem partida no hub | Placar digitado pelo administrador, marcado como resultado manual e fora das estatísticas. |
+| Resultados | Os jogos são sempre no servidor e os capitães nunca mexem no placar. A partida que chega é ligada sozinha ao jogo com a mesma campanha, as duas equipes e uma data dentro da tolerância (6 horas por padrão); o jogo fica em andamento e só termina com o último mapa, depois de 60 minutos sem estatísticas ou quando o administrador encerra. |
+| Área do capitão | Página separada do site do campeonato, com aviso ao lado da foto, para o draft, a identidade da equipe, o vice e as séries. |
+| Identidade da equipe | O capitão ou o vice envia nome, sigla e bandeira; nada aparece antes da aprovação da administração. O vice é escolhido pelo capitão. |
+| Fora da responsabilidade dos capitães | W.O., contestações, remarcações forçadas, reservas e convites ficam com a administração. |
 | Quem administra | Os administradores do hub. |
 | Avisos | Nenhum canal na primeira versão. |
 | Campeonatos simultâneos | Permitidos. |

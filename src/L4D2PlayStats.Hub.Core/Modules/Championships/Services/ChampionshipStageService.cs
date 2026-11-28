@@ -177,7 +177,7 @@ public class ChampionshipStageService(
     {
         var (championship, stage) = await Load(stageId, cancellationToken);
 
-        foreach (var game in stage.Series.SelectMany(series => series.Games).Where(game => !game.IsPlayed))
+        foreach (var game in stage.Series.SelectMany(series => series.Games).Where(game => game is { IsPlayed: false, IsInProgress: false }))
         {
             game.CampaignId = null;
             game.CampaignSource = null;
@@ -385,7 +385,7 @@ public class ChampionshipStageService(
                 picked.Add(order[cursor++ % order.Count].Id);
 
             foreach (var series in round)
-                foreach (var game in series.Games.Where(game => !game.IsPlayed))
+                foreach (var game in series.Games.Where(game => game is { IsPlayed: false, IsInProgress: false }))
                 {
                     game.CampaignId = picked[Math.Min(game.Number - 1, picked.Count - 1)];
                     game.CampaignSource = ChampionshipCampaignSource.Draw;

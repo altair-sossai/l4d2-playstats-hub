@@ -34,14 +34,30 @@ public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, ICha
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ChampionshipDraftPick> PickAsync(int championshipId, long communityId, long? by, CancellationToken cancellationToken = default)
+    public Task<ChampionshipDraftPick> PickAsync(int championshipId, long communityId, long? by, CancellationToken cancellationToken = default)
+    {
+        return PickAsync(championshipId, communityId, by, false, cancellationToken);
+    }
+
+    public Task<ChampionshipDraftPick> CaptainPickAsync(int championshipId, long communityId, long captain, CancellationToken cancellationToken = default)
+    {
+        return PickAsync(championshipId, communityId, captain, true, cancellationToken);
+    }
+
+    private async Task<ChampionshipDraftPick> PickAsync(int championshipId, long communityId, long? by, bool captain, CancellationToken cancellationToken)
     {
         var championship = await Load(championshipId, cancellationToken);
 
         if (!IsOrdered(championship))
             throw new ChampionshipException("Choose the snake or the linear draft in the settings first.");
 
+        if (captain && (!championship.IsPublic || championship.IsOver))
+            throw new ChampionshipException("The draft is closed.");
+
         var team = OnTheClock(championship) ?? throw new ChampionshipException("The draft is complete.");
+
+        if (captain && !team.IsLeader(by ?? 0))
+            throw new ChampionshipException("It is not the turn of your team.");
 
         if (!Free(championship).Contains(communityId))
             throw new ChampionshipException("The player is not available in the draft.");

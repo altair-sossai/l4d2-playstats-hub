@@ -168,6 +168,15 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("AutoCloseMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AutoLinkHours")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AutoLinkMatches")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("CancelReason")
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
@@ -319,11 +328,17 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<bool>("AutoLinked")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("CampaignId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CampaignSource")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastStatisticsAtUtc")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("MatchId")
                         .HasColumnType("int");
@@ -366,6 +381,9 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TeamBScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UnlinkedMatchId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -693,10 +711,36 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.Property<int?>("DraftPosition")
                         .HasColumnType("int");
 
+                    b.Property<string>("Flag")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime?>("PendingAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("PendingByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PendingFlag")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("PendingName")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("PendingTag")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("Seed")
                         .HasColumnType("int");

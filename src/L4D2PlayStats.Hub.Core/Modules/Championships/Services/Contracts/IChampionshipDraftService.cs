@@ -4,6 +4,7 @@ public interface IChampionshipDraftService
 {
     Task DrawOrderAsync(int championshipId, long? by, CancellationToken cancellationToken = default);
     Task<ChampionshipDraftPick> PickAsync(int championshipId, long communityId, long? by, CancellationToken cancellationToken = default);
+    Task<ChampionshipDraftPick> CaptainPickAsync(int championshipId, long communityId, long captain, CancellationToken cancellationToken = default);
     Task<ChampionshipDraftPick> SpinAsync(int championshipId, long? by, CancellationToken cancellationToken = default);
     Task<int> DrawPotsAsync(int championshipId, long? by, CancellationToken cancellationToken = default);
     Task UndoAsync(int championshipId, long? by, CancellationToken cancellationToken = default);

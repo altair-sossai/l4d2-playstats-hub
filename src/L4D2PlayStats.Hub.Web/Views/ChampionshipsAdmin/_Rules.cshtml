@@ -1,0 +1,26 @@
+@model ChampionshipAdminModel
+@{
+    var championship = Model.Championship;
+}
+
+<p class="admin-lead">@L["The rules shown on the Rules tab of the championship, in Markdown: # titles, - lists, **bold**, *italic* and [links](https://...). The page shows the text of the language of the visitor, or the English one."]</p>
+
+<form method="post" asp-antiforgery="true" action="@Model.Url/rules">
+    <div class="panel panel-default">
+        <div class="panel-body championship-rules-form">
+            <div class="form-group">
+                <label for="Rules">@L["English"]</label>
+                <textarea class="form-control admin-mono championship-rules-input" id="Rules" name="Rules" rows="16">@championship.Rules</textarea>
+            </div>
+            <div class="form-group">
+                <label for="RulesPortuguese">@L["Portuguese"]</label>
+                <textarea class="form-control admin-mono championship-rules-input" id="RulesPortuguese" name="RulesPortuguese" rows="16">@championship.RulesPortuguese</textarea>
+            </div>
+            <div class="form-group">
+                <label for="RulesSpanish">@L["Spanish"]</label>
+                <textarea class="form-control admin-mono championship-rules-input" id="RulesSpanish" name="RulesSpanish" rows="16">@championship.RulesSpanish</textarea>
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("_FormSaveButton")
+</form>

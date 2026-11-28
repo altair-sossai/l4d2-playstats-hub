@@ -349,3 +349,89 @@
         margin: 4px 0;
     }
 }
+
+.championship-flag {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+    border-radius: 3px;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.championship-flag-lg {
+    width: 32px;
+    height: 32px;
+}
+
+.championship-captain-link {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.championship-captain-link .btn {
+    margin-left: auto;
+}
+
+.championship-tasks ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+
+.championship-identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 15px 0;
+}
+
+.championship-identity-flag {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(127, 127, 127, 0.15);
+    overflow: hidden;
+}
+
+.championship-identity-flag img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.championship-identity-flag .glyphicon {
+    font-size: 40px;
+    opacity: 0.4;
+}
+
+.championship-identity-name {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.championship-pending p {
+    margin: 4px 0 0;
+}
+
+.championship-section-title {
+    margin-top: 20px;
+}
+
+.championship-propose {
+    margin-top: 10px;
+}
+
+.championship-live {
+    margin-left: 4px;
+}
+
+.admin-toolbar-actions form {
+    display: inline-block;
+}

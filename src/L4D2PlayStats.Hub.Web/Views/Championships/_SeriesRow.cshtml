@@ -11,7 +11,7 @@
 }
 
 <a class="championship-series status-@status.ToString().ToLowerInvariant()" href="@Model.Url">
-    <span class="championship-series-team team-a @(winnerA ? "winner" : null)">@owner.TeamName(series.TeamAId)</span>
+    <span class="championship-series-team team-a @(winnerA ? "winner" : null)">@await Html.PartialAsync("_TeamName", (owner, series.TeamAId))</span>
     <span class="championship-series-score">
         @if (series.Bye)
         {
@@ -21,11 +21,11 @@
         {
             <small>@L["W.O."]</small>
         }
-        else if (singleGame is { IsPlayed: true })
+        else if (singleGame is { IsPlayed: true } or { IsInProgress: true })
         {
             <span>@singleGame.TeamATotal.ToString("N0", CultureInfo.CurrentCulture)</span><span class="sep">×</span><span>@singleGame.TeamBTotal.ToString("N0", CultureInfo.CurrentCulture)</span>
         }
-        else if (series.Games.Any(game => game.IsPlayed))
+        else if (series.Games.Any(game => game.IsPlayed || game.IsInProgress))
         {
             <span>@progress.WinsA</span><span class="sep">×</span><span>@progress.WinsB</span>
         }
@@ -34,7 +34,10 @@
             <span class="sep">×</span>
         }
     </span>
-    <span class="championship-series-team team-b @(winnerB ? "winner" : null)">@(series.Bye ? "" : owner.TeamName(series.TeamBId))</span>
+    <span class="championship-series-team team-b @(winnerB ? "winner" : null)">@if (!series.Bye)
+        {
+            @await Html.PartialAsync("_TeamName", (owner, series.TeamBId))
+        }</span>
     <span class="championship-series-info text-muted">
         @if (Model.ShowStage)
         {
@@ -47,6 +50,10 @@
         else if (status != ChampionshipSeriesStatus.Finished)
         {
             <span>@ChampionshipTexts.SeriesStatus(L, status)</span>
+        }
+        @if (series.Games.Any(game => game.IsInProgress))
+        {
+            <span class="label label-warning championship-live">@L["In progress"]</span>
         }
         @if (series.BestOf > 1 && !series.Bye)
         {

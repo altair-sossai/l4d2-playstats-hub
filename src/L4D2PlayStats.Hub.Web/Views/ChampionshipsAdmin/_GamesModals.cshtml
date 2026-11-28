@@ -200,6 +200,12 @@
                 <h4 class="modal-title" id="game-edit-title"></h4>
             </div>
             <div class="modal-body">
+                <div class="alert alert-warning championship-game-live" id="game-in-progress" style="display: none">
+                    <p><span class="glyphicon glyphicon-play-circle"></span> @L["This game is in progress: the match of the server was linked to it by itself and the score follows the maps played. The standings and the bracket only change when it ends: when every map of the campaign is played, after {0} minutes without statistics, or now.", Model.Championship.AutoCloseMinutes]</p>
+                    <button type="button" class="btn btn-warning btn-sm" data-game-end-submit>
+                        <span class="glyphicon glyphicon-stop"></span> @L["End the game"]
+                    </button>
+                </div>
                 <div class="form-group">
                     <label for="game-campaign">@L["Campaign"]</label>
                     <select class="form-control" id="game-campaign" name="campaignId">
@@ -268,3 +274,7 @@
         </form>
     </div>
 </div>
+
+<form id="game-end-form" method="post" asp-antiforgery="true" action="" style="display: none" data-confirm="@L["End this game now with the current score?"]">
+    <input type="hidden" name="returnUrl" value="@returnUrl">
+</form>

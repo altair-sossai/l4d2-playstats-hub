@@ -1,15 +1,15 @@
 using System.Text;
 using L4D2PlayStats.Hub.Core.Modules.Championships;
-using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -21,11 +21,36 @@ public class ChampionshipsController(
     IChampionshipService championshipService,
     IChampionshipLoadService loadService,
     IChampionshipViewService viewService,
-    IChampionshipScheduleService scheduleService,
-    IChampionshipSeriesService seriesService,
+    IChampionshipQueryService queryService,
+    ChampionshipFlagStore flagStore,
     ISiteClock siteClock,
     ICurrentUser currentUser) : Controller
 {
+    [HttpGet(AppConsts.ChampionshipFlagsUrl + "/{teamId:int}")]
+    [ResponseCache(Duration = AppConsts.ChampionshipFlagCacheInSeconds)]
+    public async Task<IActionResult> Flag(int teamId, CancellationToken cancellationToken)
+    {
+        var flag = await queryService.FlagAsync(teamId, cancellationToken);
+
+        if (flag == null || (flag.Status == ChampionshipStatus.Draft && !await currentUser.IsAdministratorAsync()))
+            return NotFound();
+
+        return FlagFile(flag.Flag);
+    }
+
+    [HttpGet(AppConsts.ChampionshipFlagsUrl + "/{teamId:int}/pending")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> PendingFlag(int teamId, CancellationToken cancellationToken)
+    {
+        var flag = await queryService.FlagAsync(teamId, cancellationToken);
+        var me = currentUser.CommunityId;
+
+        if (flag == null || !(await currentUser.IsAdministratorAsync() || me != null && (flag.Captain == me || flag.ViceCaptain == me)))
+            return NotFound();
+
+        return FlagFile(flag.PendingFlag);
+    }
+
     private static readonly string[] Tabs =
     [
         AppConsts.ChampionshipRulesTab, AppConsts.ChampionshipTeamsTab, AppConsts.ChampionshipDraftTab, AppConsts.ChampionshipStandingsTab,
@@ -103,46 +128,6 @@ public class ChampionshipsController(
         return File(Encoding.UTF8.GetBytes(calendar), AppConsts.ChampionshipCalendarContentType, $"{championship.Slug}-{series.Id}.ics");
     }
 
-    [Authorize]
-    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/series/{seriesId:int}/proposals")]
-    public async Task<IActionResult> Propose(string slug, int seriesId, string? date, CancellationToken cancellationToken)
-    {
-        var zone = await siteClock.ZoneAsync(cancellationToken);
-        var utc = ChampionshipDates.ToUtc(date, zone);
-
-        return await Act(slug, seriesId, () => utc == null
-            ? throw new ChampionshipException("Choose a date in the future.")
-            : scheduleService.ProposeAsync(seriesId, utc.Value, currentUser.CommunityId!.Value, cancellationToken));
-    }
-
-    [Authorize]
-    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/series/{seriesId:int}/proposals/{proposalId:int}/answer")]
-    public Task<IActionResult> Answer(string slug, int seriesId, int proposalId, bool accept, CancellationToken cancellationToken)
-    {
-        return Act(slug, seriesId, () => scheduleService.AnswerAsync(proposalId, accept, currentUser.CommunityId!.Value, cancellationToken));
-    }
-
-    [Authorize]
-    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/series/{seriesId:int}/proposals/{proposalId:int}/delete")]
-    public Task<IActionResult> DeleteProposal(string slug, int seriesId, int proposalId, CancellationToken cancellationToken)
-    {
-        return Act(slug, seriesId, () => scheduleService.DeleteAsync(proposalId, currentUser.CommunityId!.Value, false, cancellationToken));
-    }
-
-    [Authorize]
-    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/series/{seriesId:int}/games/{gameId:int}/pick")]
-    public Task<IActionResult> Pick(string slug, int seriesId, int gameId, int campaignId, CancellationToken cancellationToken)
-    {
-        return Act(slug, seriesId, () => seriesService.PickAsync(gameId, campaignId, currentUser.CommunityId!.Value, cancellationToken));
-    }
-
-    [Authorize]
-    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/series/{seriesId:int}/veto")]
-    public Task<IActionResult> Veto(string slug, int seriesId, int campaignId, CancellationToken cancellationToken)
-    {
-        return Act(slug, seriesId, () => seriesService.VetoAsync(seriesId, campaignId, currentUser.CommunityId!.Value, cancellationToken));
-    }
-
     private async Task<IActionResult> Page(string slug, string tab, CancellationToken cancellationToken)
     {
         var championship = await FindAsync(slug, cancellationToken);
@@ -163,24 +148,11 @@ public class ChampionshipsController(
         return championship.IsPublic || await currentUser.IsAdministratorAsync() ? championship : null;
     }
 
-    private async Task<IActionResult> Act(string slug, int seriesId, Func<Task> action)
+    private IActionResult FlagFile(string? name)
     {
-        var championship = await FindAsync(slug, HttpContext.RequestAborted);
+        var path = flagStore.PathOf(name);
 
-        if (championship == null)
-            return NotFound();
-
-        try
-        {
-            await action();
-            TempData[AppConsts.SavedTempData] = true;
-        }
-        catch (ChampionshipException exception)
-        {
-            TempData[AppConsts.ErrorTempData] = exception.Message;
-        }
-
-        return Redirect($"{AppConsts.ChampionshipsUrl}/{championship.Slug}/series/{seriesId}");
+        return path == null ? NotFound() : PhysicalFile(path, ChampionshipFlagStore.ContentType(path));
     }
 
     private static string Escape(string value)

@@ -21,6 +21,7 @@ public static partial class AppConsts
     public const string ChampionshipGamesTab = "games";
     public const string ChampionshipStatisticsTab = "statistics";
     public const string ChampionshipAdminSettingsTab = "settings";
+    public const string ChampionshipAdminRulesTab = "rules";
     public const string ChampionshipAdminParticipantsTab = "participants";
     public const string ChampionshipAdminTeamsTab = "teams";
     public const string ChampionshipAdminDraftTab = "draft";
@@ -42,4 +43,15 @@ public static partial class AppConsts
     public const int ChampionshipHistoryPageSize = 20;
     public const string ChampionshipPortugueseCulture = "pt";
     public const string ChampionshipSpanishCulture = "es";
+    public const string ChampionshipFlagsUrl = "/championship-flags";
+    public const string ChampionshipFlagsFolder = "championship-flags";
+    public const int ChampionshipFlagMaxBytes = 2 * BytesPerMegabyte;
+    public const int ChampionshipFlagCacheInSeconds = 86400;
+    public const string ChampionshipCaptainPath = "captain";
+    public const string ChampionshipCaptainTeamTab = "team";
+    public const string ChampionshipCaptainDraftTab = "draft";
+    public const string ChampionshipCaptainSeriesTab = "series";
+    public const string ChampionshipFlagUnsupportedMessage = "The flag must be a PNG, JPG, WEBP or GIF image.";
+    public const string ChampionshipFlagTooLargeMessage = "The flag is too large: the limit is 2 MB.";
+    public const int ChampionshipGameCloseIntervalInSeconds = 60;
 }

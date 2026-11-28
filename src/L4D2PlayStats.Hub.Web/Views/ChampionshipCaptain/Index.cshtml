@@ -1,0 +1,95 @@
+@model ChampionshipCaptainModel
+@{
+    var championship = Model.Championship;
+    var team = Model.Team;
+    var view = Model.Page;
+    var series = Model.Series;
+    var draft = L4D2PlayStats.Hub.Core.Modules.Championships.Services.ChampionshipDraftService.IsOrdered(championship) && (championship.DraftPicks.Count > 0 || championship.Teams.Any(item => item.DraftPosition != null));
+    var tabList = new List<AdminTab> { new(AppConsts.ChampionshipCaptainTeamTab, L["Team"].Value, "flag", team.Members.Count) };
+
+    if (draft)
+        tabList.Add(new AdminTab(AppConsts.ChampionshipCaptainDraftTab, L["Draft"].Value, "random", Model.Tasks.Count(task => task.Kind == ChampionshipCaptainTaskKind.DraftTurn)));
+
+    if (series.Count > 0)
+        tabList.Add(new AdminTab(AppConsts.ChampionshipCaptainSeriesTab, L["Series"].Value, "list", series.Count(item => !item.Finished)));
+
+    var tabs = new AdminTabsModel(tabList, AdminTabs.Active(Context.Request.Query[AppConsts.AdminTabQuery], tabList.Select(tab => tab.Key).ToArray()));
+
+    ViewData["PageMetadata"] = new PageMetadata { Title = $"{L["Captain area"].Value} - {championship.Name}", Description = L["The management of the team {0} in {1}.", team.Name, championship.Name], NoIndex = true };
+}
+
+@section Styles {
+    @await Html.PartialAsync("_AdminStyles")
+    @await Html.PartialAsync("_AdministrationStyles")
+    <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
+}
+
+<ol class="breadcrumb championship-breadcrumb">
+    <li><a href="@AppConsts.ChampionshipsUrl">@L["Championships"]</a></li>
+    <li><a href="@AppConsts.ChampionshipsUrl/@championship.Slug">@championship.Name</a></li>
+    <li class="active">@L["Captain area"]</li>
+</ol>
+
+<div class="admin-header">
+    <h3>
+        @if (team.Flag != null)
+        {
+            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag championship-flag-lg"/>
+        }
+        @L["Captain area"]: @team.Name
+    </h3>
+    <a class="btn btn-default" href="@AppConsts.ChampionshipsUrl/@championship.Slug">
+        <span class="glyphicon glyphicon-chevron-left"></span> @championship.Name
+    </a>
+</div>
+
+<p class="admin-lead">@L["Here you manage your team in the championship. What the other players see is on the page of the championship; what only you, as {0}, can do is here.", Model.Captain ? L["captain"].Value : L["vice-captain"].Value]</p>
+
+@if (Model.Tasks.Count > 0)
+{
+    <div class="alert alert-warning championship-tasks">
+        <strong><span class="glyphicon glyphicon-exclamation-sign"></span> @L["Things to do for your team ({0}):", Model.Tasks.Count]</strong>
+        <ul>
+            @foreach (var task in Model.Tasks)
+            {
+                var target = task.Kind switch
+                {
+                    ChampionshipCaptainTaskKind.DraftTurn => AppConsts.ChampionshipCaptainDraftTab,
+                    ChampionshipCaptainTaskKind.IdentityRejected => AppConsts.ChampionshipCaptainTeamTab,
+                    _ => AppConsts.ChampionshipCaptainSeriesTab
+                };
+                var title = task.SeriesId == null ? null : series.FirstOrDefault(item => item.Id == task.SeriesId);
+
+                <li>
+                    <a href="@AdminTabs.Url(Model.Url, target)">@ChampionshipTexts.CaptainTask(L, task, title == null ? null : view.TeamName(title.TeamAId == team.Id ? title.TeamBId : title.TeamAId))</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="alert alert-success championship-tasks"><span class="glyphicon glyphicon-ok"></span> @L["Nothing to do for now."]</div>
+}
+
+@await Html.PartialAsync("_AdminTabs", tabs)
+
+<div class="tab-content">
+    <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipCaptainTeamTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipCaptainTeamTab)">
+        @await Html.PartialAsync("_Team", Model)
+    </div>
+    @if (draft)
+    {
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipCaptainDraftTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipCaptainDraftTab)">
+            @await Html.PartialAsync("_Draft", Model)
+        </div>
+    }
+    @if (series.Count > 0)
+    {
+        <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.ChampionshipCaptainSeriesTab)" id="@AdminTabs.PaneId(AppConsts.ChampionshipCaptainSeriesTab)">
+            @await Html.PartialAsync("_Series", Model)
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_Modals", Model)

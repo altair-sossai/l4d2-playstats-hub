@@ -1,0 +1,9 @@
+@model (ChampionshipPageModel Page, int? TeamId)
+@{
+    var flag = Model.Page.FlagUrl(Model.TeamId);
+}
+@if (flag != null)
+{
+    <img src="@flag" alt="" class="championship-flag" loading="lazy"/>
+}
+@Model.Page.TeamName(Model.TeamId)

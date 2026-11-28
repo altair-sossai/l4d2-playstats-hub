@@ -4,5 +4,6 @@ public enum ChampionshipGameStatus
 {
     Pending,
     Played,
-    NotNeeded
+    NotNeeded,
+    InProgress
 }

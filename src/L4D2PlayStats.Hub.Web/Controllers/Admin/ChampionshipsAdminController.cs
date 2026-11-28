@@ -9,6 +9,7 @@ using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Infrastructure.Localization;
 using L4D2PlayStats.Hub.Web.Models;
@@ -32,6 +33,9 @@ public class ChampionshipsAdminController(
     IChampionshipLogService logService,
     IChampionshipQueryService queryService,
     IChampionshipViewService viewService,
+    IChampionshipIdentityService identityService,
+    IChampionshipMatchService matchService,
+    ChampionshipFlagStore flagStore,
     ISiteClock siteClock,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> L) : AdminControllerBase
@@ -66,7 +70,11 @@ public class ChampionshipsAdminController(
     [HttpPost("{id:int}/delete")]
     public async Task<IActionResult> Delete(int id, string? returnUrl, CancellationToken cancellationToken)
     {
-        await championshipService.DeleteAsync(id, cancellationToken);
+        var files = await identityService.FilesAsync(id, null, cancellationToken);
+
+        if (await championshipService.DeleteAsync(id, cancellationToken))
+            flagStore.Delete(files);
+
         Saved();
 
         return Back(returnUrl, AppConsts.AdminChampionshipsUrl);
@@ -128,6 +136,12 @@ public class ChampionshipsAdminController(
         }, null, Address(id, AppConsts.ChampionshipAdminSettingsTab));
     }
 
+    [HttpPost("{id:int}/rules")]
+    public Task<IActionResult> SaveRules(int id, string? rules, string? rulesPortuguese, string? rulesSpanish, CancellationToken cancellationToken)
+    {
+        return Run(() => championshipService.UpdateRulesAsync(id, rules, rulesPortuguese, rulesSpanish, Me, cancellationToken), null, Address(id, AppConsts.ChampionshipAdminRulesTab));
+    }
+
     [HttpPost("{id:int}/participants")]
     public Task<IActionResult> AddParticipants(int id, string? players, string? returnUrl, CancellationToken cancellationToken)
     {
@@ -167,19 +181,43 @@ public class ChampionshipsAdminController(
     }
 
     [HttpPost("{id:int}/teams/{teamId:int}")]
-    public Task<IActionResult> UpdateTeam(int id, int teamId, string? name, string? tag, int seed, long? captain, long? viceCaptain, CancellationToken cancellationToken)
+    public Task<IActionResult> UpdateTeam(int id, int teamId, string? name, string? tag, int seed, long? captain, long? viceCaptain, IFormFile? flag, bool removeFlag, CancellationToken cancellationToken)
     {
         return Run(async () =>
         {
             await teamService.UpdateTeamAsync(teamId, name ?? string.Empty, tag, seed, Me, cancellationToken);
             await teamService.SetLeadersAsync(teamId, captain is > 0 ? captain : null, viceCaptain is > 0 ? viceCaptain : null, Me, cancellationToken);
+
+            if (flag is { Length: > 0 })
+                flagStore.Delete(await identityService.SetFlagAsync(teamId, await flagStore.SaveAsync(flag, cancellationToken), Me, cancellationToken));
+            else if (removeFlag)
+                flagStore.Delete(await identityService.RemoveFlagAsync(teamId, Me, false, cancellationToken));
         }, null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
     }
 
-    [HttpPost("{id:int}/teams/{teamId:int}/delete")]
-    public Task<IActionResult> DeleteTeam(int id, int teamId, CancellationToken cancellationToken)
+    [HttpPost("{id:int}/teams/{teamId:int}/identity/{operation}")]
+    public Task<IActionResult> Identity(int id, int teamId, string operation, string? reason, CancellationToken cancellationToken)
     {
-        return Run(() => teamService.DeleteTeamAsync(teamId, Me, cancellationToken), null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
+        var back = Address(id, AppConsts.ChampionshipAdminTeamsTab);
+
+        return operation switch
+        {
+            "approve" => Run(async () => flagStore.Delete(await identityService.ApproveAsync(teamId, Me, cancellationToken)), null, back),
+            "refuse" => Run(async () => flagStore.Delete(await identityService.RejectAsync(teamId, reason, Me, cancellationToken)), null, back),
+            _ => Task.FromResult<IActionResult>(NotFound())
+        };
+    }
+
+    [HttpPost("{id:int}/teams/{teamId:int}/delete")]
+    public async Task<IActionResult> DeleteTeam(int id, int teamId, CancellationToken cancellationToken)
+    {
+        var files = await identityService.FilesAsync(id, teamId, cancellationToken);
+
+        return await Run(async () =>
+        {
+            await teamService.DeleteTeamAsync(teamId, Me, cancellationToken);
+            flagStore.Delete(files);
+        }, null, Address(id, AppConsts.ChampionshipAdminTeamsTab));
     }
 
     [HttpPost("{id:int}/teams/{teamId:int}/members")]
@@ -318,6 +356,12 @@ public class ChampionshipsAdminController(
             if (result is AppConsts.ChampionshipMatchResult or AppConsts.ChampionshipTypedResult)
                 await seriesService.SetPenaltiesAsync(gameId, teamAPenalty ?? 0, teamBPenalty ?? 0, notes, Me, cancellationToken);
         }, returnUrl, Address(id, AppConsts.ChampionshipAdminGamesTab));
+    }
+
+    [HttpPost("{id:int}/series/{seriesId:int}/games/{gameId:int}/end")]
+    public Task<IActionResult> EndGame(int id, int seriesId, int gameId, string? returnUrl, CancellationToken cancellationToken)
+    {
+        return Run(() => matchService.CloseAsync(gameId, Me, cancellationToken), returnUrl, Address(id, AppConsts.ChampionshipAdminGamesTab));
     }
 
     [HttpPost("{id:int}/series/{seriesId:int}/proposals/{proposalId:int}/delete")]

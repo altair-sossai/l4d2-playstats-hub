@@ -56,3 +56,61 @@
 .admin-toolbar-actions form {
     display: inline-block;
 }
+
+.championship-rules-form .form-group {
+    margin-bottom: 36px;
+}
+
+.championship-rules-form .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.championship-rules-form label {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.championship-rules-form textarea {
+    min-height: 320px;
+    line-height: 1.5;
+}
+
+.championship-flag {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+    border-radius: 3px;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.championship-flag-lg {
+    width: 48px;
+    height: 48px;
+}
+
+.championship-flag-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.championship-flag-field .form-group {
+    flex: 1;
+}
+
+.championship-review-flag {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.championship-inline-form {
+    display: inline-block;
+    margin: 0;
+}
+
+.championship-game-live p {
+    margin-bottom: 8px;
+}

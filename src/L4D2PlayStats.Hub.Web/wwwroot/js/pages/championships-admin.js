@@ -59,9 +59,15 @@ $(function () {
         $('#game-penalty-b').val(data.gamePenaltyB || 0);
         $('#game-notes').val($(this).attr('data-game-notes') || '');
         $game.find('input[name="result"][value="' + result + '"]').prop('checked', true);
+        $('#game-end-form').attr('action', $(this).attr('data-game-end') || '');
+        $('#game-in-progress').toggle(!!$(this).attr('data-game-end'));
         sections(result);
         candidates($(this).attr('data-game-candidates'), data.gameMatch);
         $game.modal('show');
+    });
+
+    $game.on('click', '[data-game-end-submit]', function () {
+        $('#game-end-form').trigger('submit');
     });
 
     $game.on('change', '[data-game-result-option]', function () {

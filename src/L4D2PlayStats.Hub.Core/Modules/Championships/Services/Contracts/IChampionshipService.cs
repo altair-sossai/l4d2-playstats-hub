@@ -10,6 +10,7 @@ public interface IChampionshipService
     Task<Page<ChampionshipSummary>> PageAsync(int page, int size, CancellationToken cancellationToken = default);
     Task<Championship> CreateAsync(string name, IReadOnlyList<ChampionshipStageTemplate> stages, long? createdBy, CancellationToken cancellationToken = default);
     Task UpdateAsync(int id, ChampionshipSettingsForm form, long? updatedBy, CancellationToken cancellationToken = default);
+    Task UpdateRulesAsync(int id, string? english, string? portuguese, string? spanish, long? updatedBy, CancellationToken cancellationToken = default);
     Task SetStatusAsync(int id, ChampionshipStatus status, string? reason, long? updatedBy, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

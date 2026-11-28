@@ -5,12 +5,8 @@
     var stage = Model.StageOf(series);
     var progress = Model.Progress(series);
     var status = Model.SeriesStatus(series);
-    var mine = Model.MyTeam(series);
-    var open = championship.Status == ChampionshipStatus.Running && !series.Finished && series.HasTeams;
     var url = $"{AppConsts.ChampionshipsUrl}/{championship.Slug}/series/{series.Id}";
     var title = $"{Model.TeamName(series.TeamAId)} × {Model.TeamName(series.TeamBId)}";
-    var myVeto = mine == null ? null : series.TeamAId == mine.Id ? series.TeamAVetoCampaignId : series.TeamBVetoCampaignId;
-    var vetoesDone = !stage.Veto || series.TeamAVetoCampaignId != null && series.TeamBVetoCampaignId != null;
     var group = Model.GroupName(series);
 
     ViewData["PageMetadata"] = new PageMetadata { Title = $"{title} - {championship.Name}", Description = L["{0} in {1}.", title, championship.Name] };
@@ -25,9 +21,16 @@
 <div class="panel panel-default championship-series-card">
     <div class="panel-body">
         <div class="championship-series-big">
-            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamAId ? "winner" : null)">@Model.TeamName(series.TeamAId)</div>
+            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamAId ? "winner" : null)">@await Html.PartialAsync("_TeamName", (Model, series.TeamAId))</div>
             <div class="score">@progress.WinsA <span class="sep">×</span> @progress.WinsB</div>
-            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamBId ? "winner" : null)">@(series.Bye ? L["Bye"].Value : Model.TeamName(series.TeamBId))</div>
+            <div class="team @(series.Finished && series.WinnerTeamId == series.TeamBId ? "winner" : null)">@if (series.Bye)
+                {
+                    @L["Bye"]
+                }
+                else
+                {
+                    @await Html.PartialAsync("_TeamName", (Model, series.TeamBId))
+                }</div>
         </div>
         <div class="text-center text-muted championship-series-details">
             <span>@stage.Name · @(series.ThirdPlace ? L["Third place"].Value : ChampionshipTexts.Round(L, stage, series.Round, Model.Rounds(stage)))</span>
@@ -112,12 +115,16 @@
                         {
                             <span class="label label-default">@L["Replay"]</span>
                         }
+                        @if (game.IsInProgress)
+                        {
+                            <span class="label label-warning championship-live">@L["In progress"]</span>
+                        }
                         @if (!string.IsNullOrWhiteSpace(game.Notes))
                         {
                             <div class="small text-muted">@game.Notes</div>
                         }
                     </td>
-                    @if (game.IsPlayed)
+                    @if (game.IsPlayed || game.IsInProgress)
                     {
                         <td class="text-center @(game.TeamATotal > game.TeamBTotal ? "championship-game-winner" : null)">
                             @game.TeamATotal.ToString("N0", CultureInfo.CurrentCulture)
@@ -155,113 +162,3 @@
     </div>
 }
 
-@if (open && mine != null)
-{
-    <div class="panel panel-primary championship-captain">
-        <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-star"></span> @L["Your team: {0}", mine.Name]</h3></div>
-        <div class="panel-body">
-            @if (stage.Veto && myVeto == null && !series.Games.Any(game => game.IsPlayed))
-            {
-                <form method="post" asp-antiforgery="true" action="@url/veto" class="form-inline championship-inline-form">
-                    <label for="veto-campaign">@L["Veto a campaign"]</label>
-                    <select class="form-control input-sm" id="veto-campaign" name="campaignId">
-                        @foreach (var option in Model.VetoOptions(series, series.TeamAId == mine.Id))
-                        {
-                            <option value="@option.Id">@option.Name</option>
-                        }
-                    </select>
-                    <button type="submit" class="btn btn-danger btn-sm">@L["Veto"]</button>
-                </form>
-            }
-
-            @if (stage.CampaignRule == ChampionshipCampaignRule.Picks)
-            {
-                foreach (var game in series.Games.Where(game => game.Status == ChampionshipGameStatus.Pending && GamePlan.PickedByTeamA(game, series.BestOf) == (series.TeamAId == mine.Id)).OrderBy(game => game.Number))
-                {
-                    if (!vetoesDone)
-                    {
-                        <p class="text-muted">@L["The campaigns are chosen after both teams veto one."]</p>
-                        break;
-                    }
-
-                    <form method="post" asp-antiforgery="true" action="@url/games/@game.Id/pick" class="form-inline championship-inline-form">
-                        <label for="pick-@game.Id">@L["Campaign of game {0}", game.Number]</label>
-                        <select class="form-control input-sm" id="pick-@game.Id" name="campaignId">
-                            @foreach (var option in Model.PickOptions(series, game, mine.Id))
-                            {
-                                <option value="@option.Id" selected="@(option.Id == game.CampaignId)">@option.Name</option>
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-primary btn-sm">@(game.CampaignId == null ? L["Choose"] : L["Change"])</button>
-                    </form>
-                }
-            }
-
-            <h5>@L["Dates"]</h5>
-            <p class="small text-muted">@L["Propose dates to the other team. The game is scheduled when both teams accept the same date. Times are in the time zone of the site: {0}.", Model.TimeZone.Id]</p>
-            <form method="post" asp-antiforgery="true" action="@url/proposals" class="form-inline championship-inline-form">
-                <label for="proposal-date">@L["New date"]</label>
-                <input type="datetime-local" class="form-control input-sm" id="proposal-date" name="date" required>
-                <button type="submit" class="btn btn-success btn-sm">@L["Propose"]</button>
-            </form>
-        </div>
-    </div>
-}
-else if (open && Model.CurrentUser == null)
-{
-    <p class="text-muted small"><span class="glyphicon glyphicon-log-in"></span> <a href="/login?returnUrl=@Uri.EscapeDataString(url)">@L["Sign in with Steam"]</a> @L["to manage the series of your team, if you are its captain or vice-captain."]</p>
-}
-
-@if (series.Proposals.Count > 0)
-{
-    <div class="panel panel-default">
-        <div class="panel-heading"><h3 class="panel-title">@L["Date proposals"]</h3></div>
-        <table class="table table-condensed">
-            <tbody>
-            @foreach (var proposal in series.Proposals.OrderBy(proposal => proposal.DateUtc))
-            {
-                var answerA = proposal.TeamAAnswer;
-                var answerB = proposal.TeamBAnswer;
-                var mineProposal = mine != null && proposal.TeamId == mine.Id;
-                var myAnswer = mine == null ? ChampionshipAnswer.None : series.TeamAId == mine.Id ? answerA : answerB;
-
-                <tr class="@(proposal.Confirmed ? "success" : proposal.Refused ? "text-muted" : null)">
-                    <td><strong>@Display.DateTime(proposal.DateUtc, Model.TimeZone)</strong><br/><small class="text-muted">@L["Proposed by {0}", Model.TeamName(proposal.TeamId)]</small></td>
-                    <td class="small">@Model.TeamName(series.TeamAId): @Answer(answerA)<br/>@Model.TeamName(series.TeamBId): @Answer(answerB)</td>
-                    <td class="text-right">
-                        @if (open && mine != null && !mineProposal && !proposal.Confirmed)
-                        {
-                            <form method="post" asp-antiforgery="true" action="@url/proposals/@proposal.Id/answer" class="championship-inline-buttons">
-                                <button type="submit" name="accept" value="true" class="btn btn-success btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Accepted)">@L["Accept"]</button>
-                                <button type="submit" name="accept" value="false" class="btn btn-default btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Refused)">@L["Refuse"]</button>
-                            </form>
-                        }
-                        @if (open && mineProposal && !proposal.Confirmed)
-                        {
-                            <form method="post" asp-antiforgery="true" action="@url/proposals/@proposal.Id/delete" class="championship-inline-buttons" data-confirm="@L["Delete this proposal?"]">
-                                <button type="submit" class="btn btn-link btn-xs text-danger">@L["Delete"]</button>
-                            </form>
-                        }
-                        @if (proposal.Confirmed)
-                        {
-                            <span class="label label-success">@L["Confirmed"]</span>
-                        }
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-}
-
-@functions {
-    private string Answer(ChampionshipAnswer answer)
-    {
-        return answer switch
-        {
-            ChampionshipAnswer.Accepted => "✔ " + L["Accepted"].Value,
-            ChampionshipAnswer.Refused => "✖ " + L["Refused"].Value,
-            _ => L["Waiting"].Value
-        };
-    }
-}

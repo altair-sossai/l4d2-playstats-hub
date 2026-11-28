@@ -1,0 +1,153 @@
+@model ChampionshipCaptainModel
+@{
+    var team = Model.Team;
+    var view = Model.Page;
+    var members = team.Members.OrderByDescending(member => member.CommunityId == team.CaptainCommunityId).ThenByDescending(member => member.CommunityId == team.ViceCaptainCommunityId).ThenBy(member => member.JoinedAtUtc).ToList();
+}
+
+<p class="admin-lead">@L["The name, the tag and the flag of the team are shown on every page of the championship. A change only appears after the administration of the site approves it."]</p>
+
+<div class="admin-toolbar">
+    <div class="admin-toolbar-actions">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#captain-identity-modal">
+            <span class="glyphicon glyphicon-pencil"></span> @L["Change name, tag or flag"]
+        </button>
+        @if (team.HasPendingIdentity)
+        {
+            <form method="post" asp-antiforgery="true" action="@Model.Url/identity/cancel" data-confirm="@L["Withdraw what is waiting for approval?"]">
+                <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-remove"></span> @L["Withdraw the change"]
+                </button>
+            </form>
+        }
+        @if (team.Flag != null)
+        {
+            <form method="post" asp-antiforgery="true" action="@Model.Url/flag/remove" data-confirm="@L["Remove the flag of the team?"]">
+                <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-trash"></span> @L["Remove the flag"]
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<div class="championship-identity">
+    <div class="championship-identity-flag">
+        @if (team.Flag != null)
+        {
+            <img src="@ChampionshipFlags.Url(team)" alt="@L["Flag"]"/>
+        }
+        else
+        {
+            <span class="glyphicon glyphicon-flag"></span>
+        }
+    </div>
+    <div>
+        <div class="championship-identity-name">@team.Name</div>
+        <div class="text-muted">@L["Tag"]: <strong>@(team.Tag ?? "—")</strong></div>
+    </div>
+</div>
+
+@if (team.HasPendingIdentity)
+{
+    <div class="alert alert-info championship-pending">
+        <strong><span class="glyphicon glyphicon-time"></span> @L["Waiting for the approval of the administration of the site."]</strong>
+        <p>@L["Until then, the other players keep seeing the current name, tag and flag."]</p>
+        <div class="championship-identity">
+            @if (team.PendingFlag != null)
+            {
+                <div class="championship-identity-flag"><img src="@ChampionshipFlags.PendingUrl(team)" alt="@L["New flag"]"/></div>
+            }
+            <div>
+                @if (team.PendingName != null)
+                {
+                    <div>@L["New name"]: <strong>@team.PendingName</strong></div>
+                    <div>@L["New tag"]: <strong>@(team.PendingTag ?? "—")</strong></div>
+                }
+                @if (team.PendingFlag != null)
+                {
+                    <div>@L["New flag"]</div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else if (team.RejectionReason != null)
+{
+    <div class="alert alert-danger championship-pending">
+        <strong><span class="glyphicon glyphicon-ban-circle"></span> @L["The administration of the site refused the last change of the team."]</strong>
+        @if (!string.IsNullOrWhiteSpace(team.RejectionReason))
+        {
+            <div>@L["Reason"]: @team.RejectionReason</div>
+        }
+    </div>
+}
+
+<h4 class="championship-section-title">@L["Players"]</h4>
+@if (Model.Captain)
+{
+    <p class="text-muted small">@L["As captain you choose the vice-captain among the players of the team. The vice-captain can do everything here, except choosing the vice-captain."]</p>
+}
+<table class="table table-striped table-hover table-bordered table-condensed table-responsive admin-table">
+    <thead>
+    <tr>
+        <th>@L["Player"]</th>
+        <th class="text-center">@L["Hours"]</th>
+        <th>@L["Role"]</th>
+        @if (Model.Captain)
+        {
+            <th></th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var member in members)
+    {
+        var hours = view.Hours(member.CommunityId);
+
+        <tr>
+            <td class="vertical-align-middle" data-label="@L["Player"]">
+                <img src="@AppConsts.AvatarUrl@member.CommunityId" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                <a href="@PlayerUrls.Details(member.CommunityId)">@DisplayNames.Apply(member.CommunityId, view.PlayerName(member.CommunityId))</a>
+            </td>
+            <td class="text-center vertical-align-middle" data-label="@L["Hours"]">@(hours == null ? "—" : Display.Number(hours.Value))</td>
+            <td class="vertical-align-middle" data-label="@L["Role"]">
+                @if (member.CommunityId == team.CaptainCommunityId)
+                {
+                    <span class="label label-primary">@L["Captain"]</span>
+                }
+                else if (member.CommunityId == team.ViceCaptainCommunityId)
+                {
+                    <span class="label label-info">@L["Vice-captain"]</span>
+                }
+                else
+                {
+                    <span class="text-muted">@L["Player"]</span>
+                }
+            </td>
+            @if (Model.Captain)
+            {
+                <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    @if (member.CommunityId == team.ViceCaptainCommunityId)
+                    {
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/vice">
+                            <button class="btn btn-xs btn-default" type="submit">
+                                <span class="glyphicon glyphicon-remove"></span> @L["Remove as vice-captain"]
+                            </button>
+                        </form>
+                    }
+                    else if (member.CommunityId != team.CaptainCommunityId)
+                    {
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/vice" data-confirm="@L["Make {0} the vice-captain?", view.PlayerName(member.CommunityId)]">
+                            <input type="hidden" name="communityId" value="@member.CommunityId"/>
+                            <button class="btn btn-xs btn-default" type="submit">
+                                <span class="glyphicon glyphicon-star-empty"></span> @L["Make vice-captain"]
+                            </button>
+                        </form>
+                    }
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>

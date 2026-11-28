@@ -4,6 +4,7 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 using L4D2PlayStats.Hub.Core.Modules.Players;
+using L4D2PlayStats.Hub.Web.Helpers;
 
 namespace L4D2PlayStats.Hub.Web.Models.Championships;
 
@@ -96,7 +97,7 @@ public class ChampionshipPageModel
         if (series.Finished)
             return ChampionshipSeriesStatus.Finished;
 
-        return series.Games.Any(game => game.IsPlayed) ? ChampionshipSeriesStatus.InProgress : ChampionshipSeriesStatus.Pending;
+        return series.Games.Any(game => game.IsPlayed || game.IsInProgress) ? ChampionshipSeriesStatus.InProgress : ChampionshipSeriesStatus.Pending;
     }
 
     public List<ChampionshipStanding> Standings(ChampionshipStage stage, ChampionshipGroup group)
@@ -119,17 +120,19 @@ public class ChampionshipPageModel
         return AllSeries.Where(series => series is { Finished: true, Bye: false }).OrderByDescending(series => series.Games.Where(game => game.PlayedAtUtc != null).Select(game => game.PlayedAtUtc).DefaultIfEmpty().Max()).ThenByDescending(series => series.Id).Take(AppConsts.ChampionshipUpcomingSeries).ToList();
     }
 
-    public ChampionshipTeam? MyTeam(ChampionshipSeries series)
+    public ChampionshipTeam? MyTeam()
     {
-        return CurrentUser == null ? null : Championship.Teams.FirstOrDefault(team => series.Has(team.Id) && team.IsLeader(CurrentUser.Value));
+        if (CurrentUser == null || !Championship.IsPublic || Championship.IsOver)
+            return null;
+
+        return Championship.Teams.FirstOrDefault(team => team.IsLeader(CurrentUser.Value));
     }
 
-    public List<ChampionshipSeries> MySeries()
+    public string? FlagUrl(int? teamId)
     {
-        if (CurrentUser == null || Championship.Status != ChampionshipStatus.Running)
-            return [];
+        var team = Team(teamId);
 
-        return AllSeries.Where(series => series is { Finished: false } && series.HasTeams && MyTeam(series) != null).OrderBy(series => series.ScheduledAtUtc ?? DateTime.MaxValue).ThenBy(series => series.Round).ToList();
+        return team?.Flag == null ? null : ChampionshipFlags.Url(team);
     }
 
     public string? Rules(string culture)

@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
 using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Helpers;
@@ -125,6 +126,19 @@ public static class ChampionshipTexts
             ChampionshipCampaignSource.Draw => L["Drawn"],
             ChampionshipCampaignSource.Admin => L["Set by the administration"],
             _ => string.Empty
+        };
+    }
+
+    public static string CaptainTask(IStringLocalizer L, ChampionshipCaptainTask task, string? opponent)
+    {
+        return task.Kind switch
+        {
+            ChampionshipCaptainTaskKind.DraftTurn => L["It is the turn of your team in the draft"],
+            ChampionshipCaptainTaskKind.IdentityRejected => L["The administration refused the new name, tag or flag"],
+            ChampionshipCaptainTaskKind.Veto => opponent == null ? L["Veto a campaign"] : L["Veto a campaign against {0}", opponent],
+            ChampionshipCaptainTaskKind.Pick => opponent == null ? L["Choose the campaign of game {0}", task.GameNumber ?? 1] : L["Choose the campaign of game {0} against {1}", task.GameNumber ?? 1, opponent],
+            ChampionshipCaptainTaskKind.AnswerDate => opponent == null ? L["Answer a date proposal"] : L["Answer the date proposed by {0}", opponent],
+            _ => opponent == null ? L["Propose a date"] : L["Propose a date to {0}", opponent]
         };
     }
 }

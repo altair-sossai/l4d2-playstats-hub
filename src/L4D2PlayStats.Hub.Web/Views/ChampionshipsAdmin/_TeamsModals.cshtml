@@ -69,7 +69,7 @@
 
     <div class="modal fade" id="team-edit-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-edit-title-@team.Id">
         <div class="modal-dialog" role="document">
-            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id">
+            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id" enctype="multipart/form-data">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                         <span aria-hidden="true">&times;</span>
@@ -115,7 +115,26 @@
                             </div>
                         }
                     </div>
-                    <p class="help-block" style="margin: 10px 0 0">@L["A captain or vice-captain without a team joins this team."]</p>
+                    <p class="help-block" style="margin: 10px 0 15px">@L["A captain or vice-captain without a team joins this team."]</p>
+                    <div class="championship-flag-field">
+                        @if (team.Flag != null)
+                        {
+                            <img src="@ChampionshipFlags.Url(team)" alt="@L["Flag"]" class="championship-flag championship-flag-lg"/>
+                        }
+                        <div class="form-group" style="margin-bottom: 0">
+                            <label for="team-flag-@team.Id">@L["Flag"] @FieldHelp.Tip(L["A square image, ideally 1024 × 1024 pixels: PNG, JPG, WEBP or GIF, up to 2 MB. A flag chosen here is shown at once."])</label>
+                            <input type="file" class="form-control" id="team-flag-@team.Id" name="flag" accept="image/png,image/jpeg,image/webp,image/gif">
+                            @if (team.Flag != null)
+                            {
+                                <div class="checkbox" style="margin-bottom: 0">
+                                    <label for="team-remove-flag-@team.Id">
+                                        <input type="checkbox" id="team-remove-flag-@team.Id" name="removeFlag" value="true">
+                                        @L["Remove the flag"]
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
@@ -126,6 +145,81 @@
             </form>
         </div>
     </div>
+
+    @if (team.HasPendingIdentity)
+    {
+        <div class="modal fade" id="team-review-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-review-title-@team.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="team-review-title-@team.Id">@L["Review the change of {0}", team.Name]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">@L["Sent by {0} on {1}. Approve it only if the name, the tag and the image are not offensive nor sensitive.", team.PendingByCommunityId == null ? "—" : DisplayNames.Apply(team.PendingByCommunityId.Value, view.PlayerName(team.PendingByCommunityId.Value)), team.PendingAtUtc == null ? "—" : Display.DateTime(team.PendingAtUtc.Value, view.TimeZone)]</p>
+                        <table class="table table-bordered table-condensed admin-table championship-review">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>@L["Now"]</th>
+                                <th>@L["Proposed"]</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (team.PendingName != null)
+                            {
+                                <tr>
+                                    <th>@L["Name"]</th>
+                                    <td>@team.Name</td>
+                                    <td class="@(team.PendingName != team.Name ? "warning" : null)"><strong>@team.PendingName</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>@L["Tag"]</th>
+                                    <td>@(team.Tag ?? "—")</td>
+                                    <td class="@(team.PendingTag != team.Tag ? "warning" : null)"><strong>@(team.PendingTag ?? "—")</strong></td>
+                                </tr>
+                            }
+                            @if (team.PendingFlag != null)
+                            {
+                                <tr>
+                                    <th>@L["Flag"]</th>
+                                    <td>
+                                        @if (team.Flag != null)
+                                        {
+                                            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-review-flag"/>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td class="warning"><a href="@ChampionshipFlags.PendingUrl(team)" target="_blank"><img src="@ChampionshipFlags.PendingUrl(team)" alt="" class="championship-review-flag"/></a></td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/refuse" id="team-refuse-form-@team.Id">
+                            <label for="team-refuse-reason-@team.Id">@L["Reason, if you refuse"] @FieldHelp.Tip(L["Shown to the captain and the vice-captain in the captain area."])</label>
+                            <input class="form-control" id="team-refuse-reason-@team.Id" name="reason" maxlength="@CoreConsts.ChampionshipReasonMaxLength" autocomplete="off">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                        <button type="submit" class="btn btn-danger" form="team-refuse-form-@team.Id">
+                            <span class="glyphicon glyphicon-ban-circle"></span> @L["Refuse"]
+                        </button>
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/approve" class="championship-inline-form">
+                            <button type="submit" class="btn btn-success">
+                                <span class="glyphicon glyphicon-ok"></span> @L["Approve"]
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
     <div class="modal fade" id="team-players-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-players-title-@team.Id">
         <div class="modal-dialog" role="document">

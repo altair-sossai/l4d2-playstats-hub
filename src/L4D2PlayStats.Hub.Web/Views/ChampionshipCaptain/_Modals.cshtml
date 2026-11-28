@@ -1,0 +1,214 @@
+@model ChampionshipCaptainModel
+@using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
+@{
+    var championship = Model.Championship;
+    var team = Model.Team;
+    var view = Model.Page;
+}
+
+<div class="modal fade" id="captain-identity-modal" tabindex="-1" role="dialog" aria-labelledby="captain-identity-title">
+    <div class="modal-dialog" role="document">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/identity" enctype="multipart/form-data">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="captain-identity-title">@L["Change name, tag or flag"]</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">@L["Everything you send here waits for the approval of the administration of the site before it appears to the other players. Offensive names and images are refused."]</p>
+                <div class="row">
+                    <div class="col-sm-8 form-group">
+                        <label for="captain-name">@L["Name"]</label>
+                        <input class="form-control" id="captain-name" name="name" value="@(team.PendingName ?? team.Name)" maxlength="@CoreConsts.ChampionshipTeamNameMaxLength" required autocomplete="off">
+                    </div>
+                    <div class="col-sm-4 form-group">
+                        <label for="captain-tag">@L["Tag"]</label>
+                        <input class="form-control" id="captain-tag" name="tag" value="@(team.PendingName != null ? team.PendingTag : team.Tag)" maxlength="@CoreConsts.ChampionshipTeamTagMaxLength" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 0">
+                    <label for="captain-flag">@L["Flag"] @FieldHelp.Tip(L["A square image, ideally 1024 × 1024 pixels: PNG, JPG, WEBP or GIF, up to 2 MB. Leave it empty to keep the current flag."])</label>
+                    <input type="file" class="form-control" id="captain-flag" name="flag" accept="image/png,image/jpeg,image/webp,image/gif">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-send"></span> @L["Send for approval"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@foreach (var series in Model.Series.Where(item => !item.Finished && championship.Status == ChampionshipStatus.Running))
+{
+    var stage = view.StageOf(series);
+    var teamA = series.TeamAId == team.Id;
+    var opponent = view.TeamName(teamA ? series.TeamBId : series.TeamAId);
+    var vetoesDone = !stage.Veto || series.TeamAVetoCampaignId != null && series.TeamBVetoCampaignId != null;
+    var proposals = series.Proposals.OrderBy(proposal => proposal.DateUtc).ToList();
+
+    <div class="modal fade" id="captain-dates-modal-@series.Id" tabindex="-1" role="dialog" aria-labelledby="captain-dates-title-@series.Id">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="captain-dates-title-@series.Id">@L["Dates against {0}", opponent]</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">@L["The series is scheduled when both teams accept the same date. Your proposal is already accepted by your team."]</p>
+                    @if (proposals.Count == 0)
+                    {
+                        <p class="text-muted">@L["No date was proposed yet."]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed table-bordered admin-table">
+                            <tbody>
+                            @foreach (var proposal in proposals)
+                            {
+                                var mineProposal = proposal.TeamId == team.Id;
+                                var myAnswer = teamA ? proposal.TeamAAnswer : proposal.TeamBAnswer;
+                                var theirAnswer = teamA ? proposal.TeamBAnswer : proposal.TeamAAnswer;
+
+                                <tr class="@(proposal.Confirmed ? "success" : proposal.Refused ? "text-muted" : null)">
+                                    <td>
+                                        <strong>@Display.DateTime(proposal.DateUtc, view.TimeZone)</strong>
+                                        <div class="small text-muted">@L["Proposed by {0}", view.TeamName(proposal.TeamId)]</div>
+                                    </td>
+                                    <td class="small">
+                                        @L["Your team"]: @Answer(myAnswer)<br/>
+                                        @opponent: @Answer(theirAnswer)
+                                    </td>
+                                    <td class="text-right slim admin-actions">
+                                        @if (proposal.Confirmed)
+                                        {
+                                            <span class="label label-success">@L["Confirmed"]</span>
+                                        }
+                                        else if (!mineProposal)
+                                        {
+                                            <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/answer">
+                                                <button type="submit" name="accept" value="true" class="btn btn-success btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Accepted)">@L["Accept"]</button>
+                                                <button type="submit" name="accept" value="false" class="btn btn-default btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Refused)">@L["Refuse"]</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/delete" data-confirm="@L["Delete this proposal?"]">
+                                                <button type="submit" class="btn btn-danger btn-xs">@L["Delete"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals" class="championship-propose">
+                        <label for="captain-date-@series.Id">@L["Propose a date"]</label>
+                        <div class="input-group">
+                            <input type="datetime-local" class="form-control" id="captain-date-@series.Id" name="date" required data-utc-offset="@((int)view.TimeZone.GetUtcOffset(DateTime.UtcNow).TotalMinutes)">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-send"></span> @L["Propose"]</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (stage.Veto)
+    {
+        <div class="modal fade" id="captain-veto-modal-@series.Id" tabindex="-1" role="dialog" aria-labelledby="captain-veto-title-@series.Id">
+            <div class="modal-dialog modal-sm" role="document">
+                <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/veto" data-confirm="@L["The veto cannot be changed. Veto this campaign?"]">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="captain-veto-title-@series.Id">@L["Veto a campaign"]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">@L["A vetoed campaign is not chosen nor drawn in the series against {0}.", opponent]</p>
+                        <select class="form-control" name="campaignId" id="captain-veto-@series.Id">
+                            @foreach (var option in view.VetoOptions(series, teamA))
+                            {
+                                <option value="@option.Id">@option.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Cancel"]</button>
+                        <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-ban-circle"></span> @L["Veto"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (stage.CampaignRule == ChampionshipCampaignRule.Picks)
+    {
+        <div class="modal fade" id="captain-campaigns-modal-@series.Id" tabindex="-1" role="dialog" aria-labelledby="captain-campaigns-title-@series.Id">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="captain-campaigns-title-@series.Id">@L["Campaigns against {0}", opponent]</h4>
+                    </div>
+                    <div class="modal-body">
+                        @if (!vetoesDone)
+                        {
+                            <p class="text-muted">@L["The campaigns are chosen after both teams veto one."]</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">@L["Your team chooses the campaign of the games of its turn. The decider is drawn only when it is needed."]</p>
+                            @foreach (var game in series.Games.Where(game => game.Status == ChampionshipGameStatus.Pending && GamePlan.PickedByTeamA(game, series.BestOf) == teamA).OrderBy(game => game.Number))
+                            {
+                                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/games/@game.Id/pick" class="form-group">
+                                    <label for="captain-pick-@game.Id">@L["Campaign of game {0}", game.Number]</label>
+                                    <div class="input-group">
+                                        <select class="form-control" id="captain-pick-@game.Id" name="campaignId">
+                                            @foreach (var option in view.PickOptions(series, game, team.Id))
+                                            {
+                                                <option value="@option.Id" selected="@(option.Id == game.CampaignId)">@option.Name</option>
+                                            }
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary">@(game.CampaignId == null ? L["Choose"] : L["Change"])</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@L["Close"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@functions {
+    private string Answer(ChampionshipAnswer answer)
+    {
+        return answer switch
+        {
+            ChampionshipAnswer.Accepted => "✔ " + L["Accepted"].Value,
+            ChampionshipAnswer.Refused => "✖ " + L["Refused"].Value,
+            _ => L["Waiting"].Value
+        };
+    }
+}

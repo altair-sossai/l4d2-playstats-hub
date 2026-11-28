@@ -223,7 +223,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
         return team;
     }
 
-    private static string TeamName(Championship championship, string? name, int? teamId)
+    public static string TeamName(Championship championship, string? name, int? teamId)
     {
         var trimmed = name?.Trim();
 
@@ -239,7 +239,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
         return trimmed;
     }
 
-    private static string? Tag(string? tag)
+    public static string? Tag(string? tag)
     {
         var trimmed = tag?.Trim();
 

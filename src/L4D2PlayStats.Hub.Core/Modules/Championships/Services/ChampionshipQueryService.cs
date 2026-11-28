@@ -75,4 +75,12 @@ public class ChampionshipQueryService(HubDbContext dbContext) : IChampionshipQue
 
         return link == null ? null : new ChampionshipMatchLink(link.Name, link.Slug, link.Stage, link.SeriesId, link.Number);
     }
+
+    public Task<ChampionshipTeamFlag?> FlagAsync(int teamId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.ChampionshipTeams.AsNoTracking()
+            .Where(team => team.Id == teamId)
+            .Join(dbContext.Championships, team => team.ChampionshipId, championship => championship.Id, (team, championship) => new ChampionshipTeamFlag(team.Flag, team.PendingFlag, championship.Status, team.CaptainCommunityId, team.ViceCaptainCommunityId))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

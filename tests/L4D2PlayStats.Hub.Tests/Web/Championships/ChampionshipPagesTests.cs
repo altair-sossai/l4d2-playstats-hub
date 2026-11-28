@@ -81,8 +81,12 @@ public partial class ChampionshipPagesTests
         await HubWebFactory.PostFormAsync(admin, url, url, new Dictionary<string, string>
         {
             ["Name"] = "Liga Teste", ["Slug"] = "liga-teste", ["PlayersPerGame"] = "2", ["RosterSize"] = "2", ["DraftMethod"] = "Manual", ["Substitutes"] = "false",
-            ["Rules"] = "# Format\n- Every team plays **every** other team", ["startsOn"] = "2026-12-01", ["endsOn"] = "2026-12-20", ["StreamUrl"] = "https://www.twitch.tv/example"
+            ["startsOn"] = "2026-12-01", ["endsOn"] = "2026-12-20", ["StreamUrl"] = "https://www.twitch.tv/example"
         });
+
+        var rulesSaved = await HubWebFactory.PostFormAsync(admin, $"{url}?tab=rules", $"{url}/rules", new Dictionary<string, string> { ["rules"] = "# Format\n- Every team plays **every** other team", ["rulesPortuguese"] = "# Formato" });
+
+        Assert.AreEqual($"{url}?tab=rules", rulesSaved.Headers.Location!.OriginalString);
 
         var players = string.Join('\n', Enumerable.Range(0, 8).Select(index => (FirstPlayer + index).ToString()));
         var added = await HubWebFactory.PostFormAsync(admin, url, $"{url}/participants", new Dictionary<string, string> { ["players"] = players });
@@ -102,8 +106,14 @@ public partial class ChampionshipPagesTests
 
         await HubWebFactory.PostFormAsync(admin, url, $"{url}/teams/{teams[0].Id}", new Dictionary<string, string> { ["name"] = "Team A", ["seed"] = "1", ["captain"] = FirstPlayer.ToString(), ["viceCaptain"] = (FirstPlayer + 1).ToString() });
 
-        foreach (var page in new[] { "/admin/championships", "/admin/championships?page=2", url, $"{url}?tab=participants&participantsPage=2", $"{url}?tab=teams", $"{url}?tab=stages", $"{url}?tab=games", $"{url}?tab=history&historyPage=3" })
+        foreach (var page in new[] { "/admin/championships", "/admin/championships?page=2", url, $"{url}?tab=rules", $"{url}?tab=participants&participantsPage=2", $"{url}?tab=teams", $"{url}?tab=stages", $"{url}?tab=games", $"{url}?tab=history&historyPage=3" })
             Assert.AreEqual(HttpStatusCode.OK, (await admin.GetAsync(page)).StatusCode, page);
+
+        var settingsPage = await admin.GetStringAsync(url);
+
+        Assert.Contains("id=\"RulesPortuguese\"", settingsPage);
+        Assert.Contains($"action=\"{url}/rules\"", settingsPage);
+        Assert.AreEqual(1, Regex.Matches(settingsPage, "id=\"Rules\"").Count);
 
         championship = await LoadAsync(factory, id);
 
@@ -172,51 +182,69 @@ public partial class ChampionshipPagesTests
     }
 
     [TestMethod]
-    public async Task CaptainsChooseTheCampaignsAndAgreeOnADateFromTheSeriesPage()
+    public async Task CaptainsChooseTheCampaignsAndAgreeOnADateFromTheCaptainArea()
     {
         using var factory = await FactoryAsync();
 
         var (slug, seriesId, games) = await KnockoutAsync(factory);
         var page = $"/championships/{slug}/series/{seriesId}";
+        var area = $"/championships/{slug}/captain";
+        var series = $"{area}/series/{seriesId}";
 
         using var captainA = factory.Client(FirstPlayer);
         using var viceB = factory.Client(FirstPlayer + 3);
         using var stranger = factory.Client(Stranger);
 
-        var asCaptain = await captainA.GetStringAsync(page);
+        var asCaptain = await captainA.GetStringAsync(area);
+        var publicPage = await captainA.GetStringAsync(page);
 
-        Assert.Contains("Your team: Team A", asCaptain);
-        Assert.Contains($"action=\"{page}/games/{games[0]}/pick\"", asCaptain);
-        Assert.DoesNotContain($"action=\"{page}/games/{games[1]}/pick\"", asCaptain);
-        Assert.DoesNotContain("Your team", await stranger.GetStringAsync(page));
+        Assert.Contains("Captain area: Team A", asCaptain);
+        Assert.Contains($"action=\"{series}/games/{games[0]}/pick\"", asCaptain);
+        Assert.DoesNotContain($"action=\"{series}/games/{games[1]}/pick\"", asCaptain);
+        Assert.Contains("Choose the campaign of game 1 against Team B", asCaptain);
+        Assert.Contains("Propose a date to Team B", asCaptain);
+        Assert.Contains($"href=\"{area}\"", publicPage);
+        Assert.DoesNotContain("/pick\"", publicPage);
+        Assert.Contains("nav-captain-badge", publicPage);
+        Assert.AreEqual(HttpStatusCode.NotFound, (await stranger.GetAsync(area)).StatusCode);
+        Assert.DoesNotContain("nav-captain", await stranger.GetStringAsync(page));
+        Assert.DoesNotContain($"href=\"{area}\"", await stranger.GetStringAsync(page));
 
-        var campaignId = Regex.Match(asCaptain, $"id=\"pick-{games[0]}\" name=\"campaignId\">\\s*<option value=\"(\\d+)\"").Groups[1].Value;
-        var picked = await HubWebFactory.PostFormAsync(captainA, page, $"{page}/games/{games[0]}/pick", new Dictionary<string, string> { ["campaignId"] = campaignId });
+        var campaignId = Regex.Match(asCaptain, $"id=\"captain-pick-{games[0]}\" name=\"campaignId\">\\s*<option value=\"(\\d+)\"").Groups[1].Value;
+        var picked = await HubWebFactory.PostFormAsync(captainA, area, $"{series}/games/{games[0]}/pick", new Dictionary<string, string> { ["campaignId"] = campaignId });
 
         Assert.AreEqual(HttpStatusCode.Redirect, picked.StatusCode);
+        Assert.AreEqual($"{area}?tab=series", picked.Headers.Location!.OriginalString);
 
         var date = DateTime.UtcNow.AddDays(3).ToString("yyyy-MM-ddT21:00");
-        var proposed = await HubWebFactory.PostFormAsync(captainA, page, $"{page}/proposals", new Dictionary<string, string> { ["date"] = date });
+        var proposed = await HubWebFactory.PostFormAsync(captainA, area, $"{series}/proposals", new Dictionary<string, string> { ["date"] = date });
 
         Assert.AreEqual(HttpStatusCode.Redirect, proposed.StatusCode);
-        Assert.AreEqual(page, proposed.Headers.Location!.OriginalString);
 
-        await HubWebFactory.PostFormAsync(stranger, page, $"{page}/proposals", new Dictionary<string, string> { ["date"] = DateTime.UtcNow.AddDays(4).ToString("yyyy-MM-ddT21:00") });
+        var strangerPost = await HubWebFactory.PostFormAsync(stranger, page, $"{series}/proposals", new Dictionary<string, string> { ["date"] = DateTime.UtcNow.AddDays(4).ToString("yyyy-MM-ddT21:00") });
+
+        Assert.AreEqual(HttpStatusCode.NotFound, strangerPost.StatusCode);
 
         var championship = await LoadAsync(factory, await IdAsync(factory, slug));
-        var series = championship.Stages.Single().Series.Single(item => item.Id == seriesId);
-        var proposal = series.Proposals.Single();
+        var loaded = championship.Stages.Single().Series.Single(item => item.Id == seriesId);
+        var proposal = loaded.Proposals.Single();
 
-        Assert.AreEqual(int.Parse(campaignId), series.Games.Single(game => game.Id == games[0]).CampaignId);
+        Assert.AreEqual(int.Parse(campaignId), loaded.Games.Single(game => game.Id == games[0]).CampaignId);
 
-        var answered = await HubWebFactory.PostFormAsync(viceB, page, $"{page}/proposals/{proposal.Id}/answer", new Dictionary<string, string> { ["accept"] = "true" });
+        var asVice = await viceB.GetStringAsync(area);
+
+        Assert.Contains("Answer the date proposed by Team A", asVice);
+        Assert.Contains($"action=\"{series}/proposals/{proposal.Id}/answer\"", asVice);
+
+        var answered = await HubWebFactory.PostFormAsync(viceB, area, $"{series}/proposals/{proposal.Id}/answer", new Dictionary<string, string> { ["accept"] = "true" });
 
         Assert.AreEqual(HttpStatusCode.Redirect, answered.StatusCode);
 
         var confirmed = await stranger.GetStringAsync(page);
 
-        Assert.Contains("Confirmed", confirmed);
         Assert.Contains("calendar.google.com", confirmed);
+        Assert.Contains("Confirmed", await viceB.GetStringAsync(area));
+        Assert.DoesNotContain("Propose a date to Team A", await viceB.GetStringAsync(area));
 
         var calendar = await stranger.GetAsync($"{page}/calendar.ics");
 
@@ -225,7 +253,7 @@ public partial class ChampionshipPagesTests
 
         using var signedOut = factory.Client();
 
-        var refused = await HubWebFactory.PostFormAsync(signedOut, page, $"{page}/proposals", new Dictionary<string, string> { ["date"] = date });
+        var refused = await HubWebFactory.PostFormAsync(signedOut, page, $"{series}/proposals", new Dictionary<string, string> { ["date"] = date });
 
         Assert.AreNotEqual(HttpStatusCode.OK, refused.StatusCode);
         Assert.HasCount(1, (await LoadAsync(factory, await IdAsync(factory, slug))).Stages.Single().Series.Single(item => item.Id == seriesId).Proposals);
@@ -311,7 +339,7 @@ public partial class ChampionshipPagesTests
         var core = Path.Combine(root, "src", "L4D2PlayStats.Hub.Core", "Modules", "Championships");
         var web = Path.Combine(root, "src", "L4D2PlayStats.Hub.Web");
 
-        foreach (var file in Directory.EnumerateFiles(core, "*.cs", SearchOption.AllDirectories).Append(Path.Combine(web, "Controllers", "ChampionshipsController.cs")))
+        foreach (var file in Directory.EnumerateFiles(core, "*.cs", SearchOption.AllDirectories).Append(Path.Combine(web, "Controllers", "ChampionshipsController.cs")).Append(Path.Combine(web, "Controllers", "ChampionshipCaptainController.cs")))
         {
             var text = File.ReadAllText(file);
 

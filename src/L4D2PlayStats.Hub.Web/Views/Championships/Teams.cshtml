@@ -23,6 +23,10 @@
             <div class="panel panel-default championship-team">
                 <div class="panel-heading">
                     <h3 class="panel-title">
+                        @if (team.Flag != null)
+                        {
+                            <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag championship-flag-lg" loading="lazy"/>
+                        }
                         @team.Name
                         @if (!string.IsNullOrWhiteSpace(team.Tag))
                         {

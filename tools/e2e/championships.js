@@ -102,6 +102,63 @@ async function settings(browser, url, values) {
     await ok(browser, `The settings of ${url}`);
 }
 
+async function rules(browser, url, values) {
+    await tab(browser, url, 'rules');
+    await browser.fill(Object.fromEntries(Object.entries(values).map(([name, value]) => [`#${name}`, value])));
+    await browser.submit('#Rules');
+    await ok(browser, `The rules of ${url}`);
+    expect(await browser.eval(`!!document.querySelector('.admin-tabs li.active a[data-admin-tab="rules"]')`), 'Saving the rules does not come back to the Rules tab');
+}
+
+async function captainArea(browser, slug, name) {
+    await browser.open(`/championships/${slug}/captain?tab=${name}`);
+    await ok(browser, `The ${name} tab of the captain area of ${slug}`);
+    expect(await browser.eval(`!!document.querySelector('.admin-tabs li.active a[data-admin-tab="${name}"]')`), `The ${name} tab of the captain area is not active`);
+}
+
+async function captainModal(browser, slug, kind, series) {
+    await captainArea(browser, slug, 'series');
+    await modal(browser, `[data-target="#captain-${kind}-modal-${series}"]`, `#captain-${kind}-modal-${series}`);
+}
+
+async function captainOnTheClock(browser, slug, captains) {
+    for (const captain of captains) {
+        await as(browser, captain);
+        await captainArea(browser, slug, 'draft');
+
+        if (await browser.eval(`!!document.querySelector('form[action$="/captain/draft/pick"]')`))
+            return captain;
+    }
+
+    return null;
+}
+
+async function captainPicks(browser, slug, captains, picks) {
+    for (let index = 0; index < picks; index++) {
+        const captain = await captainOnTheClock(browser, slug, captains);
+
+        expect(captain, `No captain is on the clock at pick ${index + 1}`);
+        await post(browser, 'form[action$="/captain/draft/pick"]', {}, `Captain pick ${index + 1}`);
+        expect(await browser.eval(`!!document.querySelector('.main-container > .alert-success')`), `Captain pick ${index + 1} was not saved`);
+    }
+}
+
+async function futureDate(browser, selector, minutes) {
+    return browser.eval(`(() => { const offset = Number(document.querySelector(${quote(selector)}).getAttribute('data-utc-offset') || 0); return new Date(Date.now() + (${minutes} + offset) * 60000).toISOString().slice(0, 16); })()`);
+}
+
+async function uploadFiles(context, files) {
+    for (const file of files) {
+        const response = await fetch(`${context.base}/api/statistics`, {
+            method: 'POST',
+            headers: { Authorization: context.token, 'Content-Type': 'application/json' },
+            body: JSON.stringify(file)
+        });
+
+        expect(response.ok, `Uploading ${file.fileName} answered ${response.status}`);
+    }
+}
+
 async function participants(browser, url, ids) {
     await tab(browser, url, 'participants');
     await modal(browser, '[data-target="#participants-add-modal"]', '#participants-add-modal');
@@ -280,11 +337,15 @@ function championshipChecks(context) {
                     PlayersPerGame: 4,
                     RosterSize: 4,
                     GameConfiguration: fixtures.configuration,
-                    StreamUrl: 'https://www.twitch.tv/example',
-                    Rules: '# Format\n- Every team plays every other team **once**.\n- A win gives 3 points, a draw 1.\n\n## Schedule\nThe captains agree on the dates.',
-                    RulesPortuguese: '# Formato\n- Todas as equipes se enfrentam **uma vez**.\n- Vitória vale 3 pontos, empate 1.'
+                    StreamUrl: 'https://www.twitch.tv/example'
                 });
                 await shot(browser, context, 'championships-admin-settings');
+                await rules(browser, url, {
+                    Rules: '# Format\n- Every team plays every other team **once**.\n- A win gives 3 points, a draw 1.\n\n## Schedule\nThe captains agree on the dates.',
+                    RulesPortuguese: '# Formato\n- Todas as equipes se enfrentam **uma vez**.\n- Vitória vale 3 pontos, empate 1.\n\n## Datas\nOs capitães combinam as datas.',
+                    RulesSpanish: '# Formato\n- Todos los equipos se enfrentan **una vez**.\n- Una victoria vale 3 puntos, un empate 1.'
+                });
+                await shot(browser, context, 'championships-admin-rules');
 
                 await participants(browser, url, players);
                 await shot(browser, context, 'championships-admin-participants');
@@ -389,7 +450,7 @@ function championshipChecks(context) {
 
                 const url = await create(browser, 'Copa Mata-Mata E2E', 'Knockout');
 
-                await settings(browser, url, { Slug: 'copa-mata-mata-e2e', PlayersPerGame: 4, RosterSize: 4, DraftMethod: 'Snake' });
+                await settings(browser, url, { Slug: 'copa-mata-mata-e2e', PlayersPerGame: 4, RosterSize: 4, DraftMethod: 'Snake', status: 'TeamFormation' });
                 await participants(browser, url, players);
 
                 const ids = await teams(browser, url, 4);
@@ -399,7 +460,8 @@ function championshipChecks(context) {
 
                 await tab(browser, url, 'draft');
                 await post(browser, `form[action="${url}/draft/order"]`, {}, 'Drawing the order of the captains');
-                await draftPicks(browser, url, 6);
+                await captainPicks(browser, 'copa-mata-mata-e2e', [0, 1, 2, 3].map(team => players[team * 4]), 6);
+                await as(browser, admin);
                 await tab(browser, url, 'draft');
                 await shot(browser, context, 'championships-admin-draft');
                 await draftPicks(browser, url, 6);
@@ -430,36 +492,39 @@ function championshipChecks(context) {
 
                 expect(captainA && captainB, `The captains of ${semifinal.a} and ${semifinal.b} were not found`);
 
+                const slug = 'copa-mata-mata-e2e';
+
                 await as(browser, captainA);
                 await browser.open(semifinal.url);
                 await ok(browser, 'The series page of a captain');
-                expect(await browser.eval(`!!document.querySelector('.championship-captain')`), 'The captain does not see the panel of the team');
-                await post(browser, `form[action="${semifinal.url}/veto"]`, {}, 'The veto of team A');
+                expect(await browser.eval(`!document.querySelector('form[action$="/veto"], form[action$="/pick"], form[action$="/proposals"]')`), 'The public series page still has forms of the captains');
+                expect(await browser.eval(`!!document.querySelector('.championship-captain-link a[href="/championships/${slug}/captain"]')`), 'The captain has no link to the captain area');
+                await captainArea(browser, slug, 'series');
+                expect(await browser.eval(`document.querySelector('.championship-tasks').innerText.includes('Veto a campaign against')`), 'The captain area does not ask for the veto');
+                await shot(browser, context, 'championship-captain-series');
+                await captainModal(browser, slug, 'veto', semifinal.id);
+                await shot(browser, context, 'championship-captain-veto');
+                await post(browser, `#captain-veto-modal-${semifinal.id} form`, {}, 'The veto of team A');
 
                 await as(browser, captainB);
-                await browser.open(semifinal.url);
-                await post(browser, `form[action="${semifinal.url}/veto"]`, {}, 'The veto of team B');
+                await captainModal(browser, slug, 'veto', semifinal.id);
+                await post(browser, `#captain-veto-modal-${semifinal.id} form`, {}, 'The veto of team B');
+                await captainModal(browser, slug, 'campaigns', semifinal.id);
+                await shot(browser, context, 'championship-captain-campaigns');
+                await post(browser, `#captain-campaigns-modal-${semifinal.id} form`, {}, 'The pick of team B');
+                await captainModal(browser, slug, 'dates', semifinal.id);
 
-                const pickB = await browser.eval(`(() => { const form = document.querySelector('form[action$="/pick"]'); return form ? form.getAttribute('action') : null; })()`);
+                const local = await futureDate(browser, `#captain-date-${semifinal.id}`, 3 * 1440);
 
-                expect(pickB, 'Team B has no game to choose');
-                await post(browser, `form[action="${pickB}"]`, {}, 'The pick of team B');
-
-                const date = new Date(Date.now() + 3 * 86400000);
-                const local = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}T21:00`;
-
-                await post(browser, `form[action="${semifinal.url}/proposals"]`, { date: local }, 'Proposing a date');
+                await post(browser, `#captain-dates-modal-${semifinal.id} form[action$="/proposals"]`, { date: local }, 'Proposing a date');
 
                 await as(browser, captainA);
+                await captainModal(browser, slug, 'campaigns', semifinal.id);
+                await post(browser, `#captain-campaigns-modal-${semifinal.id} form`, {}, 'The pick of team A');
+                await captainModal(browser, slug, 'dates', semifinal.id);
+                await shot(browser, context, 'championship-captain-dates');
+                await post(browser, `#captain-dates-modal-${semifinal.id} form[action$="/answer"]`, {}, 'Accepting the date');
                 await browser.open(semifinal.url);
-
-                const pickA = await browser.eval(`(() => { const form = document.querySelector('form[action$="/pick"]'); return form ? form.getAttribute('action') : null; })()`);
-
-                await post(browser, `form[action="${pickA}"]`, {}, 'The pick of team A');
-
-                const answer = await browser.eval(`document.querySelector('form[action*="/proposals/"][action$="/answer"]').getAttribute('action')`);
-
-                await post(browser, `form[action="${answer}"]`, { accept: 'true' }, 'Accepting the date');
                 expect(await browser.eval(`!!document.querySelector('.championship-series-dates a[href*="calendar.google.com"]')`), 'The confirmed date has no calendar link');
                 await shot(browser, context, 'championship-copa-mata-mata-e2e-series-captain');
 
@@ -580,6 +645,181 @@ function championshipChecks(context) {
             }
         },
         {
+            name: 'championships-captains',
+            timeout: 600000,
+            run: async browser => {
+                const slug = 'copa-dos-capitaes-e2e';
+                const captainA = players[0];
+                const captainB = players[4];
+
+                await as(browser, admin);
+
+                const url = await create(browser, 'Copa dos Capitães E2E', 'Knockout');
+
+                await settings(browser, url, { Slug: slug, PlayersPerGame: 4, RosterSize: 4, DraftMethod: 'Snake', status: 'TeamFormation' });
+                expect(await browser.eval(`document.querySelector('#AutoLinkMatches').checked && document.querySelector('#AutoLinkHours').value === '6' && document.querySelector('#AutoCloseMinutes').value === '60'`), 'The results settings do not start linking the matches by themselves');
+                await participants(browser, url, players.slice(0, 8));
+
+                const ids = await teams(browser, url, 2);
+
+                await leaders(browser, url, ids[0], captainA, null);
+                await leaders(browser, url, ids[1], captainB, null);
+                await tab(browser, url, 'draft');
+                await post(browser, `form[action="${url}/draft/order"]`, {}, 'Drawing the order of the captains');
+
+                const first = await captainOnTheClock(browser, slug, [captainA, captainB]);
+
+                expect(first, 'No captain is on the clock after the order is drawn');
+                await shot(browser, context, 'championship-captain-draft');
+                await browser.open(`/championships/${slug}`);
+                expect(await browser.eval(`document.querySelector('.nav-captain a[href="/championships/${slug}/captain"]').innerText.includes('Things to do: 1')`), 'The header does not show the pending pick of the captain');
+                await browser.click('.nav-captain > a', { settle: 200 });
+                await shot(browser, context, 'championship-captain-alert');
+                await captainPicks(browser, slug, [captainA, captainB], 6);
+                await captainArea(browser, slug, 'draft');
+                expect(await browser.eval(`document.body.innerText.includes('The draft is complete.')`), 'The draft is not complete after the captains chose six players');
+
+                await as(browser, captainA);
+                await captainArea(browser, slug, 'team');
+                await modal(browser, '[data-target="#captain-identity-modal"]', '#captain-identity-modal');
+                await browser.fill({ '#captain-name': 'Lobos E2E', '#captain-tag': 'LOB' });
+                await browser.eval(`(() => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 256;
+                    canvas.height = 256;
+                    const draw = canvas.getContext('2d');
+                    draw.fillStyle = '#1f6f43'; draw.fillRect(0, 0, 256, 256);
+                    draw.fillStyle = '#f5c518'; draw.beginPath(); draw.arc(128, 128, 80, 0, Math.PI * 2); draw.fill();
+                    draw.fillStyle = '#1f6f43'; draw.font = 'bold 72px sans-serif'; draw.textAlign = 'center'; draw.textBaseline = 'middle'; draw.fillText('L', 128, 132);
+                    const binary = atob(canvas.toDataURL('image/png').split(',')[1]);
+                    const bytes = new Uint8Array(binary.length);
+                    for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
+                    const transfer = new DataTransfer();
+                    transfer.items.add(new File([bytes], 'flag.png', { type: 'image/png' }));
+                    document.querySelector('#captain-flag').files = transfer.files;
+                })()`);
+                await shot(browser, context, 'championship-captain-identity-modal');
+                await save(browser, '#captain-identity-modal', 'Sending the identity of the team');
+                expect(await browser.eval(`!!document.querySelector('.championship-pending img[src*="/pending"]')`), 'The captain does not see the flag waiting for approval');
+                await shot(browser, context, 'championship-captain-identity-pending');
+
+                await as(browser, captainB);
+                await captainArea(browser, slug, 'team');
+                await modal(browser, '[data-target="#captain-identity-modal"]', '#captain-identity-modal');
+                await browser.fill({ '#captain-name': 'Nome Feio E2E' });
+                await save(browser, '#captain-identity-modal', 'Sending a name that will be refused');
+
+                await as(browser, null);
+                await browser.open(`/championships/${slug}/teams`);
+                expect(await browser.eval(`!document.body.innerText.includes('Lobos E2E') && !document.body.innerText.includes('Nome Feio E2E')`), 'A name waiting for approval is shown to visitors');
+
+                await as(browser, admin);
+                await tab(browser, url, 'teams');
+                expect(await browser.eval(`!!document.querySelector('.championship-approvals')`), 'The administration does not warn about the teams waiting for approval');
+                await shot(browser, context, 'championships-admin-teams-approval');
+                await modal(browser, `[data-target="#team-review-modal-${ids[0]}"]`, `#team-review-modal-${ids[0]}`);
+                await browser.until(`document.querySelector('#team-review-modal-${ids[0]} .championship-review-flag') && document.querySelector('#team-review-modal-${ids[0]} .championship-review-flag').complete && document.querySelector('#team-review-modal-${ids[0]} .championship-review-flag').naturalWidth > 0`, 'the flag waiting for approval');
+                await shot(browser, context, 'championships-admin-review');
+                await post(browser, `form[action="${url}/teams/${ids[0]}/identity/approve"]`, {}, 'Approving the identity of a team');
+                await modal(browser, `[data-target="#team-review-modal-${ids[1]}"]`, `#team-review-modal-${ids[1]}`);
+                await post(browser, `#team-refuse-form-${ids[1]}`, { reason: 'Escolham um nome sem ofensas.' }, 'Refusing the identity of a team');
+                expect(await browser.eval(`!document.querySelector('.championship-approvals')`), 'The teams still wait for approval');
+
+                await as(browser, captainB);
+                await captainArea(browser, slug, 'team');
+                expect(await browser.eval(`document.body.innerText.includes('Escolham um nome sem ofensas.')`), 'The captain does not see the reason of the refusal');
+                await shot(browser, context, 'championship-captain-refused');
+
+                await as(browser, captainA);
+                await captainArea(browser, slug, 'team');
+                await post(browser, 'form[action$="/captain/vice"]', {}, 'Choosing the vice-captain');
+                expect(await browser.eval(`!!document.querySelector('.championship-identity-flag img') && document.querySelectorAll('.label-info').length === 1`), 'The flag or the vice-captain is not shown in the captain area');
+                await shot(browser, context, 'championship-captain-team');
+
+                await as(browser, null);
+                await browser.open(`/championships/${slug}/teams`);
+                expect(await browser.eval(`document.body.innerText.includes('Lobos E2E') && !!document.querySelector('.championship-team img.championship-flag')`), 'The approved name and flag are not on the teams page');
+                await shot(browser, context, `championship-${slug}-teams`);
+
+                await as(browser, admin);
+
+                const [stage] = await stages(browser, url);
+
+                await stageForm(browser, url, stage, { Name: 'Final', BestOf: 3, FinalBestOf: 3, ThirdPlace: false, CampaignRule: 'Picks', Veto: false, OncePerTeam: false, MinimumMaps: 0, Seeding: 'Seeds' });
+                await build(browser, url, stage, 2);
+                await tab(browser, url, 'teams');
+
+                const rosters = await browser.eval(`(() => [${ids.join(',')}].map(team => Array.from(document.querySelectorAll('form[action*="/teams/' + team + '/members/"][action$="/remove"]')).map(form => form.getAttribute('action').split('/').slice(-2)[0])))()`);
+
+                expect(rosters[0].length === 4 && rosters[1].length === 4, `The teams do not have four players each: ${rosters.map(roster => roster.length).join(', ')}`);
+
+                await as(browser, captainA);
+                await captainArea(browser, slug, 'series');
+
+                const series = await browser.eval(`Number(document.querySelector('[data-target^="#captain-dates-modal-"]').getAttribute('data-target').split('-').pop())`);
+
+                await captainModal(browser, slug, 'campaigns', series);
+                await browser.eval(`(() => { const select = document.querySelector('#captain-campaigns-modal-${series} select'); const option = Array.from(select.options).find(item => item.text === 'Dead Center'); if (!option) throw new Error('Dead Center is not offered'); select.value = option.value; })()`);
+                await browser.submit(`#captain-campaigns-modal-${series} form`);
+                await ok(browser, 'Choosing Dead Center for game 1');
+                await captainModal(browser, slug, 'dates', series);
+
+                const date = await futureDate(browser, `#captain-date-${series}`, 40);
+
+                await post(browser, `#captain-dates-modal-${series} form[action$="/proposals"]`, { date }, 'Proposing the date of the final');
+
+                await as(browser, captainB);
+                await captainArea(browser, slug, 'series');
+                expect(await browser.eval(`document.querySelector('.championship-tasks').innerText.includes('Answer the date proposed by Lobos E2E')`), 'The other captain is not asked to answer the date');
+                await captainModal(browser, slug, 'dates', series);
+                await post(browser, `#captain-dates-modal-${series} form[action$="/answer"]`, {}, 'Accepting the date of the final');
+
+                const roster = rosters.flat().map(id => ({ id, name: (fixtures.players.find(player => player.id === id) || { name: id }).name, aliases: [] }));
+                const files = require('./statistics').generate(roster, [{ maps: ['c1m1_hotel', 'c1m2_streets', 'c1m3_mall', 'c1m4_atrium'], lineup: [0, 1, 2, 3, 4, 5, 6, 7], scores: [[320, 250], [300, 280], [340, 260], [310, 290]] }], new Date(Date.now() + 75 * 60000), fixtures.configuration);
+
+                await uploadFiles(context, files.slice(0, 2));
+                await as(browser, null);
+                await browser.open(`/championships/${slug}/series/${series}`);
+                await ok(browser, 'The final in progress');
+                expect(await browser.eval(`!!document.querySelector('.championship-games .championship-live')`), 'The game is not shown in progress after two maps');
+                await shot(browser, context, 'championship-series-in-progress');
+
+                await as(browser, admin);
+                await gamesPageOf(browser, url, series);
+                expect(await browser.eval(`!!document.querySelector('[data-game-edit*="/series/${series}/"].btn-warning')`), 'The game in progress is not yellow in the administration');
+
+                const live = await browser.eval(`document.querySelector('[data-game-edit*="/series/${series}/"].btn-warning').getAttribute('data-game-edit')`);
+
+                await openGame(browser, url, live);
+                expect(await browser.eval(`getComputedStyle(document.querySelector('#game-in-progress')).display !== 'none'`), 'The window of the game does not say it is in progress');
+                await shot(browser, context, 'championships-admin-game-in-progress');
+
+                await uploadFiles(context, files.slice(2));
+                await as(browser, null);
+                await browser.open(`/championships/${slug}/series/${series}`);
+                expect(await browser.eval(`!document.querySelector('.championship-games .championship-live') && !!document.querySelector('.championship-games a[href^="/matches/"]') && document.querySelector('.championship-series-big .score').innerText.trim().startsWith('1')`), 'The game did not end after the last map');
+                await shot(browser, context, 'championship-series-linked');
+
+                await as(browser, admin);
+                await tab(browser, url, 'history');
+                expect(await browser.eval(`document.body.innerText.includes('by itself') && document.body.innerText.includes('every map was played')`), 'The history does not show the match linked by itself');
+                await shot(browser, context, 'championships-admin-history-autolink');
+
+                await browser.open(`/language?culture=pt-BR&returnUrl=/championships/${slug}/captain`);
+                await as(browser, captainA);
+                await captainArea(browser, slug, 'series');
+                await shot(browser, context, 'championship-captain-series-pt-BR');
+                await as(browser, captainA, phone);
+                await captainArea(browser, slug, 'team');
+
+                const sizes = await browser.eval(`({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth })`);
+
+                expect(sizes.scroll <= sizes.client + 1, `The captain area scrolls sideways on a phone: ${sizes.scroll}px for ${sizes.client}px`);
+                await shot(browser, context, 'championship-captain-phone');
+                await browser.open('/language?culture=en-US&returnUrl=/');
+            }
+        },
+        {
             name: 'championships-list',
             timeout: 600000,
             run: async browser => {
@@ -595,7 +835,7 @@ function championshipChecks(context) {
                 expect(await browser.eval(`document.querySelectorAll('.admin-table tbody tr .admin-row-actions a, .admin-table tbody tr .admin-row-actions button').length`) >= 12, 'The rows have no Edit and Delete buttons');
                 await shot(browser, context, 'championships-admin-list');
 
-                for (const name of ['settings', 'participants', 'teams', 'draft', 'stages', 'games', 'history'])
+                for (const name of ['settings', 'rules', 'participants', 'teams', 'draft', 'stages', 'games', 'history'])
                     await tab(browser, '/admin/championships/2', name);
 
                 await browser.open('/admin/championships/1?tab=teams');

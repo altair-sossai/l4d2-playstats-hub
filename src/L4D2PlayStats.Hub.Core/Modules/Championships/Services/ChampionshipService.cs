@@ -98,9 +98,6 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         championship.Name = Required(form.Name);
         championship.Slug = await UniqueSlugAsync(slug, id, cancellationToken);
         championship.Description = Text(form.Description, AppConsts.ChampionshipDescriptionMaxLength);
-        championship.Rules = Text(form.Rules, AppConsts.ChampionshipRulesMaxLength);
-        championship.RulesPortuguese = Text(form.RulesPortuguese, AppConsts.ChampionshipRulesMaxLength);
-        championship.RulesSpanish = Text(form.RulesSpanish, AppConsts.ChampionshipRulesMaxLength);
         championship.StreamUrl = Url(form.StreamUrl);
         championship.VideosUrl = Url(form.VideosUrl);
         championship.GameConfiguration = Text(form.GameConfiguration, AppConsts.ChampionshipConfigurationMaxLength);
@@ -109,11 +106,27 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         championship.MaxParticipants = form.MaxParticipants is > 0 ? Math.Min(form.MaxParticipants.Value, AppConsts.ChampionshipMaxTeams * AppConsts.ChampionshipMaxRoster) : null;
         championship.Substitutes = form.Substitutes;
         championship.DraftMethod = Enum.IsDefined(form.DraftMethod) ? form.DraftMethod : ChampionshipDraftMethod.Manual;
+        championship.AutoLinkMatches = form.AutoLinkMatches;
+        championship.AutoLinkHours = Math.Clamp(form.AutoLinkHours, 1, AppConsts.ChampionshipMaxAutoLinkHours);
+        championship.AutoCloseMinutes = Math.Clamp(form.AutoCloseMinutes, AppConsts.ChampionshipMinAutoCloseMinutes, AppConsts.ChampionshipMaxAutoCloseMinutes);
         championship.StartsOn = form.StartsOn?.Date;
         championship.EndsOn = form.EndsOn?.Date;
         championship.UpdatedAtUtc = clock.UtcNow;
 
         log.Add(id, updatedBy, "Saved the settings");
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateRulesAsync(int id, string? english, string? portuguese, string? spanish, long? updatedBy, CancellationToken cancellationToken = default)
+    {
+        var championship = await dbContext.Championships.FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
+
+        championship.Rules = Text(english, AppConsts.ChampionshipRulesMaxLength);
+        championship.RulesPortuguese = Text(portuguese, AppConsts.ChampionshipRulesMaxLength);
+        championship.RulesSpanish = Text(spanish, AppConsts.ChampionshipRulesMaxLength);
+        championship.UpdatedAtUtc = clock.UtcNow;
+
+        log.Add(id, updatedBy, "Saved the rules");
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

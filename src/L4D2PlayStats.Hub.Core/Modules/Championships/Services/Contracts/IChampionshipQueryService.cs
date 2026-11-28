@@ -9,4 +9,5 @@ public interface IChampionshipQueryService
     Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default);
     Task<List<ChampionshipPlayerStatistics>> StatisticsAsync(Championship championship, CancellationToken cancellationToken = default);
     Task<ChampionshipMatchLink?> MatchLinkAsync(int matchId, CancellationToken cancellationToken = default);
+    Task<ChampionshipTeamFlag?> FlagAsync(int teamId, CancellationToken cancellationToken = default);
 }

@@ -55,6 +55,9 @@ In [Administration > Administrators](administration.md#administrators), with the
 **How do I run a championship?**
 Turn on **Championships** in [Administration > Modules](administration.md#modules), then create it in **Administration > Championships**: choose the format, add the participants and the teams, and build the first stage. See [Championships > For administrators](championships.md#for-administrators).
 
+**Where does a captain manage the team?**
+In the captain area of the championship: sign in with Steam and click the tower icon next to your photo at the top, or **Open the captain area** on the page of the championship. There the captain and the vice-captain choose the players of a draft when it is their turn, send a new name, tag or flag for the approval of the administration, choose the vice-captain, propose and accept dates, veto and choose campaigns. See [The captain area](championships.md#the-captain-area).
+
 **A championship game was played outside our server.**
 On the Games tab of the championship, in **Administration > Championships**, click the button of the game and choose **Type the result**. The game counts in the standings and the bracket, but it has no statistics.
 

@@ -17,6 +17,13 @@
     </div>
 </div>
 
+@if (view.Teams.Any(team => team.HasPendingIdentity))
+{
+    <div class="alert alert-warning championship-approvals">
+        <span class="glyphicon glyphicon-time"></span> @L["Teams waiting for the approval of a new name, tag or flag: {0}. Click Review on each one.", view.Teams.Count(team => team.HasPendingIdentity)]
+    </div>
+}
+
 @if (view.Teams.Count == 0)
 {
     <div class="admin-list">
@@ -42,16 +49,30 @@ else
             <tr>
                 <td class="text-center vertical-align-middle" data-label="@L["Seed"]">@team.Seed</td>
                 <td class="vertical-align-middle" data-label="@L["Team"]">
+                    @if (team.Flag != null)
+                    {
+                        <img src="@ChampionshipFlags.Url(team)" alt="" class="championship-flag"/>
+                    }
                     <strong>@team.Name</strong>
                     @if (!string.IsNullOrWhiteSpace(team.Tag))
                     {
                         <small class="text-muted">[@team.Tag]</small>
+                    }
+                    @if (team.HasPendingIdentity)
+                    {
+                        <span class="label label-warning">@L["Waiting for approval"]</span>
                     }
                 </td>
                 <td class="vertical-align-middle" data-label="@L["Captain"]">@(team.CaptainCommunityId == null ? "—" : DisplayNames.Apply(team.CaptainCommunityId.Value, view.PlayerName(team.CaptainCommunityId.Value)))</td>
                 <td class="vertical-align-middle" data-label="@L["Vice-captain"]">@(team.ViceCaptainCommunityId == null ? "—" : DisplayNames.Apply(team.ViceCaptainCommunityId.Value, view.PlayerName(team.ViceCaptainCommunityId.Value)))</td>
                 <td class="text-center vertical-align-middle" data-label="@L["Players"]">@team.Members.Count / @championship.RosterSize</td>
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
+                    @if (team.HasPendingIdentity)
+                    {
+                        <button class="btn btn-xs btn-warning" type="button" data-toggle="modal" data-target="#team-review-modal-@team.Id">
+                            <span class="glyphicon glyphicon-check"></span> @L["Review"]
+                        </button>
+                    }
                     <button class="btn btn-xs btn-default" type="button" data-toggle="modal" data-target="#team-edit-modal-@team.Id">
                         <span class="glyphicon glyphicon-pencil"></span> @L["Edit"]
                     </button>

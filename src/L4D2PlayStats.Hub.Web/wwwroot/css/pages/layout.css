@@ -255,3 +255,24 @@ a, a:visited, a:hover, a:active {
 #field-help-modal .modal-body p:last-child {
     margin-bottom: 0;
 }
+
+.nav-captain > a .glyphicon-tower {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.nav-captain-badge {
+    background-color: #d9534f;
+    color: #fff;
+    margin-left: 2px;
+    vertical-align: top;
+}
+
+.nav-captain .dropdown-menu > li > a {
+    white-space: normal;
+    min-width: 320px;
+}
+
+.nav-captain-hint {
+    color: #f0ad4e;
+}

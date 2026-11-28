@@ -111,25 +111,29 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title"><span class="glyphicon glyphicon-book"></span> @L["Rules"] @FieldHelp.Tip(L["Markdown: # titles, - lists, **bold**, *italic* and [links](https://...). The page shows the text of the language of the visitor, or the English one."])</h3>
-        </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-4 form-group">
-                    <label for="Rules">@L["English"]</label>
-                    <textarea class="form-control admin-mono championship-rules-input" id="Rules" name="Rules" rows="10">@championship.Rules</textarea>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-link"></span> @L["Results"]</h3>
                 </div>
-                <div class="col-md-4 form-group">
-                    <label for="RulesPortuguese">@L["Portuguese"]</label>
-                    <textarea class="form-control admin-mono championship-rules-input" id="RulesPortuguese" name="RulesPortuguese" rows="10">@championship.RulesPortuguese</textarea>
-                </div>
-                <div class="col-md-4 form-group">
-                    <label for="RulesSpanish">@L["Spanish"]</label>
-                    <textarea class="form-control admin-mono championship-rules-input" id="RulesSpanish" name="RulesSpanish" rows="10">@championship.RulesSpanish</textarea>
+                <div class="panel-body">
+                    <div class="checkbox" style="margin-top: 0">
+                        <label for="AutoLinkMatches">
+                            <input type="checkbox" id="AutoLinkMatches" name="AutoLinkMatches" value="true" checked="@championship.AutoLinkMatches">
+                            <input type="hidden" name="AutoLinkMatches" value="false">
+                            @L["Link the matches of the server to the games by themselves"]
+                            @FieldHelp.More(L["When a match arrives from a server, it is linked to the game with the same campaign, both teams on opposite sides and a date near the time of the match."], L["Link the matches by themselves"], L["The game needs a date and a campaign. The match is linked when its campaign is the campaign of the game, at least half of the players of each team are in it on opposite sides, and it started within the hours of tolerance before or after the date of the series.\nWhile the match is played, the game shows In progress with the score of the maps played, and the standings and the bracket do not change.\nThe game ends when every map of the campaign is played, when no statistics arrive for the minutes set below (a game that ends early, such as on the third map), or when an administrator clicks End the game in the window of the game. Only then the winner moves on.\nA match unlinked by an administrator is not linked again to that game."])
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                            <label for="AutoLinkHours">@L["Hours of tolerance"] @FieldHelp.Tip(L["How many hours before or after the date of the series the match can start, for a game that is late or early."])</label>
+                            <input type="number" class="form-control" id="AutoLinkHours" name="AutoLinkHours" min="1" max="@CoreConsts.ChampionshipMaxAutoLinkHours" value="@championship.AutoLinkHours">
+                        </div>
+                        <div class="col-sm-6 form-group" style="margin-bottom: 0">
+                            <label for="AutoCloseMinutes">@L["End after (minutes)"] @FieldHelp.Tip(L["A game in progress ends after this many minutes without new statistics of its match."])</label>
+                            <input type="number" class="form-control" id="AutoCloseMinutes" name="AutoCloseMinutes" min="@CoreConsts.ChampionshipMinAutoCloseMinutes" max="@CoreConsts.ChampionshipMaxAutoCloseMinutes" value="@championship.AutoCloseMinutes">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -166,6 +166,15 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AutoCloseMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AutoLinkHours")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AutoLinkMatches")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("CancelReason")
                         .HasMaxLength(300)
                         .HasColumnType("TEXT");
@@ -317,11 +326,17 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("AutoLinked")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("CampaignId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("CampaignSource")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastStatisticsAtUtc")
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("MatchId")
                         .HasColumnType("INTEGER");
@@ -364,6 +379,9 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TeamBScore")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("UnlinkedMatchId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -691,9 +709,35 @@ namespace L4D2PlayStats.Hub.Migrations.Sqlite.Migrations
                     b.Property<int?>("DraftPosition")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Flag")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("PendingAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("PendingByCommunityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PendingFlag")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PendingName")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PendingTag")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Seed")

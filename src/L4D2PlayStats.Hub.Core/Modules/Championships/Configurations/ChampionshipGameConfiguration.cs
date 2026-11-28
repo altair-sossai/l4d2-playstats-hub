@@ -13,6 +13,7 @@ public class ChampionshipGameConfiguration : IEntityTypeConfiguration<Championsh
         builder.HasIndex(e => e.MatchId);
         builder.HasOne<Match>().WithMany().HasForeignKey(e => e.MatchId).OnDelete(DeleteBehavior.SetNull);
         builder.Ignore(e => e.IsPlayed);
+        builder.Ignore(e => e.IsInProgress);
         builder.Ignore(e => e.TeamATotal);
         builder.Ignore(e => e.TeamBTotal);
         builder.Ignore(e => e.IsTie);

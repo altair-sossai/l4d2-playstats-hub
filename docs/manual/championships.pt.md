@@ -12,10 +12,11 @@ O módulo Campeonatos organiza campeonatos disputados nos servidores de jogo da 
   - [A página de campeonatos](#a-página-de-campeonatos)
   - [A página de um campeonato](#a-página-de-um-campeonato)
   - [A página de uma série](#a-página-de-uma-série)
-  - [Para capitães e vices](#para-capitães-e-vices)
+  - [A área do capitão](#a-área-do-capitão)
 - [Para administradores](#para-administradores)
   - [Criando um campeonato](#criando-um-campeonato)
   - [Configurações](#configurações)
+  - [Regras](#regras)
   - [Participantes](#participantes)
   - [Equipes](#equipes)
   - [Draft](#draft)
@@ -38,7 +39,7 @@ Cada campeonato tem seu endereço, como `/championships/copa-2027`, e estas abas
 |---|---|
 | Visão geral | A descrição, o pódio quando terminou, os próximos jogos, os últimos resultados, as séries da sua equipe quando você é o capitão ou o vice, e o formato de cada fase. |
 | Regras | As regras escritas pela administração, no idioma da página quando há tradução. |
-| Equipes | Cada equipe com capitão, vice e jogadores, com as horas de Left 4 Dead 2 de cada um. |
+| Equipes | Cada equipe com bandeira, capitão, vice e jogadores, com as horas de Left 4 Dead 2 de cada um. |
 | Draft | A ordem dos capitães e cada escolha, quando as equipes foram formadas por draft, roleta ou potes. |
 | Classificação | A tabela de cada fase de pontos corridos e de cada grupo, com as equipes que avançam para a próxima fase marcadas em verde. |
 | Chave | A chave de cada fase de mata-mata, rodada a rodada, com a disputa de terceiro lugar quando existe. |
@@ -51,23 +52,27 @@ Uma aba só aparece quando tem algo a mostrar.
 
 Uma série é o confronto de duas equipes: um jogo (melhor de 1) ou mais (melhor de 3, melhor de 5). A página mostra o placar em jogos, o status, a data com os botões **Adicionar ao Google Agenda** e **Baixar .ics**, o prazo, os vetos e cada jogo com a campanha, quem a escolheu, o placar e o link para a partida do servidor.
 
-Um jogo decidido por penalidade mostra os pontos descontados. No mata-mata, um jogo que não é mais necessário, como o terceiro depois de um 2 a 0, aparece como **Não necessário**.
+Um jogo decidido por penalidade mostra os pontos descontados. No mata-mata, um jogo que não é mais necessário, como o terceiro depois de um 2 a 0, aparece como **Não necessário**. Um jogo sendo disputado no servidor aparece como **Em andamento**, com o placar dos mapas jogados até agora.
 
-### Para capitães e vices
+### A área do capitão
 
-Entre com a Steam. Quando você é o capitão ou o vice de uma das equipes de uma série em andamento, a página dela mostra o painel **Sua equipe**:
+As páginas de um campeonato só mostram informações. O que um capitão ou um vice-capitão faz pela equipe fica numa página separada, a **área do capitão**, em `/championships/<endereço>/captain`. Entre com a Steam: quando você lidera uma equipe de um campeonato que não é rascunho nem terminou, um ícone de torre aparece ao lado da sua foto no topo de todas as páginas, com um número vermelho quando sua equipe tem algo a fazer, e as páginas do campeonato mostram **Abrir a área do capitão**.
 
-- **Vetar uma campanha**: quando a fase tem vetos, cada equipe veta uma campanha antes do primeiro jogo. Uma campanha vetada não é escolhida nem sorteada na série.
-- **Campanha do jogo N**: quando as equipes escolhem as campanhas, sua equipe escolhe os jogos da vez dela. A melhor cabeça de chave escolhe o primeiro jogo, a outra equipe o segundo, e assim por diante. O último jogo de uma melhor de 3 ou de 5 é o desempate, sorteado só quando é necessário. Só aparecem as campanhas permitidas pelas regras.
-- **Datas**: proponha uma data para a outra equipe. Sua proposta já sai aceita pela sua equipe; o capitão ou o vice da outra equipe aceita ou recusa. Quando as duas equipes aceitam a mesma data, a série fica marcada. Uma data confirmada não pode ser excluída pelas equipes; para mudar, proponham outra e as duas aceitem. Você pode excluir as suas propostas que não foram confirmadas.
+A área do capitão começa com a lista do que sua equipe tem a fazer, cada item com um link para a aba dele, e tem estas abas:
 
-Os horários estão no fuso do site, mostrado ao lado do formulário.
+| Aba | O que você faz nela |
+|---|---|
+| Equipe | **Alterar nome, sigla ou bandeira** envia um novo nome, sigla ou bandeira (uma imagem quadrada, de preferência 1024 × 1024 pixels, PNG, JPG, WEBP ou GIF de até 2 MB) para aprovação. Até a administração aprovar, a página avisa que está aguardando e os outros jogadores continuam vendo os atuais; **Retirar a alteração** desfaz o envio. Quando a administração recusa, o motivo aparece aqui. **Remover a bandeira** tira a bandeira na hora. A tabela lista os jogadores da equipe, e o capitão torna um deles o vice-capitão ou tira o vice-capitão. |
+| Draft | Num draft em serpentina ou em linha, a ordem dos capitães, as escolhas feitas e os jogadores sem equipe. Quando é a vez da sua equipe, **Escolher** coloca o jogador na sua equipe e a próxima equipe escolhe. Não há limite de tempo e nada acontece ao vivo: cada capitão escolhe quando pode, no mesmo dia ou no seguinte. |
+| Séries | Cada série da sua equipe, com a data e o status. **Datas** lista as propostas das duas equipes: proponha uma data (sua proposta já sai aceita pela sua equipe) e aceite ou recuse as da outra equipe. Quando as duas equipes aceitam a mesma data, a série fica marcada. Uma data confirmada não pode ser excluída pelas equipes. **Vetar** (quando a fase tem vetos) veta uma campanha antes do primeiro jogo: ela não é escolhida nem sorteada na série, e o veto não pode ser mudado. **Campanhas** (quando as equipes escolhem) escolhe a campanha dos jogos da vez da sua equipe: a melhor cabeça de chave o primeiro jogo, a outra equipe o segundo, e assim por diante; o desempate é sorteado só quando é necessário. |
+
+O vice-capitão pode fazer tudo o que o capitão faz, menos escolher o vice-capitão. Os horários estão no fuso do site, mostrado na aba Séries. Os resultados sempre vêm das partidas do servidor: os capitães não digitam nem mudam placares.
 
 ## Para administradores
 
 **Administração > Campeonatos** lista todos os campeonatos, inclusive os rascunhos, numa tabela com status, equipes, participantes e campeão. **Adicionar** abre uma janela para criar um; **Editar** abre a página do campeonato e **Excluir** apaga o campeonato com as equipes, fases, jogos e histórico (as partidas do servidor não são alteradas).
 
-A página de um campeonato mostra os números no topo (participantes, equipes, fases montadas e séries terminadas) e as abas Configurações, Participantes, Equipes, Draft (quando a formação das equipes não é manual), Fases, Jogos e Histórico. Cada aba começa explicando para que serve e com os botões das suas ações; toda alteração é feita numa janela, e o endereço guarda a aba, então a página recarregada depois de salvar abre na mesma aba.
+A página de um campeonato mostra os números no topo (participantes, equipes, fases montadas e séries terminadas) e as abas Configurações, Regras, Participantes, Equipes, Draft (quando a formação das equipes não é manual), Fases, Jogos e Histórico. Cada aba começa explicando para que serve e com os botões das suas ações; toda alteração é feita numa janela, e o endereço guarda a aba, então a página recarregada depois de salvar abre na mesma aba.
 
 ### Criando um campeonato
 
@@ -89,7 +94,11 @@ Um único formulário, salvo com o botão **Salvar** no rodapé:
 - **Campeonato**: nome, endereço, descrição curta, datas de início e fim, modo de jogo (como ZoneMod v2.9.1b) e os links da transmissão e dos vídeos.
 - **Status**: Rascunho, Participantes, Formação das equipes, Em andamento, Finalizado ou Cancelado, com o motivo do cancelamento. Montar a primeira fase coloca o campeonato em andamento. Marque como finalizado depois da final: o histórico passa a mostrar o campeão.
 - **Equipes e jogadores**: jogadores por jogo, jogadores por equipe (o máximo de jogadores de uma equipe, contando os reservas), vagas (o máximo de participantes), a formação das equipes (manual, roleta, potes, draft em serpentina ou draft em linha) e se as equipes podem ter reservas.
-- **Regras**, em inglês, português e espanhol, em Markdown: `#` títulos, `-` listas, `**negrito**`, `*itálico*` e `[links](https://...)`. A página mostra o texto do idioma do visitante, ou o em inglês.
+- **Resultados**: se as partidas do servidor são ligadas sozinhas aos jogos, as **Horas de tolerância** (quantas horas antes ou depois da data da série a partida pode começar, 6 por padrão) e **Encerrar depois de (minutos)** (quanto tempo um jogo em andamento espera por novas estatísticas antes de terminar, 60 por padrão). Veja [Jogos e resultados](#jogos-e-resultados).
+
+### Regras
+
+As regras em inglês, português e espanhol, uma abaixo da outra, salvas com o botão **Salvar** no rodapé da aba. Elas são escritas em Markdown: `#` títulos, `-` listas, `**negrito**`, `*itálico*` e `[links](https://...)`. A página mostra o texto do idioma do visitante, ou o em inglês.
 
 ### Participantes
 
@@ -99,11 +108,12 @@ Só a administração adiciona participantes. **Adicionar** abre uma janela onde
 
 **Adicionar** cria uma equipe, e **Adicionar várias** cria Equipe A, Equipe B, Equipe C e assim por diante. A tabela mostra o cabeça de chave (1 é a melhor; ordena as equipes quando uma fase é montada pela ordem das equipes), o capitão, o vice e os jogadores de cada equipe. Em cada linha:
 
-- **Editar**: nome, sigla, cabeça de chave, capitão e vice. Um capitão ou vice sem equipe entra nesta equipe, e é assim que se escolhem os capitães de um draft.
+- **Editar**: nome, sigla, cabeça de chave, capitão, vice e bandeira. Um capitão ou vice sem equipe entra nesta equipe, e é assim que se escolhem os capitães de um draft. Um nome, sigla ou bandeira alterado aqui aparece na hora.
+- **Revisar**, quando o capitão enviou um novo nome, sigla ou bandeira: a janela mostra o que a equipe tem agora ao lado do que foi proposto. **Aprovar** coloca em todas as páginas; **Recusar**, com um motivo opcional, descarta e mostra o motivo ao capitão. Aprove só nomes e imagens que não sejam ofensivos nem sensíveis: nada enviado por um capitão aparece antes de ser aprovado, e a imagem aguardando aprovação só é vista pelos administradores e pelos líderes da equipe.
 - **Jogadores**: os jogadores da equipe, com **Remover**, e **Adicionar jogador** com um ID da Steam ou a janela de busca de jogadores.
 - **Excluir**, enquanto a equipe não está em nenhuma fase.
 
-Um jogador só pode estar em uma equipe, e uma equipe não pode passar do limite de jogadores.
+A aba avisa quando há equipes aguardando aprovação. Um jogador só pode estar em uma equipe, e uma equipe não pode passar do limite de jogadores.
 
 ### Draft
 
@@ -114,7 +124,7 @@ Os botões no topo seguem o método escolhido nas configurações, e **Desfazer 
 | Manual | Não há aba Draft: a administração coloca cada jogador em uma equipe na aba Equipes. |
 | Roleta | **Girar a roleta** sorteia uma equipe entre as que têm menos jogadores e um jogador sem equipe. |
 | Potes | Defina o pote de cada participante na aba Participantes. **Sortear os potes** dá a cada equipe um jogador de cada pote; o jogador do primeiro pote vira o capitão de uma equipe que ainda não tem. |
-| Draft em serpentina | Dê um capitão a cada equipe na aba Equipes e **Sortear a ordem dos capitães**. A equipe da vez fica destacada; clique em **Escolher** no jogador que ela escolheu entre os que estão sem equipe. A ordem é A, B, C, D e depois D, C, B, A. |
+| Draft em serpentina | Dê um capitão a cada equipe na aba Equipes e **Sortear a ordem dos capitães**. Cada capitão então escolhe na [área do capitão](#a-área-do-capitão) quando é a vez da equipe, sem limite de tempo. A equipe da vez fica destacada aqui, e **Escolher** escolhe por ela, por exemplo quando um capitão pede no chat. A ordem é A, B, C, D e depois D, C, B, A. |
 | Draft em linha | O mesmo, sempre na ordem A, B, C, D. |
 
 ### Fases
@@ -158,6 +168,20 @@ Cada série mostra a rodada, as equipes, o resultado, a data e um botão numerad
 
 **Editar** numa série abre a janela dela: a data, o prazo, as observações, os vetos de cada equipe (quando a fase tem vetos), o W.O. (a equipe que vence sem jogar; os jogos não disputados são cancelados) e as propostas de data das equipes, que podem ser excluídas. **Ver** abre a página pública da série.
 
+**Partidas ligadas sozinhas.** Os jogos são disputados nos servidores da comunidade, então os arquivos de estatísticas chegam sozinhos. Quando a opção está ligada nas configurações, cada partida que chega é ligada ao jogo que tem:
+
+- a mesma campanha da partida;
+- pelo menos metade dos jogadores de cada equipe na partida, em lados opostos;
+- uma série com data, e a partida começou dentro das horas de tolerância antes ou depois dela (um jogo pode começar atrasado ou adiantado).
+
+Enquanto a partida é jogada, o jogo fica **Em andamento**: o botão dele fica amarelo, as páginas públicas mostram o placar dos mapas jogados, e a classificação e a chave não mudam, então nenhuma equipe avança antes de o jogo terminar. O jogo termina, e o vencedor avança, quando:
+
+- todos os mapas da campanha são jogados;
+- nenhuma estatística da partida chega pelos minutos definidos nas configurações, para um jogo que acaba antes, como no terceiro mapa;
+- ou um administrador clica em **Encerrar o jogo** na janela do jogo.
+
+Um arquivo de estatísticas da partida que chega depois ainda atualiza o placar. Para desfazer uma ligação errada, escolha **Ainda não disputado** na janela do jogo: aquela partida não é ligada de novo àquele jogo. A administração sempre pode ligar uma partida manualmente ou digitar um resultado.
+
 O vencedor de uma série de mata-mata avança sozinho para a próxima série. Um resultado que mudaria um vencedor que já começou a próxima série é recusado: limpe antes os resultados da próxima série.
 
 ### Histórico
@@ -171,3 +195,4 @@ Todas as alterações do campeonato, com quem as fez e quando, 20 por página.
 - **A classificação** dá os pontos de vitória, empate e derrota, menos os pontos de penalidade. O saldo de pontos é o total conquistado menos o sofrido menos as penalidades dos jogos. Com pontos iguais, os desempates são usados em ordem, e depois o cabeça de chave.
 - **Os sorteios de campanhas** evitam as campanhas já escolhidas na série e os vetos, e só usam campanhas com o mínimo de mapas.
 - **Os jogos de um campeonato** são partidas normais do servidor: contam para o ranking como qualquer outra. A página da partida mostra o campeonato e leva à série.
+- **Um jogo em andamento** não conta para ninguém até terminar: a classificação, a chave e as próximas séries esperam por ele.

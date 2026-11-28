@@ -177,6 +177,15 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AutoCloseMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AutoLinkHours")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("AutoLinkMatches")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("CancelReason")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
@@ -334,11 +343,17 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AutoLinked")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("CampaignId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("CampaignSource")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastStatisticsAtUtc")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("MatchId")
                         .HasColumnType("integer");
@@ -381,6 +396,9 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("TeamBScore")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UnlinkedMatchId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -724,10 +742,36 @@ namespace L4D2PlayStats.Hub.Migrations.PostgreSql.Migrations
                     b.Property<int?>("DraftPosition")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Flag")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("PendingAtUtc")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long?>("PendingByCommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PendingFlag")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PendingName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PendingTag")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<int>("Seed")
                         .HasColumnType("integer");

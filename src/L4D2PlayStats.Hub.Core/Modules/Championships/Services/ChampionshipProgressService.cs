@@ -31,7 +31,7 @@ public class ChampionshipProgressService(IChampionshipRandomService random) : IC
         if (!series.Walkover)
             series.WinnerTeamId = progress.WinnerTeamId;
 
-        foreach (var game in series.Games.Where(game => !game.IsPlayed))
+        foreach (var game in series.Games.Where(game => !game.IsPlayed && (series.Finished || series.Walkover || !game.IsInProgress)))
             game.Status = series.Finished || series.Walkover ? ChampionshipGameStatus.NotNeeded : ChampionshipGameStatus.Pending;
 
         if (!series.Finished && series.HasTeams)
@@ -78,7 +78,7 @@ public class ChampionshipProgressService(IChampionshipRandomService random) : IC
 
             var extra = games.LastOrDefault();
 
-            if (games.Count > progress.RequiredGames && extra is { Replay: true, IsPlayed: false })
+            if (games.Count > progress.RequiredGames && extra is { Replay: true, IsPlayed: false, IsInProgress: false })
             {
                 series.Games.Remove(extra);
 
@@ -136,7 +136,7 @@ public class ChampionshipProgressService(IChampionshipRandomService random) : IC
         if (current == teamId)
             return;
 
-        if (next.Walkover || next.Games.Any(game => game.IsPlayed))
+        if (next.Walkover || next.Games.Any(game => game.IsPlayed || game.IsInProgress))
             throw new ChampionshipException("The next series has already started. Clear its results first.");
 
         if (slotA)

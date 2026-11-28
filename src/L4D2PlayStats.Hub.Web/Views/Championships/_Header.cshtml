@@ -61,6 +61,14 @@
             }
         </div>
     </div>
+    @if (Model.MyTeam() is { } myTeam)
+    {
+        <div class="alert alert-info championship-captain-link">
+            <span class="glyphicon glyphicon-tower"></span>
+            @L["You are the {0} of {1}.", myTeam.CaptainCommunityId == Model.CurrentUser ? L["captain"].Value : L["vice-captain"].Value, myTeam.Name]
+            <a class="btn btn-primary btn-sm" href="@AppConsts.ChampionshipsUrl/@championship.Slug/@AppConsts.ChampionshipCaptainPath">@L["Open the captain area"]</a>
+        </div>
+    }
     @if (championship.Status == ChampionshipStatus.Draft)
     {
         <div class="alert alert-warning">@L["This championship is a draft. Only administrators can see it."]</div>

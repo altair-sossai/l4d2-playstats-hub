@@ -20,9 +20,14 @@ public class ChampionshipGame
     public int TeamBPenalty { get; set; }
     public DateTime? PlayedAtUtc { get; set; }
     public bool Replay { get; set; }
+    public bool AutoLinked { get; set; }
+    public DateTime? LastStatisticsAtUtc { get; set; }
+    public int? UnlinkedMatchId { get; set; }
     public string? Notes { get; set; }
 
     public bool IsPlayed => Status == ChampionshipGameStatus.Played;
+
+    public bool IsInProgress => Status == ChampionshipGameStatus.InProgress;
 
     public int TeamATotal => TeamAScore - TeamAPenalty;
 

@@ -55,6 +55,9 @@ Em [Administração > Administradores](administration.pt.md#administradores), co
 **Como eu organizo um campeonato?**
 Ligue **Campeonatos** em [Administração > Módulos](administration.pt.md#módulos) e crie o campeonato em **Administração > Campeonatos**: escolha o formato, adicione os participantes e as equipes e monte a primeira fase. Veja [Campeonatos > Para administradores](championships.pt.md#para-administradores).
 
+**Onde um capitão administra a equipe?**
+Na área do capitão do campeonato: entre com a Steam e clique no ícone de torre ao lado da sua foto no topo, ou em **Abrir a área do capitão** na página do campeonato. Lá o capitão e o vice-capitão escolhem os jogadores de um draft quando é a vez deles, enviam um novo nome, sigla ou bandeira para a aprovação da administração, escolhem o vice-capitão, propõem e aceitam datas, vetam e escolhem campanhas. Veja [A área do capitão](championships.pt.md#a-área-do-capitão).
+
 **Um jogo do campeonato foi disputado fora do nosso servidor.**
 Na aba Jogos do campeonato, em **Administração > Campeonatos**, clique no botão do jogo e escolha **Digitar o resultado**. O jogo conta na classificação e na chave, mas não tem estatísticas.
 

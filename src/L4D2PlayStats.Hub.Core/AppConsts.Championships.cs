@@ -38,4 +38,10 @@ public static partial class AppConsts
     public const int ChampionshipLogPageSize = 50;
     public const int ChampionshipSlugMaxAttempts = 100;
     public const string ChampionshipGroupNames = "ABCDEFGHIJKLMNOP";
+    public const int ChampionshipFileNameMaxLength = 100;
+    public const int ChampionshipDefaultAutoLinkHours = 6;
+    public const int ChampionshipMaxAutoLinkHours = 24;
+    public const int ChampionshipDefaultAutoCloseMinutes = 60;
+    public const int ChampionshipMinAutoCloseMinutes = 10;
+    public const int ChampionshipMaxAutoCloseMinutes = 720;
 }

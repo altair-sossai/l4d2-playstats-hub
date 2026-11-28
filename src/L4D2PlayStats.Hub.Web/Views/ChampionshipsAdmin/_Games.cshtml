@@ -87,9 +87,18 @@ else
                         {
                             @Display.Number(single.TeamATotal)<text> × </text>@Display.Number(single.TeamBTotal)
                         }
-                        else if (series.Games.Any(game => game.IsPlayed))
+                        else if (single is { IsInProgress: true })
+                        {
+                            @Display.Number(single.TeamATotal)<text> × </text>@Display.Number(single.TeamBTotal)
+                            <span class="label label-warning">@L["In progress"]</span>
+                        }
+                        else if (series.Games.Any(game => game.IsPlayed || game.IsInProgress))
                         {
                             @progress.WinsA<text> × </text>@progress.WinsB
+                            @if (series.Games.Any(game => game.IsInProgress))
+                            {
+                                <span class="label label-warning">@L["In progress"]</span>
+                            }
                         }
                         else
                         {
@@ -107,8 +116,9 @@ else
                     <td class="text-center vertical-align-middle championship-game-buttons" data-label="@L["Games"]">
                         @foreach (var game in series.Games.OrderBy(game => game.Number))
                         {
-                            var state = game.IsPlayed ? "btn-success" : game.Status == ChampionshipGameStatus.NotNeeded ? "btn-link" : "btn-default";
+                            var state = game.IsPlayed ? "btn-success" : game.IsInProgress ? "btn-warning" : game.Status == ChampionshipGameStatus.NotNeeded ? "btn-link" : "btn-default";
                             var result = game.MatchId != null ? AppConsts.ChampionshipMatchResult : game.IsPlayed ? AppConsts.ChampionshipTypedResult : AppConsts.ChampionshipNoResult;
+                            var scored = game.IsPlayed || game.IsInProgress;
 
                             <button class="btn btn-xs @state" type="button" disabled="@(!series.HasTeams)"
                                     title="@(Model.Page.CampaignName(game.CampaignId) ?? L["Game {0}", game.Number].Value)"
@@ -120,8 +130,9 @@ else
                                     data-game-campaign="@game.CampaignId"
                                     data-game-result="@result"
                                     data-game-match="@game.MatchId"
-                                    data-game-score-a="@(game.IsPlayed ? game.TeamAScore : null)"
-                                    data-game-score-b="@(game.IsPlayed ? game.TeamBScore : null)"
+                                    data-game-score-a="@(scored ? game.TeamAScore : null)"
+                                    data-game-score-b="@(scored ? game.TeamBScore : null)"
+                                    data-game-end="@(game.IsInProgress ? $"{Model.Url}/series/{series.Id}/games/{game.Id}/end" : null)"
                                     data-game-played-at="@ChampionshipDates.Input(game.PlayedAtUtc, view.TimeZone)"
                                     data-game-penalty-a="@game.TeamAPenalty"
                                     data-game-penalty-b="@game.TeamBPenalty"

@@ -234,6 +234,11 @@
                         </li>
                     }
 
+                    if (championships)
+                    {
+                        @await Html.PartialAsync("_CaptainAlert")
+                    }
+
                     <li>
                         <a href="@(CurrentUser.CommunityId == null ? "#" : PlayerUrls.Details(CurrentUser.CommunityId.Value))">
                             <img src="/avatar/@CurrentUser.CommunityId" alt="@CurrentUser.Name" title="@CurrentUser.Name" class="img-responsive img-header-icon" data-toggle="tooltip" data-placement="bottom" onerror="imgOnError(this)">

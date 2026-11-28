@@ -87,6 +87,8 @@ public class ChampionshipSeriesService(
         game.PlayedAtUtc = match.EndedAtUtc ?? match.LastFileDate;
         game.Status = ChampionshipGameStatus.Played;
         game.ResultSource = ChampionshipResultSource.Match;
+        game.AutoLinked = false;
+        game.LastStatisticsAtUtc = null;
 
         if (game.CampaignId == null && !string.IsNullOrWhiteSpace(match.Campaign))
         {
@@ -121,6 +123,8 @@ public class ChampionshipSeriesService(
         game.PlayedAtUtc = playedAtUtc ?? clock.UtcNow;
         game.Status = ChampionshipGameStatus.Played;
         game.ResultSource = ChampionshipResultSource.Manual;
+        game.AutoLinked = false;
+        game.LastStatisticsAtUtc = null;
 
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, by, "Typed the result {0} x {1} in game {2} of {3}", teamAScore, teamBScore, game.Number, Title(championship, stage, series));
@@ -149,7 +153,10 @@ public class ChampionshipSeriesService(
     {
         var (championship, stage, series, game) = await LoadGame(gameId, cancellationToken);
 
+        game.UnlinkedMatchId = game.MatchId ?? game.UnlinkedMatchId;
         game.MatchId = null;
+        game.AutoLinked = false;
+        game.LastStatisticsAtUtc = null;
         game.MatchTeamAIsTeamA = true;
         game.TeamAScore = 0;
         game.TeamBScore = 0;
@@ -198,7 +205,7 @@ public class ChampionshipSeriesService(
         if (pickedByTeamA == null || (pickedByTeamA == true ? series.TeamAId : series.TeamBId) != team.Id)
             throw new ChampionshipException("Your team does not choose the campaign of this game.");
 
-        if (game.IsPlayed)
+        if (game.IsPlayed || game.IsInProgress)
             throw new ChampionshipException("This game was already played.");
 
         if (stage.Veto && (series.TeamAVetoCampaignId == null || series.TeamBVetoCampaignId == null))
@@ -229,7 +236,7 @@ public class ChampionshipSeriesService(
         if (!stage.Veto)
             throw new ChampionshipException("There are no vetoes in this stage.");
 
-        if (series.Games.Any(game => game.IsPlayed))
+        if (series.Games.Any(game => game.IsPlayed || game.IsInProgress))
             throw new ChampionshipException("The series has already started.");
 
         if ((teamA ? series.TeamAVetoCampaignId : series.TeamBVetoCampaignId) != null)
