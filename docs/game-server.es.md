@@ -69,7 +69,7 @@ Ambos tienen una carpeta llamada `left4dead2` con la misma estructura que la car
 
 | Archivo | Qué es |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` y `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync`, `l4d2_weapon_skins` y `l4d2_bans`. |
 | `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` y `l4d2_show_patent_icon`, que cargan los modos de partida. |
 | `addons/sourcemod/scripting/` | Sus fuentes, solo para compilar. |
 | `addons/sourcemod/translations/` | Los textos del chat. |
@@ -87,6 +87,7 @@ Los tres plugins de `optional/` solo se cargan con un modo de partida (paso 5), 
 | `l4d2_ranking` | Abre el ranking dentro del juego con `!ranking`, y los comandos del servidor con `!comandos` o `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Muestra el ícono de patente de cada jugador en el juego. | Ranking |
 | `l4d2_weapon_skins` | Aplica las skins de armas que tienen los jugadores. | Tienda de skins de armas |
+| `l4d2_bans` | Envía los baneos del servidor al sitio y mantiene fuera a los jugadores baneados. | Baneos |
 
 ## Paso 4: define la dirección y el token
 
@@ -99,7 +100,7 @@ Los tres plugins de `optional/` solo se cargan con un modo de partida (paso 5), 
    sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
-Es todo lo que debes cambiar. El resto de `cfg/playstats.cfg` lista todos los demás ajustes de los cinco plugins, desactivados con `//` y con su valor por defecto; cada uno tiene una explicación encima.
+Es todo lo que debes cambiar. El resto de `cfg/playstats.cfg` lista todos los demás ajustes de los seis plugins, desactivados con `//` y con su valor por defecto; cada uno tiene una explicación encima.
 
 `cfg/playstats.cfg` también activa `sm_stats_writestats 1`, que hace que `l4d2_playstats` escriba los archivos de estadísticas. Su valor por defecto es `0`, y los modos de partida ZoneMod de Competitive Rework no lo cambian. Si tus modos de partida ya lo definen con `confogl_addcvar`, borra esa línea de `cfg/playstats.cfg`.
 
@@ -115,6 +116,7 @@ sm plugins load l4d2_gameinfo_sync.smx
 sm plugins load optional/l4d2_ranking.smx
 sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
+sm plugins load l4d2_bans.smx
 ```
 
 Luego reinicia el servidor de juego.

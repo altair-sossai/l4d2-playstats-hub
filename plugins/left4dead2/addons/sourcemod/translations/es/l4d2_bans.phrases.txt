@@ -1,0 +1,19 @@
+"Phrases"
+{
+    "BannedPermanently"
+    {
+        "es"    "Estás baneado de este servidor de forma permanente.\n{2}{3}"
+    }
+    "BannedPermanentlyWithReason"
+    {
+        "es"    "Estás baneado de este servidor de forma permanente.\nMotivo: {1}\n{2}{3}"
+    }
+    "BannedUntil"
+    {
+        "es"    "Estás baneado de este servidor hasta {1}.\n{3}{4}"
+    }
+    "BannedUntilWithReason"
+    {
+        "es"    "Estás baneado de este servidor hasta {1}.\nMotivo: {2}\n{3}{4}"
+    }
+}

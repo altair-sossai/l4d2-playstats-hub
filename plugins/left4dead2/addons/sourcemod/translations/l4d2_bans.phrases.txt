@@ -1,0 +1,23 @@
+"Phrases"
+{
+    "BannedPermanently"
+    {
+        "#format"    "{1:s},{2:s},{3:s}"
+        "en"         "You are banned from this server permanently.\n{2}{3}"
+    }
+    "BannedPermanentlyWithReason"
+    {
+        "#format"    "{1:s},{2:s},{3:s}"
+        "en"         "You are banned from this server permanently.\nReason: {1}\n{2}{3}"
+    }
+    "BannedUntil"
+    {
+        "#format"    "{1:s},{2:s},{3:s},{4:s}"
+        "en"         "You are banned from this server until {1}.\n{3}{4}"
+    }
+    "BannedUntilWithReason"
+    {
+        "#format"    "{1:s},{2:s},{3:s},{4:s}"
+        "en"         "You are banned from this server until {1}.\nReason: {2}\n{3}{4}"
+    }
+}

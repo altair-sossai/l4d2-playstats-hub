@@ -1,0 +1,20 @@
+@model long
+@inject IBanViewService BanViews
+@{
+    var playerBan = await BanViews.PlayerAsync(Model, Context.RequestAborted);
+}
+@if (playerBan != null)
+{
+    var ban = playerBan.Ban;
+
+    <link rel="stylesheet" href="~/css/pages/player-ban.css" asp-append-version="true"/>
+    <div class="alert alert-danger player-ban" data-community-id="@Model">
+        <span class="glyphicon glyphicon-ban-circle"></span>
+        <strong>@(ban.EndsAtUtc == null ? L["{0} is banned from the game servers permanently.", playerBan.Name] : L["{0} is banned from the game servers until {1}.", playerBan.Name, Display.DateTime(ban.EndsAtUtc.Value, playerBan.TimeZone)])</strong>
+        @if (!string.IsNullOrWhiteSpace(ban.Reason))
+        {
+            <span class="player-ban-reason">@L["Reason"]: @ban.Reason</span>
+        }
+        <a href="@AppConsts.BansUrl" class="alert-link player-ban-link">@L["See all bans"]</a>
+    </div>
+}

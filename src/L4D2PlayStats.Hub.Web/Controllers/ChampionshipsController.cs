@@ -80,7 +80,7 @@ public class ChampionshipsController(
     [ResponseCache(Duration = AppConsts.ChampionshipImageCacheInSeconds, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> Image(int id, string file, CancellationToken cancellationToken)
     {
-        if (!(await championshipService.IsPublicAsync(id, cancellationToken) || await currentUser.IsAdministratorAsync()))
+        if (!await championshipService.ShowsImageAsync(id, file, await currentUser.IsAdministratorAsync(), cancellationToken))
             return NotFound();
 
         return ImageFile(id, file);
@@ -201,6 +201,6 @@ public class ChampionshipsController(
 
     private static string Escape(string value)
     {
-        return value.Replace("\\", "\\\\").Replace(";", "\\;").Replace(",", "\\,").Replace("\n", "\\n");
+        return value.Replace("\\", "\\\\").Replace(";", "\\;").Replace(",", "\\,").Replace("\r", string.Empty).Replace("\n", "\\n");
     }
 }

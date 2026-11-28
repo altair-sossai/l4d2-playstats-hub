@@ -69,7 +69,7 @@ Os dois têm uma pasta chamada `left4dead2` com a mesma estrutura da pasta do jo
 
 | Arquivo | O que é |
 |---|---|
-| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync` e `l4d2_weapon_skins`. |
+| `addons/sourcemod/plugins/*.smx` | `l4d2_gameinfo_sync`, `l4d2_weapon_skins` e `l4d2_bans`. |
 | `addons/sourcemod/plugins/optional/*.smx` | `l4d2_playstats_sync`, `l4d2_ranking` e `l4d2_show_patent_icon`, que os modos de partida carregam. |
 | `addons/sourcemod/scripting/` | O código-fonte deles, só para compilar. |
 | `addons/sourcemod/translations/` | Os textos do chat. |
@@ -87,6 +87,7 @@ O `l4d2_playstats_sync.smx` é o único de que todo servidor precisa. Apague o `
 | `l4d2_ranking` | Abre o ranking dentro do jogo com `!ranking`, e os comandos do servidor com `!comandos` ou `!commands`. | Ranking |
 | `l4d2_show_patent_icon` | Mostra o ícone da patente de cada jogador no jogo. | Ranking |
 | `l4d2_weapon_skins` | Aplica as skins de armas que os jogadores têm. | Loja de skins de armas |
+| `l4d2_bans` | Envia os banimentos do servidor ao site e mantém os jogadores banidos fora. | Banimentos |
 
 ## Passo 4: defina o endereço e o token
 
@@ -99,7 +100,7 @@ O `l4d2_playstats_sync.smx` é o único de que todo servidor precisa. Apague o `
    sm plugins load optional/l4d2_playstats_sync.smx
    ```
 
-Isso é tudo o que você precisa mudar. O resto do `cfg/playstats.cfg` lista todas as outras configurações dos cinco plugins, desligadas com `//` e com o valor padrão; cada uma tem uma explicação acima.
+Isso é tudo o que você precisa mudar. O resto do `cfg/playstats.cfg` lista todas as outras configurações dos seis plugins, desligadas com `//` e com o valor padrão; cada uma tem uma explicação acima.
 
 O `cfg/playstats.cfg` também liga `sm_stats_writestats 1`, que faz o `l4d2_playstats` gravar os arquivos de estatísticas. O padrão é `0`, e os modos de partida ZoneMod do Competitive Rework não o mudam. Se os seus modos de partida já o definem com `confogl_addcvar`, apague essa linha do `cfg/playstats.cfg`.
 
@@ -115,6 +116,7 @@ sm plugins load l4d2_gameinfo_sync.smx
 sm plugins load optional/l4d2_ranking.smx
 sm plugins load optional/l4d2_show_patent_icon.smx
 sm plugins load l4d2_weapon_skins.smx
+sm plugins load l4d2_bans.smx
 ```
 
 Depois reinicie o servidor de jogo.

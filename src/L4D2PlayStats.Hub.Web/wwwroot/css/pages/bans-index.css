@@ -1,0 +1,21 @@
+.bans-search {
+    max-width: 360px;
+    margin: 0 auto 10px;
+}
+
+.bans-avatar {
+    width: 40px;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.bans-sub,
+.ban-sub {
+    display: block;
+    font-size: 12px;
+    opacity: .7;
+}
+
+.bans-reason {
+    overflow-wrap: anywhere;
+}

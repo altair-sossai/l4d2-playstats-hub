@@ -51,6 +51,8 @@ The text of each notification is shown in the language the player chose, and the
 | A player becomes an administrator | That player. |
 | A punishment is given or removed | That player. |
 | A chat ban is given or removed | That player. |
+| A player is banned from the game servers, or the ban is lifted | That player. |
+| An account shares an IP address with a banned account (see [Bans](bans.md#related-accounts-and-alerts)) | The administrators. |
 | A player is blocked from voting in the community ranking, or unblocked | That player. |
 | A forced name is set or removed | That player. |
 | A skin is given as a gift or refunded | That player. |

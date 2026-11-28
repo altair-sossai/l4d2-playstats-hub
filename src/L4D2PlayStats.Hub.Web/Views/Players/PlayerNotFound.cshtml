@@ -28,6 +28,8 @@
 
 <h4 class="text-center">@L["Player details"]</h4>
 
+@await Html.PartialAsync("_PlayerBan", Model.CommunityId)
+
 @if (Model.Period is { HasChoices: true })
 {
     <div class="row" style="margin-bottom: 5px">

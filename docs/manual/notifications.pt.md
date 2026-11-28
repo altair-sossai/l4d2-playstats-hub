@@ -51,6 +51,8 @@ O texto de cada notificação aparece no idioma escolhido pelo jogador, e os jog
 | Um jogador vira administrador | Esse jogador. |
 | Uma punição é dada ou removida | Esse jogador. |
 | Um banimento do chat é dado ou removido | Esse jogador. |
+| Um jogador é banido dos servidores, ou o banimento é retirado | Esse jogador. |
+| Uma conta compartilha um endereço IP com uma conta banida (veja [Banimentos](bans.pt.md#contas-relacionadas-e-alertas)) | Os administradores. |
 | Um jogador é bloqueado de votar no ranking da comunidade, ou desbloqueado | Esse jogador. |
 | Um nome forçado é definido ou removido | Esse jogador. |
 | Uma skin é dada de presente ou reembolsada | Esse jogador. |

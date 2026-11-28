@@ -8,5 +8,6 @@ public static partial class AppConsts
     public const string RelatedVoterBlocksList = "voter-blocks";
     public const string RelatedChatBansList = "chat-bans";
     public const string RelatedForcedNamesList = "forced-names";
+    public const string RelatedBansList = "bans";
     public const string RelatedAntiCheatListPrefix = "anti-cheat-";
 }

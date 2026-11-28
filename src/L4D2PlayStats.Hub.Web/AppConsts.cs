@@ -149,5 +149,5 @@ public static partial class AppConsts
         [".gif"] = "image/gif"
     };
 
-    public static readonly string[] ServerPlugins = ["optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins"];
+    public static readonly string[] ServerPlugins = ["optional/l4d2_playstats_sync", "l4d2_gameinfo_sync", "optional/l4d2_ranking", "optional/l4d2_show_patent_icon", "l4d2_weapon_skins", "l4d2_bans"];
 }

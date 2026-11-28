@@ -9,5 +9,6 @@ public enum HubModule
     SiteChat,
     RemoteCommands,
     AntiCheat,
-    Championships
+    Championships,
+    Bans
 }

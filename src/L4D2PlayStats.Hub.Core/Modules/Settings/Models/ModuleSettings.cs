@@ -12,6 +12,7 @@ public class ModuleSettings
     public bool RemoteCommands { get; set; }
     public bool AntiCheat { get; set; }
     public bool Championships { get; set; }
+    public bool Bans { get; set; }
 
     public bool IsEnabled(HubModule module)
     {
@@ -25,6 +26,7 @@ public class ModuleSettings
             HubModule.RemoteCommands => RemoteCommands && LiveServer,
             HubModule.AntiCheat => AntiCheat,
             HubModule.Championships => Championships,
+            HubModule.Bans => Bans,
             _ => false
         };
     }

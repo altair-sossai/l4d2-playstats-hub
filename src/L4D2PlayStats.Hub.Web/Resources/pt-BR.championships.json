@@ -551,6 +551,8 @@
   "This championship is a draft. Only administrators can see it.": "Este campeonato é um rascunho. Só os administradores podem vê-lo.",
   "This championship was cancelled.": "Este campeonato foi cancelado.",
   "This date is already confirmed.": "Esta data já está confirmada.",
+  "Wait for an answer to the dates already proposed, or delete one, before proposing another.": "Espere a resposta das datas já propostas, ou apague uma, antes de propor outra.",
+  "This date has already passed.": "Esta data já passou.",
   "This date was already proposed.": "Esta data já foi proposta.",
   "This game is in progress: the match of the server was linked to it by itself and the score follows the maps played. The standings and the bracket only change when it ends: when every map of the campaign is played, after {0} minutes without statistics, or now.": "Este jogo está em andamento: a partida do servidor foi ligada a ele sozinha e o placar acompanha os mapas jogados. A classificação e o chaveamento só mudam quando ele termina: quando todos os mapas da campanha forem jogados, depois de {0} minutos sem estatísticas, ou agora.",
   "This game was already played.": "Este jogo já foi disputado.",

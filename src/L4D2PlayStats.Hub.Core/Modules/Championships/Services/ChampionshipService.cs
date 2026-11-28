@@ -168,9 +168,11 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         return championship?.Images;
     }
 
-    public Task<bool> IsPublicAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> ShowsImageAsync(int id, string file, bool administrator, CancellationToken cancellationToken = default)
     {
-        return dbContext.Championships.AnyAsync(championship => championship.Id == id && championship.Status != ChampionshipStatus.Draft, cancellationToken);
+        var championship = await dbContext.Championships.AsNoTracking().FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+
+        return championship != null && (administrator || championship.Status != ChampionshipStatus.Draft) && championship.Images.Files.Contains(file);
     }
 
     public async Task<ChampionshipImageSet> SetImagesAsync(int id, ChampionshipImageSet images, long? updatedBy, CancellationToken cancellationToken = default)

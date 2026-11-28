@@ -49,7 +49,8 @@ static const char g_sPlayStatsHubPlugins[][] =
     "l4d2_gameinfo_sync",
     "l4d2_ranking",
     "l4d2_show_patent_icon",
-    "l4d2_weapon_skins"
+    "l4d2_weapon_skins",
+    "l4d2_bans"
 };
 
 static ConVar g_hPlayStatsHubUrl;

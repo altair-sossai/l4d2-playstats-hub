@@ -3,6 +3,7 @@ namespace L4D2PlayStats.Hub.Core;
 public static partial class AppConsts
 {
     public const int ChampionshipNameMaxLength = 100;
+    public const int ChampionshipOpenProposalsMax = 5;
     public const int ChampionshipSlugMaxLength = 100;
     public const int ChampionshipDescriptionMaxLength = 2000;
     public const int ChampionshipRulesMaxLength = 50000;

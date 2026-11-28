@@ -1,0 +1,84 @@
+@model BansIndexModel
+@inject ISettingsService Settings
+@{
+    var site = await Settings.GetAsync<SiteSettings>();
+    var pagination = PaginationModel.Of(Model.Bans, number => BanUrls.Public(Model.Search, number));
+
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = L["Bans"],
+        Description = L["Players banned from the {0} game servers, why, and when each ban ends.", site.Name]
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/bans-index.css" asp-append-version="true"/>
+    @await Html.PartialAsync("_PaginationStyles")
+}
+
+<h4 class="text-center">@L["Bans"]</h4>
+
+<p class="text-center text-muted">@L["Players on this list cannot join the game servers until the ban ends."]</p>
+
+<form method="get" action="@AppConsts.BansUrl" class="bans-search">
+    <div class="input-group">
+        <input class="form-control input-sm" name="q" type="search" value="@Model.Search" placeholder="@L["Name, Steam ID or reason"]" aria-label="@L["Name, Steam ID or reason"]">
+        <span class="input-group-btn">
+            <button class="btn btn-default btn-sm" type="submit" title="@L["Search"]" aria-label="@L["Search"]">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </span>
+    </div>
+</form>
+
+@if (Model.Bans.TotalItems == 0)
+{
+    <div class="alert alert-info text-center">@(string.IsNullOrEmpty(Model.Search) ? L["Nobody is banned right now."] : L["No ban matches the search."])</div>
+}
+else
+{
+    <table class="table table-striped table-hover table-bordered table-condensed" id="table-bans">
+        <thead>
+        <tr>
+            <th colspan="2">@L["Player"]</th>
+            <th>@L["Reason"]</th>
+            <th class="text-center hide-mobile">@L["Banned on"]</th>
+            <th class="text-center">@L["Ends"]</th>
+            <th class="hide-mobile">@L["Banned by"]</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var ban in Model.Bans.Items)
+        {
+            var name = DisplayNames.Apply(ban.CommunityId, ban.Name ?? ban.CommunityId.ToString());
+
+            <tr class="ban-row" data-community-id="@ban.CommunityId">
+                <td class="text-center vertical-align-middle slim" style="margin: 0; padding: 0">
+                    <a href="@PlayerUrls.Details(ban.CommunityId)" title="@name">
+                        <img src="@AppConsts.AvatarUrl@ban.CommunityId" alt="@name" class="bans-avatar" onerror="imgOnError(this)"/>
+                    </a>
+                </td>
+                <td class="vertical-align-middle">
+                    <a href="@PlayerUrls.Details(ban.CommunityId)">@name.TruncatePlayerName()</a>
+                    <small class="bans-sub">@SteamIds.DisplaySteamId(ban.CommunityId)</small>
+                </td>
+                <td class="vertical-align-middle bans-reason">@(string.IsNullOrWhiteSpace(ban.Reason) ? L["No reason given"].Value : ban.Reason)</td>
+                <td class="text-center vertical-align-middle hide-mobile">@Display.Date(ban.CreatedAtUtc, Model.TimeZone)</td>
+                <td class="text-center vertical-align-middle">
+                    @if (ban.EndsAtUtc == null)
+                    {
+                        <span class="label label-danger">@L["Permanent"]</span>
+                    }
+                    else
+                    {
+                        @Display.DateTime(ban.EndsAtUtc.Value, Model.TimeZone)
+                    }
+                </td>
+                <td class="vertical-align-middle hide-mobile">@await Html.PartialAsync("_BanOrigin", ban)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @await Html.PartialAsync("_Pagination", pagination)
+}

@@ -53,6 +53,9 @@ The bell appears only after you sign in. See [Notifications](notifications.md).
 **The number on the bell does not go away.**
 It counts the notifications you did not open yet. Open them, or use **Mark all as read** at the bottom of the bell. Notifications older than 90 days are deleted.
 
+**I was kicked from the server with a message that I am banned.**
+The message tells the reason and when the ban ends, and **More > Bans** lists every ban. Bans cannot be contested on the site; talk to the administrators of the community. See [Bans](bans.md#for-players).
+
 ## For administrators
 
 **How do I add another administrator?**
@@ -102,6 +105,12 @@ Everyone, by default, as on the old site. [Settings > Privacy](administration.md
 
 **Visitors still see the old page for a moment.**
 Pages for visitors who are not signed in (ranking, players, matches, community ranking and the in-game panel) are kept for up to 60 seconds, so many visitors and search engines cost little. New statistics files, settings, punishments and reprocessing refresh them at once; other changes, such as community votes, avatars or player names, show up within a minute. Signed-in players and administrators always see the current page.
+
+**A ban given with sm_ban is not on the Bans page.**
+The game server needs the `l4d2_bans` plugin and the Bans module must be on. Bans by IP address (`sm_banip`) are not kept. A ban sent while the site was down is sent again every minute while the server runs. See [Bans > Bans given in the game](bans.md#bans-given-in-the-game).
+
+**I unbanned a player on the site and the server still refuses them.**
+The unban reaches the game servers through the live server module. With it off, run `sm_playstats_ban_sync <SteamID64>` in the server console, or `removeid` with the Steam ID followed by `writeid`.
 
 ## Troubleshooting
 

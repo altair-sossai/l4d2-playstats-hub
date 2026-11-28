@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.AntiCheat.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Bans.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Live.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
@@ -16,6 +17,7 @@ public class RelatedAccountsService(
     IChatBanService chatBanService,
     IForcedNameStore forcedNames,
     IAntiCheatAccessService antiCheatAccessService,
+    IBanService banService,
     ISiteClock siteClock) : IRelatedAccountsService
 {
     public async Task<RelatedAccountsResult?> FindAsync(string? player, string? list, CancellationToken cancellationToken = default)
@@ -62,6 +64,8 @@ public class RelatedAccountsService(
                 return blocked;
             case AppConsts.RelatedChatBansList:
                 return await chatBanService.BannedAsync(ids, cancellationToken);
+            case AppConsts.RelatedBansList:
+                return await banService.BannedAsync(ids, cancellationToken);
             case AppConsts.RelatedForcedNamesList:
                 return [.. ids.Where(id => forcedNames.Find(id) != null)];
             case { } name when name.StartsWith(AppConsts.RelatedAntiCheatListPrefix, StringComparison.Ordinal) && AntiCheatAccessNames.TryParseList(name[AppConsts.RelatedAntiCheatListPrefix.Length..], out var accessList):

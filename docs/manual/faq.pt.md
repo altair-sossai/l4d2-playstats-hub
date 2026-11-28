@@ -53,6 +53,9 @@ O sino aparece só depois que você entra. Veja [Notificações](notifications.p
 **O número do sino não some.**
 Ele conta as notificações que você ainda não abriu. Abra-as ou use **Marcar todas como lidas** no fim do sino. Notificações com mais de 90 dias são apagadas.
 
+**Fui expulso do servidor com uma mensagem dizendo que estou banido.**
+A mensagem diz o motivo e quando o banimento termina, e **Mais > Banimentos** lista todos os banimentos. Banimentos não podem ser contestados pelo site; fale com os administradores da comunidade. Veja [Banimentos](bans.pt.md#para-jogadores).
+
 ## Para administradores
 
 **Como eu adiciono outro administrador?**
@@ -102,6 +105,12 @@ Todo mundo, por padrão, como no site antigo. [Configurações > Privacidade](ad
 
 **Os visitantes ainda veem a página antiga por um momento.**
 As páginas de quem não entrou com a Steam (ranking, jogadores, partidas, ranking da comunidade e o painel do jogo) ficam guardadas por até 60 segundos, para que muitos visitantes e buscadores custem pouco. Novos arquivos de estatísticas, configurações, punições e o reprocessamento as atualizam na hora; outras mudanças, como votos da comunidade, avatares ou nomes de jogadores, aparecem em até um minuto. Jogadores logados e administradores sempre veem a página atual.
+
+**Um banimento dado com sm_ban não aparece na página de Banimentos.**
+O servidor precisa do plugin `l4d2_bans` e o módulo Banimentos precisa estar ligado. Banimentos por endereço IP (`sm_banip`) não são guardados. Um banimento enviado com o site fora do ar é enviado de novo a cada minuto enquanto o servidor roda. Veja [Banimentos > Banimentos dados no jogo](bans.pt.md#banimentos-dados-no-jogo).
+
+**Desbani um jogador no site e o servidor ainda o recusa.**
+O desbanimento chega aos servidores pelo módulo do servidor ao vivo. Com ele desligado, rode `sm_playstats_ban_sync <SteamID64>` no console do servidor, ou `removeid` com o Steam ID seguido de `writeid`.
 
 ## Resolvendo problemas
 

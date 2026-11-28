@@ -10,5 +10,6 @@ public enum NotificationTopic
     ForcedNames,
     Skins,
     Seasons,
-    Backups
+    Backups,
+    Bans
 }
