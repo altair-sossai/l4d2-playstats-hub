@@ -1,5 +1,6 @@
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
+using L4D2PlayStats.Hub.Web.Models.Championships;
 using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Helpers;
@@ -125,6 +126,28 @@ public static class ChampionshipTexts
             ChampionshipCampaignSource.Draw => L["Drawn"],
             ChampionshipCampaignSource.Admin => L["Set by the administration"],
             _ => string.Empty
+        };
+    }
+
+    public static string StageState(IStringLocalizer L, ChampionshipStageState state)
+    {
+        return state switch
+        {
+            ChampionshipStageState.Finished => L["Finished"],
+            ChampionshipStageState.Running => L["In progress"],
+            ChampionshipStageState.Next => L["Up next"],
+            _ => L["Later"]
+        };
+    }
+
+    public static string StageStateLabel(ChampionshipStageState state)
+    {
+        return state switch
+        {
+            ChampionshipStageState.Finished => "label-primary",
+            ChampionshipStageState.Running => "label-success",
+            ChampionshipStageState.Next => "label-info",
+            _ => "label-default"
         };
     }
 }

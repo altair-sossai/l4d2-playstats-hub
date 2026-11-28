@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="~/css/pages/championships.css" asp-append-version="true"/>
 }
 
-<h4 class="text-center">@L["Championships"]</h4>
+<div class="championship-showcase-head">
+    <h1>@L["Championships"]</h1>
+    <p class="text-muted">@L["Championships of the community: the ones in progress and the history of the finished ones."]</p>
+</div>
 
 @if (Model.Championships.Count == 0)
 {
@@ -20,72 +23,22 @@
 
 @if (current.Count > 0)
 {
-    <h5 class="championship-section-title">@L["In progress"]</h5>
-    <div class="row championship-cards">
+    <h2 class="championship-section-title">@L["In progress"]</h2>
+    <div class="championship-cards championship-cards-current">
         @foreach (var item in current)
         {
-            <div class="col-sm-6 col-lg-4">
-                <a class="panel panel-default championship-card" href="@AppConsts.ChampionshipsUrl/@item.Slug">
-                    <div class="panel-body">
-                        <div class="championship-card-title">
-                            <strong>@item.Name</strong>
-                            <span class="label @ChampionshipTexts.StatusLabel(item.Status)">@ChampionshipTexts.Status(L, item.Status)</span>
-                        </div>
-                        @if (!string.IsNullOrWhiteSpace(item.Description))
-                        {
-                            <p class="text-muted championship-card-description">@item.Description</p>
-                        }
-                        <small class="text-muted">
-                            @L["{0} teams", item.Teams] · @L["{0} players", item.Participants]
-                            @if (item.StartsOn != null)
-                            {
-                                <text> · @item.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)</text>
-                            }
-                        </small>
-                    </div>
-                </a>
-            </div>
+            @await Html.PartialAsync("_Card", item)
         }
     </div>
 }
 
 @if (history.Count > 0)
 {
-    <h5 class="championship-section-title">@L["History"]</h5>
-    <div class="panel panel-default">
-        <table class="table table-hover table-condensed championship-history">
-            <thead>
-            <tr>
-                <th>@L["Championship"]</th>
-                <th>@L["Champion"]</th>
-                <th class="hidden-xs">@L["Runner-up"]</th>
-                <th class="hidden-xs text-center">@L["Teams"]</th>
-                <th class="text-right">@L["Date"]</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in history)
-            {
-                <tr>
-                    <td>
-                        <a href="@AppConsts.ChampionshipsUrl/@item.Slug">@item.Name</a>
-                        @if (item.Status == ChampionshipStatus.Cancelled)
-                        {
-                            <span class="label label-danger">@L["Cancelled"]</span>
-                        }
-                    </td>
-                    <td>
-                        @if (item.Champion != null)
-                        {
-                            <span class="championship-trophy">🏆</span> <strong>@item.Champion</strong>
-                        }
-                    </td>
-                    <td class="hidden-xs">@item.RunnerUp</td>
-                    <td class="hidden-xs text-center">@item.Teams</td>
-                    <td class="text-right text-muted">@((item.EndsOn ?? item.StartsOn ?? item.CreatedAtUtc).ToString("d", CultureInfo.CurrentCulture))</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+    <h2 class="championship-section-title">@L["History"]</h2>
+    <div class="championship-cards championship-history">
+        @foreach (var item in history)
+        {
+            @await Html.PartialAsync("_Card", item)
+        }
     </div>
 }

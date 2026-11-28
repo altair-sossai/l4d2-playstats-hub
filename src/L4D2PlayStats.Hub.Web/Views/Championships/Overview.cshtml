@@ -1,13 +1,26 @@
 @model ChampionshipPageModel
 @{
     var championship = Model.Championship;
-    var url = $"{AppConsts.ChampionshipsUrl}/{championship.Slug}";
+    var url = Model.Url;
     var podium = Model.Podium;
     var mine = Model.MySeries();
-    var upcoming = Model.Upcoming();
+    var next = Model.NextSeries;
+    var upcoming = Model.Upcoming().Where(series => series != next).ToList();
     var recent = Model.Recent();
+    var teams = Model.Teams;
+    var participants = Model.Participants;
+    var shown = participants.Take(AppConsts.ChampionshipHeroParticipants).ToList();
+    var gallery = Model.GalleryUrls;
+    var places = championship.MaxParticipants;
+    var scheduled = next != null || upcoming.Count > 0 || !championship.IsOver;
 
-    ViewData["PageMetadata"] = new PageMetadata { Title = championship.Name, Description = championship.Description ?? L["Teams, games, standings and statistics of {0}.", championship.Name].Value };
+    ViewData["PageMetadata"] = new PageMetadata
+    {
+        Title = championship.Name,
+        Description = championship.Description ?? L["Teams, games, standings and statistics of {0}.", championship.Name].Value,
+        Image = Model.BannerUrl ?? Model.LogoUrl,
+        ImageAlt = championship.Name
+    };
 }
 
 @section Styles {
@@ -16,42 +29,142 @@
 
 @await Html.PartialAsync("_Header", Model)
 
-@if (!string.IsNullOrWhiteSpace(championship.Description))
-{
-    <p class="championship-description">@championship.Description</p>
-}
-
-@if (podium.Champion != null)
-{
-    <div class="championship-podium">
-        <div class="podium-place first">
-            <div class="podium-medal">🏆</div>
-            <small>@L["Champion"]</small>
-            <strong>@Model.TeamName(podium.Champion)</strong>
-        </div>
-        @if (podium.RunnerUp != null)
+<div class="championship-landing">
+    <section class="championship-section championship-intro" id="about">
+        @if (!string.IsNullOrWhiteSpace(championship.Description))
         {
-            <div class="podium-place second">
-                <div class="podium-medal">🥈</div>
-                <small>@L["Runner-up"]</small>
-                <strong>@Model.TeamName(podium.RunnerUp)</strong>
-            </div>
+            <p class="championship-lead">@championship.Description</p>
         }
-        @if (podium.Third != null)
-        {
-            <div class="podium-place third">
-                <div class="podium-medal">🥉</div>
-                <small>@L["Third place"]</small>
-                <strong>@Model.TeamName(podium.Third)</strong>
+        <dl class="championship-facts">
+            <div class="championship-fact">
+                <dt><span class="glyphicon glyphicon-calendar"></span> @L["Dates"]</dt>
+                <dd>
+                    @if (championship.StartsOn != null)
+                    {
+                        @championship.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)@(championship.EndsOn != null ? $" – {championship.EndsOn.Value.ToString("d", CultureInfo.CurrentCulture)}" : "")
+                    }
+                    else
+                    {
+                        @L["To be announced"]
+                    }
+                </dd>
             </div>
-        }
-    </div>
-}
+            <div class="championship-fact">
+                <dt><span class="glyphicon glyphicon-flag"></span> @L["Teams"]</dt>
+                <dd>@teams.Count.ToString("N0", CultureInfo.CurrentCulture)</dd>
+            </div>
+            <div class="championship-fact">
+                <dt><span class="glyphicon glyphicon-user"></span> @L["Participants"]</dt>
+                <dd>@(places != null ? L["{0} of {1}", participants.Count, places.Value].Value : participants.Count.ToString("N0", CultureInfo.CurrentCulture))</dd>
+            </div>
+            <div class="championship-fact">
+                <dt><span class="glyphicon glyphicon-transfer"></span> @L["Games"]</dt>
+                <dd>@L["{0} vs {0}", championship.PlayersPerGame]</dd>
+            </div>
+            <div class="championship-fact">
+                <dt><span class="glyphicon glyphicon-random"></span> @L["Team formation"]</dt>
+                <dd>@ChampionshipTexts.DraftMethod(L, championship.DraftMethod)</dd>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(championship.GameConfiguration))
+            {
+                <div class="championship-fact">
+                    <dt><span class="glyphicon glyphicon-cog"></span> @L["Game mode"]</dt>
+                    <dd>@championship.GameConfiguration</dd>
+                </div>
+            }
+        </dl>
+    </section>
 
-<div class="row">
-    <div class="col-md-7">
-        @if (mine.Count > 0)
-        {
+    @if (Model.ShowsJoin)
+    {
+        var request = Model.JoinRequest;
+
+        <section class="championship-section" id="@AppConsts.ChampionshipJoinSection">
+            <div class="championship-section-head">
+                <h2>@L["Registration"]</h2>
+                @if (Model.PlacesLeft != null)
+                {
+                    <span class="text-muted">@L["{0} places left", Model.PlacesLeft.Value]</span>
+                }
+            </div>
+            <div class="panel panel-default championship-join">
+                <div class="panel-body">
+                    @if (Model.IsParticipant)
+                    {
+                        <p class="championship-join-state text-success"><span class="glyphicon glyphicon-ok-circle"></span> @L["You are a participant of this championship."]</p>
+                    }
+                    else if (request is { Status: ChampionshipJoinRequestStatus.Pending })
+                    {
+                        <p class="championship-join-state"><span class="glyphicon glyphicon-hourglass"></span> @L["Your request to join is waiting for the administration."]</p>
+                        <form method="post" asp-antiforgery="true" action="@url/join/cancel" data-confirm="@L["Cancel your request to join?"]">
+                            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-remove"></span> @L["Cancel the request"]</button>
+                        </form>
+                    }
+                    else if (request is { Status: ChampionshipJoinRequestStatus.Refused })
+                    {
+                        <p class="championship-join-state text-danger"><span class="glyphicon glyphicon-ban-circle"></span> @L["The administration refused your request to join this championship."]</p>
+                    }
+                    else if (!Model.JoinOpen)
+                    {
+                        <p class="championship-join-state text-muted"><span class="glyphicon glyphicon-lock"></span> @L["There are no places left in this championship."]</p>
+                    }
+                    else if (Model.CurrentUser == null)
+                    {
+                        <p class="championship-join-state">@L["The registrations are open. Sign in with Steam to ask for a place; the administration approves each request."]</p>
+                        <a class="btn btn-primary btn-lg" href="/login?returnUrl=@Uri.EscapeDataString($"{url}#{AppConsts.ChampionshipJoinSection}")" rel="nofollow"><span class="glyphicon glyphicon-log-in"></span> @L["Sign in to join"]</a>
+                    }
+                    else
+                    {
+                        <p class="championship-join-state">@L["The registrations are open. Ask for a place: the administration approves each request, and an approved player becomes a participant."]</p>
+                        <form method="post" asp-antiforgery="true" action="@url/join" class="championship-join-form">
+                            <div class="form-group">
+                                <label for="join-message">@L["Message to the administration"] <small class="text-muted">@L["optional"]</small></label>
+                                <textarea class="form-control" id="join-message" name="message" rows="2" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ChampionshipJoinMessageMaxLength" placeholder="@L["Such as your experience, your team or when you can play."]"></textarea>
+                            </div>
+                            <button class="btn btn-warning btn-lg" type="submit"><span class="glyphicon glyphicon-hand-up"></span> @L["Ask to join"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(championship.StreamUrl) || !string.IsNullOrWhiteSpace(championship.VideosUrl))
+    {
+        <section class="championship-section" id="watch">
+            <div class="championship-section-head">
+                <h2>@L["Where to watch"]</h2>
+            </div>
+            <div class="championship-watch">
+                @if (!string.IsNullOrWhiteSpace(championship.StreamUrl))
+                {
+                    <a class="championship-watch-link championship-watch-live" href="@championship.StreamUrl" target="_blank" rel="noopener">
+                        <span class="championship-watch-icon"><span class="glyphicon glyphicon-facetime-video"></span></span>
+                        <span class="championship-watch-text">
+                            <strong>@L["Watch live"]</strong>
+                            <small>@ChampionshipBadges.Host(championship.StreamUrl)</small>
+                        </span>
+                        <span class="glyphicon glyphicon-new-window championship-watch-go"></span>
+                    </a>
+                }
+                @if (!string.IsNullOrWhiteSpace(championship.VideosUrl))
+                {
+                    <a class="championship-watch-link" href="@championship.VideosUrl" target="_blank" rel="noopener">
+                        <span class="championship-watch-icon"><span class="glyphicon glyphicon-film"></span></span>
+                        <span class="championship-watch-text">
+                            <strong>@L["Watch the videos"]</strong>
+                            <small>@ChampionshipBadges.Host(championship.VideosUrl)</small>
+                        </span>
+                        <span class="glyphicon glyphicon-new-window championship-watch-go"></span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    @if (mine.Count > 0)
+    {
+        <section class="championship-section" id="my-series">
             <div class="panel panel-primary">
                 <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-star"></span> @L["Series of your team"]</h3></div>
                 <div class="panel-body championship-series-list">
@@ -62,71 +175,262 @@
                     }
                 </div>
             </div>
-        }
+        </section>
+    }
 
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-time"></span> @L["Next games"]</h3></div>
-            <div class="panel-body championship-series-list">
-                @if (upcoming.Count == 0)
-                {
-                    <p class="text-muted">@L["No game is scheduled."]</p>
-                }
-                @foreach (var series in upcoming)
-                {
-                    @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, series, $"{url}/series/{series.Id}", true))
-                }
-            </div>
+    <section class="championship-section" id="games">
+        <div class="championship-section-head">
+            <h2>@L["Games"]</h2>
+            @if (Model.HasGames)
+            {
+                <a href="@url/@AppConsts.ChampionshipGamesTab">@L["All games"] <span class="glyphicon glyphicon-chevron-right"></span></a>
+            }
         </div>
+        <div class="row">
+            @if (scheduled)
+            {
+            <div class="col-md-7">
+                <h3 class="championship-subtitle">@L["Next games"]</h3>
+                @if (next != null)
+                {
+                    var stage = Model.StageOf(next);
+                    var left = Model.Countdown(next);
+                    var teamA = Model.Team(next.TeamAId);
+                    var teamB = Model.Team(next.TeamBId);
 
-        @if (recent.Count > 0)
-        {
-            <div class="panel panel-default">
-                <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-ok"></span> @L["Latest results"]</h3></div>
-                <div class="panel-body championship-series-list">
+                    <div class="panel panel-default championship-next">
+                        <div class="panel-body">
+                            <div class="championship-next-stage">@stage.Name · @ChampionshipTexts.Round(L, stage, next.Round, Model.Rounds(stage))@(next.BestOf > 1 ? $" · {L["Best of {0}", next.BestOf].Value}" : "")</div>
+                            <div class="championship-next-teams">
+                                <div class="championship-next-team">
+                                    <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamAId ?? 0)">@ChampionshipBadges.Initials(teamA?.Name, teamA?.Tag)</span>
+                                    <strong>@Model.TeamName(next.TeamAId)</strong>
+                                </div>
+                                <span class="championship-next-vs">@L["vs"]</span>
+                                <div class="championship-next-team">
+                                    <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(next.TeamBId ?? 0)">@ChampionshipBadges.Initials(teamB?.Name, teamB?.Tag)</span>
+                                    <strong>@Model.TeamName(next.TeamBId)</strong>
+                                </div>
+                            </div>
+                            <div class="championship-countdown" data-countdown="@DateTime.SpecifyKind(next.ScheduledAtUtc!.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture)" role="timer">
+                                <span><strong data-countdown-days>@left.Days.ToString("00", CultureInfo.InvariantCulture)</strong><small>@L["Days"]</small></span>
+                                <span><strong data-countdown-hours>@left.Hours.ToString("00", CultureInfo.InvariantCulture)</strong><small>@L["Hours"]</small></span>
+                                <span><strong data-countdown-minutes>@left.Minutes.ToString("00", CultureInfo.InvariantCulture)</strong><small>@L["Minutes"]</small></span>
+                                <span><strong data-countdown-seconds>@left.Seconds.ToString("00", CultureInfo.InvariantCulture)</strong><small>@L["Seconds"]</small></span>
+                            </div>
+                            <div class="championship-next-when text-muted"><span class="glyphicon glyphicon-time"></span> @Display.DateTime(next.ScheduledAtUtc.Value, Model.TimeZone)</div>
+                            <div class="championship-next-actions">
+                                <a class="btn btn-primary btn-sm" href="@url/series/@next.Id">@L["Series page"]</a>
+                                <a class="btn btn-default btn-sm" href="@url/series/@next.Id/calendar.ics"><span class="glyphicon glyphicon-calendar"></span> @L["Add to calendar"]</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="championship-series-list">
+                    @if (next == null && upcoming.Count == 0)
+                    {
+                        <p class="text-muted">@L["No game is scheduled."]</p>
+                    }
+                    @foreach (var series in upcoming)
+                    {
+                        @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, series, $"{url}/series/{series.Id}", true))
+                    }
+                </div>
+            </div>
+            }
+            <div class="@(scheduled ? "col-md-5" : "col-md-12")">
+                <h3 class="championship-subtitle">@L["Latest results"]</h3>
+                <div class="championship-series-list @(scheduled ? null : "championship-results-wide")">
+                    @if (recent.Count == 0)
+                    {
+                        <p class="text-muted">@L["No game was played yet."]</p>
+                    }
                     @foreach (var series in recent)
                     {
                         @await Html.PartialAsync("_SeriesRow", new ChampionshipSeriesRowModel(Model, series, $"{url}/series/{series.Id}", true))
                     }
                 </div>
             </div>
-        }
-    </div>
-    <div class="col-md-5">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-list"></span> @L["Format"]</h3></div>
-            <ul class="list-group">
-                @if (Model.Stages.Count == 0)
-                {
-                    <li class="list-group-item text-muted">@L["The format was not defined yet."]</li>
-                }
-                @foreach (var stage in Model.Stages)
-                {
-                    var finished = stage.Series.Count(series => series.Finished && !series.Bye);
-                    var total = stage.Series.Count(series => !series.Bye);
+        </div>
+    </section>
 
-                    <li class="list-group-item">
-                        <strong>@stage.Order. @stage.Name</strong>
-                        <span class="pull-right text-muted small">@(stage.Generated ? L["{0} of {1} series", finished, total].Value : L["Not built yet"].Value)</span>
-                        <div class="small text-muted">
-                            @ChampionshipTexts.StageType(L, stage.Type)
-                            @if (!stage.IsKnockout && stage.GroupCount > 1)
+    <section class="championship-section" id="teams">
+        <div class="championship-section-head">
+            <h2>@L["Teams"]</h2>
+            @if (teams.Count > 0)
+            {
+                <a href="@url/@AppConsts.ChampionshipTeamsTab">@L["Rosters"] <span class="glyphicon glyphicon-chevron-right"></span></a>
+            }
+        </div>
+        @if (teams.Count == 0)
+        {
+            <p class="text-muted">@L["The teams were not formed yet."]</p>
+        }
+        <div class="championship-team-grid">
+            @foreach (var team in teams)
+            {
+                var leaders = new[] { (team.CaptainCommunityId, L["Captain"].Value, "label-warning"), (team.ViceCaptainCommunityId, L["Vice"].Value, "label-info") }.Where(leader => leader.Item1 != null).ToList();
+
+                <div class="panel panel-default championship-team-card">
+                    <div class="championship-team-card-head">
+                        <span class="championship-team-badge" style="--championship-hue: @ChampionshipBadges.Hue(team.Id)">@ChampionshipBadges.Initials(team.Name, team.Tag)</span>
+                        <div class="championship-team-card-name">
+                            <a href="@url/@AppConsts.ChampionshipTeamsTab">@team.Name</a>
+                            <small class="text-muted">@L["{0} players", team.Members.Count]</small>
+                        </div>
+                    </div>
+                    <ul class="championship-team-card-leaders">
+                        @if (leaders.Count == 0)
+                        {
+                            <li class="text-muted">@L["No captain yet."]</li>
+                        }
+                        @foreach (var (leader, title, label) in leaders)
+                        {
+                            <li>
+                                <img src="@AppConsts.AvatarUrl@leader" alt="" class="championship-avatar" onerror="imgOnError(this)"/>
+                                <a href="@AppConsts.PlayerUrlPrefix@leader">@DisplayNames.Apply(leader!.Value, Model.PlayerName(leader.Value))</a>
+                                <span class="label @label">@title</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </section>
+
+    @if (participants.Count > 0)
+    {
+        <section class="championship-section" id="participants">
+            <div class="championship-section-head">
+                <h2>@L["Participants"] <small class="text-muted">@participants.Count.ToString("N0", CultureInfo.CurrentCulture)</small></h2>
+            </div>
+            <div class="championship-people">
+                @foreach (var participant in shown)
+                {
+                    <a class="championship-person" href="@AppConsts.PlayerUrlPrefix@participant">
+                        <img src="@AppConsts.AvatarUrl@participant" alt="" onerror="imgOnError(this)"/>
+                        <span>@DisplayNames.Apply(participant, Model.PlayerName(participant))</span>
+                    </a>
+                }
+            </div>
+            @if (participants.Count > shown.Count)
+            {
+                <p class="text-muted championship-more">@L["And {0} more.", participants.Count - shown.Count]</p>
+            }
+        </section>
+    }
+
+    <section class="championship-section" id="format">
+        <div class="championship-section-head">
+            <h2>@L["Format"]</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Rules(CultureInfo.CurrentUICulture.Name)))
+            {
+                <a href="@url/@AppConsts.ChampionshipRulesTab">@L["Rules"] <span class="glyphicon glyphicon-chevron-right"></span></a>
+            }
+        </div>
+        @if (Model.Stages.Count == 0)
+        {
+            <p class="text-muted">@L["The format was not defined yet."]</p>
+        }
+        <ol class="championship-stages">
+            @foreach (var stage in Model.Stages)
+            {
+                var state = Model.StageState(stage);
+                var finished = stage.Series.Count(series => series.Finished && !series.Bye);
+                var total = stage.Series.Count(series => !series.Bye);
+                var percent = total == 0 ? 0 : finished * 100 / total;
+                var link = stage.IsKnockout ? AppConsts.ChampionshipBracketTab : AppConsts.ChampionshipStandingsTab;
+
+                <li class="championship-stage state-@state.ToString().ToLowerInvariant()">
+                    <span class="championship-stage-number">@stage.Order</span>
+                    <div class="panel panel-default championship-stage-body">
+                        <div class="panel-body">
+                            <div class="championship-stage-head">
+                                <strong>@stage.Name</strong>
+                                <span class="label @ChampionshipTexts.StageStateLabel(state)">@ChampionshipTexts.StageState(L, state)</span>
+                            </div>
+                            <div class="small">
+                                @ChampionshipTexts.StageType(L, stage.Type)
+                                @if (!stage.IsKnockout && stage.GroupCount > 1)
+                                {
+                                    <text> · @L["{0} groups", stage.GroupCount]</text>
+                                }
+                                · @L["Best of {0}", stage.BestOf]
+                                @if (stage.IsKnockout && stage.FinalBestOf != stage.BestOf)
+                                {
+                                    <text> · @L["final best of {0}", stage.FinalBestOf]</text>
+                                }
+                                @if (Model.Qualifiers(stage) > 0)
+                                {
+                                    <text> · @L["{0} per group move on", stage.Qualifiers]</text>
+                                }
+                            </div>
+                            <div class="small text-muted">@ChampionshipTexts.CampaignRule(L, stage.CampaignRule)</div>
+                            @if (stage.Generated)
                             {
-                                <text> · @L["{0} groups", stage.GroupCount]</text>
-                            }
-                            · @L["Best of {0}", stage.BestOf]
-                            @if (stage.IsKnockout && stage.FinalBestOf != stage.BestOf)
-                            {
-                                <text> · @L["final best of {0}", stage.FinalBestOf]</text>
-                            }
-                            @if (Model.Qualifiers(stage) > 0)
-                            {
-                                <text> · @L["{0} per group move on", stage.Qualifiers]</text>
+                                <div class="championship-stage-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar @(state == ChampionshipStageState.Finished ? "progress-bar-success" : null)" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width: @percent%"></div>
+                                    </div>
+                                    <a class="small" href="@url/@link">@L["{0} of {1} series", finished, total]</a>
+                                </div>
                             }
                         </div>
-                        <div class="small text-muted">@ChampionshipTexts.CampaignRule(L, stage.CampaignRule)</div>
-                    </li>
+                    </div>
+                </li>
+            }
+        </ol>
+    </section>
+
+    @if (podium.Champion != null)
+    {
+        <section class="championship-section" id="podium">
+            <div class="championship-section-head">
+                <h2>@L["Podium"]</h2>
+            </div>
+            <div class="championship-podium">
+                @if (podium.RunnerUp != null)
+                {
+                    <div class="podium-place second">
+                        <div class="podium-medal">🥈</div>
+                        <small>@L["Runner-up"]</small>
+                        <strong>@Model.TeamName(podium.RunnerUp)</strong>
+                    </div>
                 }
-            </ul>
-        </div>
-    </div>
+                <div class="podium-place first">
+                    <div class="podium-medal">🏆</div>
+                    <small>@L["Champion"]</small>
+                    <strong>@Model.TeamName(podium.Champion)</strong>
+                </div>
+                @if (podium.Third != null)
+                {
+                    <div class="podium-place third">
+                        <div class="podium-medal">🥉</div>
+                        <small>@L["Third place"]</small>
+                        <strong>@Model.TeamName(podium.Third)</strong>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    @if (gallery.Count > 0)
+    {
+        <section class="championship-section" id="gallery">
+            <div class="championship-section-head">
+                <h2>@L["Gallery"]</h2>
+            </div>
+            <div class="championship-gallery">
+                @foreach (var image in gallery)
+                {
+                    <a href="@image" data-lity aria-label="@L["Open the image"]"><img src="@image" alt="" loading="lazy"></a>
+                }
+            </div>
+        </section>
+    }
 </div>
+
+@section Scripts {
+    <script type="application/json" id="championships-overview-config">{ "values": { "tickInterval": 1000 } }</script>
+    <script src="~/js/pages/championships-overview.js" asp-append-version="true"></script>
+}

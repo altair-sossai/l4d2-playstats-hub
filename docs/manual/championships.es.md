@@ -11,6 +11,7 @@ El módulo Campeonatos organiza campeonatos jugados en los servidores de juego d
 - [Para jugadores](#para-jugadores)
   - [La página de campeonatos](#la-página-de-campeonatos)
   - [La página de un campeonato](#la-página-de-un-campeonato)
+  - [Pedir participar](#pedir-participar)
   - [La página de una serie](#la-página-de-una-serie)
   - [Para capitanes y vicecapitanes](#para-capitanes-y-vicecapitanes)
 - [Para administradores](#para-administradores)
@@ -28,15 +29,29 @@ El módulo Campeonatos organiza campeonatos jugados en los servidores de juego d
 
 ### La página de campeonatos
 
-**Campeonatos** en el menú lista los campeonatos en curso arriba, en tarjetas, y debajo el historial de los finalizados y cancelados, con el campeón y el subcampeón de cada uno. Un campeonato en borrador no aparece: solo los administradores lo ven.
+**Campeonatos** en el menú muestra cada campeonato en una tarjeta con su banner, su logotipo, su estado, sus equipos, sus jugadores y su fecha de inicio: los en curso arriba, en tarjetas más grandes, y debajo el historial de los finalizados y cancelados, con el campeón de cada uno. Un campeonato sin banner recibe un fondo de color, y uno sin logotipo muestra sus iniciales. Un campeonato en borrador no aparece: solo los administradores lo ven.
 
 ### La página de un campeonato
 
-Cada campeonato tiene su dirección, como `/championships/copa-2027`, y estas pestañas:
+Cada campeonato tiene su dirección, como `/championships/copa-2027`. Cada página del campeonato empieza con su banner, su logotipo, su nombre, su estado y sus fechas, seguidos de sus pestañas.
+
+La primera pestaña, **Visión general**, es la página del campeonato en sí, leída de arriba abajo:
+
+1. **Acerca de**: la descripción y los datos principales: las fechas, el número de equipos y de participantes (con las plazas, cuando hay límite), el tamaño de cada juego, como 4 contra 4, la formación de equipos y el modo de juego.
+2. **Inscripciones**, cuando el campeonato acepta solicitudes para participar: ver [Pedir participar](#pedir-participar).
+3. **Dónde ver**: botones a la transmisión y a los vídeos, cuando la administración dio los enlaces.
+4. **Series de tu equipo**, cuando eres el capitán o el vicecapitán de un equipo con una serie por jugar.
+5. **Juegos**: el próximo juego, con una cuenta regresiva hasta su fecha y los botones **Página de la serie** y **Añadir al calendario**, los otros juegos programados y los últimos resultados. **Todos los juegos** abre la pestaña Juegos.
+6. **Equipos**: cada equipo con su capitán y su vicecapitán. **Plantillas** abre la pestaña Equipos.
+7. **Participantes**: la foto y el nombre de cada jugador del campeonato, cada uno con el enlace a la página del jugador.
+8. **Formato**: cada fase en orden, con su tipo, grupos, al mejor de y regla de campañas, si está finalizada, en curso, a continuación o después, y cuántas series se jugaron.
+9. **Podio**: el campeón, el subcampeón y el tercer puesto, cuando el campeonato terminó.
+10. **Galería**: las fotos y artes del campeonato; un clic abre cada una en tamaño grande.
+
+Una sección sin nada que mostrar se omite. Las otras pestañas van más a fondo:
 
 | Pestaña | Qué muestra |
 |---|---|
-| Visión general | La descripción, el podio cuando terminó, los próximos juegos, los últimos resultados, las series de tu equipo cuando eres su capitán o vicecapitán, y el formato de cada fase. |
 | Reglas | Las reglas escritas por la administración, en el idioma de la página cuando hay traducción. |
 | Equipos | Cada equipo con su capitán, vicecapitán y jugadores, con las horas de Left 4 Dead 2 de cada uno. |
 | Draft | El orden de los capitanes y cada elección, cuando los equipos se formaron por draft, ruleta o bombos. |
@@ -46,6 +61,12 @@ Cada campeonato tiene su dirección, como `/championships/copa-2027`, y estas pe
 | Estadísticas | Las series y los juegos ganados por cada equipo, y los números de cada jugador en los juegos vinculados a partidas del servidor: MVPs, daño SI, comunes, skeets, levels, crowns, daño al Tank y muertes. |
 
 Una pestaña solo aparece cuando tiene algo que mostrar.
+
+### Pedir participar
+
+Cuando la administración deja que los jugadores pidan participar, la página del campeonato tiene una sección **Inscripciones**, y la parte de arriba de la página un botón **Pedir participar**, mientras el estado es Participantes y quedan plazas. Entra con Steam, escribe un mensaje para la administración si quieres (como tu experiencia o cuándo puedes jugar) y pulsa **Pedir participar**. La sección pasa a decir que tu solicitud está esperando; **Cancelar la solicitud** la retira, y puedes pedirlo de nuevo después.
+
+La administración aprueba o rechaza cada solicitud. Una vez aprobada eres participante y la sección lo dice; una solicitud rechazada aparece como rechazada, y no puedes pedirlo de nuevo en ese campeonato. La sección también muestra cuántas plazas quedan, y avisa cuando no queda ninguna.
 
 ### La página de una serie
 
@@ -88,12 +109,15 @@ Un único formulario, guardado con el botón **Guardar** al pie:
 
 - **Campeonato**: nombre, dirección, descripción corta, fechas de inicio y fin, modo de juego (como ZoneMod v2.9.1b) y los enlaces de la transmisión y de los vídeos.
 - **Estado**: Borrador, Participantes, Formación de equipos, En curso, Finalizado o Cancelado, con el motivo de la cancelación. Armar la primera fase pone el campeonato en curso. Márcalo como finalizado después de la final: el historial pasa a mostrar el campeón.
-- **Equipos y jugadores**: jugadores por juego, jugadores por equipo (el máximo de jugadores de un equipo, contando los suplentes), plazas (el máximo de participantes), la formación de equipos (manual, ruleta, bombos, draft en serpiente o draft en línea) y si los equipos pueden tener suplentes.
+- **Equipos y jugadores**: jugadores por juego, jugadores por equipo (el máximo de jugadores de un equipo, contando los suplentes), plazas (el máximo de participantes), la formación de equipos (manual, ruleta, bombos, draft en serpiente o draft en línea) si los equipos pueden tener suplentes y si los **jugadores pueden pedir participar** (ver [Solicitudes para participar](#participantes)).
+- **Imágenes**: el **banner**, una imagen ancha como 1920 × 600 que se muestra arriba de cada página del campeonato y en su tarjeta; el **logotipo**, una imagen cuadrada como 512 × 512; y la **galería**, hasta 12 fotos y artes que se muestran al final de la página. Cada una es un archivo PNG, JPG, WEBP o GIF de hasta 2 MB. Elige un archivo solo para cambiarla: guardar sin archivo mantiene la imagen actual. **Quitar el banner**, **Quitar el logotipo** y **Quitar** debajo de cada imagen de la galería la borran al guardar. Un archivo que no es una de estas imágenes, un archivo por encima del límite o más de 12 imágenes en la galería se rechaza, y entonces no se guarda nada del formulario. Los archivos quedan en la carpeta de datos del hub, en `branding/championships`, así que van con las copias de seguridad, y cada cambio queda en el historial.
 - **Reglas**, en inglés, portugués y español, en Markdown: `#` títulos, `-` listas, `**negrita**`, `*cursiva*` y `[enlaces](https://...)`. La página muestra el texto del idioma del visitante, o el inglés.
 
 ### Participantes
 
-Solo la administración añade participantes. **Añadir** abre una ventana donde pegas IDs de Steam, uno por línea, o usas **Elegir de la lista** en la ventana de búsqueda de jugadores. La tabla, con 20 jugadores por página, muestra las horas de Left 4 Dead 2 de cada jugador, su equipo y su bombo; **Editar** cambia el bombo, usado en el sorteo por bombos, y **Quitar** saca al jugador del campeonato y de su equipo.
+La administración añade los participantes, o aprueba las solicitudes de los jugadores. Con **Los jugadores pueden pedir participar** activado en la pestaña Configuración, el panel **Solicitudes para participar** arriba de la pestaña Participantes lista cada solicitud que espera respuesta, con el jugador, el mensaje, la fecha y un contador de cuántas esperan. **Aprobar** hace al jugador participante, salvo que el campeonato esté lleno, y **Rechazar** responde que no; una solicitud rechazada sigue en la lista, así que todavía puede aprobarse después. Cada solicitud, aprobación y rechazo queda en el historial.
+
+**Añadir** abre una ventana donde pegas IDs de Steam, uno por línea, o usas **Elegir de la lista** en la ventana de búsqueda de jugadores. La tabla, con 20 jugadores por página, muestra las horas de Left 4 Dead 2 de cada jugador, su equipo y su bombo; **Editar** cambia el bombo, usado en el sorteo por bombos, y **Quitar** saca al jugador del campeonato y de su equipo.
 
 ### Equipos
 

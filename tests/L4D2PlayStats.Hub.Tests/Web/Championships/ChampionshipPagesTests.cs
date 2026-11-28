@@ -311,7 +311,7 @@ public partial class ChampionshipPagesTests
         var core = Path.Combine(root, "src", "L4D2PlayStats.Hub.Core", "Modules", "Championships");
         var web = Path.Combine(root, "src", "L4D2PlayStats.Hub.Web");
 
-        foreach (var file in Directory.EnumerateFiles(core, "*.cs", SearchOption.AllDirectories).Append(Path.Combine(web, "Controllers", "ChampionshipsController.cs")))
+        foreach (var file in Directory.EnumerateFiles(core, "*.cs", SearchOption.AllDirectories).Append(Path.Combine(web, "Controllers", "ChampionshipsController.cs")).Append(Path.Combine(web, "Services", "ChampionshipImageService.cs")))
         {
             var text = File.ReadAllText(file);
 

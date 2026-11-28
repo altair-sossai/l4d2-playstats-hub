@@ -57,7 +57,7 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
                     championship.Teams.Count, championship.Participants.Count,
                     podium.Champion == null ? null : names.GetValueOrDefault(podium.Champion.Value),
                     podium.RunnerUp == null ? null : names.GetValueOrDefault(podium.RunnerUp.Value),
-                    championship.CreatedAtUtc);
+                    championship.CreatedAtUtc, championship.BannerImage, championship.LogoImage);
             })
             .ToList();
     }
@@ -108,6 +108,7 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
         championship.RosterSize = Math.Clamp(form.RosterSize, championship.PlayersPerGame, AppConsts.ChampionshipMaxRoster);
         championship.MaxParticipants = form.MaxParticipants is > 0 ? Math.Min(form.MaxParticipants.Value, AppConsts.ChampionshipMaxTeams * AppConsts.ChampionshipMaxRoster) : null;
         championship.Substitutes = form.Substitutes;
+        championship.JoinRequests = form.JoinRequests;
         championship.DraftMethod = Enum.IsDefined(form.DraftMethod) ? form.DraftMethod : ChampionshipDraftMethod.Manual;
         championship.StartsOn = form.StartsOn?.Date;
         championship.EndsOn = form.EndsOn?.Date;
@@ -130,6 +131,58 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
 
         log.Add(id, updatedBy, "Changed the status to {0}", status);
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<ChampionshipImageSet?> ImagesAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var championship = await dbContext.Championships.AsNoTracking().FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+
+        return championship?.Images;
+    }
+
+    public Task<bool> IsPublicAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Championships.AnyAsync(championship => championship.Id == id && championship.Status != ChampionshipStatus.Draft, cancellationToken);
+    }
+
+    public async Task<ChampionshipImageSet> SetImagesAsync(int id, ChampionshipImageSet images, long? updatedBy, CancellationToken cancellationToken = default)
+    {
+        var championship = await dbContext.Championships.FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
+        var previous = championship.Images;
+        var gallery = images.Gallery.Where(image => !string.IsNullOrWhiteSpace(image)).Select(image => image.Trim()).Distinct().ToList();
+
+        if (gallery.Count > AppConsts.ChampionshipGalleryMaxImages)
+            throw new ChampionshipException("The gallery is full. Remove an image before adding another.");
+
+        if (new[] { images.Banner, images.Logo }.OfType<string>().Concat(gallery).Any(image => image.Length > AppConsts.ChampionshipImageMaxLength || image.Contains(AppConsts.ChampionshipGallerySeparator)))
+            throw new ChampionshipException("The images must be PNG, JPG, WEBP or GIF files.");
+
+        championship.BannerImage = Image(images.Banner);
+        championship.LogoImage = Image(images.Logo);
+        championship.GalleryImages = ChampionshipGallery.Format(gallery);
+
+        if (championship.BannerImage != previous.Banner)
+            log.Add(id, updatedBy, previous.Banner == null ? "Added the banner" : championship.BannerImage == null ? "Removed the banner" : "Changed the banner");
+
+        if (championship.LogoImage != previous.Logo)
+            log.Add(id, updatedBy, previous.Logo == null ? "Added the logo" : championship.LogoImage == null ? "Removed the logo" : "Changed the logo");
+
+        var added = gallery.Except(previous.Gallery).Count();
+        var removed = previous.Gallery.Except(gallery).Count();
+
+        if (added > 0)
+            log.Add(id, updatedBy, "Added images to the gallery ({0})", added);
+
+        if (removed > 0)
+            log.Add(id, updatedBy, "Removed images from the gallery ({0})", removed);
+
+        if (championship.BannerImage == previous.Banner && championship.LogoImage == previous.Logo && gallery.SequenceEqual(previous.Gallery))
+            return previous;
+
+        championship.UpdatedAtUtc = clock.UtcNow;
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return previous;
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
@@ -199,6 +252,13 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
             throw new ChampionshipException("Enter the name of the championship.");
 
         return trimmed.Length > AppConsts.ChampionshipNameMaxLength ? trimmed[..AppConsts.ChampionshipNameMaxLength] : trimmed;
+    }
+
+    private static string? Image(string? value)
+    {
+        var trimmed = value?.Trim();
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
     }
 
     private static string? Text(string? value, int maxLength)

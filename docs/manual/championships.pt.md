@@ -11,6 +11,7 @@ O módulo Campeonatos organiza campeonatos disputados nos servidores de jogo da 
 - [Para jogadores](#para-jogadores)
   - [A página de campeonatos](#a-página-de-campeonatos)
   - [A página de um campeonato](#a-página-de-um-campeonato)
+  - [Pedindo para participar](#pedindo-para-participar)
   - [A página de uma série](#a-página-de-uma-série)
   - [Para capitães e vices](#para-capitães-e-vices)
 - [Para administradores](#para-administradores)
@@ -28,15 +29,29 @@ O módulo Campeonatos organiza campeonatos disputados nos servidores de jogo da 
 
 ### A página de campeonatos
 
-**Campeonatos** no menu lista os campeonatos em andamento no topo, em cartões, e abaixo o histórico dos finalizados e cancelados, com o campeão e o vice de cada um. Um campeonato em rascunho não aparece: só os administradores o veem.
+**Campeonatos** no menu mostra cada campeonato em um cartão com o banner, o logo, o status, as equipes, os jogadores e a data de início: os em andamento no topo, em cartões maiores, e abaixo o histórico dos finalizados e cancelados, com o campeão de cada um. Um campeonato sem banner ganha um fundo colorido, e um sem logo mostra as iniciais. Um campeonato em rascunho não aparece: só os administradores o veem.
 
 ### A página de um campeonato
 
-Cada campeonato tem seu endereço, como `/championships/copa-2027`, e estas abas:
+Cada campeonato tem seu endereço, como `/championships/copa-2027`. Toda página do campeonato começa com o banner, o logo, o nome, o status e as datas, seguidos das abas.
+
+A primeira aba, **Visão geral**, é a página do campeonato em si, lida de cima para baixo:
+
+1. **Sobre**: a descrição e os dados principais: as datas, o número de equipes e de participantes (com as vagas, quando há limite), o tamanho de cada jogo, como 4 contra 4, a formação das equipes e o modo de jogo.
+2. **Inscrições**, quando o campeonato aceita pedidos para participar: veja [Pedindo para participar](#pedindo-para-participar).
+3. **Onde assistir**: botões para a transmissão e os vídeos, quando a administração informou os links.
+4. **Séries da sua equipe**, quando você é o capitão ou o vice de uma equipe com série para jogar.
+5. **Jogos**: o próximo jogo, com uma contagem regressiva até a data e os botões **Página da série** e **Adicionar à agenda**, os outros jogos marcados e os últimos resultados. **Todos os jogos** abre a aba Jogos.
+6. **Equipes**: cada equipe com o capitão e o vice. **Elencos** abre a aba Equipes.
+7. **Participantes**: a foto e o nome de cada jogador do campeonato, cada um com o link para a página do jogador.
+8. **Formato**: cada fase em ordem, com o tipo, os grupos, a melhor de e a regra das campanhas, se está finalizada, em andamento, a seguir ou depois, e quantas séries foram jogadas.
+9. **Pódio**: o campeão, o vice e o terceiro lugar, quando o campeonato terminou.
+10. **Galeria**: as fotos e artes do campeonato; um clique abre cada uma em tamanho grande.
+
+Uma seção sem nada para mostrar fica de fora. As outras abas vão mais a fundo:
 
 | Aba | O que mostra |
 |---|---|
-| Visão geral | A descrição, o pódio quando terminou, os próximos jogos, os últimos resultados, as séries da sua equipe quando você é o capitão ou o vice, e o formato de cada fase. |
 | Regras | As regras escritas pela administração, no idioma da página quando há tradução. |
 | Equipes | Cada equipe com capitão, vice e jogadores, com as horas de Left 4 Dead 2 de cada um. |
 | Draft | A ordem dos capitães e cada escolha, quando as equipes foram formadas por draft, roleta ou potes. |
@@ -46,6 +61,12 @@ Cada campeonato tem seu endereço, como `/championships/copa-2027`, e estas abas
 | Estatísticas | As séries e os jogos vencidos por cada equipe, e os números de cada jogador nos jogos ligados a partidas do servidor: MVPs, dano SI, comuns, skeets, levels, crowns, dano no Tank e mortes. |
 
 Uma aba só aparece quando tem algo a mostrar.
+
+### Pedindo para participar
+
+Quando a administração deixa os jogadores pedirem para participar, a página do campeonato tem uma seção **Inscrições**, e o topo da página um botão **Pedir para participar**, enquanto o status é Participantes e há vagas. Entre com a Steam, escreva uma mensagem para a administração se quiser (como a sua experiência ou quando você pode jogar) e clique em **Pedir para participar**. A seção passa a dizer que o seu pedido está aguardando; **Cancelar o pedido** o retira, e você pode pedir de novo depois.
+
+A administração aprova ou recusa cada pedido. Depois de aprovado você é participante e a seção diz isso; um pedido recusado aparece como recusado, e você não pode pedir de novo naquele campeonato. A seção também mostra quantas vagas restam, e quando não há nenhuma ela avisa.
 
 ### A página de uma série
 
@@ -88,12 +109,15 @@ Um único formulário, salvo com o botão **Salvar** no rodapé:
 
 - **Campeonato**: nome, endereço, descrição curta, datas de início e fim, modo de jogo (como ZoneMod v2.9.1b) e os links da transmissão e dos vídeos.
 - **Status**: Rascunho, Participantes, Formação das equipes, Em andamento, Finalizado ou Cancelado, com o motivo do cancelamento. Montar a primeira fase coloca o campeonato em andamento. Marque como finalizado depois da final: o histórico passa a mostrar o campeão.
-- **Equipes e jogadores**: jogadores por jogo, jogadores por equipe (o máximo de jogadores de uma equipe, contando os reservas), vagas (o máximo de participantes), a formação das equipes (manual, roleta, potes, draft em serpentina ou draft em linha) e se as equipes podem ter reservas.
+- **Equipes e jogadores**: jogadores por jogo, jogadores por equipe (o máximo de jogadores de uma equipe, contando os reservas), vagas (o máximo de participantes), a formação das equipes (manual, roleta, potes, draft em serpentina ou draft em linha) se as equipes podem ter reservas e se os **jogadores podem pedir para participar** (veja [Pedidos para participar](#participantes)).
+- **Imagens**: o **banner**, uma imagem larga como 1920 × 600 mostrada no topo de toda página do campeonato e no cartão dele; o **logo**, uma imagem quadrada como 512 × 512; e a **galeria**, até 12 fotos e artes mostradas no fim da página. Cada uma é um arquivo PNG, JPG, WEBP ou GIF de até 2 MB. Escolha um arquivo só para trocar: salvar sem arquivo mantém a imagem atual. **Remover o banner**, **Remover o logo** e **Remover** embaixo de cada imagem da galeria apagam a imagem ao salvar. Um arquivo que não é uma dessas imagens, um arquivo acima do limite ou mais de 12 imagens na galeria é recusado, e aí nada do formulário é salvo. Os arquivos ficam na pasta de dados do hub, em `branding/championships`, então vão junto com os backups, e cada mudança é registrada no histórico.
 - **Regras**, em inglês, português e espanhol, em Markdown: `#` títulos, `-` listas, `**negrito**`, `*itálico*` e `[links](https://...)`. A página mostra o texto do idioma do visitante, ou o em inglês.
 
 ### Participantes
 
-Só a administração adiciona participantes. **Adicionar** abre uma janela onde você cola IDs da Steam, um por linha, ou usa **Escolher da lista** na janela de busca de jogadores. A tabela, com 20 jogadores por página, mostra as horas de Left 4 Dead 2 de cada jogador, a equipe e o pote; **Editar** muda o pote, usado no sorteio por potes, e **Remover** tira o jogador do campeonato e da equipe.
+A administração adiciona os participantes, ou aprova os pedidos dos jogadores. Com **Jogadores podem pedir para participar** ligado na aba Configurações, o painel **Pedidos para participar** no topo da aba Participantes lista cada pedido aguardando resposta, com o jogador, a mensagem, a data e um contador de quantos estão aguardando. **Aprovar** torna o jogador participante, a não ser que o campeonato esteja cheio, e **Recusar** responde que não; um pedido recusado continua na lista, então ainda pode ser aprovado depois. Cada pedido, aprovação e recusa é registrado no histórico.
+
+**Adicionar** abre uma janela onde você cola IDs da Steam, um por linha, ou usa **Escolher da lista** na janela de busca de jogadores. A tabela, com 20 jogadores por página, mostra as horas de Left 4 Dead 2 de cada jogador, a equipe e o pote; **Editar** muda o pote, usado no sorteio por potes, e **Remover** tira o jogador do campeonato e da equipe.
 
 ### Equipes
 

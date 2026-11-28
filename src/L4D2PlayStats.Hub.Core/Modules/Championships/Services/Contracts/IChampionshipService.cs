@@ -11,5 +11,8 @@ public interface IChampionshipService
     Task<Championship> CreateAsync(string name, IReadOnlyList<ChampionshipStageTemplate> stages, long? createdBy, CancellationToken cancellationToken = default);
     Task UpdateAsync(int id, ChampionshipSettingsForm form, long? updatedBy, CancellationToken cancellationToken = default);
     Task SetStatusAsync(int id, ChampionshipStatus status, string? reason, long? updatedBy, CancellationToken cancellationToken = default);
+    Task<ChampionshipImageSet?> ImagesAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> IsPublicAsync(int id, CancellationToken cancellationToken = default);
+    Task<ChampionshipImageSet> SetImagesAsync(int id, ChampionshipImageSet images, long? updatedBy, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

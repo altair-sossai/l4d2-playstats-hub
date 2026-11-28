@@ -1,0 +1,42 @@
+@model ChampionshipSummary
+@{
+    var banner = ChampionshipImageUrls.Of(Model.Id, Model.BannerImage);
+    var logo = ChampionshipImageUrls.Of(Model.Id, Model.LogoImage);
+}
+
+<a class="panel panel-default championship-card status-@Model.Status.ToString().ToLowerInvariant()" href="@AppConsts.ChampionshipsUrl/@Model.Slug" style="--championship-hue: @ChampionshipBadges.Hue(Model.Id)">
+    <span class="championship-card-banner">
+        @if (banner != null)
+        {
+            <img src="@banner" alt="" loading="lazy">
+        }
+        <span class="label @ChampionshipTexts.StatusLabel(Model.Status)">@ChampionshipTexts.Status(L, Model.Status)</span>
+    </span>
+    <span class="championship-card-body">
+        @if (logo != null)
+        {
+            <img class="championship-card-logo" src="@logo" alt="" loading="lazy">
+        }
+        else
+        {
+            <span class="championship-card-logo championship-monogram" aria-hidden="true">@ChampionshipBadges.Initials(Model.Name)</span>
+        }
+        <span class="championship-card-title">@Model.Name</span>
+        @if (Model.Champion != null)
+        {
+            <span class="championship-card-champion"><span class="championship-trophy" aria-hidden="true">🏆</span> @L["Champion"]: <strong>@Model.Champion</strong></span>
+        }
+        else if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <span class="text-muted championship-card-description">@Model.Description</span>
+        }
+        <span class="text-muted championship-card-meta">
+            <span><span class="glyphicon glyphicon-flag"></span> @L["{0} teams", Model.Teams]</span>
+            <span><span class="glyphicon glyphicon-user"></span> @L["{0} players", Model.Participants]</span>
+            @if (Model.StartsOn != null)
+            {
+                <span><span class="glyphicon glyphicon-calendar"></span> @Model.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)</span>
+            }
+        </span>
+    </span>
+</a>

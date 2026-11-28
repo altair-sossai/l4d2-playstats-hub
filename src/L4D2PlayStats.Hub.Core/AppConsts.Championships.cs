@@ -38,4 +38,9 @@ public static partial class AppConsts
     public const int ChampionshipLogPageSize = 50;
     public const int ChampionshipSlugMaxAttempts = 100;
     public const string ChampionshipGroupNames = "ABCDEFGHIJKLMNOP";
+    public const int ChampionshipImageMaxLength = 80;
+    public const int ChampionshipGalleryMaxImages = 12;
+    public const int ChampionshipGalleryMaxLength = ChampionshipGalleryMaxImages * (ChampionshipImageMaxLength + 1);
+    public const char ChampionshipGallerySeparator = '|';
+    public const int ChampionshipJoinMessageMaxLength = 300;
 }

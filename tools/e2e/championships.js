@@ -102,6 +102,136 @@ async function settings(browser, url, values) {
     await ok(browser, `The settings of ${url}`);
 }
 
+async function images(browser, url, art) {
+    await tab(browser, url, 'settings');
+
+    const set = await browser.eval(`(async () => {
+        const art = ${quote(art)};
+        const draw = (width, height, hue, seed, text, type) => new Promise(resolve => {
+            const canvas = document.createElement('canvas');
+            const g = canvas.getContext('2d');
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const background = g.createLinearGradient(0, 0, width, height);
+
+            background.addColorStop(0, 'hsl(' + hue + ', 65%, 32%)');
+            background.addColorStop(1, 'hsl(' + (hue + 70) + ', 60%, 10%)');
+            g.fillStyle = background;
+            g.fillRect(0, 0, width, height);
+
+            for (let index = 0; index < 18; index++) {
+                g.fillStyle = 'hsla(' + (hue + index * 23) + ', 85%, 60%, ' + (0.06 + (index % 4) * 0.03) + ')';
+                g.beginPath();
+                g.arc((index * 131 + seed * 57) % width, (index * 71 + seed * 29) % height, height * (0.08 + (index % 5) * 0.06), 0, Math.PI * 2);
+                g.fill();
+            }
+
+            g.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+            g.lineWidth = Math.max(2, width / 300);
+
+            for (let offset = -height; offset < width; offset += width / 14) {
+                g.beginPath();
+                g.moveTo(offset, height);
+                g.lineTo(offset + height, 0);
+                g.stroke();
+            }
+
+            if (text) {
+                g.fillStyle = 'rgba(255, 255, 255, 0.92)';
+                g.textAlign = 'center';
+                g.textBaseline = 'middle';
+                g.font = 'bold ' + Math.round(Math.min(width / (text.length * 0.65), height * 0.42)) + 'px sans-serif';
+                g.fillText(text, width / 2, height / 2);
+            }
+
+            canvas.toBlob(resolve, type, 0.86);
+        });
+        const files = (selector, list) => {
+            const transfer = new DataTransfer();
+
+            for (const [blob, name] of list)
+                transfer.items.add(new File([blob], name, { type: blob.type }));
+
+            document.querySelector(selector).files = transfer.files;
+        };
+
+        if (art.banner)
+            files('#Banner', [[await draw(1600, 500, art.hue, 1, '', 'image/jpeg'), 'banner.jpg']]);
+
+        if (art.logo)
+            files('#Logo', [[await draw(512, 512, art.hue + 30, 2, art.logo, 'image/png'), 'logo.png']]);
+
+        if (art.gallery) {
+            const list = [];
+
+            for (let index = 0; index < art.gallery; index++)
+                list.push([await draw(960, 640, art.hue + index * 40, index + 3, '#' + (index + 1), 'image/jpeg'), 'photo-' + (index + 1) + '.jpg']);
+
+            files('#Gallery', list);
+        }
+
+        return true;
+    })()`);
+
+    expect(set, 'The images were not drawn');
+    await browser.submit('#Name');
+    await ok(browser, `The images of ${url}`);
+
+    if (art.banner)
+        expect(await browser.eval(`!!document.querySelector('.championship-image-banner img')`), 'The settings do not show the banner');
+
+    if (art.logo)
+        expect(await browser.eval(`!!document.querySelector('.championship-image-logo img')`), 'The settings do not show the logo');
+
+    if (art.gallery)
+        expect(await browser.eval(`document.querySelectorAll('.championship-image-gallery img').length`) >= art.gallery, 'The settings do not show the gallery');
+}
+
+async function landing(browser, context, slug, expected, suffix = '') {
+    for (const width of [desktop, phone]) {
+        await browser.page.viewport(width, width < 700 ? 844 : 800);
+        await browser.open(`/championships/${slug}`);
+        await ok(browser, `The landing of ${slug} at ${width}px`);
+
+        const page = await browser.eval(`(() => {
+            const loaded = image => !!image && image.complete && image.naturalWidth > 0;
+            return {
+                scroll: document.documentElement.scrollWidth,
+                client: document.documentElement.clientWidth,
+                hero: !!document.querySelector('.championship-hero.championship-hero-full h1.championship-hero-title'),
+                banner: loaded(document.querySelector('.championship-hero-banner')),
+                logo: loaded(document.querySelector('img.championship-hero-logo')),
+                watch: document.querySelectorAll('#watch .championship-watch-link').length,
+                teams: document.querySelectorAll('#teams .championship-team-card').length,
+                captains: document.querySelectorAll('#teams .championship-team-card .label-warning').length,
+                participants: document.querySelectorAll('#participants .championship-person').length,
+                stages: document.querySelectorAll('#format .championship-stage').length,
+                podium: !!document.querySelector('#podium .podium-place.first'),
+                gallery: Array.from(document.querySelectorAll('#gallery a[data-lity] img')).filter(loaded).length,
+                countdown: !!document.querySelector('.championship-next [data-countdown]'),
+                join: !!document.querySelector('#join'),
+                order: Array.from(document.querySelectorAll('.championship-landing > section')).map(section => section.id)
+            };
+        })()`);
+
+        expect(page.scroll <= page.client + 1, `The landing of ${slug} scrolls sideways at ${width}px: ${page.scroll}px for ${page.client}px`);
+        expect(page.hero, `The landing of ${slug} has no hero`);
+
+        for (const [name, value] of Object.entries(expected))
+            expect(page[name] === value, `The landing of ${slug} at ${width}px has ${name} ${JSON.stringify(page[name])}, expected ${JSON.stringify(value)}`);
+
+        const known = ['about', 'join', 'watch','my-series', 'games', 'teams', 'participants', 'format', 'podium', 'gallery'];
+        const positions = page.order.map(id => known.indexOf(id));
+
+        expect(positions.every((position, index) => position >= 0 && (index === 0 || position > positions[index - 1])), `The sections of ${slug} are out of order: ${page.order.join(', ')}`);
+        await shot(browser, context, `championship-landing-${slug}${suffix}-${width < 700 ? 'phone' : 'desktop'}`);
+    }
+
+    await browser.page.viewport(desktop, 800);
+}
+
 async function participants(browser, url, ids) {
     await tab(browser, url, 'participants');
     await modal(browser, '[data-target="#participants-add-modal"]', '#participants-add-modal');
@@ -285,6 +415,8 @@ function championshipChecks(context) {
                     RulesPortuguese: '# Formato\n- Todas as equipes se enfrentam **uma vez**.\n- Vitória vale 3 pontos, empate 1.'
                 });
                 await shot(browser, context, 'championships-admin-settings');
+                await images(browser, url, { hue: 210, banner: true, logo: 'LE', gallery: 4 });
+                await shot(browser, context, 'championships-admin-settings-images');
 
                 await participants(browser, url, players);
                 await shot(browser, context, 'championships-admin-participants');
@@ -362,8 +494,7 @@ function championshipChecks(context) {
                 await as(browser, null);
                 await publicPages(browser, context, 'liga-e2e-2026', ['', 'rules', 'teams', 'standings', 'games', 'statistics'], 'The league');
 
-                await browser.open('/championships/liga-e2e-2026');
-                expect(await browser.eval(`!!document.querySelector('.championship-podium .podium-place.first')`), 'The finished league shows no champion');
+                await landing(browser, context, 'liga-e2e-2026', { banner: true, logo: true, watch: 1, teams: 4, captains: 4, participants: 16, stages: 1, podium: true, gallery: 4, countdown: false });
 
                 await browser.open('/championships/liga-e2e-2026/statistics');
                 const rows = await browser.eval(`document.querySelectorAll('.championship-statistics tbody tr').length`);
@@ -389,7 +520,8 @@ function championshipChecks(context) {
 
                 const url = await create(browser, 'Copa Mata-Mata E2E', 'Knockout');
 
-                await settings(browser, url, { Slug: 'copa-mata-mata-e2e', PlayersPerGame: 4, RosterSize: 4, DraftMethod: 'Snake' });
+                await settings(browser, url, { Slug: 'copa-mata-mata-e2e', PlayersPerGame: 4, RosterSize: 4, DraftMethod: 'Snake', Description: 'Four captains draft their teams and play a knockout to the final, with a match for the third place.', StreamUrl: 'https://www.twitch.tv/example', VideosUrl: 'https://www.youtube.com/@example' });
+                await images(browser, url, { hue: 0, banner: true, logo: 'MM', gallery: 3 });
                 await participants(browser, url, players);
 
                 const ids = await teams(browser, url, 4);
@@ -477,6 +609,7 @@ function championshipChecks(context) {
                 await publicPages(browser, context, 'copa-mata-mata-e2e', ['', 'teams', 'bracket', 'games'], 'The cup');
                 await browser.open('/championships/copa-mata-mata-e2e');
                 expect(await browser.eval(`document.querySelectorAll('.championship-podium .podium-place').length`) === 3, 'The cup does not show the three places');
+                await landing(browser, context, 'copa-mata-mata-e2e', { banner: true, logo: true, watch: 2, teams: 4, captains: 4, participants: 16, stages: 1, podium: true, gallery: 3 });
             }
         },
         {
@@ -488,6 +621,7 @@ function championshipChecks(context) {
                 const url = await create(browser, 'Copa dos Grupos E2E', 'GroupsAndKnockout');
 
                 await settings(browser, url, { Slug: 'copa-dos-grupos-e2e', PlayersPerGame: 2, RosterSize: 2, DraftMethod: 'Roulette' });
+                await images(browser, url, { hue: 130, banner: true, logo: 'CG' });
                 await participants(browser, url, players);
                 await teams(browser, url, 8);
 
@@ -527,7 +661,8 @@ function championshipChecks(context) {
 
                 const url = await create(browser, 'Liga com Mata-Mata E2E', 'RoundRobinAndKnockout');
 
-                await settings(browser, url, { Slug: 'liga-com-mata-mata-e2e', PlayersPerGame: 2, RosterSize: 2, DraftMethod: 'Pots' });
+                await settings(browser, url, { Slug: 'liga-com-mata-mata-e2e', PlayersPerGame: 2, RosterSize: 2, DraftMethod: 'Pots', Description: 'A league of six pairs drawn from two pots, then a knockout where the two best seeds wait for the semifinals.', startsOn: '2026-11-20', endsOn: '2027-01-31' });
+                await images(browser, url, { hue: 280, logo: 'LM' });
                 await participants(browser, url, players.slice(0, 12));
 
                 for (let index = 0; index < 12; index++) {
@@ -560,12 +695,26 @@ function championshipChecks(context) {
                 await save(browser, '#games-deadline-modal', 'Setting a deadline');
                 expect(await browser.eval(`document.body.innerText.includes('Until')`), 'The deadline does not show in the games');
 
+                const scheduled = (await games(browser, url)).filter(item => item.pending.length > 0).slice(0, 2);
+
+                expect(scheduled.length === 2, `The knockout has ${scheduled.length} series to schedule, expected 2`);
+
+                for (const [index, item] of scheduled.entries()) {
+                    const date = new Date(Date.now() + (index * 3 + 2) * 86400000);
+                    const local = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}T20:30`;
+
+                    await gamesPageOf(browser, url, item.series);
+                    await post(browser, `form[action="${url}/series/${item.series}"]`, { scheduledAt: local }, `Scheduling the series ${item.series}`);
+                }
+
                 await as(browser, null);
                 await browser.open('/championships/liga-com-mata-mata-e2e/bracket');
                 await ok(browser, 'The bracket with byes');
                 expect(await browser.eval(`document.querySelectorAll('.bracket-round').length`) === 3, 'The bracket of six teams does not have three rounds');
                 expect(await browser.eval(`document.querySelectorAll('.bracket-round:first-child a.championship-series.status-bye').length`) === 2, 'The two best seeds do not have a bye');
                 await publicPages(browser, context, 'liga-com-mata-mata-e2e', ['', 'standings', 'bracket', 'draft'], 'The league with knockout');
+                await landing(browser, context, 'liga-com-mata-mata-e2e', { banner: false, logo: true, watch: 0, teams: 6, participants: 12, stages: 2, podium: false, gallery: 0, countdown: true });
+                expect(await browser.eval(`/^\\d{2}$/.test(document.querySelector('[data-countdown-seconds]').innerText.trim())`), 'The countdown does not show the seconds');
 
                 await as(browser, null, phone);
 
@@ -590,6 +739,46 @@ function championshipChecks(context) {
                 await settings(browser, cancelled, { status: 'Cancelled', reason: 'Not enough teams' });
                 await create(browser, 'Rascunho Secreto E2E', 'RoundRobin');
 
+                const open = await create(browser, 'Copa Aberta E2E', 'Knockout');
+
+                await settings(browser, open, { Slug: 'copa-aberta-e2e', Description: 'Registrations are open: ask for a place and the administration approves each request.', PlayersPerGame: 2, RosterSize: 2, MaxParticipants: 8, JoinRequests: true, status: 'Participants', StreamUrl: 'https://www.twitch.tv/example', startsOn: '2027-02-01' });
+                await images(browser, open, { hue: 40, banner: true, logo: 'CA' });
+                await participants(browser, open, players.slice(10, 13));
+
+                await as(browser, players[0]);
+                await landing(browser, context, 'copa-aberta-e2e', { banner: true, logo: true, join: true, participants: 3 }, '-join');
+                expect(await browser.eval(`!!document.querySelector('.championship-hero-cta[href="#join"]')`), 'The open championship has no button to ask to join in the hero');
+                await post(browser, 'form[action="/championships/copa-aberta-e2e/join"]', { message: 'I can play every night after 9 PM.' }, 'Asking to join');
+                expect(await browser.eval(`!!document.querySelector('form[action="/championships/copa-aberta-e2e/join/cancel"]')`), 'The pending request cannot be cancelled');
+
+                await as(browser, players[1]);
+                await browser.open('/championships/copa-aberta-e2e');
+                await post(browser, 'form[action="/championships/copa-aberta-e2e/join"]', {}, 'Asking to join again');
+
+                await as(browser, admin);
+                await tab(browser, open, 'participants');
+                expect(await browser.eval(`document.querySelectorAll('.championship-requests tbody tr').length`) === 2, 'The participants tab does not list the two requests');
+                expect(await browser.eval(`document.querySelector('.championship-requests').innerText.includes('I can play every night after 9 PM.')`), 'The request does not show its message');
+                await shot(browser, context, 'championships-admin-requests');
+
+                const [approve, refuse] = await browser.eval(`(() => { const rows = document.querySelectorAll('.championship-requests tbody tr'); return [rows[0].querySelector('form[action$="/approve"]').getAttribute('action'), rows[1].querySelector('form[action$="/refuse"]').getAttribute('action')]; })()`);
+
+                await post(browser, `form[action="${approve}"]`, {}, 'Approving a request');
+                await tab(browser, open, 'participants');
+                await post(browser, `form[action="${refuse}"]`, {}, 'Refusing a request');
+                await tab(browser, open, 'participants');
+                expect(await browser.eval(`Number(document.querySelector('.admin-tabs a[data-admin-tab="participants"] .badge').innerText)`) === 4, 'The approved player is not a participant');
+
+                await as(browser, players[0]);
+                await browser.open('/championships/copa-aberta-e2e');
+                expect(await browser.eval(`!!document.querySelector('#join .text-success')`), 'The approved player is not told that the request was approved');
+
+                await as(browser, players[1], phone);
+                await browser.open('/championships/copa-aberta-e2e');
+                expect(await browser.eval(`!!document.querySelector('#join .text-danger')`), 'The refused player is not told that the request was refused');
+                await shot(browser, context, 'championship-join-refused-phone');
+                await as(browser, admin);
+
                 await browser.open('/admin/championships');
                 expect(await browser.eval(`document.querySelectorAll('.admin-table tbody tr').length`) >= 6, 'The administration does not list every championship');
                 expect(await browser.eval(`document.querySelectorAll('.admin-table tbody tr .admin-row-actions a, .admin-table tbody tr .admin-row-actions button').length`) >= 12, 'The rows have no Edit and Delete buttons');
@@ -610,8 +799,10 @@ function championshipChecks(context) {
 
                 expect(!text.includes('Rascunho Secreto E2E'), 'A draft is listed to visitors');
                 expect(text.includes('Copa Cancelada E2E'), 'The cancelled championship is not in the history');
-                expect(await browser.eval(`document.querySelectorAll('.championship-history tbody tr').length`) >= 3, 'The history does not list the finished and cancelled championships');
-                expect(await browser.eval(`document.querySelectorAll('.championship-cards .championship-card').length`) >= 1, 'The championships in progress are not shown as cards');
+                expect(await browser.eval(`document.querySelectorAll('.championship-history .championship-card').length`) >= 4, 'The history does not list the finished and cancelled championships');
+                expect(await browser.eval(`document.querySelectorAll('.championship-cards-current .championship-card').length`) >= 1, 'The championships in progress are not shown as cards');
+                expect(await browser.eval(`Array.from(document.querySelectorAll('.championship-card-banner img')).filter(image => image.complete && image.naturalWidth > 0).length`) >= 3, 'The cards do not show the banners');
+                expect(await browser.eval(`!!document.querySelector('.championship-history .championship-card-champion')`), 'The finished cards do not show the champion');
                 await shot(browser, context, 'championships-list');
 
                 const hidden = await fetch(`${context.base}/championships/rascunho-secreto-e2e`);
@@ -633,6 +824,9 @@ function championshipChecks(context) {
                 await browser.open('/championships/liga-e2e-2026/standings');
                 await ok(browser, 'The standings in the light theme');
                 await shot(browser, context, 'championship-standings-light');
+                await landing(browser, context, 'liga-e2e-2026', { banner: true, podium: true }, '-light');
+                await browser.open('/championships');
+                await shot(browser, context, 'championships-list-light');
                 await browser.theme('default');
             }
         }

@@ -1,7 +1,9 @@
 @model ChampionshipPageModel
 @{
     var championship = Model.Championship;
-    var url = $"{AppConsts.ChampionshipsUrl}/{championship.Slug}";
+    var url = Model.Url;
+    var landing = Model.Tab == AppConsts.ChampionshipOverviewTab;
+    var podium = championship.Status == ChampionshipStatus.Finished ? Model.Podium : ChampionshipPodium.None;
     var tabs = new List<(string Tab, string Title, string Url)> { (AppConsts.ChampionshipOverviewTab, L["Overview"].Value, url) };
 
     if (!string.IsNullOrWhiteSpace(Model.Rules(CultureInfo.CurrentUICulture.Name)))
@@ -30,49 +32,78 @@
     <li class="active">@championship.Name</li>
 </ol>
 
-<div class="championship-header">
-    <div class="championship-heading">
-        <h3>
-            @championship.Name
-            <span class="label @ChampionshipTexts.StatusLabel(championship.Status)">@ChampionshipTexts.Status(L, championship.Status)</span>
-        </h3>
-        <div class="championship-meta text-muted">
-            @if (championship.StartsOn != null)
+<header class="championship-hero @(landing ? "championship-hero-full" : "championship-hero-compact") @(Model.BannerUrl != null ? "has-banner" : null)" style="--championship-hue: @ChampionshipBadges.Hue(championship.Id)">
+    @if (Model.BannerUrl != null)
+    {
+        <img class="championship-hero-banner" src="@Model.BannerUrl" alt="">
+    }
+    <div class="championship-hero-shade"></div>
+    <div class="championship-hero-content">
+        @if (Model.LogoUrl != null)
+        {
+            <img class="championship-hero-logo" src="@Model.LogoUrl" alt="@championship.Name">
+        }
+        else
+        {
+            <span class="championship-hero-logo championship-monogram" aria-hidden="true">@ChampionshipBadges.Initials(championship.Name)</span>
+        }
+        <div class="championship-hero-text">
+            <div class="championship-hero-kicker">
+                <span class="label @ChampionshipTexts.StatusLabel(championship.Status)">@ChampionshipTexts.Status(L, championship.Status)</span>
+                @if (championship.StartsOn != null)
+                {
+                    <span class="championship-hero-dates"><span class="glyphicon glyphicon-calendar"></span> @championship.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)@(championship.EndsOn != null ? $" – {championship.EndsOn.Value.ToString("d", CultureInfo.CurrentCulture)}" : "")</span>
+                }
+            </div>
+            <h1 class="championship-hero-title">@championship.Name</h1>
+            <div class="championship-hero-meta">
+                <span><span class="glyphicon glyphicon-flag"></span> @L["{0} teams", championship.Teams.Count]</span>
+                <span><span class="glyphicon glyphicon-user"></span> @L["{0} players", championship.Participants.Count]</span>
+                @if (!string.IsNullOrWhiteSpace(championship.GameConfiguration))
+                {
+                    <span><span class="glyphicon glyphicon-cog"></span> @championship.GameConfiguration</span>
+                }
+                @if (!landing && !string.IsNullOrWhiteSpace(championship.StreamUrl))
+                {
+                    <a href="@championship.StreamUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-facetime-video"></span> @L["Live stream"]</a>
+                }
+                @if (!landing && !string.IsNullOrWhiteSpace(championship.VideosUrl))
+                {
+                    <a href="@championship.VideosUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-film"></span> @L["Videos"]</a>
+                }
+                @if (Model.Administrator)
+                {
+                    <a href="@AppConsts.AdminChampionshipsUrl/@championship.Id"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a>
+                }
+            </div>
+            <div class="championship-hero-actions">
+                @if (landing && Model.ShowsJoin && Model.JoinOpen && !Model.IsParticipant && Model.JoinRequest == null)
+                {
+                    <a class="btn btn-warning championship-hero-cta" href="#@AppConsts.ChampionshipJoinSection"><span class="glyphicon glyphicon-hand-up"></span> @L["Ask to join"]</a>
+                }
+            </div>
+            @if (podium.Champion != null)
             {
-                <span><span class="glyphicon glyphicon-calendar"></span> @championship.StartsOn.Value.ToString("d", CultureInfo.CurrentCulture)@(championship.EndsOn != null ? $" – {championship.EndsOn.Value.ToString("d", CultureInfo.CurrentCulture)}" : "")</span>
-            }
-            <span><span class="glyphicon glyphicon-flag"></span> @L["{0} teams", championship.Teams.Count]</span>
-            <span><span class="glyphicon glyphicon-user"></span> @L["{0} per game", championship.PlayersPerGame]</span>
-            @if (!string.IsNullOrWhiteSpace(championship.GameConfiguration))
-            {
-                <span><span class="glyphicon glyphicon-cog"></span> @championship.GameConfiguration</span>
-            }
-            @if (!string.IsNullOrWhiteSpace(championship.StreamUrl))
-            {
-                <a href="@championship.StreamUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-facetime-video"></span> @L["Live stream"]</a>
-            }
-            @if (!string.IsNullOrWhiteSpace(championship.VideosUrl))
-            {
-                <a href="@championship.VideosUrl" target="_blank" rel="noopener"><span class="glyphicon glyphicon-film"></span> @L["Videos"]</a>
-            }
-            @if (Model.Administrator)
-            {
-                <a href="@AppConsts.AdminChampionshipsUrl/@championship.Id"><span class="glyphicon glyphicon-wrench"></span> @L["Manage"]</a>
+                <div class="championship-hero-champion"><span aria-hidden="true">🏆</span> @L["Champion"]: <strong>@Model.TeamName(podium.Champion)</strong></div>
             }
         </div>
     </div>
-    @if (championship.Status == ChampionshipStatus.Draft)
-    {
-        <div class="alert alert-warning">@L["This championship is a draft. Only administrators can see it."]</div>
-    }
-    @if (championship.Status == ChampionshipStatus.Cancelled)
-    {
-        <div class="alert alert-danger">@L["This championship was cancelled."] @championship.CancelReason</div>
-    }
+</header>
+
+@if (championship.Status == ChampionshipStatus.Draft)
+{
+    <div class="alert alert-warning">@L["This championship is a draft. Only administrators can see it."]</div>
+}
+@if (championship.Status == ChampionshipStatus.Cancelled)
+{
+    <div class="alert alert-danger">@L["This championship was cancelled."] @championship.CancelReason</div>
+}
+
+<nav class="championship-nav" aria-label="@championship.Name">
     <ul class="nav nav-tabs championship-tabs">
         @foreach (var tab in tabs)
         {
             <li role="presentation" class="@(tab.Tab == Model.Tab ? "active" : null)"><a href="@tab.Url">@tab.Title</a></li>
         }
     </ul>
-</div>
+</nav>

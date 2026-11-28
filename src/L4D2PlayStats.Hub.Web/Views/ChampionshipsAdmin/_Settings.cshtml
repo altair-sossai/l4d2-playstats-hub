@@ -2,11 +2,16 @@
 @using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts
 @{
     var championship = Model.Championship;
+    var imageTypes = string.Join(",", AppConsts.LogoContentTypes.Keys);
+    var imageMegabytes = AppConsts.ChampionshipImageMaxBytes / AppConsts.BytesPerMegabyte;
+    var bannerUrl = ChampionshipImageUrls.Of(championship.Id, championship.BannerImage);
+    var logoUrl = ChampionshipImageUrls.Of(championship.Id, championship.LogoImage);
+    var gallery = championship.Gallery;
 }
 
 <p class="admin-lead">@L["The information shown on the page of the championship, how the teams are formed and its status. A draft is seen only by the administrators; building the first stage puts the championship in progress."]</p>
 
-<form method="post" asp-antiforgery="true" action="@Model.Url">
+<form method="post" asp-antiforgery="true" action="@Model.Url" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
@@ -109,6 +114,91 @@
                             @L["The teams can have substitutes"]
                         </label>
                     </div>
+                    <div class="checkbox" style="margin-bottom: 0">
+                        <label for="JoinRequests">
+                            <input type="checkbox" id="JoinRequests" name="JoinRequests" value="true" checked="@championship.JoinRequests">
+                            <input type="hidden" name="JoinRequests" value="false">
+                            @L["Players can ask to join"] @FieldHelp.Tip(L["While the status is Participants and there are places left, the page of the championship has a button for signed in players to ask for a place. Each request waits on the Participants tab until the administration approves or refuses it; an approved player becomes a participant."])
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default championship-images-panel">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-picture"></span> @L["Images"] @FieldHelp.Tip(L["Shown on the public page of the championship. Choose a file only to change it: saving without a file keeps the current image."])</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-5 form-group">
+                    <label for="Banner">@L["Banner"]</label>
+                    <div class="championship-image-preview championship-image-banner">
+                        @if (bannerUrl != null)
+                        {
+                            <img src="@bannerUrl" alt="@L["Banner"]">
+                        }
+                        else
+                        {
+                            <span class="text-muted">@L["No banner yet: the page shows a colored background."]</span>
+                        }
+                    </div>
+                    <input type="file" id="Banner" name="Banner" accept="@imageTypes">
+                    <span class="help-block">@L["A wide image, such as 1920 × 600, shown at the top of the page and on the card of the championship. PNG, JPG, WEBP or GIF, up to {0} MB.", imageMegabytes]</span>
+                    @if (bannerUrl != null)
+                    {
+                        <div class="checkbox">
+                            <label for="RemoveBanner">
+                                <input type="checkbox" id="RemoveBanner" name="RemoveBanner" value="true">
+                                @L["Remove the banner"]
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="Logo">@L["Logo"]</label>
+                    <div class="championship-image-preview championship-image-logo">
+                        @if (logoUrl != null)
+                        {
+                            <img src="@logoUrl" alt="@L["Logo"]">
+                        }
+                        else
+                        {
+                            <span class="text-muted">@L["No logo yet: the page shows the initials."]</span>
+                        }
+                    </div>
+                    <input type="file" id="Logo" name="Logo" accept="@imageTypes">
+                    <span class="help-block">@L["A square image, such as 512 × 512. PNG, JPG, WEBP or GIF, up to {0} MB.", imageMegabytes]</span>
+                    @if (logoUrl != null)
+                    {
+                        <div class="checkbox">
+                            <label for="RemoveLogo">
+                                <input type="checkbox" id="RemoveLogo" name="RemoveLogo" value="true">
+                                @L["Remove the logo"]
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="Gallery">@L["Gallery"] <small class="text-muted">@L["{0} of {1}", gallery.Count, CoreConsts.ChampionshipGalleryMaxImages]</small></label>
+                    @if (gallery.Count > 0)
+                    {
+                        <div class="championship-image-gallery">
+                            @foreach (var image in gallery)
+                            {
+                                <label class="championship-image-thumb" title="@L["Remove this image"]">
+                                    <img src="@ChampionshipImageUrls.Of(championship.Id, image)" alt="">
+                                    <span class="checkbox-inline"><input type="checkbox" name="RemoveGallery" value="@image"> @L["Remove"]</span>
+                                </label>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@L["No images yet."]</p>
+                    }
+                    <input type="file" id="Gallery" name="Gallery" accept="@imageTypes" multiple disabled="@(gallery.Count >= CoreConsts.ChampionshipGalleryMaxImages)">
+                    <span class="help-block">@L["Photos and art of the championship, shown at the end of the page. Choose one or more files, up to {0} images of {1} MB each.", CoreConsts.ChampionshipGalleryMaxImages, imageMegabytes]</span>
                 </div>
             </div>
         </div>

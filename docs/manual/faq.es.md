@@ -55,6 +55,9 @@ En [Administración > Administradores](administration.es.md#administradores), co
 **¿Cómo organizo un campeonato?**
 Activa **Campeonatos** en [Administración > Módulos](administration.es.md#módulos) y crea el campeonato en **Administración > Campeonatos**: elige el formato, añade los participantes y los equipos y arma la primera fase. Consulta [Campeonatos > Para administradores](championships.es.md#para-administradores).
 
+**¿Los jugadores pueden inscribirse solos en un campeonato?**
+Sí, cuando activas **Los jugadores pueden pedir participar** en la pestaña Configuración del campeonato. Mientras su estado es Participantes y quedan plazas, su página tiene un botón para que los jugadores conectados pidan una plaza; cada solicitud espera en la pestaña Participantes hasta que la apruebas o la rechazas. Ver [Pedir participar](championships.es.md#pedir-participar).
+
 **Un juego del campeonato se jugó fuera de nuestro servidor.**
 En la pestaña Juegos del campeonato, en **Administración > Campeonatos**, haz clic en el botón del juego y elige **Escribir el resultado**. El juego cuenta en la clasificación y en el cuadro, pero no tiene estadísticas.
 

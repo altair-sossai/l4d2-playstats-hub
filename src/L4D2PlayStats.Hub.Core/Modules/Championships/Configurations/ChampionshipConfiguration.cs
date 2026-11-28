@@ -15,6 +15,9 @@ public class ChampionshipConfiguration : IEntityTypeConfiguration<Championship>
         builder.Property(e => e.RulesSpanish).HasMaxLength(AppConsts.ChampionshipRulesMaxLength);
         builder.Property(e => e.StreamUrl).HasMaxLength(AppConsts.ChampionshipUrlMaxLength);
         builder.Property(e => e.VideosUrl).HasMaxLength(AppConsts.ChampionshipUrlMaxLength);
+        builder.Property(e => e.BannerImage).HasMaxLength(AppConsts.ChampionshipImageMaxLength);
+        builder.Property(e => e.LogoImage).HasMaxLength(AppConsts.ChampionshipImageMaxLength);
+        builder.Property(e => e.GalleryImages).HasMaxLength(AppConsts.ChampionshipGalleryMaxLength);
         builder.Property(e => e.GameConfiguration).HasMaxLength(AppConsts.ChampionshipConfigurationMaxLength);
         builder.Property(e => e.CancelReason).HasMaxLength(AppConsts.ChampionshipReasonMaxLength);
         builder.HasIndex(e => e.Slug).IsUnique();
@@ -24,5 +27,7 @@ public class ChampionshipConfiguration : IEntityTypeConfiguration<Championship>
         builder.HasMany(e => e.DraftPicks).WithOne().HasForeignKey(e => e.ChampionshipId).OnDelete(DeleteBehavior.Cascade);
         builder.Ignore(e => e.IsPublic);
         builder.Ignore(e => e.IsOver);
+        builder.Ignore(e => e.Gallery);
+        builder.Ignore(e => e.Images);
     }
 }

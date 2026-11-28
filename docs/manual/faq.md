@@ -55,6 +55,9 @@ In [Administration > Administrators](administration.md#administrators), with the
 **How do I run a championship?**
 Turn on **Championships** in [Administration > Modules](administration.md#modules), then create it in **Administration > Championships**: choose the format, add the participants and the teams, and build the first stage. See [Championships > For administrators](championships.md#for-administrators).
 
+**Can players sign up for a championship themselves?**
+Yes, when you turn on **Players can ask to join** in the Settings tab of the championship. While its status is Participants and there are places left, its page has a button for signed in players to ask for a place; each request waits on the Participants tab until you approve or refuse it. See [Asking to join](championships.md#asking-to-join).
+
 **A championship game was played outside our server.**
 On the Games tab of the championship, in **Administration > Championships**, click the button of the game and choose **Type the result**. The game counts in the standings and the bracket, but it has no statistics.
 
