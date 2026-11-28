@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, IChampionshipLogService log) : IChampionshipJoinService
+public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipJoinService
 {
     public bool IsOpen(Championship championship)
     {
@@ -65,6 +65,7 @@ public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, ICham
         request.AnsweredBy = null;
 
         log.Add(championshipId, communityId, "{0} asked to join", communityId);
+        notify.JoinAsked(championship, communityId);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return request;
@@ -79,6 +80,7 @@ public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, ICham
 
         dbContext.ChampionshipJoinRequests.Remove(request);
         log.Add(championshipId, communityId, "{0} cancelled the request to join", communityId);
+        notify.JoinCancelled(await Load(championshipId, cancellationToken), communityId);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -101,6 +103,7 @@ public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, ICham
 
         Answer(request, ChampionshipJoinRequestStatus.Approved, answeredBy);
         log.Add(request.ChampionshipId, answeredBy, "Approved the request of {0} to join", request.CommunityId);
+        notify.JoinAnswered(championship, request.CommunityId, true);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -113,6 +116,7 @@ public class ChampionshipJoinService(HubDbContext dbContext, IClock clock, ICham
 
         Answer(request, ChampionshipJoinRequestStatus.Refused, answeredBy);
         log.Add(request.ChampionshipId, answeredBy, "Refused the request of {0} to join", request.CommunityId);
+        notify.JoinAnswered(await Load(request.ChampionshipId, cancellationToken), request.CommunityId, false);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

@@ -129,7 +129,7 @@ else if (team.RejectionReason != null)
                 <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
                     @if (member.CommunityId == team.ViceCaptainCommunityId)
                     {
-                        <form method="post" asp-antiforgery="true" action="@Model.Url/vice">
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/vice" data-confirm="@L["Remove the vice-captain? The team has no vice-captain until you choose another one."]">
                             <button class="btn btn-xs btn-default" type="submit">
                                 <span class="glyphicon glyphicon-remove"></span> @L["Remove as vice-captain"]
                             </button>

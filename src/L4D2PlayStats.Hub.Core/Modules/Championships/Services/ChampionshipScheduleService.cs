@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log) : IChampionshipScheduleService
+public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipScheduleService
 {
     public async Task<ChampionshipDateProposal> ProposeAsync(int seriesId, DateTime dateUtc, long communityId, CancellationToken cancellationToken = default)
     {
@@ -35,6 +35,7 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
 
         series.Proposals.Add(proposal);
         log.Add(championship.Id, communityId, "{0} proposed a date for {1}", team.Name, ChampionshipSeriesService.Title(championship, stage, series));
+        notify.DateProposed(championship, series, team.Id);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return proposal;
@@ -66,6 +67,7 @@ public class ChampionshipScheduleService(HubDbContext dbContext, IClock clock, I
             series.ScheduledAtUtc = proposal.DateUtc;
 
         log.Add(championship.Id, communityId, accept ? "{0} accepted a date for {1}" : "{0} refused a date for {1}", team.Name, ChampionshipSeriesService.Title(championship, stage, series));
+        notify.DateAnswered(championship, series, proposal, accept);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

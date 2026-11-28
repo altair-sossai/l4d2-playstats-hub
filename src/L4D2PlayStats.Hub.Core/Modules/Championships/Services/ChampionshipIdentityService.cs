@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log) : IChampionshipIdentityService
+public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipIdentityService
 {
     public async Task<List<string>> ProposeAsync(int teamId, long leader, string? name, string? tag, string? flag, CancellationToken cancellationToken = default)
     {
@@ -38,6 +38,7 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
         team.PendingByCommunityId = leader;
         team.RejectionReason = null;
         log.Add(championship.Id, leader, "Sent a new name, tag or flag of the team {0} for approval", team.Name);
+        notify.IdentitySent(championship, team);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return removed;
@@ -114,6 +115,7 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
         team.PendingByCommunityId = null;
         team.RejectionReason = null;
         log.Add(championship.Id, by, "Approved the new name, tag or flag of the team {0}", team.Name);
+        notify.IdentityAnswered(championship, team, true);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return removed;
@@ -129,6 +131,7 @@ public class ChampionshipIdentityService(HubDbContext dbContext, IClock clock, I
         var removed = Clear(team);
         team.RejectionReason = Text.Clip(reason, AppConsts.ChampionshipReasonMaxLength) ?? string.Empty;
         log.Add(championship.Id, by, "Refused the new name, tag or flag of the team {0}", team.Name);
+        notify.IdentityAnswered(championship, team, false);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return removed;

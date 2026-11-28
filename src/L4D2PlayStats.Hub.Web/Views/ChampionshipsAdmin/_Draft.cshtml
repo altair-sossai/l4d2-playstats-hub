@@ -24,7 +24,7 @@
     <div class="admin-toolbar-actions">
         @if (ordered)
         {
-            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/order">
+            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/order" data-confirm="@L["Draw the order of the captains? The draft starts with the team drawn first."]">
                 <button class="btn btn-primary" type="submit" disabled="@(picks.Count > 0)">
                     <span class="glyphicon glyphicon-random"></span> @L["Draw the order of the captains"]
                 </button>
@@ -32,7 +32,7 @@
         }
         @if (method == ChampionshipDraftMethod.Roulette)
         {
-            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/spin">
+            <form method="post" asp-antiforgery="true" action="@Model.Url/draft/spin" data-confirm="@L["Spin the roulette? A player without a team goes to one of the teams with fewest players."]">
                 <button class="btn btn-primary" type="submit" disabled="@(free.TotalItems == 0)">
                     <span class="glyphicon glyphicon-repeat"></span> @L["Spin the roulette"]
                 </button>
@@ -46,7 +46,7 @@
                 </button>
             </form>
         }
-        <form method="post" asp-antiforgery="true" action="@Model.Url/draft/undo">
+        <form method="post" asp-antiforgery="true" action="@Model.Url/draft/undo" data-confirm="@L["Undo the last pick? The player leaves the team and that team picks again."]">
             <button class="btn btn-default" type="submit" disabled="@(picks.Count == 0)">
                 <span class="glyphicon glyphicon-share-alt"></span> @L["Undo the last pick"]
             </button>
@@ -119,7 +119,7 @@
                         @if (ordered)
                         {
                             <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
-                                <form method="post" asp-antiforgery="true" action="@Model.Url/draft/pick">
+                                <form method="post" asp-antiforgery="true" action="@Model.Url/draft/pick" data-confirm="@L["Pick this player for the team on the clock? The next team picks after it."]">
                                     <input type="hidden" name="communityId" value="@player">
                                     <button class="btn btn-xs btn-primary" type="submit" disabled="@(onTheClock == null)">
                                         <span class="glyphicon glyphicon-ok"></span> @L["Pick"]

@@ -9,7 +9,7 @@
 
 <div class="modal fade" id="games-deadline-modal" tabindex="-1" role="dialog" aria-labelledby="games-deadline-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/deadlines">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/deadlines" data-confirm="@L["Save the deadline of this round? Every series of the round shows it."]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -51,7 +51,7 @@
 
 <div class="modal fade" id="games-campaigns-modal" tabindex="-1" role="dialog" aria-labelledby="games-campaigns-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/campaigns">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/campaigns" data-confirm="@L["Change the campaigns of this stage? Only the games not played yet change."]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -95,7 +95,7 @@
     <div class="modal fade" id="series-edit-modal-@series.Id" tabindex="-1" role="dialog" aria-labelledby="series-edit-title-@series.Id">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id" id="series-form-@series.Id">
+                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id" id="series-form-@series.Id" data-confirm="@L["Save the changes to this series? A walkover finishes the series and cancels the games not played."]">
                     <input type="hidden" name="returnUrl" value="@returnUrl">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
@@ -179,7 +179,7 @@
                 </form>
                 @foreach (var proposal in series.Proposals)
                 {
-                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/delete" id="proposal-delete-@proposal.Id">
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/delete" id="proposal-delete-@proposal.Id" data-confirm="@L["Delete this date proposal of the teams?"]">
                         <input type="hidden" name="returnUrl" value="@returnUrl">
                     </form>
                 }
@@ -190,7 +190,7 @@
 
 <div class="modal fade" id="game-edit-modal" tabindex="-1" role="dialog" aria-labelledby="game-edit-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" id="game-form" method="post" asp-antiforgery="true" action="">
+        <form class="modal-content" id="game-form" method="post" asp-antiforgery="true" action="" data-confirm="@L["Save this game? The standings, the bracket and the next series are calculated again."]">
             <input type="hidden" name="returnUrl" value="@returnUrl">
             <input type="hidden" id="game-original-campaign" name="originalCampaignId" value="">
             <div class="modal-header">

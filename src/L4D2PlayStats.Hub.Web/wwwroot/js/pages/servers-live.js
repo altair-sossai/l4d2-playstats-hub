@@ -266,10 +266,10 @@ terminal.apply = function (command) {
     $('#message').val(command);
     $('button[type="submit"]').prop('disabled', false);
 
-    if (!confirm(serversLiveConfig.texts["Are you sure you want to execute the following command?"] + '\n\n' + command))
-        return false;
-
-    $("#chatForm").submit();
+    Hub.confirm(serversLiveConfig.texts["Are you sure you want to execute the following command?"] + '\n\n' + command).done(function (accepted) {
+        if (accepted)
+            $("#chatForm").submit();
+    });
 
     return true;
 };

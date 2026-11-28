@@ -34,6 +34,7 @@ Pages for players and pages for administrators are marked in the list below. The
 | [Community ranking](community-ranking.md) | Everyone | Voting on pairs of players, the rating, the vote limits and their settings. |
 | [Anti-Cheat](anti-cheat.md) | Everyone | The page that offers the Anti-Cheat download, who must use the Anti-Cheat on the game servers, and its settings. |
 | [Championships](championships.md) | Everyone | Championships with round robin and knockout stages: teams, draft, brackets, dates proposed by the captains, results and statistics. |
+| [Notifications](notifications.md) | Everyone | The bell in the top bar, the notifications page, and who is told about each event. |
 | [Pages inside the game](in-game-pages.md) | Everyone | The light pages that `!ranking`, `!comandos` and `!commands` can open inside Left 4 Dead 2. |
 | [Game server commands](commands.md) | Everyone | The Commands page: every command of the game server with examples, and the catalogs its text comes from. |
 | [Languages, themes and phones](languages-and-themes.md) | Everyone | The three languages, the dark and light themes, and the layout on a phone. |

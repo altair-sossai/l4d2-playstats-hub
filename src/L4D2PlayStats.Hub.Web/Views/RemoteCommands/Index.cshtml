@@ -43,7 +43,7 @@
         }
         else
         {
-            <form method="post" asp-antiforgery="true" action="/admin/remote-commands">
+            <form method="post" asp-antiforgery="true" action="/admin/remote-commands" data-confirm="@L["Send this command to the server now?"]">
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">

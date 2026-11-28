@@ -115,7 +115,7 @@
                     else
                     {
                         <p class="championship-join-state">@L["The registrations are open. Ask for a place: the administration approves each request, and an approved player becomes a participant."]</p>
-                        <form method="post" asp-antiforgery="true" action="@url/join" class="championship-join-form">
+                        <form method="post" asp-antiforgery="true" action="@url/join" class="championship-join-form" data-confirm="@L["Ask for a place in this championship? The administration receives your request and approves or refuses it."]">
                             <div class="form-group">
                                 <label for="join-message">@L["Message to the administration"] <small class="text-muted">@L["optional"]</small></label>
                                 <textarea class="form-control" id="join-message" name="message" rows="2" maxlength="@L4D2PlayStats.Hub.Core.AppConsts.ChampionshipJoinMessageMaxLength" placeholder="@L["Such as your experience, your team or when you can play."]"></textarea>

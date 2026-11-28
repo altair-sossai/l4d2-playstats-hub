@@ -11,7 +11,7 @@
 
 <p class="admin-lead">@L["The information shown on the page of the championship, how the teams are formed and its status. A draft is seen only by the administrators; building the first stage puts the championship in progress."]</p>
 
-<form method="post" asp-antiforgery="true" action="@Model.Url" enctype="multipart/form-data">
+<form method="post" asp-antiforgery="true" action="@Model.Url" enctype="multipart/form-data" data-confirm="@L["Save the settings of the championship? The public pages change at once."]">
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">

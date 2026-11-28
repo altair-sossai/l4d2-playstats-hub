@@ -8,7 +8,7 @@
 
 <div class="modal fade" id="stage-add-modal" tabindex="-1" role="dialog" aria-labelledby="stage-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages" data-confirm="@L["Add this stage at the end of the championship?"]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -53,7 +53,7 @@
 
     <div class="modal fade" id="stage-edit-modal-@stage.Id" tabindex="-1" role="dialog" aria-labelledby="stage-edit-title-@stage.Id">
         <div class="modal-dialog modal-lg" role="document">
-            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id">
+            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id" data-confirm="@L["Save the changes to this stage?"]">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                         <span aria-hidden="true">&times;</span>
@@ -220,7 +220,7 @@
     {
         <div class="modal fade" id="stage-build-modal-@stage.Id" tabindex="-1" role="dialog" aria-labelledby="stage-build-title-@stage.Id">
             <div class="modal-dialog" role="document">
-                <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/generate">
+                <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/generate" data-confirm="@L["Build this stage? Its groups and series are created and the championship is put in progress."]">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                             <span aria-hidden="true">&times;</span>
@@ -286,7 +286,7 @@
                                         <td class="text-center vertical-align-middle">-@penalty.Points</td>
                                         <td class="vertical-align-middle"><small class="text-muted">@penalty.Reason</small></td>
                                         <td class="text-right vertical-align-middle slim">
-                                            <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/unpenalize">
+                                            <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/unpenalize" data-confirm="@L["Remove this penalty? The points come back to the team in the standings."]">
                                                 <input type="hidden" name="penaltyId" value="@penalty.Id">
                                                 <button class="btn btn-xs btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span> @L["Remove"]</button>
                                             </form>
@@ -296,7 +296,7 @@
                                 </tbody>
                             </table>
                         }
-                        <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/penalty" class="championship-penalty-add">
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/stages/@stage.Id/penalty" class="championship-penalty-add" data-confirm="@L["Take these points off the team in the standings?"]">
                             <div class="row">
                                 <div class="col-sm-5 form-group">
                                     <label for="penalty-team-@stage.Id">@L["Team"]</label>

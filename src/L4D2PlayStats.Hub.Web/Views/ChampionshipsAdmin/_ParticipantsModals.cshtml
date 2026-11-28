@@ -5,7 +5,7 @@
 
 <div class="modal fade" id="participants-add-modal" tabindex="-1" role="dialog" aria-labelledby="participants-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/participants">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/participants" data-confirm="@L["Add these players as participants of the championship?"]">
             <input type="hidden" name="returnUrl" value="@returnUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
@@ -34,7 +34,7 @@
 
 <div class="modal fade" id="participant-pot-modal" tabindex="-1" role="dialog" aria-labelledby="participant-pot-title">
     <div class="modal-dialog modal-sm" role="document">
-        <form class="modal-content" id="participant-pot-form" method="post" asp-antiforgery="true" action="">
+        <form class="modal-content" id="participant-pot-form" method="post" asp-antiforgery="true" action="" data-confirm="@L["Save the pot of this participant? It is used when the teams are formed by pots."]">
             <input type="hidden" name="returnUrl" value="@returnUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">

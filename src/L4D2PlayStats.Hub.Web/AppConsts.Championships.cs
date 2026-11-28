@@ -2,8 +2,8 @@ namespace L4D2PlayStats.Hub.Web;
 
 public static partial class AppConsts
 {
-    public const string ChampionshipsUrl = "/championships";
-    public const string AdminChampionshipsUrl = "/admin/championships";
+    public const string ChampionshipsUrl = Core.AppConsts.ChampionshipsPath;
+    public const string AdminChampionshipsUrl = Core.AppConsts.AdminChampionshipsPath;
     public const string ChampionshipLocalDateFormat = "yyyy-MM-ddTHH:mm";
     public static readonly string[] ChampionshipLocalDateFormats = [ChampionshipLocalDateFormat, "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:ss.fff"];
     public const string ChampionshipDateOnlyFormat = "yyyy-MM-dd";

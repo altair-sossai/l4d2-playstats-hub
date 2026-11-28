@@ -42,7 +42,6 @@ async function post(browser, form, values = {}, label = form) {
             const field = Array.from(fields).find(item => item.type !== 'hidden') || fields[0];
             if (field.type === 'checkbox') field.checked = !!value; else field.value = value;
         }
-        form.removeAttribute('data-confirm');
         return true;
     })()`);
 
@@ -1068,6 +1067,80 @@ function championshipChecks(context) {
                 await browser.open('/championships');
                 await shot(browser, context, 'championships-list-light');
                 await browser.theme('default');
+            }
+        },
+        {
+            name: 'notifications',
+            timeout: 300000,
+            run: async browser => {
+                const player = players[6];
+                const name = fixtures.players[6].name;
+                const unread = () => browser.eval(`(() => { const badge = document.querySelector('.nav-notifications-badge'); return badge ? Number(badge.innerText) : 0; })()`);
+                const texts = () => browser.eval(`Array.from(document.querySelectorAll('.nav-notifications-text')).map(item => item.innerText.trim())`);
+
+                await as(browser, player);
+                await browser.open('/notifications');
+                await ok(browser, 'The notifications page');
+
+                const before = await unread();
+
+                await as(browser, admin);
+
+                const url = await create(browser, 'Copa Avisos E2E', 'Knockout');
+
+                await settings(browser, url, { Slug: 'copa-avisos-e2e', PlayersPerGame: 2, RosterSize: 2, MaxParticipants: 8, JoinRequests: true, status: 'Participants' });
+
+                await as(browser, player);
+                await browser.open('/players');
+                expect(await unread() === before + 1, `The bell does not count the new championship: ${await unread()} after ${before}`);
+                expect((await texts())[0] === 'There is a new championship you can join: Copa Avisos E2E.', `The newest notification is not the new championship: ${(await texts())[0]}`);
+                await browser.click('.nav-notifications > a', { settle: 300 });
+                expect(await browser.eval(`document.querySelector('.nav-notifications').classList.contains('open')`), 'The bell does not open its list');
+                await shot(browser, context, 'notifications-bell');
+                await browser.click('.nav-notifications-menu li.unread a', { navigates: true });
+                expect(await browser.eval('location.pathname') === '/championships/copa-avisos-e2e', `Opening the notification went to ${await browser.eval('location.pathname')}`);
+                expect(await unread() === before, 'Opening a notification does not mark it as read');
+                await post(browser, 'form[action="/championships/copa-avisos-e2e/join"]', { message: 'Ready to play.' }, 'Asking to join');
+                await post(browser, 'form[action="/championships/copa-avisos-e2e/join/cancel"]', {}, 'Cancelling the request');
+                await post(browser, 'form[action="/championships/copa-avisos-e2e/join"]', {}, 'Asking to join again');
+
+                await as(browser, admin);
+                await browser.open('/notifications');
+                await ok(browser, 'The notifications of the administrator');
+
+                const adminTexts = await browser.eval(`Array.from(document.querySelectorAll('.notifications-table tbody td:first-child')).map(cell => cell.innerText.trim())`);
+
+                expect(adminTexts.some(text => text.includes(`${name} asked for a place in Copa Avisos E2E.`)), `The administrator is not told about the request: ${adminTexts.slice(0, 4).join(' | ')}`);
+                expect(adminTexts.some(text => text.includes(`${name} cancelled the request to join Copa Avisos E2E.`)), 'The administrator is not told about the cancelled request');
+                await shot(browser, context, 'notifications-admin');
+                await browser.click('.notifications-table tbody tr.notifications-unread a[href^="/notifications/"]', { navigates: true });
+                expect(await browser.eval('location.pathname + location.search') === `${url}?tab=participants`, `The request notification went to ${await browser.eval('location.pathname + location.search')}`);
+
+                const approve = await browser.eval(`document.querySelector('.championship-requests form[action$="/approve"]').getAttribute('action')`);
+
+                await post(browser, `form[action="${approve}"]`, {}, 'Approving the request');
+
+                await as(browser, player);
+                await browser.open('/players');
+                expect((await texts()).includes('Your request to join Copa Avisos E2E was approved: you are a participant now.'), 'The player is not told that the request was approved');
+                expect(await unread() > 0, 'The approval is not counted as unread');
+                await browser.click('.nav-notifications > a', { settle: 300 });
+                await browser.click('.nav-notifications-actions button[type=submit]', { navigates: true });
+                expect(await browser.eval('location.pathname') === '/players', 'Marking everything as read does not come back to the page');
+                expect(await unread() === 0, 'Marking everything as read leaves unread notifications');
+
+                await browser.open('/language?culture=pt-BR&returnUrl=/notifications');
+                await ok(browser, 'The notifications page in Portuguese');
+                expect(await browser.eval(`document.body.innerText.includes('Seu pedido para participar de Copa Avisos E2E foi aprovado')`), 'The notifications are not translated to Portuguese');
+                await shot(browser, context, 'notifications-page-pt-BR');
+                await browser.page.viewport(phone, 844);
+                await browser.open('/notifications');
+
+                const sizes = await browser.eval(`({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth })`);
+
+                expect(sizes.scroll <= sizes.client + 1, `The notifications page scrolls sideways on a phone: ${sizes.scroll}px for ${sizes.client}px`);
+                await shot(browser, context, 'notifications-page-phone');
+                await browser.open('/language?culture=en-US&returnUrl=/');
             }
         }
     ];

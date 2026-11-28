@@ -15,7 +15,8 @@ public class ChampionshipStageService(
     IChampionshipLoadService loader,
     IChampionshipProgressService progress,
     IChampionshipRandomService random,
-    IChampionshipLogService log) : IChampionshipStageService
+    IChampionshipLogService log,
+    IChampionshipNotificationService notify) : IChampionshipStageService
 {
     public async Task<ChampionshipStage> AddAsync(int championshipId, string name, ChampionshipStageType type, long? by, CancellationToken cancellationToken = default)
     {
@@ -130,11 +131,15 @@ public class ChampionshipStageService(
 
         stage.Generated = true;
 
+        var previousStatus = championship.Status;
+
         if (championship.Status < ChampionshipStatus.Running)
             championship.Status = ChampionshipStatus.Running;
 
         championship.UpdatedAtUtc = clock.UtcNow;
         log.Add(championship.Id, by, "Built the stage {0} with {1} teams", stage.Name, teams.Count);
+        notify.StatusChanged(championship, previousStatus);
+        notify.StageBuilt(championship, stage);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

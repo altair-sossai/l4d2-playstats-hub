@@ -8,7 +8,7 @@
 
 <div class="modal fade" id="captain-identity-modal" tabindex="-1" role="dialog" aria-labelledby="captain-identity-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/identity" enctype="multipart/form-data">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/identity" enctype="multipart/form-data" data-confirm="@L["Send this name, tag and flag to the administration? They only appear to the other players after they are approved."]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -92,8 +92,8 @@
                                         else if (!mineProposal)
                                         {
                                             <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals/@proposal.Id/answer">
-                                                <button type="submit" name="accept" value="true" class="btn btn-success btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Accepted)">@L["Accept"]</button>
-                                                <button type="submit" name="accept" value="false" class="btn btn-default btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Refused)">@L["Refuse"]</button>
+                                                <button type="submit" name="accept" value="true" class="btn btn-success btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Accepted)" data-confirm="@L["Accept this date? When both teams accept the same date, the series is scheduled for it."]">@L["Accept"]</button>
+                                                <button type="submit" name="accept" value="false" class="btn btn-default btn-xs" disabled="@(myAnswer == ChampionshipAnswer.Refused)" data-confirm="@L["Refuse this date? The other team needs to propose another one."]">@L["Refuse"]</button>
                                             </form>
                                         }
                                         else
@@ -108,7 +108,7 @@
                             </tbody>
                         </table>
                     }
-                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals" class="championship-propose">
+                    <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/proposals" class="championship-propose" data-confirm="@L["Propose this date to the other team? Your team already accepts it, and the series is scheduled when the other team accepts it too."]">
                         <label for="captain-date-@series.Id">@L["Propose a date"]</label>
                         <div class="input-group">
                             <input type="datetime-local" class="form-control" id="captain-date-@series.Id" name="date" required data-utc-offset="@((int)view.TimeZone.GetUtcOffset(DateTime.UtcNow).TotalMinutes)">
@@ -175,7 +175,7 @@
                             <p class="text-muted">@L["Your team chooses the campaign of the games of its turn. The decider is drawn only when it is needed."]</p>
                             @foreach (var game in series.Games.Where(game => game.Status == ChampionshipGameStatus.Pending && GamePlan.PickedByTeamA(game, series.BestOf) == teamA).OrderBy(game => game.Number))
                             {
-                                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/games/@game.Id/pick" class="form-group">
+                                <form method="post" asp-antiforgery="true" action="@Model.Url/series/@series.Id/games/@game.Id/pick" class="form-group" data-confirm="@L["Choose this campaign for the game? Both teams see it on the page of the series."]">
                                     <label for="captain-pick-@game.Id">@L["Campaign of game {0}", game.Number]</label>
                                     <div class="input-group">
                                         <select class="form-control" id="captain-pick-@game.Id" name="campaignId">

@@ -76,7 +76,7 @@
                             }
                         </td>
                         <td class="text-center vertical-align-middle slim admin-actions admin-row-actions">
-                            <form method="post" asp-antiforgery="true" action="@Model.Url/requests/@request.Id/approve">
+                            <form method="post" asp-antiforgery="true" action="@Model.Url/requests/@request.Id/approve" data-confirm="@L["Approve this request? The player becomes a participant of the championship."]">
                                 <input type="hidden" name="returnUrl" value="@returnUrl">
                                 <button class="btn btn-xs btn-success" type="submit">
                                     <span class="glyphicon glyphicon-ok"></span> @L["Approve"]

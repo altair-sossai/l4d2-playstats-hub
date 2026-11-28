@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipCaptainService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log) : IChampionshipCaptainService
+public class ChampionshipCaptainService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipCaptainService
 {
     public async Task<List<ChampionshipCaptainTeam>> TeamsAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -50,6 +50,9 @@ public class ChampionshipCaptainService(HubDbContext dbContext, IClock clock, IC
 
         team.ViceCaptainCommunityId = viceCaptain;
         log.Add(championship.Id, captain, "The captain chose the vice-captain of the team {0}", team.Name);
+
+        if (viceCaptain != null)
+            notify.LeaderChosen(championship, team, viceCaptain.Value, false);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

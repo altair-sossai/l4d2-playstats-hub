@@ -47,6 +47,12 @@ The community ranking asks for a minimum number of matches, counted over all sea
 **The live server page is behind the game.**
 It is about 15 seconds behind, on purpose. An administrator changes the delay in **Administration > Game servers > Live server page**.
 
+**I do not see the bell of the notifications.**
+The bell appears only after you sign in. See [Notifications](notifications.md).
+
+**The number on the bell does not go away.**
+It counts the notifications you did not open yet. Open them, or use **Mark all as read** at the bottom of the bell. Notifications older than 90 days are deleted.
+
 ## For administrators
 
 **How do I add another administrator?**

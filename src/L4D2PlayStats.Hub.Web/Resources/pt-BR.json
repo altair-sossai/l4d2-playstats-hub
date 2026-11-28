@@ -1509,5 +1509,21 @@
   "Already blocked": "Já bloqueado",
   "Has a forced name": "Já tem nome forçado",
   "Already on the list": "Já está na lista",
-  "Related accounts included: {0}.": "Contas relacionadas incluídas: {0}."
+  "Related accounts included: {0}.": "Contas relacionadas incluídas: {0}.",
+  "Confirm": "Confirmar",
+  "Yes, continue": "Sim, continuar",
+  "Notifications": "Notificações",
+  "Notification": "Notificação",
+  "No notification yet.": "Nenhuma notificação ainda.",
+  "See all": "Ver todas",
+  "Mark all as read": "Marcar todas como lidas",
+  "Mark every notification as read? The counter next to the bell goes back to zero.": "Marcar todas as notificações como lidas? O contador ao lado do sino volta para zero.",
+  "What happened on the site for you: your championships, your team, the administration and the community. A click opens the page of the notification and marks it as read.": "O que aconteceu no site para você: seus campeonatos, sua equipe, a administração e a comunidade. Um clique abre a página da notificação e a marca como lida.",
+  "New": "Nova",
+  "Open": "Abrir",
+  "You are an administrator of the site now.": "Agora você é administrador do site.",
+  "You can vote in the community ranking again.": "Você pode votar no ranking da comunidade de novo.",
+  "You were banned from the chat of the site.": "Você foi banido do chat do site.",
+  "You can use the chat of the site again.": "Você pode usar o chat do site de novo.",
+  "A new season started: the ranking starts again from zero.": "Uma nova temporada começou: o ranking recomeça do zero."
 }

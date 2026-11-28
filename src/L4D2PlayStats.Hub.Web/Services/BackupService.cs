@@ -1,12 +1,16 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using L4D2PlayStats.Hub.Core.Data;
 using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups;
 using L4D2PlayStats.Hub.Web.Infrastructure.Backups.Contracts;
@@ -23,6 +27,8 @@ public class BackupService(
     IBackupVerificationService verificationService,
     IBackupStorageFactory storageFactory,
     BackupLock backupLock,
+    INotificationService notifications,
+    HubDbContext dbContext,
     IClock clock,
     ILogger<BackupService> logger) : IBackupService
 {
@@ -47,6 +53,7 @@ public class BackupService(
             var run = await ExecuteAsync(settings, trigger, cancellationToken);
 
             await historyService.AddAsync(run, cancellationToken);
+            await NotifyAsync(run, cancellationToken);
 
             return run;
         }
@@ -108,6 +115,21 @@ public class BackupService(
 
             return new BackupCheck(false, error);
         }
+    }
+
+    private async Task NotifyAsync(BackupRun run, CancellationToken cancellationToken)
+    {
+        if (run.Trigger != BackupTrigger.Schedule)
+            return;
+
+        if (!run.Succeeded)
+            notifications.SendAdministrators(new NotificationMessage(NotificationTopic.Backups, "The automatic backup failed. Open the backup page to see why.", AppConsts.AdminBackupUrl));
+        else if (run.Verification?.Status == BackupVerificationStatus.Failed)
+            notifications.SendAdministrators(new NotificationMessage(NotificationTopic.Backups, "The automatic backup was uploaded, but its check failed. Open the backup page to see why.", AppConsts.AdminBackupUrl));
+        else
+            return;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task<BackupRun> ExecuteAsync(BackupSettings settings, BackupTrigger trigger, CancellationToken cancellationToken)

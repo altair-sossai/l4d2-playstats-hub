@@ -1327,6 +1327,66 @@ namespace L4D2PlayStats.Hub.Migrations.SqlServer.Migrations
                     b.ToTable("MatchPlayers");
                 });
 
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Notifications.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Audience")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("Topic")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Values")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("Audience", "CommunityId", "CreatedAtUtc");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Notifications.NotificationRead", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ReadAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("NotificationId", "CommunityId");
+
+                    b.HasIndex("CommunityId");
+
+                    b.ToTable("NotificationReads");
+                });
+
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Players.PlayerProfile", b =>
                 {
                     b.Property<long>("CommunityId")
@@ -1999,6 +2059,15 @@ namespace L4D2PlayStats.Hub.Migrations.SqlServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Match");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Notifications.NotificationRead", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Notifications.Notification", null)
+                        .WithMany()
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Punishments.Punishment", b =>

@@ -16,7 +16,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <form method="post" asp-antiforgery="true" action="/admin/modules">
+        <form method="post" asp-antiforgery="true" action="/admin/modules" data-confirm="@L["Save the modules? A module turned off hides its pages and menu items, and its data is kept."]">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <partial name="_ModuleSwitches" model="Model"/>

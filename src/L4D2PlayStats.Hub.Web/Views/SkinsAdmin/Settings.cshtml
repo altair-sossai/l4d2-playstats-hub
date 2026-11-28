@@ -13,7 +13,7 @@
     <h3>@L["Shop settings"]</h3>
 </div>
 
-<form method="post" asp-antiforgery="true" action="@AppConsts.SkinSettingsUrl">
+<form method="post" asp-antiforgery="true" action="@AppConsts.SkinSettingsUrl" data-confirm="@L["Save the settings of the skins?"]">
     <div class="panel panel-default">
         <div class="panel-heading">
             <strong>@L["Seasons"]</strong>

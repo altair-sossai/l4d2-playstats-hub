@@ -51,5 +51,11 @@
   "The container address was not changed: it must start with https://, name the container and carry a SAS token (sig=...).": "O endereço do contêiner não foi alterado: ele precisa começar com https://, ter o nome do contêiner e trazer um token SAS (sig=...).",
   "The connection string was not changed: copy it as the Azure portal shows it, under Access keys of the storage account.": "A string de conexão não foi alterada: copie-a como o portal do Azure mostra, em Chaves de acesso da conta de armazenamento.",
   "The container name was not changed: use 3 to 63 lowercase letters, digits and single hyphens.": "O nome do contêiner não foi alterado: use de 3 a 63 letras minúsculas, dígitos e hifens simples.",
-  "The file name prefix was not changed: use up to 60 letters, digits, dots, hyphens and underscores, starting with a letter or a digit.": "O prefixo do nome do arquivo não foi alterado: use até 60 letras, dígitos, pontos, hifens e sublinhados, começando com uma letra ou um dígito."
+  "The file name prefix was not changed: use up to 60 letters, digits, dots, hyphens and underscores, starting with a letter or a digit.": "O prefixo do nome do arquivo não foi alterado: use até 60 letras, dígitos, pontos, hifens e sublinhados, começando com uma letra ou um dígito.",
+  "Back up the database now? It can take a few seconds.": "Fazer o backup do banco de dados agora? Pode levar alguns segundos.",
+  "Save the settings of the backups?": "Salvar as configurações dos backups?",
+  "Test the connection to the destination of the backups now?": "Testar agora a conexão com o destino dos backups?",
+  "Verify the latest backup now?": "Verificar o último backup agora?",
+  "The automatic backup failed. Open the backup page to see why.": "O backup automático falhou. Abra a página de backup para ver o motivo.",
+  "The automatic backup was uploaded, but its check failed. Open the backup page to see why.": "O backup automático foi enviado, mas a verificação dele falhou. Abra a página de backup para ver o motivo."
 }

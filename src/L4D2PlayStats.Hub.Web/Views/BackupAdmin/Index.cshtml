@@ -124,17 +124,17 @@ else
                         </dd>
                     </dl>
 
-                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupRunUrl" style="display: inline-block">
+                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupRunUrl" style="display: inline-block" data-confirm="@L["Back up the database now? It can take a few seconds."]">
                         <button class="btn btn-success" type="submit" disabled="@(!Model.IsConfigured || Model.IsRunning)">
                             <span class="glyphicon glyphicon-floppy-disk"></span> @L["Back up now"]
                         </button>
                     </form>
-                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupTestUrl" style="display: inline-block">
+                    <form class="backup-action" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupTestUrl" style="display: inline-block" data-confirm="@L["Test the connection to the destination of the backups now?"]">
                         <button class="btn btn-default" type="submit" disabled="@(!Model.IsConfigured)">
                             <span class="glyphicon glyphicon-transfer"></span> @L["Test connection"]
                         </button>
                     </form>
-                    <form class="backup-action backup-verify" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupVerifyUrl" style="display: inline-block">
+                    <form class="backup-action backup-verify" method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupVerifyUrl" style="display: inline-block" data-confirm="@L["Verify the latest backup now?"]">
                         <button class="btn btn-default" type="submit" disabled="@(!Model.CanVerify)">
                             <span class="glyphicon glyphicon-check"></span> @L["Verify now"]
                         </button>
@@ -229,7 +229,7 @@ else
     <div role="tabpanel" class="@AdminTabs.Pane(tabs, AppConsts.BackupStorageTab)" id="@AdminTabs.PaneId(AppConsts.BackupStorageTab)">
         <div class="row">
             <div class="col-lg-8">
-                <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl">
+                <form method="post" asp-antiforgery="true" action="@AppConsts.AdminBackupUrl" data-confirm="@L["Save the settings of the backups?"]">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="checkbox">

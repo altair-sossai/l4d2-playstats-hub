@@ -6,6 +6,9 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Extensions;
 using L4D2PlayStats.Hub.Core.Modules.Community.Models;
 using L4D2PlayStats.Hub.Core.Modules.Community.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Community.Services;
@@ -15,7 +18,8 @@ public class CommunityModerationService(
     HubState hubState,
     IClock clock,
     ICommunityPlayerService playerService,
-    ICommunityRatingService ratingService) : ICommunityModerationService
+    ICommunityRatingService ratingService,
+    INotificationService notifications) : ICommunityModerationService
 {
     public Task<bool> IsBlockedAsync(long voterId, CancellationToken cancellationToken = default)
     {
@@ -48,6 +52,7 @@ public class CommunityModerationService(
                 dbContext.Remove(offer);
 
             dbContext.Add(new CommunityVoterBlock { CommunityId = voterId, BlockedAtUtc = clock.UtcNow, BlockedBy = blockedBy });
+            notifications.Send(voterId, new NotificationMessage(NotificationTopic.Community, "You can no longer vote in the community ranking.", AppConsts.CommunityPath));
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -59,7 +64,13 @@ public class CommunityModerationService(
     {
         await using (await hubState.LockAsync(cancellationToken))
         {
-            return await dbContext.Set<CommunityVoterBlock>().Where(b => b.CommunityId == voterId).ExecuteDeleteAsync(cancellationToken) > 0;
+            if (await dbContext.Set<CommunityVoterBlock>().Where(b => b.CommunityId == voterId).ExecuteDeleteAsync(cancellationToken) == 0)
+                return false;
+
+            notifications.Send(voterId, new NotificationMessage(NotificationTopic.Community, "You can vote in the community ranking again.", AppConsts.CommunityPath));
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return true;
         }
     }
 

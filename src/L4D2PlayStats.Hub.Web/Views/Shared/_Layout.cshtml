@@ -234,6 +234,8 @@
                         </li>
                     }
 
+                    @await Html.PartialAsync("_NotificationBell")
+
                     if (championships)
                     {
                         @await Html.PartialAsync("_CaptainAlert")
@@ -381,6 +383,8 @@
         gtag('config', @Json.Serialize(site.GoogleAnalyticsId));
     </script>
 }
+
+@await Html.PartialAsync("_ConfirmModal")
 
 <div class="modal fade" id="field-help-modal" tabindex="-1" role="dialog" data-more="@L["Click the icon for more details."]">
     <div class="modal-dialog" role="document">

@@ -102,7 +102,7 @@ else
 
 <div class="modal fade" id="fn-edit-modal" tabindex="-1" role="dialog" aria-labelledby="fn-edit-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.ForcedNamesUrl/save" data-related-accounts="@AppConsts.RelatedForcedNamesList" data-related-accounts-player="#fn-player">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.ForcedNamesUrl/save" data-related-accounts="@AppConsts.RelatedForcedNamesList" data-related-accounts-player="#fn-player" data-confirm="@L["Save this forced name? The player is shown with it on the servers and on the site."]">
             <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
@@ -140,7 +140,7 @@ else
 
 <div class="modal fade" id="fn-import-modal" tabindex="-1" role="dialog" aria-labelledby="fn-import-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.ForcedNamesUrl/import">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@AppConsts.ForcedNamesUrl/import" data-confirm="@L["Import the names of this file into the list of forced names?"]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>

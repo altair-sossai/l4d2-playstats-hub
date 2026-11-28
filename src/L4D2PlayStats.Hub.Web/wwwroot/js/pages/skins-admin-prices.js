@@ -73,8 +73,7 @@ $(function () {
     });
 
     $('.ska-reset').on('click', function () {
-        if (confirm(skinsAdminPricesConfig.texts["Go back to the catalog price for this skin?"]))
-            save(null);
+        save(null);
     });
 
     $('#ska-price-modal').on('shown.bs.modal', function () {

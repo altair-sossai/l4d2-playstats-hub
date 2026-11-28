@@ -47,6 +47,12 @@ O ranking da comunidade pede um número mínimo de partidas, contadas em todas a
 **A página do servidor ao vivo está atrasada em relação ao jogo.**
 Ela fica cerca de 15 segundos atrás, de propósito. Um administrador muda o atraso em **Administração > Servidores de jogo > Página do servidor ao vivo**.
 
+**Não vejo o sino das notificações.**
+O sino aparece só depois que você entra. Veja [Notificações](notifications.pt.md).
+
+**O número do sino não some.**
+Ele conta as notificações que você ainda não abriu. Abra-as ou use **Marcar todas como lidas** no fim do sino. Notificações com mais de 90 dias são apagadas.
+
 ## Para administradores
 
 **Como eu adiciono outro administrador?**

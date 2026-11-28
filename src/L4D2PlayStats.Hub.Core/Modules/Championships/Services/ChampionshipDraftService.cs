@@ -7,7 +7,7 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipRandomService random, IChampionshipLogService log) : IChampionshipDraftService
+public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipRandomService random, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipDraftService
 {
     public async Task DrawOrderAsync(int championshipId, long? by, CancellationToken cancellationToken = default)
     {
@@ -31,6 +31,7 @@ public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, ICha
             order[index].DraftPosition = index + 1;
 
         log.Add(championshipId, by, "Drew the order of the draft");
+        notify.DraftOrdered(championship);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -65,6 +66,7 @@ public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, ICha
         var pick = Record(championship, team, communityId);
 
         log.Add(championshipId, by, "Draft pick {0}: {1} chose {2}", pick.Number, team.Name, communityId);
+        notify.Picked(championship, team, communityId);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return pick;
@@ -90,6 +92,7 @@ public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, ICha
         var pick = Record(championship, team, player);
 
         log.Add(championshipId, by, "Draft pick {0}: {1} chose {2}", pick.Number, team.Name, player);
+        notify.MemberAdded(championship, team, player);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return pick;
@@ -122,6 +125,7 @@ public class ChampionshipDraftService(HubDbContext dbContext, IClock clock, ICha
             for (var index = 0; index < Math.Min(players.Count, teams.Count); index++)
             {
                 Record(championship, teams[index], players[index]);
+                notify.MemberAdded(championship, teams[index], players[index]);
 
                 if (pot.Key == first && teams[index].CaptainCommunityId == null)
                     teams[index].CaptainCommunityId = players[index];

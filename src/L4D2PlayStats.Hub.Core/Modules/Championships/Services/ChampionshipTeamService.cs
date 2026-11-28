@@ -6,7 +6,7 @@ using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log) : IChampionshipTeamService
+public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, IChampionshipLoadService loader, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipTeamService
 {
     public async Task<int> AddParticipantsAsync(int championshipId, IReadOnlyCollection<long> communityIds, long? addedBy, CancellationToken cancellationToken = default)
     {
@@ -24,6 +24,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
             championship.Participants.Add(new ChampionshipParticipant { CommunityId = communityId, AddedAtUtc = clock.UtcNow });
             existing.Add(communityId);
+            notify.ParticipantAdded(championship, communityId);
             added++;
         }
 
@@ -51,6 +52,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
         championship.Participants.Remove(participant);
         log.Add(championshipId, removedBy, "Removed the participant {0}", communityId);
+        notify.ParticipantRemoved(championship, communityId);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -133,6 +135,7 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
 
         AddMember(championship, team, communityId, clock.UtcNow);
         log.Add(championship.Id, addedBy, "Added {0} to the team {1}", communityId, team.Name);
+        notify.MemberAdded(championship, team, communityId);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -160,9 +163,17 @@ public class ChampionshipTeamService(HubDbContext dbContext, IClock clock, ICham
             if (team.Members.All(member => member.CommunityId != leader))
                 AddMember(championship, team, leader, clock.UtcNow);
 
+        var (previousCaptain, previousVice) = (team.CaptainCommunityId, team.ViceCaptainCommunityId);
+
         team.CaptainCommunityId = captain;
         team.ViceCaptainCommunityId = viceCaptain;
         log.Add(championship.Id, updatedBy, "Saved the leaders of the team {0}", team.Name);
+
+        if (captain != null && captain != previousCaptain)
+            notify.LeaderChosen(championship, team, captain.Value, true);
+
+        if (viceCaptain != null && viceCaptain != previousVice)
+            notify.LeaderChosen(championship, team, viceCaptain.Value, false);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

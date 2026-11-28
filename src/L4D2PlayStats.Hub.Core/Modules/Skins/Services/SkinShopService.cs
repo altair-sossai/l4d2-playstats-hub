@@ -5,6 +5,9 @@ using L4D2PlayStats.Hub.Core.Infrastructure.Contracts;
 using L4D2PlayStats.Hub.Core.Infrastructure.Extensions;
 using L4D2PlayStats.Hub.Core.Infrastructure.Helpers;
 using L4D2PlayStats.Hub.Core.Infrastructure.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Models;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Skins.Enums;
@@ -21,7 +24,8 @@ public class SkinShopService(
     IClock clock,
     ISkinStarsService skinStarsService,
     ISkinService skinService,
-    ILogger<SkinShopService> logger) : ISkinShopService
+    ILogger<SkinShopService> logger,
+    INotificationService notifications) : ISkinShopService
 {
     public async Task<SkinWallet> GetWalletAsync(long communityId, CancellationToken cancellationToken = default)
     {
@@ -223,6 +227,7 @@ public class SkinShopService(
 
             dbContext.Add(purchase);
             await EquipAsync(communityId, skin, AppConsts.SkinSourceGift, now, cancellationToken);
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.Skins, "You received the skin {0} as a gift. It is already equipped.", AppConsts.SkinsPath, skin.OriginalTitle ?? skin.Id));
 
             if (!await TrySaveAsync(cancellationToken))
                 return SkinShopResult.Of(SkinShopStatus.AlreadyOwned, skin);
@@ -244,6 +249,7 @@ public class SkinShopService(
             if (purchases.Count == 0)
                 return SkinShopResult.Of(SkinShopStatus.NotOwned, skin);
 
+            notifications.Send(communityId, new NotificationMessage(NotificationTopic.Skins, "The skin {0} was refunded: its stars are back in your balance.", AppConsts.SkinsPath, skin?.OriginalTitle ?? id));
             await RemoveAsync(purchases, cancellationToken);
 
             logger.LogInformation("Skin refunded: {RefundedBy} refunded {SkinId} ({Price} stars) to {CommunityId}", refundedBy, id, purchases.Sum(p => p.Price), communityId);

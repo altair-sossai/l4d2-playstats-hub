@@ -23,5 +23,12 @@
   "last check": "última comprobación",
   "last name change": "último cambio de nombre",
   "Check the names now": "Comprobar los nombres ahora",
-  "Steam did not answer. Try again in a few minutes.": "Steam no respondió. Inténtalo de nuevo en unos minutos."
+  "Steam did not answer. Try again in a few minutes.": "Steam no respondió. Inténtalo de nuevo en unos minutos.",
+  "Check the names of the authors of the skins now?": "¿Comprobar ahora los nombres de los autores de las skins?",
+  "Equip this skin? It replaces the skin you use on this weapon from the next map.": "¿Equipar esta skin? Reemplaza la skin que usas en esta arma desde el próximo mapa.",
+  "Give this skin to the player? It goes to their inventory at once.": "¿Regalar esta skin al jugador? Va a su inventario al instante.",
+  "Save the price of this skin? The shop shows it at once.": "¿Guardar el precio de esta skin? La tienda lo muestra al instante.",
+  "Save the settings of the skins?": "¿Guardar la configuración de las skins?",
+  "You received the skin {0} as a gift. It is already equipped.": "Recibiste la skin {0} de regalo. Ya está equipada.",
+  "The skin {0} was refunded: its stars are back in your balance.": "La skin {0} fue reembolsada: sus estrellas volvieron a tu saldo."
 }

@@ -20,15 +20,9 @@ public class ChampionshipQueryService(HubDbContext dbContext, IPlayerNameService
         return await dbContext.PlayerProfiles.AsNoTracking().Where(profile => ids.Contains(profile.CommunityId)).ToDictionaryAsync(profile => profile.CommunityId, cancellationToken);
     }
 
-    public async Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
+    public Task<Dictionary<long, string>> NamesAsync(IReadOnlyCollection<long> communityIds, CancellationToken cancellationToken = default)
     {
-        var ids = communityIds.Distinct().ToList();
-        var names = await dbContext.Administrators.AsNoTracking().Where(administrator => ids.Contains(administrator.CommunityId) && administrator.Name != null).ToDictionaryAsync(administrator => administrator.CommunityId, administrator => administrator.Name!, cancellationToken);
-
-        foreach (var (communityId, name) in await playerNames.NamesAsync(ids.Where(id => !names.ContainsKey(id)).ToList(), cancellationToken))
-            names[communityId] = name;
-
-        return names;
+        return playerNames.NamesWithAdministratorsAsync(communityIds, cancellationToken);
     }
 
     public async Task<List<ChampionshipPlayerStatistics>> StatisticsAsync(Championship championship, CancellationToken cancellationToken = default)

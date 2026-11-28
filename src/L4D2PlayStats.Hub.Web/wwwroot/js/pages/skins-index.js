@@ -356,8 +356,6 @@ $(function () {
         var $button = $(this);
         var weaponName = Hub.escapeHtml($button.data('weapon-name'));
 
-        if (!confirm(texts.confirmUnequip))
-            return;
 
         post('/api/shop/weapons/' + encodeURIComponent($button.data('weapon')) + '/unequip', null, $button, function () {
             var html = '<p>' + Hub.format(texts.unequipSuccess, weaponName) + '</p>'

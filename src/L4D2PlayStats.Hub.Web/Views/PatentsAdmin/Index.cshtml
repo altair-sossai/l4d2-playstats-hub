@@ -20,7 +20,7 @@
 <p class="text-muted">@L["The 15 levels and their names are fixed. Here you set the experience the highest level, Global, needs and the curve that spreads it between the levels; every page of the site uses the new values right away."]</p>
 <p class="text-muted">@L["The patent icons inside the game are turned on and off on the game server, with patent_icon_enabled in its configuration files."]</p>
 
-<form method="post" asp-antiforgery="true" action="@AppConsts.AdminPatentsUrl">
+<form method="post" asp-antiforgery="true" action="@AppConsts.AdminPatentsUrl" data-confirm="@L["Save the patents? The level of every player is calculated again."]">
     <div class="row">
         <div class="col-lg-8">
             <div class="panel panel-default">

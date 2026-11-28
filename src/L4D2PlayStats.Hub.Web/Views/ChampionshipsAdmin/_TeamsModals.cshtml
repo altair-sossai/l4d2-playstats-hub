@@ -8,7 +8,7 @@
 
 <div class="modal fade" id="team-add-modal" tabindex="-1" role="dialog" aria-labelledby="team-add-title">
     <div class="modal-dialog" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams" data-confirm="@L["Add this team to the championship?"]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -39,7 +39,7 @@
 
 <div class="modal fade" id="teams-add-modal" tabindex="-1" role="dialog" aria-labelledby="teams-add-title">
     <div class="modal-dialog modal-sm" role="document">
-        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/many">
+        <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/many" data-confirm="@L["Add these teams? They are named Team A, Team B and so on, and can be renamed later."]">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                     <span aria-hidden="true">&times;</span>
@@ -69,7 +69,7 @@
 
     <div class="modal fade" id="team-edit-modal-@team.Id" tabindex="-1" role="dialog" aria-labelledby="team-edit-title-@team.Id">
         <div class="modal-dialog" role="document">
-            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id" enctype="multipart/form-data">
+            <form class="modal-content" method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id" enctype="multipart/form-data" data-confirm="@L["Save the changes to this team? A name, tag or flag changed here is shown at once."]">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="@L["Close"]">
                         <span aria-hidden="true">&times;</span>
@@ -200,7 +200,7 @@
                             }
                             </tbody>
                         </table>
-                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/refuse" id="team-refuse-form-@team.Id">
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/refuse" id="team-refuse-form-@team.Id" data-confirm="@L["Refuse the new name, tag or flag? The captain sees the refusal and its reason in the captain area."]">
                             <label for="team-refuse-reason-@team.Id">@L["Reason, if you refuse"] @FieldHelp.Tip(L["Shown to the captain and the vice-captain in the captain area."])</label>
                             <input class="form-control" id="team-refuse-reason-@team.Id" name="reason" maxlength="@CoreConsts.ChampionshipReasonMaxLength" autocomplete="off">
                         </form>
@@ -210,7 +210,7 @@
                         <button type="submit" class="btn btn-danger" form="team-refuse-form-@team.Id">
                             <span class="glyphicon glyphicon-ban-circle"></span> @L["Refuse"]
                         </button>
-                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/approve" class="championship-inline-form">
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/identity/approve" class="championship-inline-form" data-confirm="@L["Approve the new name, tag or flag? They are shown at once on every page of the championship."]">
                             <button type="submit" class="btn btn-success">
                                 <span class="glyphicon glyphicon-ok"></span> @L["Approve"]
                             </button>
@@ -254,7 +254,7 @@
                                         }
                                     </td>
                                     <td class="text-right vertical-align-middle slim">
-                                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members/@member.CommunityId/remove">
+                                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members/@member.CommunityId/remove" data-confirm="@L["Remove this player from the team? They stay a participant of the championship."]">
                                             <button class="btn btn-xs btn-danger" type="submit">
                                                 <span class="glyphicon glyphicon-remove"></span> @L["Remove"]
                                             </button>
@@ -267,7 +267,7 @@
                     }
                     @if (open)
                     {
-                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members" class="championship-member-add">
+                        <form method="post" asp-antiforgery="true" action="@Model.Url/teams/@team.Id/members" class="championship-member-add" data-confirm="@L["Add this player to the team?"]">
                             <label for="member-@team.Id">@L["Add a player"] @FieldHelp.Tip(L["A SteamID64, a Steam ID such as STEAM_1:0:123 or [U:1:123], or a profile link such as https://steamcommunity.com/profiles/76561198000000000."])</label>
                             <div class="input-group">
                                 <input class="form-control" id="member-@team.Id" name="player" placeholder="76561198000000000" required autocomplete="off">

@@ -87,6 +87,7 @@ builder.Services.AddHostedService<SkinSeasonRefundBackgroundService>();
 builder.Services.AddHostedService<SkinAuthorSyncBackgroundService>();
 builder.Services.AddHostedService<LivePushBackgroundService>();
 builder.Services.AddHostedService<ChampionshipGameBackgroundService>();
+builder.Services.AddHostedService<NotificationCleanupBackgroundService>();
 builder.Services.AddSingleton<LiveWatchers>();
 builder.Services.AddSingleton<LiveNotifier>();
 builder.Services.AddSignalR();

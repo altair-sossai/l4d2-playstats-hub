@@ -67,7 +67,7 @@
                 }
             </small>
         </p>
-        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/authors" style="margin: 0">
+        <form method="post" asp-antiforgery="true" action="@AppConsts.SkinCatalogUrl/authors" style="margin: 0" data-confirm="@L["Check the names of the authors of the skins now?"]">
             <button class="btn btn-default" type="submit" @(Model.Authors.Authors == 0 ? "disabled" : null)>
                 <span class="glyphicon glyphicon-refresh"></span> @L["Check the names now"]
             </button>

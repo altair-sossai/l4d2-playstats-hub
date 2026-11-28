@@ -21,6 +21,7 @@ public class ChampionshipMatchService(
     IChampionshipLoadService loader,
     IChampionshipProgressService progress,
     IChampionshipLogService log,
+    IChampionshipNotificationService notify,
     ILogger<ChampionshipMatchService> logger) : IChampionshipMatchService
 {
     public async Task SyncAsync(IReadOnlyCollection<int> matchIds, CancellationToken cancellationToken = default)
@@ -228,6 +229,7 @@ public class ChampionshipMatchService(
     private async Task FinishAsync(Championship championship, ChampionshipStage stage, ChampionshipSeries series, ChampionshipGame game, long? by, ChampionshipGameEnd end, int minutes, CancellationToken cancellationToken)
     {
         var title = ChampionshipSeriesService.Title(championship, stage, series);
+        var wasFinished = series.Finished;
 
         game.Status = ChampionshipGameStatus.Played;
         progress.Apply(championship, series, await loader.CampaignsAsync(cancellationToken));
@@ -245,6 +247,8 @@ public class ChampionshipMatchService(
                 log.Add(championship.Id, by, "Ended game {0} of {1}", game.Number, title);
                 break;
         }
+
+        notify.GameFinished(championship, series, game, wasFinished);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

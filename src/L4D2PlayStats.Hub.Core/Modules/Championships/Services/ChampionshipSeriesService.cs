@@ -15,7 +15,8 @@ public class ChampionshipSeriesService(
     IClock clock,
     IChampionshipLoadService loader,
     IChampionshipProgressService progress,
-    IChampionshipLogService log) : IChampionshipSeriesService
+    IChampionshipLogService log,
+    IChampionshipNotificationService notify) : IChampionshipSeriesService
 {
     public async Task<List<ChampionshipCandidateMatch>> CandidatesAsync(int seriesId, CancellationToken cancellationToken = default)
     {
@@ -102,8 +103,11 @@ public class ChampionshipSeriesService(
             }
         }
 
+        var wasFinished = series.Finished;
+
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, by, "Linked the match #{0} to game {1} of {2}", match.Id, game.Number, Title(championship, stage, series));
+        notify.GameFinished(championship, series, game, wasFinished);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -127,8 +131,11 @@ public class ChampionshipSeriesService(
         game.AutoLinked = false;
         game.LastStatisticsAtUtc = null;
 
+        var wasFinished = series.Finished;
+
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, by, "Typed the result {0} x {1} in game {2} of {3}", teamAScore, teamBScore, game.Number, Title(championship, stage, series));
+        notify.GameFinished(championship, series, game, wasFinished);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -222,6 +229,7 @@ public class ChampionshipSeriesService(
 
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, communityId, "{0} chose the campaign of game {1} of {2}", team.Name, game.Number, Title(championship, stage, series));
+        notify.CampaignPicked(championship, series, game, team.Id);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -252,6 +260,7 @@ public class ChampionshipSeriesService(
 
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, communityId, "{0} vetoed a campaign in {1}", team.Name, Title(championship, stage, series));
+        notify.Vetoed(championship, series, team.Id);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -279,11 +288,16 @@ public class ChampionshipSeriesService(
         if (winnerTeamId != null && (!series.HasTeams || !series.Has(winnerTeamId.Value)))
             throw new ChampionshipException("Choose one of the two teams of the series.");
 
+        var given = winnerTeamId != null && (!series.Walkover || series.WinnerTeamId != winnerTeamId);
+
         series.Walkover = winnerTeamId != null;
         series.WinnerTeamId = winnerTeamId;
 
         await ApplyAsync(championship, series, cancellationToken);
         log.Add(championship.Id, by, winnerTeamId == null ? "Removed the walkover of {0}" : "Gave a walkover in {0}", Title(championship, stage, series));
+
+        if (given)
+            notify.Walkover(championship, series);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -291,10 +305,15 @@ public class ChampionshipSeriesService(
     {
         var (championship, stage, series) = await loader.SeriesAsync(seriesId, cancellationToken);
 
+        var rescheduled = scheduledAtUtc != null && scheduledAtUtc != series.ScheduledAtUtc && series.HasTeams;
+
         series.ScheduledAtUtc = scheduledAtUtc;
         series.DeadlineUtc = deadlineUtc;
         series.Notes = Text.Clip(notes, AppConsts.ChampionshipNotesMaxLength);
         log.Add(championship.Id, by, "Saved the date of {0}", Title(championship, stage, series));
+
+        if (rescheduled)
+            notify.Scheduled(championship, series);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

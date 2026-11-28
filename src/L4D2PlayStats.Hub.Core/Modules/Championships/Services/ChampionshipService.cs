@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Championships.Services;
 
-public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampionshipLogService log) : IChampionshipService
+public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampionshipLogService log, IChampionshipNotificationService notify) : IChampionshipService
 {
     public Task<Page<ChampionshipSummary>> PageAsync(int page, int size, CancellationToken cancellationToken = default)
     {
@@ -145,16 +145,19 @@ public class ChampionshipService(HubDbContext dbContext, IClock clock, IChampion
 
     public async Task SetStatusAsync(int id, ChampionshipStatus status, string? reason, long? updatedBy, CancellationToken cancellationToken = default)
     {
-        var championship = await dbContext.Championships.FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
+        var championship = await dbContext.Championships.Include(item => item.Participants).Include(item => item.Teams).ThenInclude(team => team.Members).AsSplitQuery().FirstOrDefaultAsync(item => item.Id == id, cancellationToken) ?? throw NotFound();
 
         if (!Enum.IsDefined(status))
             throw new ChampionshipException("Choose a valid status.");
+
+        var previous = championship.Status;
 
         championship.Status = status;
         championship.CancelReason = status == ChampionshipStatus.Cancelled ? Text.Clip(reason, AppConsts.ChampionshipReasonMaxLength) : null;
         championship.UpdatedAtUtc = clock.UtcNow;
 
         log.Add(id, updatedBy, "Changed the status to {0}", status);
+        notify.StatusChanged(championship, previous);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

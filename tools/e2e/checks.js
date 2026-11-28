@@ -591,7 +591,6 @@ function checks(context) {
                 expect(line, 'The map page has no pencil next to the survivors of the first round half');
                 expect(pencils === onMap.length * 2, `The map page has ${pencils} pencils for ${onMap.length} players; each player should have one per round half`);
 
-                await browser.eval(`window.confirm = () => true`);
                 await browser.click('#tab-round-half-1 .ms-replace[data-survivor="true"]', { settle: 0 });
                 await browser.modalShown('#pp-modal');
                 await browser.until(`document.querySelector('#pp-modal .pp-player')`, 'the players of the search window');
@@ -603,6 +602,7 @@ function checks(context) {
                 const loaded = browser.page.waitFor('Page.loadEventFired');
 
                 await browser.click('#pp-modal [data-e2e-pick]', { settle: 0 });
+                await browser.confirm();
                 await loaded;
                 await browser.page.idle();
                 await pageOk(browser, 'The map page after replacing a player');

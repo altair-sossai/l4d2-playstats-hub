@@ -5,7 +5,7 @@
 
 <p class="admin-lead">@L["The rules shown on the Rules tab of the championship, in Markdown: # titles, - lists, **bold**, *italic* and [links](https://...). The page shows the text of the language of the visitor, or the English one."]</p>
 
-<form method="post" asp-antiforgery="true" action="@Model.Url/rules">
+<form method="post" asp-antiforgery="true" action="@Model.Url/rules" data-confirm="@L["Save the rules? They are shown at once on the Rules tab of the championship."]">
     <div class="panel panel-default">
         <div class="panel-body championship-rules-form">
             <div class="form-group">

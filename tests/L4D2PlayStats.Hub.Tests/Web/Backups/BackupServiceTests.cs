@@ -3,6 +3,8 @@ using L4D2PlayStats.Hub.Core.Modules.Backups.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Models;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Backups.Settings;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Tests.Support;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -286,6 +288,39 @@ public class BackupServiceTests
         Assert.HasCount(1, factory.Backups.Created);
         Assert.AreEqual(BackupDestination.ConnectionString, factory.Backups.Created[0].Destination);
         Assert.AreEqual("backups", factory.Backups.Created[0].ContainerName);
+    }
+
+    [TestMethod]
+    public async Task OnlyAFailedAutomaticBackupTellsTheAdministrators()
+    {
+        using var factory = await StartAsync();
+
+        factory.Backups.Storage.FailUploadWith = "The container is gone.";
+
+        await RunAsync(factory, BackupTrigger.Manual);
+        await RunAsync(factory, BackupTrigger.Schedule);
+
+        factory.Backups.Storage.FailUploadWith = null;
+
+        await RunAsync(factory, BackupTrigger.Schedule);
+
+        var notices = await factory.RunAsync(services => services.GetRequiredService<INotificationService>().LatestAsync(HubWebFactory.Administrator, true, 10));
+        var failures = notices.Where(notice => notice.Topic == NotificationTopic.Backups).ToList();
+        var player = await factory.RunAsync(services => services.GetRequiredService<INotificationService>().LatestAsync(HubWebFactory.Player, false, 10));
+
+        Assert.HasCount(1, failures);
+        Assert.AreEqual("The automatic backup failed. Open the backup page to see why.", failures[0].Text);
+        Assert.AreEqual("/admin/backup", failures[0].Url);
+        Assert.IsEmpty(player);
+
+        factory.Backups.Storage.FailDownloadWith = "The blob cannot be read.";
+
+        var run = await RunAsync(factory, BackupTrigger.Schedule);
+        var latest = (await factory.RunAsync(services => services.GetRequiredService<INotificationService>().LatestAsync(HubWebFactory.Administrator, true, 10))).First();
+
+        Assert.IsTrue(run!.Succeeded);
+        Assert.AreEqual(BackupVerificationStatus.Failed, run.Verification!.Status);
+        Assert.AreEqual("The automatic backup was uploaded, but its check failed. Open the backup page to see why.", latest.Text);
     }
 
     private static async Task<HubWebFactory> StartAsync(Action<BackupSettings>? change = null)

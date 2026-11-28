@@ -7,6 +7,7 @@ using L4D2PlayStats.Hub.Core.Modules.Matches;
 using L4D2PlayStats.Hub.Core.Modules.Players;
 using L4D2PlayStats.Hub.Core.Modules.Punishments;
 using L4D2PlayStats.Hub.Core.Modules.Seasons;
+using L4D2PlayStats.Hub.Core.Modules.Notifications;
 using L4D2PlayStats.Hub.Core.Modules.Servers;
 using L4D2PlayStats.Hub.Core.Modules.Settings;
 using L4D2PlayStats.Hub.Core.Modules.Skins;
@@ -48,6 +49,8 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
     public DbSet<ChampionshipDateProposal> ChampionshipDateProposals => Set<ChampionshipDateProposal>();
     public DbSet<ChampionshipLog> ChampionshipLogs => Set<ChampionshipLog>();
     public DbSet<ChampionshipJoinRequest> ChampionshipJoinRequests => Set<ChampionshipJoinRequest>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<NotificationRead> NotificationReads => Set<NotificationRead>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
