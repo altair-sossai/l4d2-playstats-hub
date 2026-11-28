@@ -11,6 +11,7 @@ The Championships module organizes championships played on the game servers of t
 - [For players](#for-players)
   - [The championships page](#the-championships-page)
   - [The page of a championship](#the-page-of-a-championship)
+  - [Asking to join](#asking-to-join)
   - [The page of a series](#the-page-of-a-series)
   - [The captain area](#the-captain-area)
 - [For administrators](#for-administrators)
@@ -29,15 +30,28 @@ The Championships module organizes championships played on the game servers of t
 
 ### The championships page
 
-**Championships** in the menu lists the championships in progress at the top, as cards, and the history of the finished and cancelled ones below, with the champion and the runner-up of each. A championship in draft is not listed: only the administrators see it.
+**Championships** in the menu shows each championship as a card with its banner, its logo, its status, its teams, its players and its start date: the ones in progress at the top, in larger cards, and the history of the finished and cancelled ones below, with the champion of each. A championship without a banner gets a colored background, and one without a logo shows its initials. A championship in draft is not listed: only the administrators see it.
 
 ### The page of a championship
 
-Each championship has its own address, such as `/championships/cup-2027`, and these tabs:
+Each championship has its own address, such as `/championships/cup-2027`. Every page of the championship starts with its banner, its logo, its name, its status and its dates, followed by its tabs.
+
+The first tab, **Overview**, is the page of the championship itself, read from top to bottom:
+
+1. **About**: the description and the key facts: the dates, the number of teams and of participants (with the places, when there is a limit), the size of each game, such as 4 vs 4, the team formation and the game mode.
+2. **Registration**, when the championship takes requests to join: see [Asking to join](#asking-to-join).
+3. **Where to watch**: buttons to the live stream and the videos, when the administration gave the links.
+4. **Games**: the next game, with a countdown to its date and the buttons **Series page** and **Add to calendar**, the other scheduled games and the latest results. **All games** opens the Games tab.
+5. **Teams**: each team with its captain and vice-captain. **Rosters** opens the Teams tab.
+6. **Participants**: the photo and the name of each player of the championship, each one linked to the page of the player.
+7. **Format**: each stage in order, with its type, groups, best of and campaign rule, whether it is finished, in progress, up next or later, and how many series were played.
+8. **Podium**: the champion, the runner-up and the third place, when the championship is finished.
+9. **Gallery**: the photos and art of the championship; a click opens each one in full size.
+
+A section without anything to show is left out. The other tabs go deeper:
 
 | Tab | What it shows |
 |---|---|
-| Overview | The description, the podium when it is finished, the next games, the latest results, the series of your team when you are its captain or vice-captain, and the format of each stage. |
 | Rules | The rules written by the administration, in the language of the page when there is a translation. |
 | Teams | Each team with its flag, captain, vice-captain and players, with the hours of Left 4 Dead 2 of each one. |
 | Draft | The order of the captains and every pick, when the teams were formed by a draft, a roulette or pots. |
@@ -47,6 +61,12 @@ Each championship has its own address, such as `/championships/cup-2027`, and th
 | Statistics | The series and games won by each team, and the numbers of each player in the games linked to matches of the server: MVPs, SI damage, commons, skeets, levels, crowns, tank damage and deaths. |
 
 A tab only appears when it has something to show.
+
+### Asking to join
+
+When the administration lets the players ask to join, the page of the championship has a **Registration** section, and the top of the page a button **Ask to join**, while the status is Participants and there are places left. Sign in with Steam, write a message to the administration if you want (such as your experience or when you can play) and press **Ask to join**. The section then says that your request is waiting; **Cancel the request** withdraws it, and you can ask again later.
+
+The administration approves or refuses each request. Once it is approved you are a participant and the section says so; a refused request is shown as refused, and you cannot ask again in that championship. The section also shows how many places are left, and when there are none it says so.
 
 ### The page of a series
 
@@ -93,7 +113,8 @@ One form, saved with the **Save** button at the bottom:
 
 - **Championship**: name, address, short description, start and end dates, game mode (such as ZoneMod v2.9.1b), and the links of the live stream and the videos.
 - **Status**: Draft, Participants, Team formation, In progress, Finished or Cancelled, with the reason of the cancellation. Building the first stage puts the championship in progress. Mark it as finished after the final: the history then shows the champion.
-- **Teams and players**: players per game, players per team (the most players a team can have, counting the substitutes), places (the most participants), the team formation (manual, roulette, pots, snake draft or linear draft) and whether the teams can have substitutes.
+- **Teams and players**: players per game, players per team (the most players a team can have, counting the substitutes), places (the most participants), the team formation (manual, roulette, pots, snake draft or linear draft) whether the teams can have substitutes and whether **players can ask to join** (see [Requests to join](#participants)).
+- **Images**: the **banner**, a wide image such as 1920 × 600 shown at the top of every page of the championship and on its card; the **logo**, a square image such as 512 × 512; and the **gallery**, up to 12 photos and art shown at the end of the page. Each one is a PNG, JPG, WEBP or GIF file of up to 2 MB. Choose a file only to change it: saving without a file keeps the current image. **Remove the banner**, **Remove the logo** and **Remove** under each image of the gallery delete it when you save. A file that is not one of these images, a file over the limit or more than 12 images in the gallery is refused, and then nothing of the form is saved. The files are kept in the data folder of the hub, in `branding/championships`, so they go with the backups, and each change is written in the history.
 - **Results**: whether the matches of the server are linked to the games by themselves, the **hours of tolerance** (how many hours before or after the date of the series the match can start, 6 by default) and **End after (minutes)** (how long a game in progress waits for new statistics before it ends, 60 by default). See [Games and results](#games-and-results).
 
 ### Rules
@@ -102,7 +123,9 @@ The rules in English, Portuguese and Spanish, one under the other, saved with th
 
 ### Participants
 
-Only the administration adds participants. **Add** opens a window where you paste Steam IDs, one per line, or **Choose from the list** in the player search window. The table, 20 players per page, shows the hours of Left 4 Dead 2 of each player, the team and the pot; **Edit** changes the pot, used by the pots draw, and **Remove** takes the player out of the championship and of the team.
+The administration adds the participants, or approves the requests of the players. With **Players can ask to join** on in the Settings tab, the panel **Requests to join** at the top of the Participants tab lists each request waiting for an answer, with the player, the message, the date and a badge with how many are waiting. **Approve** makes the player a participant, unless the championship is full, and **Refuse** answers no; a refused request stays in the list, so it can still be approved later. Each request, approval and refusal is written in the history.
+
+**Add** opens a window where you paste Steam IDs, one per line, or **Choose from the list** in the player search window. The table, 20 players per page, shows the hours of Left 4 Dead 2 of each player, the team and the pot; **Edit** changes the pot, used by the pots draw, and **Remove** takes the player out of the championship and of the team.
 
 ### Teams
 

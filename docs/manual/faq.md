@@ -55,6 +55,9 @@ In [Administration > Administrators](administration.md#administrators), with the
 **How do I run a championship?**
 Turn on **Championships** in [Administration > Modules](administration.md#modules), then create it in **Administration > Championships**: choose the format, add the participants and the teams, and build the first stage. See [Championships > For administrators](championships.md#for-administrators).
 
+**Can players sign up for a championship themselves?**
+Yes, when you turn on **Players can ask to join** in the Settings tab of the championship. While its status is Participants and there are places left, its page has a button for signed in players to ask for a place; each request waits on the Participants tab until you approve or refuse it. See [Asking to join](championships.md#asking-to-join).
+
 **Where does a captain manage the team?**
 In the captain area of the championship: sign in with Steam and click the tower icon next to your photo at the top, or **Open the captain area** on the page of the championship. There the captain and the vice-captain choose the players of a draft when it is their turn, send a new name, tag or flag for the approval of the administration, choose the vice-captain, propose and accept dates, veto and choose campaigns. See [The captain area](championships.md#the-captain-area).
 

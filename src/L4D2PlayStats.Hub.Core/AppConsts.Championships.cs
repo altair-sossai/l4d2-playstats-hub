@@ -44,4 +44,9 @@ public static partial class AppConsts
     public const int ChampionshipDefaultAutoCloseMinutes = 60;
     public const int ChampionshipMinAutoCloseMinutes = 10;
     public const int ChampionshipMaxAutoCloseMinutes = 720;
+    public const int ChampionshipImageMaxLength = 80;
+    public const int ChampionshipGalleryMaxImages = 12;
+    public const int ChampionshipGalleryMaxLength = ChampionshipGalleryMaxImages * (ChampionshipImageMaxLength + 1);
+    public const char ChampionshipGallerySeparator = '|';
+    public const int ChampionshipJoinMessageMaxLength = 300;
 }

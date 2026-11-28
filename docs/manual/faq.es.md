@@ -55,6 +55,9 @@ En [Administración > Administradores](administration.es.md#administradores), co
 **¿Cómo organizo un campeonato?**
 Activa **Campeonatos** en [Administración > Módulos](administration.es.md#módulos) y crea el campeonato en **Administración > Campeonatos**: elige el formato, añade los participantes y los equipos y arma la primera fase. Consulta [Campeonatos > Para administradores](championships.es.md#para-administradores).
 
+**¿Los jugadores pueden inscribirse solos en un campeonato?**
+Sí, cuando activas **Los jugadores pueden pedir participar** en la pestaña Configuración del campeonato. Mientras su estado es Participantes y quedan plazas, su página tiene un botón para que los jugadores conectados pidan una plaza; cada solicitud espera en la pestaña Participantes hasta que la apruebas o la rechazas. Ver [Pedir participar](championships.es.md#pedir-participar).
+
 **¿Dónde gestiona un capitán su equipo?**
 En el área del capitán del campeonato: inicia sesión con Steam y haz clic en el icono de torre junto a tu foto arriba, o en **Abrir el área del capitán** en la página del campeonato. Allí el capitán y el vicecapitán eligen los jugadores de un draft cuando es su turno, envían un nuevo nombre, sigla o bandera para la aprobación de la administración, eligen al vicecapitán, proponen y aceptan fechas, vetan y eligen campañas. Consulta [El área del capitán](championships.es.md#el-área-del-capitán).
 

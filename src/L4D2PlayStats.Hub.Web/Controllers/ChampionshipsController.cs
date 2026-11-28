@@ -1,15 +1,18 @@
 using System.Text;
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
+using L4D2PlayStats.Hub.Core.Modules.Championships.Exceptions;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using L4D2PlayStats.Hub.Web.Helpers;
 using L4D2PlayStats.Hub.Web.Infrastructure.Authentication.Contracts;
+using L4D2PlayStats.Hub.Web.Infrastructure.Branding;
 using L4D2PlayStats.Hub.Web.Infrastructure.Championships;
 using L4D2PlayStats.Hub.Web.Infrastructure.Filters;
 using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -22,7 +25,9 @@ public class ChampionshipsController(
     IChampionshipLoadService loadService,
     IChampionshipViewService viewService,
     IChampionshipQueryService queryService,
+    IChampionshipJoinService joinService,
     ChampionshipFlagStore flagStore,
+    ChampionshipImageStore imageStore,
     ISiteClock siteClock,
     ICurrentUser currentUser) : Controller
 {
@@ -70,6 +75,21 @@ public class ChampionshipsController(
         var championships = await championshipService.ListAsync(true, cancellationToken);
 
         return View(new ChampionshipsIndexModel(championships, await siteClock.ZoneAsync(cancellationToken)));
+    }
+
+    [HttpGet(AppConsts.ChampionshipImagesUrl + "/{id:int}/{file}")]
+    [ResponseCache(Duration = AppConsts.ChampionshipImageCacheInSeconds, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> Image(int id, string file, CancellationToken cancellationToken)
+    {
+        var path = imageStore.PathOf(id, file);
+        var contentType = ChampionshipImageStore.ContentType(file);
+
+        if (path == null || contentType == null || !(await championshipService.IsPublicAsync(id, cancellationToken) || await currentUser.IsAdministratorAsync()))
+            return NotFound();
+
+        Response.Headers.XContentTypeOptions = AppConsts.NoSniff;
+
+        return PhysicalFile(path, contentType);
     }
 
     [HttpGet(AppConsts.ChampionshipsUrl + "/{slug}")]
@@ -126,6 +146,40 @@ public class ChampionshipsController(
             .ToString();
 
         return File(Encoding.UTF8.GetBytes(calendar), AppConsts.ChampionshipCalendarContentType, $"{championship.Slug}-{series.Id}.ics");
+    }
+
+    [Authorize]
+    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/join")]
+    public Task<IActionResult> Join(string slug, string? message, CancellationToken cancellationToken)
+    {
+        return Registration(slug, id => joinService.AskAsync(id, currentUser.CommunityId!.Value, message, cancellationToken));
+    }
+
+    [Authorize]
+    [HttpPost(AppConsts.ChampionshipsUrl + "/{slug}/join/cancel")]
+    public Task<IActionResult> CancelJoin(string slug, CancellationToken cancellationToken)
+    {
+        return Registration(slug, id => joinService.CancelAsync(id, currentUser.CommunityId!.Value, cancellationToken));
+    }
+
+    private async Task<IActionResult> Registration(string slug, Func<int, Task> action)
+    {
+        var championship = await FindAsync(slug, HttpContext.RequestAborted);
+
+        if (championship == null)
+            return NotFound();
+
+        try
+        {
+            await action(championship.Id);
+            TempData[AppConsts.SavedTempData] = true;
+        }
+        catch (ChampionshipException exception)
+        {
+            TempData[AppConsts.ErrorTempData] = exception.Message;
+        }
+
+        return Redirect($"{AppConsts.ChampionshipsUrl}/{championship.Slug}#{AppConsts.ChampionshipJoinSection}");
     }
 
     private async Task<IActionResult> Page(string slug, string tab, CancellationToken cancellationToken)

@@ -17,6 +17,7 @@ using L4D2PlayStats.Hub.Web.Models.Championships;
 using L4D2PlayStats.Hub.Web.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using CoreConsts = L4D2PlayStats.Hub.Core.AppConsts;
 
 namespace L4D2PlayStats.Hub.Web.Controllers.Admin;
 
@@ -36,6 +37,8 @@ public class ChampionshipsAdminController(
     IChampionshipIdentityService identityService,
     IChampionshipMatchService matchService,
     ChampionshipFlagStore flagStore,
+    IChampionshipImageService imageService,
+    IChampionshipJoinService joinService,
     ISiteClock siteClock,
     ICurrentUser currentUser,
     IStringLocalizer<SharedResource> L) : AdminControllerBase
@@ -73,7 +76,10 @@ public class ChampionshipsAdminController(
         var files = await identityService.FilesAsync(id, null, cancellationToken);
 
         if (await championshipService.DeleteAsync(id, cancellationToken))
+        {
             flagStore.Delete(files);
+            imageService.DeleteAll(id);
+        }
 
         Saved();
 
@@ -106,11 +112,19 @@ public class ChampionshipsAdminController(
             }
         }
 
-        page.Names = await queryService.NamesAsync(history.Items.Where(log => log.CommunityId != null).Select(log => log.CommunityId!.Value).ToList(), cancellationToken);
+        var requests = await joinService.ListAsync(id, cancellationToken);
+        var named = history.Items.Where(log => log.CommunityId != null).Select(log => log.CommunityId!.Value)
+            .Concat(history.Items.SelectMany(log => (log.Values ?? string.Empty).Split(CoreConsts.ChampionshipLogValueSeparator)).Select(value => long.TryParse(value, out var number) ? number : 0).Where(number => number >= CoreConsts.SteamCommunityIdBase))
+            .Concat(requests.Select(request => request.CommunityId))
+            .Distinct()
+            .ToList();
+
+        page.Names = await queryService.NamesAsync(named, cancellationToken);
 
         return View(new ChampionshipAdminModel
         {
             Page = page,
+            Requests = requests,
             Participants = new PagedListModel<ChampionshipParticipant>(participants, participantsPage, AppConsts.ChampionshipParticipantsPageSize),
             Series = new PagedListModel<ChampionshipSeries>(series, gamesPage, AppConsts.ChampionshipGamesPageSize),
             History = new PagedListModel<ChampionshipLog>(history),
@@ -120,14 +134,17 @@ public class ChampionshipsAdminController(
     }
 
     [HttpPost("{id:int}")]
-    public async Task<IActionResult> SaveSettings(int id, ChampionshipSettingsForm form, string? startsOn, string? endsOn, ChampionshipStatus status, string? reason, CancellationToken cancellationToken)
+    [RequestSizeLimit(AppConsts.ChampionshipSettingsFormMaxBytes)]
+    public async Task<IActionResult> SaveSettings(int id, ChampionshipSettingsForm form, ChampionshipImagesUpload images, string? startsOn, string? endsOn, ChampionshipStatus status, string? reason, CancellationToken cancellationToken)
     {
         form.StartsOn = Date(startsOn);
         form.EndsOn = Date(endsOn);
 
         return await Run(async () =>
         {
+            await imageService.ValidateAsync(id, images, cancellationToken);
             await championshipService.UpdateAsync(id, form, Me, cancellationToken);
+            await imageService.SaveAsync(id, images, Me, cancellationToken);
 
             var championship = await loadService.LoadAsync(id, false, cancellationToken);
 
@@ -154,6 +171,18 @@ public class ChampionshipsAdminController(
 
             await teamService.AddParticipantsAsync(id, ids.Select(value => value!.Value).ToList(), Me, cancellationToken);
         }, returnUrl, Address(id, AppConsts.ChampionshipAdminParticipantsTab));
+    }
+
+    [HttpPost("{id:int}/requests/{requestId:int}/approve")]
+    public Task<IActionResult> ApproveRequest(int id, int requestId, string? returnUrl, CancellationToken cancellationToken)
+    {
+        return Run(() => joinService.ApproveAsync(requestId, Me, cancellationToken), returnUrl, Address(id, AppConsts.ChampionshipAdminParticipantsTab));
+    }
+
+    [HttpPost("{id:int}/requests/{requestId:int}/refuse")]
+    public Task<IActionResult> RefuseRequest(int id, int requestId, string? returnUrl, CancellationToken cancellationToken)
+    {
+        return Run(() => joinService.RefuseAsync(requestId, Me, cancellationToken), returnUrl, Address(id, AppConsts.ChampionshipAdminParticipantsTab));
     }
 
     [HttpPost("{id:int}/participants/{communityId:long}/remove")]

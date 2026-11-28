@@ -54,4 +54,15 @@ public static partial class AppConsts
     public const string ChampionshipFlagUnsupportedMessage = "The flag must be a PNG, JPG, WEBP or GIF image.";
     public const string ChampionshipFlagTooLargeMessage = "The flag is too large: the limit is 2 MB.";
     public const int ChampionshipGameCloseIntervalInSeconds = 60;
+    public const string ChampionshipImagesFolder = "championships";
+    public const string ChampionshipJoinSection = "join";
+    public const string ChampionshipImagesUrl = "/championships/images";
+    public const string ChampionshipBannerImage = "banner";
+    public const string ChampionshipLogoImage = "logo";
+    public const string ChampionshipGalleryImage = "gallery";
+    public const int ChampionshipImageMaxBytes = 2 * BytesPerMegabyte;
+    public const int ChampionshipSettingsFormMaxBytes = 32 * BytesPerMegabyte;
+    public const int ChampionshipImageCacheInSeconds = 31536000;
+    public const int ChampionshipHeroParticipants = 48;
+    public const int ChampionshipHueSteps = 360;
 }

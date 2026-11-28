@@ -14,6 +14,7 @@ public class ChampionshipSettingsForm
     public int RosterSize { get; set; } = AppConsts.ChampionshipDefaultPlayersPerGame;
     public int? MaxParticipants { get; set; }
     public bool Substitutes { get; set; }
+    public bool JoinRequests { get; set; }
     public ChampionshipDraftMethod DraftMethod { get; set; }
     public bool AutoLinkMatches { get; set; } = true;
     public int AutoLinkHours { get; set; } = AppConsts.ChampionshipDefaultAutoLinkHours;

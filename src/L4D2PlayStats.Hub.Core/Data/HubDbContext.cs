@@ -47,6 +47,7 @@ public class HubDbContext(DbContextOptions<HubDbContext> options) : DbContext(op
     public DbSet<ChampionshipPenalty> ChampionshipPenalties => Set<ChampionshipPenalty>();
     public DbSet<ChampionshipDateProposal> ChampionshipDateProposals => Set<ChampionshipDateProposal>();
     public DbSet<ChampionshipLog> ChampionshipLogs => Set<ChampionshipLog>();
+    public DbSet<ChampionshipJoinRequest> ChampionshipJoinRequests => Set<ChampionshipJoinRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

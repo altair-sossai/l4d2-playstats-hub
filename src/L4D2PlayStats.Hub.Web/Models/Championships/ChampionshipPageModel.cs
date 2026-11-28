@@ -20,8 +20,44 @@ public class ChampionshipPageModel
     public ChampionshipSeries? Series { get; init; }
     public List<ChampionshipPlayerStatistics> Statistics { get; init; } = [];
     public Dictionary<long, string> Names { get; set; } = [];
+    public DateTime NowUtc { get; init; } = DateTime.UtcNow;
+    public bool JoinOpen { get; init; }
+    public ChampionshipJoinRequest? JoinRequest { get; init; }
+
+    public bool IsParticipant => CurrentUser != null && Championship.Participants.Any(participant => participant.CommunityId == CurrentUser);
+
+    public bool ShowsJoin => Championship.JoinRequests && Championship.Status == ChampionshipStatus.Participants || JoinRequest is { Status: ChampionshipJoinRequestStatus.Pending };
+
+    public int? PlacesLeft => Championship.MaxParticipants == null ? null : Math.Max(0, Championship.MaxParticipants.Value - Championship.Participants.Count);
 
     public ChampionshipPodium Podium => ChampionshipPodiums.Of(Championship);
+
+    public string Url => $"{AppConsts.ChampionshipsUrl}/{Championship.Slug}";
+
+    public string? BannerUrl => ChampionshipImageUrls.Of(Championship.Id, Championship.BannerImage);
+
+    public string? LogoUrl => ChampionshipImageUrls.Of(Championship.Id, Championship.LogoImage);
+
+    public List<string> GalleryUrls => Championship.Gallery.Select(image => ChampionshipImageUrls.Of(Championship.Id, image)!).ToList();
+
+    public ChampionshipSeries? NextSeries => Upcoming().FirstOrDefault(series => series.ScheduledAtUtc >= NowUtc);
+
+    public TimeSpan Countdown(ChampionshipSeries series)
+    {
+        var left = (series.ScheduledAtUtc ?? NowUtc) - NowUtc;
+
+        return left < TimeSpan.Zero ? TimeSpan.Zero : left;
+    }
+
+    public List<long> Participants => Championship.Participants.OrderBy(participant => participant.AddedAtUtc).ThenBy(participant => participant.Id).Select(participant => participant.CommunityId).ToList();
+
+    public ChampionshipStageState StageState(ChampionshipStage stage)
+    {
+        if (!stage.Generated)
+            return Stages.First(item => !item.Generated).Id == stage.Id ? ChampionshipStageState.Next : ChampionshipStageState.Later;
+
+        return stage.Series.Where(series => !series.Bye).All(series => series.Finished) ? ChampionshipStageState.Finished : ChampionshipStageState.Running;
+    }
 
     public List<ChampionshipStage> Stages => Championship.Stages.OrderBy(stage => stage.Order).ToList();
 

@@ -177,6 +177,10 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.Property<bool>("AutoLinkMatches")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("BannerImage")
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
                     b.Property<string>("CancelReason")
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
@@ -194,9 +198,20 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                     b.Property<DateTime?>("EndsOn")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("GalleryImages")
+                        .HasMaxLength(972)
+                        .HasColumnType("varchar(972)");
+
                     b.Property<string>("GameConfiguration")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("JoinRequests")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("LogoImage")
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
 
                     b.Property<int?>("MaxParticipants")
                         .HasColumnType("int");
@@ -443,6 +458,44 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .IsUnique();
 
                     b.ToTable("ChampionshipGroupTeams");
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipJoinRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AnsweredAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("AnsweredBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ChampionshipId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CommunityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChampionshipId", "CommunityId")
+                        .IsUnique();
+
+                    b.HasIndex("ChampionshipId", "Status");
+
+                    b.ToTable("ChampionshipJoinRequests");
                 });
 
             modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipLog", b =>
@@ -1772,6 +1825,15 @@ namespace L4D2PlayStats.Hub.Migrations.MySql.Migrations
                         .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("L4D2PlayStats.Hub.Core.Modules.Championships.ChampionshipJoinRequest", b =>
+                {
+                    b.HasOne("L4D2PlayStats.Hub.Core.Modules.Championships.Championship", null)
+                        .WithMany()
+                        .HasForeignKey("ChampionshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

@@ -75,6 +75,7 @@ builder.Services.AddSingleton<SteamProfileClient>();
 builder.Services.AddSingleton<SteamWebApiClient>();
 builder.Services.AddSingleton<BrandingStore>();
 builder.Services.AddSingleton<ChampionshipFlagStore>();
+builder.Services.AddSingleton<ChampionshipImageStore>();
 builder.Services.AddSingleton<ICommandCatalog, CommandCatalog>();
 builder.Services.AddSingleton<SkinThumbnailStore>();
 builder.Services.AddSingleton<BackupLock>();

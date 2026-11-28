@@ -1,6 +1,7 @@
 using L4D2PlayStats.Hub.Core.Modules.Championships;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Enums;
 using L4D2PlayStats.Hub.Core.Modules.Championships.Models;
+using L4D2PlayStats.Hub.Web.Models.Championships;
 using Microsoft.Extensions.Localization;
 
 namespace L4D2PlayStats.Hub.Web.Helpers;
@@ -139,6 +140,28 @@ public static class ChampionshipTexts
             ChampionshipCaptainTaskKind.Pick => opponent == null ? L["Choose the campaign of game {0}", task.GameNumber ?? 1] : L["Choose the campaign of game {0} against {1}", task.GameNumber ?? 1, opponent],
             ChampionshipCaptainTaskKind.AnswerDate => opponent == null ? L["Answer a date proposal"] : L["Answer the date proposed by {0}", opponent],
             _ => opponent == null ? L["Propose a date"] : L["Propose a date to {0}", opponent]
+        };
+    }
+
+    public static string StageState(IStringLocalizer L, ChampionshipStageState state)
+    {
+        return state switch
+        {
+            ChampionshipStageState.Finished => L["Finished"],
+            ChampionshipStageState.Running => L["In progress"],
+            ChampionshipStageState.Next => L["Up next"],
+            _ => L["Later"]
+        };
+    }
+
+    public static string StageStateLabel(ChampionshipStageState state)
+    {
+        return state switch
+        {
+            ChampionshipStageState.Finished => "label-primary",
+            ChampionshipStageState.Running => "label-success",
+            ChampionshipStageState.Next => "label-info",
+            _ => "label-default"
         };
     }
 }
