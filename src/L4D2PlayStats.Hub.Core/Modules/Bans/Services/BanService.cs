@@ -15,6 +15,8 @@ using L4D2PlayStats.Hub.Core.Modules.Notifications.Services.Contracts;
 using L4D2PlayStats.Hub.Core.Modules.Players.Helpers;
 using L4D2PlayStats.Hub.Core.Modules.Players.Models;
 using L4D2PlayStats.Hub.Core.Modules.Players.Services.Contracts;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Helpers;
+using L4D2PlayStats.Hub.Core.Modules.Settings.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace L4D2PlayStats.Hub.Core.Modules.Bans.Services;
@@ -22,6 +24,7 @@ namespace L4D2PlayStats.Hub.Core.Modules.Bans.Services;
 public class BanService(
     HubDbContext dbContext,
     IClock clock,
+    ISiteClock siteClock,
     IPlayerNameService playerNameService,
     IBanAlertService alertService,
     IRemoteCommandService remoteCommandService,
@@ -223,6 +226,7 @@ public class BanService(
     public async Task<BanImport> ImportAsync(string? text, BanActor actor, CancellationToken cancellationToken = default)
     {
         var file = BanFileParser.Parse(text);
+        var timeZone = await siteClock.ZoneAsync(cancellationToken);
         var now = clock.UtcNow;
         var ids = file.Bans.Select(item => item.CommunityId).ToList();
         var banned = await BannedAsync(ids, cancellationToken);
@@ -231,8 +235,8 @@ public class BanService(
 
         foreach (var imported in file.Bans)
         {
-            var bannedAt = imported.BannedOn.HasValue ? DateTime.SpecifyKind(imported.BannedOn.Value, DateTimeKind.Utc) : now;
-            var endsAt = imported.Minutes > 0 ? bannedAt.AddMinutes(imported.Minutes) : imported.ExpiresOn.HasValue ? DateTime.SpecifyKind(imported.ExpiresOn.Value, DateTimeKind.Utc) : (DateTime?)null;
+            var bannedAt = imported.BannedOn.HasValue ? SiteTime.ToUtc(imported.BannedOn.Value, timeZone) : now;
+            var endsAt = imported.Minutes > 0 ? bannedAt.AddMinutes(imported.Minutes) : imported.ExpiresOn.HasValue ? SiteTime.ToUtc(imported.ExpiresOn.Value, timeZone) : (DateTime?)null;
 
             if (banned.Contains(imported.CommunityId) || endsAt <= now || !SteamIds.IsValid(imported.CommunityId))
             {

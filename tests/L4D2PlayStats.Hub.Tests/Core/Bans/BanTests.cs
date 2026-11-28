@@ -249,6 +249,20 @@ public class BanTests
     }
 
     [TestMethod]
+    public async Task TheDatesOfTheImportAreDaysOfTheTimeZoneOfTheSite()
+    {
+        using var hub = new TestHub();
+
+        await hub.RunAsync(services => services.GetRequiredService<ISettingsService>().SaveAsync(new SiteSettings { Name = "Hub", TimeZone = "America/Sao_Paulo" }));
+        await hub.RunAsync(services => services.GetRequiredService<IBanService>().ImportAsync("// Name: Alice\n// Ban date: 2026-08-24\n// Expire in: 2026-12-25\nbanid 0 STEAM_1:1:19867136", Administrator));
+
+        var alice = await ActiveAsync(hub, Alice);
+
+        Assert.AreEqual(new DateTime(2026, 8, 24, 3, 0, 0, DateTimeKind.Utc), alice!.CreatedAtUtc);
+        Assert.AreEqual(new DateTime(2026, 12, 25, 3, 0, 0, DateTimeKind.Utc), alice.EndsAtUtc);
+    }
+
+    [TestMethod]
     public async Task TheSearchFindsBansByNameSteamIdOrReason()
     {
         using var hub = new TestHub();
